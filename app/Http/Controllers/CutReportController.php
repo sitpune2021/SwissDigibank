@@ -24,486 +24,921 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Member;
 use App\Models\Branch;
+use App\Models\Promotor;
 use App\Models\Scheme;
+use App\Models\ShareTransfer;
+use Illuminate\Support\Facades\Response;
 
 class CutReportController extends Controller
 {
 
+    // Promoters/Members Cut Reports start here
+    public function promoterMemberIndex()
+    {
+        $members = Member::with(['promotor', 'branch'])->orderBy('id', 'desc')->paginate(10);
+    
+        return view('cut-reports.report.promoter-member', compact('members'));
+    }
+
+    public function promoterMemberSearchBox(Request $request)
+    {
+        $query = Member::with(['promotor', 'branch']);
+
+        if ($request->branch_id) {
+            $query->where('branch_id', $request->branch_id);
+        }
+
+        if ($request->member_no) {
+            $query->where('member_no', 'LIKE', '%' . $request->member_no . '%');
+        }
+
+        if ($request->first_name) {
+            $query->where('member_info_first_name', 'LIKE', '%' . $request->first_name . '%');
+        }
+
+        if ($request->last_name) {
+            $query->where('member_info_last_name', 'LIKE', '%' . $request->last_name . '%');
+        }
+
+        if ($request->account_no) {
+            $query->where('account_no', 'LIKE', '%' . $request->account_no . '%');
+        }
+
+        if ($request->mobile_no) {
+            $query->where('member_info_mobile', 'LIKE', '%' . $request->mobile_no . '%');
+        }
+
+        $members = $query->orderBy('id', 'desc')->paginate(10);
+        $branches = Branch::all();
+
+        return view('cut-reports.report.promoter-member', compact('members', 'branches'));
+    }
+
+    public function downloadPromoterMemberCsv()
+    {
+        $members = Member::with(['promotor', 'branch'])->orderBy('id', 'desc')->get();
+
+        $filename = 'promoter_members_' . date('Ymd_His') . '.csv';
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $columns = ['Member No', 'Member Name', 'Branch', 'KYC Status', 'Enrollment Date', 'Status'];
+
+        $callback = function () use ($members, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($members as $member) {
+                fputcsv($file, [
+                    $member->member_no ?? '',
+                    ($member->member_info_first_name ?? '') . ' ' . ($member->member_info_last_name ?? ''),
+                    $member->branch->branch_name ?? 'N/A',
+                    strtoupper($member->status) ?? 'N/A',
+                    $member->general_enrollment_date ? date('d-m-Y', strtotime($member->general_enrollment_date)) : 'N/A',
+                    $member->is_active ? 'Active' : 'Inactive',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    // Promoters/Members Cut Reports start here
+
+    // shareHoldingIndex Cut Reports start here
+    public function shareHoldingIndex()
+    {
+        $promoters = Promotor::with('latestShare')->orderBy('id', 'desc')->paginate(10);
+        return view('cut-reports.report.share-holding', compact('promoters'));
+    }
+
+    public function shareAllotmentSearchBox(Request $request)
+    {
+
+        $from = $request->from_date;
+        $to   = $request->to_date;
+
+        // Base query
+        $promoters = Promotor::with(['latestShare'])
+            ->when($from && $to, function ($query) use ($from, $to) {
+
+                // Convert DD/MM/YYYY → YYYY-MM-DD
+                $fromDate = \Carbon\Carbon::createFromFormat('d-m-Y', $from)->format('Y-m-d');
+                $toDate   = \Carbon\Carbon::createFromFormat('d-m-Y', $to)->format('Y-m-d');
+
+                $query->whereHas('latestShare', function ($q) use ($fromDate, $toDate) {
+                    $q->whereBetween('allotment_date', [$fromDate, $toDate]);
+                });
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('cut-reports.report.share-holding', compact('promoters'));
+    }
+
+
+    public function downloadPromoterCSV(Request $request)
+    {
+
+        $records = Promotor::with('latestShare')->get();
+
+        $filename = 'promoter_holdings_report_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            "Content-Type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+        ];
+
+        $columns = [
+            'MEMBER',
+            'SHARE RANGE',
+            'TOTAL SHARES',
+            'NOMINAL VAL.',
+            'TOTAL SHARE VAL.',
+            'ALLOTMENT DATE',
+            'TRANSFER DATE',
+        ];
+
+        $callback = function () use ($records, $columns) {
+            $file = fopen('php://output', 'w');
+
+            // Add heading row
+            fputcsv($file, $columns);
+
+            foreach ($records as $promoter) {
+
+                $share = $promoter->latestShare;
+
+                fputcsv($file, [
+                    // MEMBER NAME
+                    strtoupper($promoter->first_name . ' ' . $promoter->last_name),
+
+                    // SHARE RANGE
+                    ($share->first_share ?? '') . ' - ' . ($share->share_no ?? ''),
+
+                    // TOTAL SHARES
+                    $share->total_share_held ?? '',
+
+                    // NOMINAL VAL
+                    $share->nominal_value ?? '',
+
+                    // TOTAL SHARE VAL
+                    $share->total_share_value ?? '',
+
+                    // ALLOTMENT DATE → d-m-Y
+                    $share && $share->allotment_date
+                        ? date('d-m-Y', strtotime($share->allotment_date))
+                        : '',
+
+                    // TRANSFER DATE (transaction_date) → d-m-Y
+                    $share && $share->transaction_date
+                        ? date('d-m-Y', strtotime($share->transaction_date))
+                        : '',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
+    // shareHoldingIndex Cut Reports start here
+
+    // shareHoldingIndex Cut Reports start here
+    public function shareTransferHistoryIndex()
+    {
+        $shareTransfers = ShareTransfer::with(['promotor', 'members'])->paginate(10);
+        return view('cut-reports.report.share-transfer-history', compact('shareTransfers'));
+    }
+    public function downloadShareTransferHistoryCsv()
+    {
+        $shareTransfers = ShareTransfer::with(['promotor', 'members'])->get();
+
+        $filename = "share-transfer-history.csv";
+
+        $columns = [
+            'Business Type',
+            'Transferor',
+            'Transferee',
+            'Share Range',
+            'Nominal Value',
+            'No. of Shares',
+            'Date of Transfer',
+            'New Share'
+        ];
+
+        $callback = function () use ($shareTransfers, $columns) {
+            $file = fopen('php://output', 'w');
+
+            // Write headers
+            fputcsv($file, $columns);
+
+            foreach ($shareTransfers as $s) {
+                fputcsv($file, [
+                    $s->business_type ?? '',
+                    optional($s->members)->member_info_first_name . ' ' . optional($s->members)->member_info_last_name,
+                    optional($s->promotor)->first_name . ' ' . optional($s->promotor)->last_name,
+                    "'" . ($s->from_share_no ?? '') . " - " . ($s->to_share_no ?? ''),
+                    $s->face_value ?? '',
+                    $s->total_consideration ?? '',
+                    $s->date_of_transfer ?? '',
+                    $s->certificate_number ? 'Yes' : 'No',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, [
+            "Content-Type" => "text/csv",
+            "Content-Disposition" => "attachment; filename={$filename}",
+        ]);
+    }
+
+    public function shareTransferHistorySearchBox(Request $request)
+    {
+        // VALIDATION
+        $request->validate([
+            'from_date' => 'required|date_format:d-m-Y',
+            'to_date' => 'required|date_format:d-m-Y',
+        ]);
+
+        $from = $request->from_date;
+        $to   = $request->to_date;
+        // CONVERT FROM dd-mm-yyyy TO yyyy-mm-dd
+        $fromDate = \Carbon\Carbon::createFromFormat('d-m-Y', $from)->format('Y-m-d');
+        $toDate   = \Carbon\Carbon::createFromFormat('d-m-Y', $to)->format('Y-m-d');
+
+        // FETCH DATA
+        $shareTransfers = ShareTransfer::with(['members', 'promotor'])
+            ->whereDate('transfer_date', '>=', $fromDate)
+            ->whereDate('transfer_date', '<=', $toDate)
+            ->orderBy('transfer_date', 'DESC')
+            ->get();
+
+        return view('cut-reports.report.share-transfer-history', compact('shareTransfers'));
+    }
+
+
+    // shareHoldingIndex Cut Reports start here
+
     // Saving Account Cut Reports start here
 
-        public function savingacc_index()
-        {
-            $account = Account::with(['members', 'branch'])->orderBy('id', 'desc')->get();
+    public function savingacc_index()
+    {
+        $account = Account::with(['members', 'branch'])->orderBy('id', 'desc')->paginate(10);
 
-            return view('cut-reports.report.saving-account', compact('account'));
-        }
+        return view('cut-reports.report.saving-account', compact('account'));
+    }
 
-        public function savingIndex()
-        {
-            $associates = Account::select(
-                'accounts.id',
-                'accounts.account_no',
-                'members.member_info_first_name as name',
-                'members.member_info_first_name as last_name',
-                'members.member_info_title as title'
-            )
-                ->leftJoin('members', 'members.id', '=', 'accounts.member_id')
-                ->get();
+    public function savingIndex()
+    {
+        $associates = Account::select(
+            'accounts.id',
+            'accounts.account_no',
+            'members.member_info_first_name as name',
+            'members.member_info_last_name as last_name',
+            'members.member_info_title as title'
+        )
+            ->leftJoin('members', 'members.id', '=', 'accounts.member_id')
+            ->get();
 
-            $associates = collect($associates)->map(function ($item) {
+        $associates = collect($associates)->map(function ($item) {
 
-                $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
+            $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
 
-                // If helper returns array
-                if (is_array($balance) && isset($balance['total_balance'])) {
-                    $item->amount = (float) $balance['total_balance'];
-                } else {
-                    $item->amount = 0; // fallback
-                }
+            // If helper returns array
+            if (is_array($balance) && isset($balance['total_balance'])) {
+                $item->amount = (float) $balance['total_balance'];
+            } else {
+                $item->amount = 0; // fallback
+            }
 
-                return $item;
-            });
+            return $item;
+        });
 
-            $totalAmount = $associates->sum('amount');
-            $data = [
-                'company' => [
-                    'name' => Company::first()->company_name ?? 'SBC GLOBAL'
-                ],
-                'associates' => $associates,
-                'totalAmount' =>  $totalAmount,
-                'photoPath' => public_path('assets/images/sbc-image.jpg'),
-            ];
+        $totalAmount = $associates->sum('amount');
+        $data = [
+            'company' => [
+                'name' => Company::first()->company_name ?? 'SBC GLOBAL'
+            ],
+            'associates' => $associates,
+            'totalAmount' =>  $totalAmount,
+            'photoPath' => public_path('assets/images/sbc-image.jpg'),
+        ];
 
-            $html = view('cut-reports.pdf.cut-report-saving', $data)->render();
-            $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-            $fontDirs = $defaultConfig['fontDir'];
+        $html = view('cut-reports.pdf.cut-report-saving', $data)->render();
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
 
-            $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-            $fontData = $defaultFontConfig['fontdata'];
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
 
-            $mpdf = new \Mpdf\Mpdf([
-                'format' => 'A4',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 10,
-                'margin_bottom' => 10,
-                'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
-                'fontdata' => $fontData + [
-                    'mukta' => [
-                        'R' => 'TiroDevanagariMarathi-Regular.ttf',
-                        'B' => 'Mukta-Bold.ttf',
-                    ]
-                ],
-                'default_font' => 'mukta',
-            ]);
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
+            'fontdata' => $fontData + [
+                'mukta' => [
+                    'R' => 'TiroDevanagariMarathi-Regular.ttf',
+                    'B' => 'Mukta-Bold.ttf',
+                ]
+            ],
+            'default_font' => 'mukta',
+        ]);
 
-            $mpdf->SetAutoPageBreak(true, 10);
-            $mpdf->WriteHTML($html);
+        $mpdf->SetAutoPageBreak(true, 10);
+        $mpdf->WriteHTML($html);
 
-            return response($mpdf->Output('cut-report-saving.pdf', 'D'))
-                ->header('Content-Type', 'application/pdf');
-        }
+        return response($mpdf->Output('cut-report-saving.pdf', 'D'))
+            ->header('Content-Type', 'application/pdf');
+    }
 
-        public function exportCsv()
-        {
-            $accounts = Account::with(['members', 'branch'])->get();
+    public function exportCsv()
+    {
+        $accounts = Account::with(['members', 'branch'])->get();
 
-            $filename = "accounts_" . date('Ymd_His') . ".csv";
+        $filename = "accounts_" . date('Ymd_His') . ".csv";
 
-            $columns = [
-                "Account No",
-                "Member Name",
-                "Branch",
-                "Enrollment Date",
-                "Status"
-            ];
+        $columns = [
+            "Account No",
+            "Member Name",
+            "Branch",
+            "Enrollment Date",
+            "Status"
+        ];
 
-            $callback = function () use ($accounts, $columns) {
+        $callback = function () use ($accounts, $columns) {
 
-                $file = fopen('php://output', 'w');
+            $file = fopen('php://output', 'w');
 
-                fputcsv($file, $columns);
+            fputcsv($file, $columns);
 
-                foreach ($accounts as $row) {
-                    fputcsv($file, [
-                        $row->account_no,
-                        $row->members->full_name ?? '',
-                        $row->branch->branch_name ?? '',
-                        optional($row->members)->general_enrollment_date
-                            ? \Carbon\Carbon::parse($row->members->general_enrollment_date)->format('d-m-Y')
-                            : '',
-                        $row->final_status ?? '',
-                    ]);
-                }
+            foreach ($accounts as $row) {
+                fputcsv($file, [
+                    $row->account_no,
+                    $row->members->full_name ?? '',
+                    $row->branch->branch_name ?? '',
+                    optional($row->members)->general_enrollment_date
+                        ? \Carbon\Carbon::parse($row->members->general_enrollment_date)->format('d-m-Y')
+                        : '',
+                    $row->final_status ?? '',
+                ]);
+            }
 
-                fclose($file);
-            };
+            fclose($file);
+        };
 
-            return response()->streamDownload($callback, $filename, [
-                "Content-type"        => "text/csv",
-                "Content-Disposition" => "attachment; filename={$filename}",
-            ]);
-        }
-
+        return response()->streamDownload($callback, $filename, [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename={$filename}",
+        ]);
+    }
     // Saving Account Cut Reports end here
 
 
     // FD Account Cut Reports Start here
+    public function fdaccount_index()
+    {
+        $account = FdAccount::with(['member', 'branch', 'fdscheme.fdslabs'])->orderBy('id', 'desc')->paginate(10);
+        return view('cut-reports.report.fd-account', compact('account'));
+    }
 
-        public function fdaccount_index()
-        {
-            $account = FdAccount::with(['member', 'branch', 'fdscheme.fdslabs'])->orderBy('id', 'desc')->get();
-            return view('cut-reports.report.fd-account', compact('account'));
-        }
-        
-        public function FDIndex()
-        {
-            $associates = FdAccount::select(
-                'fd_accounts.id',
-                'fd_accounts.fd_no',
-                'members.member_info_first_name as name',
-                'members.member_info_first_name as last_name',
-                'members.member_info_title as title',
-            )
-                ->leftJoin('members', 'members.id', '=', 'fd_accounts.member_id')
-                ->get();
+    public function FDIndex()
+    {
+        $associates = FdAccount::select(
+            'fd_accounts.id',
+            'fd_accounts.fd_no',
+            'members.member_info_first_name as name',
+            'members.member_info_last_name as last_name',
+            'members.member_info_title as title',
+        )
+            ->leftJoin('members', 'members.id', '=', 'fd_accounts.member_id')
+            ->get();
 
-            $associates = collect($associates)->map(function ($item) {
+        $associates = collect($associates)->map(function ($item) {
 
-                $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
+            $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
 
-                // If helper returns array
-                if (is_array($balance) && isset($balance['total_balance'])) {
-                    $item->amount = (float) $balance['total_balance'];
-                } else {
-                    $item->amount = 0; // fallback
-                }
+            // If helper returns array
+            if (is_array($balance) && isset($balance['total_balance'])) {
+                $item->amount = (float) $balance['total_balance'];
+            } else {
+                $item->amount = 0; // fallback
+            }
 
-                return $item;
-            });
+            return $item;
+        });
 
-            $totalAmount = $associates->sum('amount');
-            $data = [
-                'company' => [
-                    'name' => Company::first()->company_name ?? 'SBC GLOBAL'
-                ],
-                'associates' => $associates,
-                'totalAmount' =>  $totalAmount,
-                'photoPath' => public_path('assets/images/sbc-image.jpg'),
-            ];
+        $totalAmount = $associates->sum('amount');
+        $data = [
+            'company' => [
+                'name' => Company::first()->company_name ?? 'SBC GLOBAL'
+            ],
+            'associates' => $associates,
+            'totalAmount' =>  $totalAmount,
+            'photoPath' => public_path('assets/images/sbc-image.jpg'),
+        ];
 
-            $html = view('cut-reports.pdf.cut-report-fd', $data)->render();
-            $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-            $fontDirs = $defaultConfig['fontDir'];
+        $html = view('cut-reports.pdf.cut-report-fd', $data)->render();
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
 
-            $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-            $fontData = $defaultFontConfig['fontdata'];
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
 
-            $mpdf = new \Mpdf\Mpdf([
-                'format' => 'A4',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 10,
-                'margin_bottom' => 10,
-                'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
-                'fontdata' => $fontData + [
-                    'mukta' => [
-                        'R' => 'TiroDevanagariMarathi-Regular.ttf',
-                        'B' => 'Mukta-Bold.ttf',
-                    ]
-                ],
-                'default_font' => 'mukta',
-            ]);
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
+            'fontdata' => $fontData + [
+                'mukta' => [
+                    'R' => 'TiroDevanagariMarathi-Regular.ttf',
+                    'B' => 'Mukta-Bold.ttf',
+                ]
+            ],
+            'default_font' => 'mukta',
+        ]);
 
-            $mpdf->SetAutoPageBreak(true, 10);
-            $mpdf->WriteHTML($html);
+        $mpdf->SetAutoPageBreak(true, 10);
+        $mpdf->WriteHTML($html);
 
-            return response($mpdf->Output('cut-report-fd_account.pdf', 'D'))
-                ->header('Content-Type', 'application/pdf');
-        }
+        return response($mpdf->Output('cut-report-fd_account.pdf', 'D'))
+            ->header('Content-Type', 'application/pdf');
+    }
 
-        public function fdExportCsv()
-        {
-            $accounts = FdAccount::with(['member', 'branch', 'fdscheme.fdslabs'])->get();
+    public function fdExportCsv()
+    {
+        $accounts = FdAccount::with(['member', 'branch', 'fdscheme.fdslabs'])->get();
 
-            $filename = "fd_accounts_" . date('Ymd_His') . ".csv";
+        $filename = "fd_accounts_" . date('Ymd_His') . ".csv";
 
-            $columns = [
-                "Account No",
-                "Member Name",
-                "Branch",
-                "Scheme",
-                "Interest Payout",
-                "Principal Amt",
-                "Open Date",
-                "Maturity Date",
-                "Status"
-            ];
+        $columns = [
+            "Account No",
+            "Member Name",
+            "Branch",
+            "Scheme",
+            "Interest Payout",
+            "Principal Amt",
+            "Open Date",
+            "Maturity Date",
+            "Status"
+        ];
 
-            $callback = function () use ($accounts, $columns) {
+        $callback = function () use ($accounts, $columns) {
 
-                $file = fopen('php://output', 'w');
+            $file = fopen('php://output', 'w');
 
-                fputcsv($file, $columns);
+            fputcsv($file, $columns);
 
-                foreach ($accounts as $row) {
-                    fputcsv($file, [
-                        $row->fd_no,
-                        $row->member->full_name ?? '',
-                        $row->branch->branch_name ?? '',
-                        $row->fdscheme->scheme_name ?? '',
-                        $row->interest_payout_type ?? '',
-                        $row->fd_amount ?? '',
-                        optional($row->maturity_date)
-                            ? \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y')
-                            : '',
-                        optional($row->open_date)
-                            ? \Carbon\Carbon::parse($row->open_date)->format('d-m-Y')
-                            : '',
-                        $row->final_status ?? '',
-                    ]);
-                }
+            foreach ($accounts as $row) {
+                fputcsv($file, [
+                    $row->fd_no,
+                    $row->member->full_name ?? '',
+                    $row->branch->branch_name ?? '',
+                    $row->fdscheme->scheme_name ?? '',
+                    $row->interest_payout_type ?? '',
+                    $row->fd_amount ?? '',
+                    optional($row->maturity_date)
+                        ? \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y')
+                        : '',
+                    optional($row->open_date)
+                        ? \Carbon\Carbon::parse($row->open_date)->format('d-m-Y')
+                        : '',
+                    $row->final_status ?? '',
+                ]);
+            }
 
-                fclose($file);
-            };
+            fclose($file);
+        };
 
-            return response()->streamDownload($callback, $filename, [
-                "Content-type"        => "text/csv",
-                "Content-Disposition" => "attachment; filename={$filename}",
-            ]);
-        }
+        return response()->streamDownload($callback, $filename, [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename={$filename}",
+        ]);
+    }
 
     // FD Account Cut Reports End here
 
 
     // MIS Account Cut Reports Start here
 
-        public function misaccount_index()
-        {
-            $account = Misaccount::with(['member', 'branch', 'fdScheme.fdslabs'])->orderBy('id', 'desc')->get();
-            return view('cut-reports.report.mis-account', compact('account'));
-        }
+    public function misaccount_index()
+    {
+        $account = Misaccount::with(['member', 'branch', 'fdScheme.fdslabs'])->orderBy('id', 'desc')->paginate(10);
+        return view('cut-reports.report.mis-account', compact('account'));
+    }
 
-        public function misIndex()
-        {
-            $associates = Misaccount::select(
-                'misaccounts.id',
-                'misaccounts.mis_account_no',
-                'members.member_info_first_name as name',
-                'members.member_info_first_name as last_name',
-                'members.member_info_title as title',
-            )
-                ->leftJoin('members', 'members.id', '=', 'misaccounts.member_id')
-                ->get();
+    public function misIndex()
+    {
+        $associates = Misaccount::select(
+            'misaccounts.id',
+            'misaccounts.mis_account_no',
+            'members.member_info_first_name as name',
+            'members.member_info_last_name as last_name',
+            'members.member_info_title as title',
+        )
+            ->leftJoin('members', 'members.id', '=', 'misaccounts.member_id')
+            ->get();
 
-            $associates = collect($associates)->map(function ($item) {
+        $associates = collect($associates)->map(function ($item) {
 
-                $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
+            $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
 
-                // If helper returns array
-                if (is_array($balance) && isset($balance['total_balance'])) {
-                    $item->amount = (float) $balance['total_balance'];
-                } else {
-                    $item->amount = 0; // fallback
-                }
+            // If helper returns array
+            if (is_array($balance) && isset($balance['total_balance'])) {
+                $item->amount = (float) $balance['total_balance'];
+            } else {
+                $item->amount = 0; // fallback
+            }
 
-                return $item;
-            });
+            return $item;
+        });
 
-            $totalAmount = $associates->sum('amount');
-            $data = [
-                'company' => [
-                    'name' => Company::first()->company_name ?? 'SBC GLOBAL'
-                ],
-                'associates' => $associates,
-                'totalAmount' =>  $totalAmount,
-                'photoPath' => public_path('assets/images/sbc-image.jpg'),
-            ];
+        $totalAmount = $associates->sum('amount');
+        $data = [
+            'company' => [
+                'name' => Company::first()->company_name ?? 'SBC GLOBAL'
+            ],
+            'associates' => $associates,
+            'totalAmount' =>  $totalAmount,
+            'photoPath' => public_path('assets/images/sbc-image.jpg'),
+        ];
 
-            $html = view('cut-reports.pdf.cut-report-mis', $data)->render();
-            $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-            $fontDirs = $defaultConfig['fontDir'];
+        $html = view('cut-reports.pdf.cut-report-mis', $data)->render();
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
 
-            $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-            $fontData = $defaultFontConfig['fontdata'];
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
 
-            $mpdf = new \Mpdf\Mpdf([
-                'format' => 'A4',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 10,
-                'margin_bottom' => 10,
-                'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
-                'fontdata' => $fontData + [
-                    'mukta' => [
-                        'R' => 'TiroDevanagariMarathi-Regular.ttf',
-                        'B' => 'Mukta-Bold.ttf',
-                    ]
-                ],
-                'default_font' => 'mukta',
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
+            'fontdata' => $fontData + [
+                'mukta' => [
+                    'R' => 'TiroDevanagariMarathi-Regular.ttf',
+                    'B' => 'Mukta-Bold.ttf',
+                ]
+            ],
+            'default_font' => 'mukta',
+        ]);
+
+        $mpdf->SetAutoPageBreak(true, 10);
+        $mpdf->WriteHTML($html);
+
+        return response($mpdf->Output('cut-report-mis_account.pdf', 'D'))
+            ->header('Content-Type', 'application/pdf');
+    }
+    public function downloadMisCsv()
+    {
+        $accounts = Misaccount::with(['member', 'branch', 'fdscheme'])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $filename = "mis_accounts_" . date('Y-m-d_H-i-s') . ".csv";
+
+        $headers = [
+            "Content-Type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename"
+        ];
+
+        return response()->stream(function () use ($accounts) {
+
+            $file = fopen('php://output', 'w');
+
+            // UTF-8 BOM (Fixes Marathi/Hindi text in Excel)
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // CSV HEADERS
+            fputcsv($file, [
+                'MIS NO',
+                'MEMBER NAME',
+                'BRANCH',
+                'SCHEME',
+                'INTEREST PAYOUT',
+                'PRINCIPAL AMOUNT',
+                'OPEN DATE',
+                'MATURITY DATE',
+                'STATUS'
             ]);
 
-            $mpdf->SetAutoPageBreak(true, 10);
-            $mpdf->WriteHTML($html);
+            // ROWS
+            foreach ($accounts as $row) {
 
-            return response($mpdf->Output('cut-report-mis_account.pdf', 'D'))
-                ->header('Content-Type', 'application/pdf');
-        }
+                $memberName = trim(($row->member->member_info_first_name ?? '') . ' ' . ($row->member->member_info_last_name ?? ''));
+
+                $scheme = trim(($row->fdscheme->scheme_name ?? '') . ' ' . ($row->fdscheme->scheme_code ?? ''));
+
+                fputcsv($file, [
+                    $row->mis_account_no ?? '',
+                    $memberName,
+                    $row->branch->branch_name ?? '',
+                    $scheme,
+                    $row->interest_payout_type ?? '',
+                    $row->mis_amount ?? '',
+                    $row->open_date
+                        ? '="' . date('d-m-Y', strtotime($row->open_date)) . '"'
+                        : '',
+                    $row->maturity_date
+                        ? '="' . date('d-m-Y', strtotime($row->maturity_date)) . '"'
+                        : '',
+                    ucfirst($row->final_status ?? '')
+                ]);
+            }
+
+            fclose($file);
+        }, 200, $headers);
+    }
 
     // MIS Account Cut Reports End here
 
 
     // DD Account Cut Reports Start here
+    public function ddaccount_index()
+    {
+        $account = DdsAccount::with(['member', 'branch', 'scheme'])->orderBy('id', 'desc')->paginate(10);
+        return view('cut-reports.report.dd-accounts', compact('account'));
+    }
 
-        public function ddaccount_index()
-        {
-            $account = DdsAccount::with(['member', 'branch', 'scheme'])->orderBy('id', 'desc')->get();
-            return view('cut-reports.report.dd-accounts', compact('account'));
-        }
-
-        public function ddIndex()
-        {
-            $associates = DdsAccount::select(
-                'dds_accounts.id',
-                'dds_accounts.dd_no',
-                'members.member_info_first_name as name',
-                'members.member_info_first_name as last_name',
-                'members.member_info_title as title',
-            )
-                ->leftJoin('members', 'members.id', '=', 'dds_accounts.member_id')
-                ->get();
-
-            $associates = collect($associates)->map(function ($item) {
-
+    public function ddIndex()
+    {
+        $associates = DdsAccount::with(['member', 'branch', 'scheme'])
+            ->get()
+            ->map(function ($item, $key) {
                 $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
 
-                // If helper returns array
-                if (is_array($balance) && isset($balance['total_balance'])) {
-                    $item->amount = (float) $balance['total_balance'];
-                } else {
-                    $item->amount = 0; // fallback
-                }
-
-                return $item;
+                return [
+                    'sr_no' => $key + 1,
+                    'dd_account_no' => $item->dd_no,
+                    'name' => $item->member->member_info_first_name ?? '',
+                    'last_name' => $item->member->member_info_last_name ?? '',
+                    'branch_name' => $item->branch->branch_name ?? '',
+                    'scheme_name' => $item->scheme->scheme_name ?? '',
+                    'scheme_code' => $item->scheme->scheme_code ?? '',
+                    'dd_amount' => $item->dd_amount ?? 0,
+                    'amount' => is_array($balance) && isset($balance['total_balance'])
+                        ? (float) $balance['total_balance']
+                        : 0,
+                    'open_date' => $item->open_date ? \Carbon\Carbon::parse($item->open_date)->format('d-m-Y') : '',
+                    'maturity_date' => $item->maturity_date ? \Carbon\Carbon::parse($item->maturity_date)->format('d-m-Y') : '',
+                    'rr_dd_frequency' => $item->scheme->rr_dd_frequency ?? '',
+                    'final_status' => $item->final_status ?? '',
+                ];
             });
 
-            $totalAmount = $associates->sum('amount');
-            $data = [
-                'company' => [
-                    'name' => Company::first()->company_name ?? 'SBC GLOBAL'
-                ],
-                'associates' => $associates,
-                'totalAmount' =>  $totalAmount,
-                'photoPath' => public_path('assets/images/sbc-image.jpg'),
-            ];
+        $totalAmount = $associates->sum('amount');
 
-            $html = view('cut-reports.pdf.cut-report-dd', $data)->render();
-            $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-            $fontDirs = $defaultConfig['fontDir'];
+        $data = [
+            'company' => ['name' => Company::first()->company_name ?? 'SBC GLOBAL'],
+            'associates' => $associates,
+            'totalAmount' => $totalAmount,
+            'photoPath' => public_path('assets/images/sbc-image.jpg'),
+        ];
 
-            $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-            $fontData = $defaultFontConfig['fontdata'];
+        $html = view('cut-reports.pdf.cut-report-dd', $data)->render();
 
-            $mpdf = new \Mpdf\Mpdf([
-                'format' => 'A4',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 10,
-                'margin_bottom' => 10,
-                'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
-                'fontdata' => $fontData + [
-                    'mukta' => [
-                        'R' => 'TiroDevanagariMarathi-Regular.ttf',
-                        'B' => 'Mukta-Bold.ttf',
-                    ]
-                ],
-                'default_font' => 'mukta',
-            ]);
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+            'fontDir' => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], [storage_path('fonts')]),
+            'fontdata' => (new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'] + [
+                'mukta' => [
+                    'R' => 'TiroDevanagariMarathi-Regular.ttf',
+                    'B' => 'Mukta-Bold.ttf',
+                ]
+            ],
+            'default_font' => 'mukta',
+        ]);
 
-            $mpdf->SetAutoPageBreak(true, 10);
-            $mpdf->WriteHTML($html);
+        $mpdf->SetAutoPageBreak(true, 10);
+        $mpdf->WriteHTML($html);
 
-            return response($mpdf->Output('cut-report-dd_account.pdf', 'D'))
-                ->header('Content-Type', 'application/pdf');
-        }
+        return response($mpdf->Output('cut-report-dd_account.pdf', 'D'))
+            ->header('Content-Type', 'application/pdf');
+    }
+
+
+    public function ddAccountCsv()
+    {
+        $accounts = DdsAccount::with(['member', 'branch', 'scheme'])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $filename = "dd_accounts_report_" . date('Y-m-d_H-i-s') . ".csv";
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = [
+            "DD NO",
+            "MEMBER",
+            "BRANCH",
+            "ASSOCIATE",
+            "COLLECTOR",
+            "SCHEME",
+            "AMOUNT",
+            "OPEN DATE",
+            "MATURITY DATE",
+            "FREQUENCY",
+            "STATUS"
+        ];
+
+        $callback = function () use ($accounts, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($accounts as $row) {
+                fputcsv($file, [
+                    $row->dd_account_no,
+                    $row->member->member_info_first_name . ' ' . $row->member->member_info_last_name,
+                    $row->branch->branch_name ?? '',
+                    '', // associate
+                    '', // collector
+                    ($row->scheme->scheme_name ?? '') . ' ' . ($row->scheme->scheme_code ?? ''),
+                    $row->dd_amount,
+                    $row->open_date
+                        ? "=\"" . \Carbon\Carbon::parse($row->open_date)->format('d-m-Y') . "\""
+                        : '',
+
+                    $row->maturity_date
+                        ? "=\"" . \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y') . "\""
+                        : '',
+                    $row->scheme->rr_dd_frequency ?? '',
+                    $row->final_status,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 
     // DD Account Cut Reports End here
 
 
     // RD Account Cut Reports Start here
 
-        public function rd_account_index()
-        {
-            $account = RdAccount::with(['member', 'branch', 'scheme'])->orderBy('id', 'desc')->get();
-            return view('cut-reports.report.rd-account', compact('account'));
-        }
-        
-        public function rdIndex()
-        {
-            $associates = RdAccount::select(
-                'rd_accounts.id',
-                'rd_accounts.rd_no',
-                'members.member_info_first_name as name',
-                'members.member_info_first_name as last_name',
-                'members.member_info_title as title',
-            )
-                ->leftJoin('members', 'members.id', '=', 'rd_accounts.member_id')
-                ->get();
+    public function rd_account_index()
+    {
+        $account = RdAccount::with(['member', 'branch', 'scheme'])->orderBy('id', 'desc')->paginate(10);
+        return view('cut-reports.report.rd-account', compact('account'));
+    }
+    //  Download Pdf
+    public function rdIndex()
+    {
+        $associates = RdAccount::select(
+            'rd_accounts.id',
+            'rd_accounts.rd_no',
+            'members.member_info_first_name as name',
+            'members.member_info_last_name as last_name',
+            'members.member_info_title as title',
+        )
+            ->leftJoin('members', 'members.id', '=', 'rd_accounts.member_id')
+            ->get();
 
-            $associates = collect($associates)->map(function ($item) {
+        $associates = collect($associates)->map(function ($item, $key) {
+            $item->sr_no = $key + 1;
+            $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
 
-                $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
+            // If helper returns array
+            if (is_array($balance) && isset($balance['total_balance'])) {
+                $item->amount = (float) $balance['total_balance'];
+            } else {
+                $item->amount = 0; // fallback
+            }
 
-                // If helper returns array
-                if (is_array($balance) && isset($balance['total_balance'])) {
-                    $item->amount = (float) $balance['total_balance'];
-                } else {
-                    $item->amount = 0; // fallback
-                }
+            return $item;
+        });
 
-                return $item;
-            });
+        $totalAmount = $associates->sum('amount');
+        $data = [
+            'company' => [
+                'name' => Company::first()->company_name ?? 'SBC GLOBAL'
+            ],
+            'associates' => $associates,
+            'totalAmount' =>  $totalAmount,
+            'photoPath' => public_path('assets/images/sbc-image.jpg'),
+        ];
 
-            $totalAmount = $associates->sum('amount');
-            $data = [
-                'company' => [
-                    'name' => Company::first()->company_name ?? 'SBC GLOBAL'
-                ],
-                'associates' => $associates,
-                'totalAmount' =>  $totalAmount,
-                'photoPath' => public_path('assets/images/sbc-image.jpg'),
-            ];
+        $html = view('cut-reports.pdf.cut-report-rd', $data)->render();
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
 
-            $html = view('cut-reports.pdf.cut-report-rd', $data)->render();
-            $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-            $fontDirs = $defaultConfig['fontDir'];
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
 
-            $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-            $fontData = $defaultFontConfig['fontdata'];
+        $mpdf = new \Mpdf\Mpdf([
+            'format' => 'A4',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
+            'fontdata' => $fontData + [
+                'mukta' => [
+                    'R' => 'TiroDevanagariMarathi-Regular.ttf',
+                    'B' => 'Mukta-Bold.ttf',
+                ]
+            ],
+            'default_font' => 'mukta',
+        ]);
 
-            $mpdf = new \Mpdf\Mpdf([
-                'format' => 'A4',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 10,
-                'margin_bottom' => 10,
-                'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
-                'fontdata' => $fontData + [
-                    'mukta' => [
-                        'R' => 'TiroDevanagariMarathi-Regular.ttf',
-                        'B' => 'Mukta-Bold.ttf',
-                    ]
-                ],
-                'default_font' => 'mukta',
-            ]);
+        $mpdf->SetAutoPageBreak(true, 10);
+        $mpdf->WriteHTML($html);
 
-            $mpdf->SetAutoPageBreak(true, 10);
-            $mpdf->WriteHTML($html);
+        return response($mpdf->Output('cut-report-rd_account.pdf', 'D'))
+            ->header('Content-Type', 'application/pdf');
+    }
+    // Download CSV
+    public function rdAccountCsv()
+    {
+        $accounts = RdAccount::with(['member', 'branch', 'scheme'])
+            ->orderBy('id', 'desc')
+            ->get(); // export ALL records
 
-            return response($mpdf->Output('cut-report-rd_account.pdf', 'D'))
-                ->header('Content-Type', 'application/pdf');
-        }
+        $filename = "rd_accounts_" . date('Y-m-d_H-i-s') . ".csv";
 
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = [
+            "RD NO.",
+            "MEMBER",
+            "ASSOCIATE",
+            "COLLECTOR",
+            "MOBILE NO",
+            "BRANCH",
+            "SCHEME",
+            "AMOUNT",
+            "OPEN DATE",
+            "MATURITY DATE",
+            "FREQUENCY",
+            "STATUS",
+        ];
+
+        $callback = function () use ($accounts, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($accounts as $row) {
+                fputcsv($file, [
+                    $row->rd_no ?? '',
+                    ($row->member->member_info_first_name ?? '') . ' ' . ($row->member->member_info_last_name ?? ''),
+                    '', // associate
+                    '', // collector
+                    $row->member->member_info_mobile_no ?? '',
+                    $row->branch->branch_name ?? '',
+                    ($row->scheme->scheme_name ?? '') . ' ' . ($row->scheme->scheme_code ?? ''),
+                    $row->rd_amount ?? '',
+
+                    // Prevent Excel auto-formatting
+                    $row->open_date
+                        ? "=\"" . \Carbon\Carbon::parse($row->open_date)->format('d-m-Y') . "\""
+                        : '',
+
+                    $row->maturity_date
+                        ? "=\"" . \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y') . "\""
+                        : '',
+
+                    $row->scheme->rr_dd_frequency ?? '',
+                    $row->final_status ?? '',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
     // RD Account Cut Reports End here
 
 
@@ -548,7 +983,7 @@ class CutReportController extends Controller
     }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////
 
     // Index Page Gold Loan
 
@@ -599,8 +1034,7 @@ class CutReportController extends Controller
         $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
 
         // --- Current Debt Calculation ---
-        foreach ($goldLoan as $loan) 
-        {
+        foreach ($goldLoan as $loan) {
 
             $loanAmount = $loan->loan_amount;
 
@@ -764,8 +1198,7 @@ class CutReportController extends Controller
         $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
 
         // --- Current Debt Calculation ---
-        foreach ($goldLoan as $loan) 
-        {
+        foreach ($goldLoan as $loan) {
 
             $loanAmount = $loan->loan_amount;
 
@@ -794,7 +1227,7 @@ class CutReportController extends Controller
     }
 
     // CSV Downloan Mortgage Loan
-    
+
     public function mortgage_exportCsv()
     {
         $loans = MortgageLoanApplication::with(['member', 'branch', 'scheme'])
@@ -929,8 +1362,7 @@ class CutReportController extends Controller
         $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
 
         // --- Current Debt Calculation ---
-        foreach ($goldLoan as $loan) 
-        {
+        foreach ($goldLoan as $loan) {
 
             $loanAmount = $loan->loan_amount;
 
@@ -959,7 +1391,7 @@ class CutReportController extends Controller
     }
 
     // CSV Downloan Loanagainst
-    
+
     public function loanagainst_exportCsv()
     {
         $loans = LoanAgainstApplication::with(['member', 'branch', 'scheme'])
@@ -1094,8 +1526,7 @@ class CutReportController extends Controller
         $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
 
         // --- Current Debt Calculation ---
-        foreach ($goldLoan as $loan) 
-        {
+        foreach ($goldLoan as $loan) {
 
             $loanAmount = $loan->loan_amount;
 
@@ -1124,7 +1555,7 @@ class CutReportController extends Controller
     }
 
     // CSV Downloan Business
-    
+
     public function business_exportCsv()
     {
         $loans = BusinessLoanApplication::with(['member', 'branch', 'scheme'])
@@ -1259,8 +1690,7 @@ class CutReportController extends Controller
         $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
 
         // --- Current Debt Calculation ---
-        foreach ($goldLoan as $loan) 
-        {
+        foreach ($goldLoan as $loan) {
 
             $loanAmount = $loan->loan_amount;
 
@@ -1289,7 +1719,7 @@ class CutReportController extends Controller
     }
 
     // CSV Downloan Personal
-    
+
     public function personal_exportCsv()
     {
         $loans = PersonalLoanApplication::with(['member', 'branch', 'scheme'])
@@ -1424,8 +1854,7 @@ class CutReportController extends Controller
         $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
 
         // --- Current Debt Calculation ---
-        foreach ($goldLoan as $loan) 
-        {
+        foreach ($goldLoan as $loan) {
 
             $loanAmount = $loan->loan_amount;
 
@@ -1454,7 +1883,7 @@ class CutReportController extends Controller
     }
 
     // CSV Downloan daily_weekly
-    
+
     public function dailyweekly_exportCsv()
     {
         $loans = DailyWeeklyApplication::with(['member', 'branch', 'scheme'])
@@ -1589,8 +2018,7 @@ class CutReportController extends Controller
         $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
 
         // --- Current Debt Calculation ---
-        foreach ($goldLoan as $loan) 
-        {
+        foreach ($goldLoan as $loan) {
 
             $loanAmount = $loan->loan_amount;
 
@@ -1619,7 +2047,7 @@ class CutReportController extends Controller
     }
 
     // CSV Downloan vehical
-    
+
     public function vehical_exportCsv()
     {
         $loans = VehicalApplication::with(['member', 'branch', 'scheme'])
@@ -1754,8 +2182,7 @@ class CutReportController extends Controller
         $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
 
         // --- Current Debt Calculation ---
-        foreach ($goldLoan as $loan) 
-        {
+        foreach ($goldLoan as $loan) {
 
             $loanAmount = $loan->loan_amount;
 
@@ -1784,7 +2211,7 @@ class CutReportController extends Controller
     }
 
     // CSV Downloan CC OD
-    
+
     public function cc_od_exportCsv()
     {
         $loans = CcOdLoanApplication::with(['member', 'branch', 'scheme'])
@@ -1868,6 +2295,4 @@ class CutReportController extends Controller
             "Content-Disposition" => "attachment; filename={$filename}",
         ]);
     }
-
-
 }

@@ -87,8 +87,9 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Amount to Deposit <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" name="amount" min="0" placeholder="Enter Amount to Deposit"
+                        <input type="number" id="amount" name="amount" min="0" placeholder="Enter Amount to Deposit"
                             class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm">
+                            <x-number-to-word for="amount" />
                     </div>
                     @error('amount')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -267,7 +268,6 @@
                             <tr class="border-b">
                                 <td class="font-semibold pr-4 py-3">Member</td>
                                 <td>
-                                    {{ $rdAccount->member->id ?? 'N/A' }} -
                                     {{ $rdAccount->member->member_info_first_name ?? '' }}
                                     {{ $rdAccount->member->member_info_last_name ?? '' }}
                                 </td>
@@ -278,15 +278,15 @@
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold pr-4 py-3">Scheme</td>
-                                <td>{{ $rdAccount->rdscheme->scheme_name ?? 'N/A' }}</td>
+                                <td>{{ $rdAccount->scheme->scheme_name ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold pr-4 py-3">Tenure</td>
-                                <td>{{ $rdAccount->rdscheme->tenure_of_rd_dd_value ?? 'N/A' }} {{ $rdAccount->rdscheme->tenure_of_rd_dd_type ?? '' }}</td>
+                                <td>{{ $rdAccount->scheme->tenure_of_rd_dd_value ?? 'N/A' }} {{ $rdAccount->scheme->tenure_of_rd_dd_type ?? '' }}</td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold pr-4 py-3">Frequency</td>
-                                <td>{{ ucfirst($rdAccount->rdscheme->rd_dd_frequency ?? 'N/A') }}</td>
+                                <td>{{ ucfirst($rdAccount->scheme->rd_dd_frequency ?? 'N/A') }}</td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold pr-4 py-3">Principal Amt.</td>
@@ -294,14 +294,12 @@
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold pr-4 py-3">Amount Received</td>
-                                <td>{{ number_format($totalReceived, 2) }}</td>
+                                <td>{{ number_format($receivedAmount,2) }}</td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold pr-4 py-3">Balance Available</td>
                                 <td>
-                                    {{ number_format(
-                                    ($rdAccount->rdTransactions->whereNotNull('paid_on')->where('transaction_type', 'credit')->sum('amount')) -
-                                    ($rdAccount->rdTransactions->where('transaction_type', 'debit')->sum('amount')),2) }}
+                                    {{ number_format($balance, 2) }}
                                 </td>
                             </tr>
                         </tbody>
@@ -349,13 +347,12 @@
     });
 </script>
 
+
+
 <!-- Datepicker CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker.min.css">
-
 <!-- Datepicker JS -->
 <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
-
-
 
 <!-- Datepicker Initialization -->
 <script>

@@ -278,8 +278,14 @@
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Interest Credited (D) </td>
                                 <td class="px-4 py-2">
-                                    ({{ optional($ddaccount->transactions->last())->interest_amount ?? '0.00' }})
+                                    @if ($interestCredited < 0)
+                                        ({{ number_format(abs($interestCredited), 2) }})
+                                    @else
+                                        {{ number_format($interestCredited, 2) }}
+                                    @endif
                                 </td>
+                                </td>
+                     
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">TDS Deducted (E) </td>
@@ -385,54 +391,173 @@
                 </div>
 
                 <!--PASSBOOK-->
-                <div class="box shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
+                <div class="bg-white shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
                     <!-- Header -->
-                    <div class=" px-4 py-3 flex items-center gap-4 justify-between bg-red-100">
-                        <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED Passbook</h3>
-                        <button class="btn-primary px-3 py-2 rounded-3xl text-white">
+                    <div class="border-b px-4 py-3 flex items-center gap-4 justify-between bg-red-100">
+                        <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED PASSBOOK</h3>
+                        <a href="{{ route('passbook.create-passbook') }}"
+                            class="btn-primary px-3 py-2 rounded-3xl text-white">
                             <i class="las la-plus"></i>
-                            Passbook
-                        </button>
+                            passbook
+                        </a>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-4">
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+                                <thead class="bg-gray-100 text-gray-700">
+                                    <tr class="border-b">
+                                        <th class="px-4 py-2 font-semibold">Passbook No</th>
+                                        <th class="px-4 py-2 font-semibold">Issue Date</th>
+                                        <th class="px-4 py-2 font-semibold">Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="divide-y divide-gray-200 whitespace-nowrap">
+                                    @forelse($passbooks as $pass)
+                                        <tr class="border-b text-center">
+                                            <td class="px-4 py-2">{{ $pass->passbook_no ?? 'N/A' }}</td>
+                                            <td class="px-4 py-2">
+                                                {{ \Carbon\Carbon::parse($pass->issue_date)->format('d-m-Y') ?? 'N/A' }}
+                                            </td>
+                                            <td class="px-4 py-2">
+                                                <div class="w-full flex gap-3 justify-center">
+
+                                                    <!-- Edit -->
+                                                    <a href="{{ route('passbook.edit-passbook', $pass->id) }}"
+                                                        class="btn-primary  p-1">
+                                                        <i class="las la-edit "></i>
+                                                    </a>
+
+                                                    <!-- View -->
+                                                    <a href="{{ route('passbook.show', $pass->id) }}"
+                                                        class="btn-primary  p-1">
+                                                        <i class="las la-eye "></i>
+                                                    </a>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="py-3 text-center text-gray-500">
+                                                No DD passbooks found.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
                 </div>
+
                 <!--documents-->
-                <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+                <div class="bg-white dark:bg-bg3 box shadow-md mt-5 rounded-10 overflow-hidden">
                     <!-- Header -->
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('hidden')">
                         <h3 class="text-lg font-semibold">DOCUMENTS</h3>
-                        <button class=" btn-outline p-1  ">
-                            <i class="las la-upload"></i>
-                        </button>
+                        <a href="{{ route('dds.uploadDocuments', $ddaccount->id) }}"
+                            class=" btn-primary rounded-full p-1  w-2"><i class="las la-upload"></i>
+                        </a>
                     </div>
+
                     <!-- Body -->
                     <div class="p-4">
                         <div class="overflow-x-auto">
-                            <p class="capitalize">No documents found</p>
+                            @if ($documents->isEmpty())
+                                <p class="capitalize text-gray-500">No documents found</p>
+                            @else
+                                <table
+                                    class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+                                    <thead class="bg-gray-100  text-gray-700">
+                                        <tr class="border-b">
+                                            <th class="px-4 py-2 font-semibold">Name</th>
+                                            <th class="px-4 py-2 font-semibold">URL</th>
+                                            <th class="px-4 py-2 font-semibold">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        @foreach ($documents as $doc)
+                                            <tr class="border-b text-center">
+                                                <td class="px-4 py-2">{{ $doc->document_type }}</td>
+                                                <td class="px-4 py-2">
+                                                    <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank"
+                                                        class="text-primary underline">
+                                                        Show
+                                                    </a>
+                                                </td>
+                                                <td class="px-4 py-2">
+                                                    <form action="{{ route('documents.destroy', $doc->id) }}"
+                                                        method="POST" onsubmit="return confirm('Are you sure?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-red-600 hover:text-red-800">
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
                         </div>
                     </div>
                 </div>
-                <!--COMMENTS-->
-                <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+
+                <div class="bg-white box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                     <!-- Header -->
                     <div class="flex items-center justify-between bg-secondary/5 text-black rounded-10 px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('hidden')">
                         <h3 class="text-lg font-semibold">COMMENTS</h3>
+
                     </div>
+
                     <!-- Body -->
                     <div class="p-4">
-                        <div class="overflow-x-auto text-center mt-5">
-                            <a href="{{ route('dds.addComment', $ddaccount->id) }}"
-                                class="btn-primary px-3 py-2 rounded-3xl uppercase text-white">
-                                Add Comments
-                            </a>
+
+                        <div class="overflow-x-auto">
+
+                            @if ($ddaccount->comments->count() == 0)
+                                <p class="capitalize text-gray-500">No comments found</p>
+                            @else
+                                <table class="w-full text-sm text-left">
+                                    <thead>
+                                        <tr class="border-b">
+                                            <th class="px-4 py-2 uppercase font-semibold">Comment</th>
+                                            <th class="px-4 py-2 uppercase font-semibold">Commented By</th>
+                                            <th class="px-4 py-2 uppercase font-semibold">Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        @foreach ($ddaccount->comments as $comment)
+                                            <tr class="hover:bg-gray-50 border-b">
+                                                <td class="px-4 py-2">{{ $comment->comment }}</td>
+                                                <td class="px-4 py-2">
+                                                    {{ $comment->commented_by ? \App\Models\User::find($comment->commented_by)->name : '-' }}
+                                                </td>
+                                                <td class="px-4 py-2">
+                                                    {{ \Carbon\Carbon::parse($comment->date)->format('d-m-Y ') ?? '' }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
+                            <div class="overflow-x-auto text-center mt-5">
+                                @if ($ddaccount->comments->count() > 0)
+                                    <a href="{{ route('dds.addComment', $ddaccount->id) }}"
+                                        class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">View All</a>
+                                @endif
+                                <a href="{{ route('dds.addComment', $ddaccount->id) }}"
+                                    class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">Add Comments</a>
+                            </div>
                         </div>
                     </div>
-
                 </div>
-
-
-
             </div>
 
             <!-- Right: Settings -->
@@ -464,7 +589,7 @@
                                                 </div>
                                             </div>
                                             <!-- <span id="smsLabel" class="ml-4 text-sm font-medium text-black"></span>
-                                                                                                                                                                        </labels> -->
+                                                                                                                                                                                                        </labels> -->
                                     </td>
                                 </tr>
                                 <!-- DEDUCT TDS Toggle -->
@@ -927,7 +1052,7 @@
                                 <div class="overflow-x-auto text-center mt-5">
                                     <div class="overflow-x-auto">
                                         <table
-                                            class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+                                            class="w-full whitespace-nowrap border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
                                             <thead class="bg-gray-100 text-start text-gray-700">
                                                 <tr class="border-b">
                                                     <th class="px-4 py-2 text-start text-sm font-semibold">DATE</th>
@@ -942,7 +1067,7 @@
                                                 @forelse ($ddaccount->transactions as $transaction)
                                                     <tr class="border-b hover:bg-gray-50">
                                                         <td class="px-4 py-2">
-                                                            {{ $transaction->transaction_date ?? 'N/A' }}
+                                                            {{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d-m-Y') ?? 'N/A' }}
                                                         </td>
                                                         <td class="px-4 py-2">
                                                             {{ $transaction->type ?? 'N/A' }}

@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 use Illuminate\Database\Eloquent\Model;
 
 class FdTransaction extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'fd_transactions';
 
     protected $fillable = [
@@ -25,7 +29,7 @@ class FdTransaction extends Model
         'processed',
         'status',
         'due_date',
-        
+
     ];
 
     public function fdAccount()

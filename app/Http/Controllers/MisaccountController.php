@@ -122,6 +122,15 @@ class MisaccountController extends Controller
             $misaccount = Misaccount::create($validated);
             Log::info('MIS Account Created', $misaccount->toArray());
 
+            $formattedMisNo = 'MIS' . str_pad($misaccount->id, 9, '0', STR_PAD_LEFT);
+
+            // Update record
+            $misaccount->update([
+                'mis_account_no' => $formattedMisNo
+            ]);
+
+            Log::info('MIS Account No Generated', ['mis_no' => $formattedMisNo]);
+
             try {
                 $member        = Member::find($misaccount->member_id);
                 $dlttemplateid = 1707172234271737114;
@@ -936,7 +945,7 @@ class MisaccountController extends Controller
         return view('fd_mis_account.misaccount.show', compact('misaccount', 'passbooks', 'savingAccounts', 'branches', 'balance', 'documents', 'transactions'));
     }
 
-    //edit editBranch
+    // edit editBranch
     public function updateBranch(Request $request, $misaccountId)
     {
         $misaccount = Misaccount::findOrFail($misaccountId);
@@ -1103,7 +1112,6 @@ class MisaccountController extends Controller
 
     public function storeCreditDebitInterestAndTDS(Request $request, $id)
     {
-
         $request->validate([
             'transaction_date' => 'required|date',
             'transaction_type' => 'required|in:credit,debit',
@@ -1377,8 +1385,6 @@ class MisaccountController extends Controller
 
         return response()->json(['success' => true]);
     }
-
-
 
     public function destroy($id)
     {

@@ -113,7 +113,7 @@
         @endif
 
         @if($rdAccount->approve_status == 'Approved')
-        <a class="btn-error px-2 py-2 rounded-10">
+        <a href="{{ route('rd-accounts.withdraw.form', $rdAccount->id) }} " class="btn-error px-2 py-2 rounded-10">
             WITHDRAW MONEY
         </a>
         @endif
@@ -133,16 +133,13 @@
                 class="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                 <ul class="py-2">
                     <li>
-                        <a href="#"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100">REMOVE ACCOUNT</a>
+                        <a href="{{ route('rd-accounts.change-info', $rdAccount->id)}}"
+                            class="block px-4 py-2 text-gray-700 uppercase ">change Account Info</a>
                     </li>
-                </ul>
-                <ul class="py-2">
-                    <li>
+                     <li>
                         <a href="{{route('rd.accounts.nominee',['type'=>'rd','id'=>base64_encode($rdAccount->id)])}}"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100">ADD NOMINEE</a>
+                            class="block px-4 py-2 text-gray-700 uppercase ">Add Nominee</a>
                     </li>
-
                 </ul>
             </div>
         </div>
@@ -240,8 +237,8 @@
 
         <!-- Left: Details -->
         <div class="w-full overflow-hidden">
-            <div class="overflow-x-auto border  rounded-lg dark:bg-bg3 bg-white shadow-md ">
-                <table class="min-w-full whitespace-nowrap text-sm text-left ">
+            <div class="overflow-x-auto  rounded-lg dark:bg-bg3 bg-white shadow-md ">
+                <table class="min-w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 w-1/3 uppercase">Status</td>
@@ -293,7 +290,7 @@
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Scheme</td>
-                            <td class="px-4 py-2">{{$rdAccount->rdScheme->scheme_name ?? 'N/A' }}</td>
+                            <td class="px-4 py-2">{{$rdAccount->scheme->scheme_name ?? 'N/A' }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Open Date</td>
@@ -301,7 +298,7 @@
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Deposit Frequency</td>
-                            <td class="px-4 py-2">{{ $rdAccount->rdScheme->rd_dd_frequency ?? 'N/A' }}</td>
+                            <td class="px-4 py-2">{{ $rdAccount->scheme->rd_dd_frequency ?? 'N/A' }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Installment Amount</td>
@@ -309,7 +306,7 @@
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Installment Amount Received (C)</td>
-                            <td class="px-4 py-2">₹ -</td>
+                            <td class="px-4 py-2">₹ {{ $receivedAmount }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Penalty / Other Charges Received</td>
@@ -325,7 +322,7 @@
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Balance Available (C + D - E)</td>
-                            <td class="px-4 py-2">₹ -</td>
+                            <td class="px-4 py-2">₹ {{ $balance }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Principal Amount Due (A)</td>
@@ -341,7 +338,9 @@
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Maturity Date</td>
-                            <td class="px-4 py-2">{{ optional($calc['maturity_date'])->format('d-m-Y') }}</td>
+                            <td class="px-4 py-2">
+                                {{ $rdAccount->maturity_date ? \Carbon\Carbon::parse($rdAccount->maturity_date)->format('d-m-Y') : '' }}
+                            </td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Close Date</td>
@@ -357,11 +356,11 @@
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2">Annual Interest Rate (%)</td>
-                            <td class="px-4 py-2">{{ $rdAccount->rdScheme->anuual_interest_rate ?? 'N/A' }}</td>
+                            <td class="px-4 py-2">{{ $rdAccount->scheme->anuual_interest_rate ?? 'N/A' }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">Interest Compounding Interval</td>
-                            <td class="px-4 py-2">{{ $rdAccount->rdScheme->interest_compounding_interval ?? 'N/A' }}</td>
+                            <td class="px-4 py-2">{{ $rdAccount->scheme->interest_compounding_interval ?? 'N/A' }}</td>
                         </tr>
                         <tr>
                             <td class="font-semibold px-4 py-2 uppercase">TDS Deduction</td>
@@ -468,26 +467,76 @@
             </div>
             @endif
 
+
             <div class="bg-white shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
                 <!-- Header -->
                 <div class="border-b px-4 py-3 flex items-center gap-4 justify-between bg-red-100">
-                    <h3 class="text-lg font-semibold uppercase text-black ">ALLOCATED PASSBOOK</h3>
-                    <button class="btn-primary px-3 py-2 rounded-3xl text-white">
+                    <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED PASSBOOK</h3>
+                    <a href="{{ route('passbook.create-passbook') }}" class="btn-primary px-3 py-2 rounded-3xl text-white">
                         <i class="las la-plus"></i>
-                        Passbok
-                    </button>
+                        passbook
+                    </a>
+                </div>
+
+                <!-- Body -->
+                <div class="p-4">
+                    <div class="overflow-x-auto ">
+                        <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+                            <thead class="bg-gray-100 text-gray-700">
+                                <tr class="border-b">
+                                    <th class="px-4 py-2 font-semibold">Passbook No</th>
+                                    <th class="px-4 py-2 font-semibold">Issue Date</th>
+                                    <th class="px-4 py-2 font-semibold">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-gray-200 whitespace-nowrap">
+                                @forelse($passbooks as $pass)
+                                <tr class="border-b text-center">
+                                    <td class="px-4 py-2">{{ $pass->passbook_no ?? 'N/A' }}</td>
+                                    <td class="px-4 py-2">{{ $pass->issue_date ?? 'N/A' }}</td>
+
+                                    <td class="px-4 py-2">
+                                        <div class="w-full flex gap-3 justify-center">
+
+                                            <!-- Edit -->
+                                            <a href="{{ route('passbook.edit-passbook', $pass->id) }}"
+                                                class="btn-primary  p-1">
+                                                <i class="las la-edit "></i>
+                                            </a>
+
+                                            <!-- View -->
+                                            <a href="{{ route('passbook.show', $pass->id) }}"
+                                                class="btn-primary  p-1">
+                                                <i class="las la-eye "></i>
+                                            </a>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="3" class="py-3 text-center text-gray-500">
+                                        No MIS passbooks found.
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
+
 
 
             <!--documents-->
             <div class="box bg-white dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
-                <div class="flex items-center justify-between bg-primary text-white  rounded-t-lg px-4 py-3 cursor-pointer">
+                <div class="flex items-center justify-between bg-secondary/5  text-black  rounded-t-lg px-4 py-3 cursor-pointer">
                     <h3 class="text-lg font-semibold">DOCUMENTS</h3>
                     <div class="flex items-center gap-2">
-                        <button class=" bg-white px-3 py-2 rounded-3xl text-primary"><i class="las la-upload"></i></button>
-                        <!-- Toggle Button -->
+                        <a href="{{ route('rd.uploadDocuments', $rdAccount->id)}}" class="btn-primary rounded-full p-1  w-2"><i class="las la-upload"></i></a> <!-- Toggle Button -->
                         <button
                             class="p-1 rounded transition"
                             onclick="toggleSection(this)">
@@ -499,7 +548,40 @@
                 <!-- Body -->
                 <div class="p-4">
                     <div class="overflow-x-auto">
-                        <p class="capitalize">No documents found</p>
+                        @if($documents->isEmpty())
+                        <p class="capitalize text-gray-500">No documents found</p>
+                        @else
+                        <table class="w-full  text-sm text-left">
+                            <thead class="">
+                                <tr class="border-b">
+                                    <th class="px-4 py-2 text-start uppercase font-semibold">Name</th>
+                                    <th class="px-4 py-2 text-start uppercase font-semibold">URL</th>
+                                    <th class="px-4 py-2 text-start uppercase font-semibold">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                @foreach($documents as $doc)
+                                <tr class="hover:bg-gray-50 border-b">
+                                    <td class="px-4 py-2">{{ $doc->document_type }}</td>
+                                    <td class="px-4 py-2">
+                                        <a href="{{ asset($doc->file_path) }}" target="_blank" class="text-blue-600 underline">
+                                            Show
+                                        </a>
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <form action="{{ route('rd.documents.destroy', $doc->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-800">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -519,12 +601,44 @@
 
                 <!-- Body -->
                 <div class="p-4">
-                    <div class="overflow-x-auto text-center mt-5">
-                        <p class="capitalize">No comments found</p>
-                        <button class="btn-primary px-3 py-2 rounded-3xl text-white">upload</button>
+
+                    <div class="overflow-x-auto">
+
+                        @if($rdAccount->comments->count() == 0)
+                        <p class="capitalize text-gray-500">No comments found</p>
+                        @else
+                        <table class="w-full text-sm text-left">
+                            <thead>
+                                <tr class="border-b">
+                                    <th class="px-4 py-2 uppercase font-semibold">Comment</th>
+                                    <th class="px-4 py-2 uppercase font-semibold">Commented By</th>
+                                    <th class="px-4 py-2 uppercase font-semibold">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                @foreach($rdAccount->comments as $comment)
+                                <tr class="hover:bg-gray-50 border-b">
+                                    <td class="px-4 py-2">{{ $comment->comment }}</td>
+                                    <td class="px-4 py-2">
+                                        {{ $comment->commented_by ? \App\Models\User::find($comment->commented_by)->name : '-' }}
+                                    </td>
+                                    <td class="px-4 py-2">{{ \Carbon\Carbon::parse($comment->date)->format('d-m-Y ') ?? '' }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        @endif
+
+
+
+                        <div class="overflow-x-auto text-center mt-5">
+                            @if($rdAccount->comments->count() > 0)
+                            <a href="{{ route('rd.addComment', $rdAccount->id) }}" class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">View All</a>
+                            @endif
+                            <a href="{{ route('rd.addComment', $rdAccount->id) }}" class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">Add Comments</a>
+                        </div>
                     </div>
                 </div>
-
             </div>
 
         </div>
@@ -547,14 +661,24 @@
 
                             <!-- INTERNET BANKING / MOBILE ENABLE -->
                             <tr>
-                                <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">INTERNET BANKING / MOBILE ENABLE</td>
+                                <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">
+                                    INTERNET BANKING / MOBILE ENABLE
+                                </td>
                                 <td class="px-4 py-3">
+
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id="internetToggle" class="sr-only peer slider-toggle" data-label-id="internetLabel">
+                                        <input type="checkbox"
+                                            id="internetToggle"
+                                            class="sr-only peer slider-toggle"
+                                            data-label-id="internetLabel"
+                                            {{ $rdAccount->is_internet_enabled ? 'checked' : '' }}>
+
                                         <div class="relative">
                                             <div class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all"></div>
                                             <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6"></div>
                                         </div>
+
+                                        <span id="internetLabel" class="ml-4 text-sm font-medium text-gray-700"></span>
                                     </label>
                                 </td>
                             </tr>
@@ -563,12 +687,20 @@
                             <tr>
                                 <td class="font-semibold text-center align-middle px-4 py-3">MONEY TRANSFER</td>
                                 <td class="px-4 py-3">
+
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id="transferToggle" class="sr-only peer slider-toggle" data-label-id="transferLabel">
+                                        <input type="checkbox"
+                                            id="transferToggle"
+                                            class="sr-only peer slider-toggle"
+                                            data-label-id="transferLabel"
+                                            {{ $rdAccount->money_transfer ? 'checked' : '' }}>
+
                                         <div class="relative">
                                             <div class="blocks w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-all"></div>
                                             <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6"></div>
                                         </div>
+
+                                        <span id="transferLabel" class="ml-4 text-sm font-medium text-gray-700"></span>
                                     </label>
                                 </td>
                             </tr>
@@ -577,12 +709,20 @@
                             <tr>
                                 <td class="font-semibold text-center align-middle px-4 py-3">ACCOUNT LOCKED</td>
                                 <td class="px-4 py-3">
+
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id="lockedToggle" class="sr-only peer slider-toggle" data-label-id="lockedLabel">
+                                        <input type="checkbox"
+                                            id="lockedToggle"
+                                            class="sr-only peer slider-toggle"
+                                            data-label-id="lockedLabel"
+                                            {{ $rdAccount->is_locked ? 'checked' : '' }}>
+
                                         <div class="relative">
                                             <div class="blocks w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-all"></div>
                                             <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6"></div>
                                         </div>
+
+                                        <span id="lockedLabel" class="ml-4 text-sm font-medium text-gray-700"></span>
                                     </label>
                                 </td>
                             </tr>
@@ -592,11 +732,18 @@
                                 <td class="font-semibold text-center align-middle px-4 py-3">SMS</td>
                                 <td class="px-4 py-3">
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id="smsToggle" class="sr-only peer slider-toggle" data-label-id="smsLabel">
+                                        <input type="checkbox"
+                                            id="smsToggle"
+                                            class="sr-only peer slider-toggle"
+                                            data-label-id="smsLabel"
+                                            {{ $rdAccount->sms ? 'checked' : '' }}>
+
                                         <div class="relative">
                                             <div class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all"></div>
                                             <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6"></div>
                                         </div>
+
+                                        <span id="smsLabel" class="ml-4 text-sm font-medium text-gray-700"></span>
                                     </label>
                                 </td>
                             </tr>
@@ -606,16 +753,37 @@
                 </div>
             </div>
 
-            <!-- Script -->
             <script>
-                // Update labels ON/OFF when toggled
+                const fieldMap = {
+                    internetToggle: 'is_internet_enabled',
+                    transferToggle: 'money_transfer',
+                    lockedToggle: 'is_locked',
+                    smsToggle: 'sms'
+                };
+
                 document.querySelectorAll('.slider-toggle').forEach(toggle => {
+
                     toggle.addEventListener('change', function() {
+                        const field = fieldMap[this.id];
+                        const value = this.checked ? 1 : 0;
+
                         const label = document.getElementById(this.dataset.labelId);
-                        label.textContent = this.checked ? 'ON' : 'OFF';
+                        label.textContent = this.checked ? "" : "";
+
+                        fetch(`/mds-rds-dds/rdaccount/{{$rdAccount->id }}/update-setting`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({
+                                field: field,
+                                value: value
+                            })
+                        });
                     });
 
-                    // Initialize on page load
+                    // Initialize ON/OFF on page load
                     toggle.dispatchEvent(new Event('change'));
                 });
             </script>
@@ -784,63 +952,63 @@
                         <tbody>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 w-1/3 uppercase">Scheme Name</td>
-                                <td class="px-3 py-2">{{ $rdAccount->rdScheme->scheme_name ?? 'N/A' }}</td>
+                                <td class="px-3 py-2">{{ $rdAccount->scheme->scheme_name ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 uppercase">Scheme Code</td>
-                                <td class="px-3 py-2">{{ $rdAccount->rdScheme->scheme_code ?? 'N/A' }}</td>
+                                <td class="px-3 py-2">{{ $rdAccount->scheme->scheme_code ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 uppercase">Minimum Locking Period</td>
-                                <td class="px-3 py-2">{{ $rdAccount->rdScheme->rd_dd_lock_in_period ?? 'N/A' }}</td>
+                                <td class="px-3 py-2">{{ $rdAccount->scheme->rd_dd_lock_in_period ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 uppercase">Interest Locking Period</td>
-                                <td class="px-3 py-2">{{ $rdAccount->rdScheme->interest_lock_in_period ?? 'N/A' }}</td>
+                                <td class="px-3 py-2">{{ $rdAccount->scheme->interest_lock_in_period ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 uppercase">Deposit Frequency</td>
-                                <td class="px-3 py-2">{{ $rdAccount->rdScheme->rd_dd_frequency ?? 'N/A' }}</td>
+                                <td class="px-3 uppercase py-2">{{ $rdAccount->scheme->rd_dd_frequency ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 uppercase">Annual Interest Rate (%)</td>
-                                <td class="px-3 py-2">{{ $rdAccount->rdScheme->anuual_interest_rate ?? 'N/A' }}</td>
+                                <td class="px-3 py-2">{{ $rdAccount->scheme->anuual_interest_rate ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200 uppercase">
                                 <td class="font-semibold px-3 py-2">Interest Compounding Interval</td>
-                                <td class="px-3 py-2">{{ $rdAccount->rdScheme->interest_compounding_interval ?? 'N/A' }}</td>
+                                <td class="px-3 py-2">{{ $rdAccount->scheme->interest_compounding_interval ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200 uppercase">
                                 <td class="font-semibold px-3 py-2">Tenure</td>
                                 <td class="px-3 py-2">
-                                    {{ $rdAccount->rdScheme->tenure_of_rd_dd_value ?? 'N/A' }}
-                                    {{ $rdAccount->rdScheme->tenure_of_rd_dd_type ?? '' }}
+                                    {{ $rdAccount->scheme->tenure_of_rd_dd_value ?? 'N/A' }}
+                                    {{ $rdAccount->scheme->tenure_of_rd_dd_type ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200 uppercase">
                                 <td class="font-semibold px-3 py-2">Cancellation Charges</td>
                                 <td class="px-3 py-2">
-                                    {{ $rdAccount->rdScheme->cancellation_charges_value ?? 'N/A' }}
-                                    {{ $rdAccount->rdScheme->cancellation_charges_type ?? '' }}
+                                    {{ $rdAccount->scheme->cancellation_charges_value ?? 'N/A' }}
+                                    {{ $rdAccount->scheme->cancellation_charges_type ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200 uppercase">
                                 <td class="font-semibold px-3 py-2">Penal Charges</td>
                                 <td class="px-3 py-2">
-                                    {{ $rdAccount->rdScheme->penalty_charges_value ?? 'N/A' }}
-                                    {{ $rdAccount->rdScheme->penalty_charges_type ?? '' }}
+                                    {{ $rdAccount->scheme->penalty_charges_value ?? 'N/A' }}
+                                    {{ $rdAccount->scheme->penalty_charges_type ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200 uppercase">
                                 <td class="font-semibold px-3 py-2">Bonus Rate</td>
                                 <td class="px-3 py-2">
-                                    {{ $rdAccount->rdScheme->bonus_rate_value ?? 'N/A' }}
-                                    {{ $rdAccount->rdScheme->bonus_rate_type ?? '' }}
+                                    {{ $rdAccount->scheme->bonus_rate_value ?? 'N/A' }}
+                                    {{ $rdAccount->scheme->bonus_rate_type ?? '' }}
                                 </td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-3 py-2 uppercase">Minimum Amount</td>
-                                <td class="px-3 py-2">₹ {{ number_format($rdAccount->rdScheme->min_rd_dd_amount ?? 0, 2) }}</td>
+                                <td class="px-3 py-2">₹ {{ number_format($rdAccount->scheme->min_rd_dd_amount ?? 0, 2) }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -870,7 +1038,7 @@
                         <tbody>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 w-1/3 uppercase">Maturity Date</td>
-                                <td class="px-3 py-2">{{ optional($calc['maturity_date'])->format('d-m-Y') }}</td>
+                                <td class="px-3 py-2">{{ $calc['maturity_date'] ? \Carbon\Carbon::parse($calc['maturity_date'])->format('d-m-Y') : '-' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 uppercase">Principal Amount (A)</td>

@@ -261,13 +261,25 @@
 
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2">Amount Received</td>
-                                        <td class="py-2">{{ $ddaccount->balance ?? 'N/A' }}</td>
+                                        <td class="py-2">
+                                            @php
+                                                $totalReceived = $ddaccount->balance ?? 0; // Current balance
+                                                $totalTransactionAmounts = $ddaccount->transactions->sum(function ($t) {
+                                                    return $t->transaction_type == 'reverse'
+                                                        ? $t->interest_amount // reverse adds to received
+                                                        : 0; // credit does not affect amount_received
+                                                });
+                                                $totalAmountReceived = $totalReceived + $totalTransactionAmounts;
+                                            @endphp
+                                            {{ number_format($totalAmountReceived, 2) }}
+                                        </td>
                                     </tr>
+
 
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2">Balance Available</td>
                                         <td class="py-2">
-                                            {{ number_format($ddaccount->transactions->sum('balance_available'), 2) }}
+                                            {{ number_format(optional($ddaccount->transactions->last())->balance_available ?? $ddaccount->dd_amount, 2) }}
                                         </td>
                                     </tr>
                                 </tbody>

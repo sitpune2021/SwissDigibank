@@ -131,7 +131,7 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-row gap-2">
                 <h3 class="text-xl uppercase font-semibold">
-                    MIS Account - 1706 - Link Saving Account (Auto credit MIS interest to saving account)
+                    DD Account - 0000{{$ddaccount->id}} - Mark Lien Account
                 </h3>
             </div>
         </div>
@@ -143,7 +143,7 @@
                     <!-- Header -->
                     <div class=" py-3">
                         <h3 class="text-lg border-b font-semibold text-black uppercase">
-                            Mark Lien against member's deposit loan account for security.
+                            Mark Lien against customer's deposit loan account for security.
 
                         </h3>
                     </div>

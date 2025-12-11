@@ -445,7 +445,6 @@
         </div>
       </div>
 
-
       <!--COMMENTS-->
       <div class="bg-white box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
         <!-- Header -->
@@ -484,9 +483,6 @@
               </tbody>
             </table>
             @endif
-
-
-
             <div class="overflow-x-auto text-center mt-5">
               @if($misaccount->comments->count() > 0)
               <a href="{{ route('mis.addComment', $misaccount->id) }}" class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">View All</a>
@@ -1138,6 +1134,7 @@
     tdsToggle: 'tds',
     holdToggle: 'hold'
   };
+  
   const updateUrl = "{{ route('mis.updateSetting', $misaccount->id) }}";
 
   document.querySelectorAll('.slider-toggle').forEach(toggle => {

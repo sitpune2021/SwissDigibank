@@ -86,8 +86,12 @@ class DdsAccount extends Model
 
         return '--';
     }
-     public function comments()
+    public function comments()
     {
         return $this->hasMany(Comments::class, 'dds_account_id');
+    }
+    public function getCurrentBalanceAttribute()
+    {
+        return $this->transactions()->latest('id')->value('balance_available');
     }
 }

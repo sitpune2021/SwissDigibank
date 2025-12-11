@@ -16,7 +16,7 @@
             </a>
             <a href="{{ route('accounts.export.csv') }}" class="btn-error rounded-10 px-1 flex justify-center py-2 text-sm uppercase">
                 <i class="las la-download"></i>
-                Request xlsx
+                Download Csv
             </a>
         </div>
         <div class="pb-4 overflow-x-auto lg:pb-6">
@@ -91,6 +91,7 @@
             </table>
         </div>
     </div>
+    <x-pagination :paginator="$account" />
     <!-- BACKDROP -->
     <div id="loanModal"
         class="fixed inset-0 z-50 hidden bg-black/60 flex items-start justify-center overflow-y-auto pt-10">

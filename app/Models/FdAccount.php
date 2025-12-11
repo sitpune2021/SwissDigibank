@@ -42,6 +42,8 @@ class FdAccount extends Model
         'final_amount',
         'maturity_amount',
         'maturity_date',
+        'saving_account_id',
+        'link_status',
 
     ];
     public function member()
@@ -79,5 +81,21 @@ class FdAccount extends Model
         }
 
         return '--';
+    }
+    public function transactions()
+    {
+        return $this->hasMany(FdTransaction::class, 'fd_account_id');
+    }
+    public function minor()
+    {
+        return $this->belongsTo(Minor::class, 'minor_id');
+    }
+    public function savingAccount()
+    {
+        return $this->belongsTo(Account::class, 'saving_account_id', 'id');
+    }
+    public function comments()
+    {
+        return $this->hasMany(Comments::class, 'fd_account_id');
     }
 }

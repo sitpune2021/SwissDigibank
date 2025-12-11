@@ -52,8 +52,8 @@
 
         </div>
         <div class="overflow-x-auto box">
-            <table class="min-w-full  text-sm">
-                <thead class="bg-secondary/5 rounded-10  text-black text-sm font-semibold uppercase tracking-wider">
+            <table class="whitespace-nowrap min-w-full  text-sm">
+                <thead class=" bg-secondary/5 rounded-10  text-black text-sm font-semibold uppercase tracking-wider">
                     <tr>
                         <th class="px-4 py-2 text-center">Year</th>
                         <th class="px-4 py-2 text-center">Period</th>

@@ -11,7 +11,9 @@ class Comments extends Model
         'date',
         'rd_account_id',
         'comment',
-        'commented_by'
+        'commented_by',
+        'dds_account_id',
+        'fd_account_id'
     ];
 
     public function misaccount()
@@ -27,4 +29,13 @@ class Comments extends Model
     {
         return $this->belongsTo(User::class, 'commented_by', 'id');
     }
+     public function ddsaccount()
+    {
+        return $this->belongsTo(DdsAccount::class, 'dds_account_id');
+    }
+    public function fdAccount()
+    {
+        return $this->belongsTo(FdAccount::class, 'fd_account_id');
+    }
+
 }
