@@ -9,6 +9,7 @@ class Misaccount extends Model
 {
     protected $fillable = [
         'member_id',
+        'mis_account_no',
         'member_name',
         'member_address',
         'member_mobile',

@@ -41,12 +41,21 @@
           <td class="py-2 px-3 border border-gray-300">{{ $annual_rate }} %</td>        
         </tr>
         <tr>
-          @if ($interest_as_first)
+          <!-- @if ($interest_as_first)
             <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Interest as First EMI</td>
             <td class="py-2 px-3 border border-gray-300">
               {{ $interest_as_first }}
             </td>
+          @endif -->
+          @if ($interestType === 'flat_advanced' && $interest_as_emi !== 'Yes')
+              <td class="font-semibold uppercase py-2 px-3 border border-gray-300">
+                 Interest as First EMI
+              </td>
+              <td class="py-2 px-3 border border-gray-300">
+                  {{ $interest_as_first }}
+              </td>
           @endif
+
           @if ($interest_as_emi)
             <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Interest as EMI</td>
             <td class="py-2 px-3 border border-gray-300">
@@ -129,7 +138,7 @@
         <tr class="bg-secondary/5  font-bold border border-gray-300">
             <td colspan="3" class="p-2 text-right uppercase tracking-wide border border-gray-300">TOTAL</td>
             <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_principal, 2) }}</td>
-            <td class="p-2 text-right border border-gray-300">{{ $total_interest > 0 ? '₹ '.number_format($total_interest,2) : '' }}</td>
+            <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_interest, 2) }}</td>
             <td class="p-2 text-center border border-gray-300">-</td>
             <td class="p-2 text-right border border-gray-300">{{ $total_emi_paid > 0 ? '₹ '.number_format($total_emi_paid,2) : '' }}</td>
             <td class="p-2 text-center border border-gray-300">-</td>

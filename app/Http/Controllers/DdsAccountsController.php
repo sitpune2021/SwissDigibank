@@ -307,12 +307,12 @@ class DdsAccountsController extends Controller
         }
     }
 
+
     public function show($id)
     {
         Log::info("DdsAccountsController@show called for ID: $id");
 
         $ddaccount = DdsAccount::with(['member', 'branch', 'scheme', 'transactions', 'account'])->findOrFail($id);
-
 
         $savingAccounts = Account::where('member_id', $ddaccount->member_id)
             ->where('account_type', 'Saving')
@@ -323,32 +323,42 @@ class DdsAccountsController extends Controller
         $passbooks = Passbook::where('account_type', 'MIS Accounts')
             ->where('account_no', $ddaccount->id)
             ->get();
-        $latestTransaction = DdTransaction::where('dds_account_id', $id)
-            ->latest('id')
-            ->first();
+
+        $transactions = DdTransaction::where('dds_account_id', $id)
+            ->orderBy('transaction_date', 'asc') // ascending for chronological order
+            ->get();
+
+        $latestTransaction = $transactions->last();
 
         $isLinked = $latestTransaction ? $latestTransaction->is_linked : 0;
         $linkedSavingAcc = $latestTransaction && $latestTransaction->saving_account_id
             ? Account::find($latestTransaction->saving_account_id)
             : null;
 
-
-        $transactions = DdTransaction::where('dds_account_id', $id)
-            ->orderBy('transaction_date', 'desc')
-            ->get();
-
         $installmentAmount = $ddaccount->dd_amount ?? 0;
-
         $totalInstallments = $ddaccount->total_installments
             ?? (strtolower($ddaccount->rd_dd_frequency) === 'daily' ? 365 : ($ddaccount->scheme->tenure_of_rd_dd_value ?? 12));
 
+        // Correct calculation: use latest transaction's balance_available
+        $balanceAvailable = $latestTransaction ? $latestTransaction->balance_available : $ddaccount->dd_amount;
+
+        // Calculate Installment Received, Penalty, Interest separately for display
         $installmentReceived = $transactions->sum('amount') ?? 0;
         $penaltyReceived     = $transactions->sum('penalty_amount') ?? 0;
-        $interestCredited    = $transactions->sum('interest_amount') ?? 0;
+        // $interestCredited    = $transactions->sum('interest_amount') ?? 0;
+        $interestCredited = $transactions->reduce(function ($carry, $transaction) {
+            $amount = (float) $transaction->interest_amount; // cast to float
+            if ($transaction->transaction_type === 'credit') {
+                return $carry + $amount;
+            } elseif ($transaction->transaction_type === 'reverse') {
+                return $carry - $amount;
+            }
+            return $carry;
+        }, 0);
+
         $tdsDeduction        = $ddaccount->tds_deduction ?? 0;
 
-        $balanceAvailable = $installmentReceived + $interestCredited + $penaltyReceived - $tdsDeduction;
-
+        // Calculate expected payments
         $shouldHavePaid = 0;
         if ($ddaccount->open_date) {
             $openDate = Carbon::parse($ddaccount->open_date);
@@ -429,9 +439,6 @@ class DdsAccountsController extends Controller
         $balances = AccountsTransactionsHelper::getAccountBalacec($ddaccount->account_id);
         $availableBalance = $balances['total_balance'] ?? 0;
 
-        // -----------------------------
-        // RETURN VIEW WITH isLinked & linkedSavingAcc
-        // -----------------------------
         return view('fd_account.ddsaccounts.show', [
             'ddaccount'            => $ddaccount,
             'branches'             => Branch::all(),
@@ -460,10 +467,9 @@ class DdsAccountsController extends Controller
             'savingAccounts'       => $savingAccounts,
             'linkedSavingAcc'      => $linkedSavingAcc,
             'isLinked'             => $isLinked,
-            'transactions' => $transactions,
-            'documents' => $documents,
-            'passbooks' => $passbooks
-
+            'transactions'         => $transactions,
+            'documents'            => $documents,
+            'passbooks'            => $passbooks
         ]);
     }
 
@@ -879,7 +885,7 @@ class DdsAccountsController extends Controller
         return $pdf->stream('installment-receipt.pdf');
     }
 
-   
+
     public function regenerateInstallment($id)
     {
         $dd = DdsAccount::findOrFail($id);
@@ -1422,9 +1428,12 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.unlink_confirm', compact('ddaccount', 'linkedSavingAcc', 'availableBalance'));
     }
+
     public function createCreditInterest($id)
     {
-        $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')->findOrFail($id);
+        $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')
+            ->findOrFail($id);
+
         $savingAccounts = Account::where('member_id', $ddaccount->member_id)
             ->where('account_type', 'Saving')
             ->where('account_status', 1)
@@ -1432,7 +1441,6 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.creditReverse', compact('ddaccount', 'savingAccounts'));
     }
-
     public function storeCreditInterest(Request $request, $id)
     {
         Log::info("DDS Interest Transaction Start", [
@@ -1446,7 +1454,7 @@ class DdsAccountsController extends Controller
             'interest_amount'  => 'required|numeric|min:1',
         ]);
 
-        $ddaccount = DdsAccount::findOrFail($id);
+        $ddaccount = DdsAccount::with('transactions')->findOrFail($id);
 
         // Convert date to Y-m-d
         $transactionDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transaction_date)
@@ -1455,12 +1463,13 @@ class DdsAccountsController extends Controller
         DB::beginTransaction();
 
         try {
+            // ------------------------------------------------------------
+            // GET LATEST BALANCE
+            // ------------------------------------------------------------
+            $lastTransaction = $ddaccount->transactions()->latest('id')->first();
 
-            // ------------------------------------------------------------
-            // GET OLD VALUES
-            // ------------------------------------------------------------
-            $oldBalance = $ddaccount->balance ?? 0; // 910
-            $oldAmountReceived = $ddaccount->amount_received ?? 0; // 1160
+            $oldBalance = $lastTransaction->balance_available ?? $ddaccount->balance ?? $ddaccount->dd_amount;
+            $oldAmountReceived = $ddaccount->amount_received ?? 0;
 
             Log::info("Old Values", [
                 'old_balance' => $oldBalance,
@@ -1469,40 +1478,26 @@ class DdsAccountsController extends Controller
 
             $interest = $request->interest_amount;
 
-            // Default
-            $newAmountReceived = $oldAmountReceived;
-            $newBalance = $oldBalance;
-
             // ------------------------------------------------------------
-            // CREDIT LOGIC
+            // CALCULATE NEW BALANCE
             // ------------------------------------------------------------
             if ($request->transaction_type == 'credit') {
-
-                // amount_received stays SAME
-                // balance increases  
                 $newBalance = $oldBalance + $interest;
-
+                $newAmountReceived = $oldAmountReceived; // Amount received stays the same
                 Log::info("CREDIT Interest Applied", [
                     'interest' => $interest,
-                    'amount_received' => $newAmountReceived,
                     'new_balance' => $newBalance,
                 ]);
-            }
-
-            // ------------------------------------------------------------
-            // REVERSE LOGIC
-            // ------------------------------------------------------------
-            else {
-
-                // amount_received increases  
-                // balance decreases  
-                $newAmountReceived = $oldAmountReceived + $interest;
+            } else { // reverse
                 $newBalance = $oldBalance - $interest;
+                $newAmountReceived = $oldAmountReceived + $interest;
+                // Debug values
+                // dd($newBalance,$newAmountReceived);
 
                 Log::info("REVERSE Interest Applied", [
                     'interest' => $interest,
-                    'new_amount_received' => $newAmountReceived,
                     'new_balance' => $newBalance,
+                    'new_amount_received' => $newAmountReceived,
                 ]);
             }
 
@@ -1539,9 +1534,9 @@ class DdsAccountsController extends Controller
 
             DB::commit();
 
-            return back()->with('success', 'Interest updated successfully.');
+            return redirect()->route('ddsaccounts.show', ['id' => $ddaccount->id])
+                ->with('success', 'Interest updated successfully.');
         } catch (\Exception $e) {
-
             DB::rollBack();
 
             Log::error("DDS Interest Transaction FAILED", [
@@ -1553,6 +1548,7 @@ class DdsAccountsController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+
 
     public function createMarkLienAccount($id)
     {
@@ -1595,7 +1591,7 @@ class DdsAccountsController extends Controller
             compact('ddaccount', 'members', 'schemes')
         );
     }
-   
+
     public function updateAccountInfo(Request $request, $id)
     {
         // -----------------------------
