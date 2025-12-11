@@ -122,6 +122,15 @@ class MisaccountController extends Controller
             $misaccount = Misaccount::create($validated);
             Log::info('MIS Account Created', $misaccount->toArray());
 
+            $formattedMisNo = 'MIS' . str_pad($misaccount->id, 9, '0', STR_PAD_LEFT);
+
+            // Update record
+            $misaccount->update([
+                'mis_account_no' => $formattedMisNo
+            ]);
+
+            Log::info('MIS Account No Generated', ['mis_no' => $formattedMisNo]);
+
             try {
                 $member        = Member::find($misaccount->member_id);
                 $dlttemplateid = 1707172234271737114;

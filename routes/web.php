@@ -408,7 +408,7 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
 
     Route::get('/fd-acccount/comment/{id}', [FdController::class, 'addComment'])->name('fd.addComment');
     Route::post('/fd-account/store-comment/{id}', [FdController::class, 'storeComment'])->name('fd.storeComment');
-//////
+    //////
     Route::get('/fd-account/credit-debit-interest/{id}', [FdController::class, 'creditDebitInterest'])->name('fd-account.creditDebitInterest');
     Route::post('/fd-account/{id}/credit-debit-interest', [FdController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('fd.creditdebit.store');
@@ -416,7 +416,7 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/fd-account/deduct-reverse-tds/{id}', [FdController::class, 'deductReverseTds'])->name('fd-account.deductReverseTds');
     Route::post('/fd-account/{id}/deduct-reverse-tds', [FdController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('fd.creditdebit.store');
-//////
+    //////
 
     Route::get('/fd-add-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('fd.add.nominee');
     Route::post('fd/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('fd.nominees.save');
@@ -1985,17 +1985,21 @@ Route::group(['prefix' => 'cut-report'], function () {
     //reports
     Route::get('report/promoter-member', [CutReportController::class, 'promoterMemberIndex'])
         ->name('report.promoter-member');
-        
+    Route::get('/promoter-members/download', [CutReportController::class, 'downloadPromoterMemberCsv'])->name('promoter.members.download');
+
+
     Route::get('report/share-holdings', [CutReportController::class, 'shareHoldingIndex'])
         ->name('report.share-holdings');
     Route::get('/promoter-report/download', [CutReportController::class, 'downloadPromoterCSV'])
         ->name('promoter.report.csv');
-
-
-    Route::get('/share-allotment-report', [CutReportController::class, 'shareAllotmentReport'])->name('share-allotment.report');
+    Route::get('/share-allotment-report', [CutReportController::class, 'shareAllotmentSearchBox'])->name('share-allotment.report');
 
     Route::get('report/share-transfer-history', [CutReportController::class, 'shareTransferHistoryIndex'])
         ->name('report.share-transfer-history');
+    Route::get('/share-transfer-history/csv', [CutReportController::class, 'downloadShareTransferHistoryCsv'])
+        ->name('shareTransfer.csv');
+    Route::get('/share-transfer-history-report', [CutReportController::class, 'shareTransferHistorySearchBox'])->name('share.transfer.history.report');
+
 
     Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
         ->name('report.saving-account');
@@ -2012,6 +2016,9 @@ Route::group(['prefix' => 'cut-report'], function () {
     Route::get('report/mis-account', [CutReportController::class, 'misaccount_index'])
         ->name('report.mis-account');
     Route::get('report/mis', [CutReportController::class, 'misIndex'])->name('report.mis.index');
+    Route::get('/mis-account/download-csv', [CutReportController::class, 'downloadMisCsv'])
+        ->name('mis.account.csv');
+
 
 
     Route::get('report/dd-accounts', [CutReportController::class, 'ddaccount_index'])
@@ -2021,7 +2028,12 @@ Route::group(['prefix' => 'cut-report'], function () {
 
 
     Route::get('report/dd', [CutReportController::class, 'ddIndex'])->name('report.dd.index');
+    Route::get('/dd-accounts/download-csv', [CutReportController::class, 'ddAccountCsv'])
+        ->name('ddaccounts.csv');
+
     Route::get('report/rd', [CutReportController::class, 'rdIndex'])->name('report.rd.index');
+    Route::get('/rd-account/csv', [CutReportController::class, 'rdAccountCsv'])->name('rd-account.csv');
+
 
     // Gold Loan Report
     Route::get('report/gold-loan-account', [CutReportController::class, 'gold_loan_index'])
