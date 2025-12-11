@@ -59,11 +59,13 @@
                 <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
                         <div class="col-span-2 md:col-span-1">
-                             {{-- Application Date --}}           
+                            {{-- Application Date --}}
                             <label class="md:text-lg font-medium block mb-4">
                                 Application Date <span class="text-red-500">*</span>
                             </label>
+
                             <input type="text" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                value="{{ \Carbon\Carbon::parse(old('application_date', $application->application_date ?? date('Y-m-d')))->format('d-m-Y') }}">
                         </div>
                         
                         <div class="col-span-2 md:col-span-1">
