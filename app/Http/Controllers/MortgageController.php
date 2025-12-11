@@ -365,12 +365,8 @@ class MortgageController extends Controller
                 $installments = max(1, (int) ceil($tenureMonths / $monthsPerInstallment));
             }
         }
-
-        // FLAT ADVANCED override → always 1 EMI
-        if ($interestType === 'flat_advanced') {
-            $installments = 1;
-        }
-
+   
+        
         $schedule = [];
         $startDate = now();
         $outstanding = $loan;
@@ -388,42 +384,72 @@ class MortgageController extends Controller
         } else {
             $totalInterest = 0; // Final total interest later calculated from schedule
         }
+            
 
         /* -------------------------------------------------------
             4(A). FLAT ADVANCED → ONLY ONE EMI
         ---------------------------------------------------------*/
-        if ($interestType === 'flat_advanced') {
+        if ($interestType === 'flat_advanced') 
+        {
 
-            if ($payout === 'daily') {
-                $emiDate = $startDate->copy()->addDays($installments);
-            } elseif ($payout === 'weekly') {
-                $emiDate = $startDate->copy()->addDays($installments * 7);
-            } elseif ($payout === 'bi_weekly' || $payout === 'bi-weekly') {
-                $emiDate = $startDate->copy()->addDays($installments * 14);
-            } elseif ($payout === '4_weekly' || $payout === '4-weekly') {
-                $emiDate = $startDate->copy()->addDays($installments * 28);
-            } else {
-                $emiDate = $startDate->copy()->addMonths($monthsPerInstallment);
+            // Force principal split always
+            $remainingPrincipal = $loan;
+            $principalPerEmi = round($loan / $installments, 2);
+
+            for ($i = 1; $i <= $installments; $i++) {
+
+                // EMI DATE
+                if ($payout === 'daily') {
+                    $emiDate = $startDate->copy()->addDays($i);
+                }
+                elseif ($payout === 'weekly') {
+                    $emiDate = $startDate->copy()->addDays($i * 7);
+                }
+                elseif ($payout === 'bi_weekly') {
+                    $emiDate = $startDate->copy()->addDays($i * 14);
+                }
+                elseif ($payout === '4_weekly') {
+                    $emiDate = $startDate->copy()->addDays($i * 28);
+                }
+                else {
+                    $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
+                }
+
+                $dueDate = $emiDate->copy()->addDay();
+
+                // Always normal principal split
+                $principal = ($i == $installments)
+                    ? $remainingPrincipal
+                    : $principalPerEmi;
+
+                $balance = max($remainingPrincipal - $principal, 0);
+
+                $schedule[] = [
+                    'no'        => $i,
+                    'emi_date'  => $emiDate->format('d/m/Y'),
+                    'due_date'  => $dueDate->format('d/m/Y'),
+                    'principal' => $principal,
+                    'interest'  => 0,
+                    'charges'   => 0,
+                    'emi'       => $principal,
+                    'balance'   => $balance,
+                ];
+
+                $remainingPrincipal -= $principal;
             }
 
-            $dueDate = $emiDate->copy()->addDay();
-
-            $schedule[] = [
-                'no' => 1,
-                'emi_date'  => $emiDate->format('d/m/Y'),
-                'due_date'  => $dueDate->format('d/m/Y'),
-                'principal' => round($loan, 2),
-                'interest'  => 0,
-                'charges'   => 0,
-                'emi'       => round($loan, 2),
-                'balance'   => 0
-            ];
+            // Summary
+            $total_principal = $loan;
+            $total_interest  = 0;
+            $total_emi_paid  = $loan;
         }
+ 
 
         /* -------------------------------------------------------
              4(B). FLAT EMI
         ---------------------------------------------------------*/
-        elseif ($interestType === 'flat_emi') {
+
+        if ($interestType === 'flat_emi') {
 
             $principalPerEmi = round($loan / $installments, 2);
             $interestPerEmi  = round($totalInterest / $installments, 2);
@@ -599,9 +625,13 @@ class MortgageController extends Controller
 
 
            // --- FIX: Reducing + Quarterly => EMI count = tenureMonths / 3 ---
+            $total_principal = 0;
+            $total_interest  = 0;
+            $total_emi_paid  = 0;
+
             $totalInterestAll = 0;
             $total_charges = 0;
-            $total_interest = 0;
+
 
             if ($interestType === 'reducing' && strtolower($payout) === 'quarterly') {
 
@@ -704,45 +734,83 @@ class MortgageController extends Controller
                 $total_interest  = $totalInterestAll;
                 $total_emi_paid  = $loan + $totalInterestAll;
             }
-
-            
+      
 
         /* -------------------------------------------------------
-             4(C). REDUCING EMI — FULLY FIXED 
+            4(C). REDUCING EMI — MULTI-PAYOUT SUPPORT
         ---------------------------------------------------------*/
-        elseif ($interestType === 'reducing') 
+        elseif ($interestType === 'reducing')
         {
-
-            $monthlyRate = ($annualRate / 12) / 100;
-
-            $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
-
+            $schedule = [];
             $remaining_principal = $loan;
+            $totalInterestAll = 0;
 
-            for ($i = 1; $i <= $tenureMonths; $i++) {
+            // Correct period-based interest rate
+            switch ($payout) {
 
-                $emiDate = $startDate->copy()->addMonths($i);
+                case 'yearly':
+                    $periods = 12;
+                    $addDate = fn($d, $i) => $d->copy()->addYears($i);
+                    break;
+
+                case 'half-yearly':
+                    $periods = 6;
+                    $addDate = fn($d, $i) => $d->copy()->addHalfyearly($i * 6);
+                    break;
+
+                case 'quarterly':
+                    $periods = 3;
+                    $addDate = fn($d, $i) => $d->copy()->addQuarterly($i * 3);
+                    break;
+
+                case 'monthly':
+                    $periods = 1;
+                    $addDate = fn($d, $i) => $d->copy()->addMonths($i);
+                    break;
+
+                case 'weekly':
+                    $periods = 12/52; 
+                    $addDate = fn($d, $i) => $d->copy()->addDays($i * 7);
+                    break;
+
+                case 'bi_weekly':
+                    $periods = 12/26;
+                    $addDate = fn($d, $i) => $d->copy()->addDays($i * 14);
+                    break;
+
+                case '4_weekly':
+                    $periods = 12/13;
+                    $addDate = fn($d, $i) => $d->copy()->addDays($i * 28);
+                    break;
+
+                case 'daily':
+                    $periods = 12/365;
+                    $addDate = fn($d, $i) => $d->copy()->addDays($i);
+                    break;
+
+                default:
+                    $periods = 1;
+                    $addDate = fn($d, $i) => $d->copy()->addMonths($i);
+            }
+
+            // Correct reducing rate-per-period
+            $ratePer = ($annualRate / 100) * ($periods / 12);
+
+            // UNIVERSAL EMI FORMULA
+            $emi = round(($loan * $ratePer) / (1 - pow(1 + $ratePer, -$installments)), 2);
+
+            for ($i = 1; $i <= $installments; $i++) {
+
+                $emiDate = $addDate($startDate, $i);
                 $dueDate = $emiDate->copy()->addDay();
 
-                // --- INTEREST CALCULATION FIX (FIRST 4 EMI ONLY) ---
-                // if ($i <= 4) {
-                //     $days = 30; // ya aap dynamic days calculate kar rahe ho to wahi use karein
-                //     $interest = round($remaining_principal * ($annualRate / 100) * ($days / 365), 2);
-                // } else {
-                //     $interest = 0;  // 5th EMI se interest ZERO
-                // }
-                
-                // ✔ Correct Reducing Interest
-                $interest = round($remaining_principal * $monthlyRate, 2);
-
+                $interest = round($remaining_principal * $ratePer, 2);
                 $principal = round($emi - $interest, 2);
 
-                if ($principal < 0) { 
-                    $principal = 0; 
-                }
+                if ($principal < 0) { $principal = 0; }
 
                 $schedule[] = [
-                    'no' => $i,
+                    'no'        => $i,
                     'emi_date'  => $emiDate->format('d/m/Y'),
                     'due_date'  => $dueDate->format('d/m/Y'),
                     'principal' => $principal,
@@ -753,14 +821,26 @@ class MortgageController extends Controller
                 ];
 
                 $remaining_principal -= $principal;
+                $totalInterestAll += $interest;
             }
+
+            $total_principal = $loan;
+            $totalInterest   = $totalInterestAll;
+            $total_emi_paid  = $loan + $totalInterest;
         }
-        
+
+        // ADD THIS LINE - FIX TOTAL INTEREST FOR REDUCING EMI
+        if ($interestType === 'reducing') {
+            $totalInterest = array_sum(array_column($schedule, 'interest'));
+        }
+
      
         /* -------------------------------------------------------
             4(D). INTEREST AS EMI LOGIC (PRINCIPAL ZERO)
         ---------------------------------------------------------*/
-        if ($interestAsEmi === 'Yes') {
+
+        /* INTEREST AS EMI LOGIC (PRINCIPAL ZERO) */
+        if ($interestAsEmi === 'Yes' && $interestType !== 'flat_advanced') {
 
             foreach ($schedule as $k => $row) {
 
@@ -777,6 +857,43 @@ class MortgageController extends Controller
 
                 // EMI = interest only
                 $schedule[$k]['emi'] = $schedule[$k]['principal'] + $schedule[$k]['interest'];
+            }
+        }
+
+
+        /* -------------------------------------------------------
+            IF INTEREST AS EMI = NO → ONLY ONE ROW (flat_advanced only)
+        ---------------------------------------------------------*/
+
+        if ($interestType === 'flat_advanced' && $interestAsEmi !== 'Yes') 
+        {
+
+            if (!empty($schedule)) 
+            {
+
+                // FINAL EMI DATE / DUE DATE use karenge
+                $lastRow = end($schedule);
+
+                // Replace full schedule with single row and force full loan
+                $schedule = [
+                    [
+                        'no'        => 1,
+                        'emi_date'  => $lastRow['emi_date'],
+                        'due_date'  => $lastRow['due_date'],
+
+                        // ⭐ SINGLE ROW CASE → FULL LOAN AS PRINCIPAL
+                        'principal' => round($loan, 2),
+
+                        'interest'  => 0,
+                        'charges'   => 0,
+
+                        // EMI = FULL LOAN
+                        'emi'       => round($loan, 2),
+
+                        // Balance = 0
+                        'balance'   => 0,
+                    ]
+                ];
             }
         }
 
@@ -1050,7 +1167,8 @@ class MortgageController extends Controller
             'ratioFirstEmi' => $ratioFirstEmi,
             'ratioFirstPercentage' => $ratioFirstPercentage,
 
-
+            'interestType' => $interestType,
+   
             'total_interest' => round($totalInterest, 2),
             'total_principal' => $loan,
             'total_emi_paid' => round(($interestType == 'flat_advanced' ? $loan : $loan + $totalInterest), 2),
