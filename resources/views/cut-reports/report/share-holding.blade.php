@@ -56,7 +56,7 @@
     <!-- custom date picker -->
     <div class="box  ">
         <p class="border-b uppercase text-lg font-semibold">Share Allotment Date <span class="text-error">*</span></p>
-        <form action="{{ route('share-allotment.report') }}" method="GET">
+        <form action="{{ route('share-transfer.report') }}" method="GET">
             <div class="grid grid-cols-2 md:grid-cols-3 gap-6 rounded-xl">
 
                 <div class="w-full mt-4 col-span-1 md:col-span-1  dark:bg-bg3">

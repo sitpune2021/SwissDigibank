@@ -127,9 +127,9 @@
     <div class="col-span-12 box lg:col-span-12">
         <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
 
-            <a href="" class="btn-error rounded-10 px-1 flex justify-center py-2 text-sm uppercase">
+            <a href="{{ route('promoter.members.download') }}" class="btn-error rounded-10 px-1 flex justify-center py-2 text-sm uppercase">
                 <i class="las la-download"></i>
-                Request for Report
+              Download Csv
             </a>
         </div>
 
@@ -184,7 +184,7 @@
                         <!-- Name -->
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 capitalize">
-                                {{ $member->member_info_first_name ?? '' }}  {{ $member->member_info_last_name ?? '' }}
+                                {{ $member->member_info_first_name ?? '' }} {{ $member->member_info_last_name ?? '' }}
                             </div>
                         </td>
 
@@ -221,6 +221,7 @@
                 </tbody>
             </table>
         </div>
+        <x-pagination :paginator="$members" />
     </div>
 
     <script>
