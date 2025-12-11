@@ -278,8 +278,14 @@
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Interest Credited (D) </td>
                                 <td class="px-4 py-2">
-                                    ({{ optional($ddaccount->transactions->last())->interest_amount ?? '0.00' }})
+                                    @if ($interestCredited < 0)
+                                        ({{ number_format(abs($interestCredited), 2) }})
+                                    @else
+                                        {{ number_format($interestCredited, 2) }}
+                                    @endif
                                 </td>
+                                </td>
+                     
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">TDS Deducted (E) </td>
@@ -583,7 +589,7 @@
                                                 </div>
                                             </div>
                                             <!-- <span id="smsLabel" class="ml-4 text-sm font-medium text-black"></span>
-                                                                                                                                                                                                </labels> -->
+                                                                                                                                                                                                        </labels> -->
                                     </td>
                                 </tr>
                                 <!-- DEDUCT TDS Toggle -->
