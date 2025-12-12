@@ -139,4 +139,38 @@ class AccountsTransactionsHelper
         // Balance = total credits - total debits
         return $totalCredit - $totalDebit;
     }
+    public static function getFdAccountBalance($fdAccountIds)
+    {
+        if (!is_array($fdAccountIds)) {
+            $fdAccountIds = [$fdAccountIds];
+        }
+
+        // Get all approved FD transactions
+        $transactions = \App\Models\FdTransaction::whereIn('fd_account_id', $fdAccountIds)
+            ->where('status', 'approved')
+            ->get()
+            ->groupBy('fd_account_id');
+
+        $balances = [];
+
+        foreach ($fdAccountIds as $fdAccountId) {
+            $fdAccount = \App\Models\FdAccount::find($fdAccountId);
+
+            $balance = 0;
+            if ($fdAccount && $fdAccount->status == 1) { // Approved FD
+                $balance = $fdAccount->fd_amount;
+            }
+
+            if (isset($transactions[$fdAccountId])) {
+                $group = $transactions[$fdAccountId];
+                $credit = $group->where('transaction_type', 1)->sum('amount'); // 1 = Credit
+                $debit  = $group->where('transaction_type', 0)->sum('amount'); // 0 = Debit
+                $balance += ($credit - $debit);
+            }
+
+            $balances[$fdAccountId] = $balance;
+        }
+
+        return $balances;
+    }
 }

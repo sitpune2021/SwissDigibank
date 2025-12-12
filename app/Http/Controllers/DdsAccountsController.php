@@ -217,11 +217,12 @@ class DdsAccountsController extends Controller
             $newDdNo = 'DD' . str_pad($lastDdNo + 1, 3, '0', STR_PAD_LEFT);
 
             $ddsAccount = new DdsAccount();
-            $ddsAccount->dd_no = $newDdNo;  // Store the generated dd_no
+            $ddsAccount->dd_no = $newDdNo;  
             $ddsAccount->member_id = $request->member_id;
             $ddsAccount->branch_id = $request->branch_id;
             $ddsAccount->scheme_id = $request->scheme_id;
             $ddsAccount->dd_amount = $request->dd_amount;
+            $ddsAccount->balance = $ddsAccount->dd_amount;
             $ddsAccount->open_date = $request->open_date;
             // $ddsAccount->nominee = ($request->nominee === 'yes') ? 1 : 0;
             $ddsAccount->account_type = $request->account_type; // ✅ FIXED
