@@ -15,7 +15,8 @@ class FdTransaction extends Model
     protected $fillable = [
         'fd_account_id',
         'transaction_date',
-
+        'transaction_type',
+        'paid_on',
         'amount',
         'mode',
         'bank',

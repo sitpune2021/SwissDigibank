@@ -89,9 +89,9 @@
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-2xl font-semibold">FD ACCOUNT - {{ $fdAccount->id }}</h1>
                 <!-- <p class="text-gray-500">
-                                                                                <a href="#" class="text-gray-500">FD Account</a> >
-                                                                                <a href="#" class="text-gray-500"> {{ $fdAccount->id }}</a>
-                                                                            </p> -->
+                                                                                                            <a href="#" class="text-gray-500">FD Account</a> >
+                                                                                                            <a href="#" class="text-gray-500"> {{ $fdAccount->id }}</a>
+                                                                                                        </p> -->
             </div>
         </div>
 
@@ -167,10 +167,10 @@
             <div class=" w-full  overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <!-- <div class="text-end p-3">
-                                                                                    <a href="#" class=" p-2 btn-outline">
-                                                                                        <i class="las la-pen"></i>
-                                                                                    </a>
-                                                                                </div> -->
+                                                                                                                <a href="#" class=" p-2 btn-outline">
+                                                                                                                    <i class="las la-pen"></i>
+                                                                                                                </a>
+                                                                                                            </div> -->
                     <table class="min-w-full text-sm text-left border-collapse">
                         <tbody class="divide-y divide-gray-200">
                             <tr>
@@ -240,8 +240,11 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Balance Available</td>
-                                <td class="px-4 py-2">₹ {{ $fdAccount->fd_amount }}</td>
+                                <td class="px-4 py-2">
+                                    ₹{{ number_format($fdBalance, 2) }}
+                                </td>
                             </tr>
+
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Status</td>
                                 <td class="px-4 py-2">Fore close approved static*</td>
@@ -509,18 +512,36 @@
                                             <th class="px-4 py-2 text-start text-sm font-semibold">STATUS</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="text-left">
-                                        <tr class="border-b hover:bg-gray-50">
-                                            <td class="px-4 py-2 text-sm">
-                                                {{ $fdAccount->transaction_date ? \Carbon\Carbon::parse($fdAccount->transaction_date)->format('d-m-Y') : '' }}
-                                            </td>
-                                            <td class="px-4 py-2 text-sm">{{ $fdAccount->mode }}</td>
-                                            <td class="px-4 py-2 text-sm">
-                                                {{ optional($fdAccount->transactions->last())->mode ?? '' }}</td>
-                                            <td class="px-4 py-2 text-sm">{{ $fdAccount->fd_amount }}</td>
-                                            <td class="px-4 py-2 text-sm text-green-600 font-medium">
-                                                {{ $fdAccount->status }}</td>
-                                        </tr>
+                                    <tbody>
+                                        @foreach ($fdAccount->transactions->sortByDesc('id') as $tran)
+                                            <tr class="border-b">
+                                                <td class="px-3 py-2">
+                                                    {{ \Carbon\Carbon::parse($tran->transaction_date)->format('d/m/Y H:i') }}
+                                                </td>
+
+                                                <td class="px-3 py-2">
+                                                    {{ $tran->transaction_type == 1 ? 'Credit' : 'Debit' }}
+                                                </td>
+
+                                                <td class="px-3 py-2">
+                                                    {{ $tran->mode ?? 'System' }}
+                                                </td>
+
+                                                <td class="px-3 py-2">
+                                                    {{ number_format($tran->amount, 2) }}
+                                                </td>
+
+                                                <td class="px-3 py-2">
+                                                    @if ($tran->status === 'approved')
+                                                        <span class="text-green-600 font-semibold">Approved</span>
+                                                    @elseif ($tran->status === 'pending')
+                                                        <span class="text-yellow-600 font-semibold">Pending</span>
+                                                    @else
+                                                        <span class="text-red-600 font-semibold">Rejected</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -1015,12 +1036,12 @@
                                         @endif
                                     </td>
                                 </tr>
-                                <tr>
+                                {{-- <tr>
                                     <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Joint Account Member Name
                                     </td>
-                                    {{-- <td class="px-4 py-2 text-right md:text-left">{{ $fdAccount->savingAccount->branch_name }} --}}
+                                    <td class="px-4 py-2 text-right md:text-left">{{ $fdAccount->savingAccount->branch_name }}
                                     </td>
-                                </tr>
+                                </tr> --}}
                             </tbody>
                         </table>
                     </div>
@@ -1032,16 +1053,40 @@
             </div>
 
         </div>
-    @endsection
-    <script>
-        // Label update on toggle
-        document.querySelectorAll('.slider-toggle').forEach(toggle => {
-            toggle.addEventListener('change', function() {
-                const label = document.getElementById(this.dataset.labelId);
-                label.textContent = this.checked ? 'ON' : 'OFF';
-            });
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const interestButton = document.getElementById('interestButton');
+                const interestMenu = document.getElementById('interestMenu');
+                const interestArrow = document.getElementById('interestArrow');
 
-            // Initialize label on page load
-            toggle.dispatchEvent(new Event('change'));
-        });
-    </script>
+                // Toggle menu on button click
+                interestButton.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent click from closing immediately
+
+                    interestMenu.classList.toggle('hidden');
+                    interestArrow.classList.toggle('rotate-180');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!interestMenu.classList.contains('hidden')) {
+                        interestMenu.classList.add('hidden');
+                        interestArrow.classList.remove('rotate-180');
+                    }
+                });
+            });
+        </script>
+        <script>
+            // Label update on toggle
+            document.querySelectorAll('.slider-toggle').forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    const label = document.getElementById(this.dataset.labelId);
+                    label.textContent = this.checked ? 'ON' : 'OFF';
+                });
+
+                // Initialize label on page load
+                toggle.dispatchEvent(new Event('change'));
+            });
+        </script>
+
+    @endsection

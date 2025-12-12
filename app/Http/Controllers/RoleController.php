@@ -43,10 +43,93 @@ class RoleController extends Controller
     {
         $roles = Role::all();
         $allPermissions = Permissions::all();
+        $menuItems1 = [
+            ['title' => 'DASHBOARD'],
+            ['title' => 'COMPANY'],
+            ['title' => 'USER MANAGEMENT'],
+            ['title' => 'COLLECTION CENTERS'],
+            ['title' => 'MEMBER MANAGEMENT'],
+        ];
+        $menuItems2 = [
+            ['title' => 'SAVING ACCOUNTS'],
+            ['title' => 'FIXED DEPOSITS'],
+            ['title' => 'RECURRING DEPOSITS'],
+            ['title' => 'GOLD LOAN'],
+            ['title' => 'PROPERTY LOAN'],
+        ];
+        $menuItems3 = [
+            ['title' => 'DEPOSIT LOAN'],
+            ['title' => 'OTHER LOAN'],
+            ['title' => 'FIXED LOAN'],
+            ['title' => 'APPROVALS'],
+            ['title' => 'PAYMENT COLLECTIONS'],
+        ];
+        $menuItems4 = [
+            ['title' => 'PAYMENT PAYOUTS'],
+            ['title' => 'MACHINE COLLECTION'],
+            ['title' => 'PASSBOOKS'],
+            ['title' => 'PRINT DOCUMENTS'],
+            ['title' => 'ADVISORS'],
+        ];
+        $menuItems5 = [
+            ['title' => 'EXTRA SERVICES'],
+            ['title' => 'TRANSFER SETTING'],
+            ['title' => 'CASHFREE'],
+            ['title' => 'ICICI'],
+            ['title' => 'WITHIN BANK TRANSFER'],
+        ];
+        $menuItems6 = [
+            ['title' => 'REPORTS'],
+            ['title' => 'HR MANAGEMENT'],
+            ['title' => 'SOFTWARE SETTINGS'],
+            ['title' => 'WEBSITE'],
+            ['title' => 'ACCOUNTING'],
+        ];
+        $menuItems7 = [
+            ['title' => 'SMS SCHEDULER'],
+            ['title' => 'BUSINESS REPORTS'],
+            ['title' => 'DAILY COLLECTION'],
+            ['title' => 'AGENT APP'],
+            ['title' => 'LOCKERS'],
+        ];
+        $menuItems8 = [
+            ['title' => 'VERIFICATION SUITE'],
+            ['title' => 'CIBIL REPORT'],
+            ['title' => 'VIEW LEVEL FIELDS PERMISSIONS'],
+            ['title' => 'YESBANK'],
+            ['title' => 'NOTICE BOARD'],
+        ];
+        $menuItems9 = [
+            ['title' => 'DOWNLOAD REPORTS'],
+            ['title' => 'APPOINTMENTS'],
+            ['title' => 'INQUIRY'],
+            ['title' => 'ENACH'],
+            ['title' => 'CC LIMIT'],
+        ];
+        $menuItems10 = [
+            ['title' => 'AXISBANK'],
+            ['title' => 'VEHICLE LOAN'],
+            ['title' => 'PERSONAL LOAN'],
+            ['title' => 'CKYC REPORTS'],
+            ['title' => 'PAYLOADS'],
 
-        return view('roles.add-role', compact('roles', 'allPermissions'));
+        ];
+
+        return view('roles.add-role', compact(
+            'roles',
+            'allPermissions',
+            'menuItems1',
+            'menuItems2',
+            'menuItems3',
+            'menuItems4',
+            'menuItems5',
+            'menuItems6',
+            'menuItems7',
+            'menuItems8',
+            'menuItems9',
+            'menuItems10'
+        ));
     }
-
     /**
      * Store a newly created resource in storage.
      */

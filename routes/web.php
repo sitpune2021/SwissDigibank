@@ -412,10 +412,11 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/fd-account/credit-debit-interest/{id}', [FdController::class, 'creditDebitInterest'])->name('fd-account.creditDebitInterest');
     Route::post('/fd-account/{id}/credit-debit-interest', [FdController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('fd.creditdebit.store');
-
     Route::get('/fd-account/deduct-reverse-tds/{id}', [FdController::class, 'deductReverseTds'])->name('fd-account.deductReverseTds');
     Route::post('/fd-account/{id}/deduct-reverse-tds', [FdController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('fd.creditdebit.store');
+
+        
     //////
 
     Route::get('/fd-add-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('fd.add.nominee');

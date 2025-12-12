@@ -54,7 +54,8 @@
                             <tr class="border-t">
                                 <td class="font-semibold px-4 py-2 uppercase">Transaction Type</td>
                                 <td class="px-4 py-2 capitalized">
-                                    {{ $transaction->credited == 0 ? 'Credit' : 'Debit' }}
+                                    {{ $transaction->transaction_type == 1 ? 'Credit' : 'Debit' }}
+
                                 </td>
                             </tr>
                             <tr class="border-t">
