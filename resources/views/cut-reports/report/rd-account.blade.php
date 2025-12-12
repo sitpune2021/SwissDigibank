@@ -60,9 +60,9 @@
                 <i class="las la-print"></i>
                 Print Cut Report
             </a>
-            <a href="" class="btn-error rounded-10 px-1 flex justify-center py-2 text-sm uppercase">
+            <a href="{{ route('rd-account.csv') }}" class="btn-error rounded-10 px-1 flex justify-center py-2 text-sm uppercase">
                 <i class="las la-download"></i>
-                Request xlsx
+               Download Csv
             </a>
         </div>
 
