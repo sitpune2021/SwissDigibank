@@ -81,17 +81,18 @@
 
                                     <!-- Debit -->
                                     <td class="px-4 py-2 text-right">
-                                        {{ $tran->credited == 1 ? number_format($tran->amount, 2) : '' }}
+                                        {{ $tran->transaction_type == 0 ? number_format($tran->amount, 2) : '' }}
                                     </td>
 
                                     <!-- Credit -->
                                     <td class="px-4 py-2 text-right">
-                                        {{ $tran->credited == 0 ? number_format($tran->amount, 2) : '' }}
+                                        {{ $tran->transaction_type == 1 ? number_format($tran->amount, 2) : '' }}
                                     </td>
+
 
                                     <!-- Balance -->
                                     <td class="px-4 py-2 text-right">
-                                        {{ number_format($tran->amount, 2) }}
+                                        {{ number_format($tran->balance, 2) }}
                                     </td>
                                     </td>
                                     <td class="px-4 py-2 text-center">
