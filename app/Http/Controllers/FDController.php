@@ -1121,39 +1121,39 @@ class FDController extends Controller
 
     //     return view('fd_mis_account.fd-account.viewTransactions', compact('fdAccount', 'transactions'));
     // }
-   public function viewTransactions(Request $request, $id)
-{
-    $fdAccount = FdAccount::with('member', 'branch', 'fdscheme')->findOrFail($id);
+    public function viewTransactions(Request $request, $id)
+    {
+        $fdAccount = FdAccount::with('member', 'branch', 'fdscheme')->findOrFail($id);
 
-    $transactions = FdTransaction::where('fd_account_id', $id)
-        ->orderBy('transaction_date', 'asc')
-        ->orderBy('id', 'asc')
-        ->get();
+        $transactions = FdTransaction::where('fd_account_id', $id)
+            ->orderBy('transaction_date', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
 
-    $cumulativeBalance = $fdAccount->status == 1 ? $fdAccount->fd_amount : 0; // Start with FD principal if approved
+        $cumulativeBalance = $fdAccount->status == 1 ? $fdAccount->fd_amount : 0; // Start with FD principal if approved
 
-    foreach ($transactions as $tran) {
-        if ($tran->status === 'approved') {
-            // Add/Subtract only approved transactions
-            if ($tran->transaction_type == 1) { // Credit
-                $cumulativeBalance += $tran->amount;
-            } elseif ($tran->transaction_type == 0) { // Debit
-                $cumulativeBalance -= $tran->amount;
+        foreach ($transactions as $tran) {
+            if ($tran->status === 'approved') {
+                // Add/Subtract only approved transactions
+                if ($tran->transaction_type == 1) { // Credit
+                    $cumulativeBalance += $tran->amount;
+                } elseif ($tran->transaction_type == 0) { // Debit
+                    $cumulativeBalance -= $tran->amount;
+                }
+                $tran->balance = $cumulativeBalance;
+            } else {
+                // Pending transactions → just show their own amount
+                $tran->balance = $tran->amount;
             }
-            $tran->balance = $cumulativeBalance;
-        } else {
-            // Pending transactions → just show their own amount
-            $tran->balance = $tran->amount;
         }
+
+        // Show latest transactions first
+        $transactions = $transactions->sortByDesc('transaction_date')
+            ->sortByDesc('id')
+            ->values();
+
+        return view('fd_mis_account.fd-account.viewTransactions', compact('fdAccount', 'transactions'));
     }
-
-    // Show latest transactions first
-    $transactions = $transactions->sortByDesc('transaction_date')
-        ->sortByDesc('id')
-        ->values();
-
-    return view('fd_mis_account.fd-account.viewTransactions', compact('fdAccount', 'transactions'));
-}
 
     public function transactionsDetails($accountId, $transactionId)
     {
@@ -1165,7 +1165,7 @@ class FDController extends Controller
             ->with('fdAccount.branch')
             ->findOrFail($transactionId);
 
-        return view('fd_mis_account.fd-account.transaction-details', compact('fdAccount', 'transaction', 'fdBalance'));
+        return view('fd_mis_account.fd-account.transaction-details', compact('fdAccount', 'transaction'));
     }
     public function destroyTransaction($ddsAccountId, $tranxId)
     {
@@ -1429,6 +1429,7 @@ class FDController extends Controller
         $transaction->transaction_type = $request->transaction_type === 'credit' ? 1 : 0;
         $transaction->amount           = $request->amount;
         $transaction->status   =  "approved";
+
         // $transaction->mode         = "System";
         // $transaction->created_by       = Auth::id() ?? null;
         $transaction->save();
