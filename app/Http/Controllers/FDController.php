@@ -1267,56 +1267,27 @@ class FDController extends Controller
         return redirect()->route('fd-mis-schemes.fd_show', $id)
             ->with('success', 'Comment added successfully!');
     }
-    // public function creditDebitInterest($id)
-    // {
-    //     $fdAccount = FdAccount::findOrFail($id);
-    //     $balances   = self::getAccountBalance($id);
-    //     $balance    = $balances[$id] ?? 0;
+    public static function getAccountBalance($fdaccountids)
+    {
+        if (! is_array($fdaccountids)) {
+            $fdaccountids = [$fdaccountids];
+        }
 
-    //     return view('fd_mis_account.fd-account.interest-tds.credit_debit_interest', compact('fdAccount', 'balance'));
-    // }
+        $transactions = FdTransaction::whereIn('fd_account_id', $fdaccountids)
+            ->where('status', 'approved')
+            ->get();
 
-    // public function storeCreditDebitInterestAndTDS(Request $request, $id)
-    // {
-    //     $request->validate([
-    //         'transaction_date' => 'required|date',
-    //         'transaction_type' => 'required|in:credit,debit',
-    //         'amount'           => 'required|numeric|min:0.01',
-    //         'remarks'          => 'nullable|string|max:255',
-    //     ]);
+        $balances = [];
 
-    //     $fdAccount = FdAccount::findOrFail($id);
+        foreach ($transactions->groupBy('fd_account_id') as $misaccount_id => $group) {
+            $credit                   = $group->where('transaction_type', 'credit')->sum('amount');
+            $debit                    = $group->where('transaction_type', 'debit')->sum('amount');
+            $balances[$misaccount_id] = $credit - $debit;
+        }
 
-    //     // Prepare transaction entry
-    //     $transaction                   = new FdTransaction();
-    //     $transaction->fd_account_id    = $fdAccount->id;
-    //     $transaction->transaction_date = Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
-    //     $transaction->paid_on          = now();
-    //     $transaction->transaction_type = strtoupper($request->transaction_type); // CREDIT / DEBIT
-    //     $transaction->amount           = $request->amount;
-    //     $transaction->remark           = $request->remarks ?? null;
-    //     $transaction->approve_status   =  "approved";
-    //     // $transaction->pay_mode         = "System";
-    //     // $transaction->created_by       = Auth::id() ?? null;
-    //     $transaction->save();
+        return $balances;
+    }
 
-    //     Log::info('Credit/Debit Interest Transaction Recorded', [
-    //         'fd_account_id'   => $fdAccount->id,
-    //         'account_no'       => $fdAccount->account_no ?? null,
-    //         'transaction_id'   => $transaction->id,
-    //         'transaction_date' => $transaction->transaction_date,
-    //         'transaction_type' => $transaction->transaction_type,
-    //         'amount'           => $transaction->amount,
-    //         'remarks'          => $transaction->remarks,
-    //         'user_id'          => Auth::id(),
-    //         'user_name'        => Auth::user()->name ?? 'System',
-    //         'timestamp'        => now()->toDateTimeString(),
-    //     ]);
-
-    //     return redirect()
-    //         ->route('fd-mis-schemes.fd_show', $transaction->id)
-    //         ->with('success', 'Interest ' . ucfirst($request->transaction_type) . ' recorded successfully.');
-    // }
     public function creditDebitInterest($id)
     {
         $fdAccount = FdAccount::findOrFail($id);
@@ -1339,19 +1310,19 @@ class FDController extends Controller
 
         // Prepare transaction entry
         $transaction                   = new FdTransaction();
-        $transaction->misaccount_id    = $fdAccount->id;
+        $transaction->fd_account_id    = $fdAccount->id;
         $transaction->transaction_date = Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
-        $transaction->paid_on          = now();
-        $transaction->transaction_type = strtoupper($request->transaction_type); // CREDIT / DEBIT
+        // $transaction->paid_on          = now();
+        // $transaction->transaction_type = strtoupper($request->transaction_type); // CREDIT / DEBIT
         $transaction->amount           = $request->amount;
-        $transaction->remark           = $request->remarks ?? null;
-        $transaction->approve_status   =  "approved";
+        // $transaction->remarks           = $request->remarks ?? null;
+        $transaction->status   =  "approved";
         // $transaction->pay_mode         = "System";
         // $transaction->created_by       = Auth::id() ?? null;
         $transaction->save();
 
         Log::info('Credit/Debit Interest Transaction Recorded', [
-            'mis_account_id'   => $fdAccount->id,
+            'fd_account_id'   => $fdAccount->id,
             'account_no'       => $fdAccount->account_no ?? null,
             'transaction_id'   => $transaction->id,
             'transaction_date' => $transaction->transaction_date,
@@ -1364,7 +1335,7 @@ class FDController extends Controller
         ]);
 
         return redirect()
-            ->route('mis.transaction.view', $transaction->id)
+            ->route('fd-mis-schemes.fd_show', $transaction->id)
             ->with('success', 'Interest ' . ucfirst($request->transaction_type) . ' recorded successfully.');
     }
 
@@ -1374,14 +1345,6 @@ class FDController extends Controller
         $balances   = self::getAccountBalance($id);
         $balance    = $balances[$id] ?? 0;
 
-        return view('fd_mis_account.misaccount.interest-tds.deduct_reverse_tds', compact('misaccount', 'balance'));
+        return view('fd_mis_account.fd-account.interest-tds.deduct_reverse_tds', compact('fdAccount', 'balance'));
     }
-    // public function deductReverseTds($id)
-    // {
-    //     $fdAccount = FdAccount::findOrFail($id);
-    //     $balances   = self::getAccountBalance($id);
-    //     $balance    = $balances[$id] ?? 0;
-
-    //     return view('fd_mis_account.fd-account.interest-tds.deduct_reverse_tds', compact('fdAccount', 'balance'));
-    // }
 }

@@ -29,7 +29,7 @@
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-center gap-2">
                 <h3 class="uppercase font-semibold">
-                    MIS - {{$misaccount->id}}
+                    FD - {{$fdAccount->id}}
                 </h3>
                 <p class="text-gray-500 uppercase text-sm">Update Interest</p>
             </div>
@@ -40,7 +40,7 @@
     <div class="flex flex-col  dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
         <div class=" w-full  box overflow-hidden">
 
-            <form action="{{ route('mis.creditdebit.store', $misaccount->id) }}" method="POST">
+            <form action="{{ route('fd.creditdebit.store', $fdAccount->id) }}" method="POST">
                 @csrf
                 <label class="font-semibold text-lg uppercase block mb-4">
                     CREDIT / REVERSE INTEREST
@@ -105,7 +105,7 @@
                             Update Interest
                         </button>
 
-                        <a href="{{ route('mis.transaction.view', $misaccount->id) }}" class="btn-outline uppercase justify-center text-center">
+                        <a href="{{ route('mis.transaction.view', $fdAccount->id) }}" class="btn-outline uppercase justify-center text-center">
                             Back
                         </a>
                     </div>
@@ -120,7 +120,7 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black uppercase font-semibold text-lg">MIS Account Info</h3>
+                    <h3 class="text-black uppercase font-semibold text-lg">fd Account Info</h3>
 
                     <!-- Toggle Button -->
                     <button class="p-1 rounded transition" onclick="toggleSection(this)">
@@ -135,19 +135,19 @@
                         <tbody>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2 w-1/3">Customer</td>
-                                <td class="px-3 py-2">{{ $misaccount->member->member_info_first_name }} {{ $misaccount->member->member_info_last_name }} </td>
+                                <td class="px-3 py-2">{{ $fdAccount->member->member_info_first_name }} {{ $fdAccount->member->member_info_last_name }} </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="uppercase font-semibold px-3 py-2">MIS No.</td>
-                                <td class="px-3 py-2"> {{$misaccount->id}}</td>
+                                <td class="uppercase font-semibold px-3 py-2">Fd No.</td>
+                                <td class="px-3 py-2"> {{$fdAccount->id}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Scheme</td>
-                                <td class="px-3 py-2">{{$misaccount->maturity_date}}</td>
+                                <td class="px-3 py-2">{{$fdAccount->maturity_date}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Principal Amt.</td>
-                                <td class="px-3 py-2">₹{{$misaccount->mis_amount}}</td>
+                                <td class="px-3 py-2">₹{{$fdAccount->mis_amount}}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Balance Available</td>

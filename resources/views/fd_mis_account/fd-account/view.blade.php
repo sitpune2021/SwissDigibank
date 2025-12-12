@@ -89,9 +89,9 @@
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-2xl font-semibold">FD ACCOUNT - {{ $fdAccount->id }}</h1>
                 <!-- <p class="text-gray-500">
-                                                                                <a href="#" class="text-gray-500">FD Account</a> >
-                                                                                <a href="#" class="text-gray-500"> {{ $fdAccount->id }}</a>
-                                                                            </p> -->
+                                                                                            <a href="#" class="text-gray-500">FD Account</a> >
+                                                                                            <a href="#" class="text-gray-500"> {{ $fdAccount->id }}</a>
+                                                                                        </p> -->
             </div>
         </div>
 
@@ -167,10 +167,10 @@
             <div class=" w-full  overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <!-- <div class="text-end p-3">
-                                                                                    <a href="#" class=" p-2 btn-outline">
-                                                                                        <i class="las la-pen"></i>
-                                                                                    </a>
-                                                                                </div> -->
+                                                                                                <a href="#" class=" p-2 btn-outline">
+                                                                                                    <i class="las la-pen"></i>
+                                                                                                </a>
+                                                                                            </div> -->
                     <table class="min-w-full text-sm text-left border-collapse">
                         <tbody class="divide-y divide-gray-200">
                             <tr>
@@ -519,7 +519,16 @@
                                                 {{ optional($fdAccount->transactions->last())->mode ?? '' }}</td>
                                             <td class="px-4 py-2 text-sm">{{ $fdAccount->fd_amount }}</td>
                                             <td class="px-4 py-2 text-sm text-green-600 font-medium">
-                                                {{ $fdAccount->status }}</td>
+                                                @if ($fdAccount->status == 0)
+                                                    Pending
+                                                @elseif($fdAccount->status == 1)
+                                                    Approved
+                                                @elseif($fdAccount->status == 2)
+                                                    Rejected
+                                                @endif
+                                            </td>
+
+
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1032,16 +1041,40 @@
             </div>
 
         </div>
-    @endsection
-    <script>
-        // Label update on toggle
-        document.querySelectorAll('.slider-toggle').forEach(toggle => {
-            toggle.addEventListener('change', function() {
-                const label = document.getElementById(this.dataset.labelId);
-                label.textContent = this.checked ? 'ON' : 'OFF';
-            });
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const interestButton = document.getElementById('interestButton');
+                const interestMenu = document.getElementById('interestMenu');
+                const interestArrow = document.getElementById('interestArrow');
 
-            // Initialize label on page load
-            toggle.dispatchEvent(new Event('change'));
-        });
-    </script>
+                // Toggle menu on button click
+                interestButton.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent click from closing immediately
+
+                    interestMenu.classList.toggle('hidden');
+                    interestArrow.classList.toggle('rotate-180');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!interestMenu.classList.contains('hidden')) {
+                        interestMenu.classList.add('hidden');
+                        interestArrow.classList.remove('rotate-180');
+                    }
+                });
+            });
+        </script>
+        <script>
+            // Label update on toggle
+            document.querySelectorAll('.slider-toggle').forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    const label = document.getElementById(this.dataset.labelId);
+                    label.textContent = this.checked ? 'ON' : 'OFF';
+                });
+
+                // Initialize label on page load
+                toggle.dispatchEvent(new Event('change'));
+            });
+        </script>
+
+    @endsection

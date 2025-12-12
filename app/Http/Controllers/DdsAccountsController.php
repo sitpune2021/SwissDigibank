@@ -217,7 +217,7 @@ class DdsAccountsController extends Controller
             $newDdNo = 'DD' . str_pad($lastDdNo + 1, 3, '0', STR_PAD_LEFT);
 
             $ddsAccount = new DdsAccount();
-            $ddsAccount->dd_no = $newDdNo;  // Store the generated dd_no
+            $ddsAccount->dd_no = $newDdNo;  
             $ddsAccount->member_id = $request->member_id;
             $ddsAccount->branch_id = $request->branch_id;
             $ddsAccount->scheme_id = $request->scheme_id;
