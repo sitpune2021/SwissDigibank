@@ -343,6 +343,9 @@
               </div>
 
           </div>
+          <p id="emiRatioError" class="text-red-600 text-sm mt-1 hidden">
+              EMI Ratio total tenure se zyada nahi ho sakta
+          </p>
          
         <!-- Buttons -->
         <div class="flex justify-center gap-4 pt-6">
@@ -645,6 +648,144 @@
 
 });
 </script>
+
+<!-- reducing emi - emi ratio validation -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("loanForm");
+
+    const tenureInput = document.getElementById("tenure_months");
+    const chkDivide   = document.getElementById("divide_emi_ratio");
+
+    const emi1 = document.getElementById("emi_ratio_1");
+    const emi2 = document.getElementById("emi_ratio_2");
+
+    const errorBox = document.getElementById("emiRatioError");
+
+    // 🔹 Auto-calc EMI Ratio 2
+    emi1.addEventListener("input", function () {
+        const tenure = parseInt(tenureInput.value) || 0;
+        const first  = parseInt(emi1.value) || 0;
+
+        if (tenure > 0 && first >= 0) {
+            emi2.value = tenure - first;
+        }
+    });
+
+    // 🔹 FORM SUBMIT VALIDATION
+    form.addEventListener("submit", function (e) {
+
+        errorBox.classList.add("hidden");
+
+        // ✅ sirf reducing + checkbox ON case
+        if (chkDivide.checked) {
+
+            const tenure = parseInt(tenureInput.value) || 0;
+            const r1 = parseInt(emi1.value) || 0;
+            const r2 = parseInt(emi2.value) || 0;
+
+            if ((r1 + r2) > tenure) {
+                e.preventDefault();   // ⛔ form stop
+                errorBox.classList.remove("hidden");
+                errorBox.innerText =
+                    "EMI Ratio ka total (" + (r1 + r2) +
+                    ") tenure (" + tenure + ") se zyada nahi ho sakta";
+            }
+        }
+
+        // 🔹 Hidden fields set (tumhara existing logic)
+        document.getElementById("ratio_enabled").value =
+            chkDivide.checked ? "Yes" : "No";
+
+        document.getElementById("ratio_first_emi").value =
+            emi1.value || "";
+
+        document.getElementById("ratio_first_percentage").value =
+            document.getElementById("amt_ratio_1").value || "";
+    });
+
+});
+</script>
+
+<!-- reducing emi - emi ratio change total as per tenure -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const form          = document.getElementById("loanForm");
+
+    const tenureInput   = document.getElementById("tenure_months");
+    const chkDivide     = document.getElementById("divide_emi_ratio");
+
+    const emi1          = document.getElementById("emi_ratio_1");
+    const emi2          = document.getElementById("emi_ratio_2");
+
+    const emiTotalText  = document.getElementById("emi_total_text");
+    const errorBox      = document.getElementById("emiRatioError");
+
+    /* 🔹 UPDATE TOTAL EMI TEXT */
+    function updateTotalText() {
+        const tenure = parseInt(tenureInput.value) || 0;
+        emiTotalText.innerText = tenure > 0
+            ? `(Total EMI : ${tenure})`
+            : "";
+    }
+
+    /* 🔹 AUTO CALCULATE SECOND RATIO */
+    function updateRatio() {
+        const tenure = parseInt(tenureInput.value) || 0;
+        const first  = parseInt(emi1.value) || 0;
+
+        if (tenure >= 0 && first >= 0) {
+            emi2.value = Math.max(tenure - first, 0);
+        }
+    }
+
+    /* 🔹 TENURE CHANGE */
+    tenureInput.addEventListener("input", function () {
+        updateTotalText();
+        updateRatio();
+    });
+
+    /* 🔹 EMI RATIO CHANGE */
+    emi1.addEventListener("input", function () {
+        updateRatio();
+    });
+
+    /* 🔹 FORM SUBMIT VALIDATION */
+    form.addEventListener("submit", function (e) {
+
+        errorBox.classList.add("hidden");
+
+        if (chkDivide.checked) {
+
+            const tenure = parseInt(tenureInput.value) || 0;
+            const r1     = parseInt(emi1.value) || 0;
+            const r2     = parseInt(emi2.value) || 0;
+
+            if ((r1 + r2) !== tenure) {
+                e.preventDefault();
+                errorBox.classList.remove("hidden");
+                errorBox.innerText =
+                    `EMI Ratio ka total (${r1 + r2}) tenure (${tenure}) ke barabar hona chahiye`;
+                return;
+            }
+        }
+
+        // hidden fields (tumhara existing logic)
+        document.getElementById("ratio_enabled").value =
+            chkDivide.checked ? "Yes" : "No";
+
+        document.getElementById("ratio_first_emi").value =
+            emi1.value || "";
+
+        document.getElementById("ratio_first_percentage").value =
+            document.getElementById("amt_ratio_1").value || "";
+    });
+
+});
+</script>
+
 
 <script>
   // this script for get scheme details 

@@ -993,45 +993,71 @@ class ApproveController extends Controller
             case 'loan':
                 $application = LoanApplication::find($id);
                 break;
+
             case 'mortgage':
                 $application = MortgageLoanApplication::find($id);
                 break;
+
             case 'loan_against':
                 $application = LoanAgainstApplication::find($id);
                 break;
+
             case 'business_loan':
                 $application = BusinessLoanApplication::find($id);
                 break;
+
             case 'cc_od':
                 $application = CcOdLoanApplication::find($id);
                 break;
+
             case 'daily_weekly':
                 $application = DailyWeeklyApplication::find($id);
                 break;
+
             case 'personal':
                 $application = PersonalLoanApplication::find($id);
+                break;
+
             case 'vehical':
                 $application = VehicalApplication::find($id);
                 break;
+
             default:
                 $application = null;
         }
 
         if ($application) {
+
             $application->status = $status;
             $application->save();
 
-            Log::info('Status Updated Successfully', [
-                'id' => $application->id,
-                'table' => get_class($application),
-                'new_status' => $status,
-            ]);
+            /** -------------------------------
+             *  REDIRECT MAP (YAHAN ADD KARNA HAI)
+             * --------------------------------*/
+            $redirectMap = [
+                'loan'          => 'gold-loan.disbursements.index',
+                'mortgage'      => 'mortgage.disbursements.index',
+                'loan_against'  => 'loanagainst.disbursements.index',
+                'business_loan' => 'bussiness.disbursements.index',
+                'cc_od'         => 'cc_od.disbursements.index',
+                'daily_weekly'  => 'daily_weekly.disbursements.index',
+                'personal'      => 'personal.disbursements.index',
+                'vehical'       => 'vehical.disbursements.index',
+            ];
+
+            $redirectRoute = $redirectMap[$modelType] ?? null;
+
+            if ($redirectRoute) {
+                return redirect()->route($redirectRoute)
+                    ->with('success', 'Status updated successfully!');
+            }
 
             return redirect()->back()->with('success', 'Status updated successfully!');
         }
 
-        return redirect()->back()->with('error', 'Application not found in any table!');
+        return redirect()->back()->with('error', 'Application not found!');
     }
+
 
 
     public function approvals_history()

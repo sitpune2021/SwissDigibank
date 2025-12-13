@@ -8,7 +8,7 @@
       <tbody>
         <tr>
           <td class="font-semibold py-2 px-3 w-1/4 border border-gray-300">Disburse Date</td>
-          <td class="py-2 px-3 w-1/4 border border-gray-300">{{ $disburse_date->format('d/m/Y') }}</td>
+          <td class="py-2 px-3 w-1/4 border border-gray-300">{{ $disburse_date->format('d-m-Y') }}</td>
           <td class="font-semibold py-2 px-3 w-1/4 border border-gray-300">Loan Amount</td>
           <td class="py-2 px-3 w-1/4 border border-gray-300">₹ {{ number_format($loan,2) }}</td>
         </tr>
@@ -97,10 +97,10 @@
 
 </div>
 
-  <h3 class="text-lg font-semibold mt-6 mb-2"><center>EMI CHART</center></h3>
-  <div class="overflow-auto">
+  <div class="overflow-auto mt-5 box">
+        <h3 class="text-lg font-semibold text-center mt-6 mb-2">EMI CHART</h3>
 
-    <table class="w-full table-auto text-sm border border-gray-300 border-collapse">
+    <table class="w-full mt-5 table-auto text-sm border border-gray-300 border-collapse">
 
         <thead>
             <tr class="bg-gray-100 border border-gray-300">
@@ -160,7 +160,7 @@
             @endif
         </tbody>
 
-        <tr class="bg-blue-600 text-white font-bold border border-gray-300">
+        <tr class="bg-secondary/5 font-bold border border-gray-300">
             <td colspan="4" class="p-2 text-right uppercase tracking-wide border border-gray-300">TOTAL</td>
             {{-- Interest (B) column --}}
             <td class="p-2 text-right border border-gray-300">
