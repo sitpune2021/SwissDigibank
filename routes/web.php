@@ -84,7 +84,8 @@ use App\Http\Controllers\EmployeeAkash;
 // Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
 // Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
 // Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
-
+Route::view('/privacy-policy', 'privacy-policy')
+    ->name('privacy.policy');
 Route::middleware(['guest', SessionProtection::class])->group(function () {
 
     Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -416,7 +417,7 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('/fd-account/{id}/deduct-reverse-tds', [FdController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('fd.creditdebit.store');
 
-        
+
     //////
 
     Route::get('/fd-add-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('fd.add.nominee');

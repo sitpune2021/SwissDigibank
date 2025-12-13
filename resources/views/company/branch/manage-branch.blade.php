@@ -57,16 +57,18 @@
                         <tr class="even:bg-secondary/5 dark:even:bg-bg3">
                             <td class="px-2 py-5 text-center">
                                 <div>
-                                    <a href="{{ $branch?->id ? route('branch.show', base64_encode($branch->id)) : '#' }}" class="text-primary hover:underline">
-                                        <p class="mb-1 font-medium">{{ $branch?->branch_name??'' }}</p>
+                                    <a href="{{ $branch?->id ? route('branch.show', base64_encode($branch->id)) : '#' }}"
+                                        class="text-primary hover:underline">
+                                        <p class="mb-1 font-medium">{{ $branch?->branch_name ?? '' }}</p>
                                     </a>
                                 </div>
                             </td>
-                            <td class="px-6 py-5 text-center">{{ $branch?->branch_code??'' }}</td>
-                            <td class="px-6 py-5 text-center">{{ $branch?->city??'' }}</td>
-                            <td class="px-6 py-5 text-center">{{ $branch->State?->name??'' }}</td>
+                            <td class="px-6 py-5 text-center">{{ $branch?->branch_code ?? '' }}</td>
+                            <td class="px-6 py-5 text-center">{{ $branch?->city ?? '' }}</td>
+                            <td class="px-6 py-5 text-center">{{ $branch->State?->name ?? '' }}</td>
                             <td class="px-6 py-5 text-center">
-                                {{ $branch->open_date->format('d-m-Y') }}
+                                {{ $branch->open_date ? \Carbon\Carbon::parse($branch->open_date)->format('d-m-Y') : '' }}
+
                             </td>
                             <td class="px-7 py-5 text-center">{{ $branch->Member->count() }}</td>
                             <td class="px-6 py-5  text-center">

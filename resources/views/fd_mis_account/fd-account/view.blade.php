@@ -89,9 +89,9 @@
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-2xl font-semibold">FD ACCOUNT - {{ $fdAccount->id }}</h1>
                 <!-- <p class="text-gray-500">
-                                                                                                            <a href="#" class="text-gray-500">FD Account</a> >
-                                                                                                            <a href="#" class="text-gray-500"> {{ $fdAccount->id }}</a>
-                                                                                                        </p> -->
+                                                            <a href="#" class="text-gray-500">FD Account</a> >
+                                                                                                                                                    <a href="#" class="text-gray-500"> {{ $fdAccount->id }}</a>
+                                                                                                                                                </p> -->
             </div>
         </div>
 
@@ -128,6 +128,10 @@
                 </div>
             </div>
 
+            <button class="btn-primary px-4 py-2 rounded-10 ">
+                RELEASE INTEREST
+            </button>
+
             @if ($fdAccount->link_status != 1)
                 <a href="{{ route('fd-accounts.createLinkSavingAcc', $fdAccount->id) }}"
                     class="btn-primary px-2 py-2 rounded-10 flex items-center justify-between space-x-2">
@@ -135,9 +139,13 @@
                 </a>
             @endif
 
+            <button class="btn-primary px-4 py-2 rounded-10 ">
+                MARK LIEN AGAINST LOAN
+            </button>
+
             <!-- INTEREST/TDS Button -->
             <div class="relative inline-block text-left">
-                <a id="interestButton" class="btn-secondary text-sm px-2 py-2 rounded-10 flex items-center">
+                <a id="interestButton" class="btn-primary text-sm px-2 py-2 rounded-10 flex items-center">
                     INTEREST/TDS
                     <i id="interestArrow" class="las la-angle-down ml-2"></i>
                 </a>
@@ -167,20 +175,22 @@
             <div class=" w-full  overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <!-- <div class="text-end p-3">
-                                                                                                                <a href="#" class=" p-2 btn-outline">
-                                                                                                                    <i class="las la-pen"></i>
-                                                                                                                </a>
-                                                                                                            </div> -->
+                                                                                                                                                     <a href="#" class=" p-2 btn-outline">
+                                                                                                                                                            <i class="las la-pen"></i>
+                                                                                                                                                        </a>
+                                                                                                                                                    </div> -->
                     <table class="min-w-full text-sm text-left border-collapse">
                         <tbody class="divide-y divide-gray-200">
                             <tr>
                                 <td class="font-semibold px-4 py-2 w-1/3 uppercase">CUSTOMER</td>
                                 <td class="px-4 py-2">
-                                    <a href="" class="text-primary hover:underline">
-                                        {{ $fdAccount->member->member_no ??
-                                            ($fdAccount->member_id ? str_pad($fdAccount->member_id, 6, '0', STR_PAD_LEFT) : '-') }}
-                                        - {{ $fdAccount->member?->member_info_first_name ?? 'NA' }}
-
+                                    <a href="{{ $fdAccount?->member?->id ? route('member.show', $fdAccount->member->id) : '#' }}"
+                                        class="text-primary hover:underline">
+                                        {{ $fdAccount->member?->member_no ??
+                                            ($fdAccount->member?->id ? str_pad($fdAccount->member->id, 6, '0', STR_PAD_LEFT) : 'N/A') }}
+                                        -
+                                        {{ $fdAccount->member?->member_info_first_name }}
+                                        {{ $fdAccount->member?->member_info_last_name }}
                                     </a>
                                 </td>
                             </tr>
@@ -532,20 +542,27 @@
                                                 </td>
 
                                                 <td class="px-3 py-2">
-                                                    @if ($tran->status === 'approved')
+                                                    @php($status = $tran->final_status)
+
+                                                    @if ($status === 'approved')
                                                         <span class="text-green-600 font-semibold">Approved</span>
-                                                    @elseif ($tran->status === 'pending')
+                                                    @elseif ($status === 'pending')
                                                         <span class="text-yellow-600 font-semibold">Pending</span>
                                                     @else
                                                         <span class="text-red-600 font-semibold">Rejected</span>
                                                     @endif
                                                 </td>
+
+
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
-                            <button class="btn-primary  mt-3">View All</button>
+                            <a href="{{ route('fd-accounts.transactions', $fdAccount->id) }}"
+                                class="btn-primary mt-3 inline-block">
+                                View All
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -984,24 +1001,40 @@
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                                 <tr>
                                     <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Interest Credited</td>
-                                    <td class="px-4 py-2 text-right md:text-left">₹
-                                        {{ number_format($fdAccount->interest_credited ?? 0, 2) }}</td>
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        @if ($fdAccount->interest_credited < 0)
+                                            ({{ number_format(abs($fdAccount->interest_credited), 2) }})
+                                        @else
+                                            ₹{{ number_format($fdAccount->interest_credited, 2) }}
+                                        @endif
+                                    </td>
                                 </tr>
 
                                 <tr>
                                     <td class="font-semibold px-4 py-2 uppercase">Interest Released</td>
-                                    <td class="px-4 py-2 text-right md:text-left">₹
-                                        {{ number_format($fdAccount->interest_released ?? 0, 2) }}</td>
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        @if ($fdAccount->interest_released < 0)
+                                            ({{ number_format(abs($fdAccount->interest_released), 2) }})
+                                        @else
+                                            ₹{{ number_format($fdAccount->interest_released, 2) }}
+                                        @endif
+                                    </td>
                                 </tr>
 
                                 <tr>
                                     <td class="font-semibold px-4 py-2 uppercase">TDS Deducted</td>
                                     <td class="px-4 py-2 text-right md:text-left">
-                                        {{ number_format($fdAccount->tds_deducted ?? 0, 2) }}</td>
+                                        @if ($fdAccount->tds_deducted < 0)
+                                            ({{ number_format(abs($fdAccount->tds_deducted), 2) }})
+                                        @else
+                                            ₹{{ number_format($fdAccount->tds_deducted, 2) }}
+                                        @endif
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
                 </div>
 
 
