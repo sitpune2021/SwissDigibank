@@ -42,6 +42,8 @@
 
                 <form action="{{ route('fd.creditdebit.store', $fdAccount->id) }}" method="POST">
                     @csrf
+                        <input type="hidden" name="transaction_purpose" value="interest">
+
                     <label class="font-semibold text-lg uppercase block mb-4">
                         CREDIT / REVERSE INTEREST
                     </label>
@@ -136,8 +138,17 @@
                             <tbody>
                                 <tr class="border-b border-gray-200">
                                     <td class="uppercase font-semibold px-3 py-2 w-1/3">Customer</td>
-                                    <td class="px-3 py-2">{{ $fdAccount->member->member_info_first_name }}
-                                        {{ $fdAccount->member->member_info_last_name }} </td>
+                                    <td class="px-3 py-2">
+                                        <a href="{{ $fdAccount?->member?->id ? route('member.show', $fdAccount->member->id) : '#' }}"
+                                            class="text-primary hover:underline">
+                                            {{ $fdAccount->member?->member_no ??
+                                                ($fdAccount->member?->id ? str_pad($fdAccount->member->id, 6, '0', STR_PAD_LEFT) : 'N/A') }}
+                                            -
+                                            {{ $fdAccount->member?->member_info_first_name }}
+                                            {{ $fdAccount->member?->member_info_last_name }}
+                                        </a>
+                                    </td>
+
                                 </tr>
                                 <tr class="border-b border-gray-200">
                                     <td class="uppercase font-semibold px-3 py-2">Fd No.</td>
@@ -145,7 +156,7 @@
                                 </tr>
                                 <tr class="border-b border-gray-200">
                                     <td class="uppercase font-semibold px-3 py-2">Scheme</td>
-                                    <td class="px-3 py-2">{{ $fdAccount->maturity_date }}</td>
+                                    <td class="px-3 py-2">{{ $fdAccount->fdscheme->scheme_name }}</td>
                                 </tr>
                                 <tr class="border-b border-gray-200">
                                     <td class="uppercase font-semibold px-3 py-2">Principal Amt.</td>

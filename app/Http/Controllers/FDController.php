@@ -705,13 +705,14 @@ class FDController extends Controller
         $fdAccount = FdAccount::with([
             'member.address',
             'branch',
-            'transactions',
+            'transactions.fdAccount', // REQUIRED
             'fdscheme.fdslabs',
             'savingAccount'
         ])->findOrFail($id);
 
+
         $documents = Document::where('fd_id', $fdAccount->id)->get();
-        $passbooks = Passbook::where('account_type', 'MIS Accounts')
+        $passbooks = Passbook::where('account_type', 'FD Accounts')
             ->where('account_no', $fdAccount->id)
             ->get();
 
@@ -729,6 +730,10 @@ class FDController extends Controller
             $bal = AccountsTransactionsHelper::getAccountBalacec($linkedSavingAcc->id);
             $balances[$linkedSavingAcc->id] = $bal['total_balance'] ?? 0;
         }
+        $summary = AccountsTransactionsHelper::getFdInterestSummary($fdAccount->id);
+
+        $fdAccount->interest_credited = $summary['interest_credited'];
+        $fdAccount->tds_deducted      = $summary['tds_deducted'];
 
         return view('fd_mis_account.fd-account.view', array_merge(
             [
@@ -741,6 +746,7 @@ class FDController extends Controller
                 'fdBalance' => $fdBalance, // Pass FD balance to Blade
                 'documents' => $documents,
                 'passbooks' => $passbooks,
+                'summary' => $summary,
             ],
             $calculation
         ));
@@ -1409,51 +1415,44 @@ class FDController extends Controller
 
         return view('fd_mis_account.fd-account.interest-tds.credit_debit_interest', compact('fdAccount', 'balance', 'transaction'));
     }
-
     public function storeCreditDebitInterestAndTDS(Request $request, $id)
     {
         $request->validate([
             'transaction_date' => 'required|date',
             'transaction_type' => 'required|in:credit,debit',
+            'transaction_purpose'  => 'required|in:interest,tds',
             'amount'           => 'required|numeric|min:0.01',
             'remarks'          => 'nullable|string|max:255',
         ]);
 
         $fdAccount = FdAccount::findOrFail($id);
 
-        // Prepare transaction entry
-        $transaction                   = new FdTransaction();
+        $transaction = new FdTransaction();
         $transaction->fd_account_id    = $fdAccount->id;
         $transaction->transaction_date = Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
         $transaction->paid_on          = now();
         $transaction->transaction_type = $request->transaction_type === 'credit' ? 1 : 0;
+        $transaction->transaction_purpose = $request->transaction_purpose;
         $transaction->amount           = $request->amount;
-        $transaction->status   =  "approved";
+        $transaction->status           = 'approved';
 
-        // $transaction->mode         = "System";
-        // $transaction->created_by       = Auth::id() ?? null;
+        // 🔥 CORE LOGIC
+        if ($request->transaction_purpose === 'tds') {
+            // TDS always involves saving account
+            $transaction->saving_account = $fdAccount->saving_account_id;
+        } else {
+            // Interest never touches saving account
+            $transaction->saving_account = null;
+        }
+
         $transaction->save();
+
         $fdAccount->remarks = $request->remarks ?? null;
         $fdAccount->save();
-        Log::info('Credit/Debit Interest Transaction Recorded', [
-            'fd_account_id'   => $fdAccount->id,
-            'account_no'       => $fdAccount->account_no ?? null,
-            'transaction_id'   => $transaction->id,
-            'transaction_date' => $transaction->transaction_date,
-            'transaction_type' => $transaction->transaction_type,
-            'amount'           => $transaction->amount,
-            'remarks'          => $transaction->remarks,
-            'user_id'          => Auth::id(),
-            'user_name'        => Auth::user()->name ?? 'System',
-            'timestamp'        => now()->toDateTimeString(),
-        ]);
+
         return redirect()
             ->route('fd-accounts.transactions.details', [$fdAccount->id, $transaction->id])
-            ->with('success', 'Interest ' . ucfirst($request->transaction_type) . ' recorded successfully.');
-
-        // return redirect()
-        //     ->route('fd-mis-schemes.fd_show', $transaction->id)
-        //     ->with('success', 'Interest ' . ucfirst($request->transaction_type) . ' recorded successfully.');
+            ->with('success', ucfirst($request->transaction_purpose) . ' transaction saved successfully.');
     }
 
     public function deductReverseTds($id)

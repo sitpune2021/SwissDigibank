@@ -97,7 +97,7 @@ return [
         'maxlength' => '10',
         'minlength' => '10',
         'pattern' => '[0-9]{10}',
-        'required' => false,
+        'required' => true,
     ],
 
     [

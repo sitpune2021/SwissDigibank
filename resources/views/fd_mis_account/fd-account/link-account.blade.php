@@ -204,14 +204,24 @@
                                     <tbody class="divide-y divide-gray-200">
                                         <tr class="py-2 border-b">
                                             <td class="font-semibold uppercase py-2 w-40">customer</td>
-                                            <td class="py-2">
+                                            {{-- <td class="py-2">
                                                 {{ ($fdAccount->member?->member_no ??
                                                     ($fdAccount->member?->id ? str_pad($fdAccount->member->id, 6, '0', STR_PAD_LEFT) : '')) .
                                                     ' - ' .
                                                     ($fdAccount->member?->member_info_first_name ?? 'N/A') .
                                                     ' - ' .
                                                     ($fdAccount->member?->member_info_last_name ?? '') }}
+                                            </td> --}}<td class="py-2">
+                                                <a href="{{ $fdAccount?->member?->id ? route('member.show', $fdAccount->member->id) : '#' }}"
+                                                    class="text-primary hover:underline">
+                                                    {{ $fdAccount->member?->member_no ??
+                                                        ($fdAccount->member?->id ? str_pad($fdAccount->member->id, 5, '0', STR_PAD_LEFT) : 'N/A') }}
+                                                    -
+                                                    {{ $fdAccount->member?->member_info_first_name }}
+                                                    {{ $fdAccount->member?->member_info_last_name }}
+                                                </a>
                                             </td>
+
                                         </tr>
 
                                         <tr class="border-b">
@@ -229,8 +239,8 @@
                                         </tr>
 
                                         <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">Status </td>
-                                            <td class="py-2">{{ $fdAccount->active == 1 ? 'Active' : 'Inactive' }}</td>
+                                            <td class="font-semibold  uppercase py-2">Status </td>
+                                            <td class="py-2 text-primary">{{ $fdAccount->active == 1 ? 'Active' : 'Inactive' }}</td>
                                         </tr>
 
                                     </tbody>

@@ -37,6 +37,7 @@ class AccountController extends Controller
                     'account_status' => $account->account_status,
                     'account_type' => $account->account_type,
                     'branch_name' => $account->branch->branch_name ?? null,
+                    'bank_name' => $account->bank_name,
                     'ifsc_code' => $account->branch->ifsc_code ?? null,
                     'open_date' => optional($account->open_date)->format('d-m-Y'),
                     'account_status' => $account->status ?? 'active',
