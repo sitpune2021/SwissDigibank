@@ -109,12 +109,32 @@
             </tr>
         </thead>
 
-        <tr class="bg-gray-50 font-semibold border border-gray-300">
-            <td colspan="7" class="p-2 text-right border border-gray-300"></td>
-            <td class="p-2 text-right text-green-600 border border-gray-300">
-                ₹ {{ number_format($loan, 2) }}
-            </td>
-        </tr>
+          <!-- TOTAL row -->
+          <tr class="bg-gray-50 font-semibold border border-gray-300">
+              <td colspan="3" class="p-2 border border-gray-300 text-center"></td>
+              <td class="p-2 border border-gray-300 text-right">
+                
+              </td>
+              {{-- Interest column only for flat_advanced_interest --}}
+              @if($interestType === 'flat_advanced')
+                  <td class="p-2 border border-gray-300 text-right text-red-600">
+                      ₹ {{ $total_interest > 0 ? number_format($total_interest, 2) : '0.00' }}
+                  </td>
+              @else
+                  <td class="p-2 border border-gray-300 text-right">
+                      {{-- Empty cell for other interest types --}}
+                  </td>
+              @endif
+              <td class="p-2 border border-gray-300 text-right">
+                
+              </td>
+              <td class="p-2 border border-gray-300 text-right">
+                  
+              </td>
+              <td class="p-2 border border-gray-300 text-right">
+                  ₹ {{ number_format($loan, 2) }}
+              </td>
+          </tr>
 
         <tbody>
             @foreach($schedule as $row)
