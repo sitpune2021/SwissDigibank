@@ -73,7 +73,7 @@
                                     <td class="px-4 py-2">{{ $tran->remarks ?? '-' }}</td>
                                     <td class="px-4 py-2">
                                         <span
-                                            class="px-2 py-1 text-xs font-semibold  {{ $tran->status == 'Approved' ? 'bg-green-500' : 'bg-yellow-500' }}">
+                                            class="px-2 py-1 text-xs font-semibold  {{ $tran->status == 'Approved' ? '' : '' }}">
                                             {{ $tran->status ?? 'Pending' }}
                                         </span>
 
