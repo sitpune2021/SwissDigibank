@@ -71,7 +71,7 @@
                     <tr>
                         <td style="padding:4px 2px; vertical-align:top; font-weight:bold;">Av Bal.:</td>
                         <td style="padding:4px 2px; vertical-align:top;">
-                            {{ number_format($trans->balance_available, 2) }}
+                            {{ number_format($fdBalance, 2) }}
                         </td>
                     </tr>
                     <tr>

@@ -131,7 +131,7 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-row gap-2">
                 <h3 class="text-xl uppercase font-semibold">
-                    DD Account - DDA{{ $fdAccount->id }} - Unlink Saving Account
+                  FD Account{{ $fdAccount->id }} - Unlink Saving Account
                 </h3>
             </div>
         </div>
@@ -143,7 +143,7 @@
                         <div class=" py-3">
                             <h3 class="text-lg border-b font-semibold text-black uppercase">
                                 Saving Account - <a href="" class="text-primary text-lg">{{ $fdAccount->id }}</a> is
-                                linked for Auto Debit DD Installment.
+                                linked for Auto Debit FD Installment.
                             </h3>
                         </div>
                         <div class=" overflow-x-auto">
@@ -176,10 +176,10 @@
                 </div>
 
                 <div id="" class=" w-full    ">
-                    <div class="toggle-box box">
+                   <div class="toggle-box box">
                         <div
                             class=" bg-secondary/5 rounded-t-lg px-4 py-3 flex items-center justify-between cursor-pointer toggle-header">
-                            <h3 class="text-lg uppercase font-semibold">DD Info</h3>
+                            <h3 class="text-lg uppercase font-semibold">FD Info</h3>
                             <i class="las la-minus text-xl toggle-icon"></i>
                         </div>
 
@@ -190,50 +190,37 @@
                                         <tr class="py-2 border-b">
                                             <td class="font-semibold uppercase py-2 w-40">customer</td>
                                             <td class="py-2">
-                                                {{ ($fdAccount->member?->member_no ??
-                                                    ($fdAccount->member?->id ? str_pad($ddaccount->member->id, 6, '0', STR_PAD_LEFT) : '')) .
-                                                    ' - ' .
-                                                    ($fdAccount->member?->member_info_first_name ?? 'N/A') .
-                                                    ' - ' .
-                                                    ($fdAccount->member?->member_info_last_name ?? '') }}
+                                                <a href="{{ $fdAccount?->member?->id ? route('member.show', $fdAccount->member->id) : '#' }}"
+                                                    class="text-primary hover:underline">
+                                                    {{ $fdAccount->member?->member_no ??
+                                                        ($fdAccount->member?->id ? str_pad($fdAccount->member->id, 5, '0', STR_PAD_LEFT) : 'N/A') }}
+                                                    -
+                                                    {{ $fdAccount->member?->member_info_first_name }}
+                                                    {{ $fdAccount->member?->member_info_last_name }}
+                                                </a>
+                                            </td>
+
+                                        </tr>
+
+                                        <tr class="border-b">
+                                            <td class="font-semibold uppercase py-2">Open Date</td>
+                                            <td class="py-2">
+                                                {{ $fdAccount->open_date ? \Carbon\Carbon::parse($fdAccount->open_date)->format('d-m-Y') : '' }}
                                             </td>
                                         </tr>
 
                                         <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">DD No.</td>
-                                            <td class="py-2">{{ $fdAccount->dd_no ?? 'N/A' }}</td>
-                                        </tr>
-
-                                        <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">Scheme</td>
-                                            <td class="py-2">{{ $fdAccount->scheme->scheme_name ?? 'N/A' }}</td>
-                                        </tr>
-
-                                        <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">Tenure</td>
-                                            <td class="py-2">{{ $fdAccount->total_installments ?? 'N/A' }}</td>
-                                        </tr>
-
-                                        <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">Frequency</td>
-                                            <td class="py-2">{{ $fdAccount->rd_dd_frequency ?? 'N/A' }}</td>
-                                        </tr>
-
-                                        <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">Principal Amt.</td>
-                                            <td class="py-2">{{ $fdAccount->dd_amount ?? 'N/A' }}</td>
-                                        </tr>
-
-                                        <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">Amount Received</td>
-                                            <td class="py-2">{{ $fdAccount->balance ?? 'N/A' }}</td>
-                                        </tr>
-
-                                        <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">Balance Available</td>
+                                            <td class="font-semibold uppercase py-2">Maturity Date</td>
                                             <td class="py-2">
-                                                {{ optional($fdAccount->transactions->last())->balance_available }}</td>
+                                                {{ $fdAccount->open_date ? \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y') : '' }}
+                                            </td>
                                         </tr>
+
+                                        <tr class="border-b">
+                                            <td class="font-semibold  uppercase py-2">Status </td>
+                                            <td class="py-2 text-primary">{{ $fdAccount->active == 1 ? 'Active' : 'Inactive' }}</td>
+                                        </tr>
+
                                     </tbody>
                                 </table>
                             </div>
