@@ -86,6 +86,7 @@ use App\Http\Controllers\EmployeeAkash;
 // Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
 Route::view('/privacy-policy', 'privacy-policy')
     ->name('privacy.policy');
+    
 Route::middleware(['guest', SessionProtection::class])->group(function () {
 
     Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -171,17 +172,12 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/calculateMaturity', [DdsAccountsController::class, 'calculateMaturity'])->name('ddsaccounts.calculateMaturity');
         Route::get('/dds-accounts/{id}/installments', [DdsAccountsController::class, 'installments'])
             ->name('ddsaccounts.installments');
-
-
         Route::get('/dds/{id}/regenerate', [DdsAccountsController::class, 'regenerateInstallment'])
             ->name('dds.installments.regenerate');
-
         Route::get(
             '/dds-accounts/{id}/installment-receipt/{instNo}',
             [DdsAccountsController::class, 'installmentReceipt']
         )->name('dds.installment.receipt');
-
-
         Route::get('/dds-accounts/{id}/transactions/{transaction_id?}', [DdsAccountsController::class, 'transactions'])
             ->name('dds.transactions');
         // Deposit Routes
@@ -193,43 +189,32 @@ Route::middleware('auth.user')->group(function () {
             ->name('ddsaccounts.withdraw-create');
         Route::post('dds-accounts/{id}/withdraw', [DdsAccountsController::class, 'withdraw'])
             ->name('ddsaccounts.withdraw');
-
         Route::get('dds-accounts/{id}/link-saving-account', [DdsAccountsController::class, 'createLinkSavingAcc'])
             ->name('ddsaccounts.createLinkSavingAcc');
         Route::post(
             'dds-accounts/{id}/link-saving',
             [DdsAccountsController::class, 'storeLinkSavingAcc']
         )->name('ddsaccounts.storeLinkSavingAcc');
-
         Route::get('ddsaccounts/{id}/unlink', [DdsAccountsController::class, 'confirmUnlink'])
             ->name('ddsaccounts.confirmUnlink');
         Route::post('ddsaccounts/{id}/unlink', [DdsAccountsController::class, 'storeLinkSavingAcc'])
             ->name('ddsaccounts.storeLinkSavingAcc');
-
         Route::get('dds-accounts/{id}/credit-interest', [DdsAccountsController::class, 'createCreditInterest'])
             ->name('ddsaccounts.createCreditInterest');
-        Route::post(
-            'dds-accounts/{id}/credit-interest/store',
-            [DdsAccountsController::class, 'storeCreditInterest']
-        )
+        Route::post('dds-accounts/{id}/credit-interest/store', [DdsAccountsController::class, 'storeCreditInterest'])
             ->name('ddsaccounts.storeCreditInterest');
-
         Route::get('dds-accounts/{id}/mark-lien-account', [DdsAccountsController::class, 'createMarkLienAccount'])
             ->name('ddsaccounts.MarkLienAccount');
-
         Route::get('/dd/account-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('dd.accounts.nominee');
         Route::post('/dds-accounts/{type}/{id}', [AccountsController::class, 'saveNominees'])->name('dds-accounts.nominees.save');
-
         Route::get('/change-account-info/{id}', [DdsAccountsController::class, 'changeAccountInfo'])->name('dd.change.account.info');
         Route::post('/change-account-info/{id}', [DdsAccountsController::class, 'updateAccountInfo'])
             ->name('dd.update.account.info');
-
         Route::get('/change-minor-info/{id}', [DdsAccountsController::class, 'changeMinorInfo'])->name('ddChange.minor.info');
         Route::post(
             '/ddsaccounts/{id}/update-minor',
             [DdsAccountsController::class, 'updateMinor']
         )->name('ddsaccounts.updateMinor');
-
         Route::get('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'createforeClose'])->name('dds-accounts.fore-close');
         // Route::post('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'storeForeClose'])->name('dds-accounts.store-fore-close');
         Route::get('/dds-account/comment/{id}', [DdsAccountsController::class, 'addComment'])->name('dds.addComment');
@@ -237,7 +222,6 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/dds-account/uploadDocuments/{id}', [DdsAccountsController::class, 'uploadDocuments'])->name('dds.uploadDocuments');
         Route::post('/dds-account/storeDocuments/{id}', [DdsAccountsController::class, 'storeDocuments'])->name('dds.storeDocuments');
         Route::delete('/dds-account/{id}', [DdsAccountsController::class, 'destroy'])->name('documents.destroy');
-
         // Show Account Details
         Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])
             ->name('ddsaccounts.show');
@@ -249,18 +233,20 @@ Route::middleware('auth.user')->group(function () {
             [DdsAccountsController::class, 'printReceipt1']
         )->name('dds.transaction.receipt');
     });
+
+
+    // RD route 
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
     Route::get('/rd-schemes/{scheme_code}', [RDCalculatorController::class, 'getScheme']);
 
+    // MEMBER Route
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);
         Route::resource('minor', MinorController::class);
         Route::get('/members/{member_id}/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
-
         // Route::get('/members/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
         Route::post('/members/member/store-comment', [MemberController::class, 'storeComment'])->name('member.storeComment');
-
         Route::get('/member/{id}/documents', [MemberController::class, 'documentShow'])->name('member.document');
         Route::post('/member/{id}/documents', [MemberController::class, 'documentUpdate'])->name('member.documentupdate');
         Route::get('/members/{id}/address', [MemberController::class, 'addressedit'])->name('member.address');
@@ -284,26 +270,25 @@ Route::middleware('auth.user')->group(function () {
         // Route to show the form for clearing dues (GET request)
         Route::get('members/{id}/transactions/other-charges/{chargeId}/clear-due', [MemberController::class, 'showClearDueForm'])
             ->name('members.other-charges.clearDue.form');
-        // Route to handle clearing dues (POST request)
         Route::post('members/{id}/transactions/other-charges/{chargeId}/clear-due', [MemberController::class, 'storeChargesDue'])
             ->name('members.other-charges.clearDue.handle');
         Route::get('/members/receipt/print/{id}', [MemberController::class, 'printReceipt'])
             ->middleware('auth')
             ->name('transactions.print-receipt');
-
         Route::get('/members/application-form/{id}', [MemberController::class, 'applicationForm'])->name('members.application_form');
-
-        Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
         Route::get('/members/{id}/transactions/other-charges', [MemberController::class, 'otherCharges'])
             ->name('members.other-charges');
         Route::post('/members/{id}/transactions/other-charges', [MemberController::class, 'storeOtherCharges'])->name('members.other-charges.store');
 
+        // -------------------------------------Shareholding Route----------------------------------------
+        Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
         Route::get('/shareholding/view/{id}', [ShareholdingController::class, 'viewShareholding'])->name('viewShareholding');
         Route::get('/shareholding/{id}', [MemberController::class, 'shareholding'])->name('shareholding');
-
         Route::resource('shares-holdings', ShareholdersController::class);
         Route::resource('share-certificates', controller: ShareCertificateController::class);
         Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
+
+        //-------------------------------------- Form 15 route-------------------------------------------------
         Route::resource('form15g15h', Form15Gor15HController::class);
         Route::get('/form15g15h/download/{member_id}', [Form15Gor15HController::class, 'download'])->name('form15g15h.download');
         Route::get('/form15g15h/download/promoter/{promoter_id}', [Form15Gor15HController::class, 'downloadByPromoter'])->name('form15g15h.download.promoter');
@@ -327,6 +312,7 @@ Route::get('/get-member-shares/{id}', function ($id) {
 
 Route::get('/get-promoter-shares/{id}', [ShareTransferController::class, 'getPromoterShares']);
 
+//---------------------------- Saving Account route-------------------------------------------------------
 Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::resource('schemes', SchemesController::class);
     Route::resource('accounts', AccountsController::class);

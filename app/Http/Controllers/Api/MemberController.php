@@ -32,8 +32,8 @@ class MemberController extends Controller
                     'full_name' => $fullName,
                     'member_info_email' => $member->member_info_email,
                     'member_info_mobile_no' => $member->member_info_mobile_no,
-                    'member_kyc_aadhaar_no  ' => $member->kyc->member_kyc_aadhaar_no,
-                    'member_kyc_pan_no  ' => $member->kyc->member_kyc_pan_no,
+                    'member_kyc_aadhaar_no' => $member->kyc->member_kyc_aadhaar_no,
+                    'member_kyc_pan_no' => $member->kyc->member_kyc_pan_no,
                 ]
             ], 200);
         } catch (\Exception $e) {
