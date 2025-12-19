@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Loan Api route 
 Route::get('loan-types', [LoanTypeController::class, 'loanTypes']);
-// Route::get('loan-types/{id}/schemes', [LoanTypeController::class, 'loanSchemes']);
-Route::get('user/{userId}/loans', [LoanTypeController::class, 'fetchUserLoans']);
+Route::get('/loan-types/{loanType}/schemes', [LoanTypeController::class, 'getSchemes']);
 
+// Route::get('loan-types/{id}/schemes', [LoanTypeController::class, 'loanSchemes']);
+// Route::get('user/{userId}/loans', [LoanTypeController::class, 'fetchUserLoans']);
