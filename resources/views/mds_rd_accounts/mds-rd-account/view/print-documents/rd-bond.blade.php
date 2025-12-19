@@ -205,15 +205,20 @@
 
                 </div>
 
-                <div style="margin-left:30px; margin-right:120px; text-align:left; ">
+                <div style="margin-left:30px; margin-right:120px; text-align:center; ">
+                    <p>This is not a negotiable document</p>
                     <div class="company">
                         SBC GLOBAL
                     </div>
-                    <div class="subtitle" style="font-weight: bold;"> DEPOSIT CONFIRMATION/ RENEWAL ADVICE</div>
-                    <div class="small muted">BRANCH : {{ $company_address ?? 'Address here' }}</div>
-                    <div class="small muted">
-                        DATE :{{ $date ?? 'Address here' }}
+
+                    <div class="" style="text-align: center">
+                        SBC GLOBAL TOWAR , CHANDABAI PLOT NEAR BUS STOP SHEGAON Maharashtra - 444001
                     </div>
+                    <div class="" style="text-align: center">
+                        REG NO : 969/03-04
+                    </div>
+                    <div class="subtitle" style="font-weight: bold; text-align: center"> RECURRING DEPOSIT ADVICE <br>(In lieu of recurring deposit)</div>
+
                 </div>
 
                 {{-- <div class="header-right"></div> --}}
@@ -227,73 +232,93 @@
             <tr>
                 <td style="width:60%" class="no-border">
                     <div>
-                        {{ $misaccount->member->member_info_first_name ?? 'N/A' }}
-                        {{ $misaccount->member->member_info_last_name ?? '' }}
+                        {{ $rdAccount->member->member_info_first_name ?? 'N/A' }}
+                        {{ $rdAccount->member->member_info_last_name ?? '' }}
                     </div>
                     <div class="small muted">
-                        {{ $misaccount->member_address ?? 'N/A' }}
-                    </div>
-                    <div class="small mt-6">REPAYABLE TO:<br>
-                        {{ $misaccount->nominee->first()->nominee_name ?? 'N/A' }}
+                        {{ $rdAccount->member_address ?? 'N/A' }}
                     </div>
                 </td>
                 <td style="width:40%" class="no-border right">
-                    <div class="small">MEMBER NO :
-                        {{ $misaccount->member->member_no ?? '' }}
+                    <div class="small">
+                        BRANCH : {{ $company_address ?? '' }}
                     </div>
-                    <div class="small"> MIS NO :
-                        {{ $misaccount->id ?? '' }}
+                    <div class="small"> MEMEBER NO :
+                        {{ $rdAccount->id ?? '' }}
                     </div>
-                    <div class="small"> SCHEME :
-                        {{ $misaccount->fdScheme->scheme_name ?? '' }}
+                    <div class="small">
+                        DATE :{{ $date ?? '' }}
                     </div>
-                    <div class="small">Interest Payout :
-                        {{ $misaccount->interest_payout_type  }}
-                    </div>
-
-                    <div class="small"> TOTAL INTEREST :
-                        ₹ {{ $misaccount->total_interest }}
-
+                    <div class="small">
+                        NOMINEE :
+                        {{ optional($rdAccount->nominee->first())->nominee_name ?? 'Not Reg.' }}
                     </div>
 
                     <div class="small">
-                        NOMINEE: Not Reg.
+                        RELATION :
+                        {{ optional($rdAccount->nominee->first())->relation ?? 'Not Reg.' }}
                     </div>
                 </td>
             </tr>
         </table>
 
+        <div>
+            <p style="font-size:11px;"> Dear Sir/ Madam<br>
+                We have pleasure in confirming details of the following amount held in deposit with us. Thank you for banking with us.</p>
+        </div>
+
+        <table class="no-border mt-6">
+            <tr>
+
+                <td style="text-align:left !important;"> Scheme Code : {{ $rdAccount->scheme->scheme_code ?? '' }}</td>
+                <td> Scheme Name : {{ $rdAccount->scheme->scheme_name ?? '' }}</td>
+            </tr>
+        </table>
         <!-- Main table -->
         <table class="btable mt-6">
             <thead>
                 <tr>
-                    <th>Deposit Date</th>
-                    <th>
-                        Deposit Period
-                        (Year, Month, Day)
-                    </th>
-                    <th>Interest Rate (%)</th>
-                    <th>Deposit Amount (₹)</th>
+                    <th>Account No</th>
+                    <th>Term</th>
+                    <th>Interest @</th>
+                    <th>Amount</th>
+                    <th>Frequency</th>
+                    <th>Open Date</th>
                     <th>Maturity Date</th>
-                    <th>Maturity Amount (₹)</th>
                 </tr>
             </thead>
             <tbody>
+            <tbody>
                 <tr>
-                    <td class="center">{{ \Carbon\Carbon::parse($misaccount->open_date ?? now())->format('d-m-Y') }}</td>
+                    <td class="center">{{ $rdAccount->rd_no }}</td>
+
                     <td class="center">
-                        {{ $misaccount->tenure_year ? $misaccount->tenure_year . ' Year(s) ' : '' }}
-                        {{ $misaccount->tenure_month ? $misaccount->tenure_month . ' Month(s) ' : '' }}
-                        {{ $misaccount->tenure_day ? $misaccount->tenure_day . ' Day(s)' : '' }}
+                        {{ $rdAccount->scheme->tenure_of_rd_dd_value }}
+                        {{ strtoupper($rdAccount->scheme->tenure_of_rd_dd_type) }}
                     </td>
-                    <td class="center"> {{ $misaccount->fdScheme->fdslabs->first()->interest_rate ?? '' }}</td>
+
+                    <td class="center">
+                        {{ $rdAccount->scheme->anuual_interest_rate }} %
+                    </td>
+
                     <td class="right amount">
-                        {{ number_format($misaccount->mis_amount ?? 0, 2) }}
+                        ₹ {{ number_format($rdAccount->rd_amount, 2) }}
                     </td>
-                    <td class="center">{{ \Carbon\Carbon::parse($misaccount->maturity_date ?? now())->format('d-m-Y') }}
+
+                    <td class="center">
+                        {{ ucfirst($rdAccount->scheme->rd_dd_frequency) }}
                     </td>
-                    <td class="right amount">{{number_format($misaccount->maturity_amount ?? 0,2)}}
+
+                    <td class="center">
+                        {{ \Carbon\Carbon::parse($rdAccount->open_date)->format('d-m-Y') }}
+                    </td>
+
+                    <td class="center">
+                        {{ \Carbon\Carbon::parse($rdAccount->maturity_date)->format('d-m-Y') }}
+                    </td>
                 </tr>
+            </tbody>
+
             </tbody>
         </table>
 
@@ -302,12 +327,14 @@
             <tr>
                 <td style="width:70%" class="no-border">
 
-                    <div class="big">₹ {{ $amount_in_words ?? ($amount_words ?? '') }} </div>
+                    <div class="big">
+    Maturity Value : ₹ {{ number_format($rdAccount->maturity_amount, 2) }} (approx.)
+</div>
+
                 </td>
                 <td style="width:30%" class="no-border right">
                     <div class="" style="text-align: center; margin-top: 6px;">
-                        For SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA
-                        LIMITED
+                        Your Faithfully
                     </div>
 
                 </td>
@@ -330,13 +357,6 @@
 
         <div class="" style="text-align: center; margin-top: 20px;">
             THANK YOU FOR YOUR CONTINUED PATRONAGE WITH OUR SOCIETY
-        </div>
-        <div class="" style="text-align: center">
-            <strong> REGD OFFICE: </strong>
-            SBC GLOBAL TOWAR , CHANDABAI PLOT NEAR BUS STOP SHEGAON Maharashtra - 444001
-        </div>
-        <div class="" style="text-align: center">
-            <strong>REG NO </strong>: 969/03-04
         </div>
 
     </div>

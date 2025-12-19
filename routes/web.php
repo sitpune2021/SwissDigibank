@@ -237,6 +237,16 @@ Route::middleware('auth.user')->group(function () {
             '/print-documents/transaction-receipt/{accountId}/{transactionId}',
             [DdsAccountsController::class, 'printReceipt1']
         )->name('dds.transaction.receipt');
+
+        //print documents
+        Route::get('ddsaccounts/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
+            ->name('dd.bond.form');
+
+        Route::get('ddsaccounts/opening-form/{id}', [DdsAccountsController::class, 'ddOpeningForm'])
+            ->name('dd.opening.form');
+
+        Route::get('ddsaccounts/closing-form/{id}', [DdsAccountsController::class, 'ddClosingForm'])
+            ->name('dd.closing.form');
     });
 
 
@@ -414,6 +424,14 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/fd-add-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('fd.add.nominee');
     Route::post('fd/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('fd.nominees.save');
 
+    //print document
+     Route::get('/opening-form/{id}', [FdController::class, 'fdOpeningForm'])
+        ->name('fd.opening.form');
+
+    Route::get('/closing-form/{id}', [FdController::class, 'fdClosingForm'])
+        ->name('fd.closing.form');
+
+
     Route::resource('misaccount', MisaccountController::class);
     // Route::get('misaccount/create', [MisaccountController::class, 'create']);
     // Route::get('/misaccount/create/{member}', [MisAccountController::class, 'create']);
@@ -462,11 +480,6 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('/misaccount/{id}/deduct-reverse-tds', [MisaccountController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('mis.creditdebit.store');
 
-    Route::get('/misaccount/{id}/print-bond', [MisaccountController::class, 'misBondForm'])->name('misaccount.printbond');
-    Route::get('/mis-opening-form/{id}', [MisaccountController::class, 'misOpeningForm'])->name('misaccount.openingform');
-    Route::get('/mis-account/{id}/closing-form', [MisaccountController::class, 'misClosingForm'])
-        ->name('misaccount.closingform');
-
     Route::get('/misaccount/uploadDocuments/{id}', [MisaccountController::class, 'uploadDocuments'])->name('mis.uploadDocuments');
     Route::post('/misaccount/storeDocuments/{id}', [MisaccountController::class, 'storeDocuments'])->name('mis.storeDocuments');
     Route::delete('/documents/{id}', [MisaccountController::class, 'destroy'])->name('documents.destroy');
@@ -478,6 +491,13 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
         ->name('mis.updateSetting');
     Route::post('/misaccount/{id}/update-setting', [MisaccountController::class, 'updateSetting'])
         ->name('mis.updateSetting');
+
+        //print document
+    Route::get('/misaccount/{id}/print-bond', [MisaccountController::class, 'misBondForm'])->name('misaccount.printbond');
+    Route::get('/mis-opening-form/{id}', [MisaccountController::class, 'misOpeningForm'])->name('misaccount.openingform');
+    Route::get('/mis-account/{id}/closing-form', [MisaccountController::class, 'misClosingForm'])
+        ->name('misaccount.closingform');
+
 });
 
 Route::group(['prefix' => 'mds-rds-dds'], function () {
@@ -522,6 +542,12 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
         ->name('rd.storeComment');
 
     Route::post('/rdaccount/{id}/update-setting', [RdAccountController::class, 'updateSetting'])->name('rd.updateSetting');
+
+    // print documents
+        Route::get('/rdaccount/{id}/print-bond', [RdAccountController::class, 'rdBondForm'])->name('rdaccount.printbond');
+        Route::get('/rdaccount/opening-form/{id}',[RdAccountController::class, 'rdOpeningForm'])->name('opening.form');
+        Route::get('/rdaccount/closing-form/{id}',[RdAccountController::class, 'rdClosingForm'])->name('closing.form');
+
 });
 
 Route::group(['prefix' => 'deposits'], function () {

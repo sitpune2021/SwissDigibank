@@ -61,7 +61,7 @@ class FDController extends Controller
     public function store(Request $request)
     {
         try {
-            Log::info('FD Scheme Store initiated.', ['user_id' => auth()->id(), 'request_data' => $request->all()]);
+            Log::info('FD Scheme Store initiated.', ['user_id' => auth::id(), 'request_data' => $request->all()]);
 
             $validated = $request->validate([
                 'scheme_name'          => 'required|string|max:255',
@@ -1531,5 +1531,74 @@ class FDController extends Controller
         $balance    = $balances[$id] ?? 0;
 
         return view('fd_mis_account.fd-account.interest-tds.deduct_reverse_tds', compact('fdAccount', 'balance'));
+    }
+
+    public function fdOpeningForm($id)
+    {
+        // Load FD account with required relations
+        $account = FdAccount::with([
+            'member.kyc',
+            'member.address.state',
+            'member.branch',
+            'fdScheme.fdslabs'
+        ])->findOrFail($id);
+
+        // FD slab-based interest calculation
+        $tenureMonths = $account->tenure_months ?? 0;
+
+        $slab = $account->fdScheme->fdslabs
+            ->where('from_month', '<=', $tenureMonths)
+            ->where('to_month', '>=', $tenureMonths)
+            ->first();
+
+        $interestRate = $slab->interest_rate ?? $account->rate_of_interest ?? 0;
+
+        $member = $account->member;
+
+        $pdf = app('dompdf.wrapper')
+            ->loadView(
+                'fd_mis_account.fd-account.print-documents.accountopeningform',
+                compact('account', 'member', 'interestRate')
+            )
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('fd-opening-' . $id . '.pdf');
+    }
+
+    public function fdClosingForm($id)
+    {
+        $fdAccount = FdAccount::with(['member.branch'])->findOrFail($id);
+
+        $data = [
+            'name' => $fdAccount->member->member_info_first_name . ' ' .
+                $fdAccount->member->member_info_last_name,
+
+            'date' => now()->format('d-m-Y'),
+
+            // FD Receipt / Agreement No
+            'agreement_no' => $fdAccount->fd_no ?? 'FD' . str_pad($fdAccount->id, 5, '0', STR_PAD_LEFT),
+
+            'holder_name' => strtoupper(
+                $fdAccount->member->member_info_first_name . ' ' .
+                    $fdAccount->member->member_info_last_name
+            ),
+
+            'expiry_date' => \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y'),
+
+            'branch_name' => $fdAccount->member->branch->branch_name ?? '',
+
+            'branch_address' => $fdAccount->member->branch->branch_address ?? '',
+        ];
+
+        $pdf = app('dompdf.wrapper')
+            ->loadView(
+                'fd_mis_account.fd-account.print-documents.closingform',
+                $data
+            )
+            ->setPaper('A4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', true);
+
+        return $pdf->stream('fd-closing-form-' . $fdAccount->id . '.pdf');
     }
 }

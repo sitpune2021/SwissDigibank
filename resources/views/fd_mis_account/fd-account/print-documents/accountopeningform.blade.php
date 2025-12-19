@@ -116,6 +116,7 @@
 <body>
 
     <div class="form-container">
+
         <div style="width:100%; font-family: dejavusans; border-bottom: 2px solid #000 ; padding: 5px;">
 
             <!-- Logo -->
@@ -133,7 +134,8 @@
                 <div style="height:10px; margin-top: 40px;">&nbsp;</div>
 
                 <h4 style="   margin:0;  font-size:18px; font-weight:bold;">
-                    Account Opening Form For MIS Account </h4>
+                    Account Opening Form For FD
+                </h4>
             </div>
 
             <!-- Clear Float -->
@@ -151,8 +153,8 @@
             <tr>
                 <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: RD</label></td>
                 <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: DD</label></td>
-                <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: FD</label></td>
-                <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;" checked>: MIS</label></td>
+                <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;" checked>: FD</label></td>
+                <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: MIS</label></td>
                 <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: Saving</label></td>
             </tr>
             <tr>
