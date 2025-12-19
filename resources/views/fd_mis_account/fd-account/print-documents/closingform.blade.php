@@ -287,7 +287,7 @@
             <p style="font-size: 12px; text-align: center; font-weight: bold;">{{ $branch_address }}</p>
         </div>
 
-        <!-- <div class=""  >SBC GLOBAL TOWAR , KESHAV NAAR CHOWK NEAR JANORKAR MARRAIGE HALL RING ROAD AKOLA Maharashtra - 444001</div> -->
+        <div class=""  >SBC GLOBAL TOWAR , KESHAV NAAR CHOWK NEAR JANORKAR MARRAIGE HALL RING ROAD AKOLA Maharashtra - 444001</div>
 
     </div>
 </body>

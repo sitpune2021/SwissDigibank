@@ -144,7 +144,7 @@
             </div>
         </div>
 
-        <div x-data="{ open: false }" class="relative inline-block">
+         <div x-data="{ open: false }" class="relative inline-block">
 
             <a @click="open = !open"
                 class="btn-secondary px-2 py-2 rounded-10 flex items-center justify-between space-x-2">
@@ -159,12 +159,17 @@
                 class="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                 <ul class="py-2">
                     <li>
-                        <a href="#"
+                        <a href="{{route('rdaccount.printbond',$rdAccount->id)}}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
+                            RD BOND</a>
+                    </li>
+                    <li>
+                        <a href="{{route('opening.form',$rdAccount->id)}}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
                             ACCOUNT OPENING FORM</a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="{{ route('closing.form', $rdAccount->id) }}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
                             CLOSING FORM</a>
                     </li>
