@@ -9,7 +9,7 @@ class GoldLoanScheme extends Model
 {
     use HasFactory;
 
-   protected $fillable = [
+    protected $fillable = [
         'scheme_name',
         'scheme_code',
         'min_loan_amount',
@@ -41,13 +41,11 @@ class GoldLoanScheme extends Model
     ];
 
     protected $casts = [
-    'no_emi_slabs' => 'array',
-];
+        'no_emi_slabs' => 'array',
+    ];
 
     public function applications()
     {
         return $this->hasMany(LoanApplication::class, 'scheme_id');
     }
-
-
 }

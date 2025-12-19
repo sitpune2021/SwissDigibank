@@ -19,6 +19,9 @@ return [
             ['title' => 'PROMOTORS', 'route' => 'promotor.index'],
             ['title' => 'PROMOTOR SHARE HOLDINGS', 'route' => 'shareholding.index'],
             ['title' => 'DIRECTOR', 'route' => 'director.index'],
+            ['title' => 'UNENCUMBERED DEPOSITS', 'route' => 'unencumbered-deposits.index'],
+            ['title' => 'BANK ACCOUNT', 'route' => 'bank-account.index'],
+
         ],
     ],
     [
