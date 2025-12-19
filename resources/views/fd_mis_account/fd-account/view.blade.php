@@ -158,10 +158,41 @@
 
                 </div>
             </div>
-            <!-- Print Documents -->
-            <button class="btn-primary px-4 py-2 rounded-10 ">
-                PRINT DOCUMENTS
-            </button>
+           
+             <!-- Print Documents -->
+         <div x-data="{ open: false }" class="relative inline-block">
+
+            <a @click="open = !open"
+                class="btn-primary px-2 py-2 rounded-10 flex items-center justify-between space-x-2">
+                <i class="las la-print text-lg"></i><span>PRINT DOCUMENTS</span>
+                <svg class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </a>
+
+            <!-- Dropdown -->
+            <div x-show="open" @click.outside="open = false"
+                class="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+                <ul class="py-2">
+                    <!-- <li>
+                        <a href=""
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
+                            FD BOND</a>
+                    </li> -->
+                    <li>
+                        <a href="{{ route('fd.opening.form', $fdAccount->id) }}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
+                            ACCOUNT OPENING FORM</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('fd.closing.form', $fdAccount->id)}}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
+                            CLOSING FORM</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
 
             <!-- Show Audit Trail -->
             <button class="btn-primary px-4 py-2 rounded-10 ">

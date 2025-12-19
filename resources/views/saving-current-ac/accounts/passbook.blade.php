@@ -362,8 +362,7 @@
             ].filter(Boolean).join(', ') || '-' }
           </div>
           <div style="margin-top: 10px; font-weight: bold;">
-
-            JOINT HOLDER : ${accountData.joint_holder_name ?? '–'}
+            JOINT HOLDER : ${accountData.account_holder_type === 'joint' ? 'YES' : 'NO'}
           </div>
         </div>
       </div>
@@ -384,7 +383,7 @@
           <tr>
             <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">ACCOUNT TYPE</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
-            <td style="padding: 3px 4px; vertical-align: top;">${accountData.account_holder_type ?? '-'}</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.account_type ?? '-'} </td>
           </tr>
           <tr>
             <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">BRANCH CODE</td>
@@ -409,7 +408,7 @@
           <tr>
             <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">JOINT A/C HOLDER NAME</td>
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
-            <td style="padding: 3px 4px; vertical-align: top;">${accountData.joint_holder_name ?? '–'}</td>
+            <td style="padding: 3px 4px; vertical-align: top;">${accountData.joint_member1 ?? '–'}</td>
           </tr>
           <tr>
             <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">PHONE</td>

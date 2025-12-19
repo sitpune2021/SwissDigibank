@@ -172,7 +172,7 @@
     </div>
 
 
-    <div class="relative inline-block text-left">
+     <div class="relative inline-block text-left">
       <a id="dropdownButton" class="flex items-center text-sm px-2 py-2  rounded-10 btn-secondary text-white">
         <i class="las la-print mr-2"></i>
         PRINT DOCUMENTS
@@ -187,6 +187,7 @@
         <a href="{{ route('misaccount.closingform',$misaccount->id) }}" class="block px-4 py-2">CLOSING FORM</a>
       </div>
     </div>
+
 
 
 

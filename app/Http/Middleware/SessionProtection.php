@@ -11,18 +11,10 @@ class SessionProtection
     public function handle(Request $request, Closure $next)
     {
         // -----------------------------
-        // Prevent browser caching
-        // -----------------------------
-        $response = $next($request);
-        $response->headers->set('Cache-Control','no-cache, no-store, max-age=0, must-revalidate');
-        $response->headers->set('Pragma','no-cache');
-        $response->headers->set('Expires','Sat, 01 Jan 1990 00:00:00 GMT');
-
-        // -----------------------------
         // Auto logout after inactivity
         // -----------------------------
         if (Auth::check()) {
-            $timeout = config('session.lifetime') * 60; // minutes -> seconds
+            $timeout = config('session.lifetime') * 60; // minutes → seconds
             $lastActivity = session('last_activity_time', time());
 
             if ((time() - $lastActivity) > $timeout) {
@@ -37,6 +29,16 @@ class SessionProtection
             // Update last activity time
             session(['last_activity_time' => time()]);
         }
+
+        // Continue request
+        $response = $next($request);
+
+        // -----------------------------
+        // Prevent browser caching
+        // -----------------------------
+        $response->headers->set('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', 'Sat, 01 Jan 1990 00:00:00 GMT');
 
         return $response;
     }
