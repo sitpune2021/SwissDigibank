@@ -31,10 +31,9 @@ class LoanTypeController extends Controller
             'loan_types' => $loanTypes
         ]);
     }
-    public function fetchUserLoans($userId)
+    public function getSchemes($loanType)
     {
-        // Loan types mapping
-        $loanTypes = [
+        $loanTypeNames = [
             1 => 'Gold Loan',
             2 => 'Property / Mortgage Loan',
             3 => 'Loan Against Deposit',
@@ -45,55 +44,95 @@ class LoanTypeController extends Controller
             8 => 'CC / OD Loan',
         ];
 
-        $userLoans = [];
+        $schemes = match ((int)$loanType) {
+            1 => GoldLoanScheme::where('is_active', 1)->get(),
+            2 => MortgageScheme::where('is_active', 1)->get(),
+            3 => LoanAgainstScheme::where('is_active', 1)->get(),
+            4 => BusinessLoanScheme::where('is_active', 1)->get(),
+            5 => PersonalScheme::where('is_active', 1)->get(),
+            6 => DailyWeeklyScheme::where('is_active', 1)->get(),
+            7 => VehicalScheme::where('is_active', 1)->get(),
+            8 => CcOdLoanScheme::where('is_active', 1)->get(),
+            default => collect(),
+        };
 
-        foreach ($loanTypes as $id => $name) {
-            $schemes = collect(); // empty collection
-
-            // Fetch schemes based on loan type
-            switch ($id) {
-                case 1:
-                    $schemes = GoldLoanScheme::where('is_active', 1)->get();
-                    break;
-                case 2:
-                    $schemes = MortgageScheme::where('is_active', 1)->get();
-                    break;
-                case 3:
-                    $schemes = LoanAgainstScheme::where('is_active', 1)->get();
-                    break;
-                case 4:
-                    $schemes = BusinessLoanScheme::where('is_active', 1)->get();
-                    break;
-                case 5:
-                    $schemes = PersonalScheme::where('is_active', 1)->get();
-                    break;
-                case 6:
-                    $schemes = DailyWeeklyScheme::where('is_active', 1)->get();
-                    break;
-                case 7:
-                    $schemes = VehicalScheme::where('is_active', 1)->get();
-                    break;
-                case 8:
-                    $schemes = CcOdLoanScheme::where('is_active', 1)->get();
-                    break;
-            }
-
-            // Only include if schemes exist
-            if ($schemes->count() > 0) {
-                $userLoans[] = [
-                    'id' => $id,
-                    'name' => $name,
-                    'schemes' => $schemes
-                ];
-            }
+        if ($schemes->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No schemes found'
+            ], 404);
         }
 
         return response()->json([
             'status' => true,
-            'user_id' => $userId,
-            'available_loans' => $userLoans
+            'loan_type_id' => (int)$loanType,
+            'loan_type_name' => $loanTypeNames[$loanType] ?? 'Unknown',
+            'schemes' => $schemes
         ]);
     }
+    // public function fetchUserLoans($userId)
+    // {
+    //     // Loan types mapping
+    //     $loanTypes = [
+    //         1 => 'Gold Loan',
+    //         2 => 'Property / Mortgage Loan',
+    //         3 => 'Loan Against Deposit',
+    //         4 => 'Business Loan',
+    //         5 => 'Personal Loan',
+    //         6 => 'Daily / Weekly Loan',
+    //         7 => 'Vehical Loan',
+    //         8 => 'CC / OD Loan',
+    //     ];
+
+    //     $userLoans = [];
+
+    //     foreach ($loanTypes as $id => $name) {
+    //         $schemes = collect(); // empty collection
+
+    //         // Fetch schemes based on loan type
+    //         switch ($id) {
+    //             case 1:
+    //                 $schemes = GoldLoanScheme::where('is_active', 1)->get();
+    //                 break;
+    //             case 2:
+    //                 $schemes = MortgageScheme::where('is_active', 1)->get();
+    //                 break;
+    //             case 3:
+    //                 $schemes = LoanAgainstScheme::where('is_active', 1)->get();
+    //                 break;
+    //             case 4:
+    //                 $schemes = BusinessLoanScheme::where('is_active', 1)->get();
+    //                 break;
+    //             case 5:
+    //                 $schemes = PersonalScheme::where('is_active', 1)->get();
+    //                 break;
+    //             case 6:
+    //                 $schemes = DailyWeeklyScheme::where('is_active', 1)->get();
+    //                 break;
+    //             case 7:
+    //                 $schemes = VehicalScheme::where('is_active', 1)->get();
+    //                 break;
+    //             case 8:
+    //                 $schemes = CcOdLoanScheme::where('is_active', 1)->get();
+    //                 break;
+    //         }
+
+    //         // Only include if schemes exist
+    //         if ($schemes->count() > 0) {
+    //             $userLoans[] = [
+    //                 'id' => $id,
+    //                 'name' => $name,
+    //                 'schemes' => $schemes
+    //             ];
+    //         }
+    //     }
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'user_id' => $userId,
+    //         'available_loans' => $userLoans
+    //     ]);
+    // }
     // public function loanSchemes($id)
     // {
     //     $loanTypes = [
