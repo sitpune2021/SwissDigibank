@@ -76,6 +76,8 @@ use App\Http\Controllers\VehicalDistributorController;
 use App\Http\Controllers\VendorController;
 use App\Http\Middleware\SessionProtection;
 use App\Http\Controllers\EmployeeAkash;
+use App\Http\Controllers\UnencumberedDepositController;
+use App\Http\Controllers\BankAccountController;
 
 
 // Clear cache 
@@ -86,7 +88,7 @@ use App\Http\Controllers\EmployeeAkash;
 // Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
 Route::view('/privacy-policy', 'privacy-policy')
     ->name('privacy.policy');
-    
+
 Route::middleware(['guest', SessionProtection::class])->group(function () {
 
     Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -133,6 +135,9 @@ Route::middleware('auth.user')->group(function () {
         Route::post('shareholding/transfer', [ShareholdingController::class, 'IsTransforror'])
             ->name('shareholding.transfer');
         Route::resource('director', DirectorController::class);
+        //------------------------------18-12-2025------------------------------------------//
+        Route::resource('unencumbered-deposits', UnencumberedDepositController::class);
+        Route::resource('bank-account', BankAccountController::class);
     });
 
     Route::group(['prefix' => 'user'], function () {

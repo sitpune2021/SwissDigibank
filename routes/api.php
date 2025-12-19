@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ApiTransactionController;
 use App\Http\Controllers\Api\SimVerificationController;
 use App\Http\Controllers\Api\ForgotLoginPasswordController;
 use App\Http\Controllers\Api\TabController;
+use App\Http\Controllers\Api\LoanTypeController;
 
 // login and logout route
 Route::post('login', [AuthController::class, 'login']);
@@ -40,3 +41,9 @@ Route::middleware('auth:sanctum')->get('/fd-accounts', [AccountController::class
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/rd-accounts', [AccountController::class, 'getRDAccountDetails']);
 });
+
+// Loan Api route 
+Route::get('loan-types', [LoanTypeController::class, 'loanTypes']);
+// Route::get('loan-types/{id}/schemes', [LoanTypeController::class, 'loanSchemes']);
+Route::get('user/{userId}/loans', [LoanTypeController::class, 'fetchUserLoans']);
+
