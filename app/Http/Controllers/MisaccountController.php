@@ -1163,7 +1163,7 @@ class MisaccountController extends Controller
 
     public function misBondForm($id)
     {
-        $misaccount = Misaccount::with(['member', 'fdScheme.fdslabs'])->findOrFail($id);
+        $misaccount = Misaccount::with(['member','nominee' ,'fdScheme.fdslabs'])->findOrFail($id);
         // Calculate amount in words
         $amountWords = $this->numToWords((int) round($misaccount->maturity_amount)) . ' Only';
 
@@ -1254,7 +1254,6 @@ class MisaccountController extends Controller
 
     public function misOpeningForm($id)
     {
-
         // Load MIS account with all required relations
         $account = Misaccount::with([
             'member.kyc',
@@ -1274,7 +1273,13 @@ class MisaccountController extends Controller
         $member = $account->member;
 
 
-        return view('fd_mis_account.misaccount.print-documents.accountopeningform', compact('account', 'member', 'interestRate'));
+          $pdf = app('dompdf.wrapper')->loadView('fd_mis_account.misaccount.print-documents.accountopeningform', compact('account', 'member', 'interestRate'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('mis-oping-' . $id . '.pdf');
+
+
+        // return view('fd_mis_account.misaccount.print-documents.accountopeningform', compact('account', 'member', 'interestRate'));
     }
 
 
@@ -1299,6 +1304,7 @@ class MisaccountController extends Controller
 
         return $pdf->stream('mis-closing-form-' . $misaccount->id . '.pdf');
     }
+
 
 
     public function uploadDocuments($id)
@@ -1399,4 +1405,6 @@ class MisaccountController extends Controller
 
         return back()->with('success', 'Document deleted successfully.');
     }
+
+    
 }

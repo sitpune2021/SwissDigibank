@@ -143,21 +143,21 @@
         <table>
             <tr>
                 <td>Member Folio No :</td>
-                <td style=" border: 1px solid #000; vertical-align: top; ">{{$account->members->member_no??''}}</td>
+                <td style=" border: 1px solid #000; vertical-align: top; ">{{$account->member->member_no??''}}</td>
                 <td colspan="2"></td>
                 <td>Account No : </td>
-                <td style=" border: 1px solid #000; vertical-align: top;">{{$account->id ??''}}</td>
+                <td style=" border: 1px solid #000; vertical-align: top;">{{$account->rd_no ??''}}</td>
             </tr>
             <tr>
-                <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: RD</label></td>
+                <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;"checked>: RD</label></td>
                 <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: DD</label></td>
                 <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: FD</label></td>
-                <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;" checked>: MIS</label></td>
+                <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: MIS</label></td>
                 <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: Saving</label></td>
             </tr>
             <tr>
                 <td>Scheme Name :</td>
-                <td style=" border: 1px solid #000;vertical-align: top; ">{{$account->fdscheme->scheme_name ??''}} </td>
+                <td style=" border: 1px solid #000;vertical-align: top; ">{{$account->scheme->scheme_name ??''}} </td>
                 <td style="text-align: right;">Interest Rate : </td>
                 <td style=" border: 1px solid #000;vertical-align: top; ">{{$interestRate??''}}</td>
                 <td style="text-align: right;">Date:</td>
@@ -248,7 +248,7 @@
                         <input
                             type="checkbox"
                             style="width: 20px; height: 20px;"
-                            {{ $account->interest_payout_type == 'monthly' ? 'checked' : '' }}> : Monthly
+                            {{ $account->scheme->interest_compounding_interval == 'monthly' ? 'checked' : '' }}> : Monthly
                     </label>
                 </td>
 
@@ -257,7 +257,7 @@
                         <input
                             type="checkbox"
                             style="width: 20px; height: 20px;"
-                            {{ $account->interest_payout_type == 'Quarterly' ? 'checked' : '' }}> : Quarterly
+                            {{ $account->scheme->interest_compounding_interval == 'Quarterly' ? 'checked' : '' }}> : Quarterly
                     </label>
                 </td>
 
@@ -266,7 +266,7 @@
                         <input
                             type="checkbox"
                             style="width: 20px; height: 20px;"
-                            {{ $account->interest_payout_type == 'Half Yearly' ? 'checked' : '' }}> : Half Yearly
+                            {{ $account->scheme->interest_compounding_interval == 'Half Yearly' ? 'checked' : '' }}> : Half Yearly
                     </label>
                 </td>
 
@@ -275,7 +275,7 @@
                         <input
                             type="checkbox"
                             style="width: 20px; height: 20px;"
-                            {{ $account->interest_payout_type == 'Yearly' ? 'checked' : '' }}> : Yearly
+                            {{ $account->scheme->interest_compounding_interval == 'Yearly' ? 'checked' : '' }}> : Yearly
                     </label>
                 </td>
 
@@ -284,7 +284,7 @@
                         <input
                             type="checkbox"
                             style="width: 20px; height: 20px;"
-                            {{ !in_array($account->interest_payout_type, ['monthly', 'Quarterly', 'Half Yearly', 'Yearly']) ? 'checked' : '' }}> : End of Term
+                            {{ !in_array($account->scheme->interest_compounding_interval, ['monthly', 'Quarterly', 'Half Yearly', 'Yearly']) ? 'checked' : '' }}> : End of Term
                     </label>
                 </td>
             </tr>
