@@ -176,12 +176,12 @@
       <a id="dropdownButton" class="flex items-center text-sm px-2 py-2  rounded-10 btn-secondary text-white">
         <i class="las la-print mr-2"></i>
         PRINT DOCUMENTS
-        <i id="dropdownArrow" class="las la-angle-down ml-2"></i>
+        <i id="dropdownArrows" class="las la-angle-down ml-2"></i>
 
       </a>
 
       <!-- Dropdown menu -->
-      <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-full bg-white border rounded-lg shadow-lg z-50">
+      <div id="dropdownsMenu" class="hidden absolute right-0 mt-2 w-full bg-white border rounded-lg shadow-lg z-50">
         <a href="{{ route('misaccount.printbond',$misaccount->id) }}" class="block px-4 py-2">MIS BOND</a>
         <a href="{{ route('misaccount.openingform',$misaccount->id) }}" class="block px-4 py-2">ACCOUNT OPENING FORM</a>
         <a href="{{ route('misaccount.closingform',$misaccount->id) }}" class="block px-4 py-2">CLOSING FORM</a>
@@ -1107,8 +1107,8 @@
 
   //dropdownButton for print doc
   const button = document.getElementById('dropdownButton');
-  const menu = document.getElementById('dropdownMenu');
-  const arrow = document.getElementById('dropdownArrow');
+  const menu = document.getElementById('dropdownsMenu');
+  const arrow = document.getElementById('dropdownArrows');
 
   button.addEventListener('click', (e) => {
     e.stopPropagation();
