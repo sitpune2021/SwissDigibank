@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MortgageLoanPrintDocumentsController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountsController;
@@ -76,8 +77,7 @@ use App\Http\Controllers\VehicalDistributorController;
 use App\Http\Controllers\VendorController;
 use App\Http\Middleware\SessionProtection;
 use App\Http\Controllers\EmployeeAkash;
-use App\Http\Controllers\UnencumberedDepositController;
-use App\Http\Controllers\BankAccountController;
+use App\Http\Controllers\GoldLoanPrintDocument;
 
 
 // Clear cache 
@@ -784,6 +784,13 @@ Route::group(['prefix' => 'gold-loan'], function () {
         ->name('gold-loan.applications.view-buttons.disburse-setting');
 
     Route::get('disburse-setting/{id}', [GoldLoanController::class, 'showdisbursesetting'])->name('disburse.setting');
+
+    // Print Document
+    //Route::get('agreement', [GoldLoanPrintDocument::class, 'loan_agreement'])->name('loan.agreement.pdf');
+    Route::get('/loan/{loan}/loan-agreement', 
+        [GoldLoanPrintDocument::class, 'loanAgreement']
+    )->name('loan.loanAgreement');
+
 });
 
 
@@ -901,6 +908,11 @@ Route::group(['prefix' => 'mortgage'], function () {
         ->name('mortgage.col_process_fee.store');
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
+
+//print documents view page  
+    //      Route::get('/loan/{loan}/loan-agreement', 
+    //     [MortgageLoanPrintDocumentsController::class, 'loanAgreement']
+    // )->name('loan.mortgageloanAgreement');
 });
 
 

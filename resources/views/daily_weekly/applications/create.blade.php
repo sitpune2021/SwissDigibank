@@ -59,12 +59,13 @@
                 <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
                         <div class="col-span-2 md:col-span-1">
-                             {{-- Application Date --}}           
+                            {{-- Application Date --}}
                             <label class="md:text-lg font-medium block mb-4">
                                 Application Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="date" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                value="{{ old('application_date', $application->application_date ?? date('Y-m-d')) }}">
+
+                            <input type="text" name="application_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                value="{{ \Carbon\Carbon::parse(old('application_date', $application->application_date ?? date('Y-m-d')))->format('d-m-Y') }}">
                         </div>
                         
                         <div class="col-span-2 md:col-span-1">
@@ -583,7 +584,7 @@
                             <div id="bankDropdownWrapper" class="mt-3 hidden">
                                 <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
                                <select id="bank_id" name="bank_id"
-                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     <option value="">-- Select Bank --</option>
                                     @foreach($banks as $id => $name)
                                         <option value="{{ $id }}"
@@ -597,15 +598,15 @@
                                 <div class="mt-3">
                                     <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
                                     <input type="text" name="cheque_no"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                         placeholder="Enter Cheque No" value="{{ old('cheque_no', $application->cheque_no ?? '') }}">
                                 </div>
 
                                 <!-- Cheque Date -->
                                 <div class="mt-3">
                                     <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                    <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <input type="text" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
                             </div>
 
@@ -615,8 +616,8 @@
                                     <label class="block text-sm font-medium text-gray-700">
                                         Transfer Date <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="date" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <input type="text" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
 
                                 <div>
@@ -624,7 +625,7 @@
                                         UTR / Transaction No. <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No." value="{{ old('utr_no', $application->utr_no ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
 
                                 <div>
@@ -1031,33 +1032,49 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-<!-- paymode info -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const radios = document.querySelectorAll('input[name="fee_mode"]');
-    const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
-    const onlineFields = document.getElementById("onlineFields");
+<!-- pay Mode -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
 
-    radios.forEach(radio => {
-        radio.addEventListener("change", () => {
-            bankDropdownWrapper.classList.add("hidden");
-            onlineFields.classList.add("hidden");
+        const radios = document.querySelectorAll('input[name="fee_mode"]');
+        const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
+        const onlineFields = document.getElementById("onlineFields");
 
-            if (radio.value === "cheque" && radio.checked) {
-                bankDropdownWrapper.classList.remove("hidden");
-            }
-            if (radio.value === "online" && radio.checked) {
-                onlineFields.classList.remove("hidden");
-            }
+        radios.forEach(radio => {
+            radio.addEventListener("change", () => {
+                bankDropdownWrapper.classList.add("hidden");
+                onlineFields.classList.add("hidden");
+
+                if (radio.value === "cheque" && radio.checked) {
+                    bankDropdownWrapper.classList.remove("hidden");
+                }
+                if (radio.value === "online" && radio.checked) {
+                    onlineFields.classList.remove("hidden");
+                }
+            });
         });
-    });
 
-    // Default dates
-    let today = new Date().toISOString().split('T')[0];
-    document.getElementById("cheque_date").value = today;
-    document.getElementById("transfer_date").value = today;
-});
-</script>
+            // ---- FIX: Set default date as d-m-Y ----
+            function getDMY() {
+                const d = new Date();
+                let day = String(d.getDate()).padStart(2, '0');
+                let month = String(d.getMonth() + 1).padStart(2, '0');
+                let year = d.getFullYear();
+                return `${day}-${month}-${year}`;
+            }
+
+            const chequeDateInput = document.getElementById("cheque_date");
+            if (chequeDateInput && !chequeDateInput.value) {
+                chequeDateInput.value = getDMY();
+            }
+
+            const transferDateInput = document.getElementById("transfer_date");
+            if (transferDateInput && !transferDateInput.value) {
+                transferDateInput.value = getDMY();
+            }
+
+        });
+    </script>
 
 <!-- Calculation and auto populate when select scheme -->
 <script>
