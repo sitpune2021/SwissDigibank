@@ -156,6 +156,10 @@
 
         @endif
 
+        <a href="{{ route('loan.loanAgreement', $application->id) }}"
+            class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            <i class="las la-print text-secondary"></i> LOAN AGREEMENT
+        </a>
 
         {{-- If NOT CANCELED (3) then show print menu --}}
         @if($application->status != 3 && $application->status != 0)

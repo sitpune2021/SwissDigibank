@@ -76,6 +76,7 @@ use App\Http\Controllers\VehicalDistributorController;
 use App\Http\Controllers\VendorController;
 use App\Http\Middleware\SessionProtection;
 use App\Http\Controllers\EmployeeAkash;
+use App\Http\Controllers\GoldLoanPrintDocument;
 
 
 // Clear cache 
@@ -765,6 +766,13 @@ Route::group(['prefix' => 'gold-loan'], function () {
         ->name('gold-loan.applications.view-buttons.disburse-setting');
 
     Route::get('disburse-setting/{id}', [GoldLoanController::class, 'showdisbursesetting'])->name('disburse.setting');
+
+    // Print Document
+    //Route::get('agreement', [GoldLoanPrintDocument::class, 'loan_agreement'])->name('loan.agreement.pdf');
+    Route::get('/loan/{loan}/loan-agreement', 
+        [GoldLoanPrintDocument::class, 'loanAgreement']
+    )->name('loan.loanAgreement');
+
 });
 
 
