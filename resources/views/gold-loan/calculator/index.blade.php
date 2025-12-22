@@ -63,9 +63,16 @@
                   data-active="{{ $item->is_active ? 'Yes' : 'No' }}"
                   data-charge="{{ $item->foreclosure_charges }}"
                   {{-- unique attributes for each --}}
-                  data-processing="{{ $item->processing_fee }}"
                   data-stamp="{{ $item->stamp_duty_charge }}"
                   data-insurance="{{ $item->insurance_fee }}"
+
+                  {{-- NEW CHARGES --}}
+                  data-processing="{{ $item->processing_fee }}"
+                  data-sms="{{ $item->sms_charge }}"
+                  data-fuel="{{ $item->fuel_charge }}"
+                  data-stationary="{{ $item->stationary_charge }}"
+                  data-maintenance="{{ $item->maintenance_charge }}"
+                  data-collection="{{ $item->collection }}"
                 >
                   {{ $item->scheme_name }}
                 </option>
@@ -165,21 +172,15 @@
               </div>
             </div>
 
-            <!-- Stamp Duty -->
-            <div class="col-span-2">
-              <label class="md:text-lg font-medium block mb-2">Stamp Duty</label>
-              <input type="number" name="manual_stamp"
-                class="w-full bg-white border rounded px-3 py-2"
-                placeholder="In % of Loan">
-            </div>
+            <tr>
+              <td class="font-semibold py-2 pr-4 uppercase">Stamp Duty</td>
+              <td class="py-2" id="schemeStamp">-</td>
+            </tr>
 
-            <!-- Insurance -->
-            <div class="col-span-2">
-              <label class="md:text-lg font-medium block mb-2">Insurance Charge</label>
-              <input type="number" name="manual_insurance"
-                class="w-full bg-white border rounded px-3 py-2"
-                placeholder="In % of Loan">
-            </div>
+            <tr>
+              <td class="font-semibold py-2 pr-4 uppercase">Insurance Fee</td>
+              <td class="py-2" id="schemeInsurance">-</td>
+            </tr>
 
             <!-- Fore Closure -->
             <div class="col-span-2">
@@ -343,10 +344,13 @@
               </div>
 
           </div>
+          <p id="emiRatioError" class="text-red-600 text-sm mt-1 hidden">
+              EMI Ratio total tenure se zyada nahi ho sakta
+          </p>
 
           
            <!-- Buttons -->
-          <div class="flex justify-center gap-4 pt-6">
+          <div class="flex justify-center mt-4 gap-4 pt-6">
             <button type="submit" class="btn-primary uppercase">CALCULATE</button>
             <a href="{{ route('gold-loan.schemes.index') }}" class="btn-outline uppercase">Back</a>
           </div>
@@ -379,6 +383,36 @@
                 <tr class="border-b border-gray-200"><td class="font-semibold py-2 pr-4 uppercase">Interest Type</td><td class="py-2" id="schemeType">-</td></tr>
                 <tr class="border-b border-gray-200"><td class="font-semibold py-2 pr-4 uppercase">Active</td><td class="py-2" id="schemeActive">-</td></tr>
                 <tr class="border-b border-gray-200"><td class="font-semibold py-2 pr-4 uppercase">Fore Closure Charges</td><td class="py-2" id="schemeCharge">-</td></tr>
+                <tr id="rowProcessing" class="border-b border-gray-200 hidden">
+                  <td class="font-semibold py-2 pr-4 uppercase">Processing Fee</td>
+                  <td class="py-2"><span id="schemeProcessing"></span> %</td>
+                </tr>
+
+                <tr id="rowSms" class="border-b border-gray-200 hidden">
+                  <td class="font-semibold py-2 pr-4 uppercase">SMS Charges per EMI</td>
+                  <td class="py-2">₹ <span id="schemeSms"></span></td>
+                </tr>
+
+                <tr id="rowFuel" class="border-b border-gray-200 hidden">
+                  <td class="font-semibold py-2 pr-4 uppercase">Fuel Charges per EMI</td>
+                  <td class="py-2">₹ <span id="schemeFuel"></span></td>
+                </tr>
+
+                <tr id="rowStationary" class="border-b border-gray-200 hidden">
+                  <td class="font-semibold py-2 pr-4 uppercase">Stationary Charges per EMI</td>
+                  <td class="py-2">₹ <span id="schemeStationary"></span></td>
+                </tr>
+
+                <tr id="rowMaintenance" class="border-b border-gray-200 hidden">
+                  <td class="font-semibold py-2 pr-4 uppercase">Maintenance Charges per EMI</td>
+                  <td class="py-2">₹ <span id="schemeMaintenance"></span></td>
+                </tr>
+
+                <tr id="rowCollection" class="border-b border-gray-200 hidden">
+                  <td class="font-semibold py-2 pr-4 uppercase">Collection Charges per EMI</td>
+                  <td class="py-2">₹ <span id="schemeCollection"></span></td>
+                </tr>
+
               </tbody>
             </table>
           </div>
@@ -584,6 +618,143 @@
 });
 </script>
 
+<!-- reducing emi - emi ratio validation -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.getElementById("loanForm");
+
+    const tenureInput = document.getElementById("tenure_months");
+    const chkDivide   = document.getElementById("divide_emi_ratio");
+
+    const emi1 = document.getElementById("emi_ratio_1");
+    const emi2 = document.getElementById("emi_ratio_2");
+
+    const errorBox = document.getElementById("emiRatioError");
+
+    // 🔹 Auto-calc EMI Ratio 2
+    emi1.addEventListener("input", function () {
+        const tenure = parseInt(tenureInput.value) || 0;
+        const first  = parseInt(emi1.value) || 0;
+
+        if (tenure > 0 && first >= 0) {
+            emi2.value = tenure - first;
+        }
+    });
+
+    // 🔹 FORM SUBMIT VALIDATION
+    form.addEventListener("submit", function (e) {
+
+        errorBox.classList.add("hidden");
+
+        // ✅ sirf reducing + checkbox ON case
+        if (chkDivide.checked) {
+
+            const tenure = parseInt(tenureInput.value) || 0;
+            const r1 = parseInt(emi1.value) || 0;
+            const r2 = parseInt(emi2.value) || 0;
+
+            if ((r1 + r2) > tenure) {
+                e.preventDefault();   // ⛔ form stop
+                errorBox.classList.remove("hidden");
+                errorBox.innerText =
+                    "EMI Ratio ka total (" + (r1 + r2) +
+                    ") tenure (" + tenure + ") se zyada nahi ho sakta";
+            }
+        }
+
+        // 🔹 Hidden fields set (tumhara existing logic)
+        document.getElementById("ratio_enabled").value =
+            chkDivide.checked ? "Yes" : "No";
+
+        document.getElementById("ratio_first_emi").value =
+            emi1.value || "";
+
+        document.getElementById("ratio_first_percentage").value =
+            document.getElementById("amt_ratio_1").value || "";
+    });
+
+});
+</script>
+
+<!-- reducing emi - emi ratio change total as per tenure -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const form          = document.getElementById("loanForm");
+
+    const tenureInput   = document.getElementById("tenure_months");
+    const chkDivide     = document.getElementById("divide_emi_ratio");
+
+    const emi1          = document.getElementById("emi_ratio_1");
+    const emi2          = document.getElementById("emi_ratio_2");
+
+    const emiTotalText  = document.getElementById("emi_total_text");
+    const errorBox      = document.getElementById("emiRatioError");
+
+    /* 🔹 UPDATE TOTAL EMI TEXT */
+    function updateTotalText() {
+        const tenure = parseInt(tenureInput.value) || 0;
+        emiTotalText.innerText = tenure > 0
+            ? `(Total EMI : ${tenure})`
+            : "";
+    }
+
+    /* 🔹 AUTO CALCULATE SECOND RATIO */
+    function updateRatio() {
+        const tenure = parseInt(tenureInput.value) || 0;
+        const first  = parseInt(emi1.value) || 0;
+
+        if (tenure >= 0 && first >= 0) {
+            emi2.value = Math.max(tenure - first, 0);
+        }
+    }
+
+    /* 🔹 TENURE CHANGE */
+    tenureInput.addEventListener("input", function () {
+        updateTotalText();
+        updateRatio();
+    });
+
+    /* 🔹 EMI RATIO CHANGE */
+    emi1.addEventListener("input", function () {
+        updateRatio();
+    });
+
+    /* 🔹 FORM SUBMIT VALIDATION */
+    form.addEventListener("submit", function (e) {
+
+        errorBox.classList.add("hidden");
+
+        if (chkDivide.checked) {
+
+            const tenure = parseInt(tenureInput.value) || 0;
+            const r1     = parseInt(emi1.value) || 0;
+            const r2     = parseInt(emi2.value) || 0;
+
+            if ((r1 + r2) !== tenure) {
+                e.preventDefault();
+                errorBox.classList.remove("hidden");
+                errorBox.innerText =
+                    `EMI Ratio ka total (${r1 + r2}) tenure (${tenure}) ke barabar hona chahiye`;
+                return;
+            }
+        }
+
+        // hidden fields (tumhara existing logic)
+        document.getElementById("ratio_enabled").value =
+            chkDivide.checked ? "Yes" : "No";
+
+        document.getElementById("ratio_first_emi").value =
+            emi1.value || "";
+
+        document.getElementById("ratio_first_percentage").value =
+            document.getElementById("amt_ratio_1").value || "";
+    });
+
+});
+</script>
+
 <script>
   // this script for get scheme details 
   document.getElementById('scheme_id').addEventListener('change', function () {
@@ -623,6 +794,24 @@
     const schemeStamp = document.getElementById("schemeStamp");
     const schemeInsurance = document.getElementById("schemeInsurance");
     const schemeProcessing = document.getElementById("schemeProcessing");
+    // ===== Charges ROW references =====
+    const rowProcessing   = document.getElementById("rowProcessing");
+    const rowSms          = document.getElementById("rowSms");
+    const rowFuel         = document.getElementById("rowFuel");
+    const rowStationary   = document.getElementById("rowStationary");
+    const rowMaintenance  = document.getElementById("rowMaintenance");
+    const rowCollection   = document.getElementById("rowCollection");
+
+    // ===== Reusable toggle function =====
+    function toggleRow(row, spanEl, value) {
+      if (value !== undefined && value !== null && value !== '' && value != 0) {
+        row.classList.remove("hidden");
+        spanEl.textContent = value;
+      } else {
+        row.classList.add("hidden");
+      }
+    }
+
 
     schemeSelect.addEventListener("change", function () {
       const selectedOption = this.options[this.selectedIndex];
@@ -643,9 +832,27 @@
         schemeCharge.textContent = selectedOption.dataset.charge || "-";
 
         // New Fields
-        schemeStamp.textContent = selectedOption.dataset.stamp || "-";
-        schemeInsurance.textContent = selectedOption.dataset.insurance || "-";
+        if (schemeStamp) {
+          schemeStamp.textContent = selectedOption.dataset.stamp || "-";
+        }
+        if (schemeInsurance) {
+          schemeInsurance.textContent = selectedOption.dataset.insurance || "-";
+        }
+
         schemeProcessing.textContent = selectedOption.dataset.processing || "-";
+        const schemeSms          = document.getElementById("schemeSms");
+        const schemeFuel         = document.getElementById("schemeFuel");
+        const schemeStationary   = document.getElementById("schemeStationary");
+        const schemeMaintenance  = document.getElementById("schemeMaintenance");
+        const schemeCollection   = document.getElementById("schemeCollection");
+
+        // ===== Show / Hide charges rows =====
+        toggleRow(rowProcessing,  schemeProcessing,  selectedOption.dataset.processing);
+        toggleRow(rowSms,         schemeSms,         selectedOption.dataset.sms);
+        toggleRow(rowFuel,        schemeFuel,        selectedOption.dataset.fuel);
+        toggleRow(rowStationary,  schemeStationary,  selectedOption.dataset.stationary);
+        toggleRow(rowMaintenance, schemeMaintenance, selectedOption.dataset.maintenance);
+        toggleRow(rowCollection,  schemeCollection,  selectedOption.dataset.collection);
 
         schemeBox.classList.remove("hidden");
       } else {

@@ -233,6 +233,7 @@
 
         <!-- MORTGAGE LOAN  -->
         <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+            <a href="{{ route('mortgage.account.index') }}">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
                 <span class="font-medium">MORTGAGE LOAN</span><span aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg"
                         width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -252,7 +253,7 @@
                     <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['mortgageloan'] }}</h4>
                 </div>
             </div>
-        </a>
+            </a>
     </div>
 
     <!-- LOAN AGAINST DEPOSITE  -->

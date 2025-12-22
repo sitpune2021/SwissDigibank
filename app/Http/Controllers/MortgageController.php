@@ -25,15 +25,15 @@ use Illuminate\Support\Facades\Auth;
 
 class MortgageController extends Controller
 {
-    
+
     public function index()
-    {       
+    {
         //$schemes = MortgageScheme::all();
         // paginate(10) => 10 records per page
         $schemes = MortgageScheme::orderBy('id', 'desc')->paginate(10);
         return view("mortgage.schemes.index", compact('schemes'));
-    } 
-  
+    }
+
     public function create()
     {
         return view("mortgage.schemes.create");
@@ -43,7 +43,7 @@ class MortgageController extends Controller
     {
         Log::info('personal Scheme Store Started', [
             'input' => $request->all(),
-            'user_id' => Auth::id(), 
+            'user_id' => Auth::id(),
         ]);
 
         // Step 1: Validation (add new fields)
@@ -125,9 +125,9 @@ class MortgageController extends Controller
         $scheme->update($request->all());
 
         return redirect()->route('mortgage.schemes.index')
-                        ->with('success', 'Scheme updated successfully!');
+            ->with('success', 'Scheme updated successfully!');
     }
-  
+
     public function view($id)
     {
         $scheme = MortgageScheme::findOrFail($id);
@@ -135,7 +135,7 @@ class MortgageController extends Controller
     }
 
 
-//////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////
 
 
     public function calculator()
@@ -148,7 +148,7 @@ class MortgageController extends Controller
     public function calculateResult(Request $request)
     {
 
-         // Store raw user tenure selection for display (before conversion)
+        // Store raw user tenure selection for display (before conversion)
         $rawTenureValue = $request->tenure_months;
         $rawTenureType = $request->tenure_type;
 
@@ -158,7 +158,7 @@ class MortgageController extends Controller
         ---------------------------------------------------------*/
         $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
 
-         //  ADD HERE (Correct Location)
+        //  ADD HERE (Correct Location)
         $interestType = $request->interest_type;
         // $interestAsEmi = $request->has('option_interest_emi') ? 'Yes' : 'No';
         // $interestAsFirst = $request->has('option_interest_first') ? 'Yes' : 'No';
@@ -189,10 +189,9 @@ class MortgageController extends Controller
 
         $isReducingWithRatio = ($interestType === 'reducing' && $ratioEnabled === 'Yes');
 
-        
 
-        if ($isManual) 
-        {
+
+        if ($isManual) {
 
             $request->validate([
                 'loan_amount' => 'required|numeric|min:1',
@@ -202,7 +201,7 @@ class MortgageController extends Controller
                 'payout' => 'required|in:monthly,quarterly,half-yearly,yearly,WEEKLY,BI_WEEKLY,4_WEEKLY,DAILY'
             ]);
 
-            $loan         = (float) $request->loan_amount;
+            $loan = (float) $request->loan_amount;
             $tenureMonths = (int) $request->max_tenure;
             // Convert Tenure (Days / Weeks / Months)
             $tenureType = $request->tenure_type ?? 'MONTHS';
@@ -213,15 +212,15 @@ class MortgageController extends Controller
             }
 
             // Create Display Format (Human Friendly)
-            $tenureDisplay = match($rawTenureType) {
+            $tenureDisplay = match ($rawTenureType) {
                 'DAYS' => $rawTenureValue . ' Days',
                 'WEEKS' => $rawTenureValue . ' Weeks',
                 'MONTHS' => $rawTenureValue . ' Months',
                 default => $rawTenureValue . ' Months'
             };
 
-            $annualRate   = (float) $request->manual_interest_rate;
-            $payout       = $request->payout;
+            $annualRate = (float) $request->manual_interest_rate;
+            $payout = $request->payout;
 
             // FIX — interest type manual mode me same ka same
             $interestTypeRaw = strtolower(trim($request->interest_type ?? 'flat_emi'));
@@ -234,15 +233,13 @@ class MortgageController extends Controller
             };
 
 
-            $processingFee  = (float) ($request->manual_processing_fee ?? 0);
-            $stampAmount    = round($loan * ($request->manual_stamp ?? 0) / 100, 2);
-            $insuranceAmount= round($loan * ($request->manual_insurance ?? 0) / 100, 2);
+            $processingFee = (float) ($request->manual_processing_fee ?? 0);
+            $stampAmount = round($loan * ($request->manual_stamp ?? 0) / 100, 2);
+            $insuranceAmount = round($loan * ($request->manual_insurance ?? 0) / 100, 2);
 
-            $scheme         = null;
+            $scheme = null;
 
-        } 
-        else 
-        {
+        } else {
 
             $request->validate([
                 'scheme_id' => 'required|exists:mortgage_schemes,id',
@@ -254,7 +251,7 @@ class MortgageController extends Controller
 
             $scheme = MortgageScheme::findOrFail($request->scheme_id);
 
-            $loan         = (float) $request->loan_amount;
+            $loan = (float) $request->loan_amount;
             $tenureMonths = (int) $request->tenure_months;
             // Convert Tenure (Days / Weeks / Months)
             $tenureType = $request->tenure_type ?? 'MONTHS';
@@ -266,15 +263,15 @@ class MortgageController extends Controller
             }
 
             // Create Display Format (Human Friendly)
-            $tenureDisplay = match($rawTenureType) {
+            $tenureDisplay = match ($rawTenureType) {
                 'DAYS' => $rawTenureValue . ' Days',
                 'WEEKS' => $rawTenureValue . ' Weeks',
                 'MONTHS' => $rawTenureValue . ' Months',
                 default => $rawTenureValue . ' Months'
             };
 
-            $annualRate   = (float) $scheme->annual_interest_rate;
-            $payout       = $request->payout;
+            $annualRate = (float) $scheme->annual_interest_rate;
+            $payout = $request->payout;
 
             // FIX — Mapping cleaned
             $setting = strtolower($scheme->gold_loan_setting);
@@ -287,8 +284,8 @@ class MortgageController extends Controller
             };
 
 
-            $processingFee   = (float) ($scheme->processing_fee ?? 0);
-            $stampAmount     = round($loan * ($scheme->stamp_duty_charge ?? 0) / 100, 2);
+            $processingFee = (float) ($scheme->processing_fee ?? 0);
+            $stampAmount = round($loan * ($scheme->stamp_duty_charge ?? 0) / 100, 2);
             $insuranceAmount = round($loan * ($scheme->insurance_fee ?? 0) / 100, 2);
         }
 
@@ -316,11 +313,11 @@ class MortgageController extends Controller
             $installments = max(1, (int) round($rawTenureValue));
         }
         // If raw is WEEKS but payout is bi-weekly (every 2 weeks) => installments = ceil(weeks/2)
-        elseif ($rawTenureType === 'WEEKS' && in_array($payout, ['bi_weekly','bi-weekly'])) {
+        elseif ($rawTenureType === 'WEEKS' && in_array($payout, ['bi_weekly', 'bi-weekly'])) {
             $installments = max(1, (int) ceil($rawTenureValue / 2));
         }
         // If raw is WEEKS and payout is 4_weekly (every 4 wks)
-        elseif ($rawTenureType === 'WEEKS' && in_array($payout, ['4_weekly','4-weekly','4weekly'])) {
+        elseif ($rawTenureType === 'WEEKS' && in_array($payout, ['4_weekly', '4-weekly', '4weekly'])) {
             $installments = max(1, (int) ceil($rawTenureValue / 4));
         }
         // If raw is DAYS and payout = daily => days count
@@ -355,18 +352,19 @@ class MortgageController extends Controller
                     $installments = max(1, (int) ceil($tenureMonths * 4)); // approximate
                 } elseif (in_array($payout, ['bi_weekly'])) {
                     $installments = max(1, (int) ceil($tenureMonths * 2)); // approx
-                } elseif (in_array($payout, ['4_weekly','4-weekly','4weekly'])) {
+                } elseif (in_array($payout, ['4_weekly', '4-weekly', '4weekly'])) {
                     $installments = max(1, (int) ceil($tenureMonths * 1)); // approx
                 } else {
                     $installments = max(1, (int) ceil($tenureMonths / 1));
                 }
             } else {
-                if ($monthsPerInstallment <= 0) $monthsPerInstallment = 1;
+                if ($monthsPerInstallment <= 0)
+                    $monthsPerInstallment = 1;
                 $installments = max(1, (int) ceil($tenureMonths / $monthsPerInstallment));
             }
         }
-   
-        
+
+
         $schedule = [];
         $startDate = now();
         $outstanding = $loan;
@@ -384,13 +382,12 @@ class MortgageController extends Controller
         } else {
             $totalInterest = 0; // Final total interest later calculated from schedule
         }
-            
+
 
         /* -------------------------------------------------------
             4(A). FLAT ADVANCED → ONLY ONE EMI
         ---------------------------------------------------------*/
-        if ($interestType === 'flat_advanced') 
-        {
+        if ($interestType === 'flat_advanced') {
 
             // Force principal split always
             $remainingPrincipal = $loan;
@@ -401,17 +398,13 @@ class MortgageController extends Controller
                 // EMI DATE
                 if ($payout === 'daily') {
                     $emiDate = $startDate->copy()->addDays($i);
-                }
-                elseif ($payout === 'weekly') {
+                } elseif ($payout === 'weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 7);
-                }
-                elseif ($payout === 'bi_weekly') {
+                } elseif ($payout === 'bi_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 14);
-                }
-                elseif ($payout === '4_weekly') {
+                } elseif ($payout === '4_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 28);
-                }
-                else {
+                } else {
                     $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
                 }
 
@@ -425,14 +418,14 @@ class MortgageController extends Controller
                 $balance = max($remainingPrincipal - $principal, 0);
 
                 $schedule[] = [
-                    'no'        => $i,
-                    'emi_date'  => $emiDate->format('d/m/Y'),
-                    'due_date'  => $dueDate->format('d/m/Y'),
+                    'no' => $i,
+                    'emi_date' => $emiDate->format('d/m/Y'),
+                    'due_date' => $dueDate->format('d/m/Y'),
                     'principal' => $principal,
-                    'interest'  => 0,
-                    'charges'   => 0,
-                    'emi'       => $principal,
-                    'balance'   => $balance,
+                    'interest' => 0,
+                    'charges' => 0,
+                    'emi' => $principal,
+                    'balance' => $balance,
                 ];
 
                 $remainingPrincipal -= $principal;
@@ -440,10 +433,10 @@ class MortgageController extends Controller
 
             // Summary
             $total_principal = $loan;
-            $total_interest  = 0;
-            $total_emi_paid  = $loan;
+            $total_interest = 0;
+            $total_emi_paid = $loan;
         }
- 
+
 
         /* -------------------------------------------------------
              4(B). FLAT EMI
@@ -452,23 +445,19 @@ class MortgageController extends Controller
         if ($interestType === 'flat_emi') {
 
             $principalPerEmi = round($loan / $installments, 2);
-            $interestPerEmi  = round($totalInterest / $installments, 2);
+            $interestPerEmi = round($totalInterest / $installments, 2);
 
             for ($i = 1; $i <= $installments; $i++) {
 
                 if ($payout === 'daily') {
                     $emiDate = $startDate->copy()->addDays($i);
-                }
-                elseif ($payout === 'weekly') {
+                } elseif ($payout === 'weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 7);
-                }
-                elseif ($payout === 'bi_weekly') {
+                } elseif ($payout === 'bi_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 14);
-                }
-                elseif ($payout === '4_weekly') {
+                } elseif ($payout === '4_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 28);
-                }
-                else {
+                } else {
                     $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
                 }
 
@@ -502,107 +491,105 @@ class MortgageController extends Controller
         ---------------------------------------------------------*/
         // this code as per nidhi bi_weekly
 
-            if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === 'bi_weekly') 
-            {
+        if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === 'bi_weekly') {
 
-                $installments = count($schedule);
-                $loanAmount   = (float)$loan;
-                $rate         = (float)$annualRate;
-                $tenureMonths = (float)$tenureMonths;
+            $installments = count($schedule);
+            $loanAmount = (float) $loan;
+            $rate = (float) $annualRate;
+            $tenureMonths = (float) $tenureMonths;
 
-                // TOTAL INTEREST (flat)
-                $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
+            // TOTAL INTEREST (flat)
+            $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
 
-                // FIXED EMI
-                $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
+            // FIXED EMI
+            $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
 
-                // Principal per EMI (2..n)
-                $principalOther = $flatEmi;
+            // Principal per EMI (2..n)
+            $principalOther = $flatEmi;
 
-                // First Principal
-                $principal1 = round($loanAmount - ($principalOther * ($installments - 1)), 2);
+            // First Principal
+            $principal1 = round($loanAmount - ($principalOther * ($installments - 1)), 2);
 
-                // First Interest = EMI - first principal
-                //$interest1 = round($flatEmi - $principal1, 2);
-                // 1st EMI must take EXACT total interest
-                $interest1   = $totalInterest;
+            // First Interest = EMI - first principal
+            //$interest1 = round($flatEmi - $principal1, 2);
+            // 1st EMI must take EXACT total interest
+            $interest1 = $totalInterest;
 
-                // Now recompute principal1 so EMI stays accurate
-                $principal1  = round($flatEmi - $interest1, 2);
+            // Now recompute principal1 so EMI stays accurate
+            $principal1 = round($flatEmi - $interest1, 2);
 
-                $remaining = $loanAmount;
+            $remaining = $loanAmount;
 
-                foreach ($schedule as $i => $row) {
+            foreach ($schedule as $i => $row) {
 
-                    $emiNo = $row['no'];
+                $emiNo = $row['no'];
 
-                    if ($emiNo == 1) {
+                if ($emiNo == 1) {
 
-                        // FIRST EMI
-                        $schedule[$i]['principal'] = $principal1;
-                        $schedule[$i]['interest']  = $interest1;
-                        $schedule[$i]['emi']       = $flatEmi;
+                    // FIRST EMI
+                    $schedule[$i]['principal'] = $principal1;
+                    $schedule[$i]['interest'] = $interest1;
+                    $schedule[$i]['emi'] = $flatEmi;
 
-                        $remaining -= $principal1;
+                    $remaining -= $principal1;
 
+                } else {
+
+                    // OTHER EMIs = principal only
+                    if ($emiNo == $installments) {
+                        $principal = round($remaining, 2);
                     } else {
-
-                        // OTHER EMIs = principal only
-                        if ($emiNo == $installments) {
-                            $principal = round($remaining, 2);
-                        } else {
-                            $principal = $principalOther;
-                        }
-
-                        $schedule[$i]['principal'] = $principal;
-                        $schedule[$i]['interest']  = 0;
-                        $schedule[$i]['emi']       = $flatEmi;
-
-                        $remaining -= $principal;
+                        $principal = $principalOther;
                     }
 
-                    // BALANCE UPDATE
-                    $schedule[$i]['balance'] = max(0, round($remaining, 2));
+                    $schedule[$i]['principal'] = $principal;
+                    $schedule[$i]['interest'] = 0;
+                    $schedule[$i]['emi'] = $flatEmi;
+
+                    $remaining -= $principal;
                 }
+
+                // BALANCE UPDATE
+                $schedule[$i]['balance'] = max(0, round($remaining, 2));
             }
+        }
 
-            // this code as per nidhi 4_weekly
-            if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === '4_weekly') 
-            {
+        // this code as per nidhi 4_weekly
+        if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === '4_weekly') {
 
-                $installments = count($schedule);
-                $loanAmount   = (float)$loan;
-                $rate         = (float)$annualRate;
-                $tenureMonths = (float)$tenureMonths;
+            $installments = count($schedule);
+            $loanAmount = (float) $loan;
+            $rate = (float) $annualRate;
+            $tenureMonths = (float) $tenureMonths;
 
-                // TOTAL INTEREST (flat)
-                $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
+            // TOTAL INTEREST (flat)
+            $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
 
-                // FIXED EMI
-                $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
+            // FIXED EMI
+            $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
 
-                // FIRST EMI takes exact total interest
-                $interest1 = $totalInterest;
+            // FIRST EMI takes exact total interest
+            $interest1 = $totalInterest;
 
-                // First principal = EMI - interest
-                $principal1 = round($flatEmi - $interest1, 2);
+            // First principal = EMI - interest
+            $principal1 = round($flatEmi - $interest1, 2);
 
-                $remaining = $loanAmount;
+            $remaining = $loanAmount;
 
-                foreach ($schedule as $i => $row) {
+            foreach ($schedule as $i => $row) {
 
-                    $emiNo = $row['no'];
+                $emiNo = $row['no'];
 
-                    if ($emiNo == 1) {
+                if ($emiNo == 1) {
 
-                        // FIRST EMI
-                        $schedule[$i]['principal'] = $principal1;
-                        $schedule[$i]['interest']  = $interest1;
-                        $schedule[$i]['emi']       = $flatEmi;
+                    // FIRST EMI
+                    $schedule[$i]['principal'] = $principal1;
+                    $schedule[$i]['interest'] = $interest1;
+                    $schedule[$i]['emi'] = $flatEmi;
 
-                        $remaining -= $principal1;
+                    $remaining -= $principal1;
 
-                    } else {
+                } else {
 
                     // OTHER EMIs = principal only
                     if ($emiNo == $installments) {
@@ -612,135 +599,133 @@ class MortgageController extends Controller
                     }
 
                     $schedule[$i]['principal'] = $principal;
-                    $schedule[$i]['interest']  = 0;
-                    $schedule[$i]['emi']       = $flatEmi;
+                    $schedule[$i]['interest'] = 0;
+                    $schedule[$i]['emi'] = $flatEmi;
 
                     $remaining -= $principal;
                 }
 
                 // BALANCE UPDATE
                 $schedule[$i]['balance'] = max(0, round($remaining, 2));
-                }
             }
+        }
 
 
-           // --- FIX: Reducing + Quarterly => EMI count = tenureMonths / 3 ---
-            $total_principal = 0;
-            $total_interest  = 0;
-            $total_emi_paid  = 0;
+        // --- FIX: Reducing + Quarterly => EMI count = tenureMonths / 3 ---
+        $total_principal = 0;
+        $total_interest = 0;
+        $total_emi_paid = 0;
 
+        $totalInterestAll = 0;
+        $total_charges = 0;
+
+
+        if ($interestType === 'reducing' && strtolower($payout) === 'quarterly') {
+
+            $emiCount = ceil($tenureMonths / 3);
+            $monthlyRate = ($annualRate / 12) / 100;
+
+            $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+
+            $remaining_principal = $loan;
             $totalInterestAll = 0;
-            $total_charges = 0;
 
+            for ($i = 1; $i <= $emiCount; $i++) {
 
-            if ($interestType === 'reducing' && strtolower($payout) === 'quarterly') {
+                $emiDate = $startDate->copy()->addMonths($i * 3);
+                $dueDate = $emiDate->copy()->addDay();
 
-                $emiCount = ceil($tenureMonths / 3);
-                $monthlyRate = ($annualRate / 12) / 100;
+                $interest = 0;
 
-                $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+                for ($m = 1; $m <= 3; $m++) {
+                    $monthInterest = round($remaining_principal * $monthlyRate, 2);
+                    $interest += $monthInterest;
 
-                $remaining_principal = $loan;
-                $totalInterestAll = 0;
-
-                for ($i = 1; $i <= $emiCount; $i++) {
-
-                    $emiDate = $startDate->copy()->addMonths($i * 3);
-                    $dueDate = $emiDate->copy()->addDay();
-
-                    $interest = 0;
-
-                    for ($m = 1; $m <= 3; $m++) {
-                        $monthInterest = round($remaining_principal * $monthlyRate, 2);
-                        $interest += $monthInterest;
-
-                        $principalMonthly = round($emi - $monthInterest, 2);
-                        $remaining_principal -= $principalMonthly;
-                    }
-
-                    $totalInterestAll += $interest;
-
-                    $principal = round($emi * 3 - $interest, 2);
-
-                    $schedule[] = [
-                        'no' => $i,
-                        'emi_date'  => $emiDate->format('d/m/Y'),
-                        'due_date'  => $dueDate->format('d/m/Y'),
-                        'principal' => $principal,
-                        'interest'  => $interest,
-                        'charges'   => 0,
-                        'emi'       => $principal + $interest,
-                        'balance'   => max($remaining_principal, 0),
-                    ];
+                    $principalMonthly = round($emi - $monthInterest, 2);
+                    $remaining_principal -= $principalMonthly;
                 }
 
-                $finalTotals['principal'] = $loan;
-                $finalTotals['interest']  = $totalInterestAll;
-                $finalTotals['emi']       = $loan + $totalInterestAll;
+                $totalInterestAll += $interest;
 
-                $total_principal = $loan;
-                $total_interest  = $totalInterestAll;
-                $total_emi_paid  = $loan + $totalInterestAll;
+                $principal = round($emi * 3 - $interest, 2);
 
+                $schedule[] = [
+                    'no' => $i,
+                    'emi_date' => $emiDate->format('d/m/Y'),
+                    'due_date' => $dueDate->format('d/m/Y'),
+                    'principal' => $principal,
+                    'interest' => $interest,
+                    'charges' => 0,
+                    'emi' => $principal + $interest,
+                    'balance' => max($remaining_principal, 0),
+                ];
             }
 
-            // --- NOW HALF-YEARLY BLOCK — MUST USE else if ----
-            else if ($interestType === 'reducing' && strtolower($payout) === 'half-yearly') {
+            $finalTotals['principal'] = $loan;
+            $finalTotals['interest'] = $totalInterestAll;
+            $finalTotals['emi'] = $loan + $totalInterestAll;
 
-                $emiCount = ceil($tenureMonths / 6);
-                $monthlyRate = ($annualRate / 12) / 100;
+            $total_principal = $loan;
+            $total_interest = $totalInterestAll;
+            $total_emi_paid = $loan + $totalInterestAll;
 
-                $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+        }
 
-                $remaining_principal = $loan;
-                $totalInterestAll = 0;
+        // --- NOW HALF-YEARLY BLOCK — MUST USE else if ----
+        else if ($interestType === 'reducing' && strtolower($payout) === 'half-yearly') {
 
-                for ($i = 1; $i <= $emiCount; $i++) {
+            $emiCount = ceil($tenureMonths / 6);
+            $monthlyRate = ($annualRate / 12) / 100;
 
-                    $emiDate = $startDate->copy()->addMonths($i * 6);
-                    $dueDate = $emiDate->copy()->addDay();
+            $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
 
-                    $interest = 0;
+            $remaining_principal = $loan;
+            $totalInterestAll = 0;
 
-                    for ($m = 1; $m <= 6; $m++) {
-                        $monthInterest = round($remaining_principal * $monthlyRate, 2);
-                        $interest += $monthInterest;
+            for ($i = 1; $i <= $emiCount; $i++) {
 
-                        $principalMonthly = round($emi - $monthInterest, 2);
-                        $remaining_principal -= $principalMonthly;
-                    }
+                $emiDate = $startDate->copy()->addMonths($i * 6);
+                $dueDate = $emiDate->copy()->addDay();
 
-                    $totalInterestAll += $interest;
+                $interest = 0;
 
-                    $principal = round($emi * 6 - $interest, 2);
+                for ($m = 1; $m <= 6; $m++) {
+                    $monthInterest = round($remaining_principal * $monthlyRate, 2);
+                    $interest += $monthInterest;
 
-                    $schedule[] = [
-                        'no'        => $i,
-                        'emi_date'  => $emiDate->format('d/m/Y'),
-                        'due_date'  => $dueDate->format('d/m/Y'),
-                        'principal' => $principal,
-                        'interest'  => $interest,
-                        'charges'   => 0,
-                        'emi'       => $principal + $interest,
-                        'balance'   => max($remaining_principal, 0),
-                    ];
+                    $principalMonthly = round($emi - $monthInterest, 2);
+                    $remaining_principal -= $principalMonthly;
                 }
 
-                $finalTotals['principal'] = $loan;
-                $finalTotals['interest']  = $totalInterestAll;
-                $finalTotals['emi']       = $loan + $totalInterestAll;
+                $totalInterestAll += $interest;
 
-                $total_principal = $loan;
-                $total_interest  = $totalInterestAll;
-                $total_emi_paid  = $loan + $totalInterestAll;
+                $principal = round($emi * 6 - $interest, 2);
+
+                $schedule[] = [
+                    'no' => $i,
+                    'emi_date' => $emiDate->format('d/m/Y'),
+                    'due_date' => $dueDate->format('d/m/Y'),
+                    'principal' => $principal,
+                    'interest' => $interest,
+                    'charges' => 0,
+                    'emi' => $principal + $interest,
+                    'balance' => max($remaining_principal, 0),
+                ];
             }
-      
+
+            $finalTotals['principal'] = $loan;
+            $finalTotals['interest'] = $totalInterestAll;
+            $finalTotals['emi'] = $loan + $totalInterestAll;
+
+            $total_principal = $loan;
+            $total_interest = $totalInterestAll;
+            $total_emi_paid = $loan + $totalInterestAll;
+        }
+
 
         /* -------------------------------------------------------
             4(C). REDUCING EMI — MULTI-PAYOUT SUPPORT
-        ---------------------------------------------------------*/
-        elseif ($interestType === 'reducing')
-        {
+        ---------------------------------------------------------*/ elseif ($interestType === 'reducing') {
             $schedule = [];
             $remaining_principal = $loan;
             $totalInterestAll = 0;
@@ -769,22 +754,22 @@ class MortgageController extends Controller
                     break;
 
                 case 'weekly':
-                    $periods = 12/52; 
+                    $periods = 12 / 52;
                     $addDate = fn($d, $i) => $d->copy()->addDays($i * 7);
                     break;
 
                 case 'bi_weekly':
-                    $periods = 12/26;
+                    $periods = 12 / 26;
                     $addDate = fn($d, $i) => $d->copy()->addDays($i * 14);
                     break;
 
                 case '4_weekly':
-                    $periods = 12/13;
+                    $periods = 12 / 13;
                     $addDate = fn($d, $i) => $d->copy()->addDays($i * 28);
                     break;
 
                 case 'daily':
-                    $periods = 12/365;
+                    $periods = 12 / 365;
                     $addDate = fn($d, $i) => $d->copy()->addDays($i);
                     break;
 
@@ -807,17 +792,19 @@ class MortgageController extends Controller
                 $interest = round($remaining_principal * $ratePer, 2);
                 $principal = round($emi - $interest, 2);
 
-                if ($principal < 0) { $principal = 0; }
+                if ($principal < 0) {
+                    $principal = 0;
+                }
 
                 $schedule[] = [
-                    'no'        => $i,
-                    'emi_date'  => $emiDate->format('d/m/Y'),
-                    'due_date'  => $dueDate->format('d/m/Y'),
+                    'no' => $i,
+                    'emi_date' => $emiDate->format('d/m/Y'),
+                    'due_date' => $dueDate->format('d/m/Y'),
                     'principal' => $principal,
-                    'interest'  => $interest,
-                    'charges'   => 0,
-                    'emi'       => $principal + $interest,
-                    'balance'   => max($remaining_principal - $principal, 0),
+                    'interest' => $interest,
+                    'charges' => 0,
+                    'emi' => $principal + $interest,
+                    'balance' => max($remaining_principal - $principal, 0),
                 ];
 
                 $remaining_principal -= $principal;
@@ -825,8 +812,8 @@ class MortgageController extends Controller
             }
 
             $total_principal = $loan;
-            $totalInterest   = $totalInterestAll;
-            $total_emi_paid  = $loan + $totalInterest;
+            $totalInterest = $totalInterestAll;
+            $total_emi_paid = $loan + $totalInterest;
         }
 
         // ADD THIS LINE - FIX TOTAL INTEREST FOR REDUCING EMI
@@ -834,7 +821,7 @@ class MortgageController extends Controller
             $totalInterest = array_sum(array_column($schedule, 'interest'));
         }
 
-     
+
         /* -------------------------------------------------------
             4(D). INTEREST AS EMI LOGIC (PRINCIPAL ZERO)
         ---------------------------------------------------------*/
@@ -848,7 +835,7 @@ class MortgageController extends Controller
                 if ($row['no'] == $installments) {
                     $schedule[$k]['principal'] = $loan;
                     $schedule[$k]['balance'] = 0;
-                } 
+                }
                 // All other EMI - principal ZERO
                 else {
                     $schedule[$k]['principal'] = 0;
@@ -865,11 +852,9 @@ class MortgageController extends Controller
             IF INTEREST AS EMI = NO → ONLY ONE ROW (flat_advanced only)
         ---------------------------------------------------------*/
 
-        if ($interestType === 'flat_advanced' && $interestAsEmi !== 'Yes') 
-        {
+        if ($interestType === 'flat_advanced' && $interestAsEmi !== 'Yes') {
 
-            if (!empty($schedule)) 
-            {
+            if (!empty($schedule)) {
 
                 // FINAL EMI DATE / DUE DATE use karenge
                 $lastRow = end($schedule);
@@ -877,21 +862,21 @@ class MortgageController extends Controller
                 // Replace full schedule with single row and force full loan
                 $schedule = [
                     [
-                        'no'        => 1,
-                        'emi_date'  => $lastRow['emi_date'],
-                        'due_date'  => $lastRow['due_date'],
+                        'no' => 1,
+                        'emi_date' => $lastRow['emi_date'],
+                        'due_date' => $lastRow['due_date'],
 
                         // ⭐ SINGLE ROW CASE → FULL LOAN AS PRINCIPAL
                         'principal' => round($loan, 2),
 
-                        'interest'  => 0,
-                        'charges'   => 0,
+                        'interest' => 0,
+                        'charges' => 0,
 
                         // EMI = FULL LOAN
-                        'emi'       => round($loan, 2),
+                        'emi' => round($loan, 2),
 
                         // Balance = 0
-                        'balance'   => 0,
+                        'balance' => 0,
                     ]
                 ];
             }
@@ -905,16 +890,16 @@ class MortgageController extends Controller
         /* ---------------------------------------------------------
                 INTEREST AS FIRST EMI (FLAT EMI + QUARTERLY/HALF/YEARLY)
         ---------------------------------------------------------*/
-        
+
         if (
             $interestAsFirst === 'Yes' &&
             $interestType === 'flat_emi' &&
-            in_array(strtolower($payout), ['quarterly','half-yearly','yearly'])
+            in_array(strtolower($payout), ['quarterly', 'half-yearly', 'yearly'])
         ) {
-            $installments = (int)$installments;   // ex: 4
-            $loanAmount   = (float)$loan;
-            $rate         = (float)$annualRate;
-            $tenureMonths = (int)$tenureMonths;
+            $installments = (int) $installments;   // ex: 4
+            $loanAmount = (float) $loan;
+            $rate = (float) $annualRate;
+            $tenureMonths = (int) $tenureMonths;
 
             // Total flat interest for whole tenure (e.g. 5000)
             $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
@@ -939,9 +924,9 @@ class MortgageController extends Controller
             // Reset previous values first (defensive)
             foreach ($schedule as $i => $row) {
                 $schedule[$i]['principal'] = 0;
-                $schedule[$i]['interest']  = 0;
-                $schedule[$i]['emi']       = 0;
-                $schedule[$i]['balance']   = 0;
+                $schedule[$i]['interest'] = 0;
+                $schedule[$i]['emi'] = 0;
+                $schedule[$i]['balance'] = 0;
             }
 
             // Rebuild schedule cleanly
@@ -951,8 +936,8 @@ class MortgageController extends Controller
                 if ($emiNo === 1) {
                     // FIRST EMI: full interest + first principal (smaller)
                     $schedule[$i]['principal'] = $firstPrincipal;
-                    $schedule[$i]['interest']  = $totalInterest;
-                    $schedule[$i]['emi']       = round($firstPrincipal + $totalInterest, 2);
+                    $schedule[$i]['interest'] = $totalInterest;
+                    $schedule[$i]['emi'] = round($firstPrincipal + $totalInterest, 2);
 
                     $remaining -= $firstPrincipal;
                 } else {
@@ -964,8 +949,8 @@ class MortgageController extends Controller
                     }
 
                     $schedule[$i]['principal'] = $principal;
-                    $schedule[$i]['interest']  = 0.00;
-                    $schedule[$i]['emi']       = $principal;
+                    $schedule[$i]['interest'] = 0.00;
+                    $schedule[$i]['emi'] = $principal;
 
                     $remaining -= $principal;
                 }
@@ -978,7 +963,7 @@ class MortgageController extends Controller
 
         ///////////////////////////////////////////////////////////////////////////////////////////////        
 
-        
+
         // perefect only month show
         /* ---------------------------------------------------------
             PERFECT FIX — Flat EMI + Interest As First EMI (MONTHLY)
@@ -989,9 +974,9 @@ class MortgageController extends Controller
             strtolower($payout) === 'monthly'
         ) {
             $installments = count($schedule);
-            $loanAmount   = (float)$loan;
-            $rate         = (float)$annualRate;
-            $tenureMonths = (float)$tenureMonths;
+            $loanAmount = (float) $loan;
+            $rate = (float) $annualRate;
+            $tenureMonths = (float) $tenureMonths;
 
             // Total interest
             $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
@@ -1005,7 +990,8 @@ class MortgageController extends Controller
 
             // Remaining interest
             $interest2 = round($totalInterest - $interest1, 2);
-            if ($interest2 < 0) $interest2 = 0;
+            if ($interest2 < 0)
+                $interest2 = 0;
 
             // Principal for remaining EMIs
             $principalForOthers = round($loanAmount / ($installments - 1), 2);
@@ -1019,40 +1005,39 @@ class MortgageController extends Controller
 
                     // 1st EMI → interest only
                     $schedule[$i]['principal'] = 0;
-                    $schedule[$i]['interest']  = $interest1;
-                    $schedule[$i]['emi']       = $flatEmi;
-                    $schedule[$i]['balance']   = $remaining;
+                    $schedule[$i]['interest'] = $interest1;
+                    $schedule[$i]['emi'] = $flatEmi;
+                    $schedule[$i]['balance'] = $remaining;
 
                 } elseif ($emiNo == 2) {
 
                     // 2nd EMI → remaining interest + partial principal
-                    $interest  = $interest2;
+                    $interest = $interest2;
                     $principal = round($flatEmi - $interest, 2);
 
                     $schedule[$i]['principal'] = $principal;
-                    $schedule[$i]['interest']  = $interest;
-                    $schedule[$i]['emi']       = $flatEmi;
+                    $schedule[$i]['interest'] = $interest;
+                    $schedule[$i]['emi'] = $flatEmi;
 
                     $remaining -= $principal;
                     $schedule[$i]['balance'] = round($remaining, 2);
 
-                } 
-                else {
+                } else {
 
-                        // 3rd EMI onward → principal = EMI (interest zero)
-                        if ($emiNo == $installments) {
-                            $principal = round($remaining, 2);
-                        } else {
-                            $principal = $flatEmi;
-                        }
-
-                        $schedule[$i]['principal'] = $principal;
-                        $schedule[$i]['interest']  = 0;
-                        $schedule[$i]['emi']       = $flatEmi;
-
-                        $remaining -= $principal;
-                        $schedule[$i]['balance'] = max(0, round($remaining, 2));
+                    // 3rd EMI onward → principal = EMI (interest zero)
+                    if ($emiNo == $installments) {
+                        $principal = round($remaining, 2);
+                    } else {
+                        $principal = $flatEmi;
                     }
+
+                    $schedule[$i]['principal'] = $principal;
+                    $schedule[$i]['interest'] = 0;
+                    $schedule[$i]['emi'] = $flatEmi;
+
+                    $remaining -= $principal;
+                    $schedule[$i]['balance'] = max(0, round($remaining, 2));
+                }
 
             }
         }
@@ -1065,8 +1050,8 @@ class MortgageController extends Controller
             in_array(strtolower($payout), ['daily', 'weekly'])
         ) {
             $installments = count($schedule);
-            $loanAmount   = $loan;
-            $rate         = $annualRate;
+            $loanAmount = $loan;
+            $rate = $annualRate;
             $tenureMonths = $tenureMonths;
 
             // Total flat interest (example: 3,891.67)
@@ -1084,7 +1069,7 @@ class MortgageController extends Controller
                 if ($emiNo == 1) {
 
                     // ---- CHANGE: show TOTAL interest in first row (not per-installment) ----
-                    $interest  = $totalInterest;                      // ← show totalInterest here (₹3,891.67)
+                    $interest = $totalInterest;                      // ← show totalInterest here (₹3,891.67)
                     $principal = round($flatEmi - $interest, 2);      // EMI - totalInterest
 
                     // safety: if principal became negative (rare), clamp to 0 and adjust interest to flatEmi
@@ -1093,9 +1078,9 @@ class MortgageController extends Controller
                         $interest = $flatEmi; // first EMI cannot exceed EMI amount visually
                     }
 
-                    $schedule[$i]['interest']  = $interest;
+                    $schedule[$i]['interest'] = $interest;
                     $schedule[$i]['principal'] = $principal;
-                    $schedule[$i]['emi']       = $flatEmi;
+                    $schedule[$i]['emi'] = $flatEmi;
 
                     $remaining -= $principal;
 
@@ -1110,7 +1095,7 @@ class MortgageController extends Controller
                         $schedule[$i]['emi'] = $flatEmi;
                     }
 
-                    $schedule[$i]['interest']  = 0;
+                    $schedule[$i]['interest'] = 0;
                     $schedule[$i]['principal'] = $principal;
 
                     $remaining -= $principal;
@@ -1129,9 +1114,9 @@ class MortgageController extends Controller
         ---------------------------------------------------------*/
         $grandTotalPayable = $loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount;
 
-         /* --------------------------------------------
-        FINAL FIX — Ensure correct value after mapping
-        ---------------------------------------------*/
+        /* --------------------------------------------
+       FINAL FIX — Ensure correct value after mapping
+       ---------------------------------------------*/
         $isReducingWithRatio = ($interestType === 'reducing' && $ratioEnabled === 'Yes');
 
 
@@ -1158,7 +1143,7 @@ class MortgageController extends Controller
             'interest_as_emi' => $interestAsEmi,
             'interest_as_first' => $interestAsFirst,
 
-           'tenure_display' => $tenureDisplay,
+            'tenure_display' => $tenureDisplay,
             'ratio_enabled' => $ratioEnabled,
             'ratio_first_emi' => $ratioFirstEmi,
             'ratio_first_percentage' => $ratioFirstPercentage,
@@ -1168,7 +1153,7 @@ class MortgageController extends Controller
             'ratioFirstPercentage' => $ratioFirstPercentage,
 
             'interestType' => $interestType,
-   
+
             'total_interest' => round($totalInterest, 2),
             'total_principal' => $loan,
             'total_emi_paid' => round(($interestType == 'flat_advanced' ? $loan : $loan + $totalInterest), 2),
@@ -1178,7 +1163,7 @@ class MortgageController extends Controller
     }
 
 
-////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
 
 
     public function appindex()
@@ -1189,16 +1174,16 @@ class MortgageController extends Controller
         return view("mortgage.applications.index", compact('applications'));
     }
 
-    public function appcreate() 
+    public function appcreate()
     {
         //$members = Member::all();
-        $members = Member::select('id', 'member_info_first_name','member_info_mobile_no','general_branch')->get();
+        $members = Member::select('id', 'member_info_first_name', 'member_info_mobile_no', 'general_branch')->get();
         $branch = Branch::all();
         $scheme = MortgageScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
-        return view("mortgage.applications.create", compact('members','branch','scheme','banks'));
+        return view("mortgage.applications.create", compact('members', 'branch', 'scheme', 'banks'));
     }
-   
+
     public function storeLoanApplication(Request $request)
     {
         Log::info('--- Mortgage Loan Application Store Started ---', [
@@ -1209,17 +1194,17 @@ class MortgageController extends Controller
         // Validate before try
         $validated = $request->validate([
             'application_date' => 'required|date_format:d-m-Y',
-            'member_id'        => 'required|exists:members,id',
-            'branch_id'        => 'required|exists:branches,id',
-            'scheme_id'        => 'required|exists:gold_loan_schemes,id',
-            'loan_amount'      => 'required|numeric|min:1',
-            'tenure_type'      => 'required',
-            'tenure_value'      => 'required',
-            'emi_collection'      => 'required',
-            'credit_period'      => 'required',
-            'insurance_amount'      => 'required',
-            'net_loan_amount'      => 'required',
-            'purpose_of_loan'      => 'required',
+            'member_id' => 'required|exists:members,id',
+            'branch_id' => 'required|exists:branches,id',
+            'scheme_id' => 'required|exists:gold_loan_schemes,id',
+            'loan_amount' => 'required|numeric|min:1',
+            'tenure_type' => 'required',
+            'tenure_value' => 'required',
+            'emi_collection' => 'required',
+            'credit_period' => 'required',
+            'insurance_amount' => 'required',
+            'net_loan_amount' => 'required',
+            'purpose_of_loan' => 'required',
         ]);
 
         try {
@@ -1259,7 +1244,7 @@ class MortgageController extends Controller
                 'net_loan_amount' => 'required|numeric|min:1',
             ]);
 
-             // Validate CIBIL scores (each must be 3 digits between 300–900)
+            // Validate CIBIL scores (each must be 3 digits between 300–900)
             if ($request->has('cibil_score')) {
                 foreach ($request->cibil_score as $index => $score) {
                     if (!empty($score)) {
@@ -1275,6 +1260,7 @@ class MortgageController extends Controller
             Log::info('Validation Passed');
 
             // Step 3.5: Check if any property already exists before creating loan
+
             if ($request->has('properties') && is_array($request->properties)) {
                 foreach ($request->properties as $i => $prop) {
                     if (empty($prop['property_type'])) continue;
@@ -1315,6 +1301,49 @@ class MortgageController extends Controller
                     }
                 }
             }
+                  
+            
+//             if ($request->has('properties') && is_array($request->properties)) {
+
+//     foreach ($request->properties as $i => $prop) {
+
+//         if (empty($prop['property_type'])) continue;
+
+//         $data = [
+//             'loan_application_id' => $loanApplication->id,
+//             'property_type' => $prop['property_type'] ?? null,
+//             'doc_number' => trim($prop['doc_number'] ?? ''),
+//             'registrar_name' => trim($prop['registrar_name'] ?? ''),
+//             'owner_name' => trim($prop['owner_name'] ?? ''),
+//             'parent_name' => trim($prop['parent_name'] ?? ''),
+//             'plot_no' => trim($prop['plot_no'] ?? ''),
+//             'tehsil' => trim($prop['tehsil'] ?? ''),
+//             'district' => trim($prop['district'] ?? ''),
+//             'area_sqft' => trim($prop['area_sqft'] ?? ''),
+//             'expected_value' => $prop['expected_value'] ?? null,
+//             'total_security_amount' => $request->total_security_amount ?? null,
+//             'registered' => $prop['registered'] ?? 'no',
+//             'boundary_sale_east' => $prop['boundary_sale_east'] ?? null,
+//             'boundary_sale_west' => $prop['boundary_sale_west'] ?? null,
+//             'boundary_sale_north' => $prop['boundary_sale_north'] ?? null,
+//             'boundary_sale_south' => $prop['boundary_sale_south'] ?? null,
+//             'boundary_tech_east' => $prop['boundary_tech_east'] ?? null,
+//             'boundary_tech_west' => $prop['boundary_tech_west'] ?? null,
+//             'boundary_tech_north' => $prop['boundary_tech_north'] ?? null,
+//             'boundary_tech_south' => $prop['boundary_tech_south'] ?? null,
+//         ];
+
+//         // 🔥 UPDATE OR CREATE
+//         MortgageProperty::updateOrCreate(
+//             [
+//                 'id' => $prop['id'] ?? null
+//             ],
+//             $data
+//         );
+//     }
+// }
+
+            
 
             // Step 4: Create main loan application
             $loanApplication = MortgageLoanApplication::create([
@@ -1352,7 +1381,8 @@ class MortgageController extends Controller
             // Step 5: Insert multiple CIBIL records
             if ($request->has('cibil_type') && is_array($request->cibil_type)) {
                 foreach ($request->cibil_type as $index => $type) {
-                    if (empty($type)) continue;
+                    if (empty($type))
+                        continue;
 
                     try {
                         $reportDate = null;
@@ -1386,11 +1416,12 @@ class MortgageController extends Controller
                     }
                 }
             }
-     
+
             // Step 6: Insert property details
             if ($request->has('properties') && is_array($request->properties)) {
                 foreach ($request->properties as $i => $prop) {
-                    if (empty($prop['property_type'])) continue;
+                    if (empty($prop['property_type']))
+                        continue;
 
                     // Clean all fields
                     $docNumber = trim($prop['doc_number'] ?? '');
@@ -1401,20 +1432,19 @@ class MortgageController extends Controller
                     $areaSqft = trim($prop['area_sqft'] ?? '');
 
                     // --- 🔍 Check if this property already exists globally ---
-                    $alreadyExists = MortgageProperty::where(function ($q) use (
-                        $docNumber,
-                        $ownerName,
-                        $plotNo,
-                        $tehsil,
-                        $district,
-                        $areaSqft
-                    ) {
-                        if ($docNumber) $q->where('doc_number', $docNumber);
-                        if ($ownerName) $q->where('owner_name', $ownerName);
-                        if ($plotNo) $q->where('plot_no', $plotNo);
-                        if ($tehsil) $q->where('tehsil', $tehsil);
-                        if ($district) $q->where('district', $district);
-                        if ($areaSqft) $q->where('area_sqft', $areaSqft);
+                    $alreadyExists = MortgageProperty::where(function ($q) use ($docNumber, $ownerName, $plotNo, $tehsil, $district, $areaSqft) {
+                        if ($docNumber)
+                            $q->where('doc_number', $docNumber);
+                        if ($ownerName)
+                            $q->where('owner_name', $ownerName);
+                        if ($plotNo)
+                            $q->where('plot_no', $plotNo);
+                        if ($tehsil)
+                            $q->where('tehsil', $tehsil);
+                        if ($district)
+                            $q->where('district', $district);
+                        if ($areaSqft)
+                            $q->where('area_sqft', $areaSqft);
                     })->exists();
 
                     if ($alreadyExists) {
@@ -1475,8 +1505,7 @@ class MortgageController extends Controller
             return redirect()->route('mortgage.applications.index')
                 ->with('success', 'Mortgage Loan, Credit Score details saved successfully.');
 
-        } 
-        catch (Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error while storing Loan Application', [
                 'error_message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -1535,9 +1564,9 @@ class MortgageController extends Controller
 
         $members = Member::all();
         $schemes = MortgageScheme::all();
-        $scheme  = MortgageScheme::all();
-        $branch  = Branch::all();
-        $banks   = Bank::pluck('name', 'id');
+        $scheme = MortgageScheme::all();
+        $branch = Branch::all();
+        $banks = Bank::pluck('name', 'id');
 
         // Total Security Amount calculate (sum of all property expected_value)
         $totalSecurityAmount = $application->properties->sum('expected_value');
@@ -1549,17 +1578,19 @@ class MortgageController extends Controller
             'branch',
             'scheme',
             'banks',
-            'totalSecurityAmount' 
+            'totalSecurityAmount'
         ));
     }
 
     public function appupdate(Request $request, $id)
     {
         $request->validate([
-            'application_date' => 'required|date',
-            'member_id'        => 'required|exists:members,id',
-            'scheme_id'        => 'required|exists:gold_loan_schemes,id',
-            'loan_amount'      => 'required|numeric',
+            // 'application_date' => 'required|date',
+            'application_date' => 'required|regex:/^\d{2}-\d{2}-\d{4}$/',
+
+            'member_id' => 'required|exists:members,id',
+            'scheme_id' => 'required|exists:gold_loan_schemes,id',
+            'loan_amount' => 'required|numeric',
         ]);
 
         $application = MortgageLoanApplication::findOrFail($id);
@@ -1568,19 +1599,58 @@ class MortgageController extends Controller
         $data = $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']);
 
         // Convert application_date from d-m-Y → Y-m-d
-        if (!empty($data['application_date'])) {
-            $data['application_date'] = Carbon::createFromFormat('d-m-Y', $data['application_date'])->format('Y-m-d');
-        }
+        
+        // if (!empty($data['application_date'])) {
+        //     $data['application_date'] = Carbon::createFromFormat('d-m-Y', $data['application_date'])->format('Y-m-d');
+        // }
 
         // Convert cheque_date if it exists and not already in Y-m-d
-        if (!empty($data['cheque_date']) && strpos($data['cheque_date'], '-') === 2) {
-            $data['cheque_date'] = Carbon::createFromFormat('d-m-Y', $data['cheque_date'])->format('Y-m-d');
-        }
+        // if (!empty($data['cheque_date']) && strpos($data['cheque_date'], '-') === 2) {
+        //     $data['cheque_date'] = Carbon::createFromFormat('d-m-Y', $data['cheque_date'])->format('Y-m-d');
+        // }
 
         // Convert transfer_date if exists
-        if (!empty($data['transfer_date']) && strpos($data['transfer_date'], '-') === 2) {
-            $data['transfer_date'] = Carbon::createFromFormat('d-m-Y', $data['transfer_date'])->format('Y-m-d');
-        }
+        // if (!empty($data['transfer_date']) && strpos($data['transfer_date'], '-') === 2) {
+        //     $data['transfer_date'] = Carbon::createFromFormat('d-m-Y', $data['transfer_date'])->format('Y-m-d');
+        // }
+
+// Convert application_date from d-m-Y → Y-m-d
+if (!empty($data['application_date'])) {
+    try {
+        $data['application_date'] = Carbon::createFromFormat(
+            'd-m-Y',
+            trim($data['application_date'])
+        )->format('Y-m-d');
+    } catch (\Exception $e) {
+        $data['application_date'] = null; // prevent crash
+    }
+}
+
+// Convert cheque_date if it exists
+if (!empty($data['cheque_date'])) {
+    try {
+        $data['cheque_date'] = Carbon::createFromFormat(
+            'd-m-Y',
+            trim($data['cheque_date'])
+        )->format('Y-m-d');
+    } catch (\Exception $e) {
+        $data['cheque_date'] = null;
+    }
+}
+
+// Convert transfer_date if it exists
+if (!empty($data['transfer_date'])) {
+    try {
+        $data['transfer_date'] = Carbon::createFromFormat(
+            'd-m-Y',
+            trim($data['transfer_date'])
+        )->format('Y-m-d');
+    } catch (\Exception $e) {
+        $data['transfer_date'] = null;
+    }
+}
+
+
 
         // Now safely update
         $application->update($data);
@@ -1599,21 +1669,30 @@ class MortgageController extends Controller
                 $application->creditScores()->create([
                     'cibil_type' => $type,
                     'cibil_score' => $request->cibil_score[$index],
-                    'report_date' => Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d'),
+                    // 'report_date' => Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
+                    'report_date' => !empty($request->report_date[$index])
+    ? (function ($v) {
+        try {
+            return \Carbon\Carbon::createFromFormat('d/m/Y', trim($v))->format('Y-m-d');
+        } catch (\Exception $e) {
+            return null;
+        }
+    })($request->report_date[$index])
+    : null,
                     'report_file_path' => $filePath,
                 ]);
             }
         }
 
         // Delete old property details
-    $application->properties()->delete();
+        $application->properties()->delete();
 
-    // Insert updated property details
-    if ($request->has('properties')) {
-        foreach ($request->properties as $prop) {
-            $application->properties()->create($prop);
+        // Insert updated property details
+        if ($request->has('properties')) {
+            foreach ($request->properties as $prop) {
+                $application->properties()->create($prop);
+            }
         }
-    }
 
 
         return redirect()
@@ -1622,7 +1701,7 @@ class MortgageController extends Controller
     }
 
 
-//////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////
 
 
     public function emiChart($id)
@@ -1654,13 +1733,14 @@ class MortgageController extends Controller
 
         $loanAmount = floatval($application->approved_loan_amount ?? $application->loan_amount ?? 0);
         $tenure = intval($application->tenure_value ?? ($application->scheme->no_of_emi ?? 1));
-        if ($tenure <= 0) $tenure = 1;
+        if ($tenure <= 0)
+            $tenure = 1;
 
         /* Charges */
         $processingFeeInc = floatval($application->processing_fee ?? 0);
-        $stampDutyInc     = floatval($application->stamp_duty ?? 0);
-        $insuranceInc     = floatval($application->insurance_fee ?? 0);
-        $fitnessInc       = floatval($application->fitness_fee ?? 0);
+        $stampDutyInc = floatval($application->stamp_duty ?? 0);
+        $insuranceInc = floatval($application->insurance_fee ?? 0);
+        $fitnessInc = floatval($application->fitness_fee ?? 0);
 
         $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
         $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
@@ -1671,9 +1751,20 @@ class MortgageController extends Controller
         /* Collection Frequency */
         $collection = strtolower($application->emi_collection ?? 'monthly');
         switch ($collection) {
-            case 'daily':    $periodIncrement = 'addDay';  $periodName = 'DAILY';   $periodsPerYear = 365; break;
-            case 'weekly':   $periodIncrement = 'addWeek'; $periodName = 'WEEKLY';  $periodsPerYear = 52; break;
-            default:         $periodIncrement = 'addMonth';$periodName = 'MONTHLY'; $periodsPerYear = 12;
+            case 'daily':
+                $periodIncrement = 'addDay';
+                $periodName = 'DAILY';
+                $periodsPerYear = 365;
+                break;
+            case 'weekly':
+                $periodIncrement = 'addWeek';
+                $periodName = 'WEEKLY';
+                $periodsPerYear = 52;
+                break;
+            default:
+                $periodIncrement = 'addMonth';
+                $periodName = 'MONTHLY';
+                $periodsPerYear = 12;
         }
 
         $periodicRate = ($annualRate / 100) / $periodsPerYear;
@@ -1694,9 +1785,9 @@ class MortgageController extends Controller
         /*  SPECIAL CASE — **ONLY 1 ROW** (Flat Advanced) */
         if ($interestType == 'flat_advanced') {
 
-        $emiDate = $emiDate->copy()->{$periodIncrement}(1);
-        $formattedEmiDate = $emiDate->format('d-m-Y');
-        $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
+            $emiDate = $emiDate->copy()->{$periodIncrement}(1);
+            $formattedEmiDate = $emiDate->format('d-m-Y');
+            $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
 
             $schedule[] = [
                 'no' => 1,
@@ -1716,11 +1807,23 @@ class MortgageController extends Controller
             $totalEmi = $loanAmount;
 
             return view('mortgage.applications.view-buttons.show-emi-chart', compact(
-                'application','loanAmount','disburseDate',
-                'processingFeeInc','stampDutyInc','insuranceInc','fitnessInc',
-                'tenure','chargesPerEmi','schedule',
-                'totalPrincipal','totalInterest','totalCharges','totalEmi',
-                'annualRate','interestType','periodName'
+                'application',
+                'loanAmount',
+                'disburseDate',
+                'processingFeeInc',
+                'stampDutyInc',
+                'insuranceInc',
+                'fitnessInc',
+                'tenure',
+                'chargesPerEmi',
+                'schedule',
+                'totalPrincipal',
+                'totalInterest',
+                'totalCharges',
+                'totalEmi',
+                'annualRate',
+                'interestType',
+                'periodName'
             ));
         }
 
@@ -1778,32 +1881,44 @@ class MortgageController extends Controller
                 'no' => $i,
                 'emi_date' => $formattedEmiDate,
                 'due_date' => $dueDate,
-                'principal' => $principalThis,         
-                'interest' => $interestForPeriod,      
-                'charges_per_emi' => $chargesPerEmi,   
-                'emi' => $emiTotal,                    
-                'bal_principal' => $remainingPrincipal 
+                'principal' => $principalThis,
+                'interest' => $interestForPeriod,
+                'charges_per_emi' => $chargesPerEmi,
+                'emi' => $emiTotal,
+                'bal_principal' => $remainingPrincipal
             ];
 
         }
 
         /* Totals */
-        $totalPrincipal = array_sum(array_map(fn($r)=>floatval($r['principal']), $schedule));
-        $totalInterest  = array_sum(array_map(fn($r)=>floatval($r['interest']), $schedule));
-        $totalCharges   = array_sum(array_map(fn($r)=>floatval($r['charges_per_emi']), $schedule));
-        $totalEmi       = array_sum(array_map(fn($r)=>floatval($r['emi']), $schedule));
+        $totalPrincipal = array_sum(array_map(fn($r) => floatval($r['principal']), $schedule));
+        $totalInterest = array_sum(array_map(fn($r) => floatval($r['interest']), $schedule));
+        $totalCharges = array_sum(array_map(fn($r) => floatval($r['charges_per_emi']), $schedule));
+        $totalEmi = array_sum(array_map(fn($r) => floatval($r['emi']), $schedule));
         if ($interestType === 'no_emi') {
             $totalPrincipal = 0;
-            $totalInterest  = 0;
-            $totalCharges   = 0;
-            $totalEmi       = 0;
+            $totalInterest = 0;
+            $totalCharges = 0;
+            $totalEmi = 0;
         }
         return view('mortgage.applications.view-buttons.show-emi-chart', compact(
-            'application','loanAmount','disburseDate',
-            'processingFeeInc','stampDutyInc','insuranceInc','fitnessInc',
-            'tenure','chargesPerEmi','schedule',
-            'totalPrincipal','totalInterest','totalCharges','totalEmi',
-            'annualRate','interestType','periodName'
+            'application',
+            'loanAmount',
+            'disburseDate',
+            'processingFeeInc',
+            'stampDutyInc',
+            'insuranceInc',
+            'fitnessInc',
+            'tenure',
+            'chargesPerEmi',
+            'schedule',
+            'totalPrincipal',
+            'totalInterest',
+            'totalCharges',
+            'totalEmi',
+            'annualRate',
+            'interestType',
+            'periodName'
         ));
     }
 
@@ -1819,7 +1934,7 @@ class MortgageController extends Controller
 
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view("mortgage.applications.view-buttons.col_process_fee", compact('application','banks'));
+        return view("mortgage.applications.view-buttons.col_process_fee", compact('application', 'banks'));
     }
 
     public function mortgagestoreProcessFee(Request $request, $id)
@@ -1853,7 +1968,7 @@ class MortgageController extends Controller
 
         return redirect()->route('mortgage.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
-    
+
     public function linepropertyindex()
     {
         $applications = MortgageLoanApplication::with(['creditScores', 'branch', 'member', 'properties'])
@@ -1863,7 +1978,7 @@ class MortgageController extends Controller
 
         return view("mortgage.lineproperty.index", compact('applications'));
     }
-    
+
     public function exportLineProperty()
     {
         $fileName = "line_property_export.xls";
@@ -1940,14 +2055,14 @@ class MortgageController extends Controller
         // Do NOT change status. Only update updated_at to current time so it becomes "latest"
         // Option A: touch() updates updated_at automatically
         $application->touch();
-        
+
         return redirect()->route('loans')
-        ->with('success', 'Submitted for approval!');      
-        
+            ->with('success', 'Submitted for approval!');
+
     }
 
     public function audit(Request $request)
-    { 
+    {
         return view('mortgage.applications.view-buttons.audit-trail');
     }
 

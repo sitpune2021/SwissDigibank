@@ -11,7 +11,7 @@
             </div>
 
       @if(session('success'))
-        <div 
+        {{-- <div 
             id="successMessage" 
             class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
         >
@@ -27,7 +27,13 @@
                     setTimeout(() => msg.remove(), 500); // smooth fade-out
                 }
             }, 30000);
-        </script>
+        </script> --}}
+
+        {{-- //alert msg --}}
+        <div class="w-44 mb-5 flex justify-end">
+             <x-alert />
+        </div>
+       
     @endif
     
        <div class="col-span-12 box lg:col-span-12">
