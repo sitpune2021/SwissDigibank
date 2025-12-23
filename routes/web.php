@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\MortgageLoanPrintDocumentsController;
+use App\Http\Controllers\NoticeBoardController;
+use App\Http\Controllers\UnencumberedDepositController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountsController;
@@ -2314,6 +2317,12 @@ Route::delete('/passbook/{id}', [PassbookController::class, 'destroy'])->name('p
 
 /////////////////////////////////////   end Passbook   ////////////////////////////////////////////////////////
 
+
+/////////////////////////////Notice Board ///////////////////////////////
+
+Route::resource('notice-boards', NoticeBoardController::class);
+
+/////////////////////////////End Notice Board //////////////////////////
 
 
 Route::get('/dev/run/{action}', function ($action) {
