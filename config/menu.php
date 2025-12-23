@@ -238,6 +238,13 @@ return [
             ['title' => 'COMMISSION PAYOUTS', 'route' => 'associates-advisor.commission-payout.index'],
         ],
     ],
+     [
+        'title' => 'NOTICE BOARD',
+        'icon' => 'las la-book',
+        'position' => '5',
+        'active' => '1',
+        'route' => 'notice-boards.index',
+    ],
     [
         'title' => 'HR MANAGEMENT',
         'icon' => 'las la-user',
@@ -250,6 +257,7 @@ return [
 
         ],
     ],
+   
     [
         'title' => 'PASSBOOK',
         'icon' => 'las la-book',
