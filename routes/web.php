@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BankAccountController;
+use App\Http\Controllers\CollectionCenterController;
 use App\Http\Controllers\MortgageLoanPrintDocumentsController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\UnencumberedDepositController;
@@ -2323,6 +2324,14 @@ Route::delete('/passbook/{id}', [PassbookController::class, 'destroy'])->name('p
 Route::resource('notice-boards', NoticeBoardController::class);
 
 /////////////////////////////End Notice Board //////////////////////////
+
+
+Route::resource('collection-centers', CollectionCenterController::class);
+
+/////////////////////////////Collection Center and Groups //////////////////////////
+
+
+/////////////////////////////end Collection Center and Groups //////////////////////////
 
 
 Route::get('/dev/run/{action}', function ($action) {
