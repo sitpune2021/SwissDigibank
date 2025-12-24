@@ -35,6 +35,16 @@ return [
         ],
     ],
     [
+        'title' => 'COLL.CENTER/GROUPS',
+        'icon' => 'las la-university',
+        'position' => '3',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'COLLECTION CENTERS', 'route' => 'collection-centers.index'],
+           
+        ],
+    ],
+    [
         'title' => 'CUSTOMER',
         'icon' => 'las la-piggy-bank',
         'position' => '4',
