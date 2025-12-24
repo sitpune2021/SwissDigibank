@@ -43,9 +43,8 @@
                         <tr class="border-t">
                             <td class="px-6 py-4 text-center">{{ $notice->notice_title }}</td>
                             <td class="px-6 py-4 text-center">
-                                <a href="{{ asset($notice->images) }}" class="text-secondary ">View</a>
-                               
-
+                                {{-- <a href="{{ asset($notice->images) }}" class="text-secondary ">View</a> --}}
+                                     <p>-</p>
                             </td>
                             <td class="px-6 py-4 text-center">
                                 {{ \Carbon\Carbon::parse($notice->start_date)->format('d-m-Y') }}

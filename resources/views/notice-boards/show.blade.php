@@ -48,6 +48,7 @@
                         <a href="{{ route('notice-boards.edit', ['notice_board' => $encodedId]) }}"
                             class="btn-primary p-1"><i class="las la-pencil-alt"></i></a>
                     </div>
+                    <div class="whitespace-nowrap overflow-x-auto">
                     <table class="w-full text-lg rounded-md">
 
                         <tr class="text-start border-b border-gray-200">
@@ -93,6 +94,7 @@
                         </tr>
 
                     </table>
+                    </div>
 
                 </div>
             </div>
