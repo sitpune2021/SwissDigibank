@@ -1533,6 +1533,100 @@ class FDController extends Controller
         return view('fd_mis_account.fd-account.interest-tds.deduct_reverse_tds', compact('fdAccount', 'balance'));
     }
 
+    public function fdBondForm($id)
+{
+    // Load FD account with required relations
+    $fdAccount = FdAccount::with([
+        'member',
+        'nominee',        // hasMany (recommended)
+        'fdScheme.fdSlabs' // scheme + slabs
+    ])->findOrFail($id);
+
+    // Convert maturity amount to words
+    $amountWords = $this->numToWords((int) round($fdAccount->maturity_amount)) . ' Only';
+
+    $data = [
+        'fdAccount'        => $fdAccount,
+        'amount_words'     => $amountWords,
+        'company_address'  => 'HEAD OFFICE',
+        'date'             => now()->format('d-m-Y'),
+        'company_reg_no'   => 'Reg. No. 969/03-04',
+    ];
+
+    $pdf = app('dompdf.wrapper')
+        ->loadView('fd_mis_account.fd-account.print-documents.fdbond', $data)
+        ->setPaper('a4', 'portrait');
+
+    return $pdf->stream('fd-bond-' . $fdAccount->id . '.pdf');
+}
+
+    protected function numToWords($number)
+    {
+        $words = [
+            0 => 'Zero',
+            1 => 'One',
+            2 => 'Two',
+            3 => 'Three',
+            4 => 'Four',
+            5 => 'Five',
+            6 => 'Six',
+            7 => 'Seven',
+            8 => 'Eight',
+            9 => 'Nine',
+            10 => 'Ten',
+            11 => 'Eleven',
+            12 => 'Twelve',
+            13 => 'Thirteen',
+            14 => 'Fourteen',
+            15 => 'Fifteen',
+            16 => 'Sixteen',
+            17 => 'Seventeen',
+            18 => 'Eighteen',
+            19 => 'Nineteen',
+            20 => 'Twenty',
+            30 => 'Thirty',
+            40 => 'Forty',
+            50 => 'Fifty',
+            60 => 'Sixty',
+            70 => 'Seventy',
+            80 => 'Eighty',
+            90 => 'Ninety'
+        ];
+
+        if ($number == 0) return 'Zero';
+
+        $crores = floor($number / 10000000);
+        $number -= $crores * 10000000;
+        $lakhs = floor($number / 100000);
+        $number -= $lakhs * 100000;
+        $thousands = floor($number / 1000);
+        $number -= $thousands * 1000;
+        $hundreds = floor($number / 100);
+        $number -= $hundreds * 100;
+        $tens = floor($number / 10) * 10;
+        $units = $number % 10;
+
+        $result = '';
+
+        if ($crores) $result .= $this->numToWords($crores) . ' Crore ';
+        if ($lakhs) $result .= $this->numToWords($lakhs) . ' Lakh ';
+        if ($thousands) $result .= $this->numToWords($thousands) . ' Thousand ';
+        if ($hundreds) $result .= $this->numToWords($hundreds) . ' Hundred ';
+
+        if ($tens || $units) {
+            if ($result != '') $result .= 'and ';
+            if ($tens < 20) {
+                $result .= $words[$tens + $units];
+            } else {
+                $result .= $words[$tens];
+                if ($units) $result .= '-' . $words[$units];
+            }
+        }
+
+        return trim($result);
+    }
+
+
     public function fdOpeningForm($id)
     {
         // Load FD account with required relations
@@ -1557,7 +1651,7 @@ class FDController extends Controller
 
         $pdf = app('dompdf.wrapper')
             ->loadView(
-                'fd_mis_account.fd-account.print-documents.accountopeningform',
+                'fd_mis_account.fd-account.fd_mis_account.fd-account.print-documents.accountopeningform',
                 compact('account', 'member', 'interestRate')
             )
             ->setPaper('a4', 'portrait');
