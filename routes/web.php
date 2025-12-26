@@ -431,7 +431,9 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('fd/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('fd.nominees.save');
 
     //print document
-    Route::get('/opening-form/{id}', [FdController::class, 'fdOpeningForm'])
+    Route::get('/Fd-Bond/{id}', [FdController::class, 'fdBondForm'])
+        ->name('fd.bond.form');
+     Route::get('/opening-form/{id}', [FdController::class, 'fdOpeningForm'])
         ->name('fd.opening.form');
 
     Route::get('/closing-form/{id}', [FdController::class, 'fdClosingForm'])
