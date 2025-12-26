@@ -77,7 +77,10 @@
                                 <td class="text-center !py-5 px-6">
                                     {{ $center->centerCashierMember->member_info_first_name ?? $center->centerCashierEmployee->name ?? '-' }}
                                 </td>
-                                <td class="text-center !py-5 px-6">{{ $center->group_id ?? '-' }}</td>
+                                <td class="text-center !py-5 px-6">
+                                      {{ $center->groups->count() }}  
+                                </td>
+
                                 <td class="text-center !py-5 px-6">
                                     @if($center->is_active)
                                         <span

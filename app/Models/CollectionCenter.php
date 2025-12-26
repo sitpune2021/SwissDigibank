@@ -52,4 +52,10 @@ class CollectionCenter extends Model
     {
         return $this->belongsTo(Employee::class, 'center_cashier_employee_id');
     }
+      public function groups()
+{
+    return $this->hasMany(Group::class, 'collection_center_id');
+}
+
+    
 }

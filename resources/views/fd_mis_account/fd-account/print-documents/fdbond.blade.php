@@ -227,32 +227,32 @@
             <tr>
                 <td style="width:60%" class="no-border">
                     <div>
-                        {{ $misaccount->member->member_info_first_name ?? 'N/A' }}
-                        {{ $misaccount->member->member_info_last_name ?? '' }}
+                        {{ $fdAccount->member->member_info_first_name ?? 'N/A' }}
+                        {{ $fdAccount->member->member_info_last_name ?? '' }}
                     </div>
                     <div class="small muted">
-                        {{ $misaccount->member_address ?? 'N/A' }}
+                        {{ $fdAccount->member_address ?? 'N/A' }}
                     </div>
                     <div class="small mt-6">REPAYABLE TO:<br>
-                        {{ $misaccount->nominee->first()->nominee_name ?? 'N/A' }}
+                        {{ $fdAccount->nominee->first()->nominee_name ?? 'N/A' }}
                     </div>
                 </td>
                 <td style="width:40%" class="no-border right">
                     <div class="small">MEMBER NO :
-                        {{ $misaccount->member->member_no ?? '' }}
+                        {{ $fdAccount->member->member_no ?? '' }}
                     </div>
-                    <div class="small"> MIS NO :
-                        {{ $misaccount->id ?? '' }}
+                    <div class="small"> FD NO :
+                        {{ $fdAccount->id ?? '' }}
                     </div>
                     <div class="small"> SCHEME :
-                        {{ $misaccount->fdScheme->scheme_name ?? '' }}
+                        {{ $fdAccount->fdScheme->scheme_name ?? '' }}
                     </div>
                     <div class="small">Interest Payout :
-                        {{ $misaccount->interest_payout_type  }}
+                        {{ $fdAccount->interest_payout_type  }}
                     </div>
 
                     <div class="small"> TOTAL INTEREST :
-                        ₹ {{ $misaccount->total_interest }}
+                        ₹ {{ $fdAccount->total_interest }}
 
                     </div>
 
@@ -280,19 +280,19 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="center">{{ \Carbon\Carbon::parse($misaccount->open_date ?? now())->format('d-m-Y') }}</td>
+                    <td class="center">{{ \Carbon\Carbon::parse($fdAccount->open_date ?? now())->format('d-m-Y') }}</td>
                     <td class="center">
-                        {{ $misaccount->tenure_year ? $misaccount->tenure_year . ' Year(s) ' : '' }}
-                        {{ $misaccount->tenure_month ? $misaccount->tenure_month . ' Month(s) ' : '' }}
-                        {{ $misaccount->tenure_day ? $misaccount->tenure_day . ' Day(s)' : '' }}
+                        {{ $fdAccount->tenure_year ? $fdAccount->tenure_year . ' Year(s) ' : '' }}
+                        {{ $fdAccount->tenure_month ? $fdAccount->tenure_month . ' Month(s) ' : '' }}
+                        {{ $fdAccount->tenure_day ? $fdAccount->tenure_day . ' Day(s)' : '' }}
                     </td>
-                    <td class="center"> {{ $misaccount->fdScheme->fdslabs->first()->interest_rate ?? '' }}</td>
+                    <td class="center"> {{ $fdAccount->fdScheme->fdslabs->first()->interest_rate ?? '' }}</td>
                     <td class="right amount">
-                        {{ number_format($misaccount->mis_amount ?? 0, 2) }}
+                        {{ number_format($fdAccount->fd_amount ?? 0, 2) }}
                     </td>
-                    <td class="center">{{ \Carbon\Carbon::parse($misaccount->maturity_date ?? now())->format('d-m-Y') }}
+                    <td class="center">{{ \Carbon\Carbon::parse($fdAccount->maturity_date ?? now())->format('d-m-Y') }}
                     </td>
-                    <td class="right amount">{{number_format($misaccount->maturity_amount ?? 0,2)}}
+                    <td class="right amount">{{number_format($fdAccount->maturity_amount ?? 0,2)}}
                 </tr>
             </tbody>
         </table>
