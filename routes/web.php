@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\CollectionCenterController;
+use App\Http\Controllers\GroupCommentController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MortgageLoanPrintDocumentsController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\UnencumberedDepositController;
@@ -429,7 +431,7 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('fd/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('fd.nominees.save');
 
     //print document
-     Route::get('/opening-form/{id}', [FdController::class, 'fdOpeningForm'])
+    Route::get('/opening-form/{id}', [FdController::class, 'fdOpeningForm'])
         ->name('fd.opening.form');
 
     Route::get('/closing-form/{id}', [FdController::class, 'fdClosingForm'])
@@ -496,7 +498,7 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('/misaccount/{id}/update-setting', [MisaccountController::class, 'updateSetting'])
         ->name('mis.updateSetting');
 
-        //print document
+    //print document
     Route::get('/misaccount/{id}/print-bond', [MisaccountController::class, 'misBondForm'])->name('misaccount.printbond');
     Route::get('/mis-opening-form/{id}', [MisaccountController::class, 'misOpeningForm'])->name('misaccount.openingform');
     Route::get('/mis-account/{id}/closing-form', [MisaccountController::class, 'misClosingForm'])
@@ -548,9 +550,9 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
     Route::post('/rdaccount/{id}/update-setting', [RdAccountController::class, 'updateSetting'])->name('rd.updateSetting');
 
     // print documents
-        Route::get('/rdaccount/{id}/print-bond', [RdAccountController::class, 'rdBondForm'])->name('rdaccount.printbond');
-        Route::get('/rdaccount/opening-form/{id}',[RdAccountController::class, 'rdOpeningForm'])->name('opening.form');
-        Route::get('/rdaccount/closing-form/{id}',[RdAccountController::class, 'rdClosingForm'])->name('closing.form');
+    Route::get('/rdaccount/{id}/print-bond', [RdAccountController::class, 'rdBondForm'])->name('rdaccount.printbond');
+    Route::get('/rdaccount/opening-form/{id}', [RdAccountController::class, 'rdOpeningForm'])->name('opening.form');
+    Route::get('/rdaccount/closing-form/{id}', [RdAccountController::class, 'rdClosingForm'])->name('closing.form');
 
 });
 
@@ -791,7 +793,8 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     // Print Document
     //Route::get('agreement', [GoldLoanPrintDocument::class, 'loan_agreement'])->name('loan.agreement.pdf');
-    Route::get('/loan/{loan}/loan-agreement', 
+    Route::get(
+        '/loan/{loan}/loan-agreement',
         [GoldLoanPrintDocument::class, 'loanAgreement']
     )->name('loan.loanAgreement');
 
@@ -913,7 +916,7 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
 
-//print documents view page  
+    //print documents view page  
     //      Route::get('/loan/{loan}/loan-agreement', 
     //     [MortgageLoanPrintDocumentsController::class, 'loanAgreement']
     // )->name('loan.mortgageloanAgreement');
@@ -2326,9 +2329,21 @@ Route::resource('notice-boards', NoticeBoardController::class);
 /////////////////////////////End Notice Board //////////////////////////
 
 
-Route::resource('collection-centers', CollectionCenterController::class);
+
 
 /////////////////////////////Collection Center and Groups //////////////////////////
+Route::resource('collection-centers', CollectionCenterController::class);
+Route::resource('groups', GroupController::class);
+
+Route::get('/branches-by-center/{centerId}', [GroupController::class, 'getBranches']);
+// Route::get('/commnets/view', [GroupCommentController::class, 'view'])->name('commnet.view');
+
+Route::get('groups/{group}/comments', [GroupCommentController::class, 'index'])
+     ->name('groups.comments.index');
+
+Route::post('groups/{group}/comments', [GroupCommentController::class, 'store'])
+     ->name('groups.comments.store');
+
 
 
 /////////////////////////////end Collection Center and Groups //////////////////////////
@@ -2368,7 +2383,7 @@ Route::get('/dev/run/{action}', function ($action) {
             case 'storage-link':
                 Artisan::call('storage:link');
                 $output = Artisan::output();
-                return "Storage link created!"  . nl2br($output);
+                return "Storage link created!" . nl2br($output);
 
             case 'install':
                 exec('composer install');

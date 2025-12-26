@@ -41,7 +41,8 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'COLLECTION CENTERS', 'route' => 'collection-centers.index'],
-           
+            ['title' => 'GROUPS', 'route' => 'groups.index'],
+
         ],
     ],
     [
@@ -248,7 +249,7 @@ return [
             ['title' => 'COMMISSION PAYOUTS', 'route' => 'associates-advisor.commission-payout.index'],
         ],
     ],
-     [
+    [
         'title' => 'NOTICE BOARD',
         'icon' => 'las la-book',
         'position' => '5',
@@ -267,7 +268,7 @@ return [
 
         ],
     ],
-   
+
     [
         'title' => 'PASSBOOK',
         'icon' => 'las la-book',
