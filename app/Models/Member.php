@@ -97,12 +97,12 @@ class Member extends Model
     {
         return trim(
             ($this->member_info_first_name ?? '') . ' ' .
-                ($this->member_info_middle_name ?? '') . ' ' .
-                ($this->member_info_last_name ?? '')
+            ($this->member_info_middle_name ?? '') . ' ' .
+            ($this->member_info_last_name ?? '')
         );
     }
-   
- public function promotor()
+
+    public function promotor()
     {
         return $this->belongsTo(Promotor::class);
     }
@@ -131,6 +131,11 @@ class Member extends Model
     {
         return $this->belongsTo(Religion::class, 'member_info_religion');
     }
- 
 
+    // groups 
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_members');
+    }
+    
 }

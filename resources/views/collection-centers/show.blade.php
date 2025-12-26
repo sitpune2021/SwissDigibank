@@ -44,7 +44,8 @@
                         {{-- @php
                         $encodedId = base64_encode($notice_board->id);
                         @endphp --}}
-                        <a href="{{ route('collection-centers.edit', base64_encode($center->id)) }}" class="btn-primary p-1"><i class="las la-pencil-alt"></i></a>
+                        <a href="{{ route('collection-centers.edit', base64_encode($center->id)) }}"
+                            class="btn-primary p-1"><i class="las la-pencil-alt"></i></a>
                     </div>
                     <div class="whitespace-nowrap overflow-x-auto">
                         <table class="w-full text-lg rounded-md">
@@ -125,7 +126,7 @@
         </div>
         <div class="box mt-5 w-full">
             <div class="pb-4 overflow-x-auto lg:pb-6">
-                <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+                <table class="w-full whitespace-nowrap select-all-table" id="">
 
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3">
@@ -150,31 +151,31 @@
                     </thead>
 
                     <tbody>
-                        <tr class="border-b">
-
-                            <td class="text-left !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <a href="#" class="text-primary">SAHARANPUR (static )</a>
-                            </td>
-                            <td class="text-left !py-5 px-6 min-w-[100px] cursor-pointer">122333  (static )</td>
-                            <td class="text-left !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                        Yes
-                                    </span>
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                        No
-                                    </span>
-                                    (Static)
-                                </div>
-                                 
-                            </td>
-
-
-
-
-                        </tr>
+                        @forelse($center->groups as $group)
+                            <tr class="border-b">
+                                <td class="text-left !py-5 px-6">
+                                    <a href="#" class="text-primary">{{ $group->group_name }}</a>
+                                </td>
+                                <td class="text-left !py-5 px-6">
+                                    {{ \Carbon\Carbon::parse($group->open_date)->format('d-m-Y') }}
+                                </td>
+                                <td class="text-left !py-5 px-6">
+                                    <div class="flex items-center gap-1">
+                                        @if($group->is_active)
+                                            <span
+                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">Active</span>
+                                        @else
+                                            <span
+                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">Inactive</span>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center py-5">No groups assigned to this collection center.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
 
                 </table>
