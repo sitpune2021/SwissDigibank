@@ -29,8 +29,9 @@
                             <marquee direction="up" scrollamount="2" height="50px" onmouseover="this.stop();" onmouseout="this.start();">
                                 <ul  class="animate-marquee space-y-2">
                                     @forelse($dashboardData['notices'] as $notice)
-                                        <li class="text-sm xl:text-base uppercase mb-1">
-                                            {{ $notice->notice_title }}-{{ $notice->start_date }}
+                                        <li class="text-sm xl:text-base uppercase mb-4">
+                                            {{ $notice->notice_title }} &nbsp;&nbsp; {{ \Carbon\Carbon::parse($notice->start_date)->format('d-m-Y') }}
+
                                         </li>
                                     @empty
                                         <li class="text-sm xl:text-base text-gray-500">No notices found</li>

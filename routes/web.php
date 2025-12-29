@@ -6,6 +6,7 @@ use App\Http\Controllers\GroupCommentController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MortgageLoanPrintDocumentsController;
 use App\Http\Controllers\NoticeBoardController;
+use App\Http\Controllers\PrintDocumentsController;
 use App\Http\Controllers\UnencumberedDepositController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -433,7 +434,7 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     //print document
     Route::get('/Fd-Bond/{id}', [FdController::class, 'fdBondForm'])
         ->name('fd.bond.form');
-     Route::get('/opening-form/{id}', [FdController::class, 'fdOpeningForm'])
+    Route::get('/opening-form/{id}', [FdController::class, 'fdOpeningForm'])
         ->name('fd.opening.form');
 
     Route::get('/closing-form/{id}', [FdController::class, 'fdClosingForm'])
@@ -2341,14 +2342,60 @@ Route::get('/branches-by-center/{centerId}', [GroupController::class, 'getBranch
 // Route::get('/commnets/view', [GroupCommentController::class, 'view'])->name('commnet.view');
 
 Route::get('groups/{group}/comments', [GroupCommentController::class, 'index'])
-     ->name('groups.comments.index');
+    ->name('groups.comments.index');
 
 Route::post('groups/{group}/comments', [GroupCommentController::class, 'store'])
-     ->name('groups.comments.store');
+    ->name('groups.comments.store');
 
 
 
 /////////////////////////////end Collection Center and Groups //////////////////////////
+
+/////////////////////////////print-documents //////////////////////////
+Route::get(
+    '/print/fd-mis-bond',
+    [PrintDocumentsController::class, 'fd_mis_bond']
+)->name('print-documents.fd-mis-bond.index');
+
+Route::post('/print/fd-mis-bond/search', [PrintDocumentsController::class, 'searchBond'])
+    ->name('fd.mis.bond.search');
+
+Route::get(
+    '/get-account-numbers/{type}',
+    [PrintDocumentsController::class, 'getAccountNumbers']
+)->name('get.account.numbers');
+// FD bond download
+Route::get('/fd/bond/{id}', [FDController::class, 'fdBondForm'])
+    ->name('fd.bond.download');
+// MIS bond download    
+Route::get(
+    '/mis/bond/{id}',
+    [MisaccountController::class, 'misBondForm']
+)->name('mis.bond.download');
+
+//rd-dd
+// RD / DD Bond Page
+// Route::get('/print/rd-dd-bond', [PrintDocumentsController::class, 'rdDdBond'])
+//     ->name('print.rd-dd-bond.index');
+
+// // RD / DD Search
+// Route::post('/print/rd-dd-bond/search', [PrintDocumentsController::class, 'searchRdDdBond'])
+//     ->name('rd.dd.bond.search');
+
+// // RD / DD Account Numbers (AJAX)
+// Route::get('/get-rd-dd-account-numbers/{type}', [PrintDocumentsController::class, 'getRdDdAccountNumbers'])
+//     ->name('get.rd.dd.account.numbers');
+
+// // RD Bond Download
+// Route::get('/rd/bond/{id}', [RdAccountController::class, 'rdBondForm'])
+//     ->name('rd.bond.download');
+
+// // DD Bond Download
+// Route::get('/dd/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
+//     ->name('dd.bond.download');
+
+    
+/////////////////////////////print-documents-end //////////////////////////
 
 
 Route::get('/dev/run/{action}', function ($action) {
