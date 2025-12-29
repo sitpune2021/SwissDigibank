@@ -257,6 +257,16 @@ return [
         'route' => 'notice-boards.index',
     ],
     [
+        'title' => 'PRINT DOCUMENTS',
+        'icon' => 'las la-clipboard',
+        'position' => '6',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'FD/MIS BOND', 'route' => 'print-documents.fd-mis-bond.index'],
+            // ['title' => 'RD/DD BOND', 'route' => 'print.rd-dd-bond.index']
+        ],
+    ],
+    [
         'title' => 'HR MANAGEMENT',
         'icon' => 'las la-user',
         'position' => '6',
