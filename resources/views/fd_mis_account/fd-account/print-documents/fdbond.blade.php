@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>MIS Bond / Deposit Receipt</title>
+    <title>FD Bond / Deposit Receipt</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
     <style>

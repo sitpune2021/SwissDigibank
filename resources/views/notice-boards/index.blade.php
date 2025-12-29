@@ -1,141 +1,142 @@
 @extends('layout.main')
 
 @section('content')
-    <div class="main-inner">
-        <!-- Header -->
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
-            <h2 class="h2">Notice Board </h2>
-            <a class="btn-primary flex items-center gap-2" href="{{ route('notice-boards.create') }}">
-                Add
-            </a>
-        </div>
+<div class="main-inner">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
+        <h2 class="text-lg uppercase">Print RD/ DD Bond </h2>
+    </div>
 
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 min-h-screen md-4">
+        <div class="col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6">
 
-        @if(session('success'))
-            <div class="">
-                <div class="w-44 mb-5 flex justify-end">
-                    <x-alert />
+            <form action="{{ route('rd.dd.bond.search') }}" method="POST" id="bondForm" class="space-y-6">
+                @csrf
+
+                <div>
+                    <label class="block font-medium mb-2">
+                        Account Type <span class="text-error">*</span>
+                    </label>
+
+                    <select id="account_type" name="account_type" class="w-full border rounded-10 px-3 py-3 text-sm">
+                        <option value="">Select</option>
+                        <option value="RD" {{ old('account_type', $type ?? '' )==='RD' ? 'selected' : '' }}>RD</option>
+                        <option value="DD" {{ old('account_type', $type ?? '' )==='DD' ? 'selected' : '' }}>DD</option>
+                    </select>
+                    <p id="account_type_error" class="text-error text-sm mt-1"></p>
                 </div>
-                {{-- {{ session('success') }} --}}
-            </div>
-        @endif
 
+                <div class="mt-4">
+                    <label class="block font-medium mb-2">
+                        Account No <span class="text-error">*</span>
+                    </label>
 
-        <!-- Table -->
+                    <select id="account_no" name="account_no" class="w-full border rounded-10 px-3 py-3 text-sm" {{ isset($type) ? '' : 'disabled' }}>
+                        <option value="">Select Account No</option>
+                    </select>
+                    <p id="account_no_error" class="text-error text-sm mt-1"></p>
+                </div>
 
-        <div class="pb-4 box overflow-x-auto rounded-t-lg bg-white lg:pb-6">
-            <table class="w-full border border-n30 rounded-lg overflow-hidden">
-                <thead>
-                    <tr class="bg-secondary/5 dark:bg-bg3 text-sm font-semibold">
-                        <th class="px-6 py-3 text-center">TITLE</th>
-                        <th class="px-6 py-3 text-center">IMAGE/ FILE</th>
-                        <th class="px-6 py-3 text-center">START DATE</th>
-                        <th class="px-6 py-3 text-center">END DATE</th>
-                        <th class="px-6 py-3 text-center">APP TYPE</th>
-                        <th class="px-6 py-3 text-center">CREATED BY</th>
-                        <th class="px-6 py-3 text-center">ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                <tbody>
-                    @forelse($notices as $notice)
-                        <tr class="border-t">
-                            <td class="px-6 py-4 text-center">{{ $notice->notice_title }}</td>
-                            <td class="px-6 py-4 text-center">
-                                {{-- <a href="{{ asset($notice->images) }}" class="text-secondary ">View</a> --}}
-                                     <p>-</p>
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                {{ \Carbon\Carbon::parse($notice->start_date)->format('d-m-Y') }}
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                {{ \Carbon\Carbon::parse($notice->end_date)->format('d-m-Y') }}
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                {{ $notice->app_type }}
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                {{ $notice->user ? $notice->user->fname . ' ' . $notice->user->lname : 'N/A' }}
-                            </td>
-                            <td class="px-6 py-2">
-                                @php
-                                    $encodedId = base64_encode($notice->id);
-                                @endphp
-                                <div class="flex justify-center">
-                                    <div class="relative">
-                                        <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                                        <ul class="horiz-option popover-content">
-                                            <li>
-                                                <a href="{{ route('notice-boards.show', ['notice_board' => $encodedId]) }}"
-                                                    class="single-option">View</a>
-                                            </li>
-                                            <li>
-                                                <a href="{{ route('notice-boards.edit', ['notice_board' => $encodedId]) }}"
-                                                    class="single-option">Edit</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="border border-gray-300 px-4 py-2 text-center">No notices found.</td>
-                        </tr>
-                    @endforelse
-
-
-                </tbody>
-
-            </table>
-
-            <!-- Overlay -->
-            <div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
-
-                <!-- Modal Box -->
-                <div class="bg-white w-56 max-w-md rounded-xl shadow-lg p-6 relative">
-
-                    <!-- Close Button -->
-                    <button onclick="closeModal()" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
-                        ✕
+                <div class="flex justify-center pt-4">
+                    <button type="submit" class="btn-primary uppercase">
+                        Search
                     </button>
-
-                    <!-- Title -->
-                    <h2 class="text-xl font-semibold mb-4">
-                        Tailwind Popup
-                    </h2>
-
-                    <!-- Content -->
-                    <p class="text-gray-600 mb-6">
-                        This is a simple Tailwind CSS popup modal.
-                    </p>
-
-                    <!-- Actions -->
-                    <div class="flex justify-end gap-3">
-                        <button onclick="closeModal()" class="px-4 py-2 border rounded hover:bg-gray-100">
-                            Cancel
-                        </button>
-                        <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                            Confirm
-                        </button>
-                    </div>
                 </div>
+            </form>
+
+            {{-- Download Buttons --}}
+            <div id="downloadButtons" class="mt-6 text-center">
+                @if(!empty($account))
+                    @if($type === 'RD')
+                        <a href="{{ route('rd.bond.download', $account->id) }}" class="btn-primary" target="_blank">
+                            Download RD Bond
+                        </a>
+                    @elseif($type === 'DD')
+                        <a href="{{ route('dd.bond.download', $account->id) }}" class="btn-primary" target="_blank">
+                            Download DD Bond
+                        </a>
+                    @endif
+                @endif
             </div>
 
-
         </div>
+    </div>
 
+    <script>
+        // Account type change logic
+        document.getElementById('account_type').addEventListener('change', function () {
+            const type = this.value;
+            const accountSelect = document.getElementById('account_no');
 
-        <script>
-            // popup for image
-            function openModal() {
-                document.getElementById('modal').classList.remove('hidden');
-            }
+            accountSelect.innerHTML = '<option value="">Loading...</option>';
+            accountSelect.disabled = true;
 
-            function closeModal() {
-                document.getElementById('modal').classList.add('hidden');
-            }
-        </script>
+            if (!type) return;
 
+            fetch(`/get-rd-dd-account-numbers/${type}`)
+                .then(res => res.json())
+                .then(data => {
+                    accountSelect.innerHTML = '<option value="">Select Account No</option>';
+
+                    data.forEach(account => {
+                        const option = document.createElement('option');
+                        option.value = account.id;
+                        option.textContent = type === 'RD' ? account.rd_no : account.dd_no;
+                        accountSelect.appendChild(option);
+                    });
+
+                    accountSelect.disabled = false;
+                })
+                .catch(() => {
+                    accountSelect.innerHTML = '<option value="">Error loading accounts</option>';
+                });
+        });
+
+        // AJAX form submit
+        const bondForm = document.getElementById('bondForm');
+
+        bondForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(bondForm);
+
+            fetch("{{ route('rd.dd.bond.search') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json'  // important for Laravel to return JSON on validation errors
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                // Clear previous errors
+                document.getElementById('account_type_error').textContent = '';
+                document.getElementById('account_no_error').textContent = '';
+
+                if (data.errors) {
+                    // Show validation errors
+                    if (data.errors.account_type) {
+                        document.getElementById('account_type_error').textContent = data.errors.account_type[0];
+                    }
+                    if (data.errors.account_no) {
+                        document.getElementById('account_no_error').textContent = data.errors.account_no[0];
+                    }
+                    return;
+                }
+
+                // Display download buttons dynamically
+                const downloadDiv = document.getElementById('downloadButtons');
+                let html = '';
+
+                if (data.type === 'RD' && data.account_id) {
+                    html = `<a href="/rd-bond-download/${data.account_id}" class="btn-primary" target="_blank">Download RD Bond</a>`;
+                } else if (data.type === 'DD' && data.account_id) {
+                    html = `<a href="/dd-bond-download/${data.account_id}" class="btn-primary" target="_blank">Download DD Bond</a>`;
+                }
+
+                downloadDiv.innerHTML = html;
+            })
+            .catch(err => console.error('Error:', err));
+        });
+    </script>
 @endsection

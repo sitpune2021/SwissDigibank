@@ -54,7 +54,11 @@ class DashboardService
             : 0;
 
                    // 🔹 Fetch latest 5 notices
-        $notices = Notice::latest()->take(5)->get();
+        // $notices = Notice::latest()->take(5)->get();
+        $notices = Notice::whereDate('end_date', '>=', now()->toDateString())
+    ->orderBy('created_at', 'desc')
+    ->take(5)
+    ->get();
         return [
             'branchesCount' => Branch::count(),
             'accountsCount' => Account::count(),
