@@ -2357,7 +2357,7 @@ Route::get(
     [PrintDocumentsController::class, 'fd_mis_bond']
 )->name('print-documents.fd-mis-bond.index');
 
-Route::post('/print/fd-mis-bond/search', [PrintDocumentsController::class, 'searchBond'])
+Route::match(['get', 'post'],'/print/fd-mis-bond/search', [PrintDocumentsController::class, 'searchBond'])
     ->name('fd.mis.bond.search');
 
 Route::get(
@@ -2375,26 +2375,44 @@ Route::get(
 
 //rd-dd
 // RD / DD Bond Page
-// Route::get('/print/rd-dd-bond', [PrintDocumentsController::class, 'rdDdBond'])
-//     ->name('print.rd-dd-bond.index');
+Route::get('/print/rd-dd-bond', [PrintDocumentsController::class, 'rdDdBond'])
+    ->name('print.rd-dd-bond.index');
 
 // // RD / DD Search
+Route::match(['get', 'post'], 'print/rd-dd-bond/search', 
+    [PrintDocumentsController::class, 'searchRdDdBond']
+)->name('rd.dd.bond.search');
 // Route::post('/print/rd-dd-bond/search', [PrintDocumentsController::class, 'searchRdDdBond'])
 //     ->name('rd.dd.bond.search');
 
 // // RD / DD Account Numbers (AJAX)
-// Route::get('/get-rd-dd-account-numbers/{type}', [PrintDocumentsController::class, 'getRdDdAccountNumbers'])
-//     ->name('get.rd.dd.account.numbers');
+Route::get('/get-rd-dd-account-numbers/{type}', [PrintDocumentsController::class, 'getRdDdAccountNumbers'])
+    ->name('get.rd.dd.account.numbers');
 
 // // RD Bond Download
-// Route::get('/rd/bond/{id}', [RdAccountController::class, 'rdBondForm'])
-//     ->name('rd.bond.download');
+Route::get('/rd/bond/{id}', [RdAccountController::class, 'rdBondForm'])
+    ->name('rd.bond.download');
 
 // // DD Bond Download
-// Route::get('/dd/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
-//     ->name('dd.bond.download');
+Route::get('/dd/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
+    ->name('dd.bond.download');
 
-    
+//fd-mis-passbooks
+// Route::get('/fd-mis-passbook', [PrintDocumentsController::class, 'fd_mis_passbook']);
+
+// Route::post('/fd-mis-passbook/search', [PrintDocumentsController::class, 'searchPassbook'])
+//     ->name('passbook.search');
+
+// Route::get('/fd-mis-passbook/download/{id}', [PrintDocumentsController::class, 'printpassbook'])
+//     ->name('passbook.download');
+
+// Route::get('/fd-mis-passbook/accounts/{type}', [PrintDocumentsController::class, 'getAccountsByType']);
+
+//letter head
+Route::get('/print/letter-head', [PrintDocumentsController::class, 'letter_head'])->name('print.letter-head');
+
+Route::get('/letter-head', [PrintDocumentsController::class, 'print_letter_head'])
+    ->name('letterhead.download');
 /////////////////////////////print-documents-end //////////////////////////
 
 
