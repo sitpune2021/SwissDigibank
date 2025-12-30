@@ -263,7 +263,9 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'FD/MIS BOND', 'route' => 'print-documents.fd-mis-bond.index'],
-            // ['title' => 'RD/DD BOND', 'route' => 'print.rd-dd-bond.index']
+            ['title' => 'RD/DD BOND', 'route' => 'print.rd-dd-bond.index'],
+            ['title' => 'LETTER HEAD', 'route' => 'letterhead.download'],
+           
         ],
     ],
     [
