@@ -99,6 +99,14 @@
             <h1 class="text-lg uppercase font-semibold">LOAN AGAINST DEPOSITE APPLICATION</h1>
         </div>
     </div>
+      @if(session('success'))
+            <div class="">
+                <div class="w-44 mb-5 flex justify-end">
+                    <x-alert />
+                </div>
+                {{-- {{ session('success') }} --}}
+            </div>
+        @endif
 
    <div class="flex flex-wrap gap-3">
 
@@ -235,7 +243,10 @@
 
                         <tr class="border-b">
                             <td class="font-semibold uppercase px-4 py-2">Application No.</td>
-                            <td class="px-4 py-2">{{ $application->id }}</td>
+                            <td class="px-4 py-2">
+                                {{-- {{ $application->id }} --}}
+                                  {{ str_pad($application->id, 10, '0', STR_PAD_LEFT) }}
+                            </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold uppercase px-4 py-2">Application Date</td>

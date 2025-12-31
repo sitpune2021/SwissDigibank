@@ -1341,6 +1341,65 @@ class LoanAgainstController extends Controller
         } else {
             Log::warning('application_date field is empty');
         }
+        // Convert cheque_date (d-m-Y → Y-m-d)
+if ($request->filled('cheque_date')) {
+    try {
+        $originalChequeDate = $request->cheque_date;
+
+        $convertedChequeDate = Carbon::createFromFormat('d-m-Y', $originalChequeDate)
+            ->format('Y-m-d');
+
+        $request->merge([
+            'cheque_date' => $convertedChequeDate,
+        ]);
+
+        Log::info('Converted cheque_date successfully', [
+            'original'  => $originalChequeDate,
+            'converted' => $convertedChequeDate,
+            'user_id'   => Auth::id(),
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Invalid cheque_date format', [
+            'value'   => $request->cheque_date,
+            'user_id' => Auth::id(),
+            'error'   => $e->getMessage(),
+        ]);
+    }
+} else {
+    Log::warning('cheque_date field is empty', [
+        'user_id' => Auth::id(),
+    ]);
+}
+// Convert transfer_date (d-m-Y → Y-m-d)
+if ($request->filled('transfer_date')) {
+    try {
+        $originalTransferDate = $request->transfer_date;
+
+        $convertedTransferDate = Carbon::createFromFormat('d-m-Y', $originalTransferDate)
+            ->format('Y-m-d');
+
+        $request->merge([
+            'transfer_date' => $convertedTransferDate,
+        ]);
+
+        Log::info('Converted transfer_date successfully', [
+            'original'  => $originalTransferDate,
+            'converted' => $convertedTransferDate,
+            'user_id'   => Auth::id(),
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Invalid transfer_date format', [
+            'value'   => $request->transfer_date,
+            'user_id' => Auth::id(),
+            'error'   => $e->getMessage(),
+        ]);
+    }
+} else {
+    Log::warning('transfer_date field is empty', [
+        'user_id' => Auth::id(),
+    ]);
+}
+
 
         // Step 2: Validation (with detailed logging)
         try {
@@ -1617,6 +1676,34 @@ class LoanAgainstController extends Controller
 
     public function appupdate(Request $request, $id)
     {
+        // --- Normalize application_date ---
+if ($request->filled('application_date')) {
+    try {
+        $original = $request->application_date;
+
+        $converted = Carbon::createFromFormat('d-m-Y', $original)
+            ->format('Y-m-d');
+
+        $request->merge([
+            'application_date' => $converted,
+        ]);
+
+        Log::info('Converted application_date (UPDATE)', [
+            'application_id' => $id,
+            'original' => $original,
+            'converted' => $converted,
+            'user_id' => auth()->id(),
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Invalid application_date format (UPDATE)', [
+            'application_id' => $id,
+            'value' => $request->application_date,
+            'error' => $e->getMessage(),
+        ]);
+
+        return back()->with('error', 'Invalid application date format.');
+    }
+}
         Log::info('--- Loan Application Update Started ---', [
             'user_id' => auth()->id(),
             'application_id' => $id,

@@ -2,7 +2,7 @@
 @section('content')
     <div class="main-inner">
 
-     @if(session('success'))     
+     {{-- @if(session('success'))     
             <div class="flex justify-end">
                 <div 
                         id="successMessage" 
@@ -22,7 +22,7 @@
                 }
             }, 30000);
         </script>
-    @endif
+    @endif --}}
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
                 <h3 class=" flex text-xl uppercase block font-semibold">LOAN AGAINST DEPOSITE APPLICATIONS</h3>
@@ -30,6 +30,14 @@
                 </a>
             </div>
 
+            @if(session('success'))
+            <div class="">
+                <div class="w-44 mb-5 flex justify-end">
+                    <x-alert />
+                </div>
+                {{-- {{ session('success') }} --}}
+            </div>
+        @endif
       
        <div class="col-span-12 box lg:col-span-12">
             <div class="pb-4 overflow-x-auto lg:pb-6">
