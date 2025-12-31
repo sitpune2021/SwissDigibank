@@ -214,7 +214,7 @@ class DdsAccountsController extends Controller
             // Generate dd_no based on the last inserted value
             $lastAccount = DdsAccount::orderBy('id', 'desc')->first();
             $lastDdNo = $lastAccount ? (int) substr($lastAccount->dd_no, 2) : 0;
-            $newDdNo = 'DD' . str_pad($lastDdNo + 1, 3, '0', STR_PAD_LEFT);
+            $newDdNo = 'DD' . str_pad($lastDdNo + 1, 10, '0', STR_PAD_LEFT);
 
             $ddsAccount = new DdsAccount();
             $ddsAccount->dd_no = $newDdNo;  

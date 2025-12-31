@@ -15,12 +15,13 @@
 
 
     <!-- Table -->
-    <x-searchbox />
+   <div class="box">
+     <x-searchbox />
     <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
         <x-alert />
     </div>
-    <div class="pb-4 overflow-x-auto lg:pb-6">
-        <table class="w-full border border-n30 rounded-lg overflow-hidden whitespace-nowrap">
+    <div class="pb-4 overflow-x-auto   lg:pb-6">
+        <table class="w-full border border-n30 rounded-lg p-2 overflow-hidden whitespace-nowrap">
             <thead>
                 <tr class="bg-secondary/5 dark:bg-bg3 text-sm font-semibold">
                     <th class="px-6 py-3 text-center">ASSOCIATE</th>
@@ -45,9 +46,7 @@
                     <th class="px-6 py-3 text-center">STATUS</th>
                     <th class="px-6 py-3 text-center">ACTIONS</th>
                 </tr>
-            </thead>
-            <tbody>
-                <!-- Demo Row -->
+            </thead> 
             <tbody>
                 @forelse($rdAccounts as $account)
                 <tr class="border-t">
@@ -56,7 +55,7 @@
                     <td class="px-6 py-4 text-center">—</td>
                     <td class="px-6 py-4 text-center">
                         <a href="{{route('rd-accounts.show',$account->id)}}" class="text-primary underline hover:text-primary/80">
-                            {{ $account->id ?? 'N/A' }}
+                            {{ $account->rd_no ?? 'N/A' }}
                         </a>
                     </td>
                     <td class="px-6 py-4 text-center">
@@ -148,5 +147,6 @@
         @endif
 
     </div>
-
+   </div>
+</div>
     @endsection

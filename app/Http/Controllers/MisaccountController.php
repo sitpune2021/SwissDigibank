@@ -122,7 +122,7 @@ class MisaccountController extends Controller
             $misaccount = Misaccount::create($validated);
             Log::info('MIS Account Created', $misaccount->toArray());
 
-            $formattedMisNo = 'MIS' . str_pad($misaccount->id, 9, '0', STR_PAD_LEFT);
+            $formattedMisNo = 'MIS' . str_pad($misaccount->id, 10, '0', STR_PAD_LEFT);
 
             // Update record
             $misaccount->update([
@@ -1178,7 +1178,7 @@ class MisaccountController extends Controller
         $pdf = app('dompdf.wrapper')->loadView('fd_mis_account.misaccount.print-documents.misbond', $data)
             ->setPaper('a4', 'portrait');
 
-        return $pdf->stream('mis-bond-' . $misaccount->id . '.pdf');
+        return $pdf->download('mis-bond-' . $misaccount->id . '.pdf');
 
         // $pdf = PDF::loadView('misaccount.print-documents.misbond', $data)
         //           ->setPaper('a4', 'portrait');
