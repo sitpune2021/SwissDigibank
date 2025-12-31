@@ -102,7 +102,8 @@
            <td class="text-start !py-5 px-6">
                 <a href="{{ route('gold-loan.applications.view', $application->id) }}" 
                 class="text-green-600 hover:underline">
-                    {{ $application->id }}
+                    {{-- {{ $application->id }} --}}
+                     {{ str_pad($application->id, 10, '0', STR_PAD_LEFT) }}
                 </a>
             </td>
 

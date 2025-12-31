@@ -171,7 +171,7 @@ class RdAccountController extends Controller
                 'total_interest' => $summary['total_interest'],
             ]);
 
-            $rdAccount->rd_no = 'RD' . str_pad($rdAccount->id, 5, '0', STR_PAD_LEFT);
+            $rdAccount->rd_no = 'RD' . str_pad($rdAccount->id, 10, '0', STR_PAD_LEFT);
             $rdAccount->save();
 
             Log::info('RD Account Created', $rdAccount->toArray());
@@ -1476,7 +1476,7 @@ class RdAccountController extends Controller
             )
             ->setPaper('a4', 'portrait');
 
-        return $pdf->stream('rd-bond-' . $rdAccount->id . '.pdf');
+        return $pdf->download('rd-bond-' . $rdAccount->id . '.pdf');
     }
 
     public function rdOpeningForm($id)

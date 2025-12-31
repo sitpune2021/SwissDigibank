@@ -378,8 +378,8 @@ class FDController extends Controller
                 'fd_account_no' => $fdAccount->account_no
             ]);
 
-            $fdAccount->account_no = 'SA' . str_pad($fdAccount->id, 5, '0', STR_PAD_LEFT);
-            $fdAccount->fd_no = 'FD' . str_pad($fdAccount->id, 5, '0', STR_PAD_LEFT);
+            $fdAccount->account_no = 'SA' . str_pad($fdAccount->id, 10, '0', STR_PAD_LEFT);
+            $fdAccount->fd_no = 'FD' . str_pad($fdAccount->id, 10, '0', STR_PAD_LEFT);
             $fdAccount->save();
 
             Log::info('🔄 FD Account Number Updated', [
@@ -1557,7 +1557,7 @@ class FDController extends Controller
         ->loadView('fd_mis_account.fd-account.print-documents.fdbond', $data)
         ->setPaper('a4', 'portrait');
 
-    return $pdf->stream('fd-bond-' . $fdAccount->id . '.pdf');
+    return $pdf->download('fd-bond-' . $fdAccount->id . '.pdf');
 }
 
     protected function numToWords($number)

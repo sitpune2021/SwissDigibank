@@ -235,7 +235,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">FD No.</td>
-                                <td class="px-4 py-2">FD-{{ $fdAccount->id }}</td>
+                                <td class="px-4 py-2">{{ $fdAccount->fd_no }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Old FD No.</td>

@@ -98,7 +98,7 @@
                         <td class="px-6 py-3">{{ $account->member->associate ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->member->group ?? '-' }}</td>
                         <td class="px-6 py-3">
-                            <a href="{{route('fd-mis-schemes.fd_show',$account->id)}}" style="color:green;">{{ "FD-".$account->id }}</a>
+                            <a href="{{route('fd-mis-schemes.fd_show',$account->id)}}" style="color:green;">{{ $account->fd_no }}</a>
                         </td>
                         <td class="px-6 py-3">
                             <a href="#" style="color:green;">

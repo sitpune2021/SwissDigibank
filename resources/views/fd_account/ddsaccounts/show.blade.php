@@ -276,7 +276,7 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">DD No.</td>
-                                <td class="px-4 py-2">DDA{{ $ddaccount->id ?? 'N/A' }}</td>
+                                <td class="px-4 py-2">{{ $ddaccount->dd_no ?? 'N/A' }}</td>
                             </tr>
                             <tr>
                                 <td class="font-semibold px-4 py-2 uppercase">Old DD No.</td>
