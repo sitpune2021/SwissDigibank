@@ -222,7 +222,7 @@
             </tr>
             <tr>
               <td class="font-semibold px-4 py-2 uppercase">MIS No.</td>
-              <td class="px-4 py-2"> {{ '' . $misaccount->id}} </td>
+              <td class="px-4 py-2"> {{ '' . $misaccount->mis_account_no}} </td>
             </tr>
             <tr>
               <td class="font-semibold px-4 py-2 uppercase">Old MIS No.</td>

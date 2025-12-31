@@ -100,7 +100,7 @@
                         <td class="text-start !py-5 px-6 min-w-[100px]">-</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">
                             <a href="{{ $mis?->id ? route('misaccount.show', $mis->id) : '#' }}" class="text-primary underline hover:text-primary/80">
-                                {{ $mis->id }}
+                                {{ $mis->mis_account_no }}
                             </a>
                         </td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">

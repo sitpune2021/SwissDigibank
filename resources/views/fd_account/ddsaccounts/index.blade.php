@@ -57,7 +57,7 @@
                                 <td class="px-6 py-4 text-center">
                                     <a href="{{ $ddaccount?->id ? route('ddsaccounts.show', $ddaccount->id) : '#' }}"
                                         class="text-primary hover:underline">
-                                        DDA{{ $ddaccount->id }}
+                                        {{ $ddaccount->dd_no }}
                                     </a>
                                 </td>
 

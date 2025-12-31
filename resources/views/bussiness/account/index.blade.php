@@ -104,7 +104,8 @@
                                 <div class="flex items-center text-secondary gap-1">
                                     <a href="{{ route('bussiness.account.show', $loan->id) }}" 
                                         class="text-blue-600 hover:underline">
-                                        {{ $loan->id }}
+                                        {{-- {{ $loan->id }} --}}
+                                         {{ str_pad($loan->id, 10, '0', STR_PAD_LEFT) }}
                                     </a>
                                 </div>
                             </td>

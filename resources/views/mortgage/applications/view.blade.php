@@ -210,7 +210,7 @@
                     @endif
                 </div>
 
-                <table class="min-w-full text-sm text-left border-collapse">
+                <table class="w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
                         <tr class="border-b">
                             <td class="font-semibold uppercase px-4 py-2 w-1/3">Customer</td>
@@ -224,7 +224,10 @@
 
                         <tr class="border-b">
                             <td class="font-semibold uppercase px-4 py-2">Application No.</td>
-                            <td class="px-4 py-2">{{ $application->id }}</td>
+                            <td class="px-4 py-2">
+                                {{-- {{ $application->id }} --}}
+                                 {{ str_pad($application->id, 10, '0', STR_PAD_LEFT) }}
+                            </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold uppercase px-4 py-2">Application Date</td>
