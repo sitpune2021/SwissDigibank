@@ -119,7 +119,7 @@
                <a href="{{ route('loanagainst.applications.view', $disbursement->id) }}" 
                 class="text-green-600 hover:underline">
                     {{-- {{ $disbursement->id }} --}}
-                     {{ str_pad($application->id, 10, '0', STR_PAD_LEFT) }}
+                     {{ str_pad($disbursement->id, 10, '0', STR_PAD_LEFT) }}
                 </a>
             </td>
             <td class="text-start !py-5 px-6">
