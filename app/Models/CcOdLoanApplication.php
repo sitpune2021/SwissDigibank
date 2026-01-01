@@ -21,6 +21,7 @@ class CcOdLoanApplication extends Model
         'guarantor_3_id',
         'guarantor_4_id',
         'scheme_id',
+        'tenure_value',
         'credit_period',
         'net_loan_amount',
         'purpose_of_loan',

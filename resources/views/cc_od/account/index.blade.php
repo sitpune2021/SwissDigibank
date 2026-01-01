@@ -5,6 +5,14 @@
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
         <h1 class=" flex text-lg block  uppercase font-semibold">CC / OD LIMIT LOAN</h1>
     </div>
+     @if(session('success'))
+            <div class="">
+                <div class="w-44 mb-5 flex justify-end">
+                    <x-alert />
+                </div>
+                {{-- {{ session('success') }} --}}
+            </div>
+        @endif
 
     <div class="col-span-12 box lg:col-span-12">
         <div class="pb-4 overflow-x-auto lg:pb-6">

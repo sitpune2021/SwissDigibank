@@ -25,23 +25,23 @@ use Illuminate\Validation\ValidationException;
 
 class CcOdLoanController extends Controller
 {
-    
+
     public function index()
-    {       
+    {
         $schemes = CcOdLoanScheme::orderBy('id', 'desc')->paginate(10);
         return view("cc_od.schemes.index", compact('schemes'));
-    } 
-  
+    }
+
     public function create()
     {
         return view("cc_od.schemes.create");
     }
- 
+
     public function store(Request $request)
     {
         Log::info('--- cc_od Loan Scheme Store Started ---', [
             'user_id' => auth()->id(),
-            'input'   => $request->all(),
+            'input' => $request->all(),
         ]);
 
         try {
@@ -60,49 +60,49 @@ class CcOdLoanController extends Controller
                     'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
                 ]);
 
-            // Merge other optional fields
-            $data = array_merge($validated, $request->only([
-                'processing_fee',
-                'stamp_duty_charge',
-                'insurance_fee',
-                'gold_loan_setting',
-                'penalty_charge',
-                'fore_closer_charge',
-                'credit_period',
-                'sms_charge',
-                'fuel_charge',
-                'stationary_charge',
-                'maintenance_charge',
-                'collection',
-            ]));
+                // Merge other optional fields
+                $data = array_merge($validated, $request->only([
+                    'processing_fee',
+                    'stamp_duty_charge',
+                    'insurance_fee',
+                    'gold_loan_setting',
+                    'penalty_charge',
+                    'fore_closer_charge',
+                    'credit_period',
+                    'sms_charge',
+                    'fuel_charge',
+                    'stationary_charge',
+                    'maintenance_charge',
+                    'collection',
+                ]));
 
             } catch (ValidationException $e) {
                 Log::warning('Validation Failed in CcOdLoanScheme', [
                     'errors' => $e->errors(),
-                    'input'  => $request->all(),
+                    'input' => $request->all(),
                 ]);
 
                 return back()->withErrors($e->errors())->withInput();
             }
 
-                // Store data in DB
-                $scheme = CcOdLoanScheme::create($data);
+            // Store data in DB
+            $scheme = CcOdLoanScheme::create($data);
 
-                DB::commit();
+            DB::commit();
 
-                Log::info('cc_od Loan Scheme Created Successfully', [
-                    'scheme_id' => $scheme->id,
-                ]);
+            Log::info('cc_od Loan Scheme Created Successfully', [
+                'scheme_id' => $scheme->id,
+            ]);
 
-                return redirect()
-                    ->route('cc_od.schemes.index')
-                    ->with('success', 'Scheme created successfully!');
+            return redirect()
+                ->route('cc_od.schemes.index')
+                ->with('success', 'Scheme created successfully!');
 
-            } catch (Exception $e) {
-                DB::rollBack();
-                Log::error('Error while storing cc_od Loan Scheme', [
-                    'message' => $e->getMessage(),
-                ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error while storing cc_od Loan Scheme', [
+                'message' => $e->getMessage(),
+            ]);
 
             return back()->with('error', 'Something went wrong! Please check log file.');
         }
@@ -127,15 +127,15 @@ class CcOdLoanController extends Controller
         $scheme->update($request->all());
 
         return redirect()->route('cc_od.schemes.index')
-                        ->with('success', 'Scheme updated successfully!');
+            ->with('success', 'Scheme updated successfully!');
     }
-  
+
     public function view($id)
     {
         $scheme = CcOdLoanScheme::findOrFail($id);
         return view("cc_od.schemes.view", compact('scheme'));
     }
-     
+
     public function appindex()
     {
         // loan applications fetch with pagination
@@ -146,16 +146,16 @@ class CcOdLoanController extends Controller
         return view("cc_od.applications.index", compact('applications'));
     }
 
-    public function appcreate() 
+    public function appcreate()
     {
         //$members = Member::all();
-        $members = Member::select('id', 'member_info_first_name','member_info_mobile_no','general_branch')->get();
+        $members = Member::select('id', 'member_info_first_name', 'member_info_mobile_no', 'general_branch')->get();
         $branch = Branch::all();
         $scheme = CcOdLoanScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
-        return view("cc_od.applications.create", compact('members','branch','scheme','banks'));
+        return view("cc_od.applications.create", compact('members', 'branch', 'scheme', 'banks'));
     }
-   
+
     public function storeLoanApplication(Request $request)
     {
         Log::info('--- cc od Loan Application Store Started ---', [
@@ -166,26 +166,26 @@ class CcOdLoanController extends Controller
         // Validation (Security fields removed)
         try {
             $validated = $request->validate([
-                'application_date'   => 'required|date',
-                'member_id'          => 'required|exists:members,id',
-                'branch_id'          => 'required|exists:branches,id',
-                'scheme_id'          => 'required|exists:loan_against_schemes,id',
-                'purpose_of_loan'    => 'required|string|max:255',
-                'net_loan_amount'    => 'required|numeric|min:1',
-                'credit_period'      => 'required|numeric|min:1',
-                'charge_per_emi'     => 'required|in:0,1',
-                'tenure_value'     => 'required',
+                'application_date' => 'required|date',
+                'member_id' => 'required|exists:members,id',
+                'branch_id' => 'required|exists:branches,id',
+                'scheme_id' => 'required|exists:loan_against_schemes,id',
+                'purpose_of_loan' => 'required|string|max:255',
+                'net_loan_amount' => 'required|numeric|min:1',
+                'credit_period' => 'required|numeric|min:1',
+                'charge_per_emi' => 'required|in:0,1',
+                'tenure_value' => 'required',
             ], [
                 'application_date.required' => 'Please select the application date.',
-                'member_id.required'        => 'Please select a member.',
-                'branch_id.required'        => 'Please select a branch.',
-                'scheme_id.required'        => 'Please select a loan scheme.',
-                'purpose_of_loan.required'  => 'Please enter the purpose of the loan.',
-                'net_loan_amount.required'  => 'Please enter Net Loan Amount.',
-                'credit_period.required'    => 'Please enter Credit Period.',
+                'member_id.required' => 'Please select a member.',
+                'branch_id.required' => 'Please select a branch.',
+                'scheme_id.required' => 'Please select a loan scheme.',
+                'purpose_of_loan.required' => 'Please enter the purpose of the loan.',
+                'net_loan_amount.required' => 'Please enter Net Loan Amount.',
+                'credit_period.required' => 'Please enter Credit Period.',
             ]);
 
-             // Validate CIBIL scores (each must be 3 digits between 300–900)
+            // Validate CIBIL scores (each must be 3 digits between 300–900)
             if ($request->has('cibil_score')) {
                 foreach ($request->cibil_score as $index => $score) {
                     if (!empty($score)) {
@@ -207,46 +207,51 @@ class CcOdLoanController extends Controller
 
             return back()->withErrors($e->errors())->withInput();
         }
+        $applicationDate = Carbon::createFromFormat(
+            'd-m-Y',
+            $request->application_date
+        )->format('Y-m-d');
 
         try {
             // Create record (Security fields removed, null sent instead)
-           $loanApplication = CcOdLoanApplication::create([
-            'application_date'              => $request->application_date,
-            'member_id'                     => $request->member_id,
-            'co_applicant_1_id'             => $request->co_applicant_1_id,
-            'co_applicant_2_id'             => $request->co_applicant_2_id,
-            'branch_id'                     => $request->branch_id,
-            'advisor_id'                    => $request->advisor_id,
-            'guarantor_1_id'                => $request->guarantor_1_id,
-            'guarantor_2_id'                => $request->guarantor_2_id,
-            'guarantor_3_id'                => $request->guarantor_3_id,
-            'guarantor_4_id'                => $request->guarantor_4_id,
-            'scheme_id'                     => $request->scheme_id,
-            'net_loan_amount'               => $request->net_loan_amount,
-            'purpose_of_loan'               => $request->purpose_of_loan,
-            'credit_period'                 => $request->credit_period,
-            'charge_per_emi'                => $request->charge_per_emi,
-            'processing_fee_gst'            => $request->processing_fee_gst,
-            'processing_fee_sgst'           => $request->processing_fee_sgst,
-            'processing_fee_cgst'           => $request->processing_fee_cgst,
-            'processing_fee_igst'           => $request->processing_fee_igst,
-            'processing_fee_total'          => $request->processing_fee_total,
-            'fee_mode'                      => $request->fee_mode,
-            'bank_id'                       => $request->bank_id,
-            'cheque_no'                     => $request->cheque_no,
-            'cheque_date'                   => $request->cheque_date,
-            'transfer_date'                 => $request->transfer_date,
-            'utr_no'                        => $request->utr_no,
-            'transfer_mode'                 => $request->transfer_mode,
-            'credited'                      => ($request->credited === 'yes' || $request->credited == 1) ? 1 : 0,
-            'collect_principal_as_emi'      => $request->collect_principal_as_emi ?? 0,
-            'collect_advance_processing_fee'=> $request->collect_advance_processing_fee ?? 0,
-            'max_loan_amount'               => $request->max_loan_amount ?? 0,
-            'maximum_approvable_amount'     => $request->maximum_approvable_amount ?? 0,
-            'approved_loan_amount'          => $request->approved_loan_amount ?? 0,
-            'security_type'                 => null,
-            'security_amount'               => null,
-        ]);
+            $loanApplication = CcOdLoanApplication::create([
+                'application_date' => $applicationDate,
+                'member_id' => $request->member_id,
+                'co_applicant_1_id' => $request->co_applicant_1_id,
+                'co_applicant_2_id' => $request->co_applicant_2_id,
+                'branch_id' => $request->branch_id,
+                'advisor_id' => $request->advisor_id,
+                'guarantor_1_id' => $request->guarantor_1_id,
+                'guarantor_2_id' => $request->guarantor_2_id,
+                'guarantor_3_id' => $request->guarantor_3_id,
+                'guarantor_4_id' => $request->guarantor_4_id,
+                'scheme_id' => $request->scheme_id,
+                   'tenure_value'     => $request->tenure_value, // ✅ REQUIRED
+                'net_loan_amount' => $request->net_loan_amount,
+                'purpose_of_loan' => $request->purpose_of_loan,
+                'credit_period' => $request->credit_period,
+                'charge_per_emi' => $request->charge_per_emi,
+                'processing_fee_gst' => $request->processing_fee_gst,
+                'processing_fee_sgst' => $request->processing_fee_sgst,
+                'processing_fee_cgst' => $request->processing_fee_cgst,
+                'processing_fee_igst' => $request->processing_fee_igst,
+                'processing_fee_total' => $request->processing_fee_total,
+                'fee_mode' => $request->fee_mode,
+                'bank_id' => $request->bank_id,
+                'cheque_no' => $request->cheque_no,
+                'cheque_date' => $request->cheque_date,
+                'transfer_date' => $request->transfer_date,
+                'utr_no' => $request->utr_no,
+                'transfer_mode' => $request->transfer_mode,
+                'credited' => ($request->credited === 'yes' || $request->credited == 1) ? 1 : 0,
+                'collect_principal_as_emi' => $request->collect_principal_as_emi ?? 0,
+                'collect_advance_processing_fee' => $request->collect_advance_processing_fee ?? 0,
+                'max_loan_amount' => $request->max_loan_amount ?? 0,
+                'maximum_approvable_amount' => $request->maximum_approvable_amount ?? 0,
+                'approved_loan_amount' => $request->approved_loan_amount ?? 0,
+                'security_type' => null,
+                'security_amount' => null,
+            ]);
 
 
             Log::info('cc / od Loan Application created successfully', [
@@ -267,10 +272,10 @@ class CcOdLoanController extends Controller
                         }
 
                         $loanApplication->creditScores()->create([
-                            'cibil_type'       => $type,
-                            'cibil_score'      => $request->cibil_score[$index] ?? null,
-                            'report_date'      => isset($request->report_date[$index])
-                                ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
+                            'cibil_type' => $type,
+                            'cibil_score' => $request->cibil_score[$index] ?? null,
+                            'report_date' => isset($request->report_date[$index])
+                                ? Carbon::createFromFormat('d-m-Y', $request->report_date[$index])->format('Y-m-d')
                                 : null,
                             'report_file_path' => $filePath,
                         ]);
@@ -285,7 +290,7 @@ class CcOdLoanController extends Controller
                 Log::warning('CIBIL block skipped — no cibil_type found in request.');
             }
 
-            return redirect()->route('cc_od.disbursements.index')
+            return redirect()->route('cc_od.applications.index')
                 ->with('success', 'cc / od Loan Application + Credit Scores saved successfully!');
         } catch (Exception $e) {
             Log::error('❌ Error while storing Business Loan Application', [
@@ -348,9 +353,13 @@ class CcOdLoanController extends Controller
         $banks = Bank::pluck('name', 'id');
 
         return view('cc_od.applications.create', compact(
-            'application', 'members', 'scheme', 'branch', 'banks'
+            'application',
+            'members',
+            'scheme',
+            'branch',
+            'banks'
         ));
-    } 
+    }
 
     public function appupdate(Request $request, $id)
     {
@@ -366,8 +375,8 @@ class CcOdLoanController extends Controller
             // Step 1: Validation
             $request->validate([
                 'application_date' => 'required|date',
-                'member_id'        => 'required|exists:members,id',
-                'scheme_id'        => 'required|exists:gold_loan_schemes,id',
+                'member_id' => 'required|exists:members,id',
+                'scheme_id' => 'required|exists:gold_loan_schemes,id',
             ]);
 
             // Step 2: Fetch record
@@ -389,6 +398,13 @@ class CcOdLoanController extends Controller
 
             $inputData = $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']);
 
+            //  FIX: Convert application_date (DD-MM-YYYY → YYYY-MM-DD)
+            if (!empty($inputData['application_date'])) {
+                $inputData['application_date'] = Carbon::createFromFormat(
+                    'd-m-Y',
+                    $inputData['application_date']
+                )->format('Y-m-d');
+            }
             if (isset($inputData['credited'])) {
                 $inputData['credited'] = ($inputData['credited'] === 'yes' || $inputData['credited'] === '1') ? 1 : 0;
             }
@@ -410,7 +426,7 @@ class CcOdLoanController extends Controller
             $application->creditScores()->delete();
 
             // Step 6: Insert new CIBIL scores
-            $cibilTypes  = $request->input('cibil_type', []);
+            $cibilTypes = $request->input('cibil_type', []);
             $cibilScores = $request->input('cibil_score', []);
             $reportDates = $request->input('report_date', []);
             $reportFiles = $request->file('report_file', []);
@@ -438,10 +454,10 @@ class CcOdLoanController extends Controller
                     }
 
                     $application->creditScores()->create([
-                        'cibil_type'   => $type,
-                        'cibil_score'  => $cibilScores[$index] ?? null,
-                        'report_date'  => $formattedDate,
-                        'report_file'  => $filePath,
+                        'cibil_type' => $type,
+                        'cibil_score' => $cibilScores[$index] ?? null,
+                        'report_date' => $formattedDate,
+                        'report_file' => $filePath,
                     ]);
 
                     Log::info('CIBIL Entry Added', [
@@ -480,10 +496,10 @@ class CcOdLoanController extends Controller
             return back()->with('error', 'Something went wrong while updating the application.');
         }
     }
-    
+
     public function col_process_fee($id)
     {
-         $application = CcOdLoanApplication::with([
+        $application = CcOdLoanApplication::with([
             'member',
             'coApplicant1',
             'guarantor1',
@@ -492,7 +508,7 @@ class CcOdLoanController extends Controller
         ])->findOrFail($id);
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view("cc_od.applications.view-buttons.col_process_fee", compact('application','banks'));
+        return view("cc_od.applications.view-buttons.col_process_fee", compact('application', 'banks'));
     }
 
     public function storeProcessFee(Request $request, $id)
@@ -535,12 +551,12 @@ class CcOdLoanController extends Controller
         // Do NOT change status. Only update updated_at to current time so it becomes "latest"
         // Option A: touch() updates updated_at automatically
         $application->touch();
-        
+
         return redirect()->route('loans')
-        ->with('success', 'Submitted for approval!');      
-        
+            ->with('success', 'Submitted for approval!');
+
     }
 
 
-    
+
 }
