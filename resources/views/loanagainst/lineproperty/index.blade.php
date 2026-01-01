@@ -5,7 +5,7 @@
 
    <div class="box">
      <div class="flex justify-end">
-            <a href="{{ route('loanagainst.lineproperty.export') }}" class="btn-primary tet-sm rounded-10 uppercase">
+            <a href="{{ route('loanagainst.lineproperty.export') }}" class="btn-primary text-sm py-2 px-2 rounded-10 uppercase">
                         <i class="las la-download"></i>
                         Download XLS
              </a>
@@ -15,13 +15,13 @@
         <table class="w-full border-collapse whitespace-nowrap  text-sm">
             <thead class="bg-secondary/5 ">
                 <tr class="text-center">
-                    <th class=" p-2 ">LOAN APPLICATION NO</th>
-                    <th class=" p-2 ">LOAN APPLICATION STATUS</th>
-                    <th class=" p-2 ">LIEN ACCOUNT TYPE</th>
-                    <th class=" p-2 ">LOAN ACCOUNT STATUS</th>
-                    <th class=" p-2 ">LIEN ACCOUNT STATUS</th>
-                    <th class=" p-2 ">LIEN ACCOUNT NUMBER</th>
-                    <th class=" p-2 ">LIEN ACCOUNT ASSIGNED</th>
+                    <th class=" py-3 px-3 ">LOAN APPLICATION NO</th>
+                    <th class=" py-3 px-3 ">LOAN APPLICATION STATUS</th>
+                    <th class=" py-3 px-3 ">LIEN ACCOUNT TYPE</th>
+                    <th class=" py-3 px-3 ">LOAN ACCOUNT STATUS</th>
+                    <th class=" py-3 px-3 ">LIEN ACCOUNT STATUS</th>
+                    <th class=" py-3 px-3 ">LIEN ACCOUNT NUMBER</th>
+                    <th class=" py-3 px-3 ">LIEN ACCOUNT ASSIGNED</th>
                 </tr>
             </thead>
             <tbody>
