@@ -132,7 +132,7 @@
                             <td class="font-semibold uppercase p-3">Active</td>
                             <td class="p-3">
                                 <span
-                                    class="block w-28 rounded-[30px] border border-n30 {{ $scheme->is_active ? 'bg-primary/20 text-primary' : 'bg-red-200 text-red-600' }} py-2 text-center text-xs dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                    class="block w-28 rounded-[30px] border border-n30 {{ $scheme->is_active ? 'bg-primary/20 text-primary' : 'bg-error/20 text-error' }} py-2 text-center text-xs dark:border-n500 dark:bg-bg3 xxl:w-16">
                                     {{ $scheme->is_active ? 'Yes' : 'No' }}
                                 </span>
                             </td>
