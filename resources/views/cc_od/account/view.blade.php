@@ -326,7 +326,10 @@ $settingLabel = '';
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold uppercase px-4 py-2">Application No.</td>
-                            <td class="px-4 py-2 text-primary">{{$goldLoan->id ?? 'N/A'}}</td>
+                            <td class="px-4 py-2 text-primary">
+                                {{-- {{$goldLoan->id ?? 'N/A'}} --}}
+                                  {{ str_pad($goldLoan->id , 10, '0', STR_PAD_LEFT) }}
+                            </td>
                         </tr>
                         @php
                         use Carbon\Carbon;
