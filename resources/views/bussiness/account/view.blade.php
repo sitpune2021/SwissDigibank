@@ -294,7 +294,7 @@ $settingLabel = '';
         <!-- Left: Details -->
         <div class=" w-full overflow-x-auto   overflow-hidden">
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
-                <table class="min-w-full text-sm text-left border-collapse">
+                <table class="w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
                         <tr class="border-b">
                             <td class="font-semibold uppercase px-4 py-2 w-1/3">Status</td>
@@ -326,7 +326,10 @@ $settingLabel = '';
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold uppercase px-4 py-2">Application No.</td>
-                            <td class="px-4 py-2 text-primary">{{$goldLoan->id ?? 'N/A'}}</td>
+                            <td class="px-4 py-2 text-primary">
+                                {{-- {{$goldLoan->id ?? 'N/A'}} --}}
+                                 {{ str_pad($goldLoan->id, 10, '0', STR_PAD_LEFT) }}
+                            </td>
                         </tr>
                         @php
                         use Carbon\Carbon;
