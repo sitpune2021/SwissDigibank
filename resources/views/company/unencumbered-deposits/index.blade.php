@@ -23,42 +23,42 @@
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center uppercase gap-1">
                                 BANK NAME
                             </div>
                         </th>
 
                         <th class="text-start text-center !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 text-center">
+                            <div class="flex items-center uppercase gap-1 text-center">
                                 FD No.
                             </div>
                         </th>
 
-                        <th class="text-start text-center !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <th class="text-start text-center uppercase !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 text-center">
                                 AMOUNT
                             </div>
                         </th>
 
-                        <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
+                        <th class="text-start !py-5 uppercase px-6 min-w-[130px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 OPEN DATE
                             </div>
                         </th>
 
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <th class="text-start !py-5 uppercase px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 MATURITY DATE
                             </div>
                         </th>
 
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <th class="text-start !py-5 uppercase px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 INTEREST RATE (%)
                             </div>
                         </th>
 
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <th class="text-start uppercase !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 FROM DEPOSIT MONEY
                             </div>
@@ -66,7 +66,7 @@
 
                     
 
-                        <th class="text-center !py-5" data-sortable="false">
+                        <th class="text-center uppercase !py-5" data-sortable="false">
                             ACTION
                         </th>
                     </tr>

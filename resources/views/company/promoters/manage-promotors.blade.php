@@ -1,7 +1,7 @@
 @extends('layout.main')
 @section('page-title', 'PROMOTERS')
 @section('action-button')
-    <a class="btn-primary" href="{{ route('promotor.create') }}">
+    <a class="btn-primary uppercase btns-add-index" href="{{ route('promotor.create') }}">
         ADD
     </a>
 @endsection
@@ -82,7 +82,7 @@
                 </thead>
                 <tbody>
                     @foreach ($promotors as $promotor)
-                        <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                        <tr class="border-b dark:even:bg-bg3">
                             <td class="py-5 px-6">
                                 <a href="{{ $promotor?->id ? route('promotor.show', base64_encode($promotor->id)) : '#' }}"
                                     class="text-primary hover:underline">
@@ -103,7 +103,7 @@
                                     </span>
                                 @else
                                     <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
                                         {{ $promotor->is_senior ?? 'No' }}
                                     </span>
                                 @endif
@@ -112,7 +112,7 @@
                             <td class="py-2">
                                 @if (optional($promotor->kyc)->kyc_status == 'completed')
                                     <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/10 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                                         {{ optional($promotor->kyc)->kyc_status ?? 'N/A' }}
                                     </span>
                                 @else
