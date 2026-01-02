@@ -2,7 +2,7 @@
 @section('content')
     <div class="main-inner">
 
-    @if(session('success'))
+    {{-- @if(session('success'))
     <div 
         id="successMessage" 
         class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out">
@@ -19,13 +19,24 @@
             }
         }, 2000);
     </script>
-    @endif
+    @endif --}}
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-                <h3 class=" flex text-xl block font-semibold">DAILY / WEEKLY LOAN APPLICATION</h3>
-                <a href="{{route('daily_weekly.applications.create')}}" class=" block flex btn-primary capitalize ">add
+                <h3 class=" flex text-lg block font-semibold">DAILY / WEEKLY LOAN APPLICATION</h3>
+                <a href="{{route('daily_weekly.applications.create')}}" class=" block flex btn-primary uppercase ">add
                 </a>
             </div>
+
+
+ 
+        @if(session('success'))
+            <div class="">
+                <div class="w-44 mb-5 flex justify-end">
+                    <x-alert />
+                </div>
+                {{-- {{ session('success') }} --}}
+            </div>
+        @endif
 
       
        <div class="col-span-12 box lg:col-span-12">
@@ -143,9 +154,9 @@
                     <div class="relative">
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
-                            <li><a href="{{ route('daily_weekly.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
+                            <li><a href="{{ route('daily_weekly.applications.view', $application->id) }}" class="single-option uppercase">View</a></li>
                             @if($application->status != 2 )
-                            <li><a href="{{ route('daily_weekly.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
+                            <li><a href="{{ route('daily_weekly.applications.edit', $application->id) }}" class="single-option uppercase">Edit</a></li>
                             @endif
                         </ul>
                     </div>

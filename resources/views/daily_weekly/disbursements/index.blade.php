@@ -48,7 +48,7 @@
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h1 class=" flex text-xl block  uppercase font-semibold">
+            <h1 class=" flex text-lg block  uppercase font-semibold">
                 Daily Weekly Disbursements
             </h1>
             

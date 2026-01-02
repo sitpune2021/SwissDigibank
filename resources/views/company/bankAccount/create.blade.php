@@ -88,7 +88,7 @@
                 </div>
 
                 {{-- Account Open Date --}}
-                <div class="col-span-2 md:col-span-1">
+                <div class="col-span-2 md:col-span-1 mt-3">
                     <x-datepicker-disabled label="ACCOUNT OPEN DATE" name="account_open_date" inputId="account_open_date"
                         value="{{ old('account_open_date', $bankAccount->account_open_date ?? '') }}" />
 
