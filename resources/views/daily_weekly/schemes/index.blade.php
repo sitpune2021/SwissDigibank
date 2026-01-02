@@ -1,7 +1,7 @@
 @extends('layout.main')
 @section('content')
     <div class="main-inner">
-
+{{-- 
    @if(session('success'))
     <div 
         id="successMessage" 
@@ -20,13 +20,24 @@
             }
         }, 2000);
     </script>
-    @endif
+    @endif --}}
       
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
                 <h1 class=" flex text-xl block font-semibold">DAILY WEEKLY LOAN SCHEME</h1>
-                <a href="{{route('daily_weekly.schemes.create')}}" class=" block flex btn-primary capitalize ">Add
+                <a href="{{route('daily_weekly.schemes.create')}}" class=" block flex btn-primary uppercase ">Add
                 </a>
             </div>  
+
+
+ 
+        @if(session('success'))
+            <div class="">
+                <div class="w-44 mb-5 flex justify-end">
+                    <x-alert />
+                </div>
+                {{-- {{ session('success') }} --}}
+            </div>
+        @endif
               
         <div class="col-span-12 box lg:col-span-12">
             <div class="pb-4 overflow-x-auto lg:pb-6">
@@ -34,52 +45,52 @@
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3">
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center uppercase gap-1">
                                     SCHEME CODE
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center uppercase gap-1">
                                     SCHEME NAME
                                 </div>
                             </th>
                            
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center uppercase gap-1">
                                     LOAN AMOUNT
                                 </div>
                             </th>
 
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center uppercase gap-1">
                                     No of EMI
                                 </div>
                             </th>
 
                              <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center uppercase gap-1">
                                     EMI AMOUNT
                                 </div>
                             </th>
 
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center uppercase gap-1">
                                     EMI PAYOUT
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center uppercase gap-1">
                                     A. INTEREST RATE (%)
                                 </div>
                             </th>
 
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center uppercase gap-1">
                                     ACTIVE
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center uppercase gap-1">
                                     ACTIONS
                                 </div>
                             </th>
@@ -145,8 +156,8 @@
                     <div class="relative">
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
-                            <li><a href="{{ route('daily_weekly.schemes.view',$scheme->id) }}" class="single-option">View</a></li>
-                            <li><a href="{{ route('daily_weekly.schemes.edit',$scheme->id) }}" class="single-option">Edit</a></li>
+                            <li><a href="{{ route('daily_weekly.schemes.view',$scheme->id) }}" class="single-option uppercase">View</a></li>
+                            <li><a href="{{ route('daily_weekly.schemes.edit',$scheme->id) }}" class="single-option uppercase">Edit</a></li>
                         </ul>
                     </div>
                 </div>

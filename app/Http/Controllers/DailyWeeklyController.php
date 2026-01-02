@@ -25,13 +25,13 @@ use Illuminate\Validation\ValidationException;
 
 class DailyWeeklyController extends Controller
 {
-    
+
     public function index()
-    {       
+    {
         $schemes = DailyWeeklyScheme::orderBy('id', 'desc')->paginate(10);
         return view("daily_weekly.schemes.index", compact('schemes'));
-    } 
-  
+    }
+
     public function create()
     {
         return view("daily_weekly.schemes.create");
@@ -41,7 +41,7 @@ class DailyWeeklyController extends Controller
     {
         Log::info('--- daily_weekly Loan Scheme Store Started ---', [
             'user_id' => auth()->id(),
-            'input'   => $request->all(),
+            'input' => $request->all(),
         ]);
 
         try {
@@ -64,53 +64,53 @@ class DailyWeeklyController extends Controller
                     'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
                 ]);
 
-            // Merge other optional fields
-            $data = array_merge($validated, $request->only([
-                'processing_fee',
-                'stamp_duty_charge',
-                'insurance_fee',
-                'gold_loan_setting',
-                'penalty_charge',
-                'fore_closer_charge',
-                'credit_period',
-                'sms_charge',
-                'fuel_charge',
-                'stationary_charge',
-                'maintenance_charge',
-                'collection',
-                'overdue_type',               
-                'overdue_rate', 
-                'fitness_fee',
-                'credit_period', 
-            ]));
+                // Merge other optional fields
+                $data = array_merge($validated, $request->only([
+                    'processing_fee',
+                    'stamp_duty_charge',
+                    'insurance_fee',
+                    'gold_loan_setting',
+                    'penalty_charge',
+                    'fore_closer_charge',
+                    'credit_period',
+                    'sms_charge',
+                    'fuel_charge',
+                    'stationary_charge',
+                    'maintenance_charge',
+                    'collection',
+                    'overdue_type',
+                    'overdue_rate',
+                    'fitness_fee',
+                    'credit_period',
+                ]));
 
             } catch (ValidationException $e) {
                 Log::warning('Validation Failed in DailyWeeklyScheme', [
                     'errors' => $e->errors(),
-                    'input'  => $request->all(),
+                    'input' => $request->all(),
                 ]);
 
                 return back()->withErrors($e->errors())->withInput();
             }
 
-                // Store data in DB
-                $scheme = DailyWeeklyScheme::create($data);
+            // Store data in DB
+            $scheme = DailyWeeklyScheme::create($data);
 
-                DB::commit();
+            DB::commit();
 
-                Log::info('daily_weekly Loan Scheme Created Successfully', [
-                    'scheme_id' => $scheme->id,
-                ]);
+            Log::info('daily_weekly Loan Scheme Created Successfully', [
+                'scheme_id' => $scheme->id,
+            ]);
 
-                return redirect()
-                    ->route('daily_weekly.schemes.index')
-                    ->with('success', 'Scheme created successfully!');
+            return redirect()
+                ->route('daily_weekly.schemes.index')
+                ->with('success', 'Scheme created successfully!');
 
-            } catch (Exception $e) {
-                DB::rollBack();
-                Log::error('Error while storing daily_weekly Loan Scheme', [
-                    'message' => $e->getMessage(),
-                ]);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error while storing daily_weekly Loan Scheme', [
+                'message' => $e->getMessage(),
+            ]);
 
             return back()->with('error', 'Something went wrong! Please check log file.');
         }
@@ -135,7 +135,7 @@ class DailyWeeklyController extends Controller
         $scheme->update($request->all());
 
         return redirect()->route('daily_weekly.schemes.index')
-                        ->with('success', 'Scheme updated successfully!');
+            ->with('success', 'Scheme updated successfully!');
     }
 
     public function view($id)
@@ -154,14 +154,14 @@ class DailyWeeklyController extends Controller
         return view("daily_weekly.applications.index", compact('applications'));
     }
 
-    public function appcreate() 
+    public function appcreate()
     {
         //$members = Member::all();
-        $members = Member::select('id', 'member_info_first_name','member_info_mobile_no','general_branch')->get();
+        $members = Member::select('id', 'member_info_first_name', 'member_info_mobile_no', 'general_branch')->get();
         $branch = Branch::all();
         $scheme = DailyWeeklyScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
-        return view("daily_weekly.applications.create", compact('members','branch','scheme','banks'));
+        return view("daily_weekly.applications.create", compact('members', 'branch', 'scheme', 'banks'));
     }
 
     public function storeLoanApplication(Request $request)
@@ -174,33 +174,33 @@ class DailyWeeklyController extends Controller
         // Validation (Security fields removed)
         try {
             $validated = $request->validate([
-                'application_date'   => 'required|date',
-                'member_id'          => 'required|exists:members,id',
-                'branch_id'          => 'required|exists:branches,id',
-                'scheme_id'          => 'required|exists:loan_against_schemes,id',
-                'purpose_of_loan'    => 'required|string|max:255',
-                'credit_period'      => 'required|numeric|min:1',
-                'tenure_value'   => 'required|numeric|min:1',
-                'loan_amount'    => 'required|numeric|min:1',
+                'application_date' => 'required|date',
+                'member_id' => 'required|exists:members,id',
+                'branch_id' => 'required|exists:branches,id',
+                'scheme_id' => 'required|exists:loan_against_schemes,id',
+                'purpose_of_loan' => 'required|string|max:255',
+                'credit_period' => 'required|numeric|min:1',
+                'tenure_value' => 'required|numeric|min:1',
+                'loan_amount' => 'required|numeric|min:1',
                 'emi_collection' => 'required|string',
-                'emi_amount'     => 'required|numeric|min:1',
+                'emi_amount' => 'required|numeric|min:1',
                 'processing_fee' => 'required|numeric|min:0',
-                'stamp_duty'     => 'required|numeric|min:0',
-                'fitness_fee'    => 'required|numeric|min:0',
-                'insurance_fee'  => 'required|numeric|min:0',
-                'charges_per_emi'        => 'required|numeric|min:0',
-                'net_emi_with_charges'   => 'required|numeric|min:0',
+                'stamp_duty' => 'required|numeric|min:0',
+                'fitness_fee' => 'required|numeric|min:0',
+                'insurance_fee' => 'required|numeric|min:0',
+                'charges_per_emi' => 'required|numeric|min:0',
+                'net_emi_with_charges' => 'required|numeric|min:0',
                 'total_recovered_amount' => 'required|numeric|min:0',
             ], [
                 'application_date.required' => 'Please select the application date.',
-                'member_id.required'        => 'Please select a member.',
-                'branch_id.required'        => 'Please select a branch.',
-                'scheme_id.required'        => 'Please select a loan scheme.',
-                'purpose_of_loan.required'  => 'Please enter the purpose of the loan.',
-                'credit_period.required'    => 'Please enter Credit Period.',
+                'member_id.required' => 'Please select a member.',
+                'branch_id.required' => 'Please select a branch.',
+                'scheme_id.required' => 'Please select a loan scheme.',
+                'purpose_of_loan.required' => 'Please enter the purpose of the loan.',
+                'credit_period.required' => 'Please enter Credit Period.',
             ]);
 
-             // Validate CIBIL scores (each must be 3 digits between 300–900)
+            // Validate CIBIL scores (each must be 3 digits between 300–900)
             if ($request->has('cibil_score')) {
                 foreach ($request->cibil_score as $index => $score) {
                     if (!empty($score)) {
@@ -222,55 +222,67 @@ class DailyWeeklyController extends Controller
             return back()->withErrors($e->errors())->withInput();
         }
 
+        $applicationDate = Carbon::createFromFormat(
+            'd-m-Y',
+            $request->application_date
+        )->format('Y-m-d');
+
+        $chequeDate = $request->cheque_date
+            ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d')
+            : null;
+
+        $transferDate = $request->transfer_date
+            ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
+            : null;
         try {
             // Create record (Security fields removed, null sent instead)
-           $loanApplication = DailyWeeklyApplication::create([
-            'application_date'              => $request->application_date,
-            'member_id'                     => $request->member_id,
-            'co_applicant_1_id'             => $request->co_applicant_1_id,
-            'co_applicant_2_id'             => $request->co_applicant_2_id,
-            'branch_id'                     => $request->branch_id,
-            'advisor_id'                    => $request->advisor_id,
-            'guarantor_1_id'                => $request->guarantor_1_id,
-            'guarantor_2_id'                => $request->guarantor_2_id,
-            'guarantor_3_id'                => $request->guarantor_3_id,
-            'guarantor_4_id'                => $request->guarantor_4_id,
-            'scheme_id'                     => $request->scheme_id,
-            'purpose_of_loan'               => $request->purpose_of_loan,
-            'credit_period'                 => $request->credit_period,
-            'processing_fee_gst'            => $request->processing_fee_gst,
-            'processing_fee_sgst'           => $request->processing_fee_sgst,
-            'processing_fee_cgst'           => $request->processing_fee_cgst,
-            'processing_fee_igst'           => $request->processing_fee_igst,
-            'processing_fee_total'          => $request->processing_fee_total,
-            'fee_mode'                      => $request->fee_mode,
-            'bank_id'                       => $request->bank_id,
-            'cheque_no'                     => $request->cheque_no,
-            'cheque_date'                   => $request->cheque_date,
-            'transfer_date'                 => $request->transfer_date,
-            'utr_no'                        => $request->utr_no,
-            'transfer_mode'                 => $request->transfer_mode,
-            'credited'                      => ($request->credited === 'yes' || $request->credited == 1) ? 1 : 0,
-            'collect_principal_as_emi'      => $request->collect_principal_as_emi ?? 0,
-            'collect_advance_processing_fee'=> $request->collect_advance_processing_fee ?? 0,
-            'max_loan_amount'               => $request->max_loan_amount ?? 0,
-            'maximum_approvable_amount'     => $request->maximum_approvable_amount ?? 0,
-            'approved_loan_amount'          => $request->approved_loan_amount ?? 0,
-            'security_type'                 => null,
-            'security_amount'               => null,
-            'tenure_value'                => $request->tenure_value,
-            'loan_amount'                 => $request->loan_amount,
-            'emi_collection'              => $request->emi_collection,
-            'emi_amount'                  => $request->emi_amount,
-            'processing_fee'              => $request->processing_fee,
-            'stamp_duty'                  => $request->stamp_duty,
-            'fitness_fee'                 => $request->fitness_fee,
-            'insurance_fee'               => $request->insurance_fee,
-            'charges_per_emi'             => $request->charges_per_emi,
-            'net_emi_with_charges'        => $request->net_emi_with_charges,
-            'total_recovered_amount'      => $request->total_recovered_amount,
+            $loanApplication = DailyWeeklyApplication::create([
+                'application_date' => $applicationDate,
+                'member_id' => $request->member_id,
+                'co_applicant_1_id' => $request->co_applicant_1_id,
+                'co_applicant_2_id' => $request->co_applicant_2_id,
+                'branch_id' => $request->branch_id,
+                'advisor_id' => $request->advisor_id,
+                'guarantor_1_id' => $request->guarantor_1_id,
+                'guarantor_2_id' => $request->guarantor_2_id,
+                'guarantor_3_id' => $request->guarantor_3_id,
+                'guarantor_4_id' => $request->guarantor_4_id,
+                'scheme_id' => $request->scheme_id,
+                'purpose_of_loan' => $request->purpose_of_loan,
+                'credit_period' => $request->credit_period,
+                'processing_fee_gst' => $request->processing_fee_gst,
+                'processing_fee_sgst' => $request->processing_fee_sgst,
+                'processing_fee_cgst' => $request->processing_fee_cgst,
+                'processing_fee_igst' => $request->processing_fee_igst,
+                'processing_fee_total' => $request->processing_fee_total,
+                'fee_mode' => $request->fee_mode,
+                'bank_id' => $request->bank_id,
+                'cheque_no' => $request->cheque_no,
+                'cheque_date' => $chequeDate,
+                'transfer_date' => $transferDate,
+                'utr_no' => $request->utr_no,
+                'transfer_mode' => $request->transfer_mode,
+                'credited' => ($request->credited === 'yes' || $request->credited == 1) ? 1 : 0,
+                'collect_principal_as_emi' => $request->collect_principal_as_emi ?? 0,
+                'collect_advance_processing_fee' => $request->collect_advance_processing_fee ?? 0,
+                'max_loan_amount' => $request->max_loan_amount ?? 0,
+                'maximum_approvable_amount' => $request->maximum_approvable_amount ?? 0,
+                'approved_loan_amount' => $request->approved_loan_amount ?? 0,
+                'security_type' => null,
+                'security_amount' => null,
+                'tenure_value' => $request->tenure_value,
+                'loan_amount' => $request->loan_amount,
+                'emi_collection' => $request->emi_collection,
+                'emi_amount' => $request->emi_amount,
+                'processing_fee' => $request->processing_fee,
+                'stamp_duty' => $request->stamp_duty,
+                'fitness_fee' => $request->fitness_fee,
+                'insurance_fee' => $request->insurance_fee,
+                'charges_per_emi' => $request->charges_per_emi,
+                'net_emi_with_charges' => $request->net_emi_with_charges,
+                'total_recovered_amount' => $request->total_recovered_amount,
 
-        ]);
+            ]);
 
 
             Log::info('daily_weekly Loan Application created successfully', [
@@ -291,14 +303,14 @@ class DailyWeeklyController extends Controller
                         }
 
                         $loanApplication->creditScores()->create([
-                            'cibil_type'       => $type,
-                            'cibil_score'      => $request->cibil_score[$index] ?? null,
+                            'cibil_type' => $type,
+                            'cibil_score' => $request->cibil_score[$index] ?? null,
                             // 'report_date'      => isset($request->report_date[$index])
                             //     ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
                             //     : null,
-                             'report_date'      => isset($request->report_date[$index])
-                            ? Carbon::createFromFormat('d-m-Y', $request->report_date[$index])->format('Y-m-d') // ✅ Correct format
-                            : null,
+                            'report_date' => isset($request->report_date[$index])
+                                ? Carbon::createFromFormat('d-m-Y', $request->report_date[$index])->format('Y-m-d') // ✅ Correct format
+                                : null,
                             'report_file_path' => $filePath,
                         ]);
                     } catch (Exception $e) {
@@ -353,8 +365,8 @@ class DailyWeeklyController extends Controller
         ])->findOrFail($id);
 
         $processingFee = DailyWeeklyProcessingFee::where('application_id', $id)
-                        ->latest()
-                        ->first();
+            ->latest()
+            ->first();
 
         return view("daily_weekly.applications.view", compact('application', 'processingFee'));
     }
@@ -379,10 +391,14 @@ class DailyWeeklyController extends Controller
         $banks = Bank::pluck('name', 'id');
 
         return view('daily_weekly.applications.create', compact(
-            'application', 'members', 'scheme', 'branch', 'banks'
+            'application',
+            'members',
+            'scheme',
+            'branch',
+            'banks'
         ));
     }
-   
+
     public function appupdate(Request $request, $id)
     {
         Log::info('--- daily_weekly Loan Application Update Started ---', [
@@ -397,8 +413,8 @@ class DailyWeeklyController extends Controller
             // Step 1: Validation
             $request->validate([
                 'application_date' => 'required|date',
-                'member_id'        => 'required|exists:members,id',
-                'scheme_id'        => 'required|exists:gold_loan_schemes,id',
+                'member_id' => 'required|exists:members,id',
+                'scheme_id' => 'required|exists:gold_loan_schemes,id',
             ]);
 
             // Step 2: Fetch record
@@ -419,6 +435,13 @@ class DailyWeeklyController extends Controller
             ]);
 
             $inputData = $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']);
+             if (!empty($inputData['application_date'])) {
+            $inputData['application_date'] = Carbon::createFromFormat(
+                'd-m-Y',
+                $inputData['application_date']
+            )->format('Y-m-d');
+        }
+
 
             if (isset($inputData['credited'])) {
                 $inputData['credited'] = ($inputData['credited'] === 'yes' || $inputData['credited'] === '1') ? 1 : 0;
@@ -441,7 +464,7 @@ class DailyWeeklyController extends Controller
             $application->creditScores()->delete();
 
             // Step 6: Insert new CIBIL scores
-            $cibilTypes  = $request->input('cibil_type', []);
+            $cibilTypes = $request->input('cibil_type', []);
             $cibilScores = $request->input('cibil_score', []);
             $reportDates = $request->input('report_date', []);
             $reportFiles = $request->file('report_file', []);
@@ -462,17 +485,17 @@ class DailyWeeklyController extends Controller
                     $rawDate = $reportDates[$index] ?? null;
                     $formattedDate = null;
                     if (!empty($rawDate)) {
-                        $dateObj = \DateTime::createFromFormat('d/m/Y', $rawDate);
+                        $dateObj = \DateTime::createFromFormat('d-m-Y', $rawDate);
                         if ($dateObj) {
                             $formattedDate = $dateObj->format('Y-m-d');
                         }
                     }
 
                     $application->creditScores()->create([
-                        'cibil_type'   => $type,
-                        'cibil_score'  => $cibilScores[$index] ?? null,
-                        'report_date'  => $formattedDate,
-                        'report_file'  => $filePath,
+                        'cibil_type' => $type,
+                        'cibil_score' => $cibilScores[$index] ?? null,
+                        'report_date' => $formattedDate,
+                        'report_file' => $filePath,
                     ]);
 
                     Log::info('CIBIL Entry Added', [
@@ -511,10 +534,10 @@ class DailyWeeklyController extends Controller
             return back()->with('error', 'Something went wrong while updating the application.');
         }
     }
-    
+
     public function col_process_fee($id)
     {
-         $application = DailyWeeklyApplication::with([
+        $application = DailyWeeklyApplication::with([
             'member',
             'coApplicant1',
             'guarantor1',
@@ -523,7 +546,7 @@ class DailyWeeklyController extends Controller
         ])->findOrFail($id);
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view("daily_weekly.applications.view-buttons.col_process_fee", compact('application','banks'));
+        return view("daily_weekly.applications.view-buttons.col_process_fee", compact('application', 'banks'));
     }
 
     public function storeProcessFee(Request $request, $id)
@@ -569,13 +592,14 @@ class DailyWeeklyController extends Controller
 
         $loanAmount = floatval($application->loan_amount ?? 0);
         $tenure = intval($application->tenure_value ?? ($application->scheme->no_of_emi ?? 1));
-        if ($tenure <= 0) $tenure = 1;
+        if ($tenure <= 0)
+            $tenure = 1;
 
         // Charges (inclusive amounts if stored that way). We will treat these as inclusive already.
         $processingFeeInc = floatval($application->processing_fee ?? 0);
-        $stampDutyInc     = floatval($application->stamp_duty ?? 0);
-        $insuranceInc     = floatval($application->insurance_fee ?? 0);
-        $fitnessInc       = floatval($application->fitness_fee ?? 0);
+        $stampDutyInc = floatval($application->stamp_duty ?? 0);
+        $insuranceInc = floatval($application->insurance_fee ?? 0);
+        $fitnessInc = floatval($application->fitness_fee ?? 0);
 
         $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
 
@@ -638,17 +662,18 @@ class DailyWeeklyController extends Controller
 
             $emiTotal = round($principalThis + $interestForPeriod + $chargesPerEmi, 2);
             $remainingPrincipal = round($remainingPrincipal - $principalThis, 2);
-            if ($remainingPrincipal < 0) $remainingPrincipal = 0.00;
+            if ($remainingPrincipal < 0)
+                $remainingPrincipal = 0.00;
             // EMI Date format change
-                $formattedEmiDate = $emiDate->format('d-m-Y');
+            $formattedEmiDate = $emiDate->format('d-m-Y');
 
-                // Due date = EMI date + 1 day
-                $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
+            // Due date = EMI date + 1 day
+            $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
 
             $schedule[] = [
                 'no' => $i,
                 'emi_date' => $formattedEmiDate,
-                    'due_date' => $dueDate,
+                'due_date' => $dueDate,
                 'principal' => number_format($principalThis, 2, '.', ''),
                 'interest' => number_format($interestForPeriod, 2, '.', ''),
                 'charges_per_emi' => number_format($chargesPerEmi, 2, '.', ''),
@@ -658,10 +683,10 @@ class DailyWeeklyController extends Controller
         }
 
         // Totals for footer
-        $totalPrincipal = array_sum(array_map(fn($r)=>floatval($r['principal']), $schedule));
-        $totalInterest = array_sum(array_map(fn($r)=>floatval($r['interest']), $schedule));
-        $totalCharges = array_sum(array_map(fn($r)=>floatval($r['charges_per_emi']), $schedule));
-        $totalEmi = array_sum(array_map(fn($r)=>floatval($r['emi']), $schedule));
+        $totalPrincipal = array_sum(array_map(fn($r) => floatval($r['principal']), $schedule));
+        $totalInterest = array_sum(array_map(fn($r) => floatval($r['interest']), $schedule));
+        $totalCharges = array_sum(array_map(fn($r) => floatval($r['charges_per_emi']), $schedule));
+        $totalEmi = array_sum(array_map(fn($r) => floatval($r['emi']), $schedule));
 
         return view('daily_weekly.applications.view-buttons.show-emi-chart', compact(
             'application',
@@ -704,11 +729,11 @@ class DailyWeeklyController extends Controller
         // Do NOT change status. Only update updated_at to current time so it becomes "latest"
         // Option A: touch() updates updated_at automatically
         $application->touch();
-        
+
         return redirect()->route('loans')
-        ->with('success', 'Submitted for approval!');      
-        
+            ->with('success', 'Submitted for approval!');
+
     }
 
-    
+
 }

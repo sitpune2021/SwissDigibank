@@ -137,23 +137,27 @@ $settingLabel = '';
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl uppercase font-semibold">DAILY WEEKLY LOAN - {{$goldLoan->id}} </h1>
+            <h1 class="text-lg uppercase font-semibold">DAILY WEEKLY LOAN - 
+                {{-- {{$goldLoan->id}} --}}
+             {{ str_pad($goldLoan->id, 10, '0', STR_PAD_LEFT) }}    
+            </h1>
+
         </div>
     </div>
 
     <div class="flex flex-wrap gap-3">
-        <a href="{{route('daily_weekly.account.transaction',$goldLoan->id)}}" class="btn-secondary uppercase px-2 py-2 rounded-10 ">
+        <a href="{{route('daily_weekly.account.transaction',$goldLoan->id)}}" class="btn-secondary uppercase text-sm px-2 py-2 rounded-10 ">
             View Transaction
         </a>
         @if(
                 strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi'
                 
             )
-            <a href="{{route('daily_weekly.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+            <a href="{{route('daily_weekly.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase text-sm px-2 py-2 rounded-10 ">
                 Pay Emi
             </a>
             @if(strtolower($goldLoan->scheme->gold_loan_setting) == 'flat_advanced_interest')
-                <a href="{{ route('daily_weekly.account.extension',$goldLoan->id) }}" class="btn-error uppercase px-2 py-2 rounded-10 ">
+                <a href="{{ route('daily_weekly.account.extension',$goldLoan->id) }}" class="btn-error uppercase text-sm px-2 py-2 rounded-10 ">
                     LOAN EXTENSION
                 </a>
             @endif
@@ -161,13 +165,13 @@ $settingLabel = '';
         @endif
 
         @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
-            <a href="" class="btn-primary  uppercase px-2 py-2 rounded-10 ">
+            <a href="" class="btn-primary text-sm  uppercase px-2 py-2 rounded-10 ">
                 Re-Update Emi Chart
             </a>
         @endif
 
         @if(in_array(strtolower($goldLoan->scheme->gold_loan_setting), ['flat_emi', 'reducing_emi']))
-            <a href="" class="btn-primary uppercase px-2 py-2 rounded-10">
+            <a href="" class="btn-primary uppercase text-sm px-2 py-2 rounded-10">
                 RE-SCHEDULE EMIs
             </a>
         @endif
@@ -177,22 +181,22 @@ $settingLabel = '';
                 strtolower($goldLoan->scheme->gold_loan_setting) != 'reducing_emi'
             )
             <a href="{{ route('daily_weekly.account.pay', $goldLoan->id) }}"
-            class="btn-primary uppercase px-2 py-2 rounded-10">
+            class="btn-primary uppercase text-sm px-2 py-2 rounded-10">
                 Pay
             </a>
         @endif  
 
-        <a href="{{ route('daily_weekly.account.fourcloser', $goldLoan->id) }}" class="btn-error uppercase px-2 py-2 rounded-10 ">
+        <a href="{{ route('daily_weekly.account.fourcloser', $goldLoan->id) }}" class="btn-error uppercase text-sm px-2 py-2 rounded-10 ">
             Fore CloseLoan
         </a>
         
-        <a href="{{ route('daily_weekly.account.linksaving', $goldLoan->id) }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
+        <a href="{{ route('daily_weekly.account.linksaving', $goldLoan->id) }}" class="btn-primary uppercase text-sm px-2 py-2 rounded-10 ">
             link saving account(Auto Debit)
         </a>
 
         <div class="relative inline-block text-left">
             <!-- Button -->
-            <button type="button" class="btn-secondary uppercase px-2 py-2 rounded-10 flex items-center gap-2"
+            <button type="button" class="btn-secondary uppercase text-sm px-2 py-2 rounded-10 flex items-center gap-2"
                 onclick="toggleDropdown('debitCharges')">
                 Debit Other Charges
                 <i class="las la-angle-down text-xs"></i>
@@ -203,7 +207,7 @@ $settingLabel = '';
                 class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
                 <div class="py-1">
                     <a href="{{route('daily_weekly.debitChargesList.form',$goldLoan->id)}}"
-                        class="flex items-center uppercase gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        class="flex items-center uppercase gap-2  px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         Other Charges List
                     </a>
                     <a href="{{route('daily_weekly.debitOtherCharges.form',$goldLoan->id)}}"
@@ -225,16 +229,16 @@ $settingLabel = '';
             <button
                 type="button"
                 onclick="confirmRemove({{ $goldLoan->id }})"
-                class="btn-error uppercase px-2 py-2 rounded-10">
+                class="btn-error uppercase px-2 text-sm py-2 rounded-10">
                 Remove Account
             </button>
         </form>
 
         <div class="relative inline-block text-left">
             <!-- Button -->
-            <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
+            <button type="button" class="btn-secondary px-2 text-sm py-2 rounded-10 flex items-center gap-2"
                 onclick="toggleDropdown('printDropdown')">
-                <i class="las la-print text-lg"></i>
+                <i class="las la-print text-sm"></i>
                 PRINT DOCUMENTS
                 <i class="las la-angle-down text-xs"></i>
             </button>
@@ -284,7 +288,7 @@ $settingLabel = '';
             </div>
         </div>
 
-        <a href="{{ route('daily_weekly.account.audit-trail') }}" class="btn-primary uppercase  px-2 py-2 rounded-10 ">
+        <a href="{{ route('daily_weekly.account.audit-trail') }}" class="btn-primary uppercase  text-sm px-2 py-2 rounded-10 ">
             Show audit trail
         </a>
 
@@ -294,10 +298,10 @@ $settingLabel = '';
         <!-- Left: Details -->
         <div class=" w-full overflow-x-auto   overflow-hidden">
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
-                <table class="min-w-full text-sm text-left border-collapse">
+                <table class="w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2 w-1/3">Status</td>
+                            <td class="font-semibold uppercase px-4 py-2 w-1/3">Status</td>
                             <td class="px-4 py-2">
                                 <a href="" class="text-primary  capitalize hover:underline">
                                     <span
@@ -308,25 +312,28 @@ $settingLabel = '';
                             </td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold  px-4 py-2"> ACTIVE
+                            <td class="font-semibold uppercase  px-4 py-2"> ACTIVE
                                 CUSTOMER</td>
                             <td class="px-4 py-2 capitalize  text-primary">{{$goldLoan->member->member_no ?? ''}} {{$goldLoan->member->member_info_first_name ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">Customer Contact No</td>
+                            <td class="font-semibold uppercase px-4 py-2">Customer Contact No</td>
                             <td class="px-4 py-2 capitalize text-primary">{{$goldLoan->member->member_info_mobile_no ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">Guarantor 1 Customer</td>
+                            <td class="font-semibold uppercase px-4 py-2">Guarantor 1 Customer</td>
                             <td class="px-4 py-2">{{$goldLoan->coApplicant1->member_no ?? ''}} - {{$goldLoan->coApplicant1->member_info_first_name ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">Account No.</td>
+                            <td class="font-semibold uppercase px-4 py-2">Account No.</td>
                             <td class="px-4 py-2">{{ str_pad($goldLoan->id ?? 0, 6, '0', STR_PAD_LEFT) }}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">Application No.</td>
-                            <td class="px-4 py-2 text-primary">{{$goldLoan->id ?? 'N/A'}}</td>
+                            <td class="font-semibold uppercase px-4 py-2">Application No.</td>
+                            <td class="px-4 py-2 text-primary">
+                                {{-- {{$goldLoan->id ?? 'N/A'}} --}}
+                             {{ str_pad($goldLoan->id, 10, '0', STR_PAD_LEFT) }} 
+                            </td>
                         </tr>
                         @php
                         use Carbon\Carbon;
@@ -351,45 +358,45 @@ $settingLabel = '';
 
                         @endphp
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">Open Date</td>
+                            <td class="font-semibold uppercase px-4 py-2">Open Date</td>
                             <td class="px-4 py-2">{{ $applicationDate->format('d-m-Y')  ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">First EMI Date</td>
+                            <td class="font-semibold uppercase px-4 py-2">First EMI Date</td>
                             <td class="px-4 py-2">{{ $firstEmiDate->format('d-m-Y')  ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">Last EMI Date</td>
+                            <td class="font-semibold uppercase px-4 py-2">Last EMI Date</td>
                             <td class="px-4 py-2">{{ $lastEmiDate->format('d-m-Y')  ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">Scheme</td>
+                            <td class="font-semibold uppercase px-4 py-2">Scheme</td>
                             <td class="px-4 py-2">{{$goldLoan->scheme->scheme_name ?? 'N/A'}}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2"> Loan Amount</td>
+                            <td class="font-semibold uppercase px-4 py-2"> Loan Amount</td>
                             <td class="px-4 py-2">₹ {{ number_format($goldLoan->loan_amount,2) }}</td>
                         </tr>
 
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">Total Deposit</td>
+                            <td class="font-semibold uppercase px-4 py-2">Total Deposit</td>
                             <td class="px-4 py-2">₹ {{ number_format($totalDeposit,2) }}</td>
                         </tr>
 
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2">Current Debt</td>
+                            <td class="font-semibold uppercase px-4 py-2">Current Debt</td>
                             <td class="px-4 py-2">₹ {{ number_format($currentDebt,2) }}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2"> Close Date</td>
+                            <td class="font-semibold uppercase px-4 py-2"> Close Date</td>
                             <td class="px-4 py-2">{{ $closeDate ?? '---' }}</td>
                         </tr>
                         <tr class="border-b">
-                            <td class="font-semibold px-4 py-2"> Interest Rate</td>
+                            <td class="font-semibold uppercase px-4 py-2"> Interest Rate</td>
                             <td class="px-4 py-2">{{$goldLoan->scheme->annual_interest_rate ?? '0'}} %</td>
                         </tr>
                         <tr class="">
-                            <td class="font-semibold px-4 py-2"> Annualized Percentage Rate (APR)</td>
+                            <td class="font-semibold uppercase px-4 py-2"> Annualized Percentage Rate (APR)</td>
                             <td class="px-4 py-2"> %</td>
                         </tr>
                     </tbody>
@@ -426,9 +433,8 @@ $settingLabel = '';
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                    <h3 class="text-lg font-semibold text-black  capitalize">
+                    <h3 class="text-lg font-semibold text-black  uppercase">
                         Documents
-
                     </h3>
                     <div class="">
                         <a href="#" class="btn-primary p-1 pointer">
@@ -717,7 +723,7 @@ $settingLabel = '';
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">
+                                <td class="font-semibold uppercase px-4 py-2 w-1/2 md:w-1/3">
                                     Scheme Name
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -726,12 +732,12 @@ $settingLabel = '';
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">Scheme Code</td>
+                                <td class="font-semibold uppercase px-4 py-2">Scheme Code</td>
                                 <td class="px-4 py-2 text-right md:text-left">{{ $goldLoan->scheme->scheme_code??'' }}</td>
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Maximum Loan Amount
 
                                 </td>
@@ -741,7 +747,7 @@ $settingLabel = '';
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Maximum Loan Limit
 
                                 </td>
@@ -751,13 +757,13 @@ $settingLabel = '';
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">Interest Type</td>
+                                <td class="font-semibold uppercase px-4 py-2">Interest Type</td>
                                 <td class="px-4 py-2  text-right md:text-left">
                                     {{$settingLabel ??''}}
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Interest Rate
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -765,13 +771,13 @@ $settingLabel = '';
                                 </td>
                             </tr>
                             <tr class=" text-center">
-                                <td class="font-bold px-4 py-2" colspan="2">
+                                <td class="font-semibold uppercase px-4 py-2" colspan="2">
                                     Per EMI Charges
                                 </td>
 
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     SMS Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -779,7 +785,7 @@ $settingLabel = '';
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Fuel Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -787,7 +793,7 @@ $settingLabel = '';
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Stationary Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -795,7 +801,7 @@ $settingLabel = '';
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Maintenance Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -803,7 +809,7 @@ $settingLabel = '';
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Collection Charges
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -942,7 +948,7 @@ $settingLabel = '';
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3">
+                                <td class="font-semibold uppercase px-4 py-2 w-1/2 md:w-1/3">
                                     Branch
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -951,12 +957,12 @@ $settingLabel = '';
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">Advisor/ Staff</td>
+                                <td class="font-semibold uppercase px-4 py-2">Advisor/ Staff</td>
                                 <td class="px-4 py-2 text-right md:text-left"></td>
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Loan Amount
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -965,7 +971,7 @@ $settingLabel = '';
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-semibold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Annual Interest Rate
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">
@@ -974,13 +980,13 @@ $settingLabel = '';
                             </tr>
 
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">Credit Period</td>
+                                <td class="font-semibold uppercase px-4 py-2">Credit Period</td>
                                 <td class="px-4 py-2  text-right md:text-left">
                                     {{$goldLoan->credit_period??''}} Days
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Interest Type
                                 </td>
 
@@ -989,7 +995,7 @@ $settingLabel = '';
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2" colspan="">
+                                <td class="font-semibold uppercase px-4 py-2" colspan="">
                                     Per EMI Charges
                                 </td>
                                 <td class="px-4 py-2 ">
@@ -997,7 +1003,7 @@ $settingLabel = '';
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Tenure of Loan
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -1005,7 +1011,7 @@ $settingLabel = '';
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Processing Fee
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -1013,7 +1019,7 @@ $settingLabel = '';
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-bold px-4 py-2">
+                                <td class="font-semibold uppercase px-4 py-2">
                                     Purpose of Loan
                                 </td>
                                 <td class="px-4 py-2  text-right md:text-left">
@@ -1124,7 +1130,10 @@ $settingLabel = '';
                                 <!-- PROCESSED -->
                                 <td class="p-2 processed">
                                     <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">
+                                        class="block w-28 rounded-[30px] 
+                                        border border-n30 bg-error/20 py-2 text-center text-xs text-error
+                                        ">
+
                                         {{ $emi['processed'] }}
                                     </span>
                                 </td>
