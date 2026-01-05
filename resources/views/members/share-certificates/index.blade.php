@@ -53,7 +53,7 @@
                         </tr>
                     </thead>
                     @foreach ($certificates as $index => $certificate)
-                        <tr>
+                        <tr class="border-b">
                             <td>{{ $certificate->branch->branch_name ?? 'N/A' }}</td>
                             <td>{{ $certificate->member->branch->member_info_first_name ?? 'N/A' }}</td>
                             <td>{{ $certificate->share_range }}</td>
