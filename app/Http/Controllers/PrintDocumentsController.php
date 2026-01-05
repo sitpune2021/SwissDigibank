@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\DdsAccount;
 use App\Models\FdAccount;
+use App\Models\Member;
 use App\Models\Misaccount;
 use App\Models\Passbook;
 use App\Models\RdAccount;
 use Illuminate\Http\Request;
+use Mpdf\Mpdf;
+use Mpdf\Config\ConfigVariables;
+use Mpdf\Config\FontVariables;
 // use PDF;
 use Barryvdh\DomPDF\Facade\Pdf;
 class PrintDocumentsController extends Controller
@@ -192,4 +196,112 @@ class PrintDocumentsController extends Controller
     //         ->orderBy('account_no')
     //         ->get();
     // }
+
+
+  public function index_formi(){
+    // $members = Member::orderBy('id', 'asc')->get();
+    $members = Member::with([
+            'address.state'
+        ])
+        ->orderBy('id', 'asc')
+        ->get();
+    return view('print-documents.form-i-and-j.index-from-i',compact('members')) ;
+
+  }
+private function getMarathiMpdf()
+{
+    $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+    $fontDirs = $defaultConfig['fontDir'];
+
+    $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+    $fontData = $defaultFontConfig['fontdata'];
+
+    $fontData['marathi'] = [
+        'R' => 'TiroDevanagariMarathi-Regular.ttf',
+        'B' => 'TiroDevanagariMarathi-Italic.ttf',
+    ];
+
+    return new Mpdf([
+        'mode' => 'utf-8',
+        'format' => 'A4',
+        'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
+        'fontdata' => $fontData,
+        'default_font' => 'marathi',
+        'autoScriptToLang' => true,
+        'autoLangToFont' => true,
+        'margin_left' => 10,
+        'margin_right' => 10,
+        'margin_top' => 10,
+        'margin_bottom' => 10,
+    ]);
+}
+public function generateFormJ()
+{
+    // $members = Member::orderBy('id', 'asc')->get();
+//   $members = Member::with('address')
+//         ->orderBy('id', 'asc')
+//         ->get();
+$members = Member::with([
+            'address.state'
+        ])
+        ->orderBy('id', 'asc')
+        ->get();
+
+    $html = view(
+        'print-documents.form-i-and-j.form-j',
+        compact('members')
+    )->render();
+
+    $mpdf = $this->getMarathiMpdf();
+    $mpdf->WriteHTML($html);
+
+    return response(
+        $mpdf->Output('form-j-all-members.pdf', 'D')
+    )->header('Content-Type', 'application/pdf');
+}
+public function generateFormI()
+{
+    $members = Member::with('address.state')
+        ->orderBy('id', 'asc')
+        ->get();
+
+    $html = view(
+        'print-documents.form-i-and-j.form-i',
+        compact('members')
+    )->render();
+
+    $mpdf = $this->getMarathiMpdf();
+    $mpdf->WriteHTML($html);
+
+    return response(
+        $mpdf->Output('form-i.pdf', 'D')
+    )->header('Content-Type', 'application/pdf');
+}
+public function procedingBook()
+{
+    // $members = Member::orderBy('id', 'asc')->get();
+//   $members = Member::with('address')
+//         ->orderBy('id', 'asc')
+//         ->get();
+$members = Member::with([
+            'address.state'
+        ])
+        ->orderBy('id', 'asc')
+        ->get();
+
+    $html = view(
+        'print-documents.form-i-and-j.proceding-book',
+        compact('members')
+    )->render();
+
+    $mpdf = $this->getMarathiMpdf();
+    $mpdf->WriteHTML($html);
+
+    return response(
+        $mpdf->Output('form-j-all-members.pdf', 'S')
+    )->header('Content-Type', 'application/pdf');
+}
+
+
+   
 }
