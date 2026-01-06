@@ -26,7 +26,7 @@
 </head>
 <div class="main-inner">
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
-        <h3 class="h3">WITHDRAW</h2>
+        <h3 class="text-lg">WITHDRAW</h2>
     </div>
 
     <div class="grid grid-cols-12 gap-6">
@@ -38,19 +38,19 @@
 
                     <div class="col-span-2 md:col-span-1">
                         <label for="pan_no" class="block mb-1 font-semibold text-gray-700 uppercase">Customer's PAN No</label>
-                        <div class="px-2 py-1 mt-2 text-sm text-green-700 border border-green-500 rounded w-fit">Yes</div>
+                        <div class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 w-fit">Yes</div>
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
                         <label class="block mb-1 font-semibold text-gray-700 uppercase">Customer's Sign</label>
-                        <div class="p-2 text-sm text-gray-500 border border-yellow-300 rounded bg-yellow-50">
+                        <div class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             No Signature Present<br>(Upload in Customer Documents)
                         </div>
                     </div>
 
                     <div class="col-span-2 md:col-span-1">
                         <label class="block mb-1 font-semibold text-gray-700 uppercase">Customer's Photo</label>
-                        <div class="p-2 text-sm text-gray-500 border border-yellow-300 rounded bg-yellow-50">
+                        <div class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             No Photo Present<br>(Upload in Customer Documents)
                         </div>
                     </div>
@@ -58,14 +58,14 @@
                     <div class="col-span-2 md:col-span-1">
                         <label for="amount" class="block mb-1 font-semibold text-gray-700 uppercase">Amount With Draw <span class="text-red-500">*</span></label>
                         <input type="number" id="amount" name="amount"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter Amount" required>
                     </div>
 
                     <div class="col-span-2">
                         <label for="remarks" class="block mb-1 font-semibold text-gray-700 uppercase">Remarks (if any)</label>
                         <textarea id="remarks" name="remarks" rows="2"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter Remarks"></textarea>
                     </div>
 
@@ -79,9 +79,9 @@
                             <input name="transaction_date" id="date2" type="text" placeholder="DD/MM/YYYY"
                                 value=""
                                 class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" autocomplete="off">
-                            <i
+                            {{-- <i
 
-                                class="las la-calendar absolute ltr:right-4 rtl:left-4 top-1/2 -translate-y-1/2 cursor-pointer"></i>
+                                class="las la-calendar absolute ltr:right-4 rtl:left-4 top-1/2 -translate-y-1/2 cursor-pointer"></i> --}}
 
                         </div>
                         @error('transaction_date')
@@ -94,14 +94,14 @@
                     <div class="col-span-2 md:col-span-1">
                         <label for="receipt" class="block mb-1 font-semibold text-gray-700 uppercase">T. Receipt</label>
                         <input type="file" id="receipt" name="receipt" disabled
-                            class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" style="cursor: not-allowed;">
+                            class="w-full text-sm mt-4 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" style="cursor: not-allowed;">
                     </div>
 
                     <div class="col-span-2">
                         <label class="block mb-1 font-semibold text-gray-700 uppercase">Pay Mode <span class="text-red-500">*</span></label>
                         <div class="flex items-center gap-6 mt-1">
                             <label class="flex items-center gap-2">
-                                <input type="radio" name="pay_mode" value="cash" x-model="payMode" class="text-blue-600 focus:ring-blue-500"> Cash
+                                <input type="radio" name="pay_mode" value="cash" x-model="payMode" class="text-blue-600 focus:ring-blue-500" > Cash
                             </label>
                             <label class="flex items-center gap-2">
                                 <input type="radio" name="pay_mode" value="online" x-model="payMode" class="text-blue-600 focus:ring-blue-500"> Online Tr.
@@ -130,7 +130,7 @@
                         <div>
                             <label class="block mb-1 font-semibold text-gray-700 uppercase">UTR/ Transaction No <span class="text-red-500">*</span></label>
                             <input type="text" name="utr_no"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                class="w-full text-sm mt-1  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             @error('utr_no')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -191,7 +191,7 @@
                         <div>
                             <label class="block mb-1 font-semibold text-gray-700 uppercase">Cheque Number <span class="text-red-500">*</span></label>
                             <input type="text" name="cheque_number" placeholder="Enter Cheque No"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             @error('cheque_number')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -212,8 +212,8 @@
                     </div>
 
                     <div class="flex gap-4">
-                        <button type="submit" class="btn-primary">Withdraw</button>
-                        <button type="button" class="btn-outline"
+                        <button type="submit" class="btn-primary uppercase">Withdraw</button>
+                        <button type="button" class="btn-outline uppercase"
                             onclick="window.location.href='{{ route('accounts.show', base64_encode($id)) }}'">
                             Back
                         </button>
@@ -226,11 +226,11 @@
 
         <div class="col-span-12 lg:col-span-5" x-data="{ open: false }">
 
-            <div class="overflow-hidden border border-green-600 rounded-lg">
+            <div class="overflow-hidden border box rounded-lg">
 
                 <!-- Full background header (click to toggle) -->
-                <div style="background-color:#20b757; color:#fff;"
-                    class="flex items-center justify-between px-4 py-3 font-bold text-white cursor-pointer"
+                <div style=""
+                    class="flex bg-secondary/5 rounded-10 items-center justify-between px-4 py-3 font-bold  cursor-pointer"
                     @click="open = !open">
                     <span class="uppercase">Saving Account Info</span>
                     <span x-text="open ? '-' : '+'"
@@ -239,23 +239,23 @@
                 <!-- Content -->
                 <div x-show="open" x-transition class="p-4 text-sm bg-white">
                     <ul class="space-y-2">
-                        <li class="flex justify-between"><strong class="uppercase">Customer:</strong><span>{{ $member->accounts->members->member_no 
+                        <li class="flex justify-between"><strong class="uppercase">Customer</strong><span>{{ $member->accounts->members->member_no 
     ?? ($member->accounts->members->id ? str_pad($member->accounts->members->id, 6, '0', STR_PAD_LEFT) : 'NA') }}-{{ $member->accounts->members->member_info_first_name ?? "NA"}}</span></li>
                         <hr class="my-2 border-gray-300">
-                        <li class="flex justify-between"><strong class="uppercase">PAN No.:</strong><span>{{$member->accounts->members?->kyc?->member_kyc_pan_no??'NA'}}</span></li>
+                        <li class="flex justify-between"><strong class="uppercase">PAN No.</strong><span>{{$member->accounts->members?->kyc?->member_kyc_pan_no??'NA'}}</span></li>
                         <hr class="my-2 border-gray-300">
-                        <li class="flex justify-between"><strong class="uppercase">Account No.:</strong><span>{{$member->accounts?->account_no??'NA'}}</span></li>
+                        <li class="flex justify-between"><strong class="uppercase">Account No.</strong><span>{{$member->accounts?->account_no??'NA'}}</span></li>
                         <hr class="my-2 border-gray-300">
-                        <li class="flex justify-between"><strong class="uppercase">Scheme:</strong><span>{{$member->accounts->scheme->scheme_name}}</span></li>
+                        <li class="flex justify-between"><strong class="uppercase">Scheme</strong><span>{{$member->accounts->scheme->scheme_name}}</span></li>
                         <hr class="my-2 border-gray-300">
-                        <li class="flex justify-between"><strong class="uppercase">Open Date:</strong><span>{{ $member->accounts?->open_date ? \Carbon\Carbon::parse($member->accounts->open_date)->format('d-m-Y') : 'NA' }}</span></li>
+                        <li class="flex justify-between"><strong class="uppercase">Open Date</strong><span>{{ $member->accounts?->open_date ? \Carbon\Carbon::parse($member->accounts->open_date)->format('d-m-Y') : 'NA' }}</span></li>
                         <hr class="my-2 border-gray-300">
-                        <li class="flex justify-between"><strong class="uppercase">Status:</strong><span>Active</span></li>
+                        <li class="flex justify-between"><strong class="uppercase">Status</strong><span>Active</span></li>
                         <hr class="my-2 border-gray-300">
-                        <li class="flex justify-between"><strong class="uppercase">Available Balance (C):</strong><span>{{$member->accounts?->deposit_amount??'NA'}}</span></li>
+                        <li class="flex justify-between"><strong class="uppercase">Available Balance (C)</strong><span>{{$member->accounts?->deposit_amount??'NA'}}</span></li>
                         <hr class="my-2 border-gray-300">
                         <li class="flex justify-between">
-                            <strong class="uppercase">Joint Account:</strong>
+                            <strong class="uppercase">Joint Account</strong>
 
                             @if(optional($member->accounts)->account_holder_type === 'joint')
                             <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
@@ -269,7 +269,7 @@
                         </li>
                         <hr class="my-2 border-gray-300">
                         <li class="flex justify-between">
-                            <strong class="uppercase">Special Account:</strong>
+                            <strong class="uppercase">Special Account</strong>
                             @if(optional($member->accounts)->special_account === 'yes')
                             <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
                                 Yes

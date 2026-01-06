@@ -3,7 +3,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <h4 class="h3">SAVING / CURRENT ACCOUNTS</h4>
-            <a class="btn-primary" href="{{ route('accounts.create') }}">
+            <a class="btn-primary text-sm" href="{{ route('accounts.create') }}">
                 ADD
             </a>
         </div>
@@ -32,7 +32,7 @@
                             @endphp
                             @foreach ($headers as $index => $header)
                                 <th
-                                    class="{{ $header === 'Action' ? 'text-center' : 'text-start' }} py-5 px-6 min-w-[100px] cursor-pointer">
+                                    class="{{ $header === 'Action' ? 'text-center' : 'text-start' }} py-5 px-6 min-w-[100px] cursor-pointer uppercase">
                                     <div class="flex items-center gap-1">
                                         {{ $header }}
                                     </div>
@@ -46,7 +46,7 @@
 
                     <tbody>
                         @foreach ($Accounts as $index => $Account)
-                            <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                            <tr class="border-b dark:even:bg-bg3">
 
                                 {{-- Associate --}}
                                 <td class="text-start py-5 px-6">
@@ -105,7 +105,7 @@
 
                                 {{-- show Balance --}}
                                 <td class="text-start py-5 px-6">
-                                    <button class="btn btn-sm btn-primary show-balance-btn"
+                                    <button class="text-primary uppercase show-balance-btn"
                                         data-account-id="{{ $Account->id }}">
                                         Show Balance
                                     </button>
@@ -129,8 +129,11 @@
                 </table>
 
             </div>
+          <div class="mt-5">
+              <x-pagination :paginator="$Accounts" />
+          </div>
         </div>
-        <x-pagination :paginator="$Accounts" />
+        
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

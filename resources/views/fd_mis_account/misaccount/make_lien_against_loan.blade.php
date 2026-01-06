@@ -28,7 +28,7 @@
         <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
             <div class="flex items-start flex-col gap-2">
                 <div class="flex items-center gap-2">
-                    <h3  class="uppercase font-semibold">
+                    <h3  class="uppercase text-lg font-semibold">
                         MIS Account - {{$misaccount->id}} - Mark Lien Account 
                     </h3>
                 </div>

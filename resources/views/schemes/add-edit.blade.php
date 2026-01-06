@@ -20,6 +20,8 @@
         input[type="checkbox"]:checked {
             background-color: green;
             border: none;
+             width: 24px !important;
+            height: 24px !important;
         }
 
         input[type="radio"] {

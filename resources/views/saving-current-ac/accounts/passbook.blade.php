@@ -27,7 +27,7 @@
   <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
     <div class="flex items-start flex-col  gap-2">
       <div class="flex items-center gap-3">
-        <h1 class="text-xl font-semibold uppercase">
+        <h1 class="text-lg font-semibold uppercase">
           Print Saving Passbook
         </h1>
       </div>

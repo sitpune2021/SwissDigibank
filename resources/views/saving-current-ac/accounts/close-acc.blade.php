@@ -25,7 +25,7 @@
     <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-end gap-2">
-                <h3 class="uppercase font-semibold text-xl">
+                <h3 class="uppercase font-semibold text-lg">
                     Close Saving Account - {{$account->account_no??''}}
                 </h3>
             </div>
