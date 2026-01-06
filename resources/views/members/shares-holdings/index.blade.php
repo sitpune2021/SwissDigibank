@@ -3,7 +3,7 @@
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
-        <h3 class="h3">SHARE HOLDINGS</h3>
+        <h3 class="text-lg">SHARE HOLDINGS</h3>
 
         <a class="btn-primary" href="{{ route('shares-holdings.create') }}">
             <i class=" text-base md:text-lg"></i>
@@ -30,8 +30,8 @@
             @endif
         </form>
     </div>
-    <div class="overflow-x-auto pb-4 lg:pb-6">
-        <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+    <div class="w-full overflow-x-auto whitespace-nowrap pb-4 lg:pb-6">
+        <table class="w-full whitespace-nowrap overflow-x-auto select-all-table" id="transactionTable1">
             <thead>
                 <tr class="bg-secondary/5 dark:bg-bg3">
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -72,7 +72,7 @@
         <tbody>
         @foreach ($sharesholdings as $index => $item)
         <tr class="border-b dark:border-bg3 text-center">
-            <td class="py-3 px-6 text-left">{{ $item->member->branch->branch_name ?? 'N/A' }}</td>
+            <td class="py-3 border-b  px-6 text-left">{{ $item->member->branch->branch_name ?? 'N/A' }}</td>
             <td class="px-6 py-4">
                 @if ($item->member)
                 <a href="{{ route('member.show', $item->member->id) }}"

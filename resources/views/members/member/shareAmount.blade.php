@@ -24,7 +24,7 @@
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
-        <div class="box dark:bg-bg3 shadow-md rounded-2xl p-6 w-1/2 max-w-2xl mx-auto">
+        <div class="box dark:bg-bg3 shadow-md rounded-2xl p-6 w-1/2  mx-auto">
             <!-- Title -->
             <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6 uppercase">
                 Share Amount Collected
@@ -199,18 +199,19 @@
                 </div>
 
                 <!-- Buttons -->
-                <div class="flex gap-4 pt-4">
-                    <button type="submit" class="btn-primary justify-center">
+                <div class="flex gap-4 mt-5 pt-4">
+                    <button type="submit" class="btn-primary uppercase justify-center">
 
                         SAVE
                     </button>
-                    <a href="{{ url()->previous() }}" class="btn-outline inline-flex items-center justify-center">
+                    <a href="{{ url()->previous() }}" class="btn-outline inline-flex items-center uppercase justify-center">
 
                         Back
                     </a>
                 </div>
             </form>
         </div>
+    </div>   
     @endsection
 
     <script>

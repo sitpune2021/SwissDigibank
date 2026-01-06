@@ -2357,7 +2357,7 @@ Route::get(
     [PrintDocumentsController::class, 'fd_mis_bond']
 )->name('print-documents.fd-mis-bond.index');
 
-Route::match(['get', 'post'],'/print/fd-mis-bond/search', [PrintDocumentsController::class, 'searchBond'])
+Route::match(['get', 'post'], '/print/fd-mis-bond/search', [PrintDocumentsController::class, 'searchBond'])
     ->name('fd.mis.bond.search');
 
 Route::get(
@@ -2379,7 +2379,9 @@ Route::get('/print/rd-dd-bond', [PrintDocumentsController::class, 'rdDdBond'])
     ->name('print.rd-dd-bond.index');
 
 // // RD / DD Search
-Route::match(['get', 'post'], 'print/rd-dd-bond/search', 
+Route::match(
+    ['get', 'post'],
+    'print/rd-dd-bond/search',
     [PrintDocumentsController::class, 'searchRdDdBond']
 )->name('rd.dd.bond.search');
 // Route::post('/print/rd-dd-bond/search', [PrintDocumentsController::class, 'searchRdDdBond'])
@@ -2413,6 +2415,25 @@ Route::get('/print/letter-head', [PrintDocumentsController::class, 'letter_head'
 
 Route::get('/letter-head', [PrintDocumentsController::class, 'print_letter_head'])
     ->name('letterhead.download');
+
+
+
+Route::get('/index-from-i', [PrintDocumentsController::class, 'index_formi'])
+    ->name('index-from-i');
+Route::get(
+    '/form-i-and-j',
+    [PrintDocumentsController::class, 'generateFormJ']
+)->name('formj.download');
+
+Route::get('/form-i-pdf', [PrintDocumentsController::class, 'generateFormI'])
+    ->name('formi.pdf');
+
+Route::get('/proceding-book', [PrintDocumentsController::class, 'procedingBook'])
+    ->name('proceding-book.pdf');
+//   Route::get(
+//     '/form-j/{member}',
+//     [PrintDocumentsController::class, 'generateFormJ']
+// )->name('formj.download');
 /////////////////////////////print-documents-end //////////////////////////
 
 

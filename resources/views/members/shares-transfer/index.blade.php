@@ -3,7 +3,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <!-- <h2 class="h2">Manage share-holdings</h2> -->
-            <h3 class="text-xl font-semibold">SHARE HOLDINGS</h3>
+            <h3 class="text-lg font-semibold">SHARE HOLDINGS</h3>
             <a class="btn-primary" href="{{ route('shareholding.transfer.form') }}">
                 ADD
             </a>
@@ -59,7 +59,7 @@
                 </thead>
                 <tbody>
                     @foreach ($shareholdings as $shareholding)
-                        <tr>
+                        <tr class="border-b">
                             <td class="px-6 py-5">{{ $shareholding->members->branch->branch_name ?? '-' }}</td>
                             <td class="px-6 py-5">{{ $shareholding->promotor->first_name ?? '-' }}</td>
                             <td class="px-6 py-5">

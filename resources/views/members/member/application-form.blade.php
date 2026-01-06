@@ -129,13 +129,13 @@
     }
 
     .remarks {
-      margin-top: 20px;
-      height: 40px;
+      margin-top: 1 0px;
+      height: 20px;
       padding: 5px;
     }
 
     .signature {
-      margin-top: 50px;
+      /* margin-top: ; */
       display: flex;
       justify-content: space-between;
       padding-bottom: 10px;
@@ -180,8 +180,8 @@
   </style>
 </head>
 <body>
-  <div class="print-btn">
-    <button onclick="window.print()">Print Application</button>
+  <div class="print-btn " >
+    <button style="padding:10px 10px; text-transform: uppercase; border-radius: 10px; border: none; cursor: pointer; background-color: #4c8e0a; color: #ffffff;" onclick="window.print()">Print Application</button>
   </div>
 
   <!-- Page 1 -->
