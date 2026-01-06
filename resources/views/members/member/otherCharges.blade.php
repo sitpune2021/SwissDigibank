@@ -30,7 +30,7 @@
     : 'Members Transactions')
 @section('content')
     <div class="main-inner">
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 min-h-screen">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-6  min-h-screen">
             <div class="col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6">
 
                 <form action="{{ route('members.other-charges.store', $member->id) }}" method="POST" target=""
@@ -106,10 +106,10 @@
                     <!-- Buttons -->
                     <div class="w-full mt-4">
                         <div class="flex justify-center gap-4 pt-6">
-                            <button type="submit" class="btn-primary">
+                            <button type="submit" class=" uppercase btn-primary">
                                 Debit
                             </button>
-                            <a href="{{ url()->previous() }}" class="btn-outline inline-flex items-center justify-center">
+                            <a href="{{ url()->previous() }}" class="btn-outline inline-flex items-center uppercase justify-center">
                                 Back
                             </a>
                         </div>

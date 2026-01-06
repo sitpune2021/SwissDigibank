@@ -2,7 +2,7 @@
 @section('content')
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap  uppercase items-center justify-between gap-3 lg:mb-5">
-            <h4 class="h2">Form 15G/ 15H</h4>
+            <h4 class="text-lg">Form 15G/ 15H</h4>
         </div>
         <div class="box col-span-12 lg:col-span-6">
             <x-searchbox />

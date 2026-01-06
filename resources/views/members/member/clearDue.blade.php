@@ -17,10 +17,10 @@ TRANSACTIONS')
 @section('content')
 
 <div class="main-inner">
-    <div class="grid grid-cols-2 md:grid-cols-12 gap-6 p-6 min-h-screen">
+    <div class="grid grid-cols-2 md:grid-cols-12 gap-6  min-h-screen">
         <div class="col-span-1 md:col-span-2 box dark:bg-bg3 rounded-10 p-6">
             <div>
-                <h3 class="text-xl font-semibold mb-4">CHARGES - CLEAR DUES</h3>
+                <h3 class="text-lg font-semibold mb-4">CHARGES - CLEAR DUES</h3>
                 <hr class="mb-6 border-gray-300">
             </div>
 
@@ -286,12 +286,12 @@ TRANSACTIONS')
                 </div>
 
                 <!-- Submit Buttons -->
-                <div class="flex justify-center gap-3 space-x-4 pt-6 mt-4">
+                <div class="flex justify-center gap-3 space-x-4 pt-6 mt-5">
                     <button type="submit" class="btn-primary">
                         CLEAR DUE
                     </button>
 
-                    <a href="{{ url()->previous() }}" class="btn-outline inline-flex items-center justify-center">
+                    <a href="{{ url()->previous() }}" class="btn-outline uppercase inline-flex items-center justify-center">
                         Back
                     </a>
                 </div>

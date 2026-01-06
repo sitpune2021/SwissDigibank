@@ -145,7 +145,7 @@
                             </td>
 
                             <td class="py-3 px-6">
-                                <span class="text-sm px-2 py-1 rounded bg-green-100 text-green-700">
+                                <span class=" px-2 py-1 rounded bg-green-100 text-green-700">
                                     Active
                                 </span>
                             </td>
