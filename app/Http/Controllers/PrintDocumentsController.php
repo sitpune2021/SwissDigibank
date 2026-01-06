@@ -298,7 +298,7 @@ $members = Member::with([
     $mpdf->WriteHTML($html);
 
     return response(
-        $mpdf->Output('form-j-all-members.pdf', 'S')
+        $mpdf->Output('Proceeding Book.pdf', 'D')
     )->header('Content-Type', 'application/pdf');
 }
 

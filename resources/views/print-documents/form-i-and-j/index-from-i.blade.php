@@ -17,6 +17,13 @@
     <div class="col-span-12 box lg:col-span-12">
         
         <div class="flex justify-end gap-4">
+            
+            
+            <div class="mb-5  text-end">
+                <a href="{{ route('formi.pdf')}}" class="btn-warning rounded-10 uppercase py-2 px-2">
+                    <i class="las la-print text"></i>   print Form I
+                </a>
+            </div>
             <div class="mb-5  text-end">
                 <a href="{{ route('formj.download')}}" class="btn-primary rounded-10 uppercase py-2 px-2">
                   
@@ -25,10 +32,9 @@
                 </a>
                
             </div>
-            
-            <div class="mb-5  text-end">
-                <a href="{{ route('formi.pdf')}}" class="btn-warning rounded-10 uppercase py-2 px-2">
-                    <i class="las la-print text"></i>   print Form I
+              <div class="mb-5  text-end">
+                <a href="{{ route('proceding-book.pdf')}}" class="btn-secondary rounded-10 uppercase py-2 px-2">
+                    <i class="las la-print text"></i>  Proceeding Book
                 </a>
             </div>
         </div>
