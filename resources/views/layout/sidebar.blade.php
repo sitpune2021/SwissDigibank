@@ -29,7 +29,7 @@ if ($superAdmin) {
 
 // Final logo path with fallback
 $logoPath = $sidebarLogo
-    ? asset($sidebarLogo->image_path)
+    ? Storage::url($sidebarLogo->image_path)
     : asset('assets/images/SBC_Logo.png');
 @endphp
 

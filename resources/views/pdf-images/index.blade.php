@@ -68,7 +68,7 @@
             <div class="">
                 <h4 class="mt-3 uppercase">Logo</h4>
                 @if($logo)
-                <img src="{{ asset($logo->image_path) }}" width="200">
+                <img src="{{ asset('storage/' . $logo->image_path) }}" width="200">
                 @else
                 <p class="text-gray-500 mt-5">No logo uploaded yet.</p>
 
@@ -77,7 +77,8 @@
             <div class="">
                 <h4 class="mt-3 uppercase">Letter head</h4>
                 @if($letterhead)
-                <img src="{{ asset($letterhead->image_path) }}" width="200">
+                 <img src="{{ asset('storage/' . $letterhead->image_path) }}" width="200">
+                {{-- <img src="{{ asset($letterhead->image_path) }}" width="200"> --}}
                 @else
                 <p class="text-gray-500 mt-5">No letterhead uploaded yet.</p>
                 @endif
