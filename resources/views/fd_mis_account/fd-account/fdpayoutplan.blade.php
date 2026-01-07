@@ -36,7 +36,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col  gap-2">
-                <h1 class="text-xl font-semibold"> FD PAYOUTS -{{ $fdAccount->id }} </h1>
+                <h1 class="text-lg font-semibold"> FD PAYOUTS -{{ $fdAccount->id }} </h1>
                 <!-- <p class="text-gray-500">
                         <a href="{{ route('fd-mis-schemes.fd_index') }}" class="text-gray-500 text-sm">MIS Accounts</a> >
 
@@ -80,7 +80,7 @@
 
                         @foreach ($groupedPayouts as $year => $yearPayouts)
                             @foreach ($yearPayouts as $index => $payout)
-                                <tr id="payout-row-{{ $loop->parent->index ?? $index }}">
+                                <tr class="border-b py-2" id="payout-row-{{ $loop->parent->index ?? $index }}">
                                     {{-- Year column with rowspan --}}
                                     @if ($loop->first)
                                         <td class="text-center" rowspan="{{ count($yearPayouts) }}">
@@ -89,21 +89,21 @@
                                     @endif
 
                                     <!-- <td class="text-center">{{ $payout['period'] }}</td> -->
-                                    <td class="text-center">{{ $payout['from'] }} - {{ $payout['to'] }}</td>
-                                    <td class="text-center">{{ $payout['days'] }}</td>
-                                    <td class="text-right">{{ $payout['principal'] }}</td>
-                                    <td class="text-right">{{ $payout['interest'] }}</td>
-                                    <td class="text-right">{{ $payout['tds'] }}</td>
-                                    <td class="text-right">{{ $payout['net_interest'] }}</td>
-                                    <td class="text-right">{{ $payout['net_interest_due_date'] }}</td>
+                                    <td class="text-center py-2">{{ $payout['from'] }} - {{ $payout['to'] }}</td>
+                                    <td class="text-center py-2">{{ $payout['days'] }}</td>
+                                    <td class="text-right py-2">{{ $payout['principal'] }}</td>
+                                    <td class="text-right py-2">{{ $payout['interest'] }}</td>
+                                    <td class="text-right py-2">{{ $payout['tds'] }}</td>
+                                    <td class="text-right py-2">{{ $payout['net_interest'] }}</td>
+                                    <td class="text-right py-2">{{ $payout['net_interest_due_date'] }}</td>
                                     {{-- FIXED: Use the correct key --}}
-                                    <td class="text-center">
+                                    <td class="text-center py-2">
                                         @if (!empty($payout['due_date']))
                                             {{-- FIXED: Check if not empty before parsing --}}
                                             {{ \Carbon\Carbon::parse($payout['due_date'])->format('d-m-Y') }}
                                         @endif
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-center py-2">
                                         @if ($payout['status'] === 'Yes')
                                             <span
                                                 class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
@@ -125,7 +125,7 @@
                                     </td>
 
                                     {{-- Actions --}}
-                                    <td class="text-center">
+                                    <td class="text-center py-2">
                                         @php
                                             // Show button only for the first unprocessed period in each year
                                             $today = \Carbon\Carbon::today();
@@ -144,7 +144,7 @@ if (
                                         @endphp
 
                                         @if ($showButton)
-                                            <button class="btn btn-primary process-btn"
+                                            <button class=" rounded-10 py-2 px-2 uppercase mt-2 btn-primary text-sm process-btn"
                                                 data-index="{{ $loop->parent->index ?? $index }}"
                                                 data-id="{{ $fdAccount->id }}" data-due="{{ $payout['due_date'] }}">
                                                 Process

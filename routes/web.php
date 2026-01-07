@@ -4,6 +4,7 @@ use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\CollectionCenterController;
 use App\Http\Controllers\GroupCommentController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\LogoImgUploadController;
 use App\Http\Controllers\MortgageLoanPrintDocumentsController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\PrintDocumentsController;
@@ -2436,7 +2437,14 @@ Route::get('/proceding-book', [PrintDocumentsController::class, 'procedingBook']
 // )->name('formj.download');
 /////////////////////////////print-documents-end //////////////////////////
 
+/////////////////////////////////////
 
+Route::get('/pdf-images', [LogoImgUploadController::class, 'index'])->name('pdf-images.index');
+Route::post('/pdf-images', [LogoImgUploadController::class, 'store'])->name('pdf-images.store');
+
+
+
+//////////////////////////////////////
 Route::get('/dev/run/{action}', function ($action) {
     try {
         switch ($action) {

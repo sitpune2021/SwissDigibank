@@ -200,8 +200,12 @@
                 <div class="logo" style="padding: 10px; ">
                     <!-- Replace src path or use base64 img -->
 
-                    <img src="{{ public_path('assets/images/Loan_Management_Logo.png')}}" alt="logo"
-                        style="max-width:90px; max-height:90px;">
+                    @if($logo)
+                    <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;">
+                    @else
+                    {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
+                        style="max-width:90px; max-height:90px;"> --}}
+                    @endif
 
                 </div>
 
@@ -248,7 +252,7 @@
                         {{ $fdAccount->fdScheme->scheme_name ?? '' }}
                     </div>
                     <div class="small">Interest Payout :
-                        {{ $fdAccount->interest_payout_type  }}
+                        {{ $fdAccount->interest_payout_type }}
                     </div>
 
                     <div class="small"> TOTAL INTEREST :
@@ -314,7 +318,8 @@
             </tr>
         </table>
 
-        {{-- <!-- Terms (small) -->
+        {{--
+        <!-- Terms (small) -->
         <div class="mt-12 small muted">
             <strong>Terms & Conditions:</strong>
             <ol style="margin:6px 0 0 18px; padding:0;">

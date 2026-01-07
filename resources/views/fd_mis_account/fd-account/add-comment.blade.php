@@ -21,7 +21,7 @@
 <div class="main-inner">
   <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
     <div class="flex items-start flex-col gap-2">
-      <h1 class="text-2xl font-semibold">Add Comment - FD Account - {{ $fdAccount->id }}</h1>
+      <h1 class="text-lg uppercase px-6 font-semibold">Add Comment - FD Account - {{ $fdAccount->id }}</h1>
     </div>
   </div>
   <div class="flex flex-col lg:flex-row gap-6 p-4">
@@ -68,7 +68,7 @@
 
         <!-- Comment Field -->
         <div class="flex flex-col">
-          <label for="comment_message" class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label for="comment_message" class="mb-2 text-sm uppercase  font-semibold text-gray-700 dark:text-gray-300">
             Comment <span class="text-red-500">*</span>
           </label>
 

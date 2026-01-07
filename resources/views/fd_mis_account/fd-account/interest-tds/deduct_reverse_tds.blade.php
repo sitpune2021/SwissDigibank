@@ -28,10 +28,10 @@
         <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
             <div class="flex items-start flex-col gap-2">
                 <div class="flex items-center gap-2">
-                    <h3 class="uppercase font-semibold">
+                    <h3 class="uppercase text-lg font-semibold">
                         FD - {{ $fdAccount->id }}
                     </h3>
-                    <p class="text-gray-500 uppercase text-sm">Update TDS</p>
+                    <p class="text-gray-500 uppercase text-xs">Update TDS</p>
                 </div>
             </div>
         </div>
@@ -78,7 +78,7 @@
                         </label>
 
                         <input type="number" name="amount" id="interestAmount"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" placeholder="0.00"
                             step="0.01" min="0" required />
 
                         <x-number-to-word for="interestAmount" />

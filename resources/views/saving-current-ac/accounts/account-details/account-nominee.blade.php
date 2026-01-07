@@ -30,12 +30,13 @@
 <div class="main-inner dark:bg-gray-900 dark:text-gray-200">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-xl font-semibold dark:text-white">Saving ACCOUNT - {{$account->account_no}} - NOMINEE</h1>
+            <h1 class="text-lg uppercase font-semibold dark:text-white">Saving ACCOUNT - {{$account->account_no}} - NOMINEE</h1>
             <!-- <p class="text-gray-500 dark:text-gray-400">
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">FD ACCOUNTS</a> >
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">03754</a> >
                 <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Nominee</a>
             </p> -->
+       
         </div>
     </div>
 

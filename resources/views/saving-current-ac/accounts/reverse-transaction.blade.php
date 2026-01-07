@@ -3,7 +3,7 @@
 @section('content')
 <div class="main-inner">
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">
-        <h3 class="h3">REVERSE</h3>
+        <h3 class="text-lg uppercase">REVERSE</h3>
     </div>
   
     <div class="mb-4 box xxxl:mb-6">

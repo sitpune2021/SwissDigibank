@@ -28,10 +28,12 @@
     <div class="flex flex-col  dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
         <div class=" w-full  box overflow-hidden">
             <div class="">
-                <h3>CHARGES - CLEAR DUES</h3>
+                <h3 class="text-lg font-semibold">CHARGES - CLEAR DUES</h3>
             </div>
             <hr class="mt-3">
-            <form action="{{ route('saving.other.charge.debit', $account->id) }}" method="POST">
+            <form action="
+            {{-- {{ route('saving.other.charge.debit', $account->id) }} --}}
+             " method="POST">
                 @csrf
                 <div class="col-span-2 md:col-span-1 mt-5 mb-2 ">
                     <label for="" class="md:text-lg uppercase font-medium block mb-4">

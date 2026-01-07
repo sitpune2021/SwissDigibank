@@ -88,7 +88,7 @@
 <div class="main-inner">
   <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
     <div class="flex items-start flex-col gap-2">
-      <h1 class="text-2xl font-semibold">MIS ACCOUNT - {{'' . $misaccount->id}} </h1>
+      <h1 class="text-lg font-semibold">MIS ACCOUNT - {{'' . $misaccount->mis_account_no}} </h1>
       <!-- <p class="text-gray-500">
         <a href="{{route('misaccount.index')}}" class="text-gray-500">MIS ACCOUNT</a> >
         <a href="#" class="text-gray-500"> {{'' . $misaccount->member_id}} </a>
@@ -201,10 +201,10 @@
 
     <!-- Left: Details -->
     <div class=" w-full  overflow-hidden">
-      <div class="overflow-x-auto rounded-lg dark:bg-bg3  bg-white shadow-md">
-        <table class="min-w-full text-sm text-left border-collapse">
+      <div class="overflow-x-auto rounded-lg dark:bg-bg3 p-2  bg-white shadow-md">
+        <table class="w-full text-sm text-left border-collapse">
           <tbody class="divide-y divide-gray-200">
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 w-1/3 uppercase">Customer</td>
               <td class="px-4 py-2">
                 <a href="" class="text-primary hover:underline">
@@ -212,83 +212,83 @@
                 </a>
               </td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold  px-4 py-2 uppercase">Create on</td>
               <td class="px-4 py-2">{{ \Carbon\Carbon::parse($misaccount->created_at)->format('d-m-Y') }}</td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Created by</td>
               <td class="px-4 py-2">-</td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">MIS No.</td>
               <td class="px-4 py-2"> {{ '' . $misaccount->mis_account_no}} </td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Old MIS No.</td>
               <td class="px-4 py-2">—</td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Scheme</td>
               <td class="px-4 py-2">{{ $misaccount->fdScheme->scheme_name ?? '-' }}</td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Principal Amount</td>
               <td class="px-4 py-2">₹ {{ number_format($misaccount->mis_amount, 2) }}</td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Open Date</td>
               <td class="px-4 py-2">
                 {{ \Carbon\Carbon::parse($misaccount->open_date)->format('d-m-Y') }}
               </td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Maturity Date</td>
               <td class="px-4 py-2">
                 {{ \Carbon\Carbon::parse($misaccount->maturity_date)->format('d-m-Y') }}
 
               </td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Close Date</td>
               <td class="px-4 py-2">—</td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Annual Interest Rate (%)</td>
               <td class="px-4 py-2">-</td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Balance Available</td>
               <td class="px-4 py-2">₹{{ number_format($balance, 2) }}</td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Status</td>
               <td class="px-4 py-2">-</td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">TDS Deduction</td>
               <td class="px-4 py-2">
                 @if($misaccount->tds_deduction === 'yes')
-                <span class="block w-20 rounded-[30px] border bg-primary/20 text-xs text-primary">
+                <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                   Yes
                 </span>
                 @else
-                <span class="block w-20 rounded-[30px] border bg-error/20  text-center text-error">
+                <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
                   No
                 </span>
                 @endif
               </td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Special Account</td>
               <td class="px-4 py-2"><span class="px-2 py-1 text-xs font-medium rounded ">-</span></td>
             </tr>
 
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">IS Lien</td>
               <td class="px-4 py-2"><span class="px-2 py-1 text-xs font-medium rounded ">-</span></td>
             </tr>
-            <tr>
+            <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Sweep In</td>
               <td class="px-4 py-2"><span class="px-2 py-1 text-xs font-medium rounded">-</span></td>
             </tr>
@@ -299,19 +299,19 @@
 
 
       <!--MEMBER DETAILS-->
-      <div class="bg-white shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
+      <div class="bg-white shadow-md mt-5 box  dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
         <!-- Header -->
-        <div class="border-b px-4 py-3 bg-red-100">
+        <div class="border-b px-4 py-3 rounded-10  bg-secondary/5">
           <h3 class="text-lg font-semibold text-black">CUSTOMER DETAILS</h3>
         </div>
 
         <!-- Body -->
         <div class="p-4 overflow-x-auto">
-          <table class="min-w-full text-sm text-left">
+          <table class="w-full whitespace-nowrap text-sm text-left">
             <tbody class="divide-y divide-gray-200">
 
-              <tr>
-                <td class="font-semibold px-4 py-2 w-1/3">Customer Name</td>
+              <tr class="border-b">
+                <td class="font-semibold px-4 py-2 uppercase ">Customer Name</td>
                 <td class="px-4 py-2">
                   {{ ($misaccount->member->member_no ?? ($misaccount->member->id ? str_pad($misaccount->member->id, 6, '0', STR_PAD_LEFT) : '-'))
                       . ' - ' .
@@ -321,13 +321,13 @@
                 </td>
               </tr>
 
-              <tr>
-                <td class="font-semibold px-4 py-2">Mobile No</td>
+              <tr class="border-b">
+                <td class="font-semibold uppercase px-4 py-2">Mobile No</td>
                 <td class="px-4 py-2"> {{ $misaccount->member->member_info_mobile_no ?? 'N/A' }}</td>
               </tr>
 
-              <tr>
-                <td class="font-semibold px-4 py-2">Address</td>
+              <tr class="border-b">
+                <td class="font-semibold uppercase px-4 py-2">Address</td>
                 <td class="px-4 py-2">{{ $misaccount->member_address ?? 'N/A' }}</td>
               </tr>
 
@@ -336,11 +336,13 @@
         </div>
       </div>
 
-      <div class="bg-white shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
+      <div class="bg-white shadow-md box mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
         <!-- Header -->
-        <div class="border-b px-4 py-3 flex items-center gap-4 justify-between bg-red-100">
-          <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED PASSBOOK</h3>
-          <a href="{{ route('passbook.create-passbook') }}" class="btn-primary px-3 py-2 rounded-3xl text-white">
+        <div class="border-b px-4 py-3 flex items-center rounded-10  gap-4 justify-between bg-secondary/5">
+          <h3 class="text-lg font-semibold uppercase  text-black">
+            ALLOCATED PASSBOOK
+          </h3>
+          <a href="{{ route('passbook.create-passbook') }}" class="btn-primary px-3 py-2 rounded-10 text-sm uppercase text-white">
             <i class="las la-plus"></i>
             passbook
           </a>
@@ -350,11 +352,11 @@
         <div class="p-4">
           <div class="overflow-x-auto">
             <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
-              <thead class="bg-gray-100 text-gray-700">
-                <tr class="border-b">
-                  <th class="px-4 py-2 font-semibold">Passbook No</th>
-                  <th class="px-4 py-2 font-semibold">Issue Date</th>
-                  <th class="px-4 py-2 font-semibold">Action</th>
+              <thead class="bg-gray-100  text-gray-700">
+                <tr class="border-b bg-secondary/5">
+                  <th class="px-4 py-2 font-semibold uppercase">Passbook No</th>
+                  <th class="px-4 py-2 font-semibold uppercase">Issue Date</th>
+                  <th class="px-4 py-2 font-semibold uppercase">Action</th>
                 </tr>
               </thead>
 
@@ -451,7 +453,7 @@
         <!-- Header -->
         <div class="flex items-center justify-between bg-secondary/5 text-black rounded-10 px-4 py-3 cursor-pointer"
           onclick="this.nextElementSibling.classList.toggle('hidden')">
-          <h3 class="text-lg font-semibold">COMMENTS</h3>
+          <h3 class="text-lg rounded-10 font-semibold">COMMENTS</h3>
 
         </div>
 
@@ -463,9 +465,9 @@
             @if($misaccount->comments->count() == 0)
             <p class="capitalize text-gray-500">No comments found</p>
             @else
-            <table class="w-full text-sm text-left">
+            <table class="w-full mt-3 text-sm text-left">
               <thead>
-                <tr class="border-b">
+                <tr class="border-b bg-secondary/5">
                   <th class="px-4 py-2 uppercase font-semibold">Comment</th>
                   <th class="px-4 py-2 uppercase font-semibold">Commented By</th>
                   <th class="px-4 py-2 uppercase font-semibold">Date</th>
@@ -486,9 +488,9 @@
             @endif
             <div class="overflow-x-auto text-center mt-5">
               @if($misaccount->comments->count() > 0)
-              <a href="{{ route('mis.addComment', $misaccount->id) }}" class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">View All</a>
+              <a href="{{ route('mis.addComment', $misaccount->id) }}" class="btn-primary px-3 py-2 uppercase rounded-10 text-sm text-white">View All</a>
               @endif
-              <a href="{{ route('mis.addComment', $misaccount->id) }}" class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">Add Comments</a>
+              <a href="{{ route('mis.addComment', $misaccount->id) }}" class="btn-primary px-3 py-2 uppercase rounded-10 text-sm text-white">Add Comments</a>
             </div>
           </div>
         </div>
@@ -498,7 +500,7 @@
       <div class="bg-white shadow-md dark:bg-bg3 box  mt-5 rounded-lg overflow-hidden">
         <!-- Header -->
         <div class="flex items-center justify-between bg-secondary/5  text-black rounded-10 px-4 py-3 cursor-pointer"
-          onclick="this.nextElementSibling.classList.toggle('hidden')">
+          onclick="this.nextElementSibling.classList.toggle('')">
           <h3 class="text-lg font-semibold uppercase">Transactions Info</h3>
 
         </div>
@@ -506,10 +508,10 @@
         <!-- Body -->
         <div class="p-4">
           <div class="overflow-x-auto text-center mt-5">
-            <div class="overflow-x-auto">
-              <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+            <div class="whitespace-nowrap overflow-x-auto">
+              <table class="w-full border-collapse whitespace-nowrap overflow-x-auto rounded-lg overflow-hidden shadow-md responsive-table">
                 <thead class="bg-gray-100 text-start text-gray-700">
-                  <tr class="border-b border-t">
+                  <tr class="border-b  bg-secondary/5">
                     <th class="px-4 py-2 text-start text-sm font-semibold">DATE</th>
                     <th class="px-4 py-2 text-start text-sm font-semibold">TYPE</th>
                     <th class="px-4 py-2 text-start text-sm font-semibold">PAYMENT MODE</th>
@@ -546,7 +548,7 @@
               </table>
             </div>
 
-            <a href="{{ route('mis.transaction',$misaccount->id) }}" class="btn-primary px-3 py-2 mt-3 rounded-3xl text-white">View All</a>
+            <a href="{{ route('mis.transaction',$misaccount->id) }}" class="btn-primary px-3 py-2 mt-5 rounded-10 uppercase text-sm text-white">View All</a>
           </div>
         </div>
 
@@ -630,9 +632,9 @@
 
 
       <!--AUTO RENEW SETTINGS-->
-      <div class="bg-white dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
+      <div class="box dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
         <!-- Header -->
-        <div class="border-b px-4 py-3">
+        <div class=" bg-secondary/5 rounded-10 px-4 py-3">
           <h3 class="text-lg font-semibold text-black ">AUTO RENEW SETTINGS</h3>
         </div>
 
@@ -672,7 +674,7 @@
 
             <!-- Submit Button -->
             <div class="text-center mt-5">
-              <button type="submit" class="btn-primary px-4 py-2 rounded-3xl ">
+              <button type="submit" class="btn-primary px-4 py-2 rounded-10 text-sm ">
                 UPDATE
               </button>
             </div>
@@ -685,11 +687,11 @@
       <div class="bg-white dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
         <!--Old MIS No.-->
         <form action="" class="mt-3 p-3">
-          <label for="" class="block uppercase">Old MIS No.</label>
+          <label for="" class="block font-semibold uppercase">Old MIS No.</label>
           <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
-            <input type="text" name="" id="" class="block w-full rounded-10 bg-secondary/5 border py-3 dark:text-white"
+            <input type="text" name="" id="" class="block w-full rounded-10 bg-secondary/5 border py-3 px-3 dark:text-white"
               placeholder="Enter Old MIS Number">
-            <input type="button" value="UPDATE" class="block  btn-primary">
+            <input type="button" value="UPDATE" class="block  text-sm rounded-10 btn-primary">
           </div>
         </form>
 
@@ -698,10 +700,10 @@
           @csrf
           @method('PUT')
 
-          <label for="branch" class="block mb-2 uppercase">Branch</label>
+          <label for="branch" class="block mb-2 font-semibold uppercase">Branch</label>
           <div class="flex flex-row items-center gap-3 justify-between">
             <select name="branch_id" id="branch_id"
-              class="block w-full rounded-10 bg-secondary/5 border py-3 dark:text-white">
+              class="block w-full rounded-10 bg-secondary/5 border px-3 py-3 dark:text-white">
               <option value="">Select branch</option>
               @foreach ($branches as $branch)
               <option value="{{ $branch->id }}" {{ $misaccount->branch_id == $branch->id ? 'selected' : '' }}>
@@ -710,13 +712,13 @@
               @endforeach
             </select>
 
-            <button type="submit" class="block btn-primary uppercase">UPDATE</button>
+            <button type="submit" class="block btn-primary text-sm rounded-10 uppercase">UPDATE</button>
           </div>
         </form>
 
         <!--Advisor/ Staff-->
         <form action="" class="mt-2 px-3">
-          <label for="" class="block uppercase">Advisor/ Staff</label>
+          <label for="" class="block uppercase font-semibold">Advisor/ Staff</label>
           <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
             <select class="w-full rounded-10 bg-secondary/5 border  px-3 py-3
            dark:bg-bg3 dark:text-white">
@@ -725,19 +727,19 @@
               <option>Option 2</option>
             </select>
 
-            <input type="button" value="UPDATE" class="block  btn-primary">
+            <input type="button" value="UPDATE" class="block text-sm rounded-10  btn-primary">
 
           </div>
         </form>
 
         <div class=" px-6 flex py-4 flex-row items-center gap-6">
-          <p class="w-full text-lg uppercase">Current Chart</p>
+          <p class="w-full text-lg uppercase font-semibold">Current Chart</p>
           <a href="#" class="text-primary w-full">MISVVPAT</a>
         </div>
 
         <!--Commission Chart-->
         <form action="" class="mt-2 px-3 pb-4">
-          <label for="" class="block uppercase">Commission Chart</label>
+          <label for="" class="block font-semibold uppercase">Commission Chart</label>
           <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
             <select class="w-full rounded-10 bg-secondary/5 border  px-3 py-3
            dark:bg-bg3 dark:text-white">
@@ -746,7 +748,7 @@
               <option>Option 2</option>
             </select>
 
-            <input type="button" value="UPDATE" class="block  btn-primary">
+            <input type="button" value="UPDATE" class="block text-sm rounded-10  btn-primary">
 
           </div>
         </form>
@@ -754,53 +756,53 @@
       </div>
 
       <!-- Fore Close  -->
-      <div class="bg-white shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
+      <div class="bg-white shadow-md box mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
         <!-- Header -->
-        <div class="border-b px-4 py-3 bg-red-100">
+        <div class="border-b px-4 py-3 bg-secondary/5 rounded-10">
           <h3 class="text-lg font-semibold text-black uppercase ">Fore Closure Info</h3>
         </div>
 
         <!-- Body -->
-        <div class="p-4 overflow-x-auto">
-          <table class="min-w-full text-sm text-left">
+        <div class="p-4 overflow-x-auto whitespace-nowrap">
+          <table class="w-full  overflow-x-auto whitespace-nowrap text-sm text-left">
             <tbody class="divide-y divide-gray-200">
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 w-1/3 uppercase">Fore Close Date</td>
                 <td class="px-4 py-2">02-04-2025</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Principal Amount</td>
                 <td class="px-4 py-2">₹ 500,000.00</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Current Balance (A)</td>
                 <td class="px-4 py-2">₹ 500,000.00</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Balance Interest to Credit (B)</td>
                 <td class="px-4 py-2">₹ 48,750.00</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">TDS on Balance Interest to Credit (C)</td>
                 <td class="px-4 py-2">₹ 0.00</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Penal Charges to Deduct (D)</td>
                 <td class="px-4 py-2">₹ 0.00</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Fore Closure Charges (E)</td>
                 <td class="px-4 py-2">₹ 0.00</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Final Payable Amount (A + B - C - D - E)</td>
                 <td class="px-4 py-2">₹ 548,750.00</td>
               </tr>
@@ -814,7 +816,7 @@
       <div class="bg-white shadow-md box dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
         <!-- Header -->
         <div class="flex items-center justify-between bg-secondary/5 text-black rounded-10 px-4 py-3 cursor-pointer"
-          onclick="this.nextElementSibling.classList.toggle('hidden')">
+          onclick="this.nextElementSibling.classList.toggle('')">
           <h3 class="text-lg font-semibold uppercase">Scheme Info</h3>
 
         </div>
@@ -825,35 +827,35 @@
           <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
             <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Scheme Name</td>
                 <td class="px-4 py-2 text-right md:text-left">
                   {{ $misaccount->fdScheme->scheme_name ?? '-' }}
                 </td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Scheme Code</td>
                 <td class="px-4 py-2 text-right md:text-left">
                   {{ $misaccount->fdScheme->scheme_code ?? '-' }}
                 </td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Minimum Locking Period</td>
                 <td class="px-4 py-2 text-right md:text-left capitalize">
                   {{ $misaccount->fdScheme->lock_in_period ?? '-' }} months
                 </td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Interest Locking Period</td>
                 <td class="px-4 py-2 text-right md:text-left capitalize">
                   {{ $misaccount->fdScheme->interest_lock_in ?? '-' }} months
                 </td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Tenure of FD/ MIS</td>
                 <td class="px-4 py-2 text-right md:text-left">
                   {{ $misaccount->tenure_year ? $misaccount->tenure_year . ' Year(s) ' : '' }}
@@ -862,14 +864,14 @@
                 </td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Interest Payout</td>
                 <td class="px-4 py-2 text-right md:text-left">
                   N/A
                 </td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Annual Interest Rate (%)</td>
                 <td class="px-4 py-2 text-right md:text-left">
                   {{ $misaccount->fdScheme->fdslabs->first()->interest_rate ?? '' }}
@@ -889,49 +891,49 @@
       <div class="bg-white shadow-md dark:bg-bg3  box mt-5 rounded-lg overflow-hidden">
         <!-- Header -->
         <div class="flex items-center justify-between bg-secondary/5 text-black rounded-10 px-4 py-3 cursor-pointer"
-          onclick="this.nextElementSibling.classList.toggle('hidden')">
+          onclick="this.nextElementSibling.classList.toggle('')">
           <h3 class="text-lg font-semibold uppercase">MIS Maturity Info</h3>
 
         </div>
 
         <!-- Body -->
 
-        <div class="overflow-x-auto mt-5">
+        <div class="overflow-x-auto whitespace-nowrap mt-5">
 
-          <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
+          <table class="w-full border-collapse rounded-lg overflow-x-auto whitespace-nowrap shadow-md bg-white dark:bg-bg3">
             <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Maturity Date</td>
                 <td class="px-4 py-2 text-right md:text-left">{{ \Carbon\Carbon::parse($misaccount->maturity_date)->format('d-m-Y') }}</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Principal Amount (A)</td>
                 <td class="px-4 py-2 text-right md:text-left">₹{{$misaccount->mis_amount ?? ''}}</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Total Interest (B)</td>
                 <td class="px-4 py-2 text-right md:text-left">₹ {{$misaccount->total_interest ?? '' }}</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Total TDS Deducted (C)</td>
                 <td class="px-4 py-2 text-right md:text-left">{{$misaccount->tds_deduction ?? ''}}</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Maturity Bonus Amount (D)</td>
                 <td class="px-4 py-2 text-right md:text-left">₹ 0.00</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Maturity Amount (A + B + D)</td>
                 <td class="px-4 py-2 text-right md:text-left">₹ {{$misaccount->maturity_amount ?? ''}}</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Net Maturity Amount (A + B + D - C)</td>
                 <td class="px-4 py-2 text-right md:text-left">₹ 725,000.00 </td>
               </tr>
@@ -950,28 +952,28 @@
       <div class="bg-white shadow-md dark:bg-bg3 box  mt-5 rounded-lg overflow-hidden">
         <!-- Header -->
         <div class="flex items-center justify-between bg-secondary/5 text-black rounded-10 px-4 py-3 cursor-pointer"
-          onclick="this.nextElementSibling.classList.toggle('hidden')">
+          onclick="this.nextElementSibling.classList.toggle('')">
           <h3 class="text-lg font-semibold uppercase">MIS Info</h3>
 
         </div>
 
         <!-- Body -->
 
-        <div class="overflow-x-auto mt-5">
-          <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
+        <div class="overflow-x-auto whitespace-nowrap mt-5">
+          <table class="w-full border-collapse rounded-lg overflow-x-auto whitespace-nowrap shadow-md bg-white dark:bg-bg3">
             <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Interest Credited</td>
                 <td class="px-4 py-2 text-right md:text-left">₹ N/A</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Interest Released</td>
                 <td class="px-4 py-2 text-right md:text-left">₹ N/A</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">TDS Deducted</td>
                 <td class="px-4 py-2 text-right md:text-left">₹ N/A</td>
               </tr>
@@ -989,7 +991,7 @@
       <div class="bg-white shadow-md dark:bg-bg3 box  mt-5 rounded-lg overflow-hidden">
         <!-- Header -->
         <div class="flex items-center justify-between bg-secondary/5 text-black rounded px-4 py-3 cursor-pointer"
-          onclick="this.nextElementSibling.classList.toggle('hidden')">
+          onclick="this.nextElementSibling.classList.toggle('')">
           <h3 class="text-lg font-semibold uppercase">MIS Branch Info</h3>
 
         </div>
@@ -1000,7 +1002,7 @@
           <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
             <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Branch</td>
                 <td class="px-4 py-2 text-right md:text-left">
                   @if($misaccount->branch)
@@ -1011,21 +1013,21 @@
                 </td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Advisor/ Staff</td>
                 <td class="px-4 py-2 text-right md:text-left">N/A</td>
               </tr>
 
-              <tr>
+              <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Joint Account</td>
                 <td class="px-4 py-2 text-right md:text-left">
 
                   @if($misaccount->joint_member_id)
-                  <span class="block w-20 rounded-[30px] border bg-primary/20 py-1 text-primary text-center">
+                  <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                     Yes
                   </span>
                   @else
-                  <span class="block w-20 rounded-[30px] border bg-error/20 py-1 text-error text-center">
+                  <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
                     No
                   </span>
                   @endif

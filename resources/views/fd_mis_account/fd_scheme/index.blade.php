@@ -13,7 +13,7 @@
     </div>
     <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
         <div class="overflow-x-auto pb-4 lg:pb-6">
-            <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+            <table class="w-full whitespace-nowrap overflow-x-auto  select-all-table" id="transactionTable1">
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -72,7 +72,7 @@
                 </thead>
                 <tbody>
                     @foreach($fdSchemes as $fdScheme)
-                    <tr>
+                    <tr class="border-b">
                         <td class="py-5 px-6">
                             <a href="{{ $fdScheme?->id ? route('fd-mis-schemes.show', $fdScheme->id) : '#' }}" class="text-primary underline hover:text-primary/80">
                                 {{ $fdScheme->scheme_code?? 'N/A' }}

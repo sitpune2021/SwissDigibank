@@ -26,15 +26,15 @@
 
     <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
         <div class="flex items-start flex-col gap-2">
-            <div class="flex items-end gap-2">
-                <h3 class="uppercase font-semibold">MIS Account - 1707 - Fore Close</h3>
-                <p>Pay Due EMIs</p>
+            <div class="flex items-center gap-2">
+                <h3 class="uppercase text-lg font-semibold">MIS Account - 1707 - Fore Close</h3>
+                <p class="text-gray-500 text-xs">Pay Due EMIs</p>
             </div>
-            <p class="text-gray-500">
+            {{-- <p class="text-gray-500">
                 <a href="#" class="text-gray-500 text-sm">MIS Account </a> >
                 <a href="#" class="text-gray-500 text-sm">1707 </a>>
                 <a href="#" class="text-gray-500 text-sm">FORE CLOSE </a>
-            </p>
+            </p> --}}
         </div>
     </div>
     <div class="rounded-lg border-l-4 bg-error text-white p-2">
@@ -50,7 +50,7 @@
             <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
                 <form action="">
                     <!-- Header -->
-                    <div class="px-4 py-3 ">
+                    <div class="px-2 py-3 ">
                         <h3 class="text-lg  border-b mb-4 font-semibold text-black">ACCOUNT DETAILS</h3>
                     </div>
                     <!-- Body -->
