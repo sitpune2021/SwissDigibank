@@ -2435,16 +2435,18 @@ Route::get('/proceding-book', [PrintDocumentsController::class, 'procedingBook']
 //     '/form-j/{member}',
 //     [PrintDocumentsController::class, 'generateFormJ']
 // )->name('formj.download');
+
 /////////////////////////////print-documents-end //////////////////////////
 
-/////////////////////////////////////
+///////////////  LogoImgUploadController  //////////////////////
 
 Route::get('/pdf-images', [LogoImgUploadController::class, 'index'])->name('pdf-images.index');
 Route::post('/pdf-images', [LogoImgUploadController::class, 'store'])->name('pdf-images.store');
 
 
+////////////////// end LogoImgUploadController////////////////////
 
-//////////////////////////////////////
+
 Route::get('/dev/run/{action}', function ($action) {
     try {
         switch ($action) {

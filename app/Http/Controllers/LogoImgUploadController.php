@@ -4,32 +4,50 @@ namespace App\Http\Controllers;
 
 use App\Models\logo_letterhead_img_uploads;
 use App\Models\LogoImgUpload;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 class LogoImgUploadController extends Controller
 {
-   public function index()
+
+    public function index()
 {
-    $adminId = auth()->id();
+    // 🔹 Get Super Admin user (role_id = 1)
+    $superAdmin = User::where('role_id', 1)->first();
 
-    // Only fetch images uploaded by the current Super Admin
-    $logo = logo_letterhead_img_uploads::where('type', 'logo')
-        ->where('uploaded_by', $adminId)
-        ->first();
+    $logo = null;
+    $letterhead = null;
 
-    $letterhead = logo_letterhead_img_uploads::where('type', 'letterhead')
-        ->where('uploaded_by', $adminId)
-        ->first();
+    if ($superAdmin) {
+        $logo = logo_letterhead_img_uploads::where('type', 'logo')
+            ->where('uploaded_by', $superAdmin->id)
+            ->latest()
+            ->first();
+
+        $letterhead = logo_letterhead_img_uploads::where('type', 'letterhead')
+            ->where('uploaded_by', $superAdmin->id)
+            ->latest()
+            ->first();
+    }
 
     return view('pdf-images.index', compact('logo', 'letterhead'));
 }
-    // public function index()
-    // {
-    //     $logo = logo_letterhead_img_uploads::where('type', 'logo')->first();
-    //     $letterhead = logo_letterhead_img_uploads::where('type', 'letterhead')->first();
+//    public function index()
+// {
+//     $adminId = auth()->id();
 
-    //     return view('pdf-images.index', compact('logo', 'letterhead'));
-    // }
+//     // Only fetch images uploaded by the current Super Admin
+//     $logo = logo_letterhead_img_uploads::where('type', 'logo')
+//         ->where('uploaded_by', $adminId)
+//         ->first();
+
+//     $letterhead = logo_letterhead_img_uploads::where('type', 'letterhead')
+//         ->where('uploaded_by', $adminId)
+//         ->first();
+
+//     return view('pdf-images.index', compact('logo', 'letterhead'));
+// }
+  
 
     public function store(Request $request)
 {
