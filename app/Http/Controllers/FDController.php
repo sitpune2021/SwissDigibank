@@ -10,7 +10,9 @@ use App\Models\Bank;
 use App\Models\FDScheme;
 use App\Models\FdSchemeSlab;
 use App\Models\FdTransaction;
+use App\Models\logo_letterhead_img_uploads;
 use App\Models\Member;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -1542,15 +1544,28 @@ class FDController extends Controller
         'fdScheme.fdSlabs' // scheme + slabs
     ])->findOrFail($id);
 
-    // Convert maturity amount to words
-    $amountWords = $this->numToWords((int) round($fdAccount->maturity_amount)) . ' Only';
+     $amountWords = $this->numToWords((int) round($fdAccount->maturity_amount)) . ' Only';
 
+    // 🔹 Find Super Admin
+    $superAdmin = User::whereHas('role', function ($q) {
+        $q->where('name', 'Super Admin');
+    })->first();
+
+    // 🔹 Fetch letterhead uploaded by Super Admin
+    $logo = null;
+    if ($superAdmin) {
+        $logo = logo_letterhead_img_uploads::where('type', 'letterhead')
+            ->where('uploaded_by', $superAdmin->id)
+            ->latest()
+            ->first();
+    }
     $data = [
         'fdAccount'        => $fdAccount,
         'amount_words'     => $amountWords,
         'company_address'  => 'HEAD OFFICE',
         'date'             => now()->format('d-m-Y'),
         'company_reg_no'   => 'Reg. No. 969/03-04',
+         'logo'            => $logo, 
     ];
 
     $pdf = app('dompdf.wrapper')
