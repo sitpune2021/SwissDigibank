@@ -20,7 +20,7 @@
 <div class="main-inner">
      <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl font-semibold">Upload MIS Account Documents</h1>
+            <h1 class="text-lg uppercase font-semibold">Upload MIS Account Documents</h1>
             
         </div>
     </div>

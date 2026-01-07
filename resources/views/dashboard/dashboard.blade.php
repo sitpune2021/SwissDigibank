@@ -44,6 +44,57 @@
             </a>
         </div>
     </div>
+    {{-- Upload logo and letter head  --}}
+    @auth
+@if(auth()->user()->isSuperAdmin())
+     <div class="col-span-2 md:col-span-1  dark:bg-bg3 rounded-2xl ">
+
+        <div class="w-full mb-3 col-span-1 p-4 sm:col-span-3 xxxl:col-span-1 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+            <a href="{{ route('pdf-images.index') }}">
+                <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
+                    <span class="font-medium uppercase"> Upload logo and letter head <span class="text-error"> ** </span> </span><span
+                        aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" class="cursor-pointer tabler-icon tabler-icon-dots">
+                            <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                            <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        </svg></span>
+                </div>
+                <div class="flex items-center gap-4 xl:gap-6">
+                    {{-- <div
+                        class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
+                        <i class="text-3xl las xl:text-5xl la-clipboard"></i>
+
+                    </div> --}}
+                    <div>
+                        <div class="dashboard-header flex gap-5">
+    @if($dashboardData['logo'])
+       <div class="flex flex-row items-center bg-secondary/5 rounded-10 gap-3 border p-1">
+        <h4 class="uppercase text-lg text-primary ">logo</h4>
+        <div class="logo">
+            <img src="{{ asset($dashboardData['logo']->image_path) }}" alt="Logo" class="rounded-10" width="100">
+        </div>
+       </div>
+    @endif
+
+    @if($dashboardData['letterhead'])
+        <div class="flex flex-row items-center bg-secondary/5 rounded-10 gap-3 border p-1">
+            <h4 class="uppercase text-lg text-primary ">Letter head</h4>
+        <div class="letterhead">
+            <img src="{{ asset($dashboardData['letterhead']->image_path) }}" alt="Letterhead" class="rounded-10" width="60" style="height: 60px !important;">
+        </div>
+         </div>
+    @endif
+</div>
+
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    @endif
+@endauth
     </div>
     <div class="grid grid-cols-12 gap-4 xxl:gap-6">   
 

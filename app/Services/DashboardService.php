@@ -19,7 +19,9 @@ use App\Models\PersonalLoanApplication;
 use App\Models\VehicalApplication;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use App\Models\logo_letterhead_img_uploads;
 use App\Models\Notice; 
+use Illuminate\Support\Facades\Auth;
 class DashboardService
 {
 
@@ -59,6 +61,15 @@ class DashboardService
     ->orderBy('created_at', 'desc')
     ->take(5)
     ->get();
+// ✅ Fetch current Super Admin images
+        $adminId = Auth::id();
+        $logo = logo_letterhead_img_uploads::where('type', 'logo')
+            ->where('uploaded_by', $adminId)
+            ->first();
+        $letterhead = logo_letterhead_img_uploads::where('type', 'letterhead')
+            ->where('uploaded_by', $adminId)
+            ->first();
+
         return [
             'branchesCount' => Branch::count(),
             'accountsCount' => Account::count(),
@@ -87,6 +98,9 @@ class DashboardService
             
             // 🔹 Add notices
             'notices' => $notices,
+             // ✅ Images of current Super Admin
+            'logo' => $logo,
+            'letterhead' => $letterhead,
         ];
     }
 

@@ -4,29 +4,29 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl font-semibold">MIS Transactions - {{ $misaccount->id }}</h1>
+            <h1 class="text-lg uppercase font-semibold">MIS Transactions - {{ $misaccount->mis_account_no }}</h1>
         </div>
     </div>
 
     <div class="box pb-4 overflow-x-auto bg-white lg:pb-6 rounded-lg shadow">
         <table class="w-full table-fixed border border-n30 whitespace-nowrap rounded-lg overflow-hidden">
             <thead>
-                <tr class="bg-secondary/5 dark:bg-bg3 text-sm font-semibold">
-                    <th class="px-6 py-3 text-center w-28">T. Date</th>
-                    <th class="px-6 py-3 text-center w-32">Pay Mode</th>
-                    <th class="px-6 py-3 text-center w-40">Remarks</th>
-                    <th class="px-6 py-3 text-center w-32">Status</th>
-                    <th class="px-6 py-3 text-center w-28">Debit</th>
-                    <th class="px-6 py-3 text-center w-28">Credit</th>
-                    <th class="px-6 py-3 text-center w-32">Balance</th>
-                    <th class="px-6 py-3 text-center w-28">Accounted</th>
-                    <th class="px-6 py-3 text-center w-28">Actions</th>
+                <tr class="bg-secondary/5 dark:bg-bg3  font-semibold">
+                    <th class="px-6 py-3 uppercase text-center w-28">T. Date</th>
+                    <th class="px-6 py-3 uppercase text-center w-32">Pay Mode</th>
+                    <th class="px-6 py-3 uppercase text-center w-40">Remarks</th>
+                    <th class="px-6 py-3 uppercase text-center w-32">Status</th>
+                    <th class="px-6 py-3 uppercase text-center w-28">Debit</th>
+                    <th class="px-6 py-3 uppercase text-center w-28">Credit</th>
+                    <th class="px-6 py-3 uppercase text-center w-32">Balance</th>
+                    <th class="px-6 py-3 uppercase text-center w-28">Accounted</th>
+                    <th class="px-6 py-3 uppercase text-center w-28">Actions</th>
                 </tr>
             </thead>
 
             <tbody>
                 @forelse($transactions as $txn)
-                <tr class="border-t text-sm">
+                <tr class="border-b text-sm">
                     <td class="px-6 py-4 text-center">
                         {{ $txn->transaction_date ? \Carbon\Carbon::parse($txn->transaction_date)->format('d-m-Y') : '—' }}
                     </td>
@@ -64,7 +64,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="9" class="px-6 py-6 text-center text-gray-500">No transactions found.</td>
+                    <td colspan="9" class="px-6 py-6 mt-5 text-center text-gray-500">No transactions found.</td>
                 </tr>
                 @endforelse
             </tbody>
