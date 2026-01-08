@@ -53,7 +53,14 @@ Route::get('/loan-types/{loanType}/schemes', [LoanTypeController::class, 'getSch
 // MUFIN PAY CallBack Url 
 
 // Route::get('payment/callback', [MufinController::class, 'callBack']);
-Route::middleware(['api.key','whitelist.ip'])->post(
+// Route::middleware(['api.key','whitelist.ip'])->post(
+//     'payment/callback',
+//     [MufinController::class, 'callback']
+// );
+
+
+Route::middleware(['api.key','whitelist.ip'])->match(
+    ['get', 'post'],
     'payment/callback',
     [MufinController::class, 'callback']
 );
