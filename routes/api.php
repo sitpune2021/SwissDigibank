@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\MufinController;
+use App\Http\Controllers\Api\MufinController;
+use App\Http\Controllers\ApiKeyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\MemberController;
@@ -50,4 +51,11 @@ Route::get('/loan-types/{loanType}/schemes', [LoanTypeController::class, 'getSch
 // Route::get('loan-types/{id}/schemes', [LoanTypeController::class, 'loanSchemes']);
 
 // MUFIN PAY CallBack Url 
-Route::get('payment/callback', [MufinController::class, 'callBack']);
+
+// Route::get('payment/callback', [MufinController::class, 'callBack']);
+Route::middleware(['api.key','whitelist.ip'])->post(
+    'payment/callback',
+    [MufinController::class, 'callback']
+);
+
+Route::post('/admin/api-keys', [ApiKeyController::class, 'store']);
