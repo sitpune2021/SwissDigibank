@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MufinController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\MemberController;
@@ -47,3 +48,6 @@ Route::get('loan-types', [LoanTypeController::class, 'loanTypes']);
 Route::get('/loan-types/{loanType}/schemes', [LoanTypeController::class, 'getSchemes']);
 
 // Route::get('loan-types/{id}/schemes', [LoanTypeController::class, 'loanSchemes']);
+
+// MUFIN PAY CallBack Url 
+Route::get('payment/callback', [MufinController::class, 'callBack']);
