@@ -201,7 +201,7 @@
                     <!-- Replace src path or use base64 img -->
 
                     @if($logo)
-                     <img src="{{ storage_path('app/public/' . $logo->image_path) }}"
+                     <img src="{{ public_path('storage/' . $logo->image_path) }}"
          alt="logo"
          style="max-width:90px; max-height:90px;">
                     {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
