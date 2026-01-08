@@ -5,6 +5,7 @@ use App\Http\Controllers\CollectionCenterController;
 use App\Http\Controllers\GroupCommentController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\LogoImgUploadController;
+use App\Http\Controllers\MasterSettingsController;
 use App\Http\Controllers\MortgageLoanPrintDocumentsController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\PrintDocumentsController;
@@ -2438,14 +2439,18 @@ Route::get('/proceding-book', [PrintDocumentsController::class, 'procedingBook']
 
 /////////////////////////////print-documents-end //////////////////////////
 
-///////////////  LogoImgUploadController  //////////////////////
+///////////////  Logo Img Upload  /////////////////////////////
 
 Route::get('/pdf-images', [LogoImgUploadController::class, 'index'])->name('pdf-images.index');
 Route::post('/pdf-images', [LogoImgUploadController::class, 'store'])->name('pdf-images.store');
 
 
-////////////////// end LogoImgUploadController////////////////////
+////////////////// end Logo Img Upload//////////////////////////
 
+///////////////  software-settings  /////////////////////////
+
+Route::resource('master-settings', MasterSettingsController::class);
+/////////////// end software-settings  //////////////////////
 
 Route::get('/dev/run/{action}', function ($action) {
     try {
