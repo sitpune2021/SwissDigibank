@@ -18,11 +18,11 @@ class WhitelistIp
     public function handle($request, Closure $next)
     {
         $allowedIps = [
-            '127.0.0.1',
+            '5.189.152.164',
             // akash .4
-            '192.168.1.4',
+            // '192.168.1.4',
             // shrutika .36
-            '192.168.1.36', 
+            // '192.168.1.36', 
 
         ];
 
