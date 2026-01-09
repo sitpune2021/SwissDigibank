@@ -20,7 +20,7 @@ class ApiKeyAuth{
         $hashed = hash('sha256', $key);
 
         $apiKey = ApiKey::where('key', $hashed)
-            ->where('active', true)
+            ->where('active',  1)
             ->first();
 
         if (! $apiKey) {
