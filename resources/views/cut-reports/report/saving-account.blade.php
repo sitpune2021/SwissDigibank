@@ -92,7 +92,9 @@
                 </tbody>
             </table>
         </div>
-         <x-pagination :paginator="$account" />
+       <div class="mt-5">
+          <x-pagination :paginator="$account" />
+       </div>
     </div>
    
 
