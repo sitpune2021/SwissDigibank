@@ -48,7 +48,7 @@
 <div class="main-inner">
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-        <h3 class=" flex text-xl block  uppercase font-semibold">
+        <h3 class=" flex text-lg block  uppercase font-semibold">
             Report - DD Accounts
         </h3>
 
@@ -56,18 +56,18 @@
 
     <div class="col-span-12 box lg:col-span-12">
         <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
-            <a href="{{route('report.dd.index')}}" class="btn-primary rounded-10 px-1 flex justify-center py-2 text-sm uppercase">
+            <a href="{{route('report.dd.index')}}" class="btn-primary rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
                 <i class="las la-print"></i>
                 Print Cut Report
             </a>
-            <a href="{{ route('ddaccounts.csv') }}" class="btn-error rounded-10 px-1 flex justify-center py-2 text-sm uppercase">
+            <a href="{{ route('ddaccounts.csv') }}" class="btn-error rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
                 <i class="las la-download"></i>
                 Download Csv
             </a>
         </div>
 
         <div class="pb-4 overflow-x-auto lg:pb-6">
-            <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+            <table class="w-full whitespace-nowrap select-all-table" id="">
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -162,7 +162,10 @@
                     <tr class="border-b dark:border-bg3">
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 uppercase">
-                                {{ $row->dd_account_no ?? ''}}
+                                <a href="{{ $row?->id ? route('ddsaccounts.show', $row->id) : '#' }}"
+                                    class="text-primary">
+                                    {{ $row->dd_no ?? ''}}
+                                </a>
                             </div>
                         </td>
 
@@ -227,12 +230,12 @@
                         </td>
                     </tr>
                     @endforeach
-                    <tr>
+                    {{-- <tr>
                         <td colspan="3" style="font-family: dejavusans;text-align: center; font-weight: bold; font-size: 12px;">Total</td>
                         <td style="font-family: dejavusans;">
                             {{ number_format($totalAmount ?? 0, 2) }}
                         </td>
-                    </tr>
+                    </tr> --}}
                 </tbody>
             </table>
         </div>
