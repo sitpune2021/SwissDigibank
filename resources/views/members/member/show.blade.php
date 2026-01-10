@@ -68,7 +68,7 @@ CUSTOMER')
                 <li>
 
                     <a href="{{ $charge && $charge->member_id && $charge->id ? route('members.other-charges.clearDue.form', ['id' => $charge->member_id, 'chargeId' => $charge->id]) : '#' }}"
-                        class="{{ !$charge || !$charge->member_id || !$charge->id ? 'text-gray-500 cursor-not-allowed' : '' }}">
+                        class="{{ !$charge || !$charge->member_id || !$charge->id ? 'text-gray-500 cursor-not-allowed' : '' }} block px-4 py-2 text-gray-700 hover:bg-gray-100 uppercase">
                         {{-- href="{{ route('members.other-charges.clearDue.form', ['id' => $charge->member_id ?? '',
                         'chargeId' => $charge->id ?? '']) }}"> --}}
                         Clear Due
@@ -98,7 +98,13 @@ CUSTOMER')
 </div>
 <div class="grid grid-cols-12 gap-4 xxl:gap-6">
     <div class="col-span-12 lg:col-span-6 overflow-x-hidden">
+       
         <div class="col-span-12 box overflow-x-hidden">
+             <div class="text-end">
+            <a href=" {{ route('member.edit', $member->id) }}" class="btn-primary  p-1">
+             <i class="las la-pencil-alt"></i>
+            </a>
+        </div>
             <table class="w-full overflow-x-auto whitespace-nowrap text-sm">
                 <tbody>
                     <tr class="border-b dark:even:bg-bg3">

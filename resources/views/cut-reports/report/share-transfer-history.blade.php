@@ -48,7 +48,7 @@
 <div class="main-inner">
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-        <h3 class=" flex text-xl block  uppercase font-semibold">
+        <h3 class=" flex text-lg block  uppercase font-semibold">
             Report - Share Transfer Histories
         </h3>
 
@@ -56,7 +56,9 @@
     <!-- custom date picker -->
     <div class="box ">
         <p class="border-b uppercase text-lg font-semibold">Share Transfer Date <span class="text-error">*</span></p>
-        <form action="{{ route('share.transfer.history.report') }}" method="GET">
+        <form action="
+        {{ route('share.transfer.history.report') }}
+         " method="GET">
             <div class="grid grid-cols-2 md:grid-cols-3 gap-6 rounded-xl">
 
                 <div class="w-full mt-4 col-span-1 md:col-span-1  dark:bg-bg3">
@@ -86,7 +88,7 @@
             </div>
             <div class="mt-3 text-center">
 
-                <button class="btn-primary py-2 text-sm uppercase">
+                <button class="btn-primary py-2 mt-5  text-sm uppercase">
                     <i class="las la-search"></i>
                     List Share Transfer
                 </button>
@@ -97,7 +99,7 @@
 
     <div class="col-span-12 box lg:col-span-12 mt-5">
         <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
-            <a href="{{ route('shareTransfer.csv') }}" class="btn-error rounded-10 px-1 flex justify-center py-2 text-sm uppercase">
+            <a href="{{ route('shareTransfer.csv') }}" class="btn-error rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
                 <i class="las la-download"></i>
                 Download CSV
             </a>

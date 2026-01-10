@@ -223,7 +223,7 @@
 
                     <!-- Body -->
                     <div class=" flex justify-end">
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.edit') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -409,7 +409,7 @@
                     <div class=" px-4 py-3 flex  gap-2 items-center justify-between  bg-secondary/5 rounded-10">
                         <h3 class="text-lg font-semibold text-black">ATTENDANCE SETTING</h3>
 
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.edit-attendence') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
 
@@ -468,7 +468,7 @@
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('')">
                         <h3 class="text-lg font-semibold uppercase">BANK LIST</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.bank-list') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -508,7 +508,7 @@
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('')">
                         <h3 class="text-lg font-semibold uppercase">BUSINESS TYPE</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.edit-bussiness-type') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -545,7 +545,7 @@
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('')">
                         <h3 class="text-lg font-semibold uppercase">NPA Provisioning (%)</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.npa-provisioning-settings') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -612,7 +612,7 @@
                     <!-- Header -->
                     <div class=" px-4 py-3 flex items-center justify-between bg-secondary/5 rounded-10">
                         <h3 class="text-lg font-semibold text-black">GOLD LOAN SETTINGS</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.edit-goldloan-settings') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -789,7 +789,7 @@
                     <!-- Header -->
                     <div class=" px-4 py-3 flex items-center justify-between bg-secondary/5 rounded-10">
                         <h3 class="text-lg font-semibold text-black">PERSONAL LOAN SETTINGS</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.edit-personal-loan-settings') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -981,7 +981,7 @@
                     <!-- Header -->
                     <div class=" px-4 py-3 flex items-center justify-between bg-secondary/5 rounded-10">
                         <h3 class="text-lg font-semibold text-black">DEPOSIT LOAN SETTINGS</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.edit-deposit-loan') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -1164,12 +1164,13 @@
                         </table>
                     </div>
                 </div>
+                
                 <!--CC LIMIT SETTING-->
                 <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
                     <!-- Header -->
                     <div class=" px-4 py-3 flex items-center justify-between bg-secondary/5 rounded-10">
                         <h3 class="text-lg font-semibold text-black">CC LIMIT SETTING</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.edit-cc-limit') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -1277,7 +1278,7 @@
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('')">
                         <h3 class="text-lg font-semibold uppercase">LOAN APPROVAL LEVEL NAME SETTING</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.loan-apr-level-name') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -1322,7 +1323,7 @@
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('')">
                         <h3 class="text-lg font-semibold uppercase">DAILY CASH DEPOSIT / WITHDRAWAL LIMIT</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.dailycash-deposit') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -1402,7 +1403,7 @@
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('')">
                         <h3 class="text-lg font-semibold uppercase">DAILY REMINDER SMS SETTINGS</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{route('master-settings.daily-reminder-setting')}}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -1436,9 +1437,9 @@
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('')">
                         <h3 class="text-lg font-semibold uppercase">SAVING SETTING</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        {{-- <a href="{{route('master-settings.daily-reminder-setting')}}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
-                        </a>
+                        </a> --}}
                     </div>
                     <!-- Body -->
                     <div class="overflow-x-auto mt-5">
@@ -1482,9 +1483,9 @@
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('')">
                         <h3 class="text-lg font-semibold uppercase">DEPOSITS TENURE SETTING</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        {{-- <a href="{{route('master-settings.daily-reminder-setting')}}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
-                        </a>
+                        </a> --}}
                     </div>
                     <!-- Body -->
                     <div class="overflow-x-auto mt-5">
@@ -1511,7 +1512,7 @@
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('')">
                         <h3 class="text-lg font-semibold uppercase">RD SETTING</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{route('master-settings.edit-rd-settings')}}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -1616,7 +1617,7 @@
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('')">
                         <h3 class="text-lg font-semibold uppercase">DD SETTING</h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{route('master-settings.edit-dd-settings')}}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -1724,7 +1725,7 @@
                         <h3 class="text-lg font-semibold text-black">
                             BUSINESS LOAN SETTINGS
                         </h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{route('master-settings.edit-bussiness-loan')}}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -1926,7 +1927,7 @@
                         <h3 class="text-lg font-semibold text-black">
                             PROPERTY LOAN SETTINGS
                         </h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.edit-property-loan') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -2114,7 +2115,7 @@
                         <h3 class="text-lg font-semibold text-black">
                             VEHICLE LOAN SETTINGS
                         </h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{ route('master-settings.edit-vehicle-settings') }}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -2300,7 +2301,7 @@
                         <h3 class="text-lg font-semibold text-black">
                             DAILY / WEEKLY LOAN SETTINGS
                         </h3>
-                        <a href="#" class=" btn-primary p-2 ">
+                        <a href="{{route('master-settings.edit-daily-weekly-settings')}}" class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
