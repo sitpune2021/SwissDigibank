@@ -5,10 +5,12 @@ use App\Http\Controllers\CollectionCenterController;
 use App\Http\Controllers\GroupCommentController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\LogoImgUploadController;
+use App\Http\Controllers\MasterSettingController;
 use App\Http\Controllers\MasterSettingsController;
 use App\Http\Controllers\MortgageLoanPrintDocumentsController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\PrintDocumentsController;
+use App\Http\Controllers\SoftwareSettingsController;
 use App\Http\Controllers\UnencumberedDepositController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -2449,7 +2451,56 @@ Route::post('/pdf-images', [LogoImgUploadController::class, 'store'])->name('pdf
 
 ///////////////  software-settings  /////////////////////////
 
-Route::resource('master-settings', MasterSettingsController::class);
+
+Route::get('master-settings/index', [MasterSettingController::class, 'index'])->name('master-settings.index');
+
+Route::get('master-settings/edit', [MasterSettingController::class, 'edit'])->name('master-settings.edit');
+
+Route::get('master-settings/edit-attendence', [MasterSettingController::class, 'edit_attendence'])->name('master-settings.edit-attendence');
+Route::get('master-settings/bank-list', [MasterSettingController::class, 'bank_list'])->name('master-settings.bank-list');
+Route::get('master-settings/edit-bussiness-type', [MasterSettingController::class, 'edit_bussiness_type'])->name('master-settings.edit-bussiness-type');
+
+Route::get('master-settings/edit-npa-provisioning-settings', [MasterSettingController::class, 'npa_provisioning_settings'])->name('master-settings.npa-provisioning-settings');
+
+Route::get('master-settings/edit-goldloan-settings', [MasterSettingController::class, 'edit_goldloan_settings'])->name('master-settings.edit-goldloan-settings');
+
+Route::get('master-settings/edit-personal-loan-settings', [MasterSettingController::class, 'edit_personal_loan_settings'])->name('master-settings.edit-personal-loan-settings');
+
+Route::get('master-settings/edit-deposit-loan', [MasterSettingController::class, 'edit_deposit_loan'])->name('master-settings.edit-deposit-loan');
+
+Route::get('master-settings/edit-cc-limit', [MasterSettingController::class, 'edit_cc_limit'])->name('master-settings.edit-cc-limit');
+
+Route::get('master-settings/loan-apr-level-name', [MasterSettingController::class, 'loan_apr_level_name'])->name('master-settings.loan-apr-level-name');
+
+Route::get('master-settings/dailycash-deposit', [MasterSettingController::class, 'dailycash_deposit'])->name('master-settings.dailycash-deposit');
+
+
+Route::get('master-settings/daily-reminder-setting', [MasterSettingController::class, 'daily_reminder_setting'])->name('master-settings.daily-reminder-setting');
+
+Route::get('master-settings/edit-rd-settings', [MasterSettingController::class, 'edit_rd_settings'])->name('master-settings.edit-rd-settings');
+
+Route::get('master-settings/edit-dd-settings', [MasterSettingController::class, 'edit_dd_settings'])->name('master-settings.edit-dd-settings');
+
+Route::get('master-settings/edit-bussiness-loan', [MasterSettingController::class, 'edit_bussiness_loan'])->name('master-settings.edit-bussiness-loan');
+Route::get('master-settings/edit-property-loan', [MasterSettingController::class, 'edit_property_loan'])->name('master-settings.edit-property-loan');
+
+Route::get('master-settings/edit-vehicle-settings', [MasterSettingController::class, 'edit_vehicle_settings'])->name('master-settings.edit-vehicle-settings');
+
+Route::get('master-settings/edit-daily-weekly-settings', [MasterSettingController::class, 'edit_daily_weekly_settings'])->name('master-settings.edit-daily-weekly-settings');
+
+
+
+
+
+Route::get('software-settings/sms-list', [SoftwareSettingsController::class, 'sms_list'])->name('software-settings.sms-list');
+
+Route::get('software-settings/sms-history', [SoftwareSettingsController::class, 'sms_history'])->name('software-settings.sms-history');
+
+Route::get('software-settings/mail-history', [SoftwareSettingsController::class, 'mail_history'])->name('software-settings.mail-history');
+
+Route::get('software-settings/comment-history', [SoftwareSettingsController::class, 'comment_history'])->name('software-settings.comment-history');
+
+
 /////////////// end software-settings  //////////////////////
 
 Route::get('/dev/run/{action}', function ($action) {
