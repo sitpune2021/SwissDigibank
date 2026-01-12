@@ -224,7 +224,9 @@
                 </tbody>
             </table>
         </div>
-        <x-pagination :paginator="$members" />
+       <div class="mt-5">
+         <x-pagination :paginator="$members" />
+       </div>
     </div>
 
     <script>

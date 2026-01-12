@@ -178,8 +178,11 @@
                 </tbody>
             </table>
         </div>
+       <div class="mt-5">
+         <x-pagination :paginator="$account" />
+       </div>
     </div>
-    <x-pagination :paginator="$account" />
+    
     <!-- BACKDROP -->
     <div id="loanModal"
         class="fixed inset-0 z-50 hidden bg-black/60 flex items-start justify-center overflow-y-auto pt-10">
