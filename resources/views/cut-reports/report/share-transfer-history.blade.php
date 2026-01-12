@@ -216,7 +216,9 @@
                 </tbody>
             </table>
         </div>
-        <x-pagination :paginator="$shareTransfers" />
+        <div class="mt-5">
+            <x-pagination :paginator="$shareTransfers" />
+        </div>
     </div>
 
     <script>

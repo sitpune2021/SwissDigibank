@@ -2,8 +2,8 @@
 
 <style>
     input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
     }
 
@@ -13,8 +13,8 @@
     }
 
     input[type="radio"] {
-        width: 24px;
-        height: 24px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
     }
 
@@ -32,7 +32,7 @@
     <div class="main-inner dark:bg-gray-900 dark:text-gray-200">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h1 class="text-xl font-semibold dark:text-white">DD - {{ $ddaccount->id }}</h1>
+                <h1 class="text-lg font-semibold dark:text-white">DD - {{ $ddaccount->id }}</h1>
             </div>
         </div>
 
@@ -43,12 +43,12 @@
                 <form class="space-y-6" method="POST" action="{{ route('dd.update.account.info', $ddaccount->id) }}">
                     @csrf
 
-                    <h3 class="text-2xl text-black dark:text-white p-1">CHANGE ACCOUNT INFO</h3>
+                    <h3 class="text-lg text-black dark:text-white p-1">CHANGE ACCOUNT INFO</h3>
                     <hr class="border-gray-200 dark:border-gray-700" />
 
                     <!-- Scheme -->
                     <div class="mt-4">
-                        <label class="block font-medium text-gray-700 dark:text-gray-300 uppercase">
+                        <label class="block font-semibold text-gray-700 dark:text-gray-300 uppercase">
                             Scheme <span class="text-red-500">*</span>
                         </label>
 
@@ -74,7 +74,7 @@
 
                     <!-- Account Type -->
                     <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
+                        <label class="block  font-semibold text-gray-700 dark:text-gray-300 uppercase">
                             Account Type <span class="text-red-500">*</span>
                         </label>
 
@@ -94,7 +94,7 @@
                     </div>
                     <!-- Joint Account Member -->
                     <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
+                        <label class="block  font-semibold text-gray-700 dark:text-gray-300 uppercase">
                             Joint Account Customer
                         </label>
                         <select class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
@@ -110,7 +110,7 @@
 
                     <!-- Minor -->
                     <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
+                        <label class="block  font-semibold text-gray-700 dark:text-gray-300 uppercase">
                             Minor
                         </label>
                         <select class="mt-2 px-3 py-3 bg-secondary/5 dark:bg-bg-3 w-full rounded-10 border">
@@ -119,7 +119,7 @@
                     </div>
                     <!-- Open Date -->
                     <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
+                        <label class="block  font-semibold text-gray-700 dark:text-gray-300 uppercase">
                             Open Date <span class="text-red-500">*</span>
                         </label>
 
@@ -130,7 +130,7 @@
 
                     <!-- Amount -->
                     <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 uppercase">
+                        <label class="block font-semibold text-gray-700 dark:text-gray-300 uppercase">
                             Amount <span class="text-red-500">*</span>
                         </label>
 
@@ -158,7 +158,7 @@
             <div class="w-full lg:w-1/3 box dark:bg-bg3 rounded-xl shadow overflow-hidden">
 
                 <div class="bg-secondary/5 text-black px-4 py-3 flex justify-between rounded-10 items-center">
-                    <h3 class="font-semibold uppercase">Account Info</h3>
+                    <h3 class="font-semibold text-lg uppercase">Account Info</h3>
                 </div>
 
                 <div class="p-4">
@@ -196,8 +196,8 @@
                                 <td class="py-2">{{ $ddaccount->dd_no ?? '' }}</td>
                             </tr>
 
-                            <tr>
-                                <td class="py-2 font-semibold dark:text-gray-300 uppercase">Available Balance</td>
+                            <tr class="border-b">
+                                <td class="py-2 font-semibold dark:text-gray-300 uppercase ">Available Balance</td>
                                 <td class="py-2">
                                     {{ optional($ddaccount->transactions->last())->balance_available ?? '0.00' }}
                                 </td>

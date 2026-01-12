@@ -4,8 +4,8 @@
 
     <style>
         input[type="checkbox"] {
-            width: 28px;
-            height: 28px;
+            width: 24px !important;
+            height: 24px !important;
             accent-color: green;
         }
 
@@ -15,8 +15,8 @@
         }
 
         input[type="radio"] {
-            width: 24px;
-            height: 24px;
+            width: 24px !important;
+            height: 24px !important;
             accent-color: green;
         }
 
@@ -35,7 +35,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-col  gap-2">
-                <h1 class="text-xl font-semibold">
+                <h1 class="text-lg font-semibold">
                     {{ $isEdit ? 'UPDATE DD ACCOUNT' : 'OPEN NEW DD ACCOUNT' }}
                 </h1>
             </div>

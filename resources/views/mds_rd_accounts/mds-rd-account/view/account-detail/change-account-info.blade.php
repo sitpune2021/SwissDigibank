@@ -32,7 +32,7 @@
 <div class="main-inner dark:bg-gray-900 dark:text-gray-200">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-xl font-semibold dark:text-white">RD - {{ $rdAccount->id }}</h1>
+            <h1 class="text-lg font-semibold dark:text-white">RD - {{ $rdAccount->id }}</h1>
         </div>
     </div>
 
@@ -40,10 +40,12 @@
 
         <!-- LEFT FORM -->
         <div class="flex-1 w-full bg-white dark:bg-bg3 rounded-xl shadow p-6">
-            <form class="space-y-6" method="POST" action="{{ route('rd.change-info.update', $rdAccount->id) }}">
+            <form class="space-y-6" method="POST" action="
+            {{-- {{ route('rd.change-info.update', $rdAccount->id) }} --}}
+             ">
                 @csrf
 
-                <h3 class="text-2xl text-black dark:text-white p-1">CHANGE ACCOUNT INFO</h3>
+                <h3 class="text-lg text-black dark:text-white p-1">CHANGE ACCOUNT INFO</h3>
                 <hr class="border-gray-200 dark:border-gray-700" />
 
                 <!-- Scheme -->
@@ -181,7 +183,7 @@
         <div class="w-full lg:w-1/3 box dark:bg-bg3 rounded-xl shadow overflow-hidden">
 
             <div class="bg-secondary/5 text-black px-4 py-3 flex justify-between rounded-10 items-center">
-                <h3 class="font-semibold uppercase">Account Info</h3>
+                <h3 class="font-semibold text-lg uppercase">Account Info</h3>
             </div>
 
             <div class="p-4">

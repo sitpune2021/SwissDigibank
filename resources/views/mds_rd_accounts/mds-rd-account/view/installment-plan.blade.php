@@ -5,13 +5,13 @@
     <!-- Header -->
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl font-semibold">RD - {{ $rdAccount->id }} - Installments</h1>
+            <h1 class="text-lg uppercase font-semibold">RD - {{ $rdAccount->id }} - Installments</h1>
         </div>
     </div>
 
     <!-- Installments Table -->
-    <div class="p-4 bg-white dark:bg-bg3 shadow rounded-lg">
-        <table class="w-full border-collapse rounded-lg dark:bg-bg3 overflow-hidden shadow-md">
+    <div class="p-4 bg-white dark:bg-bg3  rounded-lg">
+        <table class="w-full border-collapse rounded-lg dark:bg-bg3 overflow-hidden ">
             <thead class="bg-secondary/5 text-gray-700">
                 <tr>
                     <th class="px-4 py-3">INSTALLMENT NO</th>
@@ -76,7 +76,8 @@
 
                     <!-- Paid On -->
                     <td class="installment-paid-on px-4 py-3">
-                        {{ $inst['paid_on'] ? \Carbon\Carbon::parse($inst['paid_on'])->format('d M Y') : '—' }}
+                       
+                        {{  $inst['paid_on'] ?  \Carbon\Carbon::parse($inst['paid_on'])->format('d-m-Y') : '-' }}
                     </td>
 
                     <!-- Action -->
@@ -91,9 +92,11 @@
                         @endif
 
                         {{-- PRINT BUTTON --}}
-                        <a href="{{ route('rd.installment.receipt', ['id' => $inst['id']]) }}" target="_blank"
+                        <a href="
+                        {{-- {{ route('rd.installment.receipt', ['id' => $inst['id']]) }} --}}
+                         " target="_blank"
                             class=" print-btn inline-flex items-center justify-center mt-2 py-2 text-sm
-                             text-black btn-outline rounded-10 gap-2"
+                             text-black btn-primary rounded-10 gap-2"
                             @if($inst['print_flag'])
                             style="display:inline-flex"
                             @else

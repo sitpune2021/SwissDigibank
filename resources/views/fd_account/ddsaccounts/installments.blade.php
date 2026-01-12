@@ -4,21 +4,21 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h1 class="text-xl font-semibold">DD- {{ $ddaccount->id ?? 'N/A' }} INSTALLMENTS</h1>
+                <h1 class="text-lg font-semibold">DD- {{ $ddaccount->id ?? 'N/A' }} INSTALLMENTS</h1>
             </div>
         </div>
         <div class="col-span-12 lg:col-span-12">
             <div class="my-4">
                 <a href="{{ route('dds.installments.regenerate', $ddaccount->id) }}"
-                    class="uppercase text-sm rounded-10 btn-warning">
+                    class="uppercase text-sm px-2 rounded-10 btn-warning">
                     Re-generate Installment Chart
                 </a>
             </div>
 
             <div class="shadow-lg rounded-lg box overflow-x-auto">
-                <table class="w-full divide-y bg-secondary/5">
+                <table class="w-full divide-y ">
                     <thead class="bg-gray-100">
-                        <tr>
+                        <tr class="bg-secondary/5">
                             <th class="px-4 py-3 text-start text-lg  md:text-base font-bold text-gray-700">INSTALLMENT NO
                             </th>
                             <th class="px-4 py-3 text-start text-lg  md:text-base font-bold text-gray-700">AMOUNT</th>
@@ -32,7 +32,7 @@
                     </thead>
                     <tbody>
                         @foreach ($installments as $inst)
-                            <tr>
+                            <tr class="border-b">
                                 <td class="px-3 py-2">{{ $inst['number'] }}</td>
                                 <td class="px-3 py-2">{{ $inst['amount'] }}</td>
                                 <td class="px-3 py-2">{{ $inst['due_date'] }}</td>
@@ -49,7 +49,7 @@
                                 <td class="px-3 py-2">
                                     @if ($inst['state'] === 'PAID')
                                         <a href="{{ route('dds.installment.receipt', [$ddaccount->id, $inst['number']]) }}"
-                                            target="_blank" class="btn btn-sm btn-primary">
+                                            target="_blank" class="btn btn-sm btn-primary rounded-10 uppercase px-4 py-2">
                                             Print
                                         </a>
                                     @endif
@@ -60,8 +60,11 @@
                     </tbody>
 
                 </table>
+                <div class="mt-5">
+                     <x-pagination :paginator="$installments" />
+                </div>
             </div>
-            <x-pagination :paginator="$installments" />
+           
 
         </div>
     </div>

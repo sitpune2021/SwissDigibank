@@ -1,8 +1,8 @@
 @extends('layout.main')
 @section('page-title', 'FD ACCOUNT')
 @section('action-button')
-<a class="btn-primary uppercase text-sm" href="{{ route('fd-mis-schemes.fd_create') }}">
-    <i class=" md:text-lg text-sm uppercase"></i>
+<a class="btn-primary uppercase " href="{{ route('fd-mis-schemes.fd_create') }}">
+    {{-- <i class=" md:text-lg  uppercase"></i> --}}
     Add
 </a>
 @endsection

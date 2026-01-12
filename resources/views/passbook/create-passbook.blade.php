@@ -7,11 +7,11 @@
     <!-- Header -->
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-xl font-semibold">ISSUE NEW PASSBOOK</h1>
-            <p class="text-gray-500">
+            <h1 class="text-lg font-semibold">ISSUE NEW PASSBOOK</h1>
+            {{-- <p class="text-gray-500">
                 <a href="{{ route('passbook.index') }}" class="text-gray-500">Passbooks</a> >
                 <a href="#" class="text-gray-500">New</a>
-            </p>
+            </p> --}}
         </div>
     </div>
 
@@ -133,12 +133,12 @@
 
         <!-- Action Buttons -->
         <div class="flex gap-4 mt-6 items-center">
-            <button id="addPassbookBtn" class="btn-primary" type="submit">ADD PASSBOOK</button>
+            <button id="addPassbookBtn" class="btn-primary uppercase" type="submit">ADD PASSBOOK</button>
 
             @php
             $indexUrl = route('passbook.index');
             @endphp
-            <button onclick="window.location.href='{{ $indexUrl }}'" class="btn-outline" type="button">
+            <button onclick="window.location.href='{{ $indexUrl }}'" class="btn-outline uppercase" type="button">
                 Back
             </button>
 
