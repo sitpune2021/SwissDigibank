@@ -3,8 +3,8 @@
 
 <style>
     input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
         /* For modern browsers */
     }
@@ -16,8 +16,8 @@
     }
 
     input[type="radio"] {
-        width: 24px;
-        height: 24px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
         /* Modern browser support */
     }
@@ -92,22 +92,23 @@
 
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl font-semibold">RD - {{ $rdAccount->id }}</h1>
+            <h1 class="text-lg font-semibold">RD - {{ $rdAccount->id }}</h1>
         </div>
     </div>
     <!-- Menu Buttons -->
     <div class="flex flex-wrap gap-2">
 
-        <a href="{{ route('installment.plan', $rdAccount->id) }}" class="btn-warning px-2 py-2 rounded-10">
+        <a href="{{ route('installment.plan', $rdAccount->id) }}" class="btn-warning px-2 text-sm py-2 rounded-10">
             INSTALLMENT PLAN
         </a>
 
-        <a href="{{ route('view.viewTransaction', $rdAccount->id) }}" class="btn-secondary px-2 py-2 rounded-10">
+        <a href="{{ route('view.viewTransaction', $rdAccount->id) }}"
+            class="btn-secondary px-2 py-2 text-sm rounded-10">
             VIEW TRANSACTIONS
         </a>
 
         @if($rdAccount->approve_status == 'Approved')
-        <a href="{{route('rd-accounts.deposit.form',$rdAccount->id)}}" class="btn-primary px-2 py-2 rounded-10">
+        <a href="{{route('rd-accounts.deposit.form',$rdAccount->id)}}" class="btn-primary px-2 py-2  rounded-10">
             DEPOSIT MONEY
         </a>
         @endif
@@ -121,7 +122,7 @@
         <div x-data="{ open: false }" class="relative inline-block">
 
             <a @click="open = !open"
-                class="btn-primary px-2 py-2 rounded-10 flex items-center justify-between space-x-2">
+                class="btn-primary px-2 py-2 text-sm rounded-10 flex items-center justify-between space-x-2">
                 <span>ACCOUNT DETAILS</span>
                 <svg class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
@@ -136,7 +137,7 @@
                         <a href="{{ route('rd-accounts.change-info', $rdAccount->id)}}"
                             class="block px-4 py-2 text-gray-700 uppercase ">change Account Info</a>
                     </li>
-                     <li>
+                    <li>
                         <a href="{{route('rd.accounts.nominee',['type'=>'rd','id'=>base64_encode($rdAccount->id)])}}"
                             class="block px-4 py-2 text-gray-700 uppercase ">Add Nominee</a>
                     </li>
@@ -144,11 +145,11 @@
             </div>
         </div>
 
-         <div x-data="{ open: false }" class="relative inline-block">
+        <div x-data="{ open: false }" class="relative inline-block">
 
             <a @click="open = !open"
                 class="btn-secondary px-2 py-2 rounded-10 flex items-center justify-between space-x-2">
-                <i class="las la-print text-lg"></i><span>PRINT DOCUMENTS</span>
+                <i class="las la-print "></i><span>PRINT DOCUMENTS</span>
                 <svg class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
                 </svg>
@@ -179,7 +180,7 @@
         </div>
 
         @if($rdAccount->approve_status == 'Approved')
-        <a class="btn-warning px-2 py-2 rounded-10">
+        <a href="#" class="btn-warning px-2 py-2 text-sm rounded-10">
             CREDIT /REVERSE INTEREST
         </a>
         @endif
@@ -187,7 +188,7 @@
         <div x-data="{ open: false }" class="relative inline-block">
             <!-- Button -->
             <a @click="open = !open"
-                class="btn-secondary px-2 py-2 rounded-10 flex items-center justify-between space-x-2">
+                class="btn-secondary px-2 py-2 text-sm rounded-10 flex items-center justify-between space-x-2 cursor-pointer">
                 <span>DEBIT OTHER CHARGES</span>
                 <svg class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
@@ -199,13 +200,12 @@
                 class="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                 <ul class="py-2">
                     <li>
-                        <a href="#"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100">OTHER DEBIT LIST</a>
+                        <a href="#" class="block px-4 py-2 texts-sm text-gray-700 hover:bg-gray-100">OTHER DEBIT
+                            LIST</a>
                         @if($rdAccount->approve_status == 'Approved')
-                        <a href="#"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">DEBIT OTHER CHARGES</a>
-                        <a href="#"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 ">CLEAR DUES </a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ">DEBIT OTHER
+                            CHARGES</a>
+                        <a href="#" class="block px-4 text-sm py-2 text-gray-700 hover:bg-gray-100 ">CLEAR DUES </a>
                         @endif
                     </li>
                 </ul>
@@ -213,13 +213,13 @@
         </div>
 
         @if($rdAccount->approve_status == 'Approved')
-        <a class="btn-warning px-2 py-2 rounded-10">
+        <a href="#" class="btn-warning px-2 text-sm py-2 rounded-10">
             LINK SAVINF ACCOUNT (AUTO DEBIT )
         </a>
         @endif
 
         @if($rdAccount->approve_status == 'Approved')
-        <a class="btn-error px-2 py-2 rounded-10">
+        <a href="#" class="btn-error px-2 text-sm py-2 rounded-10">
             MAKE LIEN AGAINST LOAN
         </a>
         @endif
@@ -232,7 +232,7 @@
 
 
 
-        <a class="btn-secondary px-2 py-2 rounded-10">
+        <a href="#" class="btn-secondary px-2 text-sm py-2 rounded-10">
             SHOW AUDIT TRAIL
         </a>
 
@@ -241,9 +241,9 @@
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
 
         <!-- Left: Details -->
-        <div class="w-full overflow-hidden">
-            <div class="overflow-x-auto  rounded-lg dark:bg-bg3 bg-white shadow-md ">
-                <table class="min-w-full text-sm text-left border-collapse">
+        <div class="w-full overflow-x-hidden ">
+            <div class="overflow-x-auto  rounded-lg dark:bg-bg3 box ">
+                <table class="w-full  text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 w-1/3 uppercase">Status</td>
@@ -255,7 +255,7 @@
                                 </span>
                                 @elseif (strtolower($rdAccount->approve_status ?? '') === 'pending')
                                 <span
-                                    class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                    class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2  text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">
                                     PENDING
                                 </span>
                                 @else
@@ -266,122 +266,126 @@
                                 @endif
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Customer</td>
                             <td class="px-4 py-2">
                                 {{$rdAccount->member?->member_no
-        ?? ($rdAccount->member?->id 
-            ? str_pad($rdAccount->member->id, 6, '0', STR_PAD_LEFT) 
-            : 'N/A') }} -
+                                ?? ($rdAccount->member?->id
+                                ? str_pad($rdAccount->member->id, 6, '0', STR_PAD_LEFT)
+                                : 'N/A') }} -
                                 {{ $rdAccount->member->member_info_first_name ?? '' }}
                                 {{ $rdAccount->member->member_info_last_name ?? '' }}
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Created on</td>
                             <td class="px-4 py-2">-</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Created by</td>
                             <td class="px-4 py-2">-</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">RD No.</td>
                             <td class="px-4 py-2">{{ $rdAccount->id }}</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Old RD No.</td>
                             <td class="px-4 py-2">—</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Scheme</td>
                             <td class="px-4 py-2">{{$rdAccount->scheme->scheme_name ?? 'N/A' }}</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Open Date</td>
-                            <td class="px-4 py-2"> {{ $rdAccount->open_date ? \Carbon\Carbon::createFromFormat('Y-m-d', $rdAccount->open_date)->format('d-m-Y') : '' }}</td>
+                            <td class="px-4 py-2"> {{ $rdAccount->open_date ? \Carbon\Carbon::createFromFormat('Y-m-d',
+                                $rdAccount->open_date)->format('d-m-Y') : '' }}</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Deposit Frequency</td>
                             <td class="px-4 py-2">{{ $rdAccount->scheme->rd_dd_frequency ?? 'N/A' }}</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Installment Amount</td>
                             <td class="px-4 py-2">₹ {{ number_format($rdAccount->rd_amount, 2) }}</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Installment Amount Received (C)</td>
                             <td class="px-4 py-2">₹ {{ $receivedAmount }}</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Penalty / Other Charges Received</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Interest Credited (D)</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2">TDS Deducted (E)</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Balance Available (C + D - E)</td>
                             <td class="px-4 py-2">₹ {{ $balance }}</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Principal Amount Due (A)</td>
                             <td class="px-4 py-2">₹-</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Penalty / Other Charges Due (B)</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Total Amount Due (A + B)</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Maturity Date</td>
                             <td class="px-4 py-2">
-                                {{ $rdAccount->maturity_date ? \Carbon\Carbon::parse($rdAccount->maturity_date)->format('d-m-Y') : '' }}
+                                {{ $rdAccount->maturity_date ?
+                                \Carbon\Carbon::parse($rdAccount->maturity_date)->format('d-m-Y') : '' }}
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Close Date</td>
                             <td class="px-4 py-2">-</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Maturity Amount (approx.)</td>
                             <td class="px-4 py-2">₹ {{ number_format($calc['maturity_amount'], 2) }}</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Maturity Bonus Amount</td>
                             <td class="px-4 py-2">₹ -</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Annual Interest Rate (%)</td>
                             <td class="px-4 py-2">{{ $rdAccount->scheme->anuual_interest_rate ?? 'N/A' }}</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Interest Compounding Interval</td>
                             <td class="px-4 py-2">{{ $rdAccount->scheme->interest_compounding_interval ?? 'N/A' }}</td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">TDS Deduction</td>
                             <td class="px-4 py-2">
                                 @if($rdAccount->tds === 'yes')
-                                <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                <span
+                                    class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
                                     Yes
                                 </span>
                                 @else
-                                <span class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                <span
+                                    class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
                                     No
                                 </span>
                                 @endif
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Special Account</td>
                             <td class="px-4 py-2">-</td>
                         </tr>
@@ -391,33 +395,33 @@
 
 
             <!--MEMBER DETAILS-->
-            <div class="bg-white shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
+            <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-10 overflow-hidden">
                 <!-- Header -->
-                <div class="border-b px-4 py-3 bg-red-100">
-                    <h3 class="text-lg font-semibold text-black">CUSTOMER DETAILS</h3>
+                <div class="border-b px-4 py-3 rounded-10 bg-secondary/5 bg-red-100">
+                    <h3 class="text-lg  font-semibold text-black">CUSTOMER DETAILS</h3>
                 </div>
 
                 <!-- Body -->
                 <div class="p-4 overflow-x-auto">
-                    <table class="min-w-full text-sm text-left">
+                    <table class="w-full text-sm text-left">
                         <tbody class="divide-y divide-gray-200">
 
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Customer Name</td>
                                 <td class="px-4 py-2">
                                     {{$rdAccount->member?->member_no
-        ?? ($rdAccount->member?->id 
-            ? str_pad($rdAccount->member->id, 6, '0', STR_PAD_LEFT) 
-            : 'N/A')}}-
+                                    ?? ($rdAccount->member?->id
+                                    ? str_pad($rdAccount->member->id, 6, '0', STR_PAD_LEFT)
+                                    : 'N/A')}}-
                                     {{ $rdAccount->member->member_info_first_name ?? '' }}
                                     {{ $rdAccount->member->member_info_last_name ?? '' }}
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Mobile No</td>
                                 <td class="px-4 py-2">{{ $rdAccount->member->member_info_mobile_no ?? 'N/A' }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Address</td>
                                 <td class="px-4 py-2">
                                     @if($rdAccount->member && $rdAccount->member->address)
@@ -453,7 +457,7 @@
 
                 <table class="w-full  whitespace-nowrap text-sm text-gray-700 rounded-b-md">
                     <thead>
-                        <tr class="border-b border-gray-200 text-start">
+                        <tr class="border-b bg-secondary/5 border-gray-200 text-start">
                             <th class="px-3  text-start py-2 uppercase">Status</th>
                             <th class="px-3  text-start   py-2 uppercase">Remark</th>
                             <th class="px-3  text-start  py-2 uppercase">Updated at</th>
@@ -461,8 +465,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="text-start">
-                            <td class="px-3 py-2">@if($rdAccount->approve_status == 'Pending') Pending for approvel @endif</td>
+                        <tr class="text-start border-b">
+                            <td class="px-3 py-2">@if($rdAccount->approve_status == 'Pending') Pending for approvel
+                                @endif</td>
                             <td class="px-3 py-2">{{$rdAccount->remark ?? ""}}</td>
                             <td class="px-3 py-2">aprovel on date </td>
                             <td class="px-3 py-2">-</td>
@@ -473,11 +478,12 @@
             @endif
 
 
-            <div class="bg-white shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
+            <div class="box shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
                 <!-- Header -->
-                <div class="border-b px-4 py-3 flex items-center gap-4 justify-between bg-red-100">
+                <div class="  border-b rounded-10 px-4 py-3 flex items-center gap-4 justify-between bg-secondary/5">
                     <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED PASSBOOK</h3>
-                    <a href="{{ route('passbook.create-passbook') }}" class="btn-primary px-3 py-2 rounded-3xl text-white">
+                    <a href="{{ route('passbook.create-passbook') }}"
+                        class="btn-primary px-3 py-2 rounded-10 uppercase texts-sm text-white">
                         <i class="las la-plus"></i>
                         passbook
                     </a>
@@ -488,20 +494,20 @@
                     <div class="overflow-x-auto ">
                         <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
                             <thead class="bg-gray-100 text-gray-700">
-                                <tr class="border-b">
-                                    <th class="px-4 py-2 font-semibold">Passbook No</th>
-                                    <th class="px-4 py-2 font-semibold">Issue Date</th>
-                                    <th class="px-4 py-2 font-semibold">Action</th>
+                                <tr class="border-b bg-secondary/5">
+                                    <th class="px-4 py-2 font-semibold uppercase text-start">Passbook No</th>
+                                    <th class="px-4 py-2 font-semibold uppercase text-start">Issue Date</th>
+                                    <th class="px-4 py-2 font-semibold uppercase text-start">Action</th>
                                 </tr>
                             </thead>
 
                             <tbody class="divide-y divide-gray-200 whitespace-nowrap">
                                 @forelse($passbooks as $pass)
                                 <tr class="border-b text-center">
-                                    <td class="px-4 py-2">{{ $pass->passbook_no ?? 'N/A' }}</td>
-                                    <td class="px-4 py-2">{{ $pass->issue_date ?? 'N/A' }}</td>
+                                    <td class="px-4 py-2 text-start">{{ $pass->passbook_no ?? 'N/A' }}</td>
+                                    <td class="px-4 py-2 text-start">{{ $pass->issue_date ?? 'N/A' }}</td>
 
-                                    <td class="px-4 py-2">
+                                    <td class="px-4 py-2 text-start">
                                         <div class="w-full flex gap-3 justify-center">
 
                                             <!-- Edit -->
@@ -511,8 +517,7 @@
                                             </a>
 
                                             <!-- View -->
-                                            <a href="{{ route('passbook.show', $pass->id) }}"
-                                                class="btn-primary  p-1">
+                                            <a href="{{ route('passbook.show', $pass->id) }}" class="btn-primary  p-1">
                                                 <i class="las la-eye "></i>
                                             </a>
 
@@ -538,13 +543,14 @@
             <!--documents-->
             <div class="box bg-white dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
-                <div class="flex items-center justify-between bg-secondary/5  text-black  rounded-t-lg px-4 py-3 cursor-pointer">
+                <div
+                    class="flex items-center justify-between bg-secondary/5  text-black  rounded-t-lg px-4 py-3 cursor-pointer">
                     <h3 class="text-lg font-semibold">DOCUMENTS</h3>
                     <div class="flex items-center gap-2">
-                        <a href="{{ route('rd.uploadDocuments', $rdAccount->id)}}" class="btn-primary rounded-full p-1  w-2"><i class="las la-upload"></i></a> <!-- Toggle Button -->
-                        <button
-                            class="p-1 rounded transition"
-                            onclick="toggleSection(this)">
+                        <a href="{{ route('rd.uploadDocuments', $rdAccount->id)}}"
+                            class="btn-primary rounded-full p-1  w-2"><i class="las la-upload"></i></a>
+                        <!-- Toggle Button -->
+                        <button class="p-1 rounded transition" onclick="toggleSection(this)">
                             <span class="toggle-icon text-lg font-bold">+</span>
                         </button>
                     </div>
@@ -567,14 +573,16 @@
                             <tbody class="divide-y divide-gray-200">
                                 @foreach($documents as $doc)
                                 <tr class="hover:bg-gray-50 border-b">
-                                    <td class="px-4 py-2">{{ $doc->document_type }}</td>
-                                    <td class="px-4 py-2">
-                                        <a href="{{ asset($doc->file_path) }}" target="_blank" class="text-blue-600 underline">
+                                    <td class="px-4 py-2 text-start">{{ $doc->document_type }}</td>
+                                    <td class="px-4 py-2 text-start">
+                                        <a href="{{ asset($doc->file_path) }}" target="_blank"
+                                            class="text-blue-600 underline">
                                             Show
                                         </a>
                                     </td>
-                                    <td class="px-4 py-2">
-                                        <form action="{{ route('rd.documents.destroy', $doc->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                    <td class="px-4 py-2 text-start">
+                                        <form action="{{ route('rd.documents.destroy', $doc->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-800">
@@ -594,11 +602,9 @@
             <!--COMMENTS-->
             <div class="box bg-white dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <!-- Header -->
-                <div class="flex items-center justify-between bg-secondary/5 text-black px-4 py-3 cursor-pointer">
-                    <h3 class="text-lg font-semibold">COMMENTS</h3>
-                    <button
-                        class="p-1 rounded transition"
-                        onclick="toggleSection(this)">
+                <div class="flex items-center rounded-10 justify-between bg-secondary/5 text-black px-4 py-3 cursor-pointer">
+                    <h3 class="text-lg uppercase font-semibold">COMMENTS</h3>
+                    <button class="p-1 rounded transition" onclick="toggleSection(this)">
                         <span class="toggle-icon text-lg font-bold">+</span>
                     </button>
 
@@ -614,7 +620,7 @@
                         @else
                         <table class="w-full text-sm text-left">
                             <thead>
-                                <tr class="border-b">
+                                <tr class="border-b bg-secondary/5 rounded-10 ">
                                     <th class="px-4 py-2 uppercase font-semibold">Comment</th>
                                     <th class="px-4 py-2 uppercase font-semibold">Commented By</th>
                                     <th class="px-4 py-2 uppercase font-semibold">Date</th>
@@ -623,11 +629,13 @@
                             <tbody class="divide-y divide-gray-200">
                                 @foreach($rdAccount->comments as $comment)
                                 <tr class="hover:bg-gray-50 border-b">
-                                    <td class="px-4 py-2">{{ $comment->comment }}</td>
-                                    <td class="px-4 py-2">
-                                        {{ $comment->commented_by ? \App\Models\User::find($comment->commented_by)->name : '-' }}
+                                    <td class="px-4 py-2 text-start">{{ $comment->comment }}</td>
+                                    <td class="px-4 py-2 text-start">
+                                        {{ $comment->commented_by ? \App\Models\User::find($comment->commented_by)->name
+                                        : '-' }}
                                     </td>
-                                    <td class="px-4 py-2">{{ \Carbon\Carbon::parse($comment->date)->format('d-m-Y ') ?? '' }}</td>
+                                    <td class="px-4 py-2 text-start">{{ \Carbon\Carbon::parse($comment->date)->format('d-m-Y ') ??
+                                        '' }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -638,9 +646,11 @@
 
                         <div class="overflow-x-auto text-center mt-5">
                             @if($rdAccount->comments->count() > 0)
-                            <a href="{{ route('rd.addComment', $rdAccount->id) }}" class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">View All</a>
+                            <a href="{{ route('rd.addComment', $rdAccount->id) }}"
+                                class="btn-primary px-3 py-2 uppercase text-white">View All</a>
                             @endif
-                            <a href="{{ route('rd.addComment', $rdAccount->id) }}" class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">Add Comments</a>
+                            <a href="{{ route('rd.addComment', $rdAccount->id) }}"
+                                class="btn-primary px-3 py-2 uppercase text-white">Add Comments</a>
                         </div>
                     </div>
                 </div>
@@ -672,15 +682,17 @@
                                 <td class="px-4 py-3">
 
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox"
-                                            id="internetToggle"
-                                            class="sr-only peer slider-toggle"
-                                            data-label-id="internetLabel"
-                                            {{ $rdAccount->is_internet_enabled ? 'checked' : '' }}>
+                                        <input type="checkbox" id="internetToggle" class="sr-only peer slider-toggle"
+                                            data-label-id="internetLabel" {{ $rdAccount->is_internet_enabled ? 'checked'
+                                        : '' }}>
 
                                         <div class="relative">
-                                            <div class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all"></div>
-                                            <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6"></div>
+                                            <div
+                                                class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
+                                            </div>
+                                            <div
+                                                class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                                            </div>
                                         </div>
 
                                         <span id="internetLabel" class="ml-4 text-sm font-medium text-gray-700"></span>
@@ -694,15 +706,17 @@
                                 <td class="px-4 py-3">
 
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox"
-                                            id="transferToggle"
-                                            class="sr-only peer slider-toggle"
-                                            data-label-id="transferLabel"
-                                            {{ $rdAccount->money_transfer ? 'checked' : '' }}>
+                                        <input type="checkbox" id="transferToggle" class="sr-only peer slider-toggle"
+                                            data-label-id="transferLabel" {{ $rdAccount->money_transfer ? 'checked' : ''
+                                        }}>
 
                                         <div class="relative">
-                                            <div class="blocks w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-all"></div>
-                                            <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6"></div>
+                                            <div
+                                                class="blocks w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-all">
+                                            </div>
+                                            <div
+                                                class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                                            </div>
                                         </div>
 
                                         <span id="transferLabel" class="ml-4 text-sm font-medium text-gray-700"></span>
@@ -716,15 +730,16 @@
                                 <td class="px-4 py-3">
 
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox"
-                                            id="lockedToggle"
-                                            class="sr-only peer slider-toggle"
-                                            data-label-id="lockedLabel"
-                                            {{ $rdAccount->is_locked ? 'checked' : '' }}>
+                                        <input type="checkbox" id="lockedToggle" class="sr-only peer slider-toggle"
+                                            data-label-id="lockedLabel" {{ $rdAccount->is_locked ? 'checked' : '' }}>
 
                                         <div class="relative">
-                                            <div class="blocks w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-all"></div>
-                                            <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6"></div>
+                                            <div
+                                                class="blocks w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-all">
+                                            </div>
+                                            <div
+                                                class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                                            </div>
                                         </div>
 
                                         <span id="lockedLabel" class="ml-4 text-sm font-medium text-gray-700"></span>
@@ -737,15 +752,16 @@
                                 <td class="font-semibold text-center align-middle px-4 py-3">SMS</td>
                                 <td class="px-4 py-3">
                                     <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox"
-                                            id="smsToggle"
-                                            class="sr-only peer slider-toggle"
-                                            data-label-id="smsLabel"
-                                            {{ $rdAccount->sms ? 'checked' : '' }}>
+                                        <input type="checkbox" id="smsToggle" class="sr-only peer slider-toggle"
+                                            data-label-id="smsLabel" {{ $rdAccount->sms ? 'checked' : '' }}>
 
                                         <div class="relative">
-                                            <div class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all"></div>
-                                            <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6"></div>
+                                            <div
+                                                class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
+                                            </div>
+                                            <div
+                                                class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                                            </div>
                                         </div>
 
                                         <span id="smsLabel" class="ml-4 text-sm font-medium text-gray-700"></span>
@@ -798,50 +814,51 @@
             <div class="bg-white dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
                 <!--Old Rd No.-->
                 <form action="" class="mt-3 p-3">
-                    <label for="" class="block uppercase">Old Rd No.</label>
+                    <label for="" class="block font-semibold uppercase">Old Rd No.</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
-                        <input type="text" name="" id="" class="block w-full rounded-10 bg-secondary/5 border py-3 dark:text-white"
+                        <input type="text" name="" id=""
+                            class="block w-full rounded-10 bg-secondary/5 border py-3 px-2 dark:text-white"
                             placeholder="Enter Old Rd Number">
-                        <input type="button" value="update" class="block  btn-primary">
+                        <input type="button" value="update" class="block rounded-10 uppercase btn-primary">
                     </div>
                 </form>
 
 
                 <!--Member-->
                 <form class="mt-2 px-3">
-                    <label for="branch" class="block mb-2 uppercase">Customer</label>
+                    <label for="branch" class="block font-semibold mb-2 uppercase">Customer</label>
                     <div class="flex flex-row items-center gap-3 justify-between">
                         <select name="member_id" id="member_id"
-                            class="block w-full rounded-10 bg-secondary/5 border py-3 dark:text-white">
+                            class="block w-full rounded-10 bg-secondary/5 border px-2 py-3 dark:text-white">
                             <option value="">Select Customer</option>
                             <option value="1">Vishaka-Pune</option>
                         </select>
 
-                        <button type="submit" class="block btn-primary">Update</button>
+                        <button type="submit" class="block rounded-10 uppercase  btn-primary">Update</button>
                     </div>
                 </form>
 
                 <!--Branch-->
                 <form class="mt-2 px-3">
-                    <label for="branch" class="block mb-2 uppercase">Branch</label>
+                    <label for="branch" class="block font-semibold mb-2 uppercase">Branch</label>
                     <div class="flex flex-row items-center gap-3 justify-between">
                         <select name="branch_id" id="branch_id"
-                            class="block w-full rounded-10 bg-secondary/5 border py-3 dark:text-white">
+                            class="block w-full rounded-10 bg-secondary/5 px-2 border py-3 dark:text-white">
                             @foreach($branches as $branch)
-                            <option value="{{ $branch->id }}"
-                                {{ $rdAccount->branch_id == $branch->id ? 'selected' : '' }}>
+                            <option value="{{ $branch->id }}" {{ $rdAccount->branch_id == $branch->id ? 'selected' : ''
+                                }}>
                                 {{ $branch->branch_name }}
                             </option>
                             @endforeach
                         </select>
 
-                        <button type="submit" class="block btn-primary">Update</button>
+                        <button type="submit" class="block   rounded-10 uppercase   btn-primary">Update</button>
                     </div>
                 </form>
 
                 <!--Advisor/ Staff-->
                 <form action="" class="mt-2 px-3">
-                    <label for="" class="block uppercase">Advisor/ Staff</label>
+                    <label for="" class="block font-semibold uppercase">Advisor/ Staff</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                         <select class="w-full rounded-10 bg-secondary/5 border  px-3 py-3 
            dark:bg-bg3 dark:text-white">
@@ -850,14 +867,14 @@
                             <option>Option 2</option>
                         </select>
 
-                        <input type="button" value="update" class="block  btn-primary">
+                        <input type="button" value="update" class="block  rounded-10 uppercase    btn-primary">
 
                     </div>
                 </form>
 
                 <!--Advisor/ Staff-->
                 <form action="" class="mt-2 px-3">
-                    <label for="" class="block uppercase">Collection Advisor/ Staff</label>
+                    <label for="" class="block font-semibold uppercase">Collection Advisor/ Staff</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                         <select class="w-full rounded-10 bg-secondary/5 border  px-3 py-3 
            dark:bg-bg3 dark:text-white">
@@ -866,19 +883,19 @@
                             <option>Option 2</option>
                         </select>
 
-                        <input type="button" value="update" class="block  btn-primary">
+                        <input type="button" value="update" class="block  rounded-10 uppercase    btn-primary">
 
                     </div>
                 </form>
 
                 <div class=" px-6 flex py-4 flex-row items-center gap-6">
-                    <p class="w-full text-lg uppercase">Current Chart</p>
-                    <a href="#" class="text-primary w-full">none</a>
+                    <p class="w-full text-lg font-semibold uppercase">Current Chart</p>
+                    <a href="#" class="text-primary text-lg uppercase w-full">none</a>
                 </div>
 
                 <!--Commission Chart-->
                 <form action="" class="mt-2 px-3 pb-4">
-                    <label for="" class="block uppercase">Commission Chart</label>
+                    <label for="" class="block font-semibold uppercase">Commission Chart</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                         <select class="w-full rounded-10 bg-secondary/5 border  px-3 py-3
                           dark:bg-bg3 dark:text-white">
@@ -887,7 +904,7 @@
                             <option>Option 2</option>
                         </select>
 
-                        <input type="button" value="update" class="block  btn-primary">
+                        <input type="button" value="update" class="block   rounded-10 uppercase   btn-primary">
 
                     </div>
                 </form>
@@ -903,9 +920,7 @@
                     <h3 class="text-black font-semibold text-lg">AUTO DEBIT SAVING ACCOUNT INFO</h3>
 
                     <!-- Toggle Button -->
-                    <button
-                        class="p-1 rounded transition"
-                        onclick="toggleSection(this)">
+                    <button class="p-1 rounded transition" onclick="toggleSection(this)">
                         <span class="toggle-icon text-lg font-bold">+</span>
                     </button>
 
@@ -943,9 +958,7 @@
                     <h3 class="text-black font-semibold text-lg">SCHEME INFO</h3>
 
                     <!-- Toggle Button -->
-                    <button
-                        class="p-1 rounded transition"
-                        onclick="toggleSection(this)">
+                    <button class="p-1 rounded transition" onclick="toggleSection(this)">
                         <span class="toggle-icon text-lg font-bold">+</span>
                     </button>
 
@@ -981,7 +994,8 @@
                             </tr>
                             <tr class="border-b border-gray-200 uppercase">
                                 <td class="font-semibold px-3 py-2">Interest Compounding Interval</td>
-                                <td class="px-3 py-2">{{ $rdAccount->scheme->interest_compounding_interval ?? 'N/A' }}</td>
+                                <td class="px-3 py-2">{{ $rdAccount->scheme->interest_compounding_interval ?? 'N/A' }}
+                                </td>
                             </tr>
                             <tr class="border-b border-gray-200 uppercase">
                                 <td class="font-semibold px-3 py-2">Tenure</td>
@@ -1013,7 +1027,8 @@
                             </tr>
                             <tr>
                                 <td class="font-semibold px-3 py-2 uppercase">Minimum Amount</td>
-                                <td class="px-3 py-2">₹ {{ number_format($rdAccount->scheme->min_rd_dd_amount ?? 0, 2) }}</td>
+                                <td class="px-3 py-2">₹ {{ number_format($rdAccount->scheme->min_rd_dd_amount ?? 0, 2)
+                                    }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1029,9 +1044,7 @@
                     <h3 class="text-black font-semibold text-lg">RD MATURITY INFO</h3>
 
                     <!-- Toggle Button -->
-                    <button
-                        class="p-1 rounded transition"
-                        onclick="toggleSection(this)">
+                    <button class="p-1 rounded transition" onclick="toggleSection(this)">
                         <span class="toggle-icon text-lg font-bold">+</span>
                     </button>
 
@@ -1043,7 +1056,8 @@
                         <tbody>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 w-1/3 uppercase">Maturity Date</td>
-                                <td class="px-3 py-2">{{ $calc['maturity_date'] ? \Carbon\Carbon::parse($calc['maturity_date'])->format('d-m-Y') : '-' }}</td>
+                                <td class="px-3 py-2">{{ $calc['maturity_date'] ?
+                                    \Carbon\Carbon::parse($calc['maturity_date'])->format('d-m-Y') : '-' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 py-2 uppercase">Principal Amount (A)</td>
@@ -1075,9 +1089,7 @@
                     <h3 class="text-black font-semibold text-lg">NOMINEE INFO</h3>
 
                     <!-- Toggle Button -->
-                    <button
-                        class="p-1 rounded transition"
-                        onclick="toggleSection(this)">
+                    <button class="p-1 rounded transition" onclick="toggleSection(this)">
                         <span class="toggle-icon text-lg font-bold">+</span>
                     </button>
 
@@ -1085,7 +1097,7 @@
                 <div class="overflow-x-auto p-4 hidden">
                     <table class="w-full text-sm text-center  text-gray-700 rounded-b-md">
                         <thead>
-                            <tr class="border-b  border-gray-200">
+                            <tr class="border-b bg-secondary/5  border-gray-200">
                                 <th class="px-3 py-2 w-1/3 text-left font-semibold uppercase">Name</th>
                                 <th class="px-3 py-2 w-1/3 text-left font-semibold uppercase">Relation</th>
                                 <th class="px-3 py-2 w-1/3 text-left font-semibold uppercase">Address</th>
@@ -1116,7 +1128,7 @@
 
                 <table class="w-full text-sm  text-gray-700 rounded-b-md">
                     <thead>
-                        <tr class="border-b border-gray-200 text-center">
+                        <tr class="border-b border-gray-200 bg-secondary/5 text-center">
                             <th class="px-3 py-2 uppercase">TOTAL INST</th>
                             <th class="px-3 py-2 uppercase">PAID INST</th>
                             <th class="px-3 py-2 uppercase">DUE INST</th>
@@ -1126,7 +1138,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="text-center">
+                        <tr class="text-center border-b">
                             <td class="px-3 py-2">60</td>
                             <td class="px-3 py-2">1</td>
                             <td class="px-3 py-2">0</td>
@@ -1144,10 +1156,10 @@
             <div class="bg-white dark:bg-bg3 border border-gray-200 shadow-md mt-4 rounded-lg">
                 <!-- Body -->
                 <div class="p-4 overflow-x-auto">
-                    <table class="min-w-full text-sm text-left table-fixed">
+                    <table class="w-full text-sm text-left table-fixed">
                         <tbody class="divide-y divide-gray-200">
 
-                            <tr>
+                            <tr class="border-b">
                                 <td class="px-4 py-3 w-1/2 text-start align-middle uppercase">
                                     Branch
                                 </td>
@@ -1156,7 +1168,7 @@
                                 </td>
                             </tr>
 
-                            <tr>
+                            <tr  class="border-b">
                                 <td class="px-4 py-3 w-1/2 text-start align-middle uppercase">
                                     Joint Account
                                 </td>
@@ -1184,8 +1196,8 @@
             <!-- Transactions Table -->
             <div class="box dark:bg-bg3 border border-gray-200 mt-4 shadow-md rounded-lg">
                 <!-- Header -->
-                <div class="px-4 py-3 ">
-                    <h3 class="text-lg font-semibold text-black dark:text-white uppercase">
+                <div class="px-4 py-3  bg-secondary/5 rounded-10">
+                    <h3 class="text-lg font-semibold  text-black dark:text-white uppercase">
                         Transactions <span class="text-gray-500 text-sm">(Showing Last 5)</span>
                     </h3>
                 </div>
@@ -1195,7 +1207,7 @@
                     <div class="overflow-x-auto text-center mt-2">
                         <table class="w-full border whitespace-nowrap rounded-lg overflow-hidden shadow-md">
                             <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
-                                <tr>
+                                <tr class="bg-secondary/5 py-3">
                                     <th class="px-4 py-2 text-sm font-semibold text-start uppercase">Date</th>
                                     <th class="px-4 py-2 text-sm font-semibold text-start uppercase">Type</th>
                                     <th class="px-4 py-2 text-sm font-semibold text-start uppercase">Payment Mode</th>
@@ -1218,7 +1230,8 @@
                                     <td class="px-4 py-2 text-sm">
                                         ₹ {{ number_format($txn->amount, 2) }}
                                     </td>
-                                    <td class="px-4 py-2 text-sm 
+                                    <td
+                                        class="px-4 py-2 text-sm 
                                         {{ $txn->approve_status === 'Approved' ? 'text-green-600' : ($txn->approve_status === 'pending' ? 'text-yellow-600' : 'text-red-600') }} font-medium">
                                         {{ ucfirst($txn->approve_status) }}
                                     </td>
@@ -1235,7 +1248,7 @@
 
                     </div>
                     <div class="mt-3 flex justify-center">
-                        <button class="mt-3 px-4 py-2 btn-primary text-white rounded-3xl">
+                        <button class="mt-3 px-4 py-2 btn-primary text-white uppercase">
                             View All
                         </button>
                     </div>

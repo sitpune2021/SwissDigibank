@@ -27,13 +27,13 @@
 
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h1 class="text-2xl font-semibold dark:text-white">RD - {{$account->id}}</h1>
+                <h1 class="text-lg font-semibold dark:text-white">RD - {{$account->id}}</h1>
 
             </div>
         </div>
 
         <div class="bg-white dark:bg-bg3 rounded-xl shadow p-6">
-            <h1 class="text-lg font-semibold mb-4 border-b">
+            <h1 class="text-lg uppercase font-semibold mb-4 border-b">
                 Update Nominee Details
             </h1>
  

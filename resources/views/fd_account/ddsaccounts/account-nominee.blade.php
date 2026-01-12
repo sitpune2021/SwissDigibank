@@ -2,8 +2,8 @@
 @section('content')
 <style>
     input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
     }
 
@@ -13,8 +13,8 @@
     }
 
     input[type="radio"] {
-        width: 24px;
-        height: 24px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
     }
 </style>
@@ -23,7 +23,7 @@
 
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-xl font-semibold dark:text-white">
+            <h1 class="text-lg font-semibold dark:text-white">
                 DD ACCOUNT - {{ $account->dd_no }} - NOMINEE
             </h1>
         </div>
@@ -31,7 +31,7 @@
 
     <div class="flex box flex-col lg:flex-col gap-6">
         <div>
-            <h4 class="uppercase">Update Nominee Details</h4>
+            <h4 class="uppercase text-lg">Update Nominee Details</h4>
         </div>
         <div>
             <hr>

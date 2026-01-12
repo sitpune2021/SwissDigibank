@@ -5,7 +5,7 @@
         <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
             <div class="w-full  overflow-hidden">
                 <h3 class="mb-5">
-                    <h4 class="mb-4">TRANSACTION - {{ $transaction->id }}</h4>
+                    <h4 class="mb-4 text-lg">TRANSACTION - {{ $transaction->id }}</h4>
                 </h3>
 
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200  shadow-md rounded-lg  overflow-x-auto p-4">
