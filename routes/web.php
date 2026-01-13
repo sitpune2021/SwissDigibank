@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\CollectionCenterController;
+use App\Http\Controllers\EmployeeAttendenceController;
 use App\Http\Controllers\GroupCommentController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\LogoImgUploadController;
@@ -2174,10 +2175,22 @@ Route::group(['prefix' => 'hr-managment'], function () {
 
     Route::get('employee/view-tran', [EmployeeController::class, 'view_tran'])
         ->name('hr-management.employee.view-trans');
+
+
+
 });
-/////////Akash//////////
-Route::get('attendance/attendance-index', [EmployeeAkash::class, 'attendance_index'])
+//Employee attendance 
+Route::get('attendance/attendance-index', [EmployeeAttendenceController::class, 'index'])
     ->name('hr-management.attendance.index');
+Route::post('/attendance/store', [EmployeeAttendenceController::class, 'store'])
+    ->name('attendance.store');
+Route::get(
+    '/hr-management/attendance/calendar/{employee}',
+    [EmployeeAttendenceController::class, 'calendar']
+)->name('hr-management.attendance.calender');
+
+/////////Akash//////////
+
 
 Route::get('salary-disbursement/disbursement-index', [EmployeeAkash::class, 'disbursement_index'])
     ->name('hr-management.salary-disbursement.index');
