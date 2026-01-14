@@ -361,6 +361,7 @@ class AccountsController extends Controller
                 'debit_amount'  => $txn->transaction_type === 'debit' ? $txn->amount : null,
                 'credit_amount' => $txn->transaction_type === 'credit' ? $txn->amount : null,
                 'balance'       => $runningBalance,
+                
             ];
         });
 
@@ -380,6 +381,9 @@ class AccountsController extends Controller
             'printType' => $request->print,
             'fromDate' => $request->from_date,
             'toDate' => $request->to_date,
+           'scheme_name' => $account->scheme?->scheme_name ?? '-',
+            'open_date' => optional($account->open_date)->format('d-m-Y'),
+            
         ]);
     }
 

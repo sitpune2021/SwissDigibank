@@ -290,7 +290,8 @@
 
         accountData = res.account ?? {};
         currentTransactions = res.transactions ?? [];
-
+  fromDate = res.fromDate ?? '';
+  toDate   = res.toDate ?? '';
         if (res.printType === "front") {
           $("#printableArea").html(renderFrontPage(res.account));
         } else if (res.printType === "statement") {
@@ -329,6 +330,10 @@
       alert("No transactions to print!");
       return;
     }
+    console.log(accountData);
+    console.log(accountData.fromDate);  // "01-01-2025"
+console.log(accountData.toDate);    // "31-01-2025"
+console.log(accountData.open_date); 
 
     let html = `
     
@@ -338,20 +343,74 @@
   <div style=" padding: 18px 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;">
 
     <!-- Main Content -->
-    <div style="display: flex; justify-content: space-between; gap: 20px;">
+    <div style=
+    // "display: flex; justify-content: space-between; gap: 20px;"
+    >
 
       <!-- Left Section -->
-      <div style="flex: 1;">
+      <div style="display:flex; gap:15px; padding-bottom:20px;">
         <div>
-          <img src="{{ asset('assets/images/LM_logo.png') }}" alt="Logo" style="height: 100px; width: auto;">
+          <img src="{{ asset('assets/images/SBC_Logo.jpg') }}" alt="Logo" style="height: 100px; width: auto;">
         </div>
-        <div style="border: 1px solid black; padding: 12px; font-size: 13px; line-height: 1.4;">
-          <div style="font-weight: bold; margin-bottom: 6px;">
-
-            ${accountData.members?.member_info_first_name ?? '-'} ${accountData.members?.member_info_last_name ?? ''}
+        <div style=" padding: 12px; font-size: 13px; line-height: 1.4;">
+          <div style="font-weight: bold; margin-bottom: 6px; font-size:25px; ">
+                 SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED
+           {{-- ${accountData.members?.member_info_first_name ?? '-'} ${accountData.members?.member_info_last_name ?? ''} --}}
           </div>
-          <div>
-            ${[
+          <div style="text-align">
+            
+             <p>
+              SHEGAON SHEGAON Maharashtra - 110012
+              </p>
+               <p>
+                E: sbcglobalbank@gmail.com M: 9922870805
+                </p>
+         {{--   ${[
+            accountData.address?.member_address_line_1,
+            accountData.address?.member_address_line_2,
+            accountData.address?.member_address_area,
+            accountData.address?.member_address_landmark,
+            accountData.address?.member_address_city_district,
+            accountData.address?.name,
+            accountData.address?.member_address_pincode
+            ].filter(Boolean).join(', ') || '-' } --}}
+          </div>
+          <div style="margin-top: 10px; font-weight: bold; text-align:center;">
+          {{--   JOINT HOLDER : ${accountData.account_holder_type === 'joint' ? 'YES' : 'NO'}- --}}
+          CIN: 969/03-04
+          </div>
+        </div>
+      </div>
+       <hr>
+      <!-- Right Section -->
+      <div style="flex: 1; font-size: 13px;">
+
+       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+<div style="width:30%;"></div>
+<div style="width:40%; text-align:center; font-weight:bold; font-size:20px;">Saving Account Statement</div>
+<div style="width:30%; text-align:right; font-weight:bold;">Date - 14/01/2026</div>
+</div>
+
+
+<!-- Account Details -->
+<table style="width:100%; border-collapse:collapse;">
+<tr>
+<td style="border:1px solid #000; padding:8px; width:20%;"><strong>Member's Name</strong></td>
+<td style="border:1px solid #000; padding:8px; width:30%;"><strong>${accountData.members?.member_info_first_name ?? '-'} ${accountData.members?.member_info_last_name ?? ''}</strong></td>
+<td style="border:1px solid #000; padding:8px; width:20%;"><strong>Internal A/c No</strong></td>
+<td style="border:1px solid #000; padding:8px; width:30%;"></td>
+</tr>
+<tr>
+<td style="border:1px solid #000; padding:8px;"><strong>Virtual A/c No</strong></td>
+<td style="border:1px solid #000; padding:8px;">${accountData.account_no ?? '-'}</td>
+<td style="border:1px solid #000; padding:8px;"><strong>IFSC Code</strong></td>
+<td style="border:1px solid #000; padding:8px;">
+  ${accountData.branch?.ifsc_code ?? '-'}
+</td>
+</tr>
+<tr>
+<td style="border:1px solid #000; padding:8px; vertical-align:top;"><strong>Address</strong></td>
+<td style="border:1px solid #000; padding:8px;">${[
             accountData.address?.member_address_line_1,
             accountData.address?.member_address_line_2,
             accountData.address?.member_address_area,
@@ -360,20 +419,32 @@
             accountData.address?.name,
             accountData.address?.member_address_pincode
             ].filter(Boolean).join(', ') || '-' }
-          </div>
-          <div style="margin-top: 10px; font-weight: bold;">
-            JOINT HOLDER : ${accountData.account_holder_type === 'joint' ? 'YES' : 'NO'}
-          </div>
-        </div>
-      </div>
+</td>
+<td style="border:1px solid #000; padding:8px;"><strong>Scheme</strong></td>
+<td style="border:1px solid #000; padding:8px;">
+  ${accountData.scheme?.scheme_name ?? '-'}
+  </td>
+</tr>
+<tr>
+<td style="border:1px solid #000; padding:8px;"><strong>Opening Date</strong></td>
+<td style="border:1px solid #000; padding:8px;">
+  ${accountData.open_date 
+      ? new Date(accountData.open_date).toLocaleDateString('en-GB').replace(/\//g, '-') 
+      : '-'}
+  {{-- ${accountData.open_date ?? '-'} --}} 
+</td>
+<td style="border:1px solid #000; padding:8px;"><strong>Interest Rate</strong></td>
+<td style="border:1px solid #000; padding:8px;">0.0 %</td>
+</tr>
+</table>
 
-      <!-- Right Section -->
-      <div style="flex: 1; font-size: 13px;">
-        <table style="width: 100%; border-collapse: collapse;">
+
+       {{--  <table style="width: 100%; border-collapse: collapse;">
           <tr>
             <td style="width: 40%; font-weight: bold; padding: 3px 4px; vertical-align: top;">CUSTOMER ID</td>
             <td style="width: 2%; text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
-            <td style="width: 58%; padding: 3px 4px; vertical-align: top;">${accountData.members?.member_no ?? '-'}</td>
+            <td style="width: 58%; padding: 3px 4px; vertical-align: top;">
+              ${accountData.members?.member_no ?? '-'}</td>
           </tr>
           <tr>
             <td style="font-weight: bold; padding: 3px 4px; vertical-align: top;">BRANCH NAME</td>
@@ -435,15 +506,63 @@
             <td style="text-align: center; padding: 3px 4px; vertical-align: top;">:</td>
             <td style="padding: 3px 4px; vertical-align: top;">0000000000</td>
           </tr>
-        </table>
+        </table>--}}
+        
+
       </div>
     </div>
+    <div style="text-align:center; font-weight:bold; margin:15px 0;">
+Statement Period : ${fromDate || '-'} - ${toDate || '-'} 23:59
+</div>
+<table style="width:100%; border-collapse:collapse;">
+<tr style="background:#e5e5e5;">
+<th style="border:1px solid #000; padding:8px; text-align:left; width:15%;">Date</th>
+<th style="border:1px solid #000; padding:8px; text-align:left; width:40%;">Particulars</th>
+<th style="border:1px solid #000; padding:8px; text-align:left; width:15%;">Cheq. No</th>
 
+<th style="border:1px solid #000; padding:8px; text-align:right; width:10%;">Debit</th>
+<th style="border:1px solid #000; padding:8px; text-align:right; width:10%;">Credit</th>
+<th style="border:1px solid #000; padding:8px; text-align:right; width:10%;">Balance</th>
+</tr>
+ <tbody>
+    `;
+
+    transactions.forEach(txn => {
+      html += `
+          <tr style="border:1px solid black; border-collapse:collapse;">
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.date ?? '-'}</td>
+            <td style="text-align:left border:1px solid black; border-collapse:collapse;">${txn.description ?? '-'}</td>
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.cheque_no ?? '-'}</td>
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.debit_amount ?? '-'}</td>
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.credit_amount ?? '-'}</td>
+            <td style="border:1px solid black; border-collapse:collapse;">${txn.balance ?? '-'}</td>
+          </tr>
+        `;
+    });
+    html += `
+        </tbody>
+</table>
+<div>
+  <div style="margin-top:15px; font-size:14px; text-align:center;">
+   For NEFT/ IMPS or any other payment to saving a/c use YES BANK LTD as bank name
+Payment is related to collection through Virtual A/c only, using of bank name does not denote any tie-up of bank
+</div>
+<hr>
+
+<!-- END OF REPORT -->
+<div style="margin-top:25px; text-align:center; font-weight:bold;">
+    ***End of Report***
+</div>
+
+<div style="margin-top:5px;  text-align:center; font-size:14px;">
+    This statement is system generated and doesn't require any seal/ signature in original.
+</div>  
+ </div>
   </div>
 </body>
  
-
-  <table class="transactions" style="width:100%; text-align:left; border:1px solid black; border-collapse:collapse; margin-top:15px;" border="1">
+ 
+ {{-- <table class="transactions" style="width:100%; text-align:left; border:1px solid black; border-collapse:collapse; margin-top:15px;" border="1">
     <thead>
       <tr>
         <th style="border:1px solid black; border-collapse:collapse;">Date</th>
@@ -469,8 +588,10 @@
           </tr>
         `;
     });
+    
     html += `
-        </tbody>
+        </tbody> - --}}
+       
       </table>
         </div>
     `;
