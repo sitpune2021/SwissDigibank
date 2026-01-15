@@ -2191,7 +2191,6 @@ Route::get(
 
 /////////Akash//////////
 
-
 Route::get('salary-disbursement/disbursement-index', [EmployeeAkash::class, 'disbursement_index'])
     ->name('hr-management.salary-disbursement.index');
 
@@ -2506,6 +2505,11 @@ Route::get('master-settings/edit-daily-weekly-settings', [MasterSettingControlle
 
 
 Route::get('software-settings/sms-list', [SoftwareSettingsController::class, 'sms_list'])->name('software-settings.sms-list');
+Route::get('software-settings/view-sms-list', [SoftwareSettingsController::class, 'view_sms_list'])->name('software-settings.view-sms-list');
+
+Route::get('software-settings/edit-sms-setting', [SoftwareSettingsController::class, 'edit_sms_setting'])->name('software-settings.edit-sms-setting');
+
+
 
 Route::get('software-settings/sms-history', [SoftwareSettingsController::class, 'sms_history'])->name('software-settings.sms-history');
 
@@ -2513,7 +2517,33 @@ Route::get('software-settings/mail-history', [SoftwareSettingsController::class,
 
 Route::get('software-settings/comment-history', [SoftwareSettingsController::class, 'comment_history'])->name('software-settings.comment-history');
 
+Route::get('software-settings/internet_banking', [SoftwareSettingsController::class, 'internet_banking'])->name('software-settings.internet-banking.internet-banking');
 
+Route::get('software-settings/internet-edit', [SoftwareSettingsController::class, 'internet_banking_edit'])->name('software-settings.internet-banking.internet-edit');
+
+Route::get('software-settings/account-series-settings', [SoftwareSettingsController::class, 'account_series_settings'])->name('software-settings.account-series-settings');
+
+Route::get('software-settings/software-alerts', [SoftwareSettingsController::class, 'software_alerts'])->name('software-settings.software-alerts.software-alerts');
+
+Route::get('software-settings/update-software-alerts', [SoftwareSettingsController::class, 'update_software_alerts'])->name('software-settings.software-alerts.update-software-alerts');
+
+Route::get('software-settings/form-field-setting', [SoftwareSettingsController::class, 'form_field_setting'])->name('software-settings.form-field-setting');
+
+Route::get('software-settings/gold-rate-calender', [SoftwareSettingsController::class, 'gold_rate_calender'])->name('software-settings.gold-rate-calender');
+
+Route::get('software-settings/event-calender', [SoftwareSettingsController::class, 'event_calender'])->name('software-settings.event-calender.event-calender');
+Route::get('software-settings/all-event-list', [SoftwareSettingsController::class, 'all_event_list'])->name('software-settings.event-calender.all-event-list');
+Route::get('software-settings/deleted-entry-log', [SoftwareSettingsController::class, 'deleted_entry_log'])->name('software-settings.deleted-logs.deleted-entry-log');
+
+Route::get('software-settings/deleted-entry-log-view', [SoftwareSettingsController::class, 'deleted_entry_log_view'])->name('software-settings.deleted-logs.deleted-entry-log-view');
+
+Route::get('software-settings/login-activity', [SoftwareSettingsController::class, 'login_activity'])->name('software-settings.login-activity');
+
+Route::get('software-settings/user-activity-tracking', [SoftwareSettingsController::class, 'user_activity_tracking'])->name('software-settings.user-activity-tracking');
+Route::get('software-settings/mail-setting', [SoftwareSettingsController::class, 'mail_setting'])->name('software-settings.mail-setting');
+Route::get('software-settings/edit-mail-setting', [SoftwareSettingsController::class, 'edit_mail_setting'])->name('software-settings.edit-mail-setting');
+
+Route::get('software-settings/software-service-agreement', [SoftwareSettingsController::class, 'software_service_agreement'])->name('software-settings.software-service-agreement');
 /////////////// end software-settings  //////////////////////
 
 Route::get('/dev/run/{action}', function ($action) {
