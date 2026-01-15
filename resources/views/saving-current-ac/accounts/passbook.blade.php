@@ -349,20 +349,20 @@ console.log(accountData.open_date);
 
       <!-- Left Section -->
       <div style="display:flex; gap:15px; padding-bottom:20px;">
-        <div>
+        <div style=" width:30%;">
           <img src="{{ asset('assets/images/SBC_Logo.jpg') }}" alt="Logo" style="height: 100px; width: auto;">
         </div>
-        <div style=" padding: 12px; font-size: 13px; line-height: 1.4;">
-          <div style="font-weight: bold; margin-bottom: 6px; font-size:25px; ">
+        <div style=" width:70%; padding: 12px; font-size: 13px; line-height: 1.4;">
+          <div style="font-weight: bold; margin-bottom: 6px; font-size:25px;  ">
                  SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED
            {{-- ${accountData.members?.member_info_first_name ?? '-'} ${accountData.members?.member_info_last_name ?? ''} --}}
           </div>
           <div style="text-align">
             
              <p>
-              SHEGAON SHEGAON Maharashtra - 110012
+             {{-- SHEGAON SHEGAON Maharashtra - 110012 --}} 
               </p>
-               <p>
+               <p style="text-align:center;">
                 E: sbcglobalbank@gmail.com M: 9922870805
                 </p>
          {{--   ${[
@@ -388,7 +388,7 @@ console.log(accountData.open_date);
        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
 <div style="width:30%;"></div>
 <div style="width:40%; text-align:center; font-weight:bold; font-size:20px;">Saving Account Statement</div>
-<div style="width:30%; text-align:right; font-weight:bold;">Date - 14/01/2026</div>
+<div style="width:30%; text-align:right; font-weight:bold;">Date -{{ \Carbon\Carbon::now()->format('d-m-Y') }} </div>
 </div>
 
 
