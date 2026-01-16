@@ -74,7 +74,7 @@
                             Passbook
                         </a>
                         <!-- Account Opening Form -->
-                        <a href="{{ route('saving.accounts.open.form', base64_encode($account->id)) }}" id="openModalBtn"
+                        <a href="{{ route('saving.account.openform.preview', base64_encode($account->id)) }}" id="openModalBtn"
                             class="block px-4 py-2 text-sm font-semibold uppercase hover:bg-gray-100">
                             Account Opening Form
                         </a>

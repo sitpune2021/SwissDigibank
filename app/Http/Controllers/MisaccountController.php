@@ -1161,6 +1161,20 @@ class MisaccountController extends Controller
         return view('fd_mis_account.misaccount.interest-tds.deduct_reverse_tds', compact('misaccount', 'balance'));
     }
 
+public function misBondPreview($id)
+{
+    $misaccount = Misaccount::with(['member','nominee','fdScheme.fdslabs'])
+        ->findOrFail($id);
+
+    $amountWords = $this->numToWords((int) round($misaccount->maturity_amount)) . ' Only';
+
+    return view('fd_mis_account.misaccount.print-documents.mis-bond-view', [
+        'misaccount'     => $misaccount,
+        'amount_words'   => $amountWords,
+        'date'           => now()->format('d-m-Y'),
+    ]);
+}
+
     public function misBondForm($id)
     {
         $misaccount = Misaccount::with(['member','nominee' ,'fdScheme.fdslabs'])->findOrFail($id);
@@ -1252,6 +1266,29 @@ class MisaccountController extends Controller
         return trim($result);
     }
 
+    public function misOpeningFormPreview($id)
+{
+    $account = Misaccount::with([
+        'member.kyc',
+        'member.address.state',
+        'member.branch',
+        'fdScheme.fdslabs'
+    ])->findOrFail($id);
+
+    $slab = $account->fdscheme->fdslabs
+        ->where('from_month', '<=', $account->tenure)
+        ->where('to_month', '>=', $account->tenure)
+        ->first();
+
+    $interestRate = $slab->interest_rate ?? $account->rate_of_interest;
+    $member = $account->member;
+
+    return view(
+        'fd_mis_account.misaccount.print-documents.accountopeningformview',
+        compact('account', 'member', 'interestRate')
+    );
+}
+
     public function misOpeningForm($id)
     {
         // Load MIS account with all required relations
@@ -1276,12 +1313,37 @@ class MisaccountController extends Controller
           $pdf = app('dompdf.wrapper')->loadView('fd_mis_account.misaccount.print-documents.accountopeningform', compact('account', 'member', 'interestRate'))
             ->setPaper('a4', 'portrait');
 
-        return $pdf->stream('mis-oping-' . $id . '.pdf');
+        return $pdf->download('mis-oping-' . $id . '.pdf');
 
 
         // return view('fd_mis_account.misaccount.print-documents.accountopeningform', compact('account', 'member', 'interestRate'));
     }
 
+public function misClosingFormPreview($id)
+{
+    $misaccount = Misaccount::with(['member.branch'])->findOrFail($id);
+
+    $data = [
+        'name'            => $misaccount->member->member_info_first_name . ' ' .
+                             $misaccount->member->member_info_last_name,
+        'date'            => now()->format('d-m-Y'),
+        'agreement_no'    => $misaccount->mis_no 
+                             ?? 'MIS' . str_pad($misaccount->id, 10, '0', STR_PAD_LEFT),
+        'holder_name'     => strtoupper(
+                                $misaccount->member->member_info_first_name . ' ' .
+                                $misaccount->member->member_info_last_name
+                             ),
+        'expiry_date'     => \Carbon\Carbon::parse($misaccount->maturity_date)->format('d-m-Y'),
+        'branch_name'     => $misaccount->member->branch->branch_name ?? ' ',
+        'branch_address'  => $misaccount->member->branch->branch_address ?? ' ',
+        'misaccount'      => $misaccount,
+    ];
+
+    return view(
+        'fd_mis_account.misaccount.print-documents.closingformview',
+        $data
+    );
+}
 
     public function misClosingForm($id)
     {
@@ -1290,7 +1352,7 @@ class MisaccountController extends Controller
         $data = [
             'name'            => $misaccount->member->member_info_first_name . ' ' . $misaccount->member->member_info_last_name,
             'date'            => now()->format('d-m-Y'),
-            'agreement_no'    => $mis->mis_no ?? 'MIS' . str_pad($misaccount->id, 5, '0', STR_PAD_LEFT),
+            'agreement_no'    => $mis->mis_no ?? 'MIS' . str_pad($misaccount->id, 10, '0', STR_PAD_LEFT),
             'holder_name'     => strtoupper($misaccount->member->member_info_first_name . ' ' . $misaccount->member->member_info_last_name),
             'expiry_date'     => \Carbon\Carbon::parse($misaccount->maturity_date)->format('d-m-Y'),
             'branch_name'     => $misaccount->member->branch->branch_name ?? ' ',
@@ -1302,7 +1364,7 @@ class MisaccountController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isRemoteEnabled', true);
 
-        return $pdf->stream('mis-closing-form-' . $misaccount->id . '.pdf');
+        return $pdf->download('mis-closing-form-' . $misaccount->id . '.pdf');
     }
 
 

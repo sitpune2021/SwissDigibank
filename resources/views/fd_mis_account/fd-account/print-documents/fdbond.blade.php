@@ -196,14 +196,14 @@
         <!-- Header -->
         <div class="header">
             <!-- Logo (optional) -->
-            <div style="width:100%; position:relative;">
-                <div class="logo" style="padding: 10px; ">
+            <div style="width:100%;">
+                <div class="logo" style="width: 22%">
                     <!-- Replace src path or use base64 img -->
 
                     @if($logo)
                      <img src="{{ public_path('storage/' . $logo->image_path) }}"
          alt="logo"
-         style="max-width:90px; max-height:90px;">
+         style=" width:150px; height:50px;">
                     {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
                     @else
                     {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
@@ -212,14 +212,18 @@
 
                 </div>
 
-                <div style="margin-left:30px; margin-right:120px; text-align:left; ">
+                <div style=" text-align:left; ">
                     <div class="company">
-                        SBC GLOBAL
+                        {{-- SBC GLOBAL --}}
                     </div>
-                    <div class="subtitle" style="font-weight: bold;"> DEPOSIT CONFIRMATION/ RENEWAL ADVICE</div>
-                    <div class="small muted">BRANCH : {{ $company_address ?? 'Address here' }}</div>
+                    <div class="subtitle" style="font-weight: bold;"> 
+                        {{-- DEPOSIT CONFIRMATION/ RENEWAL ADVICE --}}
+                    </div>
                     <div class="small muted">
-                        DATE :{{ $date ?? 'Address here' }}
+                        {{-- BRANCH : {{ $company_address ?? 'Address here' }} --}}
+                    </div>
+                    <div class="small muted">
+                        {{-- DATE :{{ $date ?? 'Address here' }} --}}
                     </div>
                 </div>
 
@@ -234,6 +238,7 @@
             <tr>
                 <td style="width:60%" class="no-border">
                     <div>
+                        DATE :{{ $date ?? '' }} <br>
                         {{ $fdAccount->member->member_info_first_name ?? 'N/A' }}
                         {{ $fdAccount->member->member_info_last_name ?? '' }}
                     </div>
