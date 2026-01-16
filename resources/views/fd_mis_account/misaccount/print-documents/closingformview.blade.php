@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <title>FD Closing Form - SHRI SAMARTH NAGRI</title>
-    <style>
+@extends('layout.main')
+@section('content')
+  <style>
         @page {
             size: A4;
             margin: 10mm 15mm;
@@ -91,35 +87,58 @@
             font-weight: bold;
         }
     </style>
-</head>
 
-<body>
-    <div class="container">
+    <div class="main-inner">
+        <h1 class="text-lg font-semibold">MIS ACCOUNT - 
+            {{ $misaccount->mis_account_no }}
+        </h1>
+        <div class="text-center flex justify-center gap-5 mt-4">
+            <a href="{{ route('misaccount.closingform',  $misaccount->id) }}" class="px-4 py-2 btn-primary uppercase"
+                target="_blank">
+                <i class="las la-download"></i> Download
+            </a>
+            <a href="{{ route('misaccount.show', $misaccount->id) }}" class="px-4 py-2 btn-outline uppercase"
+                target="_self">
+                BACk
+            </a>
+        </div>
+        <div class="box mt-5">
+          <div class="container">
 
-    <div style="width:100%; font-family: dejavusans; border-bottom: 2px solid #000 ; padding: 5px;">
+   <div style="width:100%; font-family: dejavusans; border-bottom: 2px solid #000 ; padding: 5px;">
 
             <!-- Logo -->
-            <div  style="float:left; width:20%; text-align:left;">
-                <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
-                    style="width:230px; height:70px;">
+
+            <div style="float:left; width:30%; text-align:left;">
+               <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
+                                style=" width:200px; height:60px;">
+                {{-- @if($logo) --}}
+                     
+                    {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
+                    {{-- @else --}}
+                    {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
+                        style="max-width:90px; max-height:90px;"> --}}
+                    {{-- @endif --}}
+                {{-- <img src="{{ public_path('assets/images/SBC_Logo.jpg') }}" alt="Company Logo"
+                    style="width:130px; height:130px;"> --}}
             </div>
 
             <!-- Title Section -->
-            <div style="float:left; width:80%; text-align:center;">
+            <div style="float:left; width:70%; text-align:center;">
                 <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; ">
                     {{-- SBC Global --}}
                 </div>
 
                 <div style="height:10px; margin-top: 40px;">&nbsp;</div>
 
-                
+              
             </div>
-
+ 
             <!-- Clear Float -->
             <div style="clear:both; "></div>
-            <h4 style=" text-align: center;  margin:0;  font-size:18px; font-weight:bold;">
-                     Discharge Form for End of Term / Pre-Maturity</h4>
-
+ <h4 style="   margin-top:30px;  text-align: center; font-size:18px; font-weight:bold;">
+                Discharge Form for End of Term / Pre-Maturity
+                </h4>
         </div>
         <!-- <div class="title">
             <table style="width:100%; border-collapse:collapse; border-bottom: 1px solid #000;">
@@ -288,9 +307,11 @@
             <p style="font-size: 12px; text-align: center; font-weight: bold;">{{ $branch_address }}</p>
         </div>
 
-        <div class=""  >SBC GLOBAL TOWAR , KESHAV NAAR CHOWK NEAR JANORKAR MARRAIGE HALL RING ROAD AKOLA Maharashtra - 444001</div>
+        <!-- <div class=""  >SBC GLOBAL TOWAR , KESHAV NAAR CHOWK NEAR JANORKAR MARRAIGE HALL RING ROAD AKOLA Maharashtra - 444001</div> -->
 
     </div>
-</body>
+        </div>
 
-</html>
+
+    </div>
+@endsection

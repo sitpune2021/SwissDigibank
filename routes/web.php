@@ -368,8 +368,17 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::post('accounts/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('accounts.nominees.save');
 
     Route::get('/accounts/close-account/{id}', [AccountsController::class, 'closeAccount'])->name('saving.accounts.close.account');
-    Route::get('/accounts/account-form/{id}', [AccountsController::class, 'accountOpenForm'])->name('saving.accounts.open.form');
-});
+    // Preview (Blade)
+Route::get('/saving-account/open-form/{id}',
+    [AccountsController::class, 'accountOpenFormPreview']
+)->name('saving.account.openform.preview');
+    // Download PDF
+Route::get(
+    '/saving-account/{id}/opening-form',
+    [AccountsController::class, 'accountOpenFormDownload']
+)->name('saving.account.opening.pdf');
+
+}); 
 
 Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::resource('fd-mis-schemes', FDController::class);
@@ -382,6 +391,7 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/account/balance/{id}', [FDController::class, 'getBalance'])->name('account.balance');
 
     Route::get('fd-account-view/{id}', [FDController::class, 'fd_show'])->name('fd-mis-schemes.fd_show');
+
     Route::get('/get-member-savings/{member_id}', [FDController::class, 'getMemberSavings'])
         ->name('member.savings');
 
@@ -437,10 +447,20 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('fd/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('fd.nominees.save');
 
     //print document
+
+    Route::get('/fd-bond/view/{id}', [FdController::class, 'fdBondFormView'])
+        ->name('fd.bond.view');
     Route::get('/Fd-Bond/{id}', [FdController::class, 'fdBondForm'])
         ->name('fd.bond.form');
+
+    Route::get('/opening-form/view/{id}', [FdController::class, 'fdOpeningFormView'])
+        ->name('fd.opening.view');
+
     Route::get('/opening-form/{id}', [FdController::class, 'fdOpeningForm'])
         ->name('fd.opening.form');
+
+    Route::get('/closing-form/view/{id}', [FdController::class, 'fdClosingFormview'])
+        ->name('fd.closing.view');
 
     Route::get('/closing-form/{id}', [FdController::class, 'fdClosingForm'])
         ->name('fd.closing.form');
@@ -507,8 +527,21 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
         ->name('mis.updateSetting');
 
     //print document
+    Route::get('/misaccount/{id}/print-bond-view', [MisaccountController::class, 'misBondPreview'])
+        ->name('misaccount.printbond.view');
+
     Route::get('/misaccount/{id}/print-bond', [MisaccountController::class, 'misBondForm'])->name('misaccount.printbond');
+
+    // Preview (Blade)
+    Route::get(
+        '/mis-opening-form/{id}/view',
+        [MisaccountController::class, 'misOpeningFormPreview']
+    )->name('misaccount.openingform.preview');
     Route::get('/mis-opening-form/{id}', [MisaccountController::class, 'misOpeningForm'])->name('misaccount.openingform');
+    Route::get('/mis-account/{id}/closing-form/view', 
+    [MisaccountController::class, 'misClosingFormPreview']
+)->name('misaccount.closingform.preview');
+
     Route::get('/mis-account/{id}/closing-form', [MisaccountController::class, 'misClosingForm'])
         ->name('misaccount.closingform');
 

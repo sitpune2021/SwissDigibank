@@ -182,9 +182,9 @@
 
       <!-- Dropdown menu -->
       <div id="dropdownsMenu" class="hidden absolute right-0 mt-2 w-full bg-white border rounded-lg shadow-lg z-50">
-        <a href="{{ route('misaccount.printbond',$misaccount->id) }}" class="block px-4 py-2">MIS BOND</a>
-        <a href="{{ route('misaccount.openingform',$misaccount->id) }}" class="block px-4 py-2">ACCOUNT OPENING FORM</a>
-        <a href="{{ route('misaccount.closingform',$misaccount->id) }}" class="block px-4 py-2">CLOSING FORM</a>
+        <a href="{{ route('misaccount.printbond.view',$misaccount->id) }}" class="block px-4 py-2">MIS BOND</a>
+        <a href="{{ route('misaccount.openingform.preview',$misaccount->id) }}" class="block px-4 py-2">ACCOUNT OPENING FORM</a>
+        <a href="{{ route('misaccount.closingform.preview',$misaccount->id) }}" class="block px-4 py-2">CLOSING FORM</a>
       </div>
     </div>
 
