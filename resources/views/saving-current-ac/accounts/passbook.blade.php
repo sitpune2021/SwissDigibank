@@ -350,12 +350,12 @@ console.log(accountData.open_date);
       <!-- Left Section -->
       <div style="display:flex; gap:15px; padding-bottom:20px;">
         <div style=" width:30%;">
-          <img src="{{ asset('assets/images/SBC_Logo.jpg') }}" alt="Logo" style="height: 100px; width: auto;">
+           <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="Logo" style="height: 80px; width: auto;">
         </div>
         <div style=" width:70%; padding: 12px; font-size: 13px; line-height: 1.4;">
           <div style="font-weight: bold; margin-bottom: 6px; font-size:25px;  ">
-                 SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED
-           {{-- ${accountData.members?.member_info_first_name ?? '-'} ${accountData.members?.member_info_last_name ?? ''} --}}
+            {{--   SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED
+            ${accountData.members?.member_info_first_name ?? '-'} ${accountData.members?.member_info_last_name ?? ''} --}}
           </div>
           <div style="text-align">
             
@@ -363,7 +363,7 @@ console.log(accountData.open_date);
              {{-- SHEGAON SHEGAON Maharashtra - 110012 --}} 
               </p>
                <p style="text-align:center;">
-                E: sbcglobalbank@gmail.com M: 9922870805
+             {{--    E: sbcglobalbank@gmail.com M: 9922870805 --}} 
                 </p>
          {{--   ${[
             accountData.address?.member_address_line_1,
@@ -376,8 +376,8 @@ console.log(accountData.open_date);
             ].filter(Boolean).join(', ') || '-' } --}}
           </div>
           <div style="margin-top: 10px; font-weight: bold; text-align:center;">
-          {{--   JOINT HOLDER : ${accountData.account_holder_type === 'joint' ? 'YES' : 'NO'}- --}}
-          CIN: 969/03-04
+          {{--   JOINT HOLDER : ${accountData.account_holder_type === 'joint' ? 'YES' : 'NO'} --}}
+       {{--    CIN: 969/03-04 --}}
           </div>
         </div>
       </div>
@@ -397,11 +397,13 @@ console.log(accountData.open_date);
 <tr>
 <td style="border:1px solid #000; padding:8px; width:20%;"><strong>Member's Name</strong></td>
 <td style="border:1px solid #000; padding:8px; width:30%;"><strong>${accountData.members?.member_info_first_name ?? '-'} ${accountData.members?.member_info_last_name ?? ''}</strong></td>
-<td style="border:1px solid #000; padding:8px; width:20%;"><strong>Internal A/c No</strong></td>
+<td style="border:1px solid #000; padding:8px; width:20%;"><strong>
+ {{-- Internal A/c No  --}} 
+</strong></td>
 <td style="border:1px solid #000; padding:8px; width:30%;"></td>
 </tr>
 <tr>
-<td style="border:1px solid #000; padding:8px;"><strong>Virtual A/c No</strong></td>
+<td style="border:1px solid #000; padding:8px;"><strong> A/c No</strong></td>
 <td style="border:1px solid #000; padding:8px;">${accountData.account_no ?? '-'}</td>
 <td style="border:1px solid #000; padding:8px;"><strong>IFSC Code</strong></td>
 <td style="border:1px solid #000; padding:8px;">
@@ -434,7 +436,9 @@ console.log(accountData.open_date);
   {{-- ${accountData.open_date ?? '-'} --}} 
 </td>
 <td style="border:1px solid #000; padding:8px;"><strong>Interest Rate</strong></td>
-<td style="border:1px solid #000; padding:8px;">0.0 %</td>
+<td style="border:1px solid #000; padding:8px;">
+   ${accountData.scheme?.annual_int_rate ?? '-'}
+   </td>
 </tr>
 </table>
 
@@ -631,34 +635,34 @@ Payment is related to collection through Virtual A/c only, using of bank name do
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">CUSTOMER ID</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_no ?? '-'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">${accountData.members?.member_no ?? '-'}</td>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">BRANCH NAME</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.branch_name ?? '-'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">${accountData.branch?.branch_name ?? '-'}</td>
       </tr>
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">ACCOUNT TYPE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.account_holder_type ?? '-'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">${accountData.account_type ?? '-'}</td>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">BRANCH CODE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.branch_code ?? '-'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">${accountData.branch?.branch_code ?? '-'}</td>
       </tr>
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">ACCOUNT NUMBER</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.account_no ?? '-'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">${accountData.account_no ?? '-'}</td>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">IFSC CODE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.ifsc_code ?? '-'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">${accountData.branch?.ifsc_code ?? '-'}</td>
       </tr>
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">ACCOUNT HOLDER NAME</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_first_name ?? '-'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">${accountData.members?.member_info_first_name ?? '-'}</td>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">BRANCH ADDRESS</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">  
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">  
         ${accountData.address?.member_address_line_1 ?? ''}
 
         </td>
@@ -666,16 +670,16 @@ Payment is related to collection through Virtual A/c only, using of bank name do
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">JOINT A/c HOLDER NAME</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_first_name ?? ''}
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">${accountData.members?.member_info_first_name ?? ''}
         </td>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">PHONE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.branch?.mobile_no ?? '-'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">${accountData.branch?.mobile_no ?? '-'}</td>
       </tr>
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">MODE OF OPERATION</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.operation_mode ?? '-'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;  text-transform: uppercase;" >${accountData.account_holder_type ?? '-'}</td>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">DATE OF ISSUE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">{{ \Carbon\Carbon::now()->format('d-m-Y') }}</td>
@@ -683,7 +687,7 @@ Payment is related to collection through Virtual A/c only, using of bank name do
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">ADDRESS</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">
                       ${[
             accountData.address?.member_address_line_1,
             accountData.address?.member_address_line_2,
@@ -698,12 +702,12 @@ Payment is related to collection through Virtual A/c only, using of bank name do
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">NOMINEE NAME</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.nominee?.nominee_name ?? 'Not Reg.'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">${accountData.nominee?.nominee_name ?? 'Not Reg.'}</td>
       </tr>
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">PHONE</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
-        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px;">${accountData.members?.member_info_mobile_no ?? '-'}</td>
+        <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">${accountData.members?.member_info_mobile_no ?? '-'}</td>
       </tr>
       <tr>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">EMAIL</td>
@@ -723,11 +727,11 @@ Payment is related to collection through Virtual A/c only, using of bank name do
       return `<p style="color:red; text-align:center;">No transactions found!</p>`;
     }
     let html = `
-    <div class="statement" style="width:794px; padding:18px 20px; box-sizing:border-box; font-family:Arial, sans-serif; font-size:12px;">
-      <table class="transactions" style="width:100%; text-align:left; border:1px solid black; border-collapse:collapse; margin-top:15px;" border="1">
+    <div class="statement" style=" padding:18px 20px; box-sizing:border-box; font-family:Arial, sans-serif; font-size:12px;">
+      <table class="transactions"style="width:100%; text-align:left; border:1px solid black; border-collapse:collapse; margin-top:15px;" border="1">
         <thead >
-          <tr>
-            <th style="border:1px solid black; border-collapse:collapse;">Date</th>
+          <tr >
+            <th style="border:1px solid black; border-collapse:collapse; padding:5px 5px; ">Date</th>
             <th style="border:1px solid black; border-collapse:collapse;">Description</th>
             <th style="border:1px solid black; border-collapse:collapse;">Cheque No</th>
             <th style="border:1px solid black; border-collapse:collapse;">Debit</th>

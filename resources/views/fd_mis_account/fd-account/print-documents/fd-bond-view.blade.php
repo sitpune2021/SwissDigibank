@@ -1,12 +1,89 @@
-<!doctype html>
-<html lang="en">
+@extends('layout.main')
+@section('content')
+<style>
+    input[type="checkbox"] {
+        width: 28px;
+        height: 28px;
+        accent-color: green;
+        /* For modern browsers */
+    }
 
-<head>
-    <meta charset="utf-8">
-    <title>MIS Bond / Deposit Receipt</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    /* Fallback for browsers without accent-color support */
+    input[type="checkbox"]:checked {
+        background-color: green;
+        border: none;
+    }
 
-    <style>
+    input[type="radio"] {
+        width: 24px;
+        height: 24px;
+        accent-color: green;
+        /* Modern browser support */
+    }
+
+    .tableWidth {
+        width: 90%;
+        margin: auto;
+    }
+
+    .bg-yellow {
+        background-color: #e17100;
+    }
+
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    /* Container for the toggle background */
+    .blocks {
+        width: 56px;
+        /* 14 * 4px */
+        height: 32px;
+        /* 8 * 4px */
+        border-radius: 9999px;
+        /* Fully rounded */
+        background-color: #9CA3AF;
+        /* Tailwind gray-400 default */
+        transition: background-color 0.3s ease;
+    }
+
+    /* The small white dot */
+    .dot {
+        position: absolute;
+        top: 4px;
+        /* 1 * 4px */
+        left: 4px;
+        /* 1 * 4px */
+        width: 24px;
+        /* 6 * 4px */
+        height: 24px;
+        /* 6 * 4px */
+        background-color: white;
+        border-radius: 9999px;
+        transition: transform 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    /* When the checkbox is checked, change bg color */
+    input[type="checkbox"].slider-toggle:checked+div .blocks {
+        background-color: #228cc5;
+        /* Tailwind green-500 */
+    }
+
+    /* Move the dot to right when checked */
+    input[type="checkbox"].slider-toggle:checked+div .dot {
+        transform: translateX(24px);
+        /* 6 * 4px */
+    }
+    
         /* Page & base */
         @page {
             size: A4;
@@ -187,50 +264,63 @@
         tr {
             page-break-inside: avoid;
         }
-    </style>
-</head>
+    
+</style>
 
-<body>
-    <div class="sheet">
+<div class="main-inner">
+     <h1 class="text-lg font-semibold">FD ACCOUNT - {{ $fdAccount->fd_no }}</h1>
+<div class="text-center flex justify-center mt-4 gap-5" >
+     <a href="{{ route('fd.bond.download', $fdAccount->id) }}"
+   class="px-4 py-2 btn-primary uppercase"
+   target="_blank">
+   <i class="las la-download"></i> Download
+</a>
+ <a href="{{ route('fd-mis-schemes.fd_show', $fdAccount->id) }}"
+   class="px-4 py-2 btn-outline uppercase"
+   target="_self">
+   BACk
+</a>
+</div>
+    <div class="box mt-5">
+        <div class="sheet">
 
         <!-- Header -->
         <div class="header">
             <!-- Logo (optional) -->
             <div style="width:100%;">
-                        <div class="logo" style="width:30%">
-                            <!-- Replace src path or use base64 img -->
-                            <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
-                                style=" width:200px; height:60px;">
-                            {{-- @if($logo)
-                            <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
-                                style=" width:150px; height:50px;"> --}}
-                            {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo"
-                                style="max-width:90px; max-height:90px;"> --}}
-                            {{-- @else --}}
-                            {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
-                                style="max-width:90px; max-height:90px;"> --}}
-                            {{-- @endif --}}
+                <div class="logo" style="width: 22%">
+                    <!-- Replace src path or use base64 img -->
 
-                        </div>
+                    @if($logo)
+                     <img src="{{ asset('storage/' . $logo->image_path) }}"
+         alt="logo"
+         style=" width:150px; height:50px;">
+                    {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
+                    @else
+                    {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
+                        style="max-width:90px; max-height:90px;"> --}}
+                    @endif
 
-                        <div style=" text-align:left; ">
-                            <div class="company">
-                                {{-- SBC GLOBAL --}}
-                            </div>
-                            <div class="subtitle" style="font-weight: bold;">
-                                {{-- DEPOSIT CONFIRMATION/ RENEWAL ADVICE --}}
-                            </div>
-                            <div class="small muted">
-                                {{-- BRANCH : {{ $company_address ?? 'Address here' }} --}}
-                            </div>
-                            <div class="small muted">
-                                {{-- DATE :{{ $date ?? 'Address here' }} --}}
-                            </div>
-                        </div>
+                </div>
 
-                        {{-- <div class="header-right"></div> --}}
-
+                <div style=" text-align:left; ">
+                    <div class="company">
+                        {{-- SBC GLOBAL --}}
                     </div>
+                    <div class="subtitle" style="font-weight: bold;"> 
+                        {{-- DEPOSIT CONFIRMATION/ RENEWAL ADVICE --}}
+                    </div>
+                    <div class="small muted">
+                        {{-- BRANCH : {{ $company_address ?? 'Address here' }} --}}
+                    </div>
+                    <div class="small muted">
+                        {{-- DATE :{{ $date ?? 'Address here' }} --}}
+                    </div>
+                </div>
+
+                {{-- <div class="header-right"></div> --}}
+
+            </div>
             <div class="clear"></div>
         </div>
 
@@ -240,32 +330,32 @@
                 <td style="width:60%" class="no-border">
                     <div>
                          DATE :{{ $date ?? '' }} <br>
-                        {{ $misaccount->member->member_info_first_name ?? 'N/A' }}
-                        {{ $misaccount->member->member_info_last_name ?? '' }}
+                        {{ $fdAccount->member->member_info_first_name ?? 'N/A' }}
+                        {{ $fdAccount->member->member_info_last_name ?? '' }}
                     </div>
                     <div class="small muted">
-                        {{ $misaccount->member_address ?? 'N/A' }}
+                        {{ $fdAccount->member_address ?? 'N/A' }}
                     </div>
                     <div class="small mt-6">REPAYABLE TO:<br>
-                        {{ $misaccount->nominee->first()->nominee_name ?? 'N/A' }}
+                        {{ $fdAccount->nominee->first()->nominee_name ?? 'N/A' }}
                     </div>
                 </td>
                 <td style="width:40%" class="no-border right">
                     <div class="small">MEMBER NO :
-                        {{ $misaccount->member->member_no ?? '' }}
+                        {{ $fdAccount->member->member_no ?? '' }}
                     </div>
-                    <div class="small"> MIS NO :
-                        {{ $misaccount->mis_account_no ?? '' }}
+                    <div class="small"> FD NO :
+                        {{ $fdAccount->id ?? '' }}
                     </div>
                     <div class="small"> SCHEME :
-                        {{ $misaccount->fdScheme->scheme_name ?? '' }}
+                        {{ $fdAccount->fdScheme->scheme_name ?? '' }}
                     </div>
                     <div class="small">Interest Payout :
-                        {{ $misaccount->interest_payout_type  }}
+                        {{ $fdAccount->interest_payout_type }}
                     </div>
 
                     <div class="small"> TOTAL INTEREST :
-                        ₹ {{ $misaccount->total_interest }}
+                        ₹ {{ $fdAccount->total_interest }}
 
                     </div>
 
@@ -293,19 +383,19 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="center">{{ \Carbon\Carbon::parse($misaccount->open_date ?? now())->format('d-m-Y') }}</td>
+                    <td class="center">{{ \Carbon\Carbon::parse($fdAccount->open_date ?? now())->format('d-m-Y') }}</td>
                     <td class="center">
-                        {{ $misaccount->tenure_year ? $misaccount->tenure_year . ' Year(s) ' : '' }}
-                        {{ $misaccount->tenure_month ? $misaccount->tenure_month . ' Month(s) ' : '' }}
-                        {{ $misaccount->tenure_day ? $misaccount->tenure_day . ' Day(s)' : '' }}
+                        {{ $fdAccount->tenure_year ? $fdAccount->tenure_year . ' Year(s) ' : '' }}
+                        {{ $fdAccount->tenure_month ? $fdAccount->tenure_month . ' Month(s) ' : '' }}
+                        {{ $fdAccount->tenure_day ? $fdAccount->tenure_day . ' Day(s)' : '' }}
                     </td>
-                    <td class="center"> {{ $misaccount->fdScheme->fdslabs->first()->interest_rate ?? '' }}</td>
+                    <td class="center"> {{ $fdAccount->fdScheme->fdslabs->first()->interest_rate ?? '' }}</td>
                     <td class="right amount">
-                        {{ number_format($misaccount->mis_amount ?? 0, 2) }}
+                        {{ number_format($fdAccount->fd_amount ?? 0, 2) }}
                     </td>
-                    <td class="center">{{ \Carbon\Carbon::parse($misaccount->maturity_date ?? now())->format('d-m-Y') }}
+                    <td class="center">{{ \Carbon\Carbon::parse($fdAccount->maturity_date ?? now())->format('d-m-Y') }}
                     </td>
-                    <td class="right amount">{{number_format($misaccount->maturity_amount ?? 0,2)}}
+                    <td class="right amount">{{number_format($fdAccount->maturity_amount ?? 0,2)}}
                 </tr>
             </tbody>
         </table>
@@ -327,7 +417,8 @@
             </tr>
         </table>
 
-        {{-- <!-- Terms (small) -->
+        {{--
+        <!-- Terms (small) -->
         <div class="mt-12 small muted">
             <strong>Terms & Conditions:</strong>
             <ol style="margin:6px 0 0 18px; padding:0;">
@@ -345,16 +436,16 @@
             THANK YOU FOR YOUR CONTINUED PATRONAGE WITH OUR SOCIETY
         </div>
         <div class="" style="text-align: center">
-            {{-- <strong> REGD OFFICE: </strong>
-            SBC GLOBAL TOWAR , CHANDABAI PLOT NEAR BUS STOP SHEGAON Maharashtra - 444001 --}}
+            <strong> REGD OFFICE: </strong>
+            SBC GLOBAL TOWAR , CHANDABAI PLOT NEAR BUS STOP SHEGAON Maharashtra - 444001
         </div>
         <div class="" style="text-align: center">
-            {{-- <strong>REG NO </strong>: 969/03-04 --}}
+            <strong>REG NO </strong>: 969/03-04
         </div>
 
     </div>
+    </div>
 
 
-</body>
-
-</html>
+</div>
+    @endsection

@@ -805,11 +805,60 @@ class AccountsController extends Controller
         return round(($balance * $rate * $days) / (365 * 100), 2);
     }
 
-    public function accountOpenForm($id)
-    {
+    // public function accountOpenForm($id)
+    // {
 
-        $account_id = base64_decode($id);
-        $account = Account::with(['transaction', 'members.kyc', 'members.address.state', 'scheme', 'savingOtherCharges'])->where('id', $account_id)->first();
-        return view('saving-current-ac.accounts.saving-account-application-form', compact('account'));
-    }
+    //     $account_id = base64_decode($id);
+    //     $account = Account::with(['transaction', 'members.kyc', 'members.address.state', 'scheme', 'savingOtherCharges'])->where('id', $account_id)->first();
+    //     return view('saving-current-ac.accounts.saving-account-application-form', compact('account'));
+    // }
+
+
+    public function accountOpenFormPreview($id)
+{
+    $account_id = base64_decode($id);
+
+    $account = Account::with([
+        'transaction',
+        'members.kyc',
+        'members.address.state',
+        'scheme',
+        'savingOtherCharges'
+    ])->findOrFail($account_id);
+
+    return view(
+        'saving-current-ac.accounts.saving-account-application-form',
+        compact('account')
+    );
 }
+
+public function accountOpenFormDownload($id)
+{
+    // Decode ID
+    $account_id = base64_decode($id);
+
+    // Fetch account with relations
+    $account = Account::with([
+         'transaction',
+        'members.kyc',
+        'members.address.state',
+        'scheme',
+        'savingOtherCharges'
+    ])->findOrFail($account_id);
+
+
+    // Generate PDF
+    $pdf = Pdf::loadView('saving-current-ac.accounts.saving-account-appli-download', compact('account'))
+        ->setPaper('A4', 'portrait');
+
+    // Stream in browser
+    return $pdf->stream('saving-account-opening-form.pdf');
+}
+
+}
+
+
+
+    
+
+

@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Opening Form</title>
-    <style>
+@extends('layout.main')
+@section('content')
+<style>
         body {
             font-family: Arial, sans-serif;
             background: #f8f8f8;
@@ -111,37 +106,56 @@
             padding: 4px;
         }
     </style>
-</head>
 
-<body>
+<div class="main-inner">
+     <h1 class="text-lg font-semibold">FD ACCOUNT - {{ $account->fd_no }}</h1>
+<div class="text-center flex justify-center gap-5 mt-4" >
+     <a href="{{ route('fd.opening.form', $account->id) }}"
+   class="px-4 py-2 btn-primary uppercase"
+   target="_blank">
+   <i class="las la-download"></i> Download
+</a>
+ <a href="{{ route('fd-mis-schemes.fd_show', $account->id) }}"
+   class="px-4 py-2 btn-outline uppercase"
+   target="_self">
+   BACk
+</a>
+</div>
+    <div class="box mt-5">
+        <div class="form-container">
 
-    <div class="form-container">
         <div style="width:100%; font-family: dejavusans; border-bottom: 2px solid #000 ; padding: 5px;">
 
             <!-- Logo -->
-            <div style="float:left; width:10%; text-align:left;">
-               <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
-                                style=" width:200px; height:60px;">
+            <div style="float:left; width:30%; text-align:left;">
+                @if($logo)
+                     <img src="{{ asset('storage/' . $logo->image_path) }}"
+         alt="logo"
+         style=" width:150px; height:50px;">
+                    {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
+                    @else
+                    {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
+                        style="max-width:90px; max-height:90px;"> --}}
+                    @endif
+                {{-- <img src="{{ public_path('assets/images/SBC_Logo.jpg') }}" alt="Company Logo"
+                    style="width:130px; height:130px;"> --}}
             </div>
 
             <!-- Title Section -->
-            <div style="float:left; width:90%; text-align:center;">
+            <div style="float:left; width:70%; text-align:center;">
                 <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; ">
                     {{-- SBC Global --}}
                 </div>
 
                 <div style="height:10px; margin-top: 40px;">&nbsp;</div>
 
-                {{-- <h4 style="   margin:0;  font-size:18px; font-weight:bold;">
-                    Account Opening Form For MIS Account </h4> --}}
+                <h4 style="   margin:0;  font-size:18px; font-weight:bold;">
+                    Account Opening Form For FD
+                </h4>
             </div>
 
             <!-- Clear Float -->
             <div style="clear:both; "></div>
-            {{-- <div style="clear:both; "></div> --}}
- <h4 style="   margin-top:30px;  text-align: center; font-size:18px; font-weight:bold;">
-                  Account Opening Form For MIS Account
-                </h4>
 
         </div>
         <table>
@@ -155,8 +169,8 @@
             <tr>
                 <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: RD</label></td>
                 <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: DD</label></td>
-                <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: FD</label></td>
-                <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;" checked>: MIS</label></td>
+                <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;" checked>: FD</label></td>
+                <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: MIS</label></td>
                 <td><label style="display:flex; align-items:center;"><input type="checkbox" style="width: 20px; height: 20px;">: Saving</label></td>
             </tr>
             <tr>
@@ -329,7 +343,9 @@
                 <p>(Manager’s Signature)</p>
             </div>
         </div>
-   </div>
-</body>
+</div>
+    </div>
 
-</html>
+
+</div>
+    @endsection

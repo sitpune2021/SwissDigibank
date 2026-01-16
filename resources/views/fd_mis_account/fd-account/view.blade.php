@@ -176,17 +176,17 @@
                 class="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                 <ul class="py-2">
                     <li>
-                        <a href="{{ route('fd.bond.form', $fdAccount->id) }}"
+                        <a href="{{ route('fd.bond.view', $fdAccount->id) }}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100 font-semibold"><i class="las la-print"></i>
                             FD BOND</a>
                     </li>
                     <li>
-                        <a href="{{ route('fd.opening.form', $fdAccount->id) }}"
+                        <a href="{{ route('fd.opening.view', $fdAccount->id) }}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100 font-semibold"><i class="las la-print"></i>
                             ACCOUNT OPENING FORM</a>
                     </li>
                     <li>
-                        <a href="{{ route('fd.closing.form', $fdAccount->id)}}"
+                        <a href="{{ route('fd.closing.view', $fdAccount->id)}}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100 font-semibold"><i class="las la-print"></i>
                             CLOSING FORM</a>
                     </li>

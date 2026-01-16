@@ -1,139 +1,89 @@
-@extends('layout.main')
-@section('content')
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8f8f8;
-      margin: 0;
-      padding: 8px;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Opening Form</title>
 
-    .form-container {
-      background: #fff;
-      max-width: 800px;
-      margin: auto;
-      padding: 15px 25px;
-      font-size: 13px;
-      /* slightly smaller text */
-      line-height: 1.3;
-    }
+    <style>
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
 
-    .header {
-      text-align: center;
-    }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            color: #000;
+        }
 
-    .letterhead {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #000;
-      padding-bottom: 5px;
-      margin-bottom: 8px;
-    }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .bold { font-weight: bold; }
+        .underline { border-bottom: 1px solid #000; }
 
-    .logo {
-      width: 100px;
-      text-align: center;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-    .logo img {
-      width: 100%;
-      height: auto;
-    }
+        td {
+            padding: 4px;
+            vertical-align: top;
+        }
 
-    hr {
-      margin: 10px 0;
-      border: 1px solid #ccc;
-    }
+        .box {
+            border: 1px solid #000;
+            padding: 4px;
+            min-height: 16px;
+        }
 
-    .section-title {
-      font-weight: bold;
-      margin: 8px 0 3px;
-      text-decoration: underline;
-    }
+        .checkbox {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 1px solid #000;
+            text-align: center;
+            line-height: 12px;
+            font-weight: bold;
+        }
 
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      margin-bottom: 6px;
-    }
+        .checked {
+            background: #000;
+            color: #fff;
+        }
 
-    .row label {
-      flex: 1;
-      font-size: 13px;
-      padding: 1px 0;
-    }
+        .section-title {
+            font-weight: bold;
+            margin-top: 8px;
+            text-decoration: underline;
+        }
 
+        .small {
+            font-size: 10px;
+            line-height: 1.4;
+        }
 
-    .declaration {
-      font-size: 12px;
-      margin: 10px 0;
-      line-height: 1.3;
-      text-align: justify;
-    }
-
-    .footer {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-      font-size: 12x;
-    }
-
-    .signature {
-      text-align: right;
-      margin-top: 10px;
-      font-size: 13px;
-    }
-
-
-
-    .office-use {
-      border-top: 1px dashed #000;
-      margin-top: 20px;
-      padding-top: 10px;
-      font-size: 13px;
-
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      margin-top: 10px;
-    }
-
-    td {
-      padding: 4px;
-    }
-  </style>
-
-<div class="main-inner">
-     <h1 class="text-lg uppercase font-semibold">Saving Account - {{ $account->account_no }}</h1>
-<div class="text-center flex justify-center gap-5 mt-4" >
-     <a href="{{ route('saving.account.opening.pdf', base64_encode($account->id)) }}"
-   class="px-4 py-2 btn-primary uppercase"
-   target="_blank">
-   <i class="las la-download"></i> Download
-</a>
- <a href="{{ route('accounts.show', base64_encode($account->id)) }}"
-   class="px-4 py-2 btn-outline uppercase"
-   target="_self">
-   BACk
-</a>
-</div>
-    <div class="box mt-5">
-       <div class="form-container">
+        .signature-line {
+            border-top: 1px solid #000;
+            width: 200px;
+            text-align: center;
+            padding-top: 3px;
+        }
+    </style>
+</head>
+<body>
+   <div class="form-container">
 
     <div class="header">
       <div class="letterhead">
         <!-- Logo -->
-        <div class="">
+        <div class="" style="border-bottom: 1px solid black;">
           <!-- <img src="{{ asset('assets/images/Loan_Management_logo.png') }}" alt="Logo"> -->
-        <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
+        <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
                     style="width:230px; height:70px;">
         </div>
         <!-- Bank Details -->
-        <div class="bank-details">
+        <div class="bank-details" style="margin-top: 10px;">
           {{-- <h2 style="margin:0; font-size:16px;">SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED</h2>
           <p style="margin:2px 0;"><strong>REG. OFFICE:</strong> SHEGAON, Maharashtra - 110012</p>
           <p style="margin:2px 0;"><strong>BR. OFFICE:</strong> SBC GLOBAL TOWER, CHANDABAI PLOT, SHEGAON, Maharashtra - 444001</p>
@@ -325,9 +275,5 @@
         <p>(Manager’s Signature)</p>
       </div>
     </div>
-</div>
-    </div>
-
-
-</div>
-    @endsection
+</div></body>
+</html>
