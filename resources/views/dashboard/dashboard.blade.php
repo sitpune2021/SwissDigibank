@@ -317,6 +317,56 @@ use Illuminate\Support\Facades\Storage;
             </div>
         </a>
     </div>
+    <!-- DDS ACCOUNTS -->
+    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+        <a href="{{ route('dds-accounts.index') }}">
+            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
+                <span class="font-medium"> DDS ACCOUNTS </span><span aria-expanded="false"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="cursor-pointer tabler-icon tabler-icon-dots">
+                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    </svg></span>
+            </div>
+            <div class="flex items-center gap-4 xl:gap-6">
+                <div
+                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
+                    <i class="text-3xl las xl:text-5xl la-coins"></i>
+                </div>
+                <div>
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['ddsCount'] }}</h4><span
+                        class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
+                </div>
+            </div>
+        </a>
+    </div>
+       <!-- MDS /RD ACCOUNTS -->
+    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+        <a href="{{ route('mds-rd-accounts.rd-account-index') }}">
+            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
+                <span class="font-medium"> MDS/RD ACCOUNTS </span><span aria-expanded="false"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="cursor-pointer tabler-icon tabler-icon-dots">
+                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    </svg></span>
+            </div>
+            <div class="flex items-center gap-4 xl:gap-6">
+                <div
+                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
+                    <i class="text-3xl las xl:text-5xl la-coins"></i>
+                </div>
+                <div>
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['mdsRdCount'] }}</h4><span
+                        class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
+                </div>
+            </div>
+        </a>
+    </div>
 
     <!-- Gold Loan  -->
     <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
@@ -520,6 +570,9 @@ use Illuminate\Support\Facades\Storage;
         </a>
     </div>
 
+</div>
+    <div class="grid grid-cols-12 gap-4 xxl:gap-6 mt-5">
+
     <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
         <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
             <span class="font-medium">PAYMENT TO COLLECT</span>
@@ -564,25 +617,7 @@ use Illuminate\Support\Facades\Storage;
     </script>
 
     <!-- Statistics -->
-    <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
-        <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
-            <span class="font-medium">BRANCHES</span>
-            @include('partials._horizontal-options')
-        </div>
-        <div class="flex items-center justify-between">
-            <div>
-                <h4 class="mb-4 h4">&#8377; 00</h4>
-                <span class="flex items-center gap-1 whitespace-nowrap text-primary">
-                    <i class="text-lg las la-arrow-up"></i> 35.7 AVG
-                </span>
-            </div>
-            <div
-                class="-my-3 shrink-0 ltr:translate-x-3 xl:ltr:translate-x-7 xxxl:ltr:translate-x-2 4xl:ltr:translate-x-9 rtl:-translate-x-3 xl:rtl:-translate-x-7 xxxl:rtl:-translate-x-2 4xl:rtl:-translate-x-9">
-                <div class="progress-chart"></div>
-            </div>
-        </div>
-        </a>
-    </div>
+    
     <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
         <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
             <span class="font-medium">TOTAL SPENDING</span>

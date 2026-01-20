@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Models\Account;
+use App\Models\DdsAccount;
 use App\Models\FdAccount;
 use App\Models\Promotor;
 use App\Models\Branch;
 use App\Models\Member;
 use App\Models\Misaccount;
+use App\Models\RdAccount;
 use App\Models\Shareholders;
 use App\Models\LoanApplication;
 use App\Models\MortgageLoanApplication;
@@ -80,6 +82,8 @@ class DashboardService
             'currentAccounts' => Account::where('account_type', 'CURRENT')->count(),
             'fdCount' => FdAccount::count(),
             'misCount' => Misaccount::count(),
+            'ddsCount' => DdsAccount::count(),
+             'mdsRdCount' => RdAccount::count(),
 
             // Loan counts
             'goldloan' => LoanApplication::where('status', '2')->count(),
