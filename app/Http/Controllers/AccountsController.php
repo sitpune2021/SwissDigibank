@@ -113,21 +113,21 @@ class AccountsController extends Controller
             Log::info('Account store request started', ['request_data' => $request->all()]);
 
             $rules = [
-                'account_type'  => 'required|in:saving,current',
-                'firm_d'        => 'nullable|required_if:account_type,current|max:255',
-                'member_id'     => 'required|exists:members,id',
-                'branch_id'     => 'required|exists:branches,id',
-                'advisor_id'    => 'nullable|exists:users,id',
-                'scheme_id'     => 'required|integer|exists:schemes,id',
-                'open_date'     => 'required|date',
-                'amount'        => 'required|numeric|min:0',
-                'account_holder_type'   => 'required|in:single,joint',
-                'member_id_one'         => 'nullable|required_if:account_holder_type,joint',
-                'member_id_two'         => 'nullable',
-                'mode_of_operation'     => 'required_if:account_holder_type,joint|in:single,jointly,either_or_survivor',
-                'nominee'               => 'required|in:yes,no',
-                'payment_mode'          => 'required|in:cash,online,cheque',
-                'transaction_date'      => 'nullable|date',
+                'account_type' => 'required|in:saving,current',
+                'firm_d' => 'nullable|required_if:account_type,current|max:255',
+                'member_id' => 'required|exists:members,id',
+                'branch_id' => 'required|exists:branches,id',
+                'advisor_id' => 'nullable|exists:users,id',
+                'scheme_id' => 'required|integer|exists:schemes,id',
+                'open_date' => 'required|date',
+                'amount' => 'required|numeric|min:0',
+                'account_holder_type' => 'required|in:single,joint',
+                'member_id_one' => 'nullable|required_if:account_holder_type,joint',
+                'member_id_two' => 'nullable',
+                'mode_of_operation' => 'required_if:account_holder_type,joint|in:single,jointly,either_or_survivor',
+                'nominee' => 'required|in:yes,no',
+                'payment_mode' => 'required|in:cash,online,cheque',
+                'transaction_date' => 'nullable|date',
             ];
 
             if ($request->input('nominee') === 'yes') {
@@ -175,21 +175,21 @@ class AccountsController extends Controller
             Log::info('DB transaction started');
 
             $account = Account::create([
-                'account_type'          => $request->account_type,
-                'account_no'            => rand(100000, 999999), // Temporary
-                'firm_name'             => $request->firm_d,
-                'member_id'             => $request->member_id,
-                'branch_id'             => $request->branch_id,
-                'advisor_id'            => $request->advisor_id,
-                'scheme_id'             => $request->scheme_id,
-                'open_date'             => Carbon::parse($request->open_date)->format('Y-m-d'),
-                'amount_deposit'        => $request->amount,
-                'account_holder_type'   => $request->account_holder_type,
-                'joint_member1'         => $request->member_id_one,
-                'joint_member2'         => $request->member_id_two,
-                'mode_of_operation'     => $request->account_holder_type === 'joint' ? $request->mode_of_operation : null,
-                'payment_mode'          => $request->payment_mode,
-                'transaction_date'      => $request->transaction_date ? Carbon::parse($request->transaction_date)->format('Y-m-d H:i:s') : null,
+                'account_type' => $request->account_type,
+                'account_no' => rand(100000, 999999), // Temporary
+                'firm_name' => $request->firm_d,
+                'member_id' => $request->member_id,
+                'branch_id' => $request->branch_id,
+                'advisor_id' => $request->advisor_id,
+                'scheme_id' => $request->scheme_id,
+                'open_date' => Carbon::parse($request->open_date)->format('Y-m-d'),
+                'amount_deposit' => $request->amount,
+                'account_holder_type' => $request->account_holder_type,
+                'joint_member1' => $request->member_id_one,
+                'joint_member2' => $request->member_id_two,
+                'mode_of_operation' => $request->account_holder_type === 'joint' ? $request->mode_of_operation : null,
+                'payment_mode' => $request->payment_mode,
+                'transaction_date' => $request->transaction_date ? Carbon::parse($request->transaction_date)->format('Y-m-d H:i:s') : null,
             ]);
 
             $account->account_no = 'SBC111' . str_pad($account->id, 9, '0', STR_PAD_LEFT);
@@ -222,20 +222,20 @@ class AccountsController extends Controller
 
             // Transaction
             Transaction::create([
-                'account_id'        => $account->id,
-                'payment_mode'      => $request->payment_mode,
-                'amount'            => $request->amount,
-                'transaction_type'  => 'credit',
-                'transaction_date'  => now(),
-                'approve_status'    => 'approved',
-                'comment'           => 'Opening deposit',
-                'utr_number'        => $request->pay1_transfer_utr ?? null,
-                'transfer_mode'     => $request->transfer_mode ?? null,
-                'transfer_date'     => $request->pay1_transfer_date ? Carbon::parse($request->pay1_transfer_date)->format('Y-m-d') : null,
-                'credited_in'       => $request->credited ?? null,
-                'bank_name'         => $request->pay1_bank ?? null,
-                'cheque_no'         => $request->pay1_cheque_no ?? null,
-                'cheque_date'       => $request->pay1_cheque_date ? Carbon::parse($request->pay1_cheque_date)->format('Y-m-d') : null,
+                'account_id' => $account->id,
+                'payment_mode' => $request->payment_mode,
+                'amount' => $request->amount,
+                'transaction_type' => 'credit',
+                'transaction_date' => now(),
+                'approve_status' => 'approved',
+                'comment' => 'Opening deposit',
+                'utr_number' => $request->pay1_transfer_utr ?? null,
+                'transfer_mode' => $request->transfer_mode ?? null,
+                'transfer_date' => $request->pay1_transfer_date ? Carbon::parse($request->pay1_transfer_date)->format('Y-m-d') : null,
+                'credited_in' => $request->credited ?? null,
+                'bank_name' => $request->pay1_bank ?? null,
+                'cheque_no' => $request->pay1_cheque_no ?? null,
+                'cheque_date' => $request->pay1_cheque_date ? Carbon::parse($request->pay1_cheque_date)->format('Y-m-d') : null,
             ]);
 
             DB::commit();
@@ -308,17 +308,34 @@ class AccountsController extends Controller
             abort(404);
         }
     }
-    public function edit(string $id) {}
+    public function edit(string $id)
+    {
+    }
 
-    public function update(Request $request, string $id) {}
+    public function update(Request $request, string $id)
+    {
+    }
 
 
-    public function destroy(string $id) {}
+    public function destroy(string $id)
+    {
+    }
 
     public function viewPassbook($id)
     {
         $id = base64_decode($id);
-        $accounts = Account::with('transaction', 'members', 'branch', 'address', 'nominee')->where('id', $id)->get();
+        $accounts = Account::with(
+            'transaction',
+             'members.address.state',
+           
+            'branch',
+            // 'address',
+            'nominee',
+          )  
+        ->findOrFail($id);
+        //  ->where('id', $id)->get();
+
+        // dd($accounts);
         return view('saving-current-ac.accounts.passbook', compact('accounts'));
     }
 
@@ -326,18 +343,26 @@ class AccountsController extends Controller
     {
         $request->validate([
             'account_id' => 'required|exists:accounts,id',
-            'from_date'  => 'required|date_format:d-m-Y',
-            'to_date'    => 'required|date_format:d-m-Y|after_or_equal:from_date',
-            'print'      => 'required|in:front,statement,full',
+            'from_date' => 'required|date_format:d-m-Y',
+            'to_date' => 'required|date_format:d-m-Y|after_or_equal:from_date',
+            'print' => 'required|in:front,statement,full',
         ]);
 
         $accountId = $request->account_id;
 
-        $account = Account::with(['members', 'branch', 'nominee', 'scheme', 'address.state'])
+        $account = Account::with([
+          
+             'members.address.state',
+               // 'members',
+         'branch',
+          'nominee',
+           'scheme',
+            // 'address.state'
+            ])
             ->find($accountId);
 
         $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
-        $toDate   = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
+        $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
 
         $transactions = Transaction::where('account_id', $accountId)
             ->whereBetween('transaction_date', [$fromDate, $toDate])
@@ -355,13 +380,13 @@ class AccountsController extends Controller
             }
 
             return [
-                'date'          => $txn->transaction_date ? \Carbon\Carbon::parse($txn->transaction_date)->format('d-m-Y') : null,
-                'description'   => $txn->description ?? '-',
-                'cheque_no'     => $txn->cheque_no ?? '-',
-                'debit_amount'  => $txn->transaction_type === 'debit' ? $txn->amount : null,
+                'date' => $txn->transaction_date ? \Carbon\Carbon::parse($txn->transaction_date)->format('d-m-Y') : null,
+                'description' => $txn->description ?? '-',
+                'cheque_no' => $txn->cheque_no ?? '-',
+                'debit_amount' => $txn->transaction_type === 'debit' ? $txn->amount : null,
                 'credit_amount' => $txn->transaction_type === 'credit' ? $txn->amount : null,
-                'balance'       => $runningBalance,
-                
+                'balance' => $runningBalance,
+
             ];
         });
 
@@ -381,9 +406,9 @@ class AccountsController extends Controller
             'printType' => $request->print,
             'fromDate' => $request->from_date,
             'toDate' => $request->to_date,
-           'scheme_name' => $account->scheme?->scheme_name ?? '-',
+            'scheme_name' => $account->scheme?->scheme_name ?? '-',
             'open_date' => optional($account->open_date)->format('d-m-Y'),
-            
+
         ]);
     }
 
@@ -392,7 +417,7 @@ class AccountsController extends Controller
     {
         $account_id = base64_decode($id);
         // $charges  = SavingOtherCharge::with('account')->where('account_id', $account_id)->first();
-        $charges  = Account::with('savingOtherCharges')->where('id', $account_id)->first();
+        $charges = Account::with('savingOtherCharges')->where('id', $account_id)->first();
 
         return view('saving-current-ac.accounts.debit-other-charges.debit-other-chargelist', compact('charges'));
     }
@@ -407,31 +432,31 @@ class AccountsController extends Controller
     {
         try {
             $request->validate([
-                'charge_type'  => 'required',
-                'amount'       => 'required|numeric|min:0',
-                'gst_rate'     => 'required|numeric|min:0',
+                'charge_type' => 'required',
+                'amount' => 'required|numeric|min:0',
+                'gst_rate' => 'required|numeric|min:0',
                 'total_amount' => 'required|numeric|min:0',
-                'charge_date'  => 'required|date',
+                'charge_date' => 'required|date',
             ]);
 
             $formattedDate = \Carbon\Carbon::parse($request->charge_date)->format('Y-m-d');
 
             $charge = SavingOtherCharge::create([
-                'account_id'   => $id,
-                'charge_type'  => $request->charge_type,
-                'amount'       => $request->amount,
-                'gst_rate'     => $request->gst_rate,
+                'account_id' => $id,
+                'charge_type' => $request->charge_type,
+                'amount' => $request->amount,
+                'gst_rate' => $request->gst_rate,
                 'total_amount' => $request->total_amount,
-                'charge_date'  => $formattedDate,
-                'remarks'      => $request->remarks,
-                'created_by'   => Auth::id(),
+                'charge_date' => $formattedDate,
+                'remarks' => $request->remarks,
+                'created_by' => Auth::id(),
             ]);
 
             Log::info('Other charge debited successfully', [
-                'user_id'     => Auth::id(),
-                'account_id'  => $request->account_id,
-                'charge_id'   => $charge->id ?? null,
-                'data'        => $request->all(),
+                'user_id' => Auth::id(),
+                'account_id' => $request->account_id,
+                'charge_id' => $charge->id ?? null,
+                'data' => $request->all(),
             ]);
 
             return redirect()->route('accounts.other.debit-charges', base64_encode($id))->with('success', 'Other charge debited successfully.');
@@ -443,9 +468,9 @@ class AccountsController extends Controller
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             Log::error('Error occurred while storing other charge', [
-                'error'      => $e->getMessage(),
-                'trace'      => $e->getTraceAsString(),
-                'user_id'    => Auth::id(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => Auth::id(),
                 'input_data' => $request->all(),
             ]);
 
@@ -466,13 +491,13 @@ class AccountsController extends Controller
         $account_id = base64_decode($id);
 
         $validated = $request->validate([
-            'charges_due'   => 'nullable|numeric',
+            'charges_due' => 'nullable|numeric',
             'waived_amount' => 'required|numeric|min:0',
-            'amount'        => 'required|numeric|min:0',
-            'gst_rate'      => 'nullable|numeric|min:0|max:100',
-            'total_amount'  => 'required|numeric|min:0',
-            'remarks'       => 'nullable|string|max:255',
-            'charge_date'   => 'required|date',
+            'amount' => 'required|numeric|min:0',
+            'gst_rate' => 'nullable|numeric|min:0|max:100',
+            'total_amount' => 'required|numeric|min:0',
+            'remarks' => 'nullable|string|max:255',
+            'charge_date' => 'required|date',
         ]);
 
         $state = null;
@@ -484,39 +509,39 @@ class AccountsController extends Controller
 
         try {
             $charge = new SavingOtherCharge();
-            $charge->account_id    = $account_id;
-            $charge->charge_date   = $validated['charge_date'];
-            $charge->amount        = $validated['amount'];
-            $charge->gst_rate      = $validated['gst_rate'] ?? 0;
-            $charge->total_amount  = $validated['total_amount'];
+            $charge->account_id = $account_id;
+            $charge->charge_date = $validated['charge_date'];
+            $charge->amount = $validated['amount'];
+            $charge->gst_rate = $validated['gst_rate'] ?? 0;
+            $charge->total_amount = $validated['total_amount'];
             $charge->waived_amount = $validated['waived_amount'];
-            $charge->remarks       = $validated['remarks'] ?? null;
-            $charge->state         = $state;
-            $charge->status        = 'approved'; // active
-            $charge->created_by    = Auth::id();
+            $charge->remarks = $validated['remarks'] ?? null;
+            $charge->state = $state;
+            $charge->status = 'approved'; // active
+            $charge->created_by = Auth::id();
 
             $charge->save();
 
             Log::info('Debit charge recorded successfully', [
-                'user_id'       => Auth::id(),
-                'account_id'    => $account_id,
-                'charge_id'     => $charge->id,
-                'charge_date'   => $validated['charge_date'],
-                'amount'        => $validated['amount'],
-                'gst_rate'      => $validated['gst_rate'],
-                'total_amount'  => $validated['total_amount'],
+                'user_id' => Auth::id(),
+                'account_id' => $account_id,
+                'charge_id' => $charge->id,
+                'charge_date' => $validated['charge_date'],
+                'amount' => $validated['amount'],
+                'gst_rate' => $validated['gst_rate'],
+                'total_amount' => $validated['total_amount'],
                 'waived_amount' => $validated['waived_amount'],
-                'state'         => $state,
-                'remarks'       => $validated['remarks'] ?? null,
+                'state' => $state,
+                'remarks' => $validated['remarks'] ?? null,
             ]);
 
             return redirect()->back()->with('success', 'Debit charge recorded successfully.');
         } catch (\Exception $e) {
             Log::error('Error while recording debit charge', [
-                'user_id'    => Auth::id(),
+                'user_id' => Auth::id(),
                 'account_id' => $account_id,
-                'error'      => $e->getMessage(),
-                'trace'      => $e->getTraceAsString(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return redirect()->back()->with('error', 'Failed to record debit charge. Please try again.');
@@ -535,45 +560,45 @@ class AccountsController extends Controller
     {
         $request->validate([
             'transaction_date' => 'required|date',
-            'amount'           => 'required|numeric|min:0.01',
-            'remarks'          => 'nullable|string|max:255',
+            'amount' => 'required|numeric|min:0.01',
+            'remarks' => 'nullable|string|max:255',
         ]);
 
         $account = Account::findOrFail($id);
 
-        $transaction                   = new Transaction();
-        $transaction->account_id    = $account->id;
+        $transaction = new Transaction();
+        $transaction->account_id = $account->id;
         $transaction->transaction_date = Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
         $transaction->transaction_type = "credit"; // CREDIT / DEBIT
-        $transaction->amount           = $request->amount;
-        $transaction->remarks           = $request->remarks ?? null;
-        $transaction->payment_mode         = "system";
+        $transaction->amount = $request->amount;
+        $transaction->remarks = $request->remarks ?? null;
+        $transaction->payment_mode = "system";
         $transaction->comment = "Deposit";
 
         $transaction->save();
 
         Log::info('Interest transaction recorded', [
-            'user_id'            => Auth::id(),
-            'account_id'         => $account->id,
-            'transaction_id'     => $transaction->id,
-            'transaction_type'   => $transaction->transaction_type,
-            'payment_mode'       => $transaction->payment_mode,
-            'amount'             => $transaction->amount,
-            'remarks'            => $transaction->remarks,
-            'transaction_date'   => $transaction->transaction_date,
-            'timestamp'          => now()->toDateTimeString(),
+            'user_id' => Auth::id(),
+            'account_id' => $account->id,
+            'transaction_id' => $transaction->id,
+            'transaction_type' => $transaction->transaction_type,
+            'payment_mode' => $transaction->payment_mode,
+            'amount' => $transaction->amount,
+            'remarks' => $transaction->remarks,
+            'transaction_date' => $transaction->transaction_date,
+            'timestamp' => now()->toDateTimeString(),
         ]);
 
         return redirect()
             ->route('accounts.show', base64_encode($account->id))
             ->with('success', 'Interest ' . ucfirst($request->transaction_type) . ' recorded successfully.');
     }
-   
+
     public function accountNominee($type, $id)
     {
-       
+
         $account_id = base64_decode($id);
- 
+
         switch ($type) {
 
             case 'saving-account':
@@ -584,7 +609,7 @@ class AccountsController extends Controller
 
             case 'rd':
                 $account = RdAccount::with('member', 'nominee')->findOrFail($account_id);
-                $member = $account->member ?? null;               
+                $member = $account->member ?? null;
                 $view = 'mds_rd_accounts.mds-rd-account.view.account-detail.add-nominee';
                 break;
 
@@ -622,16 +647,16 @@ class AccountsController extends Controller
             $hasNominee = false;
         }
 
-        return view($view, compact('account', 'member', 'hasNominee','type'));
+        return view($view, compact('account', 'member', 'hasNominee', 'type'));
     }
 
     public function saveNominees(Request $request, $type, $accountId)
     {
-       
+
         Log::info("Nominee save process started", [
             'account_id' => $accountId,
-            'type'       => $type,
-            'request'    => $request->all()
+            'type' => $type,
+            'request' => $request->all()
         ]);
         try {
 
@@ -770,12 +795,12 @@ class AccountsController extends Controller
         $balance = AccountsTransactionsHelper::getAccountBalacec($account_id);
         $available_balance = $balance['total_balance'];
 
-        $interest_accrued  = $this->calculateInterestAccrued($account);
+        $interest_accrued = $this->calculateInterestAccrued($account);
         // $penalty_charges   = $account->penaltyCharges->sum('amount');
         // $other_charges     = $account->savingOtherCharges->sum('amount');
 
         $penalty_charges = optional($account->penaltyCharges)->sum('amount') ?? 0;
-        $other_charges   = optional($account->savingOtherCharges)->sum('amount') ?? 0;
+        $other_charges = optional($account->savingOtherCharges)->sum('amount') ?? 0;
 
         // Formula: E = A + B - C - D
         $total_value = $available_balance + $interest_accrued - $penalty_charges - $other_charges;
@@ -815,50 +840,50 @@ class AccountsController extends Controller
 
 
     public function accountOpenFormPreview($id)
-{
-    $account_id = base64_decode($id);
+    {
+        $account_id = base64_decode($id);
 
-    $account = Account::with([
-        'transaction',
-        'members.kyc',
-        'members.address.state',
-        'scheme',
-        'savingOtherCharges'
-    ])->findOrFail($account_id);
+        $account = Account::with([
+            'transaction',
+            'members.kyc',
+            'members.address.state',
+            'scheme',
+            'savingOtherCharges'
+        ])->findOrFail($account_id);
 
-    return view(
-        'saving-current-ac.accounts.saving-account-application-form',
-        compact('account')
-    );
+        return view(
+            'saving-current-ac.accounts.saving-account-application-form',
+            compact('account')
+        );
+    }
+
+    public function accountOpenFormDownload($id)
+    {
+        // Decode ID
+        $account_id = base64_decode($id);
+
+        // Fetch account with relations
+        $account = Account::with([
+            'transaction',
+            'members.kyc',
+            'members.address.state',
+            'scheme',
+            'savingOtherCharges'
+        ])->findOrFail($account_id);
+
+
+        // Generate PDF
+        $pdf = Pdf::loadView('saving-current-ac.accounts.saving-account-appli-download', compact('account'))
+            ->setPaper('A4', 'portrait');
+
+        // Stream in browser
+        return $pdf->stream('saving-account-opening-form.pdf');
+    }
+
 }
 
-public function accountOpenFormDownload($id)
-{
-    // Decode ID
-    $account_id = base64_decode($id);
-
-    // Fetch account with relations
-    $account = Account::with([
-         'transaction',
-        'members.kyc',
-        'members.address.state',
-        'scheme',
-        'savingOtherCharges'
-    ])->findOrFail($account_id);
-
-
-    // Generate PDF
-    $pdf = Pdf::loadView('saving-current-ac.accounts.saving-account-appli-download', compact('account'))
-        ->setPaper('A4', 'portrait');
-
-    // Stream in browser
-    return $pdf->stream('saving-account-opening-form.pdf');
-}
-
-}
 
 
 
-    
 
 
