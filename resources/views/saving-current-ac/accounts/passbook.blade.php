@@ -42,9 +42,12 @@
           <select id="account_id" name="account_id"
             class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
             <!-- <option value="">Select Account</option> -->
-            @foreach($accounts as $account)
+             <option value="{{ $accounts->id }}">
+        {{ $accounts->account_no }}
+    </option>
+            {{-- @foreach($accounts as $account)
             <option value="{{ $account->id }}">{{ $account->account_no }}</option>
-            @endforeach
+            @endforeach --}}
           </select>
         </div>
         <!-- HTML -->
@@ -286,7 +289,7 @@
       type: "POST",
       data: $(this).serialize(),
       success: function(res) {
-        console.log(res.transactions);
+        // console.log(res.transactions);
 
         accountData = res.account ?? {};
         currentTransactions = res.transactions ?? [];
@@ -299,15 +302,21 @@
         } else {
           $("#printableArea").html(renderFullStatement(res.account, res.transactions));
         }
-    //      console.log('FULL RESPONSE:', res);
-    // console.log('res.account:', res.account);
-    // console.log('Is account array?', Array.isArray(res.account));
-    // console.log('First account:', res.account?.[0]);
-      console.log(accountData);
+   
+      // console.log(accountData);
 },
-      error: function(xhr) {
-        alert("Error fetching transactions");
-      }
+error: function (xhr, status, error) {
+    // console.error('XHR:', xhr);
+    // console.error('Status:', status);
+    // console.error('Error:', error);
+    // console.error('Response:', xhr.responseText);
+ alert("Error fetching transactions" );
+    // alert(
+    //     'Error ' + xhr.status + ':\n' +
+    //     (xhr.responseJSON?.message ?? xhr.responseText)
+    // );
+}
+     
     });
   });
 
@@ -414,14 +423,18 @@
 </tr>
 <tr>
 <td style="border:1px solid #000; padding:8px; vertical-align:top;"><strong>Address</strong></td>
-<td style="border:1px solid #000; padding:8px;">${[
-            accountData.address?.member_address_line_1,
-            accountData.address?.member_address_line_2,
-            accountData.address?.member_address_area,
-            accountData.address?.member_address_landmark,
-            accountData.address?.member_address_city_district,
-            accountData.address?.name,
-            accountData.address?.member_address_pincode
+
+<td style="border:1px solid #000; padding:8px;">
+      
+      ${[
+                 
+         accountData.members?.member_address_line_1,
+            accountData.members?.member_address_line_2,
+            accountData.members?.member_address_area,
+            accountData.members?.member_address_landmark,
+            accountData.members?.member_address_city_district,
+            accountData.members?.name,
+            accountData.members?.member_address_pincode
             ].filter(Boolean).join(', ') || '-' }
 </td>
 <td style="border:1px solid #000; padding:8px;"><strong>Scheme</strong></td>
@@ -688,10 +701,8 @@ Payment is related to collection through Virtual A/c only, using of bank name do
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">
          
         {{--  ${accountData.jointMemberOne?.member_info_first_name ?? '-'}
-${accountData.jointMemberOne?.member_info_last_name ?? ''} --}}  
+                  ${accountData.jointMemberOne?.member_info_last_name ?? ''} --}}  
 
-        -
-        
           </td>
           <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">MICR CODE </td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
@@ -734,15 +745,15 @@ ${accountData.jointMemberOne?.member_info_last_name ?? ''} --}}
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">ADDRESS</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
         <td style="width: 29%; padding: 2px 5px; vertical-align: top; font-size: 12px; text-transform: uppercase;">
-                      ${[
-            accountData.address?.member_address_line_1,
-            accountData.address?.member_address_line_2,
-            accountData.address?.member_address_area,
-            accountData.address?.member_address_landmark,
-            accountData.address?.member_address_city_district,
-            accountData.address?.name,
-            accountData.address?.member_address_pincode
-            ].filter(Boolean).join(', ') || '-' }
+                        ${[
+             accountData.members?.address?.member_address_line_1,
+              accountData.members?.address?.member_address_line_2,
+              accountData.members?.address?.member_address_area,
+              accountData.members?.address?.member_address_landmark,
+              accountData.members?.address?.member_address_city_district,
+              accountData.members?.address?.name,
+              accountData.members?.address?.member_address_pincode
+              ].filter(Boolean).join(', ') || '-' }
         </td>
         <td style="font-weight: bold; width: 19%; padding: 2px 5px; vertical-align: top; font-size: 12px;">TOLL FREE NO</td>
         <td style="font-weight: bold; width: 2%; padding: 2px 5px; vertical-align: top; font-size: 12px;">:</td>
