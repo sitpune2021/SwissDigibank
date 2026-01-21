@@ -205,7 +205,7 @@
                         <div class="logo" style="width: 22%">
                             <!-- Replace src path or use base64 img -->
                             <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
-                                style=" width:200px; height:60px;">
+                                style=" width:auto; height:50px;">
                             {{-- @if($logo)
                             <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
                                 style=" width:150px; height:50px;"> --}}

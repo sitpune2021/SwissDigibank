@@ -197,13 +197,13 @@
         <div class="header">
             <!-- Logo (optional) -->
             <div style="width:100%;">
-                <div class="logo" style="width: 22%">
+                <div class="logo" style="width: 30%">
                     <!-- Replace src path or use base64 img -->
 
                     @if($logo)
                      <img src="{{ public_path('storage/' . $logo->image_path) }}"
          alt="logo"
-         style=" width:150px; height:50px;">
+         style=" width:auto; height:50px;">
                     {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
                     @else
                     {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"

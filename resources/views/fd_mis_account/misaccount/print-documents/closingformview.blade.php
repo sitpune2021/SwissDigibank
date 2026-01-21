@@ -111,7 +111,7 @@
 
             <div style="float:left; width:30%; text-align:left;">
                <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
-                                style=" width:200px; height:60px;">
+                                style=" width:auto; height:50px;">
                 {{-- @if($logo) --}}
                      
                     {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
