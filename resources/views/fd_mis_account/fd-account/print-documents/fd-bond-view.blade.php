@@ -294,7 +294,7 @@
                     @if($logo)
                      <img src="{{ asset('storage/' . $logo->image_path) }}"
          alt="logo"
-         style=" width:150px; height:50px;">
+         style=" width:auto; height:50px;">
                     {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
                     @else
                     {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"

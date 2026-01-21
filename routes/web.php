@@ -174,7 +174,9 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/dds-accounts/store', [DdsAccountsController::class, 'store'])->name('dds-accounts.store');
         Route::get('/ajax/members/{id}', [DdsAccountsController::class, 'getMemberDetails'])
             ->name('ajax.members.show');
+            
         Route::get('/dds-accounts/{id}', [DdsAccountsController::class, 'show'])->name('dds-accounts.show');
+
         Route::get('/dds-accounts/{id}/edit', [DdsAccountsController::class, 'edit'])->name('dds-accounts.edit');
         Route::post('/dds-accounts/calculate-deposit', [DdsAccountsController::class, 'calculateDeposit'])
             ->name('dds-accounts.calculate-deposit');
@@ -254,9 +256,14 @@ Route::middleware('auth.user')->group(function () {
         Route::get('ddsaccounts/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
             ->name('dd.bond.form');
 
+            
+        Route::get('ddsaccounts/opening-form-view/{id}', [DdsAccountsController::class, 'ddOpeningFormView'])
+            ->name('dd.opening-view');
         Route::get('ddsaccounts/opening-form/{id}', [DdsAccountsController::class, 'ddOpeningForm'])
             ->name('dd.opening.form');
 
+             Route::get('ddsaccounts/closing-form-view/{id}', [DdsAccountsController::class, 'ddClosingFormView'])
+            ->name('dd.closing-view');
         Route::get('ddsaccounts/closing-form/{id}', [DdsAccountsController::class, 'ddClosingForm'])
             ->name('dd.closing.form');
     });
@@ -591,7 +598,10 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
     Route::post('/rdaccount/{id}/update-setting', [RdAccountController::class, 'updateSetting'])->name('rd.updateSetting');
 
     // print documents
+    // Route::get('/rdaccount/{id}/print-bond-view', [RdAccountController::class, 'rdBondFormView'])->name('rdaccount.printbond');
+
     Route::get('/rdaccount/{id}/print-bond', [RdAccountController::class, 'rdBondForm'])->name('rdaccount.printbond');
+
     Route::get('/rdaccount/opening-form/{id}', [RdAccountController::class, 'rdOpeningForm'])->name('opening.form');
     Route::get('/rdaccount/closing-form/{id}', [RdAccountController::class, 'rdClosingForm'])->name('closing.form');
 
@@ -2445,6 +2455,9 @@ Route::get('/rd/bond/{id}', [RdAccountController::class, 'rdBondForm'])
     ->name('rd.bond.download');
 
 // // DD Bond Download
+
+Route::get('/dd/bondview/{id}', [DdsAccountsController::class, 'ddBondFormView'])
+    ->name('dd-bondView');
 Route::get('/dd/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
     ->name('dd.bond.download');
 
