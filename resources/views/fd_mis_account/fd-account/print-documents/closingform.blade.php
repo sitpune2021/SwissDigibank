@@ -101,7 +101,7 @@
             <!-- Logo -->
             <div  style="float:left; width:20%; text-align:left;">
                 <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
-                    style="width:230px; height:70px;">
+                    style="width:auto; height:50px;">
             </div>
 
             <!-- Title Section -->

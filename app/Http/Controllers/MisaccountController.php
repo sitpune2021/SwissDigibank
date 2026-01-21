@@ -1364,7 +1364,7 @@ public function misClosingFormPreview($id)
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isRemoteEnabled', true);
 
-        return $pdf->download('mis-closing-form-' . $misaccount->id . '.pdf');
+        return $pdf->download('mis-closing-form-' . $misaccount->mis_account_no . '.pdf');
     }
 
 
