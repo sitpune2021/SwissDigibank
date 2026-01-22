@@ -285,43 +285,31 @@
         <div class="sheet">
 
         <!-- Header -->
-        <div class="header">
-            <!-- Logo (optional) -->
-            <div style="width:100%;">
-                <div class="logo" style="width: 22%">
-                    <!-- Replace src path or use base64 img -->
+       <div style="width:100%; font-family: dejavusans; ">
 
-                    @if($logo)
-                     <img src="{{ asset('storage/' . $logo->image_path) }}"
-         alt="logo"
-         style=" width:auto; height:50px;">
-                    {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
-                    @else
-                    {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
-                        style="max-width:90px; max-height:90px;"> --}}
-                    @endif
-
-                </div>
-
-                <div style=" text-align:left; ">
-                    <div class="company">
-                        {{-- SBC GLOBAL --}}
-                    </div>
-                    <div class="subtitle" style="font-weight: bold;"> 
-                        {{-- DEPOSIT CONFIRMATION/ RENEWAL ADVICE --}}
-                    </div>
-                    <div class="small muted">
-                        {{-- BRANCH : {{ $company_address ?? 'Address here' }} --}}
-                    </div>
-                    <div class="small muted">
-                        {{-- DATE :{{ $date ?? 'Address here' }} --}}
-                    </div>
-                </div>
-
-                {{-- <div class="header-right"></div> --}}
-
+            <!-- Logo -->
+            <div style="float:left; width:20%; text-align:left;">
+                <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
+                    style="width:auto; height:50px;">
             </div>
-            <div class="clear"></div>
+
+            <!-- Title Section -->
+            <div style="float:left; width:80%; text-align:center;">
+                <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; ">
+                    {{-- SBC Global --}}
+                </div>
+
+                <div style="height:10px; margin-top: 40px;">&nbsp;</div>
+
+                
+            </div>
+
+            <!-- Clear Float -->
+            <div style="clear:both; "></div>
+            <h4 style=" text-align: center;   margin:0;  font-size:18px; font-weight:bold;">
+                   
+            </h4>
+
         </div>
 
         <!-- Member & Account info -->
@@ -345,7 +333,7 @@
                         {{ $fdAccount->member->member_no ?? '' }}
                     </div>
                     <div class="small"> FD NO :
-                        {{ $fdAccount->id ?? '' }}
+                        {{ $fdAccount->fd_no ?? '' }}
                     </div>
                     <div class="small"> SCHEME :
                         {{ $fdAccount->fdScheme->scheme_name ?? '' }}

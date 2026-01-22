@@ -164,7 +164,7 @@
         <div x-data="{ open: false }" class="relative inline-block">
 
             <a @click="open = !open"
-                class="btn-secondary px-2 py-2 rounded-10 flex items-center justify-between text-sm space-x-2">
+                class="btn-secondary px-2 py-2 rounded-10 flex items-center cursor-pointer justify-between text-sm space-x-2">
                 <i class="las la-print text-lg"></i><span>PRINT DOCUMENTS</span>
                 <svg class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>

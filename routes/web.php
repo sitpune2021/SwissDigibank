@@ -598,11 +598,15 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
     Route::post('/rdaccount/{id}/update-setting', [RdAccountController::class, 'updateSetting'])->name('rd.updateSetting');
 
     // print documents
-    // Route::get('/rdaccount/{id}/print-bond-view', [RdAccountController::class, 'rdBondFormView'])->name('rdaccount.printbond');
+    Route::get('/rdaccount/{id}/print-bond-view', [RdAccountController::class, 'rdBondFormView'])->name('rdaccount.printbondView');
 
     Route::get('/rdaccount/{id}/print-bond', [RdAccountController::class, 'rdBondForm'])->name('rdaccount.printbond');
 
+    Route::get('/rdaccount/opening-form-view/{id}', [RdAccountController::class, 'rdOpeningFormView'])->name('opening.form-view');
     Route::get('/rdaccount/opening-form/{id}', [RdAccountController::class, 'rdOpeningForm'])->name('opening.form');
+
+     Route::get('/rdaccount/closing-form-view/{id}', [RdAccountController::class, 'rdClosingFormView'])->name('closing.form-view');
+
     Route::get('/rdaccount/closing-form/{id}', [RdAccountController::class, 'rdClosingForm'])->name('closing.form');
 
 });
@@ -2451,6 +2455,7 @@ Route::get('/get-rd-dd-account-numbers/{type}', [PrintDocumentsController::class
     ->name('get.rd.dd.account.numbers');
 
 // // RD Bond Download
+
 Route::get('/rd/bond/{id}', [RdAccountController::class, 'rdBondForm'])
     ->name('rd.bond.download');
 

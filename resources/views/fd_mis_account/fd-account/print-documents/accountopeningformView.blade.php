@@ -128,15 +128,17 @@
 
             <!-- Logo -->
             <div style="float:left; width:30%; text-align:left;">
-                @if($logo)
-                     <img src="{{ asset('storage/' . $logo->image_path) }}"
+               <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
+                    style="width:auto; height:50px;">
+                {{-- @if($logo) --}}
+                     {{-- <img src="{{ asset('storage/' . $logo->image_path) }}"
          alt="logo"
-         style=" width:auto; height:50px;">
+         style=" width:auto; height:50px;"> --}}
                     {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
-                    @else
+                    {{-- @else --}}
                     {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
                         style="max-width:90px; max-height:90px;"> --}}
-                    @endif
+                    {{-- @endif --}}
                 {{-- <img src="{{ public_path('assets/images/SBC_Logo.jpg') }}" alt="Company Logo"
                     style="width:130px; height:130px;"> --}}
             </div>
@@ -149,13 +151,14 @@
 
                 <div style="height:10px; margin-top: 40px;">&nbsp;</div>
 
-                <h4 style="   margin:0;  font-size:18px; font-weight:bold;">
-                    Account Opening Form For FD
-                </h4>
+               
             </div>
 
             <!-- Clear Float -->
             <div style="clear:both; "></div>
+             <h4 style=" text-align: center;  margin:0;  font-size:18px; font-weight:bold;">
+                    Account Opening Form For FD
+                </h4>
 
         </div>
         <table>
