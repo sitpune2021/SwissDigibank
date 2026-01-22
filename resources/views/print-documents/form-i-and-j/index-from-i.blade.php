@@ -20,12 +20,12 @@
             
             
             <div class="mb-5  text-end">
-                <a href="{{ route('formi.pdf')}}" class="btn-warning rounded-10 uppercase py-2 px-2">
+                <a href="{{ route('from-i-view')}}" class="btn-warning rounded-10 uppercase py-2 px-2">
                     <i class="las la-print text"></i>   print Form I
                 </a>
             </div>
             <div class="mb-5  text-end">
-                <a href="{{ route('formj.download')}}" class="btn-primary rounded-10 uppercase py-2 px-2">
+                <a href="{{ route('formj.view')}}" class="btn-primary rounded-10 uppercase py-2 px-2">
                   
                    <i class="las la-print text"></i>  print Form J   
                  
@@ -33,14 +33,14 @@
                
             </div>
               <div class="mb-5  text-end">
-                <a href="{{ route('proceding-book.pdf')}}" class="btn-secondary rounded-10 uppercase py-2 px-2">
+                <a href="{{ route('proceding-book.view')}}" class="btn-secondary rounded-10 uppercase py-2 px-2">
                     <i class="las la-print text"></i>  Proceeding Book
                 </a>
             </div>
         </div>
         <div class="pb-4 overflow-x-auto lg:pb-6">
 
-            <table class="w-full whitespace-nowrap select-all-table" id="">
+            <table class="w-full  select-all-table" id="">
 
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
