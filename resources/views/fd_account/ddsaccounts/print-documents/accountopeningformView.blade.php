@@ -108,18 +108,18 @@
     </style>
 
 <div class="main-inner">
-     <h1 class="text-lg font-semibold">FD ACCOUNT - {{ $account->fd_no }}</h1>
+     <h1 class="text-lg font-semibold">DD ACCOUNT - {{ $account->dd_no }}</h1>
 <div class="text-center flex justify-center gap-5 mt-4" >
-     <a href="{{ route('fd.opening.form', $account->id) }}"
+     <a href="{{ route('dd.opening.form', $account->id) }}"
    class="px-4 py-2 btn-primary uppercase"
    target="_blank">
    <i class="las la-download"></i> Download
 </a>
- <a href="{{ route('fd-mis-schemes.fd_show', $account->id) }}"
+ {{-- <a href="{{ route('fd-mis-schemes.fd_show', $account->id) }}"
    class="px-4 py-2 btn-outline uppercase"
    target="_self">
    BACk
-</a>
+</a> --}}
 </div>
     <div class="box mt-5">
         <div class="form-container">
@@ -128,12 +128,11 @@
 
             <!-- Logo -->
             <div style="float:left; width:30%; text-align:left;">
-               <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
-                    style="width:auto; height:50px;">
-                {{-- @if($logo) --}}
-                     {{-- <img src="{{ asset('storage/' . $logo->image_path) }}"
+                 <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}"
          alt="logo"
-         style=" width:auto; height:50px;"> --}}
+         style=" width:auto; height:50px;">
+                {{-- @if($logo)
+                     --}}
                     {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
                     {{-- @else --}}
                     {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
@@ -151,13 +150,13 @@
 
                 <div style="height:10px; margin-top: 40px;">&nbsp;</div>
 
-               
             </div>
 
             <!-- Clear Float -->
             <div style="clear:both; "></div>
-             <h4 style=" text-align: center;  margin:0;  font-size:18px; font-weight:bold;">
-                    Account Opening Form For FD
+            
+                <h4 style=" text-align: center;  margin:0;  font-size:18px; font-weight:bold;">
+                Account Opening Form For DD
                 </h4>
 
         </div>
@@ -169,7 +168,7 @@
                 <td style="width: 25%; padding-left: 20px;">Account No : </td>
                 <td style=" border: 1px solid #000; width: 25%">
 
-                    {{ $account->fd_no }}
+                    {{ $account->dd_no }}
                 </td>
             </tr>
         </table>
@@ -186,7 +185,7 @@
                 </td>
                 <td>
                     <label style="float:left;">
-                        <input type="checkbox" style="width:24px; height:24px;">
+                        <input type="checkbox" style="width:24px; height:24px;" checked>
 
                     </label>
                     <p style="float:left; margin-left:10px;">DD</p>
@@ -194,7 +193,7 @@
                 </td>
                 <td>
                     <label style="float:left;">
-                        <input type="checkbox" style="width:24px; height:24px;" checked>
+                        <input type="checkbox" style="width:24px; height:24px;" >
 
                     </label>
                     <p style="float:left; margin-left:10px;"> FD</p>
@@ -225,7 +224,7 @@
             </p>
 
             <p style="float: left;  border: 1px solid #000; padding: 2px 6px; min-width: 200px; margin-right: 16px;">
-                {{ $account->fdscheme->scheme_name ?? '' }}
+            {{$account->scheme->scheme_name ??''}} 
             </p>
 
             <!-- Interest Rate -->
@@ -235,7 +234,7 @@
 
             <p
                 style="float: left; text-align: center; border: 1px solid #000; padding: 2px 6px; min-width: 60px; margin-right: 16px;">
-                {{ $interestRate ?? '' }}
+              {{$account->scheme->anuual_interest_rate??''}} 
             </p>
 
             <!-- Date -->
@@ -377,37 +376,12 @@
          
   <div style="width: 100%; font-size: 12px;">
           <table style="width:100%; font-size:12px; border-collapse:collapse; margin-top:10px;">
-  <tr>
-
-    <td style="width:16.66%; font-weight:700;">
-      Nominee :
-    </td>
-    <td style="width:16.66%;">
-      {{-- Nominee Name --}}
-    </td>
-
-    <td style="width:16.66%; font-weight:700; text-align:right;">
-      Relationship :
-    </td>
-    <td style="width:16.66%;">
-      {{-- Relationship --}}
-    </td>
-
-    <td style="width:16.66%; font-weight:700; text-align:right;">
-      Address :
-    </td>
-    <td style="width:16.66%;">
-      {{-- Nominee Address --}}
-    </td>
-
-  </tr>
+ 
 </table>
 
 
         </div>
-        <div style="margin-top: 25px;">
-            (In case Nominee Is Minor) Guardian Name  : 
-        </div>
+        
 
 
         <p class="section-title">Mode of Operations</p>
@@ -569,7 +543,7 @@
 
             <!-- Interest Rate -->
             <p style="float: left; margin-right: 8px; margin-top:3px;  font-size: 14px;">
-               Term of RD:
+               Term of DD:
 
             </p>
 
@@ -658,16 +632,8 @@
             are opening an account under
              {{-- SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED--}}
              {{-- bank name --}}
-            - {{ strtoupper($account->fdscheme->scheme_name ?? '') }} scheme, the rules related to which/ we have
-            read and understood and accept the rules
-            of the scheme and agree to abide by any future amendments/ changes in the scheme. I/ We hereby declare
-            that the amount deposited here with is not out of any funds acquired by me/ us borrowing or accepting
-            deposits from any other person. I/We declare that I/We are reside in India and am /are not depositing this
-            amount as nominee(s) of any non resident. I/We declare that the forth named depositor should be treated
-            as the pay purpose of deduction of tax under section 194A of the Income Tax Act, 1961. I/We have gone
-            through the financial and other declarations furnished by company and after careful consideration I/ We am
-            are making the deposit with the company at my/ our own risk and volition.
-        </div>
+            - {{ strtoupper(  $account->scheme->scheme_name  ?? '') }} scheme, the rules related to which/ we have read and understood and accept the rules of the scheme and agree to abide by any future amendments/ changes in the scheme. I/ We hereby declare that the amount deposited here with is not out of any funds acquired by me/us borrowing or accepting deposits from any other person. I/We declare that I/We are reside in India and am /are not depositing this amount as nominee(s) of any non resident. I/We declare that the forth named depositor should be treated as the pay purpose of deduction of tax under section 194A of the Income Tax Act, 1961. I/We have gone through the financial and other declarations furnished by company and after careful consideration I/ We am are making the deposit with the company at my/ our own risk and volition.
+          </div>
 
         <div class="footer" style="width:100%;  font-size:12px;">
 
@@ -714,7 +680,7 @@
   <!-- Row 2 -->
   <div style="width:100%; margin-bottom:12px;">
     <div style="float:left; width:60%; font-size: 12px; font-weight: 600;">
-      Deposit / Account No : {{ $account->fd_no ?? '' }}
+      Deposit / Account No : {{ $account->dd_no ?? '' }}
     </div>
 
     <div style="float:left; width:40%;font-size: 12px; font-weight: 600;">

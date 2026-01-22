@@ -1,130 +1,165 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <title>FD Closing Form - SHRI SAMARTH NAGRI</title>
-    <style>
-        @page {
-            size: A4;
-            margin: 10mm 15mm;
-        }
-
+@extends('layout.main')
+@section('content')
+<style>
         body {
-            font-family: DejaVu Sans, sans-serif;
-            font-size: 12px;
-            color: #111;
-            line-height: 1.4;
+            font-family: Arial, sans-serif;
+            background: #f8f8f8;
             margin: 0;
-            padding: 0;
+            padding: 8px;
         }
 
-        .container {
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .title {
-            text-align: center;
-            font-weight: bold;
-            font-size: 16px;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-
-        .address {
-            text-align: center;
-            font-size: 11px;
+        .form-container {
+            background: #fff;
+            max-width: 800px;
+            margin: auto;
+            padding: 15px 25px;
+            font-size: 13px;
+            /* slightly smaller text */
             line-height: 1.3;
-            margin-bottom: 15px;
         }
 
-        .subtitle {
+        .header {
             text-align: center;
+        }
+
+        .letterhead {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+            margin-bottom: 8px;
+        }
+
+        .logo {
+            width: 100px;
+            text-align: center;
+        }
+
+        .logo img {
+            width: 100%;
+            height: auto;
+        }
+
+        hr {
+            margin: 10px 0;
+            border: 1px solid #ccc;
+        }
+
+        .section-title {
             font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 15px;
+            margin: 8px 0 3px;
             text-decoration: underline;
         }
 
-        /* .section { margin-bottom: 12px; } */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
 
-        p {
-            margin: 2px 0;
+        .row label {
+            flex: 1;
+            font-size: 13px;
+            padding: 1px 0;
+        }
+
+
+        .declaration {
+            font-size: 12px;
+            margin: 10px 0;
+            line-height: 1.3;
+            text-align: justify;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12x;
+        }
+
+        .signature {
+            text-align: right;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+
+
+        .office-use {
+            border-top: 1px dashed #000;
+            margin-top: 20px;
+            padding-top: 10px;
+            font-size: 13px;
+
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 5px;
-            font-size: 12px;
+            table-layout: fixed;
+            margin-top: 10px;
         }
 
         td {
-            padding: 4px 0;
-            vertical-align: top;
-        }
-
-        .signatures td {
-            text-align: center;
-            padding-top: 25px;
-        }
-
-        .instructions {
-            margin-top: 25px;
-            font-size: 11px;
-            border-top: 1px solid #000;
-            padding-top: 10px;
-        }
-
-        .instruction-title {
-            font-weight: bold;
-            text-decoration: underline;
-            margin-bottom: 5px;
-        }
-
-        .right {
-            text-align: right;
-        }
-
-        .bold {
-            font-weight: bold;
+            padding: 4px;
         }
     </style>
-</head>
 
-<body>
-    <div class="container">
+<div class="main-inner">
+     <h1 class="text-lg font-semibold">RD ACCOUNT - {{ $rdAccount->rd_no }}</h1>
+<div class="text-center flex justify-center gap-5 mt-4" >
+     <a href="{{ route('closing.form', $rdAccount->id) }}"
+   class="px-4 py-2 btn-primary uppercase"
+   target="_blank">
+   <i class="las la-download"></i> Download
+</a>
+ <a href="
+ {{ route('rd-accounts.show', $rdAccount->id) }}
+  "
+   class="px-4 py-2 btn-outline uppercase"
+   target="_self">
+   BACK
+</a>
+</div>
+    <div class="box mt-5">
+        <div class="container">
 
-     <div class="header" style="padding : 10px 0px ; border-bottom:  1px solid black; ">
-            <!-- Logo (optional) -->
-            <div style="width:100%; font-family: dejavusans; ">
+       <div style="width:100%; font-family: dejavusans; border-bottom: 1px solid #000 ; ">
 
             <!-- Logo -->
-            <div style="float:left; width:50%; padding: 0px 5px; text-align:left;">
-                <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
-                    style="width:auto; height:50px;">
+
+            <div style="float:left; width:30%; text-align:left;">
+               <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
+                                style=" width:auto; height:50px;">
+                {{-- @if($logo) --}}
+                     
+                    {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
+                    {{-- @else --}}
+                    {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
+                        style="max-width:90px; max-height:90px;"> --}}
+                    {{-- @endif --}}
+                {{-- <img src="{{ public_path('assets/images/SBC_Logo.jpg') }}" alt="Company Logo"
+                    style="width:130px; height:130px;"> --}}
             </div>
 
             <!-- Title Section -->
-            <div style="float:left; width:50%; text-align:center;">
+            <div style="float:left; width:70%; text-align:center;">
                 <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; ">
                     {{-- SBC Global --}}
                 </div>
 
-                <div style="height:10px; margin-top: 40px;">&nbsp;</div>
+                <div style="height:10px; ">&nbsp;</div>
 
-
+              
             </div>
-
+ 
             <!-- Clear Float -->
             <div style="clear:both; "></div>
-            <h4 style="   margin:0; text-align: center;  font-size:18px; font-weight:bold;">
-               Issue of Discharge Form for End of Term/ Pre-Maturity
-
-            </h4>
-        </div>
-            <div style="clear:both; "></div>
+ <h4 style="text-align: center; font-size:18px; font-weight:bold;">
+             Issue of Discharge Form for End of Term/ Pre-Maturity
+                </h4>
         </div>
         <!-- <div class="title">
             <table style="width:100%; border-collapse:collapse; border-bottom: 1px solid #000;">
@@ -167,10 +202,10 @@
             </table>
         </div>
 
-        <div class="section" style="font-size: 14px;">
+        <div class="section">
             <p>Entered By:</p>
             <p>Agreement No: <strong>{{ $agreement_no }}</strong> &nbsp;&nbsp;&nbsp; Holder Name:
-                <strong>{{ $holder_name }}</strong> <br> Exp. Date: <strong>{{ $expiry_date }}</strong>
+                <strong>{{ $holder_name }}</strong> &nbsp;&nbsp;&nbsp; Exp. Date: <strong>{{ $expiry_date }}</strong>
             </p>
             <p> The joint venture/ assignee of the above mentioned case down payment certificate do hereby acknowledge
                 receipt from the of sum specified below in full and final satisfaction and discharge/loan of all my
@@ -178,7 +213,7 @@
                 demands under above certificate as per particulars given below :-</p>
         </div>
 
-        <table style="width:100%; border-collapse:collapse; border-spacing:0; font-size:12px; line-height:1;">
+        <table style="width:100%; border-collapse:collapse; border-spacing:0; font-size:12px; line-height:0.5;">
             <tr>
                 <td>TOTAL RECEIVED AMOUNT</td>
                 <td>
@@ -251,21 +286,21 @@
             style="margin-top: 12px; width:100%; border-collapse:collapse; border-spacing:0; font-size:12px; line-height:0.8; padding-bottom:8px ;">
             <tr>
                 <td style="width: 60%">
-                    <p style="text-align: left; font-size: 14px;">The said Welfare case down payment is hereby delivered up to the
+                    <p style="text-align: left;">The said Welfare case down payment is hereby delivered up to the
                         company for cancellation.</p>
                 </td>
                 <td style="width: 40% ; text-align: center; font-weight: bold; vertical-align:middle;">FULL SIGNATURE
                 </td>
             </tr>
             <tr>
-                <td style=" font-size: 14px;">Dated as this day of: {{ $date }}</td>
+                <td>Dated as this day of: {{ $date }}</td>
             </tr>
             <tr>
-                <td style=" font-size: 14px;"> <strong>Customer Signature</strong></td>
+                <td> <strong>Customer Signature</strong></td>
             </tr>
             <tr>
                 <td style="width: 60%; line-height: 1;">
-                    <p style="text-align: left; font-size: 14px;"> Witness:<br>
+                    <p style="text-align: left; "> Witness:<br>
                         1._________<br>
                         2._________<br>
                         3._________<br><br></p>
@@ -281,7 +316,7 @@
             </tr>
         </table>
 
-        <div class="" style="border-top: 1px solid #000; line-height: 1; margin-bottom: 25px;">
+        <div class="" style="border-top: 1px solid #000; margin-bottom: 25px;">
             <div class="" style="text-align: center; font-size: 14px;">INSTRUCTION</div>
             <p style="font-size: 14px;">1. Signature in vernacular must have their English translation written beneath. Illiterate persons must
                 affix their
@@ -297,7 +332,8 @@
             {{-- SBC GLOBAL TOWAR , KESHAV NAAR CHOWK NEAR JANORKAR MARRAIGE HALL RING ROAD AKOLA Maharashtra - 444001 --}}
         </div>
 
-    </div>
-</body>
+    </div> </div>
 
-</html>
+
+</div>
+    @endsection

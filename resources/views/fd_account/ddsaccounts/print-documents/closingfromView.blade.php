@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <title>FD Closing Form - SHRI SAMARTH NAGRI</title>
-    <style>
+@extends('layout.main')
+@section('content')
+<style>
         @page {
             size: A4;
             margin: 10mm 15mm;
@@ -91,18 +87,32 @@
             font-weight: bold;
         }
     </style>
-</head>
 
-<body>
-    <div class="container">
-
-     <div class="header" style="padding : 10px 0px ; border-bottom:  1px solid black; ">
-            <!-- Logo (optional) -->
-            <div style="width:100%; font-family: dejavusans; ">
+<div class="main-inner">
+     <h1 class="text-lg font-semibold">DDS ACCOUNT - {{ $ddAccount->dd_no }}</h1>
+<div class="text-center flex justify-center gap-5 mt-4" >
+     <a href="{{ route('dd.closing.form', $ddAccount->id) }}"
+   class="px-4 py-2 btn-primary uppercase"
+   target="_blank">
+   <i class="las la-download"></i> Download
+</a>
+ {{-- <a href="
+ {{ route('dds-accounts.show', $ddAccount->id) }}
+  "
+   class="px-4 py-2 btn-outline uppercase"
+   target="_self">
+   BACK
+</a> --}}
+</div>
+   <div class="box mt-5">
+     <div class="container">
+ <div class="header" style="padding : 10px 0px ; border-bottom:  1px solid black; ">
+    <div style="width:100%; font-family: dejavusans; ">
 
             <!-- Logo -->
+            
             <div style="float:left; width:50%; padding: 0px 5px; text-align:left;">
-                <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
+                <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
                     style="width:auto; height:50px;">
             </div>
 
@@ -121,11 +131,9 @@
             <div style="clear:both; "></div>
             <h4 style="   margin:0; text-align: center;  font-size:18px; font-weight:bold;">
                Issue of Discharge Form for End of Term/ Pre-Maturity
-
             </h4>
         </div>
-            <div style="clear:both; "></div>
-        </div>
+   </div>     
         <!-- <div class="title">
             <table style="width:100%; border-collapse:collapse; border-bottom: 1px solid #000;">
                 <tr>
@@ -167,10 +175,10 @@
             </table>
         </div>
 
-        <div class="section" style="font-size: 14px;">
+        <div class="section">
             <p>Entered By:</p>
             <p>Agreement No: <strong>{{ $agreement_no }}</strong> &nbsp;&nbsp;&nbsp; Holder Name:
-                <strong>{{ $holder_name }}</strong> <br> Exp. Date: <strong>{{ $expiry_date }}</strong>
+                <strong>{{ $holder_name }}</strong> &nbsp;&nbsp;&nbsp; Exp. Date: <strong>{{ $expiry_date }}</strong>
             </p>
             <p> The joint venture/ assignee of the above mentioned case down payment certificate do hereby acknowledge
                 receipt from the of sum specified below in full and final satisfaction and discharge/loan of all my
@@ -178,7 +186,7 @@
                 demands under above certificate as per particulars given below :-</p>
         </div>
 
-        <table style="width:100%; border-collapse:collapse; border-spacing:0; font-size:12px; line-height:1;">
+        <table style="width:100%; border-collapse:collapse; border-spacing:0; font-size:12px; line-height:0.5;">
             <tr>
                 <td>TOTAL RECEIVED AMOUNT</td>
                 <td>
@@ -251,21 +259,21 @@
             style="margin-top: 12px; width:100%; border-collapse:collapse; border-spacing:0; font-size:12px; line-height:0.8; padding-bottom:8px ;">
             <tr>
                 <td style="width: 60%">
-                    <p style="text-align: left; font-size: 14px;">The said Welfare case down payment is hereby delivered up to the
+                    <p style="text-align: left;">The said Welfare case down payment is hereby delivered up to the
                         company for cancellation.</p>
                 </td>
                 <td style="width: 40% ; text-align: center; font-weight: bold; vertical-align:middle;">FULL SIGNATURE
                 </td>
             </tr>
             <tr>
-                <td style=" font-size: 14px;">Dated as this day of: {{ $date }}</td>
+                <td>Dated as this day of: {{ $date }}</td>
             </tr>
             <tr>
-                <td style=" font-size: 14px;"> <strong>Customer Signature</strong></td>
+                <td> <strong>Customer Signature</strong></td>
             </tr>
             <tr>
                 <td style="width: 60%; line-height: 1;">
-                    <p style="text-align: left; font-size: 14px;"> Witness:<br>
+                    <p style="text-align: left; "> Witness:<br>
                         1._________<br>
                         2._________<br>
                         3._________<br><br></p>
@@ -281,7 +289,7 @@
             </tr>
         </table>
 
-        <div class="" style="border-top: 1px solid #000; line-height: 1; margin-bottom: 25px;">
+        <div class="" style="border-top: 1px solid #000; margin-bottom: 25px;">
             <div class="" style="text-align: center; font-size: 14px;">INSTRUCTION</div>
             <p style="font-size: 14px;">1. Signature in vernacular must have their English translation written beneath. Illiterate persons must
                 affix their
@@ -298,6 +306,7 @@
         </div>
 
     </div>
-</body>
+   </div>
 
-</html>
+</div>
+    @endsection

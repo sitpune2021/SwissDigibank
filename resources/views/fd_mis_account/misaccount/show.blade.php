@@ -173,7 +173,7 @@
 
 
      <div class="relative inline-block text-left">
-      <a id="dropdownButton" class="flex items-center text-sm px-2 py-2  rounded-10 btn-secondary text-white">
+      <a id="dropdownButton" class="flex cursor-pointer items-center text-sm px-2 py-2  rounded-10 btn-secondary text-white">
         <i class="las la-print mr-2"></i>
         PRINT DOCUMENTS
         <i id="dropdownArrows" class="las la-angle-down ml-2"></i>

@@ -198,17 +198,19 @@
             <!-- Logo (optional) -->
             <div style="width:100%;">
                 <div class="logo" style="width: 30%">
+                    <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
+                    style="width:auto; height:50px;">
                     <!-- Replace src path or use base64 img -->
 
-                    @if($logo)
+                    {{-- @if($logo)
                      <img src="{{ public_path('storage/' . $logo->image_path) }}"
          alt="logo"
-         style=" width:auto; height:50px;">
+         style=" width:auto; height:50px;"> --}}
                     {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
-                    @else
+                    {{-- @else --}}
                     {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
                         style="max-width:90px; max-height:90px;"> --}}
-                    @endif
+                    {{-- @endif --}}
 
                 </div>
 
@@ -254,7 +256,7 @@
                         {{ $fdAccount->member->member_no ?? '' }}
                     </div>
                     <div class="small"> FD NO :
-                        {{ $fdAccount->id ?? '' }}
+                        {{ $fdAccount->fd_no ?? '' }}
                     </div>
                     <div class="small"> SCHEME :
                         {{ $fdAccount->fdScheme->scheme_name ?? '' }}

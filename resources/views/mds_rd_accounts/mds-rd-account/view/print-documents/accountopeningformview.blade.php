@@ -108,32 +108,32 @@
     </style>
 
 <div class="main-inner">
-     <h1 class="text-lg font-semibold">FD ACCOUNT - {{ $account->fd_no }}</h1>
+     <h1 class="text-lg font-semibold">RD ACCOUNT - {{ $account->rd_no }}</h1>
 <div class="text-center flex justify-center gap-5 mt-4" >
-     <a href="{{ route('fd.opening.form', $account->id) }}"
+     <a href="{{ route('opening.form', $account->id) }}"
    class="px-4 py-2 btn-primary uppercase"
    target="_blank">
    <i class="las la-download"></i> Download
 </a>
- <a href="{{ route('fd-mis-schemes.fd_show', $account->id) }}"
+ <a href="
+ {{ route('rd-accounts.show', $account->id) }}
+  "
    class="px-4 py-2 btn-outline uppercase"
    target="_self">
-   BACk
+   BACK
 </a>
 </div>
     <div class="box mt-5">
-        <div class="form-container">
-
-        <div style="width:100%; font-family: dejavusans; border-bottom: 2px solid #000 ; padding: 5px;">
+         <div class="form-container">
+        <div style="width:100%; font-family: dejavusans; border-bottom: 1px solid #000 ; ">
 
             <!-- Logo -->
+
             <div style="float:left; width:30%; text-align:left;">
-               <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
-                    style="width:auto; height:50px;">
+               <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
+                                style=" width:auto; height:50px;">
                 {{-- @if($logo) --}}
-                     {{-- <img src="{{ asset('storage/' . $logo->image_path) }}"
-         alt="logo"
-         style=" width:auto; height:50px;"> --}}
+                     
                     {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
                     {{-- @else --}}
                     {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
@@ -149,35 +149,37 @@
                     {{-- SBC Global --}}
                 </div>
 
-                <div style="height:10px; margin-top: 40px;">&nbsp;</div>
+                <div style="height:10px; ">&nbsp;</div>
 
-               
+              
             </div>
-
+ 
             <!-- Clear Float -->
             <div style="clear:both; "></div>
-             <h4 style=" text-align: center;  margin:0;  font-size:18px; font-weight:bold;">
-                    Account Opening Form For FD
+ <h4 style="text-align: center; font-size:18px; font-weight:bold;">
+            Account Opening Form For RD
                 </h4>
-
         </div>
-        <table>
+       <table>
             <tr>
                 <td style="width: 25%; ">Member Folio No :</td>
-                <td style=" border: 1px solid #000; width: 25%;  ">{{$account->members->member_no??''}}</td>
+                <td style=" border: 1px solid #000; width: 25%;  ">
+                    {{-- {{$account->members->member_no??''}} --}}
+
+                </td>
                 <td colspan="2"></td>
                 <td style="width: 25%; padding-left: 20px;">Account No : </td>
                 <td style=" border: 1px solid #000; width: 25%">
 
-                    {{ $account->fd_no }}
+                    {{ $account->rd_no }}
                 </td>
             </tr>
         </table>
-        <table>
+         <table>
             <tr>
                 <td>
                     <label style="float:left;">
-                        <input type="checkbox" style="width:24px; height:24px;">
+                        <input type="checkbox" style="width:24px; height:24px;" checked>
                     </label>
 
                     <p style="float:left; margin-left:10px;">RD</p>
@@ -186,7 +188,7 @@
                 </td>
                 <td>
                     <label style="float:left;">
-                        <input type="checkbox" style="width:24px; height:24px;">
+                        <input type="checkbox" style="width:24px; height:24px;" >
 
                     </label>
                     <p style="float:left; margin-left:10px;">DD</p>
@@ -194,7 +196,7 @@
                 </td>
                 <td>
                     <label style="float:left;">
-                        <input type="checkbox" style="width:24px; height:24px;" checked>
+                        <input type="checkbox" style="width:24px; height:24px;" >
 
                     </label>
                     <p style="float:left; margin-left:10px;"> FD</p>
@@ -216,7 +218,6 @@
                 </td>
             </tr>
         </table>
-
         <div style="width: 100%; font-size: 12px; margin-top: 12px;">
 
             <!-- Scheme Name -->
@@ -225,7 +226,7 @@
             </p>
 
             <p style="float: left;  border: 1px solid #000; padding: 2px 6px; min-width: 200px; margin-right: 16px;">
-                {{ $account->fdscheme->scheme_name ?? '' }}
+            {{$account->scheme->scheme_name ??''}} 
             </p>
 
             <!-- Interest Rate -->
@@ -235,7 +236,7 @@
 
             <p
                 style="float: left; text-align: center; border: 1px solid #000; padding: 2px 6px; min-width: 60px; margin-right: 16px;">
-                {{ $interestRate ?? '' }}
+              {{$account->scheme->anuual_interest_rate??''}} 
             </p>
 
             <!-- Date -->
@@ -253,9 +254,7 @@
             <div style="clear: both;"></div>
 
         </div>
-
-
-        <p class="section-title" style="">Details of Applicants</p>
+        <p class="section-title">Details of Applicants</p>
         <div style="width: 100%; font-size: 12px;">
 
             <!-- Name -->
@@ -264,7 +263,7 @@
             </p>
 
             <p style="float: left; margin-right: 16px; width: 30%;">
-                {{ $account->member->member_info_title ?? '' }}.
+                {{-- {{ $account->member->member_info_title ?? '' }}. --}}
                 {{ $account->member->member_info_first_name ?? '' }}
                 {{ $account->member->member_info_middle_name ?? '' }}
                 {{ $account->member->member_info_last_name ?? '' }}
@@ -295,9 +294,7 @@
             <div style="clear: both;"></div>
 
         </div>
-
-
-
+       
         <table style="">
             <tr>
                 <td>PAN No :</td>
@@ -374,202 +371,95 @@
 
 </table>
 
-         
-  <div style="width: 100%; font-size: 12px;">
-          <table style="width:100%; font-size:12px; border-collapse:collapse; margin-top:10px;">
-  <tr>
-
-    <td style="width:16.66%; font-weight:700;">
-      Nominee :
-    </td>
-    <td style="width:16.66%;">
-      {{-- Nominee Name --}}
-    </td>
-
-    <td style="width:16.66%; font-weight:700; text-align:right;">
-      Relationship :
-    </td>
-    <td style="width:16.66%;">
-      {{-- Relationship --}}
-    </td>
-
-    <td style="width:16.66%; font-weight:700; text-align:right;">
-      Address :
-    </td>
-    <td style="width:16.66%;">
-      {{-- Nominee Address --}}
-    </td>
-
-  </tr>
-</table>
-
-
-        </div>
-        <div style="margin-top: 25px;">
-            (In case Nominee Is Minor) Guardian Name  : 
-        </div>
-
-
         <p class="section-title">Mode of Operations</p>
-     <table style="width:100%; border-collapse:collapse;">
-  <tr>
-
-    <!-- Self -->
-    <td style="width:33.33%; vertical-align:top;">
-      <div style="width:100%;">
-        <div style="float:left; width:25%;">
-          <input type="checkbox"
-            style="width:18px; height:18px;"
-            {{ $account->account_type == 'single' ? 'checked' : '' }}>
-        </div>
-        <div style="float:left; width:75%; padding-top:2px;">
-          : Self
-        </div>
-        <div style="clear:both;"></div>
-      </div>
-    </td>
-
-    <!-- Joint -->
-    <td style="width:33.33%; vertical-align:top;">
-      <div style="width:100%;">
-        <div style="float:left; width:25%;">
-          <input type="checkbox"
-            style="width:18px; height:18px;"
-            {{ $account->account_type == 'joint' ? 'checked' : '' }}>
-        </div>
-        <div style="float:left; width:75%; padding-top:2px;">
-          : Jointly
-        </div>
-        <div style="clear:both;"></div>
-      </div>
-    </td>
-
-    <!-- Either -->
-    <td style="width:33.33%; vertical-align:top;">
-      <div style="width:100%;">
-        <div style="float:left; width:25%;">
-          <input type="checkbox"
-            style="width:18px; height:18px;"
-            {{ $account->account_type == 'either' ? 'checked' : '' }}>
-        </div>
-        <div style="float:left; width:75%; padding-top:2px;">
-          : Either of Survivor
-        </div>
-        <div style="clear:both;"></div>
-      </div>
-    </td>
-
-  </tr>
-</table>
-
-        {{-- <table>
+        <table>
             <tr>
                 <td>
                     <label style="display:flex; align-items:center;">
-                        <input type="checkbox" style="width: 20px; height: 20px;" {{ $account->account_type == 'single'
-                        ? 'checked' : '' }}> : Self
+                        <input
+                            type="checkbox"
+                            style="width: 20px; height: 20px;"
+                            {{ $account->account_type == 'single' ? 'checked' : '' }}> : Self
                     </label>
                 </td>
 
                 <td>
                     <label style="display:flex; align-items:center;">
-                        <input type="checkbox" style="width: 20px; height: 20px;" {{ $account->account_type == 'joint' ?
-                        'checked' : '' }}> : Jointly
+                        <input
+                            type="checkbox"
+                            style="width: 20px; height: 20px;"
+                            {{ $account->account_type == 'joint' ? 'checked' : '' }}> : Jointly
                     </label>
                 </td>
 
                 <td>
                     <label style="display:flex; align-items:center;">
-                        <input type="checkbox" style="width: 20px; height: 20px;" {{ $account->account_type == 'either'
-                        ? 'checked' : '' }}> : Either of Survivor
+                        <input
+                            type="checkbox"
+                            style="width: 20px; height: 20px;"
+                            {{ $account->account_type == 'either' ? 'checked' : '' }}> : Either of Survivor
                     </label>
                 </td>
             </tr>
-        </table> --}}
+        </table>
 
 
         <p class="section-title">Interest Payout</p>
-        <table style="width:100%; border-collapse:collapse;">
-  <tr>
+        <table>
+            <tr>
+                <td>
+                    <label style="display:flex; align-items:center;">
+                        <input
+                            type="checkbox"
+                            style="width: 20px; height: 20px;"
+                            {{ $account->scheme->interest_compounding_interval == 'monthly' ? 'checked' : '' }}> : Monthly
+                    </label>
+                </td>
 
-    <!-- Monthly -->
-    <td style="width:20%; vertical-align:top;">
-      <div style="width:100%;">
-        <div style="float:left; width:25%;">
-          <input type="checkbox" style="width:18px; height:18px;"
-            {{ $account->interest_payout_type == 'monthly' ? 'checked' : '' }}>
-        </div>
-        <div style="float:left; width:75%; padding-top:2px;">
-          : Monthly
-        </div>
-        <div style="clear:both;"></div>
-      </div>
-    </td>
+                <td>
+                    <label style="display:flex; align-items:center;">
+                        <input
+                            type="checkbox"
+                            style="width: 20px; height: 20px;"
+                            {{ $account->scheme->interest_compounding_interval == 'Quarterly' ? 'checked' : '' }}> : Quarterly
+                    </label>
+                </td>
 
-    <!-- Quarterly -->
-    <td style="width:20%; vertical-align:top;">
-      <div style="width:100%;">
-        <div style="float:left; width:25%;">
-          <input type="checkbox" style="width:18px; height:18px;"
-            {{ $account->interest_payout_type == 'Quarterly' ? 'checked' : '' }}>
-        </div>
-        <div style="float:left; width:75%; padding-top:2px;">
-          : Quarterly
-        </div>
-        <div style="clear:both;"></div>
-      </div>
-    </td>
+                <td>
+                    <label style="display:flex; align-items:center;">
+                        <input
+                            type="checkbox"
+                            style="width: 20px; height: 20px;"
+                            {{ $account->scheme->interest_compounding_interval == 'Half Yearly' ? 'checked' : '' }}> : Half Yearly
+                    </label>
+                </td>
 
-    <!-- Half Yearly -->
-    <td style="width:20%; vertical-align:top;">
-      <div style="width:100%;">
-        <div style="float:left; width:25%;">
-          <input type="checkbox" style="width:18px; height:18px;"
-            {{ $account->interest_payout_type == 'Half Yearly' ? 'checked' : '' }}>
-        </div>
-        <div style="float:left; width:75%; padding-top:2px;">
-          : Half Yearly
-        </div>
-        <div style="clear:both;"></div>
-      </div>
-    </td>
+                <td>
+                    <label style="display:flex; align-items:center;">
+                        <input
+                            type="checkbox"
+                            style="width: 20px; height: 20px;"
+                            {{ $account->scheme->interest_compounding_interval == 'Yearly' ? 'checked' : '' }}> : Yearly
+                    </label>
+                </td>
 
-    <!-- Yearly -->
-    <td style="width:20%; vertical-align:top;">
-      <div style="width:100%;">
-        <div style="float:left; width:25%;">
-          <input type="checkbox" style="width:18px; height:18px;"
-            {{ $account->interest_payout_type == 'Yearly' ? 'checked' : '' }}>
-        </div>
-        <div style="float:left; width:75%; padding-top:2px;">
-          : Yearly
-        </div>
-        <div style="clear:both;"></div>
-      </div>
-    </td>
+                <td>
+                    <label style="display:flex; align-items:center;">
+                        <input
+                            type="checkbox"
+                            style="width: 20px; height: 20px;"
+                            {{ !in_array($account->scheme->interest_compounding_interval, ['monthly', 'Quarterly', 'Half Yearly', 'Yearly']) ? 'checked' : '' }}> : End of Term
+                    </label>
+                </td>
+            </tr>
+        </table>
 
-    <!-- End of Term -->
-    <td style="width:20%; vertical-align:top;">
-      <div style="width:100%;">
-        <div style="float:left; width:25%;">
-          <input type="checkbox" style="width:18px; height:18px;"
-            {{ !in_array($account->interest_payout_type, ['monthly','Quarterly','Half Yearly','Yearly']) ? 'checked' : '' }}>
-        </div>
-        <div style="float:left; width:75%; padding-top:2px;">
-          : End of Term
-        </div>
-        <div style="clear:both;"></div>
-      </div>
-    </td>
-
-  </tr>
-</table>
 <div style="width: 100%; font-size: 12px; margin-top: 12px;">
 
 
             <!-- Interest Rate -->
             <p style="float: left; margin-right: 8px; margin-top:3px;  font-size: 14px;">
-               Term of RD:
+               Term of DD:
 
             </p>
 
@@ -609,130 +499,42 @@
             <div style="clear: both;"></div>
 
         </div>
-
-        {{-- <table>
-            <tr>
-                <td>
-                    <label style="display:flex; align-items:center;">
-                        <input type="checkbox" style="width: 20px; height: 20px;" {{ $account->interest_payout_type ==
-                        'monthly' ? 'checked' : '' }}> : Monthly
-                    </label>
-                </td>
-
-                <td>
-                    <label style="display:flex; align-items:center;">
-                        <input type="checkbox" style="width: 20px; height: 20px;" {{ $account->interest_payout_type ==
-                        'Quarterly' ? 'checked' : '' }}> : Quarterly
-                    </label>
-                </td>
-
-                <td>
-                    <label style="display:flex; align-items:center;">
-                        <input type="checkbox" style="width: 20px; height: 20px;" {{ $account->interest_payout_type ==
-                        'Half Yearly' ? 'checked' : '' }}> : Half Yearly
-                    </label>
-                </td>
-
-                <td>
-                    <label style="display:flex; align-items:center;">
-                        <input type="checkbox" style="width: 20px; height: 20px;" {{ $account->interest_payout_type ==
-                        'Yearly' ? 'checked' : '' }}> : Yearly
-                    </label>
-                </td>
-
-                <td>
-                    <label style="display:flex; align-items:center;">
-                        <input type="checkbox" style="width: 20px; height: 20px;" {{
-                            !in_array($account->interest_payout_type, ['monthly', 'Quarterly', 'Half Yearly', 'Yearly'])
-                        ? 'checked' : '' }}> : End of Term
-                    </label>
-                </td>
-            </tr>
-        </table> --}}
-
-
-        <div class="declaration" style="">
+        <div class="declaration" style="line-height: 1.5 ; font-size: 14px;">
             I/We {{ strtoupper(($account->member->member_info_first_name?? '') . ' ' .
             ($account->member->member_info_middle_name ?? '') . ' ' . ($account->member->member_info_last_name ?? ''))
             }}
-            are opening an account under
-             {{-- SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED--}}
-             {{-- bank name --}}
-            - {{ strtoupper($account->fdscheme->scheme_name ?? '') }} scheme, the rules related to which/ we have
-            read and understood and accept the rules
-            of the scheme and agree to abide by any future amendments/ changes in the scheme. I/ We hereby declare
-            that the amount deposited here with is not out of any funds acquired by me/ us borrowing or accepting
-            deposits from any other person. I/We declare that I/We are reside in India and am /are not depositing this
-            amount as nominee(s) of any non resident. I/We declare that the forth named depositor should be treated
-            as the pay purpose of deduction of tax under section 194A of the Income Tax Act, 1961. I/We have gone
-            through the financial and other declarations furnished by company and after careful consideration I/ We am
-            are making the deposit with the company at my/ our own risk and volition.
+            are opening an account under 
+            {{-- SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA
+            LIMITED --}}
+            -
+            {{ strtoupper(  $account->scheme->scheme_name  ?? '') }} scheme, the rules related to which/ we have read and understood and accept the rules of the scheme and agree to abide by any future amendments/ changes in the scheme. I/ We hereby declare that the amount deposited here with is not out of any funds acquired by me/us borrowing or accepting deposits from any other person. I/We declare that I/We are reside in India and am /are not depositing this amount as nominee(s) of any non resident. I/We declare that the forth named depositor should be treated as the pay purpose of deduction of tax under section 194A of the Income Tax Act, 1961. I/We have gone through the financial and other declarations furnished by company and after careful consideration I/ We am are making the deposit with the company at my/ our own risk and volition.
         </div>
 
-        <div class="footer" style="width:100%;  font-size:12px;">
-
-  <div style="float:left; width:33.33%;font-weight: 600;">
-    Place: ________
-  </div>
-
-  <div style="float:left; width:33.33%;font-weight: 600; text-align:center;">
-    Date: {{ now()->format('d-m-Y') }}
-  </div>
-
-  <div style="float:left; width:33.33%; font-weight: 600; text-align:right;">
-    (Applicant Signature)
-  </div>
-
-  <div style="clear:both;"></div>
-</div>
-
-        {{-- <div class="footer">
+        <div class="footer">
             <span>Place: ________</span>
-            <span>Date: {{ now()->format('d/m/Y') }}</span>
+            <span>Date: {{ now()->format('d-m-Y') }}</span>
             <span>(Applicant Signature)</span>
-        </div> --}}
+        </div>
 
-        <div class="office-use" style="width:100%; font-size:9px; margin-top:15px;">
+        <div class="office-use">
+            <p style="text-align:center; font-size: 12px">(For Office Use Only)</p>
+            <div class="row">
+                <label>Date of Receipt of Application &nbsp;: <div style="display: inline-block;"> &nbsp;{{ now()->format('d-m-Y') }}</div></label>
+                <label>Introducer Details &nbsp;: <div> &nbsp;</div></label>
+            </div>
+            <div class="row">
+                <label>Deposit/ Account No &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;: &nbsp; <div style="display: inline-block;"> &nbsp;{{$account->rd_no??''}}</div></label>
+                <label>Date of Maturity &nbsp; &nbsp; &nbsp;: <div style="display: inline-block;"> {{ $account->maturity_date ?
+          \Carbon\Carbon::parse($account->maturity_date)->format('d-m-Y') : '' }}</div></label>
+            </div>
 
-  <p style="text-align:center; font-weight:600; font-size: 12px; margin-bottom:8px;">
-    (For Office Use Only)
-  </p>
-
-  <!-- Row 1 -->
-  <div style="width:100%; margin-bottom:6px;">
-    <div style="float:left; width:60%;font-size: 12px; font-weight: 600;">
-      Date of Receipt of Application : {{ now()->format('d-m-Y') }}
-    </div>
-
-    <div style="float:left; width:40%;font-size: 12px; font-weight: 600;">
-      Introducer Details :
-    </div>
-
-    <div style="clear:both;"></div>
-  </div>
-
-  <!-- Row 2 -->
-  <div style="width:100%; margin-bottom:12px;">
-    <div style="float:left; width:60%; font-size: 12px; font-weight: 600;">
-      Deposit / Account No : {{ $account->fd_no ?? '' }}
-    </div>
-
-    <div style="float:left; width:40%;font-size: 12px; font-weight: 600;">
-    
-
-      Date of Maturity :  {{ $account->maturity_date ? \Carbon\Carbon::parse($account->maturity_date)->format('d-m-Y') : '' }}
-    </div>
-
-    <div style="clear:both;"></div>
-  </div>
-
-  <!-- Signature -->
-  <div style="width:100%; text-align:right; font-weight: 600; margin-top:25px;font-size: 12px;">
-    (Manager’s Signature)
-  </div>
-
+            <div class="signature">
+                <p>(Manager’s Signature)</p>
+            </div>
+        </div>
 </div>
-</div>
+
+
     </div>
 
 

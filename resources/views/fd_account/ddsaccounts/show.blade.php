@@ -107,7 +107,7 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-lg font-semibold">
-                    DD ACCOUNT -DDA{{ $ddaccount->id }}
+                    DD ACCOUNT -DDA{{ $ddaccount->dd_no }}
                 </h1>
             </div>
         </div>
@@ -181,7 +181,7 @@
         <div x-data="{ open: false }" class="relative inline-block">
 
             <a @click="open = !open"
-                class="btn-primary px-4 py-2 rounded-10 text-sm flex items-center gap-2">
+                class="btn-primary px-4 py-2 rounded-10 text-sm flex items-center gap-2 cursor-pointer">
                 <i class="las la-print "></i><span>PRINT DOCUMENTS</span>
                 <svg class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
@@ -190,21 +190,21 @@
 
             <!-- Dropdown -->
             <div x-show="open" @click.outside="open = false"
-                class="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+                class="absolute  cursor-pointer mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                 <ul class="py-2">
                     <li>
-                        <a href="{{ route('dd.bond.form', $ddaccount->id) }}"
+                        <a href="{{ route('dd-bondView', $ddaccount->id) }}"
                             class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
                             DD BOND</a>
                     </li>
                     <li>
-                        <a href="{{ route('dd.opening.form', $ddaccount->id) }}"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
+                        <a href="{{ route('dd.opening-view', $ddaccount->id) }}"
+                            class="block cursor-pointer px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
                             ACCOUNT OPENING FORM</a>
                     </li>
                     <li>
-                        <a href="{{ route('dd.closing.form', $ddaccount->id)}}"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
+                        <a href="{{ route('dd.closing-view', $ddaccount->id)}}"
+                            class="block cursor-pointer px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
                             CLOSING FORM</a>
                     </li>
 

@@ -1,207 +1,139 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <title>DD Bond / Deposit Receipt</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-
-    <style>
-        /* Page & base */
-        @page {
-            size: A4;
-            margin: 18mm 12mm;
-        }
-
-        /* Use a Devanagari-capable TTF placed in public/fonts/ */
-        @font-face {
-            font-family: "NotoDeva";
-            src: url("{{ public_path('fonts/NotoSansDevanagari-Regular.ttf') }}") format("truetype");
-            font-weight: normal;
-            font-style: normal;
-        }
-
-        @font-face {
-            font-family: "NotoDeva";
-            src: url("{{ public_path('fonts/NotoSansDevanagari-Bold.ttf') }}") format("truetype");
-            font-weight: bold;
-            font-style: normal;
-        }
-
+@extends('layout.main')
+@section('content')
+<style>
         body {
-            font-family: "NotoDeva", "DejaVu Sans", Arial, sans-serif;
-            font-size: 12px;
-            color: #111;
-            line-height: 1.25;
-            -webkit-print-color-adjust: exact;
+            font-family: Arial, sans-serif;
+            background: #f8f8f8;
+            margin: 0;
+            padding: 8px;
         }
 
-        /* Container */
-        .sheet {
-            width: 100%;
-            border: 1px solid #111;
-            padding: 5px;
-            /* keep consistent for PDF */
+        .form-container {
+            background: #fff;
+            max-width: 800px;
+            margin: auto;
+            padding: 15px 25px;
+            font-size: 13px;
+            /* slightly smaller text */
+            line-height: 1.3;
         }
 
-        /* Header */
         .header {
             text-align: center;
-            margin-bottom: 6px;
+        }
+
+        .letterhead {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .logo {
-            float: left;
-            width: 90px;
-            height: 90px;
-        }
-
-        .company {
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: 0.6px;
-        }
-
-        .subtitle {
-            font-size: 11px;
-            margin-top: 2px;
-        }
-
-        .header-right {
-            float: right;
-            text-align: right;
-            font-size: 11px;
-        }
-
-        .clear {
-            clear: both;
-        }
-
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 8px;
-        }
-
-        .no-border td {
-            border: none;
-            padding: 4px 6px;
-            vertical-align: top;
-        }
-
-        .btable th,
-        .btable td {
-            border: 1px solid #222;
-            padding: 6px 8px;
-            vertical-align: middle;
-            font-size: 12px;
-        }
-
-        .btable th {
-            background: #f4f4f4;
-            font-weight: 700;
-        }
-
-        .small {
-            font-size: 11px;
-            text-align: left;
-            text-transform: uppercase;
-        }
-
-        .center {
+            width: 100px;
             text-align: center;
         }
 
-        .right {
-            text-align: right;
-        }
-
-        .left {
-            text-align: left;
-        }
-
-        /* Amount / emphasis */
-        .big {
-            font-size: 12px;
-        }
-
-        .amount {
-            font-weight: 700;
-        }
-
-        /* Footer note & signature */
-        .signature {
-            margin-top: 28px;
+        .logo img {
             width: 100%;
+            height: auto;
         }
 
-        .sig-left {
-            float: left;
-            width: 40%;
-            text-align: left;
+        hr {
+            margin: 10px 0;
+            border: 1px solid #ccc;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin: 8px 0 3px;
+            text-decoration: underline;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .row label {
+            flex: 1;
+            font-size: 13px;
+            padding: 1px 0;
+        }
+
+
+        .declaration {
             font-size: 12px;
-        }
-
-        .sig-right {
-            float: right;
-            width: 40%;
-            text-align: right;
-            font-size: 12px;
-        }
-
-        .sig-line {
-            display: inline-block;
-            margin-top: 36px;
-            border-top: 1px solid #333;
-            padding-top: 4px;
+            margin: 10px 0;
+            line-height: 1.3;
+            text-align: justify;
         }
 
         .footer {
-            margin-top: 18px;
-            font-size: 11px;
-            text-align: center;
-            color: #333;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12x;
         }
 
-        /* small helpers */
-        .muted {
-            color: #555;
-            font-size: 11px;
+        .signature {
+            text-align: right;
+            margin-top: 10px;
+            font-size: 13px;
         }
 
-        .mt-6 {
-            margin-top: 6px;
+
+
+        .office-use {
+            border-top: 1px dashed #000;
+            margin-top: 20px;
+            padding-top: 10px;
+            font-size: 13px;
+
         }
 
-        .mt-12 {
-            margin-top: 12px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-top: 10px;
         }
 
-        /* Ensure page-break friendliness */
-        .page-break {
-            page-break-after: always;
-        }
-
-        /* Prevent tables from splitting awkwardly */
-        tr {
-            page-break-inside: avoid;
+        td {
+            padding: 4px;
         }
     </style>
-</head>
 
-<body>
-    <div class="" style="border: 1px solid #111; padding: 2px 5px;">
+<div class="main-inner">
+     <h1 class="text-lg font-semibold">DDS ACCOUNT - {{ $ddAccount->dd_no }}</h1>
+<div class="text-center flex justify-center gap-5 mt-4" >
+     <a href="{{ route('dd.bond.download', $ddAccount->id) }}"
+   class="px-4 py-2 btn-primary uppercase"
+   target="_blank">
+   <i class="las la-download"></i> Download
+</a>
+ {{-- <a href="
+ {{ route('dds-accounts.show', $ddAccount->id) }}
+  "
+   class="px-4 py-2 btn-outline uppercase"
+   target="_self">
+   BACK
+</a> --}}
+</div>
+    <div class="box mt-5">
+        <div class="" style="border: 1px solid #111; padding: 2px 5px;">
 
         <!-- Header -->
-        
         <div class="header" style="padding : 10px 0px ; border-bottom:  1px solid black; ">
             <!-- Logo (optional) -->
             <div style="width:100%; font-family: dejavusans; ">
 
             <!-- Logo -->
             <div style="float:left; width:50%; padding: 0px 5px; text-align:left;">
-                <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
+                <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
                     style="width:auto; height:50px;">
             </div>
 
@@ -219,7 +151,7 @@
             <!-- Clear Float -->
             <div style="clear:both; "></div>
             <h4 style="   margin:0; text-align: center;  font-size:18px; font-weight:bold;">
-               DAILY DEPOSIT ADVICE
+                DAILY DEPOSIT ADVICE
                <br>
 (In lieu of daily deposit)
             </h4>
@@ -364,6 +296,8 @@
     </div>
 
 
-</body>
+    </div>
 
-</html>
+
+</div>
+    @endsection
