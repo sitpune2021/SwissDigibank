@@ -1453,6 +1453,26 @@ class RdAccountController extends Controller
     }
 
     //print
+     public function rdBondFormView($id)
+    {
+        
+        // Load RD account with required relations
+        $rdAccount = RdAccount::with([
+            'member',
+            'nominee',
+            'scheme'
+        ])->findOrFail($id);
+
+        $data = [
+            'rdAccount'       => $rdAccount,
+            'company_address' => 'HEAD OFFICE',
+            'date'            => now()->format('d-m-Y'),
+            'company_reg_no'  => 'Reg. No. 969/03-04',
+        ];
+
+      return view('mds_rd_accounts.mds-rd-account.view.print-documents.rd-bond-view',$data);
+   
+    }
     public function rdBondForm($id)
     {
         // Load RD account with required relations
@@ -1479,6 +1499,25 @@ class RdAccountController extends Controller
         return $pdf->download('rd-bond-' . $rdAccount->id . '.pdf');
     }
 
+     public function rdOpeningFormView($id)
+    {
+        // Load RD account with required relations
+        $account = RdAccount::with([
+            'member.kyc',
+            'member.address.state',
+            'member.branch',
+            'scheme'   // RD scheme relation
+        ])->findOrFail($id);
+
+
+        $interestRate = $account->scheme->anuual_interest_rate ?? 0;
+
+        $member = $account->member;
+
+      return view('mds_rd_accounts.mds-rd-account.view.print-documents.accountopeningformview' , compact('account'));
+    }
+
+
     public function rdOpeningForm($id)
     {
         // Load RD account with required relations
@@ -1501,9 +1540,39 @@ class RdAccountController extends Controller
             )
             ->setPaper('a4', 'portrait');
 
-        return $pdf->stream('rd-opening-' . $id . '.pdf');
+        return $pdf->download('rd-opening-' . $id . '.pdf');
     }
 
+     public function rdClosingFormView($id)
+    {
+        $rdAccount = RdAccount::with(['member.branch'])->findOrFail($id);
+
+        $data = [
+               'rdAccount' => $rdAccount,
+            'name'           => $rdAccount->member->member_info_first_name . ' ' .
+                $rdAccount->member->member_info_last_name,
+
+            'date'           => now()->format('d-m-Y'),
+
+            // RD Agreement / Account No
+            'agreement_no'   => $rdAccount->rd_no ?? 'RD' . str_pad($rdAccount->id, 5, '0', STR_PAD_LEFT),
+
+            'holder_name'    => strtoupper(
+                $rdAccount->member->member_info_first_name . ' ' .
+                    $rdAccount->member->member_info_last_name
+            ),
+
+            'expiry_date'    => \Carbon\Carbon::parse($rdAccount->maturity_date)->format('d-m-Y'),
+
+            'branch_name'    => $rdAccount->member->branch->branch_name ?? '',
+
+            'branch_address' => $rdAccount->member->branch->branch_address ?? '',
+        ];
+
+       
+
+        return view('mds_rd_accounts.mds-rd-account.view.print-documents.closingformView', $data);
+    }
     public function rdClosingForm($id)
     {
         $rdAccount = RdAccount::with(['member.branch'])->findOrFail($id);
@@ -1538,6 +1607,6 @@ class RdAccountController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isRemoteEnabled', true);
 
-        return $pdf->stream('rd-closing-form-' . $rdAccount->id . '.pdf');
+        return $pdf->download('rd-closing-form-' . $rdAccount->id . '.pdf');
     }
 }
