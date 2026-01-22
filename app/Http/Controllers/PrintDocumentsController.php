@@ -235,6 +235,24 @@ private function getMarathiMpdf()
         'margin_bottom' => 10,
     ]);
 }
+
+public function generateFormJview()
+{
+    // $members = Member::orderBy('id', 'asc')->get();
+//   $members = Member::with('address')
+//         ->orderBy('id', 'asc')
+//         ->get();
+$members = Member::with([
+            'address.state'
+        ])
+        ->orderBy('id', 'asc')
+        ->get();
+
+    
+
+
+    return  view('print-documents.form-i-and-j.form-j-view', compact('members'));
+}
 public function generateFormJ()
 {
     // $members = Member::orderBy('id', 'asc')->get();
@@ -259,6 +277,18 @@ $members = Member::with([
         $mpdf->Output('form-j-all-members.pdf', 'D')
     )->header('Content-Type', 'application/pdf');
 }
+
+
+public function formiView()
+{
+    $members = Member::with('address.state')
+        ->orderBy('id', 'asc')
+        ->get();
+
+    
+
+    return view('print-documents.form-i-and-j.form-i-view' , compact('members'));
+}
 public function generateFormI()
 {
     $members = Member::with('address.state')
@@ -276,6 +306,23 @@ public function generateFormI()
     return response(
         $mpdf->Output('form-i.pdf', 'D')
     )->header('Content-Type', 'application/pdf');
+}
+public function procedingBookView()
+{
+    // $members = Member::orderBy('id', 'asc')->get();
+//   $members = Member::with('address')
+//         ->orderBy('id', 'asc')
+//         ->get();
+$members = Member::with([
+            'address.state'
+        ])
+        ->orderBy('id', 'asc')
+        ->get();
+
+    
+  
+    return view(        'print-documents.form-i-and-j.proceding-book-view',
+        compact('members'));
 }
 public function procedingBook()
 {
@@ -295,6 +342,7 @@ $members = Member::with([
     )->render();
 
     $mpdf = $this->getMarathiMpdf();
+    $mpdf->AddPage('L');  
     $mpdf->WriteHTML($html);
 
     return response(

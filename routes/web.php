@@ -2487,14 +2487,25 @@ Route::get('/letter-head', [PrintDocumentsController::class, 'print_letter_head'
 
 Route::get('/index-from-i', [PrintDocumentsController::class, 'index_formi'])
     ->name('index-from-i');
+
+Route::get(
+    '/form-i-j-view',
+    [PrintDocumentsController::class, 'generateFormJview']
+)->name('formj.view');
 Route::get(
     '/form-i-and-j',
     [PrintDocumentsController::class, 'generateFormJ']
 )->name('formj.download');
 
+
+Route::get('/from-i-view', [PrintDocumentsController::class, 'formiView'])
+    ->name('from-i-view');
+
 Route::get('/form-i-pdf', [PrintDocumentsController::class, 'generateFormI'])
     ->name('formi.pdf');
 
+Route::get('/proceding-book-view', [PrintDocumentsController::class, 'procedingBookView'])
+    ->name('proceding-book.view');
 Route::get('/proceding-book', [PrintDocumentsController::class, 'procedingBook'])
     ->name('proceding-book.pdf');
 //   Route::get(
