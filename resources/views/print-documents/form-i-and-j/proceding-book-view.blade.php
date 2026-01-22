@@ -1,35 +1,7 @@
-<!DOCTYPE html>
-<html lang="mr">
-
-<head>
-    <meta charset="UTF-8">
-    <style>
-         @page {
-        size: A4 landscape;
-        /* margin: 15mm; */
-    }
-     body {
-        font-size: 12px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th, td {
-        border: 1px solid #000;
-        padding: 6px;
-        vertical-align: top;
-    }
-
-    thead {
-        display: table-header-group;
-    }
-
-    tr {
-        page-break-inside: avoid;
-    }
+@extends('layout.main')
+@section('content')
+<style>
+        
         body {
 
             font-size: 12px;
@@ -86,9 +58,27 @@
             vertical-align: top;
         }
     </style>
-</head>
 
-<body>
+<div class="main-inner">
+     <h1 class=" uppercase text-lg font-semibold " style="font-family: sans-serif !important; ">
+      Proceeding Book
+    </h1>
+<div class="text-center flex justify-center gap-5 mt-4" >
+     <a href=" {{ route('proceding-book.pdf') }}"
+   class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; "
+   target="_blank">
+   <i class="las la-download"></i> Download
+</a>
+ <a href="
+ {{ route('index-from-i') }}
+  "
+   class="px-4 py-2 btn-outline uppercase" style="font-family: sans-serif !important; "
+   target="_self">
+   BACK
+</a>
+</div>
+   <div class="box mt-5">
+  
 
     <div class="title" style="font-size:24px;  ">सहकारी संस्था मर्यादीत &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; र. नं.</div>
     <div class="subtitle" style="font-size:18px; font-weight: bold; ">मासिक / वार्षिक प्रोसिडींग बुक</div>
@@ -142,6 +132,8 @@
         </tbody>
     </table>
 
-</body>
 
-</html>
+   </div>
+
+</div>
+    @endsection
