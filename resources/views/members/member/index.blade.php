@@ -1,7 +1,7 @@
 @extends('layout.main')
 @section('page-title', 'CUSTOMERS')
 @section('action-button')
-    <a class="btn-primary" href="{{ route('member.create') }}">
+    <a class="btn-primary uppercase" href="{{ route('member.create') }}">
         ADD
     </a>
 @endsection
@@ -98,7 +98,9 @@
                             </td>
 
                             <td class="py-3 px-6">
-                                {{ $item->member_info_father_name ?? ($item->member_info_spouse_name ?? 'N/A') }}
+                              <div class="px-2">
+                                  {{ $item->member_info_father_name ?? ($item->member_info_spouse_name ?? 'N/A') }}
+                              </div>
                             </td>
 
                             <td class="py-3 px-6">
@@ -106,7 +108,8 @@
                                     $age = \Carbon\Carbon::parse($item->member_info_dob)->age;
                                 @endphp
 
-                                @if ($age >= 60)
+                              <div class="px-2">
+                                  @if ($age >= 60)
                                     <span
                                         class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
                                         Yes
@@ -117,10 +120,13 @@
                                         No
                                     </span>
                                 @endif
+                              </div>
                             </td>
 
                             <td class="py-3 px-6">
-                                {{ \Carbon\Carbon::parse($item->general_enrollment_date)->format('d-m-Y') }}
+                              <div class="px-2">
+                                  {{ \Carbon\Carbon::parse($item->general_enrollment_date)->format('d-m-Y') }}
+                              </div>
                             </td>
 
                             <td class="py-3 px-6">
@@ -132,12 +138,14 @@
                             </td>
 
                             <td class="py-3 px-6">
-                                @php
+                               <div class="px-2">
+                                 @php
                                     $hasKYC = $item->kyc?->member_kyc_aadhaar_no || $item->kyc?->member_kyc_pan_no;
                                 @endphp
-                                <span class="text-sm {{ $hasKYC ? 'text-green-600' : 'text-red-600' }}">
-                                    {{ $hasKYC ? 'Completed' : 'Pending' }}
+                                <span class="text-sm {{ $hasKYC ? 'text-primary' : 'text-error' }}">
+                                    {{ $hasKYC ? 'COMPLETED' : 'PENDING' }}
                                 </span>
+                               </div>
                             </td>
 
                             <td class="py-3 px-6">

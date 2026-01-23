@@ -1,4 +1,4 @@
-@extends('layout.main')
+                @extends('layout.main')
 
 @section('page-title', isset($form15g15h) && $form15g15h->member ? ($form15g15h->member->member_info_first_name ?? '') .
     ' ' . ($form15g15h->member->member_info_last_name ?? '') . ' - ' . ($form15g15h->financial_year ?? '') : '')
@@ -9,10 +9,10 @@
 
     <div class="main-inner">
         <!-- Page Header -->
-        <div class="flex items-center justify-between mb-6 lg:mb-8">
-            <h5 class="font-bold text-gray-800 h2 uppercase">Form 15G/ 15H</h5>
+        <div class="flex items-center justify-between mb-3 lg:mb-3">
+            {{-- <h5 class="font-bold text-gray-800 text-lg uppercase">Form 15G/ 15H</h5> --}}
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 min-h-screen md-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-4 min-h-screen md-4">
         <div class="box w-full col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 ">
          <div class="flex items-center justify-between px-4 py-2 border-b bg-gray-50">
             <!-- Member Name -->
@@ -21,16 +21,16 @@
             <!-- Icons -->
             <div class="flex gap-2">
 
-                <a href="{{ route('form15g15h.edit', $form15g15h->id) }}" class=" btn-primary p-2 rounded-10" 
+                <a href="{{ route('form15g15h.edit', $form15g15h->id) }}" class=" btn-primary p-2 " 
                     title="Print">
-                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                    <i class="las la-pencil-alt" aria-hidden="true"></i>
                 </a>
                 <form action="{{ route('form15g15h.destroy', $form15g15h->id) }}" method="POST"
                     onsubmit="return confirm('Are you sure to delete Form 15G/ 15H?');">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="  btn-error p-2 rounded-10" title="Delete">
-                        <i class="fas fa-trash-alt"></i>
+                    <button type="submit" class="  btn-error p-2 " title="Delete">
+                        <i class="las la-trash-alt"></i>
                     </button>
                 </form>
             </div>
@@ -44,7 +44,7 @@
                     <td class="px-4 py-2 font-semibold border-b bg-gray-50 uppercase">Customer</td>
                     <td class="px-4 py-2 border-b">
                         <a href="{{ $form15g15h->member?->id ? route('member.show', $form15g15h->member->id) : '' }}"
-                            class="text-blue-600 underline">
+                            class="text-primary underline">
                             {{ $form15g15h->member?->member_info_first_name ?? '' }}
                             {{ $form15g15h->member?->member_info_last_name ?? '' }}
                         </a>
