@@ -27,8 +27,8 @@
                                 Group
                             </div>
                         </th>
-                        <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 uppercase">
+                        <th class="text-start px-6 !py-5 min-w-[100px] cursor-pointer">
+                            <div class=" uppercase">
                                 Fd. No
                             </div>
                         </th>
