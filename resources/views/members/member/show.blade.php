@@ -35,17 +35,18 @@ CUSTOMER')
         AMOUNT</a>
 
 
-    <a href="{{ route('members.transactions', $member->id) }}" class="text-sm rounded-10 px-2 py-2 btn-secondary">VIEW
-        TRANSACTIONS</a>
+    <a href="{{ route('members.transactions', $member->id) }}" class="text-sm rounded-10 px-2 py-2 btn-secondary">
+        VIEW
+        TRANSACTIONS
+    </a>
 
 
     <div x-data="{ open: false }" class="relative inline-block">
 
-        <a @click="open = !open" class="text-sm rounded-10 px-2 py-2 btn-primary">
+        <a @click="open = !open" class="toggle-btn text-sm cursor-pointer rounded-10 px-2 py-2 btn-primary" href="javascript:void(0);">
             <span class="text-sm">DEBIT OTHER CHARGES</span>
-            <svg class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-            </svg>
+           <i class="las la-angle-down text-sm toggle-icon"></i>
+
         </a>
 
         <!-- Dropdown -->
@@ -54,21 +55,21 @@ CUSTOMER')
             <ul class="py-2 whitespace-nowrap">
                 <li>
                     <a href="{{ route('members.other-charges.list', ['id' => $member->id]) }}"
-                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100 border-b text-sm">
                         OTHER CHARGES LIST
                     </a>
                 </li>
 
                 <li>
                     <a href="{{ route('members.other-charges', ['id' => $member->id]) }}"
-                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100 border-b text-sm ">
                         DEBIT OTHER CHARGES
                     </a>
                 </li>
                 <li>
 
                     <a href="{{ $charge && $charge->member_id && $charge->id ? route('members.other-charges.clearDue.form', ['id' => $charge->member_id, 'chargeId' => $charge->id]) : '#' }}"
-                        class="{{ !$charge || !$charge->member_id || !$charge->id ? 'text-gray-500 cursor-not-allowed' : '' }} block px-4 py-2 text-gray-700 hover:bg-gray-100 uppercase">
+                        class="{{ !$charge || !$charge->member_id || !$charge->id ? 'text-black cursor-not-allowed' : '' }} block px-4 py-2 text-sm text-black hover:bg-gray-100 uppercase">
                         {{-- href="{{ route('members.other-charges.clearDue.form', ['id' => $charge->member_id ?? '',
                         'chargeId' => $charge->id ?? '']) }}"> --}}
                         Clear Due
@@ -82,19 +83,19 @@ CUSTOMER')
     <a title="DOWNLOAD 15G/ 15H"
         href="{{ isset($member) ? route('form15g15h.download', ['member_id' => $member->id]) : '#' }}"
         class="text-sm rounded-10 px-2 py-2 btn-secondary">
-        <i class="fa fa-print"></i> DOWNLOAD 15G/ 15H
+        <i class="las la-print"></i> DOWNLOAD 15G/ 15H
     </a>
 
     <a href="{{ isset($member) ? route('form15g15h.create', ['member_id' => $member->id, 'type' => 'member']) : '#' }}"
         class="text-sm rounded-10 px-2 py-2 btn-warning">
-        <i class="fa fa-plus" aria-hidden="true"></i> UPLOAD 15G/ 15H
+        <i class="las la-plus" aria-hidden="true"></i> UPLOAD 15G/ 15H
     </a>
-    <a class="text-sm rounded-10 px-2 py-2 btn-error">REMOVE CUSTOMER</a>
+    <a href="#" class="text-sm rounded-10 px-2 py-2 btn-error cursor-pointer">REMOVE CUSTOMER</a>
 
-    <a href="{{ route('members.application_form', $member->id) }}" class="text-sm rounded-10 px-2 py-2 btn-primary">
-        <i class="fa fa-print"></i> APPLICATION FORM
+    <a href="{{ route('members.application_form', $member->id) }}" target="_blank" class="text-sm rounded-10 px-2 py-2 btn-primary">
+        <i class="las la-print"></i> APPLICATION FORM
     </a>
-    <a class="text-sm rounded-10 px-2 py-2 btn-secondary">SHOW AUDIT TRAIL</a>
+    <a class="text-sm rounded-10 px-2 py-2 cursor-pointer btn-secondary">SHOW AUDIT TRAIL</a>
 </div>
 <div class="grid grid-cols-12 gap-4 xxl:gap-6">
     <div class="col-span-12 lg:col-span-6 overflow-x-hidden">
@@ -366,8 +367,8 @@ CUSTOMER')
                         <td class="p-2">
                             <div>
                                 <span class="block w-20 py-2 text-xs rounded-[30px] border text-center border-n30 {{ $member->form15G15H->count() >= 1 
-            ? 'border-primary bg-primary/20 text-primary' 
-            : 'border-error bg-error/20 text-error' }}">
+            ? 'border-white bg-primary/20 text-primary' 
+            : 'border-white bg-error/20 text-error' }}">
                                     {{ $member->form15G15H->count() >= 1 ? 'Yes' : 'No' }}</span>
                             </div>
                         </td>
@@ -381,7 +382,7 @@ CUSTOMER')
                                                                 <div class="flex items-center justify-between px-4 py-2 text-white bg-red-500 rounded-t cursor-pointer"
                                                                     @click="open = !open">
                                                                     <span class="font-semibold uppercase">Member KYC Info</span>
-                                                                    <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                                                                    <i :class="open ? 'las la-minus' : 'lad la-plus'"></i>
                                                                 </div>
 
                                                                 <div x-show="open" x-transition class="bg-white rounded-md">
@@ -445,7 +446,7 @@ CUSTOMER')
                                                                 <div class="flex items-center justify-between px-4 py-2 text-white bg-blue-500 rounded-t cursor-pointer"
                                                                     @click="open = !open">
                                                                     <span class="font-semibold uppercase">Member Nominee Info</span>
-                                                                    <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                                                                    <i :class="open ? 'las la-minus' : 'lad la-plus'"></i>
                                                                 </div>
 
                                                                 <div x-show="open" x-transition class="bg-white">
@@ -517,7 +518,7 @@ CUSTOMER')
             <div class="flex items-center justify-between px-4 py-3   bg-secondary/5 rounded-10 cursor-pointer"
                 @click="open = !open">
                 <span class="font-semibold text-lg uppercase">Member KYC Info</span>
-                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                <i :class="open ? 'las la-minus' : 'lad la-plus'"></i>
             </div>
             <!-- Content -->
             <div x-show="open" x-transition class="bg-white rounded-md">
@@ -602,7 +603,7 @@ CUSTOMER')
             <div class="flex items-center justify-between px-4 py-3  bg-secondary/5  rounded-10  cursor-pointer"
                 @click="open = !open">
                 <span class="font-semibold uppercase text-lg">Customer Nominee Info</span>
-                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                <i :class="open ? 'las la-minus' : 'lad la-plus'"></i>
             </div>
 
             <div x-show="open" x-transition class="bg-white">
@@ -707,7 +708,7 @@ CUSTOMER')
                         <i class="cursor-pointer las la-pencil-alt "></i>
                     </a>
                     {{-- Toggle button for showing/hiding sections --}}
-                    <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                    <i :class="open ? 'las la-minus' : 'lad la-plus'"></i>
                 </div>
             </div>
 
@@ -846,7 +847,7 @@ CUSTOMER')
             <div class="flex items-center justify-between text-lg  px-4 py-3 text-black bg-secondary/5 rounded-10 cursor-pointer"
                 style="" @click="open = !open">
                 <span class="font-semibold text-lg uppercase">Joint Accounts</span>
-                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                <i :class="open ? 'las la-minus' : 'lad la-plus'"></i>
             </div>
 
             <!-- Content -->
@@ -883,7 +884,7 @@ CUSTOMER')
             <div class="flex items-center justify-between px-4 py-3  bg-secondary/5 rounded-t cursor-pointer"
                 @click="open = !open">
                 <span class="font-semibold text-lg uppercase">CO APPLICANT LOANS</span>
-                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                <i :class="open ? 'las la-minus' : 'lad la-plus'"></i>
             </div>
 
             <!-- Content -->
@@ -918,7 +919,7 @@ CUSTOMER')
             <div class="flex items-center justify-between px-4 py-3 text-lg bg-secondary/5  rounded-t cursor-pointer"
                 style="" @click="open = !open">
                 <span class="font-semibold text-lg uppercase">My Guarantor Ship</span>
-                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                <i :class="open ? 'las la-minus' : 'lad la-plus'"></i>
             </div>
 
             <!-- Content -->
@@ -951,7 +952,7 @@ CUSTOMER')
             <div class="flex items-center justify-between px-4 py-3 bg-secondary/5 rounded-10 text-lg cursor-pointer"
                 @click="open = !open">
                 <span class="font-semibold text-lg uppercase">Comments</span>
-                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                <i :class="open ? 'las la-minus' : 'lad la-plus'"></i>
             </div>
 
             <!-- Content (Show comments or No comments message) -->
@@ -1133,7 +1134,7 @@ CUSTOMER')
 
 
                     <div x-data="{
-                            showMobile: false,
+                            showMobile: true,
                             editing: false
                         }" class="mt-5  border box rounded-10 py-3 shadow">
                         <!-- Header -->
@@ -1143,7 +1144,7 @@ CUSTOMER')
                                 <a href="{{ route('member.mobile', $member->id) }}" class="btn-primary p-1">
                                     <i class="cursor-pointer las la-pencil-alt " @click="editing = !editing"></i>
                                 </a>
-                                <i class="cursor-pointer fa" :class="showMobile ? 'fa-minus' : 'fa-plus'"
+                                <i class="cursor-pointer las" :class="showMobile ? 'la-minus' : 'la-plus'"
                                     @click="showMobile = !showMobile"></i>
                             </div>
                         </div>
@@ -1248,7 +1249,7 @@ CUSTOMER')
                                 <a href="{{ route('member.address', $member->id) }}" class="btn-primary p-1">
                                     <i class="cursor-pointer las la-pencil-alt "></i>
                                 </a>
-                                <i :class="showAddress ? 'fa fa-minus' : 'fa fa-plus'"
+                                <i :class="showAddress ? 'las la-minus' : 'lad la-plus'"
                                     @click="showAddress = !showAddress"></i>
                             </div>
                         </div>
@@ -1308,7 +1309,7 @@ CUSTOMER')
                                <div class="btn-primary p-1">
                                  <i class="cursor-pointer las la-pencil-alt"></i>
                                </div>
-                                <i class="cursor-pointer fa" :class="showBank ? 'fa-minus' : 'fa-plus'"    @click="showBank = !showBank"></i>
+                                <i class="cursor-pointer las" :class="showBank ? 'la-minus' : 'la-plus'"    @click="showBank = !showBank"></i>
                             </div>
                         </div>
                         <div class="p-4 text-sm bg-white" x-show="showBank" x-transition>
@@ -1376,4 +1377,17 @@ CUSTOMER')
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('click', function (e) {
+        const button = e.target.closest('.toggle-btn');
+        if (!button) return;
+
+        const icon = button.querySelector('.toggle-icon');
+        if (!icon) return;
+
+        icon.classList.toggle('la-angle-down');
+        icon.classList.toggle('la-angle-up');
+    });
+</script>
 @endsection

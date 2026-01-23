@@ -181,7 +181,8 @@
 </head>
 <body>
   <div class="print-btn " >
-    <button style="padding:10px 10px; text-transform: uppercase; border-radius: 10px; border: none; cursor: pointer; background-color: #4c8e0a; color: #ffffff;" onclick="window.print()">Print Application</button>
+    <button style="padding:10px 10px; text-transform: uppercase; border-radius: 30px; border: none; cursor: pointer; background-color: #6dca10; color: #ffffff;" onclick="window.print()">Print Application</button>
+   
   </div>
 
   <!-- Page 1 -->
@@ -191,7 +192,7 @@
       <div class="letterhead">
         <!-- Logo -->
         <div class="logo">
-          <img src="{{ asset('assets/images/Loan_Management_logo.png') }}" alt="Logo">
+          <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="Logo" width="auto" height="50px">
         </div>
         <!-- Bank Details -->
         {{-- <div class="bank-details">

@@ -108,22 +108,21 @@
 
         <div x-data="{ open: false }" class="relative inline-block">
             <a @click="open = !open"
-                class="btn-secondary px-2 py-2 text-sm  rounded-10 flex items-center justify-between space-x-2">
-                <span>ACCOUNT DETAILS</span>
-                <svg class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-                </svg>
+                class="btn-secondary px-2 py-2 text-sm  cursor-pointer rounded-10 flex items-center justify-between space-x-2">
+                  ACCOUNT DETAILS      
+              <i class="las la-angle-down text-sm transition-transform duration-300"
+           :class="{ 'rotate-180': open }"></i>
             </a>
             <div x-show="open" @click.outside="open = false"
                 class="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                 <ul class="py-2">
                     <li>
                         <a href="{{ route('fd.change.account.info', $fdAccount->id) }}"
-                            class="block px-4 py-2 uppercase font-semibold text-gray-700 hover:bg-gray-100">Change A/c Info</a>
+                            class="block px-4 py-2 uppercase text-start  text-black border-b hover:bg-gray-100">Change A/c Info</a>
                     </li>
                     <li>
                         <a href="{{ route('fd.add.nominee', ['type' => 'fd', 'id' => base64_encode($fdAccount->id)]) }}"
-                            class="block px-4 py-2 uppercase font-semibold  text-gray-700 hover:bg-gray-100">Add Nominee</a>
+                            class="block px-4 py-2 uppercase   text-black border-b hover:bg-gray-100">Add Nominee</a>
                     </li>
                 </ul>
             </div>
@@ -140,22 +139,22 @@
         </a>
         @endif
 
-        <button class="btn-primary text-sm  px-2 py-2 rounded-10 ">
+        <a class="btn-primary text-sm px-4 py-2 rounded-10 cursor-pointer">
             MARK LIEN AGAINST LOAN
-        </button>
+        </a>
 
         <!-- INTEREST/TDS Button -->
         <div class="relative inline-block text-left">
-            <a id="interestButton" class="btn-primary text-sm px-2 py-3 rounded-10 flex items-center">
-                INTEREST/TDS
+            <a id="interestButton" class="btn-primary text-sm cursor-pointer px-4 rounded-10">
+                <span class="text-sm ">INTEREST/TDS</span>
                 <i id="interestArrow" class="las la-angle-down text-sm"></i>
             </a>
 
             <div id="interestMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
                 <a href="{{ route('fd-account.creditDebitInterest', $fdAccount->id) }}"
-                    class="block px-4 py-2 uppercase font-semibold ">CREDIT/DEBIT INTEREST</a>
+                    class="block px-4 py-2 border-b uppercase  ">CREDIT/DEBIT INTEREST</a>
                 <a href="{{ route('fd-account.deductReverseTds', $fdAccount->id) }}"
-                    class="block px-4 py-2 uppercase font-semibold ">DEDUCT/REVESRE TDS</a>
+                    class="block px-4 py-2 uppercase  border-b  ">DEDUCT/REVESRE TDS</a>
 
             </div>
         </div>
@@ -165,10 +164,9 @@
 
             <a @click="open = !open"
                 class="btn-secondary px-2 py-2 rounded-10 flex items-center cursor-pointer justify-between text-sm space-x-2">
-                <i class="las la-print text-lg"></i><span>PRINT DOCUMENTS</span>
-                <svg class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-                </svg>
+                <i class="las la-print "></i><span class="text-sm">PRINT DOCUMENTS</span>
+                 <i class="las la-angle-down text-sm transition-transform duration-300"
+           :class="{ 'rotate-180': open }"></i>
             </a>
 
             <!-- Dropdown -->
@@ -177,17 +175,17 @@
                 <ul class="py-2">
                     <li>
                         <a href="{{ route('fd.bond.view', $fdAccount->id) }}"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 font-semibold"><i class="las la-print"></i>
+                            class="block px-4 border-b py-2 text-gray-700 hover:bg-gray-100 "><i class="las la-print"></i>
                             FD BOND</a>
                     </li>
                     <li>
                         <a href="{{ route('fd.opening.view', $fdAccount->id) }}"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 font-semibold"><i class="las la-print"></i>
+                            class="block px-4 border-b py-2 text-gray-700 hover:bg-gray-100 "><i class="las la-print"></i>
                             ACCOUNT OPENING FORM</a>
                     </li>
                     <li>
                         <a href="{{ route('fd.closing.view', $fdAccount->id)}}"
-                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 font-semibold"><i class="las la-print"></i>
+                            class="block px-4 border-b py-2 text-gray-700 hover:bg-gray-100 "><i class="las la-print"></i>
                             CLOSING FORM</a>
                     </li>
 
@@ -497,21 +495,21 @@
                         @else
                         <table class="w-full text-sm text-left">
                             <thead>
-                                <tr class="border-b">
-                                    <th class="px-4 py-2 uppercase font-semibold">Comment</th>
+                                <tr class="border-b bg-secondary/5">
+                                    <th class="px-4 py-2 text-center uppercase font-semibold">Comment</th>
                                     <th class="px-4 py-2 uppercase font-semibold">Commented By</th>
                                     <th class="px-4 py-2 uppercase font-semibold">Date</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
                                 @foreach ($fdAccount->comments as $comment)
-                                <tr class="hover:bg-gray-50 border-b">
-                                    <td class="px-4 py-2">{{ $comment->comment }}</td>
-                                    <td class="px-4 py-2">
+                                <tr class="hover:bg-gray-50  border-b">
+                                    <td class="px-4 text-center py-2">{{ $comment->comment }}</td>
+                                    <td class="px-4 py-2 text-center">
                                         {{ $comment->commented_by ? \App\Models\User::find($comment->commented_by)->name
                                         : '-' }}
                                     </td>
-                                    <td class="px-4 py-2">
+                                    <td class="px-4 py-2 text-center">
                                         {{ \Carbon\Carbon::parse($comment->date)->format('d-m-Y ') ?? '' }}
                                     </td>
                                 </tr>
@@ -617,7 +615,7 @@
 
                             <!-- SMS Toggle -->
                             <tr>
-                                <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">SMS</td>
+                                <td class="font-semibold text-start align-middle px-4 py-3 w-1/3">SMS</td>
                                 <td class="px-4 py-3">
                                     <label class="inline-flex items-center cursor-pointer">
                                         <input type="checkbox" id="smsToggle" class="sr-only slider-toggle"
@@ -637,7 +635,7 @@
 
                             <!-- DEDUCT TDS Toggle -->
                             <tr>
-                                <td class="font-semibold text-center align-middle px-4 py-3">DEDUCT TDS</td>
+                                <td class="font-semibold text-start align-middle px-4 py-3">DEDUCT TDS</td>
                                 <td class="px-4 py-3">
                                     <label class="inline-flex items-center cursor-pointer">
                                         <input type="checkbox" id="tdsToggle" class="sr-only slider-toggle"
@@ -657,7 +655,7 @@
 
                             <!-- ACCOUNT ON HOLD Toggle -->
                             <tr>
-                                <td class="font-semibold text-center align-middle px-4 py-3">ACCOUNT ON HOLD</td>
+                                <td class="font-semibold text-start align-middle px-4 py-3">ACCOUNT ON HOLD</td>
                                 <td class="px-4 py-3">
                                     <label class="inline-flex items-center cursor-pointer">
                                         <input type="checkbox" id="holdToggle" class="sr-only slider-toggle"
@@ -741,9 +739,9 @@
                     <label for="" class="block uppercase font-semibold">Old FD No.</label>
                     <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                         <input type="text" name="" id=""
-                            class="block w-full bg-secondary/5 px-3 rounded-10 border py-3 dark:text-white"
+                            class="block w-full bg-secondary/5 px-3 rounded-10 border py-2 dark:text-white"
                             placeholder="Enter Old FD Number">
-                        <input type="button" value="update" class="block  btn-primary py-2 uppercase rounded-10">
+                        <input type="button" value="update" class="block  btn-primary py-2 uppercase rounded-10 cursor-pointer">
                     </div>
                 </form>
 
@@ -779,7 +777,7 @@
                             <option>Option 2</option>
                         </select>
 
-                        <input type="button" value="update" class="block rounded-10 uppercase btn-primary">
+                        <input type="button" value="update" class="block rounded-10 uppercase btn-primary cursor-pointer">
 
                     </div>
                 </form>
@@ -800,7 +798,7 @@
                             <option>Option 2</option>
                         </select>
 
-                        <input type="button" value="update" class="block rounded-10 uppercase btn-primary">
+                        <input type="button" value="update" class="block rounded-10 uppercase btn-primary cursor-pointer">
 
                     </div>
                 </form>
