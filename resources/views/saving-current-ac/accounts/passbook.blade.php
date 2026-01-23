@@ -430,7 +430,7 @@
       <div style="width: 100%;">
     <table style="width: 100%;">
             <tr>
-              <td style="font-weight: bold; padding: 1px 4px; font-size:14px; vertical-align: top;"class="uppercase">Member's Name</td>
+              <td style="font-weight: bold; padding: 1px 4px; font-size:14px; vertical-align: top;"class="uppercase">MEMBER'S NAME</td>
               <td style="text-align: center;  padding: 1px 4px; font-size:14px; vertical-align: top;">:</td>
               <td style="width: 58%; padding: 1px 4px; font-size:14px; vertical-align: top;" class="uppercase">
                ${accountData.members?.member_info_first_name ?? '-'} ${accountData.members?.member_info_last_name ?? ''}</td>
@@ -927,10 +927,8 @@
           <title>Passbook</title>
           <style>
            @page {
-              size: A4 landscape;
+              size: A4 ;
               margin: 15mm;
-              
-
                @bottom-center {
       content: "Page " counter(page) " of " counter(pages);
       font-size: 11px;
