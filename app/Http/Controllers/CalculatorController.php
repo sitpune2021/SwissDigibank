@@ -78,7 +78,7 @@ class CalculatorController extends Controller
 
             $periodStart = $currentDate->copy();
             $periodEnd = $currentDate->copy()->addMonths(min($monthsToAdd, $totalMonths - $i));
-            $days = $periodEnd->diffInDays($periodStart);
+            $days = $periodStart->diffInDays($periodEnd);
 
             $periodRate = ($rate / 100) * ($days / 365);
             $interest = $currentPrincipal * $periodRate;
@@ -94,6 +94,8 @@ class CalculatorController extends Controller
             $totalTDS += $tds;
 
             $interestPeriods[] = [
+                'fd_year' => floor($i / 12) + 1, // ✅ IMPORTANT
+                'year' => Carbon::parse($periodStart)->year,
                 'period' => $periodStart->format('d/m/Y') . ' - ' . $periodEnd->format('d/m/Y'),
                 'days' => $days,
                 'principal' => round($currentPrincipal, 2),
@@ -165,9 +167,9 @@ public function calculateInvestmentAjax(Request $request)
     $results = $this->calculateInvestment('FD', $principal, $rate, $tenureTotalYears, $startDate, $payoutType);
 
     return response()->json([
-        'success' => true,
-        'results' => $results
-    ]);
+    'success' => true,
+    'results' => $results
+]);
 }
 
 
@@ -196,7 +198,7 @@ public function getSchemeDetails($id)
     }
 }
 
-
+// year wise tab show ad result
 public function calculateInvestment(
     $type = null,
     $principal = null,
@@ -298,9 +300,95 @@ public function calculateInvestment(
         'maturity_date'   => Carbon::parse($startDate)->addYears($tenureYears)->format('d/m/Y'),
     ];
 
+    // ---------------- PERIODS (FD EMI / PERIOD WISE) ----------------
+$periods = [];
+
+$totalMonths = floor($tenureYears * 12);
+$currentDate = Carbon::parse($startDate);
+$currentPrincipal = $principalFn;
+
+for ($i = 0; $i < $totalMonths; $i++) {
+
+    $periodStart = $currentDate->copy();
+    $normalEnd   = $currentDate->copy()->addMonth();
+
+    // 🔥 Check if 31 March falls in between
+    $fyEnd = Carbon::create($periodStart->year, 3, 31);
+
+    if ($periodStart <= $fyEnd && $normalEnd > $fyEnd) {
+
+        // ---------------- 1️⃣ PART : till 31 March ----------------
+        $days1 = $periodStart->diffInDays($fyEnd);
+        $interest1 = ($currentPrincipal * $annualRate * $days1) / 365;
+
+        $periods[] = [
+            'fd_year'          => floor($i / 12) + 1,
+            'period'           => $periodStart->format('d/m/Y').' - '.$fyEnd->format('d/m/Y'),
+            'days'             => $days1,
+            'principal'        => round($currentPrincipal, 2),
+            'interest'         => round($interest1, 2),
+            'tds'              => 0,
+            'net_interest'     => round($interest1, 2),
+            'net_interest_due' => null, // ✅ ONLY 31 MARCH ROW
+            'principal_at_eoy' => null,   // ❌ as per rule
+            'due_by'           => null,   // ❌ as per rule
+        ];
+
+        // ---------------- 2️⃣ PART : from 1 April ----------------
+        $aprilStart = $fyEnd->copy()->addDay();
+        $days2 = $aprilStart->diffInDays($normalEnd);
+        $interest2 = ($currentPrincipal * $annualRate * $days2) / 365;
+
+        if (str_contains($payoutType, 'CUMULATIVE')) {
+            $currentPrincipal += ($interest1 + $interest2);
+        }
+
+        $periods[] = [
+            'fd_year'          => floor($i / 12) + 1,
+            'period'           => $aprilStart->format('d/m/Y').' - '.$normalEnd->format('d/m/Y'),
+            'days'             => $days2,
+            'principal'        => round($currentPrincipal, 2),
+            'interest'         => round($interest2, 2),
+            'tds'              => 0,
+            'net_interest'     => round($interest2, 2),
+            'net_interest_due' => round($interest2, 2),
+            'principal_at_eoy' => null,
+            'due_by'           => $normalEnd->format('d/m/Y'),
+        ];
+
+    } else {
+
+        // ---------------- NORMAL MONTH ----------------
+        $days = $periodStart->diffInDays($normalEnd);
+        $interest = ($currentPrincipal * $annualRate * $days) / 365;
+
+        if (str_contains($payoutType, 'CUMULATIVE')) {
+            $currentPrincipal += $interest;
+        }
+
+        $periods[] = [
+            'fd_year'          => floor($i / 12) + 1,
+            'period'           => $periodStart->format('d/m/Y').' - '.$normalEnd->format('d/m/Y'),
+            'days'             => $days,
+            'principal'        => round($currentPrincipal, 2),
+            'interest'         => round($interest, 2),
+            'tds'              => 0,
+            'net_interest'     => round($interest, 2),
+            'net_interest_due' => round($interest, 2),
+            'principal_at_eoy' => null,
+            'due_by'           => $normalEnd->format('d/m/Y'),
+        ];
+    }
+
+    $currentDate = $normalEnd;
+}
+
+
+
     return [
         'summary' => $summary,
-        'details' => $details
+        'details' => $details,
+        'periods' => $periods 
     ];
 }
 
