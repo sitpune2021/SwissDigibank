@@ -48,7 +48,7 @@
 <div class="main-inner">
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-        <h3 class=" flex text-xl block  uppercase font-semibold">
+        <h3 class=" flex text-lg   uppercase font-semibold">
             Report - MIS Accounts
         </h3>
 
@@ -56,18 +56,18 @@
 
     <div class="col-span-12 box lg:col-span-12">
         <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
-            <a href="{{route('report.mis.index')}}" class="btn-primary rounded-10 px-1 flex justify-center py-2 text-sm uppercase">
+            <a href="{{route('report.mis.index')}}" class="btn-primary rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
                 <i class="las la-print"></i>
                 Print Cut Report
             </a>
-            <a href="{{ route('mis.account.csv') }}" class="btn-error rounded-10 px-1 flex justify-center py-2 text-sm uppercase">
+            <a href="{{ route('mis.account.csv') }}" class="btn-error rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
                 <i class="las la-download"></i>
                 Download Csv
             </a>
         </div>
 
         <div class="pb-4 overflow-x-auto lg:pb-6">
-            <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+            <table class="w-full whitespace-nowrap select-all-table" id="">
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -122,7 +122,9 @@
                     <tr class="border-b dark:border-bg3">
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 uppercase">
-                                {{ $row->mis_account_no ?? ''}}
+                                <a href="{{ $row?->id ? route('misaccount.show', $row->id) : '#' }}" class="text-primary">
+                                    {{ $row->mis_account_no ?? ''}}
+                                </a>
                             </div>
                         </td>
 
@@ -155,12 +157,14 @@
                         </td>
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                {{ $row->open_date??'' }}
+                              {{ $row->open_date ? \Carbon\Carbon::parse($row->open_date)->format(format: 'd-m-Y') : '' }}
+                                {{-- {{ $row->open_date??'' }} --}}
                             </div>
                         </td>
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                {{ $row->maturity_date??'' }}
+                                {{ $row->maturity_date ? \Carbon\Carbon::parse($row->maturity_date)->format(format: 'd-m-Y') : '' }}
+                                {{-- {{ $row->maturity_date??'' }} --}}
                             </div>
                         </td>
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -173,8 +177,11 @@
                 </tbody>
             </table>
         </div>
+        <div class="mt-5">
+            <x-pagination :paginator="$account" />
+        </div>
     </div>
-    <x-pagination :paginator="$account" />
+    
     <!-- BACKDROP -->
     <div id="loanModal"
         class="fixed inset-0 z-50 hidden bg-black/60 flex items-start justify-center overflow-y-auto pt-10">

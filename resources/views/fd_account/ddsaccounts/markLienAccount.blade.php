@@ -97,8 +97,8 @@
     }
 
     input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
         /* For modern browsers */
     }
@@ -110,8 +110,8 @@
     }
 
     input[type="radio"] {
-        width: 24px;
-        height: 24px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
         /* Modern browser support */
     }
@@ -130,7 +130,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-row gap-2">
-                <h3 class="text-xl uppercase font-semibold">
+                <h3 class="text-lg uppercase font-semibold">
                     DD Account - 0000{{$ddaccount->id}} - Mark Lien Account
                 </h3>
             </div>
@@ -280,7 +280,10 @@
 
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2">DOB</td>
-                                        <td class="py-2">{{ $ddaccount->member->member_info_dob ?? 'N/A' }}</td>
+                                        <td class="py-2">
+                                            {{ \Carbon\Carbon::parse($ddaccount->member->member_info_dob )->format('d-m-Y')}}
+                                            
+                                        </td>
                                     </tr>
 
                                     <tr class="border-b">

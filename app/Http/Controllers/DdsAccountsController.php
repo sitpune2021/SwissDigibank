@@ -214,14 +214,15 @@ class DdsAccountsController extends Controller
             // Generate dd_no based on the last inserted value
             $lastAccount = DdsAccount::orderBy('id', 'desc')->first();
             $lastDdNo = $lastAccount ? (int) substr($lastAccount->dd_no, 2) : 0;
-            $newDdNo = 'DD' . str_pad($lastDdNo + 1, 3, '0', STR_PAD_LEFT);
+            $newDdNo = 'DD' . str_pad($lastDdNo + 1, 10, '0', STR_PAD_LEFT);
 
             $ddsAccount = new DdsAccount();
-            $ddsAccount->dd_no = $newDdNo;  // Store the generated dd_no
+            $ddsAccount->dd_no = $newDdNo;  
             $ddsAccount->member_id = $request->member_id;
             $ddsAccount->branch_id = $request->branch_id;
             $ddsAccount->scheme_id = $request->scheme_id;
             $ddsAccount->dd_amount = $request->dd_amount;
+            $ddsAccount->balance = $ddsAccount->dd_amount;
             $ddsAccount->open_date = $request->open_date;
             // $ddsAccount->nominee = ($request->nominee === 'yes') ? 1 : 0;
             $ddsAccount->account_type = $request->account_type; // ✅ FIXED
@@ -1971,4 +1972,152 @@ class DdsAccountsController extends Controller
         return redirect()->route('ddsaccounts.show', $id)
             ->with('success', 'Documents uploaded successfully.');
     }
+
+        // Print DD Bond
+     public function ddBondFormView($id)   {
+          $ddAccount = DdsAccount::with([
+        'member',
+        'nominee',
+        'scheme'
+    ])->findOrFail($id);
+
+    $data = [
+        'ddAccount'       => $ddAccount,
+        'company_address' => 'HEAD OFFICE',
+        'date'            => now()->format('d-m-Y'),
+        'company_reg_no'  => 'Reg. No. 969/03-04',
+    ];
+
+   
+
+    return view('fd_account.ddsaccounts.print-documents.dd-bondView', compact('ddAccount'));
+     }
+public function ddBondForm($id)
+{
+    $ddAccount = DdsAccount::with([
+        'member',
+        'nominee',
+        'scheme'
+    ])->findOrFail($id);
+
+    $data = [
+        'ddAccount'       => $ddAccount,
+        'company_address' => 'HEAD OFFICE',
+        'date'            => now()->format('d-m-Y'),
+        'company_reg_no'  => 'Reg. No. 969/03-04',
+    ];
+
+    $pdf = app('dompdf.wrapper')
+        ->loadView('fd_account.ddsaccounts.print-documents.dd-bond',
+            $data
+        )
+        ->setPaper('a4', 'portrait');
+
+    return $pdf->download('dd-bond-' . $ddAccount->id . '.pdf');
+}
+
+public function ddOpeningFormView($id)
+{
+    $account = DdsAccount::with([
+        'member.kyc',
+        'member.address.state',
+        'member.branch',
+        'scheme'
+    ])->findOrFail($id);
+
+    // DD interest rate (direct from scheme)
+    $interestRate = $account->scheme->anuual_interest_rate ?? 0;
+
+    $member = $account->member;
+
+   return view('fd_account.ddsaccounts.print-documents.accountopeningformView', compact('account'));
+}
+public function ddOpeningForm($id)
+{
+    $account = DdsAccount::with([
+        'member.kyc',
+        'member.address.state',
+        'member.branch',
+        'scheme'
+    ])->findOrFail($id);
+
+    // DD interest rate (direct from scheme)
+    $interestRate = $account->scheme->anuual_interest_rate ?? 0;
+
+    $member = $account->member;
+
+    $pdf = app('dompdf.wrapper')
+        ->loadView(
+            'fd_account.ddsaccounts.print-documents.accountopeningform',
+            compact('account', 'member', 'interestRate')
+        )
+        ->setPaper('a4', 'portrait');
+
+    return $pdf->download('dd-opening-' . $id . '.pdf');
+}
+
+public function ddClosingFormView($id)
+{
+    $ddAccount = DdsAccount::with(['member.branch'])->findOrFail($id);
+
+    $data = [
+        'name' => $ddAccount->member->member_info_first_name . ' ' .
+                  $ddAccount->member->member_info_last_name,
+
+        'date' => now()->format('d-m-Y'),
+
+        // DD Account No
+        'agreement_no' => $ddAccount->dd_no ?? 'DD' . str_pad($ddAccount->id, 5, '0', STR_PAD_LEFT),
+
+        'holder_name' => strtoupper(
+            $ddAccount->member->member_info_first_name . ' ' .
+            $ddAccount->member->member_info_last_name
+        ),
+
+        'expiry_date' => \Carbon\Carbon::parse($ddAccount->maturity_date)->format('d-m-Y'),
+
+        'branch_name' => $ddAccount->member->branch->branch_name ?? '',
+
+        'branch_address' => $ddAccount->member->branch->branch_address ?? '',
+    ];
+
+    return view('fd_account.ddsaccounts.print-documents.closingfromView',    array_merge($data, compact('ddAccount')));
+     }
+public function ddClosingForm($id)
+{
+    $ddAccount = DdsAccount::with(['member.branch'])->findOrFail($id);
+
+    $data = [
+        'name' => $ddAccount->member->member_info_first_name . ' ' .
+                  $ddAccount->member->member_info_last_name,
+
+        'date' => now()->format('d-m-Y'),
+
+        // DD Account No
+        'agreement_no' => $ddAccount->dd_no ?? 'DD' . str_pad($ddAccount->id, 5, '0', STR_PAD_LEFT),
+
+        'holder_name' => strtoupper(
+            $ddAccount->member->member_info_first_name . ' ' .
+            $ddAccount->member->member_info_last_name
+        ),
+
+        'expiry_date' => \Carbon\Carbon::parse($ddAccount->maturity_date)->format('d-m-Y'),
+
+        'branch_name' => $ddAccount->member->branch->branch_name ?? '',
+
+        'branch_address' => $ddAccount->member->branch->branch_address ?? '',
+    ];
+
+    $pdf = app('dompdf.wrapper')
+        ->loadView(
+            'fd_account.ddsaccounts.print-documents.closingform',
+            $data
+        )
+        ->setPaper('A4', 'portrait')
+        ->setOption('isHtml5ParserEnabled', true)
+        ->setOption('isRemoteEnabled', true);
+
+    return $pdf->download('dd-closing-form-' . $ddAccount->id . '.pdf');
+}
+
 }

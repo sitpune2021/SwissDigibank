@@ -130,7 +130,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-row gap-2">
-                <h3 class="text-xl uppercase font-semibold">
+                <h3 class="text-lg uppercase font-semibold">
                     FD Account -{{ $fdAccount->id }} - Link Saving Account (Auto credit FD interest to saving account)
                 </h3>
             </div>
@@ -205,13 +205,16 @@
                                         <tr class="py-2 border-b">
                                             <td class="font-semibold uppercase py-2 w-40">customer</td>
                                             <td class="py-2">
-                                                {{ ($fdAccount->member?->member_no ??
-                                                    ($fdAccount->member?->id ? str_pad($fdAccount->member->id, 6, '0', STR_PAD_LEFT) : '')) .
-                                                    ' - ' .
-                                                    ($fdAccount->member?->member_info_first_name ?? 'N/A') .
-                                                    ' - ' .
-                                                    ($fdAccount->member?->member_info_last_name ?? '') }}
+                                                <a href="{{ $fdAccount?->member?->id ? route('member.show', $fdAccount->member->id) : '#' }}"
+                                                    class="text-primary hover:underline">
+                                                    {{ $fdAccount->member?->member_no ??
+                                                        ($fdAccount->member?->id ? str_pad($fdAccount->member->id, 5, '0', STR_PAD_LEFT) : 'N/A') }}
+                                                    -
+                                                    {{ $fdAccount->member?->member_info_first_name }}
+                                                    {{ $fdAccount->member?->member_info_last_name }}
+                                                </a>
                                             </td>
+
                                         </tr>
 
                                         <tr class="border-b">
@@ -229,8 +232,8 @@
                                         </tr>
 
                                         <tr class="border-b">
-                                            <td class="font-semibold uppercase py-2">Status </td>
-                                            <td class="py-2">{{ $fdAccount->active == 1 ? 'Active' : 'Inactive' }}</td>
+                                            <td class="font-semibold  uppercase py-2">Status </td>
+                                            <td class="py-2 text-primary">{{ $fdAccount->active == 1 ? 'Active' : 'Inactive' }}</td>
                                         </tr>
 
                                     </tbody>

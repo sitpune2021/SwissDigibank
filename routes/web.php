@@ -1,5 +1,18 @@
 <?php
 
+use App\Http\Controllers\BankAccountController;
+use App\Http\Controllers\CollectionCenterController;
+use App\Http\Controllers\EmployeeAttendenceController;
+use App\Http\Controllers\GroupCommentController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\LogoImgUploadController;
+use App\Http\Controllers\MasterSettingController;
+use App\Http\Controllers\MasterSettingsController;
+use App\Http\Controllers\MortgageLoanPrintDocumentsController;
+use App\Http\Controllers\NoticeBoardController;
+use App\Http\Controllers\PrintDocumentsController;
+use App\Http\Controllers\SoftwareSettingsController;
+use App\Http\Controllers\UnencumberedDepositController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountsController;
@@ -85,6 +98,8 @@ use App\Http\Controllers\GoldLoanPrintDocument;
 // Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
 // Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
 // Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
+Route::view('/privacy-policy', 'privacy-policy')
+    ->name('privacy.policy');
 
 Route::middleware(['guest', SessionProtection::class])->group(function () {
 
@@ -132,6 +147,9 @@ Route::middleware('auth.user')->group(function () {
         Route::post('shareholding/transfer', [ShareholdingController::class, 'IsTransforror'])
             ->name('shareholding.transfer');
         Route::resource('director', DirectorController::class);
+        //------------------------------18-12-2025------------------------------------------//
+        Route::resource('unencumbered-deposits', UnencumberedDepositController::class);
+        Route::resource('bank-account', BankAccountController::class);
     });
 
     Route::group(['prefix' => 'user'], function () {
@@ -156,7 +174,9 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/dds-accounts/store', [DdsAccountsController::class, 'store'])->name('dds-accounts.store');
         Route::get('/ajax/members/{id}', [DdsAccountsController::class, 'getMemberDetails'])
             ->name('ajax.members.show');
+            
         Route::get('/dds-accounts/{id}', [DdsAccountsController::class, 'show'])->name('dds-accounts.show');
+
         Route::get('/dds-accounts/{id}/edit', [DdsAccountsController::class, 'edit'])->name('dds-accounts.edit');
         Route::post('/dds-accounts/calculate-deposit', [DdsAccountsController::class, 'calculateDeposit'])
             ->name('dds-accounts.calculate-deposit');
@@ -171,17 +191,12 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/calculateMaturity', [DdsAccountsController::class, 'calculateMaturity'])->name('ddsaccounts.calculateMaturity');
         Route::get('/dds-accounts/{id}/installments', [DdsAccountsController::class, 'installments'])
             ->name('ddsaccounts.installments');
-
-
         Route::get('/dds/{id}/regenerate', [DdsAccountsController::class, 'regenerateInstallment'])
             ->name('dds.installments.regenerate');
-
         Route::get(
             '/dds-accounts/{id}/installment-receipt/{instNo}',
             [DdsAccountsController::class, 'installmentReceipt']
         )->name('dds.installment.receipt');
-
-
         Route::get('/dds-accounts/{id}/transactions/{transaction_id?}', [DdsAccountsController::class, 'transactions'])
             ->name('dds.transactions');
         // Deposit Routes
@@ -193,43 +208,32 @@ Route::middleware('auth.user')->group(function () {
             ->name('ddsaccounts.withdraw-create');
         Route::post('dds-accounts/{id}/withdraw', [DdsAccountsController::class, 'withdraw'])
             ->name('ddsaccounts.withdraw');
-
         Route::get('dds-accounts/{id}/link-saving-account', [DdsAccountsController::class, 'createLinkSavingAcc'])
             ->name('ddsaccounts.createLinkSavingAcc');
         Route::post(
             'dds-accounts/{id}/link-saving',
             [DdsAccountsController::class, 'storeLinkSavingAcc']
         )->name('ddsaccounts.storeLinkSavingAcc');
-
         Route::get('ddsaccounts/{id}/unlink', [DdsAccountsController::class, 'confirmUnlink'])
             ->name('ddsaccounts.confirmUnlink');
         Route::post('ddsaccounts/{id}/unlink', [DdsAccountsController::class, 'storeLinkSavingAcc'])
             ->name('ddsaccounts.storeLinkSavingAcc');
-
         Route::get('dds-accounts/{id}/credit-interest', [DdsAccountsController::class, 'createCreditInterest'])
             ->name('ddsaccounts.createCreditInterest');
-        Route::post(
-            'dds-accounts/{id}/credit-interest/store',
-            [DdsAccountsController::class, 'storeCreditInterest']
-        )
+        Route::post('dds-accounts/{id}/credit-interest/store', [DdsAccountsController::class, 'storeCreditInterest'])
             ->name('ddsaccounts.storeCreditInterest');
-
         Route::get('dds-accounts/{id}/mark-lien-account', [DdsAccountsController::class, 'createMarkLienAccount'])
             ->name('ddsaccounts.MarkLienAccount');
-
         Route::get('/dd/account-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('dd.accounts.nominee');
         Route::post('/dds-accounts/{type}/{id}', [AccountsController::class, 'saveNominees'])->name('dds-accounts.nominees.save');
-
         Route::get('/change-account-info/{id}', [DdsAccountsController::class, 'changeAccountInfo'])->name('dd.change.account.info');
         Route::post('/change-account-info/{id}', [DdsAccountsController::class, 'updateAccountInfo'])
             ->name('dd.update.account.info');
-
         Route::get('/change-minor-info/{id}', [DdsAccountsController::class, 'changeMinorInfo'])->name('ddChange.minor.info');
         Route::post(
             '/ddsaccounts/{id}/update-minor',
             [DdsAccountsController::class, 'updateMinor']
         )->name('ddsaccounts.updateMinor');
-
         Route::get('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'createforeClose'])->name('dds-accounts.fore-close');
         // Route::post('/dds-accounts/{id}/fore-close', [DdsAccountsController::class, 'storeForeClose'])->name('dds-accounts.store-fore-close');
         Route::get('/dds-account/comment/{id}', [DdsAccountsController::class, 'addComment'])->name('dds.addComment');
@@ -237,7 +241,6 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/dds-account/uploadDocuments/{id}', [DdsAccountsController::class, 'uploadDocuments'])->name('dds.uploadDocuments');
         Route::post('/dds-account/storeDocuments/{id}', [DdsAccountsController::class, 'storeDocuments'])->name('dds.storeDocuments');
         Route::delete('/dds-account/{id}', [DdsAccountsController::class, 'destroy'])->name('documents.destroy');
-
         // Show Account Details
         Route::get('dds-accounts/{id}', [DdsAccountsController::class, 'show'])
             ->name('ddsaccounts.show');
@@ -248,19 +251,36 @@ Route::middleware('auth.user')->group(function () {
             '/print-documents/transaction-receipt/{accountId}/{transactionId}',
             [DdsAccountsController::class, 'printReceipt1']
         )->name('dds.transaction.receipt');
+
+        //print documents
+        Route::get('ddsaccounts/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
+            ->name('dd.bond.form');
+
+            
+        Route::get('ddsaccounts/opening-form-view/{id}', [DdsAccountsController::class, 'ddOpeningFormView'])
+            ->name('dd.opening-view');
+        Route::get('ddsaccounts/opening-form/{id}', [DdsAccountsController::class, 'ddOpeningForm'])
+            ->name('dd.opening.form');
+
+             Route::get('ddsaccounts/closing-form-view/{id}', [DdsAccountsController::class, 'ddClosingFormView'])
+            ->name('dd.closing-view');
+        Route::get('ddsaccounts/closing-form/{id}', [DdsAccountsController::class, 'ddClosingForm'])
+            ->name('dd.closing.form');
     });
+
+
+    // RD route 
     Route::resource('rd-calculator', RDCalculatorController::class)
         ->only(['index', 'create', 'store']);
     Route::get('/rd-schemes/{scheme_code}', [RDCalculatorController::class, 'getScheme']);
 
+    // MEMBER Route
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);
         Route::resource('minor', MinorController::class);
         Route::get('/members/{member_id}/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
-
         // Route::get('/members/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
         Route::post('/members/member/store-comment', [MemberController::class, 'storeComment'])->name('member.storeComment');
-
         Route::get('/member/{id}/documents', [MemberController::class, 'documentShow'])->name('member.document');
         Route::post('/member/{id}/documents', [MemberController::class, 'documentUpdate'])->name('member.documentupdate');
         Route::get('/members/{id}/address', [MemberController::class, 'addressedit'])->name('member.address');
@@ -284,26 +304,25 @@ Route::middleware('auth.user')->group(function () {
         // Route to show the form for clearing dues (GET request)
         Route::get('members/{id}/transactions/other-charges/{chargeId}/clear-due', [MemberController::class, 'showClearDueForm'])
             ->name('members.other-charges.clearDue.form');
-        // Route to handle clearing dues (POST request)
         Route::post('members/{id}/transactions/other-charges/{chargeId}/clear-due', [MemberController::class, 'storeChargesDue'])
             ->name('members.other-charges.clearDue.handle');
         Route::get('/members/receipt/print/{id}', [MemberController::class, 'printReceipt'])
             ->middleware('auth')
             ->name('transactions.print-receipt');
-
         Route::get('/members/application-form/{id}', [MemberController::class, 'applicationForm'])->name('members.application_form');
-
-        Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
         Route::get('/members/{id}/transactions/other-charges', [MemberController::class, 'otherCharges'])
             ->name('members.other-charges');
         Route::post('/members/{id}/transactions/other-charges', [MemberController::class, 'storeOtherCharges'])->name('members.other-charges.store');
 
+        // -------------------------------------Shareholding Route----------------------------------------
+        Route::get('/members/members/member/{id}/shareholding', [ShareHoldingController::class, 'shareholding'])->name('members.shareholding');
         Route::get('/shareholding/view/{id}', [ShareholdingController::class, 'viewShareholding'])->name('viewShareholding');
         Route::get('/shareholding/{id}', [MemberController::class, 'shareholding'])->name('shareholding');
-
         Route::resource('shares-holdings', ShareholdersController::class);
         Route::resource('share-certificates', controller: ShareCertificateController::class);
         Route::resource('share_transfer_histories', ShareTrasferHistoryController::class);
+
+        //-------------------------------------- Form 15 route-------------------------------------------------
         Route::resource('form15g15h', Form15Gor15HController::class);
         Route::get('/form15g15h/download/{member_id}', [Form15Gor15HController::class, 'download'])->name('form15g15h.download');
         Route::get('/form15g15h/download/promoter/{promoter_id}', [Form15Gor15HController::class, 'downloadByPromoter'])->name('form15g15h.download.promoter');
@@ -327,6 +346,7 @@ Route::get('/get-member-shares/{id}', function ($id) {
 
 Route::get('/get-promoter-shares/{id}', [ShareTransferController::class, 'getPromoterShares']);
 
+//---------------------------- Saving Account route-------------------------------------------------------
 Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::resource('schemes', SchemesController::class);
     Route::resource('accounts', AccountsController::class);
@@ -355,8 +375,17 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
     Route::post('accounts/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('accounts.nominees.save');
 
     Route::get('/accounts/close-account/{id}', [AccountsController::class, 'closeAccount'])->name('saving.accounts.close.account');
-    Route::get('/accounts/account-form/{id}', [AccountsController::class, 'accountOpenForm'])->name('saving.accounts.open.form');
-});
+    // Preview (Blade)
+Route::get('/saving-account/open-form/{id}',
+    [AccountsController::class, 'accountOpenFormPreview']
+)->name('saving.account.openform.preview');
+    // Download PDF
+Route::get(
+    '/saving-account/{id}/opening-form',
+    [AccountsController::class, 'accountOpenFormDownload']
+)->name('saving.account.opening.pdf');
+
+}); 
 
 Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::resource('fd-mis-schemes', FDController::class);
@@ -369,6 +398,7 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/account/balance/{id}', [FDController::class, 'getBalance'])->name('account.balance');
 
     Route::get('fd-account-view/{id}', [FDController::class, 'fd_show'])->name('fd-mis-schemes.fd_show');
+
     Route::get('/get-member-savings/{member_id}', [FDController::class, 'getMemberSavings'])
         ->name('member.savings');
 
@@ -413,14 +443,35 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/fd-account/credit-debit-interest/{id}', [FdController::class, 'creditDebitInterest'])->name('fd-account.creditDebitInterest');
     Route::post('/fd-account/{id}/credit-debit-interest', [FdController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('fd.creditdebit.store');
-
     Route::get('/fd-account/deduct-reverse-tds/{id}', [FdController::class, 'deductReverseTds'])->name('fd-account.deductReverseTds');
     Route::post('/fd-account/{id}/deduct-reverse-tds', [FdController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('fd.creditdebit.store');
+
+
     //////
 
     Route::get('/fd-add-nominee/{type}/{id}', [AccountsController::class, 'accountNominee'])->name('fd.add.nominee');
     Route::post('fd/{type}/{id}/nominee/save', [AccountsController::class, 'saveNominees'])->name('fd.nominees.save');
+
+    //print document
+
+    Route::get('/fd-bond/view/{id}', [FdController::class, 'fdBondFormView'])
+        ->name('fd.bond.view');
+    Route::get('/Fd-Bond/{id}', [FdController::class, 'fdBondForm'])
+        ->name('fd.bond.form');
+
+    Route::get('/opening-form/view/{id}', [FdController::class, 'fdOpeningFormView'])
+        ->name('fd.opening.view');
+
+    Route::get('/opening-form/{id}', [FdController::class, 'fdOpeningForm'])
+        ->name('fd.opening.form');
+
+    Route::get('/closing-form/view/{id}', [FdController::class, 'fdClosingFormview'])
+        ->name('fd.closing.view');
+
+    Route::get('/closing-form/{id}', [FdController::class, 'fdClosingForm'])
+        ->name('fd.closing.form');
+
 
     Route::resource('misaccount', MisaccountController::class);
     // Route::get('misaccount/create', [MisaccountController::class, 'create']);
@@ -470,11 +521,6 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('/misaccount/{id}/deduct-reverse-tds', [MisaccountController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('mis.creditdebit.store');
 
-    Route::get('/misaccount/{id}/print-bond', [MisaccountController::class, 'misBondForm'])->name('misaccount.printbond');
-    Route::get('/mis-opening-form/{id}', [MisaccountController::class, 'misOpeningForm'])->name('misaccount.openingform');
-    Route::get('/mis-account/{id}/closing-form', [MisaccountController::class, 'misClosingForm'])
-        ->name('misaccount.closingform');
-
     Route::get('/misaccount/uploadDocuments/{id}', [MisaccountController::class, 'uploadDocuments'])->name('mis.uploadDocuments');
     Route::post('/misaccount/storeDocuments/{id}', [MisaccountController::class, 'storeDocuments'])->name('mis.storeDocuments');
     Route::delete('/documents/{id}', [MisaccountController::class, 'destroy'])->name('documents.destroy');
@@ -486,6 +532,26 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
         ->name('mis.updateSetting');
     Route::post('/misaccount/{id}/update-setting', [MisaccountController::class, 'updateSetting'])
         ->name('mis.updateSetting');
+
+    //print document
+    Route::get('/misaccount/{id}/print-bond-view', [MisaccountController::class, 'misBondPreview'])
+        ->name('misaccount.printbond.view');
+
+    Route::get('/misaccount/{id}/print-bond', [MisaccountController::class, 'misBondForm'])->name('misaccount.printbond');
+
+    // Preview (Blade)
+    Route::get(
+        '/mis-opening-form/{id}/view',
+        [MisaccountController::class, 'misOpeningFormPreview']
+    )->name('misaccount.openingform.preview');
+    Route::get('/mis-opening-form/{id}', [MisaccountController::class, 'misOpeningForm'])->name('misaccount.openingform');
+    Route::get('/mis-account/{id}/closing-form/view', 
+    [MisaccountController::class, 'misClosingFormPreview']
+)->name('misaccount.closingform.preview');
+
+    Route::get('/mis-account/{id}/closing-form', [MisaccountController::class, 'misClosingForm'])
+        ->name('misaccount.closingform');
+
 });
 
 Route::group(['prefix' => 'mds-rds-dds'], function () {
@@ -530,6 +596,19 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
         ->name('rd.storeComment');
 
     Route::post('/rdaccount/{id}/update-setting', [RdAccountController::class, 'updateSetting'])->name('rd.updateSetting');
+
+    // print documents
+    Route::get('/rdaccount/{id}/print-bond-view', [RdAccountController::class, 'rdBondFormView'])->name('rdaccount.printbondView');
+
+    Route::get('/rdaccount/{id}/print-bond', [RdAccountController::class, 'rdBondForm'])->name('rdaccount.printbond');
+
+    Route::get('/rdaccount/opening-form-view/{id}', [RdAccountController::class, 'rdOpeningFormView'])->name('opening.form-view');
+    Route::get('/rdaccount/opening-form/{id}', [RdAccountController::class, 'rdOpeningForm'])->name('opening.form');
+
+     Route::get('/rdaccount/closing-form-view/{id}', [RdAccountController::class, 'rdClosingFormView'])->name('closing.form-view');
+
+    Route::get('/rdaccount/closing-form/{id}', [RdAccountController::class, 'rdClosingForm'])->name('closing.form');
+
 });
 
 Route::group(['prefix' => 'deposits'], function () {
@@ -769,7 +848,8 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     // Print Document
     //Route::get('agreement', [GoldLoanPrintDocument::class, 'loan_agreement'])->name('loan.agreement.pdf');
-    Route::get('/loan/{loan}/loan-agreement', 
+    Route::get(
+        '/loan/{loan}/loan-agreement',
         [GoldLoanPrintDocument::class, 'loanAgreement']
     )->name('loan.loanAgreement');
 
@@ -890,6 +970,11 @@ Route::group(['prefix' => 'mortgage'], function () {
         ->name('mortgage.col_process_fee.store');
     Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
+
+    //print documents view page  
+    //      Route::get('/loan/{loan}/loan-agreement', 
+    //     [MortgageLoanPrintDocumentsController::class, 'loanAgreement']
+    // )->name('loan.mortgageloanAgreement');
 });
 
 
@@ -2137,10 +2222,21 @@ Route::group(['prefix' => 'hr-managment'], function () {
 
     Route::get('employee/view-tran', [EmployeeController::class, 'view_tran'])
         ->name('hr-management.employee.view-trans');
+
+
+
 });
-/////////Akash//////////
-Route::get('attendance/attendance-index', [EmployeeAkash::class, 'attendance_index'])
+//Employee attendance 
+Route::get('attendance/attendance-index', [EmployeeAttendenceController::class, 'index'])
     ->name('hr-management.attendance.index');
+Route::post('/attendance/store', [EmployeeAttendenceController::class, 'store'])
+    ->name('attendance.store');
+Route::get(
+    '/hr-management/attendance/calendar/{employee}',
+    [EmployeeAttendenceController::class, 'calendar']
+)->name('hr-management.attendance.calender');
+
+/////////Akash//////////
 
 Route::get('salary-disbursement/disbursement-index', [EmployeeAkash::class, 'disbursement_index'])
     ->name('hr-management.salary-disbursement.index');
@@ -2292,6 +2388,225 @@ Route::delete('/passbook/{id}', [PassbookController::class, 'destroy'])->name('p
 /////////////////////////////////////   end Passbook   ////////////////////////////////////////////////////////
 
 
+/////////////////////////////Notice Board ///////////////////////////////
+
+Route::resource('notice-boards', NoticeBoardController::class);
+
+/////////////////////////////End Notice Board //////////////////////////
+
+
+
+
+/////////////////////////////Collection Center and Groups //////////////////////////
+Route::resource('collection-centers', CollectionCenterController::class);
+Route::resource('groups', GroupController::class);
+
+Route::get('/branches-by-center/{centerId}', [GroupController::class, 'getBranches']);
+// Route::get('/commnets/view', [GroupCommentController::class, 'view'])->name('commnet.view');
+
+Route::get('groups/{group}/comments', [GroupCommentController::class, 'index'])
+    ->name('groups.comments.index');
+
+Route::post('groups/{group}/comments', [GroupCommentController::class, 'store'])
+    ->name('groups.comments.store');
+
+
+
+/////////////////////////////end Collection Center and Groups //////////////////////////
+
+/////////////////////////////print-documents //////////////////////////
+Route::get(
+    '/print/fd-mis-bond',
+    [PrintDocumentsController::class, 'fd_mis_bond']
+)->name('print-documents.fd-mis-bond.index');
+
+Route::match(['get', 'post'], '/print/fd-mis-bond/search', [PrintDocumentsController::class, 'searchBond'])
+    ->name('fd.mis.bond.search');
+
+Route::get(
+    '/get-account-numbers/{type}',
+    [PrintDocumentsController::class, 'getAccountNumbers']
+)->name('get.account.numbers');
+// FD bond download
+Route::get('/fd/bond/{id}', [FDController::class, 'fdBondForm'])
+    ->name('fd.bond.download');
+// MIS bond download    
+Route::get(
+    '/mis/bond/{id}',
+    [MisaccountController::class, 'misBondForm']
+)->name('mis.bond.download');
+
+//rd-dd
+// RD / DD Bond Page
+Route::get('/print/rd-dd-bond', [PrintDocumentsController::class, 'rdDdBond'])
+    ->name('print.rd-dd-bond.index');
+
+// // RD / DD Search
+Route::match(
+    ['get', 'post'],
+    'print/rd-dd-bond/search',
+    [PrintDocumentsController::class, 'searchRdDdBond']
+)->name('rd.dd.bond.search');
+// Route::post('/print/rd-dd-bond/search', [PrintDocumentsController::class, 'searchRdDdBond'])
+//     ->name('rd.dd.bond.search');
+
+// // RD / DD Account Numbers (AJAX)
+Route::get('/get-rd-dd-account-numbers/{type}', [PrintDocumentsController::class, 'getRdDdAccountNumbers'])
+    ->name('get.rd.dd.account.numbers');
+
+// // RD Bond Download
+
+Route::get('/rd/bond/{id}', [RdAccountController::class, 'rdBondForm'])
+    ->name('rd.bond.download');
+
+// // DD Bond Download
+
+Route::get('/dd/bondview/{id}', [DdsAccountsController::class, 'ddBondFormView'])
+    ->name('dd-bondView');
+Route::get('/dd/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
+    ->name('dd.bond.download');
+
+//fd-mis-passbooks
+// Route::get('/fd-mis-passbook', [PrintDocumentsController::class, 'fd_mis_passbook']);
+
+// Route::post('/fd-mis-passbook/search', [PrintDocumentsController::class, 'searchPassbook'])
+//     ->name('passbook.search');
+
+// Route::get('/fd-mis-passbook/download/{id}', [PrintDocumentsController::class, 'printpassbook'])
+//     ->name('passbook.download');
+
+// Route::get('/fd-mis-passbook/accounts/{type}', [PrintDocumentsController::class, 'getAccountsByType']);
+
+//letter head
+Route::get('/print/letter-head', [PrintDocumentsController::class, 'letter_head'])->name('print.letter-head');
+
+Route::get('/letter-head', [PrintDocumentsController::class, 'print_letter_head'])
+    ->name('letterhead.download');
+
+
+
+Route::get('/index-from-i', [PrintDocumentsController::class, 'index_formi'])
+    ->name('index-from-i');
+
+Route::get(
+    '/form-i-j-view',
+    [PrintDocumentsController::class, 'generateFormJview']
+)->name('formj.view');
+Route::get(
+    '/form-i-and-j',
+    [PrintDocumentsController::class, 'generateFormJ']
+)->name('formj.download');
+
+
+Route::get('/from-i-view', [PrintDocumentsController::class, 'formiView'])
+    ->name('from-i-view');
+
+Route::get('/form-i-pdf', [PrintDocumentsController::class, 'generateFormI'])
+    ->name('formi.pdf');
+
+Route::get('/proceding-book-view', [PrintDocumentsController::class, 'procedingBookView'])
+    ->name('proceding-book.view');
+Route::get('/proceding-book', [PrintDocumentsController::class, 'procedingBook'])
+    ->name('proceding-book.pdf');
+//   Route::get(
+//     '/form-j/{member}',
+//     [PrintDocumentsController::class, 'generateFormJ']
+// )->name('formj.download');
+
+/////////////////////////////print-documents-end //////////////////////////
+
+///////////////  Logo Img Upload  /////////////////////////////
+
+Route::get('/pdf-images', [LogoImgUploadController::class, 'index'])->name('pdf-images.index');
+Route::post('/pdf-images', [LogoImgUploadController::class, 'store'])->name('pdf-images.store');
+
+
+////////////////// end Logo Img Upload//////////////////////////
+
+///////////////  software-settings  /////////////////////////
+
+
+Route::get('master-settings/index', [MasterSettingController::class, 'index'])->name('master-settings.index');
+
+Route::get('master-settings/edit', [MasterSettingController::class, 'edit'])->name('master-settings.edit');
+
+Route::get('master-settings/edit-attendence', [MasterSettingController::class, 'edit_attendence'])->name('master-settings.edit-attendence');
+Route::get('master-settings/bank-list', [MasterSettingController::class, 'bank_list'])->name('master-settings.bank-list');
+Route::get('master-settings/edit-bussiness-type', [MasterSettingController::class, 'edit_bussiness_type'])->name('master-settings.edit-bussiness-type');
+
+Route::get('master-settings/edit-npa-provisioning-settings', [MasterSettingController::class, 'npa_provisioning_settings'])->name('master-settings.npa-provisioning-settings');
+
+Route::get('master-settings/edit-goldloan-settings', [MasterSettingController::class, 'edit_goldloan_settings'])->name('master-settings.edit-goldloan-settings');
+
+Route::get('master-settings/edit-personal-loan-settings', [MasterSettingController::class, 'edit_personal_loan_settings'])->name('master-settings.edit-personal-loan-settings');
+
+Route::get('master-settings/edit-deposit-loan', [MasterSettingController::class, 'edit_deposit_loan'])->name('master-settings.edit-deposit-loan');
+
+Route::get('master-settings/edit-cc-limit', [MasterSettingController::class, 'edit_cc_limit'])->name('master-settings.edit-cc-limit');
+
+Route::get('master-settings/loan-apr-level-name', [MasterSettingController::class, 'loan_apr_level_name'])->name('master-settings.loan-apr-level-name');
+
+Route::get('master-settings/dailycash-deposit', [MasterSettingController::class, 'dailycash_deposit'])->name('master-settings.dailycash-deposit');
+
+
+Route::get('master-settings/daily-reminder-setting', [MasterSettingController::class, 'daily_reminder_setting'])->name('master-settings.daily-reminder-setting');
+
+Route::get('master-settings/edit-rd-settings', [MasterSettingController::class, 'edit_rd_settings'])->name('master-settings.edit-rd-settings');
+
+Route::get('master-settings/edit-dd-settings', [MasterSettingController::class, 'edit_dd_settings'])->name('master-settings.edit-dd-settings');
+
+Route::get('master-settings/edit-bussiness-loan', [MasterSettingController::class, 'edit_bussiness_loan'])->name('master-settings.edit-bussiness-loan');
+Route::get('master-settings/edit-property-loan', [MasterSettingController::class, 'edit_property_loan'])->name('master-settings.edit-property-loan');
+
+Route::get('master-settings/edit-vehicle-settings', [MasterSettingController::class, 'edit_vehicle_settings'])->name('master-settings.edit-vehicle-settings');
+
+Route::get('master-settings/edit-daily-weekly-settings', [MasterSettingController::class, 'edit_daily_weekly_settings'])->name('master-settings.edit-daily-weekly-settings');
+
+
+
+
+
+Route::get('software-settings/sms-list', [SoftwareSettingsController::class, 'sms_list'])->name('software-settings.sms-list');
+Route::get('software-settings/view-sms-list', [SoftwareSettingsController::class, 'view_sms_list'])->name('software-settings.view-sms-list');
+
+Route::get('software-settings/edit-sms-setting', [SoftwareSettingsController::class, 'edit_sms_setting'])->name('software-settings.edit-sms-setting');
+
+
+
+Route::get('software-settings/sms-history', [SoftwareSettingsController::class, 'sms_history'])->name('software-settings.sms-history');
+
+Route::get('software-settings/mail-history', [SoftwareSettingsController::class, 'mail_history'])->name('software-settings.mail-history');
+
+Route::get('software-settings/comment-history', [SoftwareSettingsController::class, 'comment_history'])->name('software-settings.comment-history');
+
+Route::get('software-settings/internet_banking', [SoftwareSettingsController::class, 'internet_banking'])->name('software-settings.internet-banking.internet-banking');
+
+Route::get('software-settings/internet-edit', [SoftwareSettingsController::class, 'internet_banking_edit'])->name('software-settings.internet-banking.internet-edit');
+
+Route::get('software-settings/account-series-settings', [SoftwareSettingsController::class, 'account_series_settings'])->name('software-settings.account-series-settings');
+
+Route::get('software-settings/software-alerts', [SoftwareSettingsController::class, 'software_alerts'])->name('software-settings.software-alerts.software-alerts');
+
+Route::get('software-settings/update-software-alerts', [SoftwareSettingsController::class, 'update_software_alerts'])->name('software-settings.software-alerts.update-software-alerts');
+
+Route::get('software-settings/form-field-setting', [SoftwareSettingsController::class, 'form_field_setting'])->name('software-settings.form-field-setting');
+
+Route::get('software-settings/gold-rate-calender', [SoftwareSettingsController::class, 'gold_rate_calender'])->name('software-settings.gold-rate-calender');
+
+Route::get('software-settings/event-calender', [SoftwareSettingsController::class, 'event_calender'])->name('software-settings.event-calender.event-calender');
+Route::get('software-settings/all-event-list', [SoftwareSettingsController::class, 'all_event_list'])->name('software-settings.event-calender.all-event-list');
+Route::get('software-settings/deleted-entry-log', [SoftwareSettingsController::class, 'deleted_entry_log'])->name('software-settings.deleted-logs.deleted-entry-log');
+
+Route::get('software-settings/deleted-entry-log-view', [SoftwareSettingsController::class, 'deleted_entry_log_view'])->name('software-settings.deleted-logs.deleted-entry-log-view');
+
+Route::get('software-settings/login-activity', [SoftwareSettingsController::class, 'login_activity'])->name('software-settings.login-activity');
+
+Route::get('software-settings/user-activity-tracking', [SoftwareSettingsController::class, 'user_activity_tracking'])->name('software-settings.user-activity-tracking');
+Route::get('software-settings/mail-setting', [SoftwareSettingsController::class, 'mail_setting'])->name('software-settings.mail-setting');
+Route::get('software-settings/edit-mail-setting', [SoftwareSettingsController::class, 'edit_mail_setting'])->name('software-settings.edit-mail-setting');
+
+Route::get('software-settings/software-service-agreement', [SoftwareSettingsController::class, 'software_service_agreement'])->name('software-settings.software-service-agreement');
+/////////////// end software-settings  //////////////////////
 
 Route::get('/dev/run/{action}', function ($action) {
     try {
@@ -2327,7 +2642,7 @@ Route::get('/dev/run/{action}', function ($action) {
             case 'storage-link':
                 Artisan::call('storage:link');
                 $output = Artisan::output();
-                return "Storage link created!"  . nl2br($output);
+                return "Storage link created!" . nl2br($output);
 
             case 'install':
                 exec('composer install');

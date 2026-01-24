@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>FD Closing Form - SHRI SAMARTH NAGRI</title>
+    <title>FD Closing Form - </title>
     <style>
         @page {
             size: A4;
@@ -95,21 +95,57 @@
 
 <body>
     <div class="container">
-        <div class="title">
+
+    <div style="width:100%; font-family: dejavusans; border-bottom: 2px solid #000 ; padding: 5px;">
+
+            <!-- Logo -->
+
+            <div style="float:left; width:30%; text-align:left;">
+               <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
+                                style=" width:auto; height:50px;">
+                {{-- @if($logo) --}}
+                     
+                    {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
+                    {{-- @else --}}
+                    {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
+                        style="max-width:90px; max-height:90px;"> --}}
+                    {{-- @endif --}}
+                {{-- <img src="{{ public_path('assets/images/SBC_Logo.jpg') }}" alt="Company Logo"
+                    style="width:130px; height:130px;"> --}}
+            </div>
+
+            <!-- Title Section -->
+            <div style="float:left; width:70%; text-align:center;">
+                <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; ">
+                    {{-- SBC Global --}}
+                </div>
+
+                <div style="height:10px; margin-top: 40px;">&nbsp;</div>
+
+              
+            </div>
+ 
+            <!-- Clear Float -->
+            <div style="clear:both; "></div>
+ <h4 style="   margin-top:30px;  text-align: center; font-size:18px; font-weight:bold;">
+                Discharge Form for End of Term / Pre-Maturity
+                </h4>
+        </div>
+        <!-- <div class="title">
             <table style="width:100%; border-collapse:collapse; border-bottom: 1px solid #000;">
                 <tr>
                     <td style=" text-align:left;">
-                        <img src="{{ public_path('assets/images/sbc-image.jpg') }}" alt="Logo"
+                        <img src="{{ public_path('assets/images/SBC_Logo.jpg') }}" alt="Logo"
                             style="width:90px; height:90px;">
                     </td>
                     <td style="text-align:center; vertical-align:start; ">
-                        <div class="" style="font-size: 18px;"> SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED</div>
+                        <
                         <div class="" style="margin-top: 30px; text-transform: capitalize; font-size: 16px;">Issue Of
-                            Discharge Form for End of Term / Pre-Maturity</div>
+                           
                     </td>
                 </tr>
             </table>
-        </div>
+        </div> -->
 
 
 
@@ -250,7 +286,7 @@
             </tr>
         </table>
 
-        <div class="" style="border-top: 1px solid #000;">
+        <div class="" style="border-top: 1px solid #000; margin-bottom: 25px;">
             <div class="" style="text-align: center; font-size: 14px;">INSTRUCTION</div>
             <p style="font-size: 14px;">1. Signature in vernacular must have their English translation written beneath. Illiterate persons must
                 affix their
@@ -261,6 +297,8 @@
                 order commission as the case may be.</p>
             <p style="font-size: 12px; text-align: center; font-weight: bold;">{{ $branch_address }}</p>
         </div>
+
+        <!-- <div class=""  >SBC GLOBAL TOWAR , KESHAV NAAR CHOWK NEAR JANORKAR MARRAIGE HALL RING ROAD AKOLA Maharashtra - 444001</div> -->
 
     </div>
 </body>

@@ -6,12 +6,8 @@
     <!-- Header -->
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex flex-col gap-2">
-            <h1 class="text-xl font-semibold">Edit Passbook - {{ $passbook->passbook_no }}</h1>
-            <p class="text-gray-500">
-                <a href="{{ route('passbook.index') }}" class="text-gray-500">Passbooks</a> >
-                <a href="#" class="text-gray-500">{{ $passbook->passbook_no }}</a> >
-                <span class="text-gray-500">Edit</span>
-            </p>
+            <h1 class="text-lg uppercase font-semibold">Edit Passbook - {{ $passbook->passbook_no }}</h1>
+           
         </div>
     </div>
 
@@ -53,7 +49,7 @@
                     name="account_no"
                     value="{{ $passbook->account_no }}"
                     readonly
-                    class="w-full px-3 py-2 text-sm border bg-gray-100 dark:bg-bg3 border-n30 dark:border-n500 rounded-10 md:px-6 md:py-3">
+                    class="w-full bg-secondary/5 px-3 py-2 text-sm border bg-gray-100 dark:bg-bg3 border-n30 dark:border-n500 rounded-10 md:px-6 md:py-3">
             </div>
 
             <!-- Passbook Issue Date -->
@@ -96,7 +92,7 @@
         <!-- Action Buttons -->
         <div class="flex gap-4 mt-6">
             <button class="btn-primary" type="submit">UPDATE PASSBOOK</button>
-            <button onclick="window.location.href='{{ $indexUrl }}'" class="btn-outline" type="button">
+            <button onclick="window.location.href='{{ $indexUrl }}'" class="btn-outline uppercase" type="button">
                 Back
             </button>
         </div>

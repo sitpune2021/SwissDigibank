@@ -31,7 +31,7 @@
     </head>
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h4 class="h2">{{ isset($account) ? 'EDIT' : 'ADD' }} ACCOUNT</h4>
+            <h4 class="text-lg uppercase">{{ isset($account) ? 'EDIT' : 'ADD' }} ACCOUNT</h4>
         </div>
 
         @if (session('success'))

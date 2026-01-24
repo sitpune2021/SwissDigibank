@@ -3,20 +3,20 @@
     <ul class="horiz-option popover-content">
         @isset($viewRoute)
         <li>
-            <a href="{{ route($viewRoute, $id) }}" class="single-option">
+            <a href="{{ route($viewRoute, $id) }}" class="single-option btns-add-index">
                 View
             </a>
         </li>
         @endisset
         @isset($editRoute)
         <li>
-            <a href="{{ route($editRoute, $id) }}" class="single-option">
+            <a href="{{ route($editRoute, $id) }}" class="single-option btns-add-index">
                 Edit
             </a>
         </li>
         @endisset
             @isset($printRoute)
-        <a href="{{ route($printRoute, $id) }}" target="_blank" class="single-option">
+        <a href="{{ route($printRoute, $id) }}" target="_blank" class="single-option btns-add-index">
             Print
         </a>
         @endisset
@@ -25,7 +25,7 @@
         <form action="{{ route($deleteRoute, $id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
             @csrf
             @method('DELETE')
-            <button type="submit" class="single-option">
+            <button type="submit" class="single-option btns-add-index">
                 Delete
             </button>
         </form>

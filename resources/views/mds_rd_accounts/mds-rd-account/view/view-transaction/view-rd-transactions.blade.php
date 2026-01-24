@@ -4,11 +4,11 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-2xl font-semibold">RD - {{ $rdAccount->id }}</h1>
+            <h1 class="text-lg font-semibold">RD - {{ $rdAccount->id }}</h1>
         </div>
     </div>
 
-    <div class="box     pb-4 overflow-x-auto bg-white lg:pb-6">
+    <div class="box  pb-4 overflow-x-auto bg-white lg:pb-6">
         <table class="w-full table-fixed border border-n30 rounded-lg overflow-hidden">
             <thead>
                 <tr class="bg-secondary/5 dark:bg-bg3 text-sm font-semibold">

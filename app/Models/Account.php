@@ -36,6 +36,9 @@ class Account extends Model
         'member_address_line_1',
 
     ];
+    protected $casts = [
+        'open_date' => 'date',
+    ];
 
     public function members()
     {

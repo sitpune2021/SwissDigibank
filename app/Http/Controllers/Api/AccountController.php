@@ -20,26 +20,60 @@ use Illuminate\Support\Facades\Auth;
 class AccountController extends Controller
 {
 
+    // public function fetchAccountInfo(Request $request)
+    // {
+    //     try {
+    //         $userId = Auth::id();
+
+    //         $member = Member::where('user_id', $userId)->firstOrFail();
+    //         $account = Account::with('branch')->where('member_id', $member->id)->firstOrFail();
+
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => 'Account fetched successfully',
+    //             'data' => [
+    //                 'account_id' => $account->id,
+    //                 'account_no' => $account->account_no,
+    //                 'account_status' => $account->account_status,
+    //                 'account_type' => $account->account_type,
+    //                 'branch_name' => $account->branch->branch_name ?? null,
+    //                 'ifsc_code' => $account->branch->ifsc_code ?? null,
+    //                 'open_date' => optional($account->open_date)->format('d-m-Y'),
+    //                 'account_status' => $account->status ?? 'active',
+    //             ]
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Account not found',
+    //             'error' => $e->getMessage()
+    //         ], 404);
+    //     }
+    // }
+
+    // --------------------------here i give static bank name-------------------------------------
     public function fetchAccountInfo(Request $request)
     {
         try {
             $userId = Auth::id();
 
             $member = Member::where('user_id', $userId)->firstOrFail();
-            $account = Account::with('branch')->where('member_id', $member->id)->firstOrFail();
+            $account = Account::with('branch')
+                ->where('member_id', $member->id)
+                ->firstOrFail();
 
             return response()->json([
                 'status' => true,
                 'message' => 'Account fetched successfully',
                 'data' => [
-                    'account_id' => $account->id,
-                    'account_no' => $account->account_no,
-                    'account_status' => $account->account_status,
-                    'account_type' => $account->account_type,
-                    'branch_name' => $account->branch->branch_name ?? null,
-                    'ifsc_code' => $account->branch->ifsc_code ?? null,
-                    'open_date' => optional($account->open_date)->format('d-m-Y'),
+                    'bank_name'     => 'Shri Samarth Nagri Sahakari Pat Sanstha',
+                    'account_id'    => $account->id,
+                    'account_no'    => $account->account_no,
                     'account_status' => $account->status ?? 'active',
+                    'account_type'  => $account->account_type,
+                    'branch_name'   => $account->branch->branch_name ?? null,
+                    'ifsc_code'     => $account->branch->ifsc_code ?? null,
+                    'open_date'     => optional($account->open_date)->format('d-m-Y'),
                 ]
             ], 200);
         } catch (\Exception $e) {
@@ -50,6 +84,7 @@ class AccountController extends Controller
             ], 404);
         }
     }
+
     public function getBanks(Request $request)
     {
         try {

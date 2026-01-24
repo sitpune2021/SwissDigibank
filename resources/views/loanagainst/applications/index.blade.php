@@ -2,7 +2,7 @@
 @section('content')
     <div class="main-inner">
 
-     @if(session('success'))     
+     {{-- @if(session('success'))     
             <div class="flex justify-end">
                 <div 
                         id="successMessage" 
@@ -22,7 +22,7 @@
                 }
             }, 30000);
         </script>
-    @endif
+    @endif --}}
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
                 <h3 class=" flex text-xl uppercase block font-semibold">LOAN AGAINST DEPOSITE APPLICATIONS</h3>
@@ -30,6 +30,14 @@
                 </a>
             </div>
 
+            @if(session('success'))
+            <div class="">
+                <div class="w-44 mb-5 flex justify-end">
+                    <x-alert />
+                </div>
+                {{-- {{ session('success') }} --}}
+            </div>
+        @endif
       
        <div class="col-span-12 box lg:col-span-12">
             <div class="pb-4 overflow-x-auto lg:pb-6">
@@ -97,7 +105,8 @@
            <td class="text-start !py-5 px-6">
                 <a href="{{ route('loanagainst.applications.view', $application->id) }}" 
                 class="text-green-600 hover:underline">
-                    {{ $application->id }}
+                    {{-- {{ $application->id }} --}}
+                    {{ str_pad($application->id, 10, '0', STR_PAD_LEFT) }}
                 </a>
             </td>
 
@@ -154,9 +163,9 @@
                     <div class="relative">
                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                         <ul class="horiz-option popover-content">
-                            <li><a href="{{ route('loanagainst.applications.view', $application->id) }}" class="single-option capitalize">View</a></li>
+                            <li><a href="{{ route('loanagainst.applications.view', $application->id) }}" class="single-option uppercase">View</a></li>
                             @if($application->status != 2)
-                            <li><a href="{{ route('loanagainst.applications.edit', $application->id) }}" class="single-option capitalize">Edit</a></li>
+                            <li><a href="{{ route('loanagainst.applications.edit', $application->id) }}" class="single-option uppercase">Edit</a></li>
                             @endif
                         </ul>
                     </div>

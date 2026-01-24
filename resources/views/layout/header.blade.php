@@ -40,6 +40,9 @@
         .uppercase {
             text-transform: uppercase !important;
         }
+        .btns-add-index{
+            text-transform: uppercase !important;
+        }
     </style>
 
 </head>

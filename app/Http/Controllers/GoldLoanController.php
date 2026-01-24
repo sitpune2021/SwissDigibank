@@ -1528,9 +1528,23 @@ class GoldLoanController extends Controller
         ]);
 
         $application = LoanApplication::findOrFail($id);
-        $request->merge([
-            'application_date' => date('Y-m-d', strtotime(str_replace('/', '-', $request->application_date)))
-        ]);
+        
+        // $request->merge([
+        //     'application_date' => date('Y-m-d', strtotime(str_replace('/', '-', $request->application_date)))
+        // ]);
+
+        if (!empty($request->application_date)) {
+    $request->merge([
+        'application_date' => date('Y-m-d', strtotime(str_replace('/', '-', $request->application_date)))
+    ]);
+}
+
+if (!empty($request->cheque_date)) {
+    $request->merge([
+        'cheque_date' => date('Y-m-d', strtotime(str_replace('/', '-', $request->cheque_date)))
+    ]);
+}
+
         $application->update($request->all());
 
         /* -----------------------------------------------

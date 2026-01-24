@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\MufinController;
+use App\Http\Controllers\ApiKeyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\MemberController;
@@ -8,6 +10,7 @@ use App\Http\Controllers\Api\ApiTransactionController;
 use App\Http\Controllers\Api\SimVerificationController;
 use App\Http\Controllers\Api\ForgotLoginPasswordController;
 use App\Http\Controllers\Api\TabController;
+use App\Http\Controllers\Api\LoanTypeController;
 
 // login and logout route
 Route::post('login', [AuthController::class, 'login']);
@@ -40,3 +43,26 @@ Route::middleware('auth:sanctum')->get('/fd-accounts', [AccountController::class
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/rd-accounts', [AccountController::class, 'getRDAccountDetails']);
 });
+
+// Loan Api route 
+Route::get('loan-types', [LoanTypeController::class, 'loanTypes']);
+Route::get('/loan-types/{loanType}/schemes', [LoanTypeController::class, 'getSchemes']);
+
+// Route::get('loan-types/{id}/schemes', [LoanTypeController::class, 'loanSchemes']);
+
+// MUFIN PAY CallBack Url 
+
+// Route::get('payment/callback', [MufinController::class, 'callBack']);
+// Route::middleware(['api.key','whitelist.ip'])->post(
+//     'payment/callback',
+//     [MufinController::class, 'callback']
+// );
+
+
+Route::middleware(['api.key','whitelist.ip'])->match(
+    ['get', 'post'],
+    'payment/callback',
+    [MufinController::class, 'callback']
+);
+
+Route::post('/admin/api-keys', [ApiKeyController::class, 'store']);

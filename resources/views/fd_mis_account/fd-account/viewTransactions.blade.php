@@ -32,7 +32,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h1 class="text-2xl font-semibold dark:text-white">FD - {{ $fdAccount->id }}</h1>
+                <h1 class="text-lg font-semibold dark:text-white">FD - {{ $fdAccount->id }}</h1>
             </div>
         </div>
 
@@ -52,15 +52,15 @@
                     <table class="w-full text-sm text-left text-gray-700 dark:text-gray-200">
                         <thead class="bg-secondary/5 text-black uppercase text-lg dark:bg-green-700">
                             <tr>
-                                <th class="px-4 py-2 text-start">T. DATE</th>
-                                <th class="px-4 py-2 text-start">PAY MODE</th>
-                                <th class="px-4 py-2 text-start">REMARKS</th>
-                                <th class="px-4 py-2 text-start">STATUS</th>
-                                <th class="px-4 py-2 text-start">DEBIT</th>
-                                <th class="px-4 py-2 text-start">CREDIT</th>
-                                <th class="px-4 py-2 text-start">BALANCE</th>
-                                <th class="px-4 py-2 text-start">ACCOUNTED</th>
-                                <th class="px-4 py-2 text-start">ACTIONS</th>
+                                <th class="px-2 py-2 text-start">T. DATE</th>
+                                <th class="px-2 py-2 text-start">PAY MODE</th>
+                                <th class="px-2 py-2 text-start">REMARKS</th>
+                                <th class="px-2 py-2 text-start">STATUS</th>
+                                <th class="px-2 py-2 text-start">DEBIT</th>
+                                <th class="px-2 py-2 text-start">CREDIT</th>
+                                <th class="px-2 py-2 text-start">BALANCE</th>
+                                <th class="px-2 py-2 text-start">ACCOUNTED</th>
+                                <th class="px-2 py-2 text-start">ACTIONS</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,32 +71,35 @@
                                     </td>
                                     <td class="px-4 py-2">{{ ucfirst($tran->mode) }}</td>
                                     <td class="px-4 py-2">{{ $tran->remarks ?? '-' }}</td>
-                                    <td class="px-4 py-2">
-                                        <span
-                                            class="px-2 py-1 text-xs font-semibold  {{ $tran->status == 'Approved' ? 'bg-green-500' : 'bg-yellow-500' }}">
+                                    <td class="px-4 flex py-2 justify-start ">
+                                        <div class="">
+                                            <span
+                                            class=" py-1   {{ $tran->status == 'Approved' ? '' : '' }}">
                                             {{ $tran->status ?? 'Pending' }}
                                         </span>
+                                        </div>
 
                                     </td>
 
                                     <!-- Debit -->
                                     <td class="px-4 py-2 text-right">
-                                        {{ $tran->credited == 1 ? number_format($tran->amount, 2) : '' }}
+                                        {{ $tran->transaction_type == 0 ? number_format($tran->amount, 2) : '' }}
                                     </td>
 
                                     <!-- Credit -->
                                     <td class="px-4 py-2 text-right">
-                                        {{ $tran->credited == 0 ? number_format($tran->amount, 2) : '' }}
+                                        {{ $tran->transaction_type == 1 ? number_format($tran->amount, 2) : '' }}
                                     </td>
+
 
                                     <!-- Balance -->
                                     <td class="px-4 py-2 text-right">
-                                        {{ number_format($tran->amount, 2) }}
+                                        {{ number_format($tran->balance, 2) }}
                                     </td>
                                     </td>
                                     <td class="px-4 py-2 text-center">
                                         <span
-                                            class="px-2 py-1 text-xs font-semibold text-white rounded {{ $tran->accounted ? 'bg-green-500' : 'bg-red-500' }}">
+                                            class="px-2 py-1 text-xs font-semibold  rounded {{ $tran->accounted ? 'block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16' : 'block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16' }}">
                                             {{ $tran->accounted ? 'Yes' : 'No' }}
                                         </span>
                                     </td>

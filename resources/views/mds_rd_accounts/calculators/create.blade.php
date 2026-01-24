@@ -16,9 +16,9 @@
     </style>
 </head>
 <div class="main-inner">
-    <h4 class="flex flex-wrap items-center justify-between gap-4 mb-6 lg:mb-8">RD / DD CALCULATOR</h4>
+    <h4 class="flex flex-wrap items-center text-lg justify-between gap-4 mb-6 lg:mb-8">RD / DD CALCULATOR</h4>
 
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 min-h-screen">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mt-5 min-h-screen">
         <!-- Calculator Section -->
         <div class="col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6">
 
@@ -29,7 +29,7 @@
                         Scheme <span class="text-red-500">*</span>
                     </label>
                     <select id="scheme" name="scheme_code" required
-                        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option value="">Select Scheme</option>
                         @foreach($schemes as $scheme)
                         <option value="{{ $scheme->scheme_code }}">
@@ -50,14 +50,14 @@
                 <div>
                     <label class="font-medium block mb-2 uppercase">Open Date<span class="text-red-500">*</span></label>
                     <input type="text" id="date2" placeholder="dd/mm/yyyy"
-                        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                 </div>
 
                 <!-- RD / DD Amount -->
                 <div>
                     <label class="font-medium block mb-2 uppercase">RD / DD Amount <span class="text-red-500">*</span></label>
                     <input type="number" id="amount"
-                        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter amount">
                 </div>
 
@@ -65,7 +65,7 @@
                 <div>
                     <label class="font-medium block mb-2 uppercase">RD / DD Frequency <span class="text-red-500">*</span></label>
                     <select id="frequency"
-                        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option>Select RD / DD Frequency </option>
                         <option>DAILY</option>
                         <option>WEEKLY</option>
@@ -82,7 +82,7 @@
                     <label class="font-medium block mb-2 uppercase">Interest Comp. Interval <span
                             class="text-red-500">*</span></label>
                     <select id="compInterval"
-                        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option>Select Intervel Compounding</option>
                         <option>MONTHLY</option>
                         <option>QUARTERLY</option>
@@ -95,7 +95,7 @@
                 <div>
                     <label class="font-medium block mb-2 uppercase">Interest Rate <span class="text-red-500">*</span></label>
                     <input type="number" id="interestRate"
-                        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Interest Rate">
                 </div>
 
@@ -104,11 +104,11 @@
                     <label class="font-medium block mb-2 uppercase">Tenure of RD / DD <span class="text-red-500">*</span></label>
                     <div class="flex gap-1">
                         <input type="text" id="tenure_type" name="tenure_type" value="DAYS"
-                            class="w-full text-sm bg-primary/5 dark:bg-bg3 border 
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
                                 border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Tenure" readonly="readonly">
                         <input type="number" id="tenureNumber"
-                            class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter tenure of RD/ DD">
                     </div>
                 </div>
@@ -118,20 +118,20 @@
                     <label class="font-medium block mb-2 uppercase">Bonus<span class="text-red-500">*</span></label>
                     <div class="flex gap-2">
                         <select id="bonusSelect" required
-                            class="w-auto text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            class="w-auto text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="%">(%)</option>
                             <option value="fixed">FIXED</option>
                         </select>
                         <input type="text" id="bonusInput" required
-                            class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter Bonus">
                     </div>
                 </div>
 
                 <!-- Buttons -->
-                <div class="flex justify-center col-span-2 gap-4 mt-2 md:gap-6">
-                    <button id="calculateBtn" class="btn-primary" type="submit">Calculate</button>
-                    <button class="btn-outline" type="button">Back</button>
+                <div class="flex justify-center col-span-2 gap-4 mt-5 md:gap-6">
+                    <button id="calculateBtn" class="btn-primary uppercase" type="submit">Calculate</button>
+                    <button class="btn-outline uppercase" type="button">Back</button>
                 </div>
             </div>
 
@@ -165,11 +165,13 @@
             <div class="mt-6">
                 <!-- Header -->
                 <div
-                    class=" bg-Secondary/5 text-black font-semibold px-4 py-2 rounded-10 flex justify-between items-center cursor-pointer uppercase">
-                    <span>Scheme Info</span>
+                    class="  bg-Secondary/5 text-black font-semibold px-4 py-2 rounded-10 flex text-lg justify-between items-center cursor-pointer uppercase">
+                    Scheme Info
                     <button id="toggleButton" class="text-white text-xl font-bold focus:outline-none">-</button>
                 </div>
-
+                   <div class="">
+                    <hr>
+                   </div>
                 <!-- Collapsible Table -->
                 <div id="schemeContent"
                     class="bg-white dark:bg-bg rounded-10 shadow overflow-hidden transition-all duration-500 hidden">
@@ -227,7 +229,7 @@
                                 <tr>
                                     <td class="font-medium px-4 py-2 border-b uppercase">Active</td>
                                     <td class="px-4 py-2 border-b">
-                                        <span id="is_active" class="px-3 py-1 text-xs font-semibold text-white rounded-full"></span>
+                                        <span id="is_active" class="px-3 py-1  rounded-full"></span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -354,12 +356,12 @@
                                             const activeEl = document.querySelector('#is_active');
                                             if (s.is_active) {
                                                 activeEl.textContent = 'Yes';
-                                                activeEl.classList.add('bg-green-500');
-                                                activeEl.classList.remove('bg-red-500');
+                                                activeEl.classList.add('block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 ');
+                                                activeEl.classList.remove('block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16');
                                             } else {
                                                 activeEl.textContent = 'No';
-                                                activeEl.classList.add('bg-red-500');
-                                                activeEl.classList.remove('bg-green-500');
+                                                activeEl.classList.add('text-black');
+                                                activeEl.classList.remove('text-black');
                                             }
 
                                             //  Input fields auto-fill

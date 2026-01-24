@@ -106,34 +106,34 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h1 class="text-2xl font-semibold">
-                    DD ACCOUNT -DDA{{ $ddaccount->id }}
+                <h1 class="text-lg font-semibold">
+                    DD ACCOUNT -DDA{{ $ddaccount->dd_no }}
                 </h1>
             </div>
         </div>
 
         <div class="flex flex-wrap gap-3">
-            <a href="{{ route('ddsaccounts.installments', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-3xl">
+            <a href="{{ route('ddsaccounts.installments', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-10 ">
                 INSTALLMENT PLAN
             </a>
 
             <a href="{{ route('dds-accounts.transactions', $ddaccount->id) }}"
-                class="btn btn-primary px-4 py-2 rounded-3xl">
+                class="btn btn-warning px-4 py-2 rounded-10 ">
                 VIEW TRANSACTIONS
             </a>
 
-            <a href="{{ route('ddsaccounts.createDeposit', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-3xl">
+            <a href="{{ route('ddsaccounts.createDeposit', $ddaccount->id) }}" class="btn-secondary px-4 py-2 rounded-10 ">
                 DEPOSIT MONEY
             </a>
 
-            <a href="{{ route('ddsaccounts.withdraw-create', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-3xl">
+            <a href="{{ route('ddsaccounts.withdraw-create', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-10 ">
                 WITHDRAW MONEY
             </a>
             <div class="relative inline-block text-left">
 
                 <!-- Button -->
                 <button onclick="this.nextElementSibling.classList.toggle('hidden')"
-                    class="btn-primary px-4 py-2 rounded-3xl flex items-center gap-2 uppercase">
+                    class="btn-secondary px-4 py-2 rounded-10  flex items-center gap-2 uppercase">
                     Account Details
                     <svg class="w-4 h-2 ml-1 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg"
                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -177,43 +177,74 @@
                     </ul>
                 </div>
             </div>
-            <button class="btn-primary px-4 py-2 rounded-3xl ">
-                PRINT DOCUMENTS
-            </button>
+            <!-- Print Documents -->
+        <div x-data="{ open: false }" class="relative inline-block">
+
+            <a @click="open = !open"
+                class="btn-primary px-4 py-2 rounded-10 text-sm flex items-center gap-2 cursor-pointer">
+                <i class="las la-print "></i><span>PRINT DOCUMENTS</span>
+                <svg class="w-2 h-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </a>
+
+            <!-- Dropdown -->
+            <div x-show="open" @click.outside="open = false"
+                class="absolute  cursor-pointer mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+                <ul class="py-2">
+                    <li>
+                        <a href="{{ route('dd-bondView', $ddaccount->id) }}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
+                            DD BOND</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('dd.opening-view', $ddaccount->id) }}"
+                            class="block cursor-pointer px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
+                            ACCOUNT OPENING FORM</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('dd.closing-view', $ddaccount->id)}}"
+                            class="block cursor-pointer px-4 py-2 text-gray-700 hover:bg-gray-100"><i class="las la-print"></i>
+                            CLOSING FORM</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
             <a href="{{ route('ddsaccounts.createCreditInterest', $ddaccount->id) }}"
-                class="btn-primary px-4 py-2 rounded-3xl">
+                class="btn-secondary px-4 py-2 rounded-10 ">
                 CREDIT / REVERSE INTEREST
             </a>
-            <button class="btn-primary px-4 py-2 rounded-3xl ">
+            <button class="btn-primary px-4 py-2 rounded-10  ">
                 DEBIT OTHER CHARGES
             </button>
 
             @if ($isLinked != 1)
                 <a href="{{ route('ddsaccounts.createLinkSavingAcc', $ddaccount->id) }}"
-                    class="btn-primary px-4 py-2 rounded-3xl">
+                    class="btn-secondary px-4 py-2 rounded-10 ">
                     LINK SAVING ACCOUNT (AUTO DEBIT)
                 </a>
             @endif
 
 
-            <a href="{{ route('ddsaccounts.MarkLienAccount', $ddaccount->id) }}" class="btn-primary px-4 py-2 rounded-3xl">
+            <a href="{{ route('ddsaccounts.MarkLienAccount', $ddaccount->id) }}" class="btn-warning px-4 py-2 rounded-10 ">
                 MARK LIEN AGAINST LOAN
             </a>
 
-            <button class="btn-primary px-4 py-2 rounded-3xl ">
+            <button class="btn-secondary px-4 py-2 rounded-10  ">
                 SHOW AUDIT TRAIL
             </button>
         </div>
 
         <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
-            <div class=" w-full  overflow-hidden">
+            <div class=" w-full  overflow-x-auto  overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <div class="text-end p-3">
 
                     </div>
-                    <table class="min-w-full text-sm text-left border-collapse">
+                    <table class="w-full  text-left border-collapse">
                         <tbody class="divide-y divide-gray-200">
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 w-1/3 uppercase">Status</td>
                                 <td class="px-4 py-2">
                                     <a href="" class="label label-default">
@@ -221,7 +252,7 @@
                                     </a>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 w-1/3 uppercase">Customer</td>
                                 <td class="px-4 py-2">
                                     <a href="{{ route('member.show', $ddaccount->member->id) }}"
@@ -235,47 +266,47 @@
                                     </a>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold  px-4 py-2 uppercase">Create on</td>
                                 <td class="px-4 py-2">Admin App</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Created by</td>
                                 <td class="px-4 py-2">Test Test</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">DD No.</td>
-                                <td class="px-4 py-2">DDA{{ $ddaccount->id ?? 'N/A' }}</td>
+                                <td class="px-4 py-2">{{ $ddaccount->dd_no ?? 'N/A' }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Old DD No.</td>
                                 <td class="px-4 py-2">0.00</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Scheme</td>
                                 <td class="px-4 py-2"> {{ $ddaccount->scheme->scheme_name ?? '-' }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Open Date </td>
                                 <td class="px-4 py-2">{{ $ddaccount->open_date?->format('d-m-Y') }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Deposit Frequency </td>
                                 <td class="px-4 py-2">{{ $ddaccount->scheme->rd_dd_frequency ?? '-' }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Installment Amount</td>
                                 <td class="px-4 py-2">{{ number_format($ddaccount->dd_amount ?? 0, 2) }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Installment Amount Received (C)</td>
                                 <td class="px-4 py-2">{{ number_format($installmentReceived, 2) }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Penalty/ Other Charges Received</td>
                                 <td class="px-4 py-2">{{ number_format($penaltyReceived, 2) }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Interest Credited (D) </td>
                                 <td class="px-4 py-2">
                                     @if ($interestCredited < 0)
@@ -287,60 +318,60 @@
                                 </td>
                      
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">TDS Deducted (E) </td>
                                 <td class="px-4 py-2">{{ number_format($tdsDeduction, 2) }} </td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold  px-4 py-2 uppercase">Balance Available (C + D - E)</td>
                                 <td class="px-4 py-2">{{ number_format($balanceAvailable, 2) }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Principal Amount Due (A) </td>
                                 <td class="px-4 py-2">{{ number_format($principalDue, 2) }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Penalty / Other Charges Due (B)</td>
                                 <td class="px-4 py-2">{{ number_format($penaltyDue, 2) }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Total Amount Due (A + B) </td>
                                 <td class="px-4 py-2">{{ number_format($totalAmountDue, 2) }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Maturity Date </td>
                                 <td class="px-4 py-2">{{ $ddaccount->maturity_date?->format('d-m-Y') }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Close Date </td>
                                 <td class="px-4 py-2">{{ $closeDate ?? 'N/A' }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Maturity Amount (approx.)</td>
                                 <td class="px-4 py-2">{{ $ddaccount->maturity_amount ?? '-' }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Maturity Bonus Amount</td>
                                 <td class="px-4 py-2">{{ $ddaccount->bonus ?? '-' }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Annual Interest Rate (%)</td>
                                 <td class="px-4 py-2">{{ number_format($annualInterestRate, 2) }}</td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Interest Compounding Interval</td>
                                 <td class="px-4 py-2">
                                     {{ ucfirst($ddaccount->scheme->interest_compounding_interval ?? 'N/A') }}
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">TDS Deduction</td>
                                 <td class="px-4 py-2"><span
                                         class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600"
                                         {{ $tdsDeduction === 'Yes' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
                                         {{ $tdsDeduction }}</span></td>
                             </tr>
-                            <tr>
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Special Account </td>
                                 <td class="px-4 py-2"><span
                                         class="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-600"
@@ -354,16 +385,16 @@
                 <!--MEMBER DETAILS-->
                 <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
                     <!-- Header -->
-                    <div class="border-b px-4 py-3 bg-red-100">
-                        <h3 class="text-lg font-semibold text-blacj">CUSTOMER DETAILS</h3>
+                    <div class="border-b px-4 py-3 bg-secondary/5 rounded-10">
+                        <h3 class="text-lg font-semibold ">CUSTOMER DETAILS</h3>
                     </div>
 
                     <!-- Body -->
                     <div class="p-4 overflow-x-auto">
-                        <table class="min-w-full text-sm text-left">
+                        <table class="w-full  text-left">
                             <tbody class="divide-y divide-gray-200">
 
-                                <tr>
+                                <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 w-1/3 uppercase">Customer Name</td>
                                     <td class="px-4 py-2">
                                         {{ ($ddaccount->member?->member_no ??
@@ -374,12 +405,12 @@
                                     </td>
                                 </tr>
 
-                                <tr>
+                                <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Mobile No</td>
                                     <td class="px-4 py-2">{{ $ddaccount->member->member_info_mobile_no ?? 'N/A' }}</td>
                                 </tr>
 
-                                <tr>
+                                <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Address</td>
                                     <td class="px-4 py-2">
                                         {{ $ddaccount->member->address->member_address_line_1 ?? 'N/A' }}
@@ -391,12 +422,12 @@
                 </div>
 
                 <!--PASSBOOK-->
-                <div class="bg-white shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
+                <div class="box shadow-md mt-5 rounded-lg dark:bg-bg3 overflow-hidden">
                     <!-- Header -->
-                    <div class="border-b px-4 py-3 flex items-center gap-4 justify-between bg-red-100">
+                    <div class="border-b px-4 py-3 bg-secondary/5 flex items-center gap-4 justify-between rounded-10">
                         <h3 class="text-lg font-semibold uppercase text-black">ALLOCATED PASSBOOK</h3>
                         <a href="{{ route('passbook.create-passbook') }}"
-                            class="btn-primary px-3 py-2 rounded-3xl text-white">
+                            class="btn-primary px-3 py-2 rounded-10 text-sm text-white">
                             <i class="las la-plus"></i>
                             passbook
                         </a>
@@ -407,21 +438,21 @@
                         <div class="overflow-x-auto">
                             <table class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
                                 <thead class="bg-gray-100 text-gray-700">
-                                    <tr class="border-b">
-                                        <th class="px-4 py-2 font-semibold">Passbook No</th>
-                                        <th class="px-4 py-2 font-semibold">Issue Date</th>
-                                        <th class="px-4 py-2 font-semibold">Action</th>
+                                    <tr class="border-b bg-secondary/5">
+                                        <th class="px-4 py-2 font-semibold uppercase text-start">Passbook No</th>
+                                        <th class="px-4 py-2 font-semibold uppercase text-start">Issue Date</th>
+                                        <th class="px-4 py-2 font-semibold uppercase text-start">Action</th>
                                     </tr>
                                 </thead>
 
                                 <tbody class="divide-y divide-gray-200 whitespace-nowrap">
                                     @forelse($passbooks as $pass)
                                         <tr class="border-b text-center">
-                                            <td class="px-4 py-2">{{ $pass->passbook_no ?? 'N/A' }}</td>
-                                            <td class="px-4 py-2">
+                                            <td class="px-4 text-start py-2">{{ $pass->passbook_no ?? 'N/A' }}</td>
+                                            <td class="px-4 text-start py-2">
                                                 {{ \Carbon\Carbon::parse($pass->issue_date)->format('d-m-Y') ?? 'N/A' }}
                                             </td>
-                                            <td class="px-4 py-2">
+                                            <td class="px-4 text-start py-2">
                                                 <div class="w-full flex gap-3 justify-center">
 
                                                     <!-- Edit -->
@@ -473,23 +504,23 @@
                                 <table
                                     class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
                                     <thead class="bg-gray-100  text-gray-700">
-                                        <tr class="border-b">
-                                            <th class="px-4 py-2 font-semibold">Name</th>
-                                            <th class="px-4 py-2 font-semibold">URL</th>
-                                            <th class="px-4 py-2 font-semibold">Action</th>
+                                        <tr class="border-b bg-secondary/5">
+                                            <th class="px-4 text-start py-2 font-semibold">Name</th>
+                                            <th class="px-4 text-start py-2 font-semibold">URL</th>
+                                            <th class="px-4 text-start py-2 font-semibold">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-200">
                                         @foreach ($documents as $doc)
                                             <tr class="border-b text-center">
-                                                <td class="px-4 py-2">{{ $doc->document_type }}</td>
-                                                <td class="px-4 py-2">
+                                                <td class="px-4 text-start py-2">{{ $doc->document_type }}</td>
+                                                <td class="px-4 text-start py-2">
                                                     <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank"
                                                         class="text-primary underline">
                                                         Show
                                                     </a>
                                                 </td>
-                                                <td class="px-4 py-2">
+                                                <td class="px-4 text-start py-2">
                                                     <form action="{{ route('documents.destroy', $doc->id) }}"
                                                         method="POST" onsubmit="return confirm('Are you sure?');">
                                                         @csrf
@@ -526,7 +557,7 @@
                             @else
                                 <table class="w-full text-sm text-left">
                                     <thead>
-                                        <tr class="border-b">
+                                        <tr class="border-b bg-secondary/5">
                                             <th class="px-4 py-2 uppercase font-semibold">Comment</th>
                                             <th class="px-4 py-2 uppercase font-semibold">Commented By</th>
                                             <th class="px-4 py-2 uppercase font-semibold">Date</th>
@@ -550,10 +581,10 @@
                             <div class="overflow-x-auto text-center mt-5">
                                 @if ($ddaccount->comments->count() > 0)
                                     <a href="{{ route('dds.addComment', $ddaccount->id) }}"
-                                        class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">View All</a>
+                                        class="btn-primary px-3 py-2 uppercase   text-white">View All</a>
                                 @endif
                                 <a href="{{ route('dds.addComment', $ddaccount->id) }}"
-                                    class="btn-primary px-3 py-2 uppercase rounded-3xl text-white">Add Comments</a>
+                                    class="btn-primary px-3 py-2 uppercase text-white">Add Comments</a>
                             </div>
                         </div>
                     </div>
@@ -561,13 +592,13 @@
             </div>
 
             <!-- Right: Settings -->
-            <div class=" w-full ">
+            <div class=" w-full  overflow-x-auto   overflow-hidden ">
 
                 <!--settings-->
-                <div class="box dark:bg-bg3 border-gray-200 shadow-md rounded-lg">
+                <div class="box dark:bg-bg3 border-gray-200 shadow rounded-lg">
                     <!-- Header -->
-                    <div class="px-4 py-3">
-                        <h3 class="text-lg border-b font-semibold text-black">SETTINGS</h3>
+                    <div class="px-2 py-1">
+                        <h3 class="text-lg border-b py-2 font-semibold text-black">SETTINGS</h3>
                     </div>
                     <div class="p-4 overflow-x-auto">
                         <table class="min-w-full text-sm text-left">
@@ -654,23 +685,24 @@
                         </table>
                     </div>
                 </div>
+
                 <!-- Body -->
-                <div class="p-4">
+                <div class="">
                     <form id="autoRenewForm" class="space-y-6">
-                        <div class="box dark:bg-bg3 shadow-md mt-4 rounded-xl border border-gray-200">
-                            <!--Old MIS No.-->
-                            <form action="" class="mt-3 p-3">
-                                <label for="" class="block uppercase">Old DD No.
+                        <div class="box dark:bg-bg3 shadow-md mt-4 rounded-10 border border-gray-200">
+                            <!--Old  No.-->
+                            <form action="" class="mt-3 px-3 ">
+                                <label for="" class="block font-semibold uppercase">Old DD No.
                                 </label>
                                 <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                                     <input type="text" name="" id=""
                                         class="block w-full bg-secondary/5 px-3 rounded-10 border py-3 dark:text-white"
                                         placeholder="Enter Old DD Number">
-                                    <input type="button" value="Update" class="block  btn-primary">
+                                    <input type="button" value="Update" class="block  btn-primary uppercase">
                                 </div>
                             </form>
                             <form action="" class="mt-2 px-3">
-                                <label for="memberDropdown" class="block uppercase">Customer</label>
+                                <label for="memberDropdown" class="block uppercase font-semibold ">Customer</label>
                                 <div class="mt-2 flex flex-row items-center gap-3 justify-between">
                                     <select id="memberDropdown" name="member_id"
                                         class="w-full rounded-10 border px-3 py-3 bg-secondary/5 dark:bg-bg3 dark:text-white">
@@ -683,12 +715,12 @@
                                         @endif
                                     </select>
 
-                                    <input type="submit" value="Update" class="block btn-primary">
+                                    <input type="submit" value="Update" class="block btn-primary uppercase">
                                 </div>
                             </form>
                             <!--Branch-->
                             <form action="" class="mt-2 px-3">
-                                <label for="branchDropdown" class="block uppercase">Branch</label>
+                                <label for="branchDropdown" class="block uppercase font-semibold">Branch</label>
                                 <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                                     <select id="branchDropdown" name="branch_id"
                                         class="w-full rounded-10 border px-3 py-3 bg-secondary/5 dark:bg-bg3 dark:text-white">
@@ -706,13 +738,13 @@
                                         @endforeach
                                     </select>
 
-                                    <input type="submit" value="Update" class="block btn-primary">
+                                    <input type="submit" value="Update" class="block btn-primary uppercase">
                                 </div>
                             </form>
 
                             <!--Advisor/ Staff-->
                             <form action="" class="mt-2 px-3">
-                                <label for="" class="block uppercase">Advisor/ Staff</label>
+                                <label for="" class="block uppercase font-semibold">Advisor/ Staff</label>
                                 <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                                     <select
                                         class="w-full rounded-10 border  px-3 py-3  bg-secondary/5 dark:bg-bg3 dark:text-white">
@@ -721,13 +753,13 @@
                                         <option>Option 2</option>
                                     </select>
 
-                                    <input type="button" value="Update" class="block  btn-primary">
+                                    <input type="button" value="Update" class="block  btn-primary uppercase">
 
                                 </div>
                             </form>
 
                             <form action="" class="mt-2 px-3">
-                                <label for="" class="block uppercase">Collection Advisor/ Staff
+                                <label for="" class="block font-semibold uppercase">Collection Advisor/ Staff
                                 </label>
                                 <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                                     <select
@@ -737,18 +769,20 @@
                                         <option>Option 2</option>
                                     </select>
 
-                                    <input type="button" value="Update" class="block  btn-primary">
+                                    <input type="button" value="Update" class="block  btn-primary uppercase">
 
                                 </div>
                             </form>
-                            <div class=" px-6 flex py-4 flex-row items-start gap-6">
-                                <p class="w-full text-lg  uppercase">Current Chart</p>
+                            <div class=" px-6 flex py-4 flex-row items-center justify-between gap-6">
+                                <p class="w-full text-lg font-semibold  uppercase">Current Chart</p>
                                 <a href="#" class="text-primary w-full uppercase">None </a>
                             </div>
 
                             <!--Commission Chart-->
                             <form action="" class="mt-2 px-3 pb-4">
-                                <label for="" class="block uppercase">Commission Chart</label>
+                                <label for="" class="block font-semibold uppercase">
+                                    Commission Chart
+                                </label>
                                 <div class="mt-2 flex flex-row items-center gap-3 justify-between ">
                                     <select
                                         class="w-full rounded-10 border  px-3 py-3  bg-secondary/5 dark:bg-bg3 dark:text-white">
@@ -757,7 +791,7 @@
                                         <option>Option 2</option>
                                     </select>
 
-                                    <input type="button" value="Update" class="block btn-primary">
+                                    <input type="button" value="Update" class="block btn-primary uppercase">
 
                                 </div>
                             </form>
@@ -823,67 +857,69 @@
                             <!-- Header -->
                             <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                                 onclick="this.nextElementSibling.classList.toggle('hidden')">
-                                <h3 class="text-lg font-semibold uppercase">Scheme Info</h3>
+                                <h3 class="text-lg font-semibold uppercase">
+                                    Scheme Info
+                                </h3>
                             </div>
                             <!-- Body -->
                             <div class="overflow-x-auto mt-5">
                                 <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
                                     <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-                                        <tr>
+                                        <tr class="border-b">
                                             <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Scheme Name</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->scheme_name ?? '-' }}
                                             </td>
                                         </tr>
 
-                                        <tr>
+                                        <tr class="border-b">
                                             <td class="font-semibold px-4 py-2 uppercase">Scheme Code</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->scheme_code ?? '-' }}
                                             </td>
                                         </tr>
 
-                                        <tr>
+                                        <tr class="border-b">
                                             <td class="font-semibold px-4 py-2 uppercase">Minimum Locking Period</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->rd_dd_lock_in_period ?? 'NA' }} months
                                             </td>
                                         </tr>
 
-                                        <tr>
+                                        <tr class="border-b"> 
                                             <td class="font-semibold px-4 py-2 uppercase">Interest Locking Period</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->interest_lock_in_period ?? 0 }} Months
                                             </td>
                                         </tr>
 
-                                        <tr class="bg-gray-50 dark:bg-bg3">
+                                        <tr class="border-b">
                                             <td class="font-bold px-4 py-2 uppercase">Deposit Frequency</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->rd_dd_frequency ?? '-' }}
                                             </td>
                                         </tr>
-                                        <tr class="bg-gray-50 dark:bg-bg3">
+                                        <tr class="border-b">
                                             <td class="font-bold px-4 py-2 uppercase">Annual Interest Rate (%)</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->anuual_interest_rate ?? 'NA' }} %
                                             </td>
                                         </tr>
-                                        <tr class="bg-gray-50 dark:bg-bg3">
+                                        <tr class="border-b">
                                             <td class="font-bold px-4 py-2 uppercase">Interest Compounding Interval</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->interest_compounding_interval ?? 'NA' }}
                                             </td>
                                         </tr>
-                                        <tr class="bg-gray-50 dark:bg-bg3">
+                                        <tr class="border-b">
                                             <td class="font-bold px-4 py-2 uppercase">Tenure</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->tenure_of_rd_dd_value }}
                                                 {{ $ddaccount->scheme->tenure_of_rd_dd_type }}
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr class="border-b">
                                             <td class="font-semibold px-4 py-2 uppercase">Cancellation Charges</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->cancellation_charges_value }}
@@ -891,26 +927,26 @@
                                             </td>
                                         </tr>
 
-                                        <tr class="bg-gray-50 dark:bg-bg3">
+                                        <tr class="border-b">
                                             <td class="font-bold px-4 py-2 uppercase">Penal Charges</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->penal_charges ?? '-' }}
                                             </td>
                                         </tr>
-                                        <tr class="bg-gray-50 dark:bg-bg3">
+                                        <tr class="border-b">
                                             <td class="font-bold px-4 py-2 uppercase">Bonus Rate</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->bonus_rate_value }}
                                                 {{ $ddaccount->scheme->bonus_rate_type === 'percentage' ? '%' : 'fixed' }}
                                             </td>
                                         </tr>
-                                        <tr class="bg-gray-50 dark:bg-bg3">
+                                        <tr class="border-b">
                                             <td class="font-bold px-4 py-2 uppercase">Minimum Amount</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->scheme->min_rd_dd_amount ?? 'NA' }}
                                             </td>
                                         </tr>
-                                        <tr class="bg-gray-50 dark:bg-bg3">
+                                        <tr class="border-b">
                                             <td class="font-bold px-4 py-2 uppercase">Skip Days (For DD Only) </td>
                                             <td class="px-4 py-2   text-right md:text-left">-</td>
                                         </tr>
@@ -931,34 +967,34 @@
                                     class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
                                     <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-                                        <tr>
+                                        <tr class="border-b">
                                             <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Maturity Date</td>
                                             <td class="px-4 py-2 text-right md:text-left">
                                                 {{ $ddaccount->maturity_date?->format('d-m-Y') }}</td>
                                         </tr>
 
-                                        <tr>
+                                        <tr class="border-b">
                                             <td class="font-semibold px-4 py-2 uppercase">Principal Amount (A)</td>
                                             <td class="px-4 py-2 text-right md:text-left">
                                                 {{ number_format($ddaccount->dd_amount, 2) }}
                                             </td>
                                         </tr>
 
-                                        <tr>
+                                        <tr class="border-b">
                                             <td class="font-semibold px-4 py-2 uppercase">Total Interest (B)</td>
                                             <td class="px-4 py-2 text-right md:text-left">
                                                 {{ $ddaccount->interest_earned }}
                                             </td>
                                         </tr>
 
-                                        <tr>
+                                        <tr class="border-b">
                                             <td class="font-semibold px-4 py-2 uppercase">Bonus Amount (C)</td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->bonus }}
                                             </td>
                                         </tr>
 
-                                        <tr>
+                                        <tr class="border-b">
                                             <td class="font-semibold px-4 py-2 uppercase">Maturity Amount (A + B + C) </td>
                                             <td class="px-4 py-2   text-right md:text-left">
                                                 {{ $ddaccount->maturity_amount ?? '0' }}
@@ -975,16 +1011,16 @@
                                     <div class="overflow-x-auto">
                                         <table
                                             class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
-                                            <thead class="bg-gray-100 text-start text-gray-700">
+                                            <thead class="bg-secondary/5 text-start text-gray-700">
                                                 <tr class="border-b">
-                                                    <th class="px-4 py-2 text-start text-sm font-semibold">TOTAL INST</th>
-                                                    <th class="px-4 py-2 text-start text-sm font-semibold">PAID INST</th>
-                                                    <th class="px-4 py-2 text-start text-sm font-semibold">DUE INST </th>
-                                                    <th class="px-4 py-2 text-start text-sm font-semibold">OVERDUE INST
+                                                    <th class="px-4 py-2 text-start  font-semibold">TOTAL INST</th>
+                                                    <th class="px-4 py-2 text-start  font-semibold">PAID INST</th>
+                                                    <th class="px-4 py-2 text-start  font-semibold">DUE INST </th>
+                                                    <th class="px-4 py-2 text-start  font-semibold">OVERDUE INST
                                                     </th>
-                                                    <th class="px-4 py-2 text-start text-sm font-semibold">INST CANCELED
+                                                    <th class="px-4 py-2 text-start  font-semibold">INST CANCELED
                                                     </th>
-                                                    <th class="px-4 py-2 text-start text-sm font-semibold">TOTAL INST NOT
+                                                    <th class="px-4 py-2 text-start  font-semibold">TOTAL INST NOT
                                                         DUE</th>
                                                 </tr>
                                             </thead>
@@ -1023,16 +1059,16 @@
                                     class="w-full border-collapse rounded-lg overflow-hidden shadow-md bg-white dark:bg-bg3">
                                     <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
 
-                                        <tr>
+                                        <tr class="border-b">
                                             <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Branch</td>
                                             <td class="px-4 py-2">{{ $ddaccount->member->branch->branch_name ?? 'N/A' }}
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr class="border-b">
                                             <td class="font-semibold px-4 py-2 uppercase">Advisor/ Staff</td>
                                             <td class="px-4 py-2 text-right md:text-left">₹ 0.00</td>
                                         </tr>
-                                        <tr>
+                                        <tr class="border-b">
                                             <td class="font-semibold px-4 py-2 uppercase">Joint Account </td>
                                             <td class="px-4 py-2 text-right md:text-left">-</td>
                                         </tr>
@@ -1078,7 +1114,7 @@
                                                         <td class="px-4 py-2">
                                                             {{ $transaction->balance_available ?? 'N/A' }}
                                                         </td>
-                                                        <td class="px-4 py-2 text-sm text-green-600 font-medium">Approved
+                                                        <td class="px-4 py-2 ">Approved
                                                         </td>
                                                     </tr>
                                                 @empty
@@ -1090,7 +1126,7 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <button class="btn-primary  mt-3">View All</button>
+                                    <button class="btn-primary uppercase   mt-5">View All</button>
                                 </div>
                             </div>
                         </div>

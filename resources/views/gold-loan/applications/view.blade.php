@@ -100,23 +100,50 @@
             <h3 class="text-lg uppercase font-semibold">Gold Loan Application </h3>
         </div>
     </div>
+     @if(session('success'))
+        {{-- <div 
+            id="successMessage" 
+            class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
+        >
+            {{ session('success') }}
+        </div>
+
+        <script>
+            // Auto hide after 30 seconds (30000 ms)
+            setTimeout(() => {
+                const msg = document.getElementById('successMessage');
+                if (msg) {
+                    msg.style.opacity = '0';
+                    setTimeout(() => msg.remove(), 500); // smooth fade-out
+                }
+            }, 30000);
+        </script> --}}
+
+        {{-- //alert msg --}}
+        <div class="w-44 mb-5 flex justify-end">
+             <x-alert />
+        </div>
+       
+    @endif
+    
 
     <div class="flex flex-wrap gap-3">
 
         <!-- Always Visible -->
-        <a href="{{ route('gold-loan.applications.view-buttons.show-emi-chart', $application->id) }}" 
-            target="_blank" class="btn-primary px-2 py-2 rounded-10 uppercase text-sm">
+        <a href="{{ route('gold-loan.applications.view-buttons.show-emi-chart', $application->id) }}" target="_blank"
+            class="btn-primary px-2 py-2 rounded-10 uppercase text-sm">
             Show EMI Chart
         </a>
         @if($application->status != 1 && $application->status != 2)
-        <a href="{{route('gold-loan.applications.view-buttons.col_process_fee', $application->id)}}" 
+        <a href="{{route('gold-loan.applications.view-buttons.col_process_fee', $application->id)}}"
             class="btn-warning uppercase px-2 py-2 rounded-10  text-sm">
             Collect Processing Fee
-        </a>       
+        </a>
         <!-- <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
             SUBMIT FOR APPROVAL
         </a> -->
-        <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST" style="display:inline;">
+        <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST"
+            style="display:inline;">
             @csrf
             <button type="submit" class="btn-primary uppercase px-2 py-2 rounded-10"
                 onclick="return confirm('Submit this application for approval')">
@@ -129,80 +156,97 @@
         {{-- Status != DISBURSEMENT (2) --}}
         @if($application->status != 2)
 
-            {{-- Status == DRAFT (0) OR CANCELED (3) --}}
-            @if(in_array($application->status, [3]))
-                <a href="{{route('gold-loan.applications.view-buttons.col_process_fee', $application->id)}}" 
-                    class="btn-warning uppercase px-2 py-2 rounded-10">
-                    Collect Processing Fee
-                </a>
-            @endif 
+        {{-- Status == DRAFT (0) OR CANCELED (3) --}}
+        @if(in_array($application->status, [3]))
+        <a href="{{route('gold-loan.applications.view-buttons.col_process_fee', $application->id)}}"
+            class="btn-warning uppercase px-2 py-2 rounded-10">
+            Collect Processing Fee
+        </a>
+        @endif
 
-            {{-- Status != CANCELED (3) --}}
-            @if($application->status != 3 && $application->status != 0)
-                <a href="{{ route('gold-loan.applications.view-buttons.disburse-setting', $application->id) }}" 
-                    target="_blank" class="btn-warning uppercase px-2 py-2 rounded-10">
-                    DISBURSE SETTINGS
-                </a>
-                <a href="#" class="btn-primary px-2  uppercase py-2 rounded-10">
-                    REGISTER eNACH (Fidypay)
-                </a>
-                <a href="#" class="btn-primary px-2 uppercase py-2 rounded-10">
-                    REGISTER eNACH (Rocketpay)
-                </a>
-                <a href="#" class="btn-primary px-2 uppercase py-2 rounded-10">
-                    REGISTER eNACH (Rocketpay UPI)
-                </a>
-            @endif
+        {{-- Status != CANCELED (3) --}}
+        @if($application->status != 3 && $application->status != 0)
+        <a href="{{ route('gold-loan.applications.view-buttons.disburse-setting', $application->id) }}" target="_blank"
+            class="btn-warning uppercase px-2 py-2 rounded-10">
+            DISBURSE SETTINGS
+        </a>
+        <a href="#" class="btn-primary px-2  uppercase py-2 rounded-10">
+            REGISTER eNACH (Fidypay)
+        </a>
+        <a href="#" class="btn-primary px-2 uppercase py-2 rounded-10">
+            REGISTER eNACH (Rocketpay)
+        </a>
+        <a href="#" class="btn-primary px-2 uppercase py-2 rounded-10">
+            REGISTER eNACH (Rocketpay UPI)
+        </a>
+        @endif
 
         @endif
 
-        <a href="{{ route('loan.loanAgreement', $application->id) }}"
-            class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-            <i class="las la-print text-secondary"></i> LOAN AGREEMENT
-        </a>
+        @if($application->status != 3 && $application->status != 0)
+        <div class="relative inline-block text-left">
+            <!-- Print Button -->
+            <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
+                onclick="toggleDropdown('printDropdown')">
+                <i class="las la-print text-lg"></i>
+                PRINT DOCUMENTS
+                <i class="las la-angle-down text-xs"></i>
+            </button>
+            <div id="printDropdown"
+                class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                <div class="py-1 px-3">
+                    <a href="{{ route('loan.loanAgreement', $application->id) }}"
+                        class="flex items-center gap-2 px-4   py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="las la-print text-secondary"></i> LOAN AGREEMENT
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        @endif
 
         {{-- If NOT CANCELED (3) then show print menu --}}
-        @if($application->status != 3 && $application->status != 0)
-            <div class="relative inline-block text-left">
+        {{-- @if($application->status != 3 && $application->status != 0)
+        <div class="relative inline-block text-left">
 
-                <!-- Print Button -->
-                <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
-                    onclick="toggleDropdown('printDropdown')">
-                    <i class="las la-print text-lg"></i>
-                    PRINT DOCUMENTS
-                    <i class="las la-angle-down text-xs"></i>
-                </button>
+            <!-- Print Button -->
+            <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
+                onclick="toggleDropdown('printDropdown')">
+                <i class="las la-print text-lg"></i>
+                PRINT DOCUMENTS
+                <i class="las la-angle-down text-xs"></i>
+            </button>
 
-                <!-- Print Dropdown Menu -->
-                <div id="printDropdown"
-                    class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+            <!-- Print Dropdown Menu -->
+            <div id="printDropdown"
+                class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
 
-                    @php $printDocs = [
-                        'APPLICATION FORM',
-                        'EMI SCHEDULE CHART',
-                        'SANCTION LETTER',
-                        'LOAN AGREEMENT',
-                        'DISBURSE LETTER',
-                        'PROMISSORY NOTE',
-                        'LETTER OF UNDERTAKING',
-                        'LETTER OF EVIDENCING',
-                        'GUARANTOR AGREEMENT',
-                        'JURISDICTION ACK LETTER',
-                        'INDEMNIFICATION LETTER'
-                    ]; @endphp
+                @php $printDocs = [
+                'APPLICATION FORM',
+                'EMI SCHEDULE CHART',
+                'SANCTION LETTER',
+                'LOAN AGREEMENT',
+                'DISBURSE LETTER',
+                'PROMISSORY NOTE',
+                'LETTER OF UNDERTAKING',
+                'LETTER OF EVIDENCING',
+                'GUARANTOR AGREEMENT',
+                'JURISDICTION ACK LETTER',
+                'INDEMNIFICATION LETTER'
+                ]; @endphp
 
-                    <div class="py-1">
-                        @foreach($printDocs as $doc)
-                            <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <i class="las la-print text-secondary"></i> {{ $doc }}
-                            </a>
-                        @endforeach
-                    </div>
-
+                <div class="py-1">
+                    @foreach($printDocs as $doc)
+                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="las la-print text-secondary"></i> {{ $doc }}
+                    </a>
+                    @endforeach
                 </div>
 
             </div>
-        @endif
+
+        </div>
+        @endif --}}
 
     </div>
 
@@ -213,23 +257,24 @@
         <div class=" w-full  overflow-hidden">
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                 <div class="text-end p-3">
-                   <a href="{{ route('gold-loan.applications.edit', $application->id) }}" class="p-2 btn-primary">
+                    <a href="{{ route('gold-loan.applications.edit', $application->id) }}" class="p-2 btn-primary">
                         <i class="las la-pencil-alt"></i>
                     </a>
                     <a href="#" class=" p-2 btn-error">
                         <i class="las la-trash-alt"></i>
                     </a>
                 </div>
-                
 
-                <table class="min-w-full text-sm text-left border-collapse">
+
+                <table class="w-full text-sm text-left border-collapse">
                     <tbody class="divide-y divide-gray-200">
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 w-1/3 uppercase">Customer</td>
                             <td class="px-4 py-2">
-                                <a href="{{ url('members/member/'. $application->member->id) }}" 
-                                class="text-primary capitalize hover:underline">
-                                {{ $application->member->member_no }} - {{ $application->member->member_info_first_name }}
+                                <a href="{{ url('members/member/'. $application->member->id) }}"
+                                    class="text-primary capitalize hover:underline">
+                                    {{ $application->member->member_no }} - {{
+                                    $application->member->member_info_first_name }}
                                 </a>
                             </td>
                         </tr>
@@ -237,37 +282,43 @@
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 w-1/3 uppercase">1st Co-Applicant Customer</td>
                             <td class="px-4 py-2 capitalize text-primary">
-                                {{ optional($application->coApplicant1)->member_no }} - {{ optional($application->coApplicant1)->member_info_first_name }}
+                                {{ optional($application->coApplicant1)->member_no }} - {{
+                                optional($application->coApplicant1)->member_info_first_name }}
                             </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 w-1/3 uppercase">2nd Co-Applicant Customer</td>
                             <td class="px-4 py-2 capitalize text-primary">
-                                {{ optional($application->coApplicant2)->member_no }} - {{ optional($application->coApplicant2)->member_info_first_name }}
+                                {{ optional($application->coApplicant2)->member_no }} - {{
+                                optional($application->coApplicant2)->member_info_first_name }}
                             </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Guarantor 1 Customer</td>
                             <td class="px-4 py-2 capitalize text-primary">
-                                {{ optional($application->guarantor1)->member_no }} - {{ optional($application->guarantor1)->member_info_first_name }}
+                                {{ optional($application->guarantor1)->member_no }} - {{
+                                optional($application->guarantor1)->member_info_first_name }}
                             </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Guarantor 2 Customer</td>
                             <td class="px-4 py-2 capitalize text-primary">
-                                {{ optional($application->guarantor2)->member_no }} - {{ optional($application->guarantor2)->member_info_first_name }}
+                                {{ optional($application->guarantor2)->member_no }} - {{
+                                optional($application->guarantor2)->member_info_first_name }}
                             </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Guarantor 3 Customer</td>
                             <td class="px-4 py-2 capitalize text-primary">
-                                {{ optional($application->guarantor3)->member_no }} - {{ optional($application->guarantor3)->member_info_first_name }}
+                                {{ optional($application->guarantor3)->member_no }} - {{
+                                optional($application->guarantor3)->member_info_first_name }}
                             </td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2">Guarantor 4 Customer</td>
                             <td class="px-4 py-2 capitalize text-primary">
-                                {{ optional($application->guarantor4)->member_no }} - {{ optional($application->guarantor4)->member_info_first_name }}
+                                {{ optional($application->guarantor4)->member_no }} - {{
+                                optional($application->guarantor4)->member_info_first_name }}
                             </td>
                         </tr>
                         @endif
@@ -288,7 +339,7 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Gold Loan Scheme</td>
-                           <td class="text-start !py-5 px-6">
+                            <td class="text-start !py-5 px-6 uppercase">
                                 {{ $application->scheme->scheme_name ?? 'N/A' }}
                             </td>
                         </tr>
@@ -300,21 +351,21 @@
                             <td class="font-semibold px-4 py-2 uppercase">Status</td>
                             <td class="px-4 py-2">
                                 @if($application->status == 0)
-                                    <span class="block w-32 rounded-[30px]  py-2 text-center text-xs text-warning">
-                                        DRAFT
-                                    </span>
+                              
+                                    DRAFT
+                                
                                 @elseif($application->status == 1)
-                                    <span class="block w-32 rounded-[30px] text-primary py-2 text-center text-xs ">
-                                        APPROVED
-                                    </span>
+                              
+                                    APPROVED
+                           
                                 @elseif($application->status == 2)
-                                    <span class="block w-32 rounded-[30px] py-2 text-center text-xs text-secondary">
-                                        DISBURSED
-                                    </span>
+                               
+                                    DISBURSED
+                            
                                 @elseif($application->status == 3)
-                                    <span class="block w-32 rounded-[30px]  py-2 text-center text-xs text-error">
-                                        CANCELLED
-                                    </span>
+                              
+                                    CANCELLED
+                             
                                 @endif
                             </td>
                         </tr>
@@ -330,9 +381,10 @@
                 <div class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black uppercase">Cibil Info</h3>
                     <div class=" flex gap-3">
-                       
+
                         <!-- Modal Background (hidden by default) -->
-                        <div id="creditScoreModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div id="creditScoreModal"
+                            class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                             <!-- Modal Container -->
                             <div class="bg-white rounded-lg shadow-xl min-w-full max-w-5xl mx-4">
 
@@ -368,31 +420,33 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                        @if($application->creditScores && $application->creditScores->isNotEmpty())
+                            @if($application->creditScores && $application->creditScores->isNotEmpty())
                             @foreach($application->creditScores as $score)
-                                @if($score)
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-2">{{ $score->cibil_type ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2">{{ $score->cibil_score ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2">
-                                            {{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : 'N/A' }}
-                                        </td>
-                                        <td class="px-4 py-2">
-                                            @if(!empty($score->report_file_path))                               
-                                                <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>                                           
-                                            @else
-                                                <span class="text-gray-500">No File Available</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endif
-                            @endforeach
+                            @if($score)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-2">{{ $score->cibil_type ?? 'N/A' }}</td>
+                                <td class="px-4 py-2">{{ $score->cibil_score ?? 'N/A' }}</td>
+                                <td class="px-4 py-2">
+                                    {{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y')
+                                    : 'N/A' }}
+                                </td>
+                                <td class="px-4 py-2">
+                                    @if(!empty($score->report_file_path))
+                                    <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank"
+                                        class="text-blue-500 underline text-sm">View File</a>
                                     @else
-                                        <tr>
-                                            <td colspan="4" class="text-center py-3 text-gray-500">No CIBIL Data Found</td>
-                                        </tr>
+                                    <span class="text-gray-500">No File Available</span>
                                     @endif
-                                </tbody>
+                                </td>
+                            </tr>
+                            @endif
+                            @endforeach
+                            @else
+                            <tr>
+                                <td colspan="4" class="text-center py-3 text-gray-500">No CIBIL Data Found</td>
+                            </tr>
+                            @endif
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -410,27 +464,27 @@
                     <tbody>
                         <tr class="border-t border-b">
                             <td class="px-2 py-2 text-gray-800 capitalize">
-                                 @php
-                                    $statusText = 'UNKNOWN';
-                                    $statusClass = 'bg-gray-200 text-gray-600 border-gray-300';
+                                @php
+                                $statusText = 'UNKNOWN';
+                                $statusClass = 'bg-gray-200 text-gray-600 border-gray-300';
 
-                                    if ($application->status == 0) {
-                                        $statusText = 'DRAFT';
-                                        $statusClass = 'bg-gray-300 text-gray-700 border-gray-400';
-                                    } elseif ($application->status == 1) {
-                                        $statusText = 'APPROVED';
-                                        $statusClass = 'bg-blue-200 text-blue-600 border-blue-300';
-                                    } elseif ($application->status == 2) {
-                                        $statusText = 'DISBURSEMENT';
-                                        $statusClass = 'bg-green-200 text-green-600 border-green-300';
-                                    } elseif ($application->status == 3) {
-                                        $statusText = 'CANCELED';
-                                        $statusClass = 'bg-red-200 text-red-600 border-red-300';
-                                    }
+                                if ($application->status == 0) {
+                                $statusText = 'DRAFT';
+                                $statusClass = 'bg-gray-300 text-gray-700 border-gray-400';
+                                } elseif ($application->status == 1) {
+                                $statusText = 'APPROVED';
+                                $statusClass = 'bg-blue-200 text-blue-600 border-blue-300';
+                                } elseif ($application->status == 2) {
+                                $statusText = 'DISBURSEMENT';
+                                $statusClass = 'bg-green-200 text-green-600 border-green-300';
+                                } elseif ($application->status == 3) {
+                                $statusText = 'CANCELED';
+                                $statusClass = 'bg-red-200 text-red-600 border-red-300';
+                                }
                                 @endphp
 
-                                 {{ $statusText }}
-                              
+                                {{ $statusText }}
+
                             </td>
                             <td class="px-2 py-2 text-gray-800 capitalize">-</td>
                             <td class="px-2 py-2 text-gray-800">-</td>
@@ -479,37 +533,43 @@
 
                                 <tbody class="divide-y divide-gray-200">
                                     @if($application->loanOrnaments->isNotEmpty())
-                                        @foreach($application->loanOrnaments as $ornament)
-                                            <tr>
-                                                <td class="px-3 py-2">{{ $ornament->item_type ?? 'N/A' }}</td>
-                                                <td class="px-3 py-2">{{ $ornament->item_name ?? 'N/A' }}</td>
-                                                <td class="px-3 py-2 text-center">{{ $ornament->no_of_items ?? '0' }}</td>
-                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->value_per_gram, 2) }}</td>
-                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->gross_weight, 2) }}</td>
-                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->net_weight, 2) }}</td>
-                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->tunch, 2) }}</td>
-                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->fine_weight, 2) }}</td>
-                                                <td class="px-3 py-2 text-center">{{ number_format($ornament->total_value, 2) }}</td>
-                                                <td class="px-3 py-2 text-center">
-                                                    @if(!empty($ornament->image_path))
-                                                        <a href="{{ asset('storage/' . $ornament->image_path) }}" target="_blank" class="text-blue-500 underline">
-                                                            View
-                                                        </a>
-                                                    @else
-                                                        <span class="text-gray-400">No Image</span>
-                                                    @endif
-                                                </td>
-                                                <td class="px-3 py-2">
-                                                    {{ $ornament->status == 0 ? 'RELEASED' : 'MORTGAGE' }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                    @foreach($application->loanOrnaments as $ornament)
+                                    <tr>
+                                        <td class="px-3 py-2">{{ $ornament->item_type ?? 'N/A' }}</td>
+                                        <td class="px-3 py-2">{{ $ornament->item_name ?? 'N/A' }}</td>
+                                        <td class="px-3 py-2 text-center">{{ $ornament->no_of_items ?? '0' }}</td>
+                                        <td class="px-3 py-2 text-center">{{ number_format($ornament->value_per_gram, 2)
+                                            }}</td>
+                                        <td class="px-3 py-2 text-center">{{ number_format($ornament->gross_weight, 2)
+                                            }}</td>
+                                        <td class="px-3 py-2 text-center">{{ number_format($ornament->net_weight, 2) }}
+                                        </td>
+                                        <td class="px-3 py-2 text-center">{{ number_format($ornament->tunch, 2) }}</td>
+                                        <td class="px-3 py-2 text-center">{{ number_format($ornament->fine_weight, 2) }}
+                                        </td>
+                                        <td class="px-3 py-2 text-center">{{ number_format($ornament->total_value, 2) }}
+                                        </td>
+                                        <td class="px-3 py-2 text-center">
+                                            @if(!empty($ornament->image_path))
+                                            <a href="{{ asset('storage/' . $ornament->image_path) }}" target="_blank"
+                                                class="text-blue-500 underline">
+                                                View
+                                            </a>
+                                            @else
+                                            <span class="text-gray-400">No Image</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-3 py-2">
+                                            {{ $ornament->status == 0 ? 'RELEASED' : 'MORTGAGE' }}
+                                        </td>
+                                    </tr>
+                                    @endforeach
                                     @else
-                                        <tr>
-                                            <td colspan="11" class="text-center py-3 text-gray-500">
-                                                No security deposits available.
-                                            </td>
-                                        </tr>
+                                    <tr>
+                                        <td colspan="11" class="text-center py-3 text-gray-500">
+                                            No security deposits available.
+                                        </td>
+                                    </tr>
                                     @endif
                                 </tbody>
                             </table>
@@ -564,15 +624,16 @@
                         class="flex justify-center items-center mt-3 px-4 py-6 text-2xl sm:text-3xl font-semibold text-red-500">
                         <label class="cursor-pointer">
                             @if($application->creditScores->isNotEmpty())
-                                @foreach($application->creditScores as $score)
-                                    <div class="flex justify-center items-center mt-3 px-4 py-6 text-2xl sm:text-3xl font-semibold text-red-500">
-                                        <label class="cursor-pointer">
-                                            {{ $score->cibil_score ?? 'N/A' }}
-                                        </label>
-                                    </div>
-                                @endforeach
+                            @foreach($application->creditScores as $score)
+                            <div
+                                class="flex justify-center items-center mt-3 px-4 py-6 text-2xl sm:text-3xl font-semibold text-red-500">
+                                <label class="cursor-pointer">
+                                    {{ $score->cibil_score ?? 'N/A' }}
+                                </label>
+                            </div>
+                            @endforeach
                             @else
-                                <div class="text-center text-gray-500 mt-3">No CIBIL score available.</div>
+                            <div class="text-center text-gray-500 mt-3">No CIBIL score available.</div>
                             @endif
                         </label>
                     </div>
@@ -695,60 +756,60 @@
                                     {{ $application->scheme->processing_fee ?? 0 }} %
                                 </td>
                             </tr>
-                       
+
                             <tr class=" text-center">
-                                <td class="font-semibold px-4 py-2 uppercase"  colspan="2">
+                                <td class="font-semibold px-4 py-2 uppercase" colspan="2">
                                     Per EMI Charges
                                 </td>
                             </tr>
 
                             @if(!empty($application->scheme->sms_charge))
-                                <tr class="border-b">
-                                    <td class="font-semibold px-4 py-2 uppercase">SMS Charges</td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $application->scheme->sms_charge ?? 0 }} ₹ 
-                                    </td>
-                                </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">SMS Charges</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->sms_charge ?? 0 }} ₹
+                                </td>
+                            </tr>
                             @endif
 
                             @if(!empty($application->scheme->fuel_charge))
-                                <tr class="border-b">
-                                    <td class="font-semibold px-4 py-2 uppercase">Fuel Charges</td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $application->scheme->fuel_charge ?? 0 }} ₹ 
-                                    </td>
-                                </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Fuel Charges</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->fuel_charge ?? 0 }} ₹
+                                </td>
+                            </tr>
                             @endif
 
                             @if(!empty($application->scheme->stationary_charge))
-                                <tr class="border-b">
-                                    <td class="font-semibold px-4 py-2 uppercase">Stationary Charges</td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $application->scheme->stationary_charge ?? 0 }} ₹ 
-                                    </td>
-                                </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Stationary Charges</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->stationary_charge ?? 0 }} ₹
+                                </td>
+                            </tr>
                             @endif
 
                             @if(!empty($application->scheme->maintenance_charge))
-                                <tr class="border-b">
-                                    <td class="font-semibold px-4 py-2 uppercase">Maintenance Charges</td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $application->scheme->maintenance_charge ?? 0 }} ₹ 
-                                    </td>
-                                </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Maintenance Charges</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->maintenance_charge ?? 0 }} ₹
+                                </td>
+                            </tr>
                             @endif
-                    
+
                             @if(!empty($application->scheme->collection))
-                                <tr class="border-b">
-                                    <td class="font-semibold px-4 py-2 uppercase">Collection Charges</td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $application->scheme->collection ?? 0 }} ₹ 
-                                    </td>
-                                </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Collection Charges</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->collection ?? 0 }} ₹
+                                </td>
+                            </tr>
                             @endif
 
                         </tbody>
-                   </table>
+                    </table>
                 </div>
             </div>
 

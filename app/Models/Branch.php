@@ -12,6 +12,7 @@ class Branch extends Model
 {
     protected $fillable = [
         'branch_name',
+        'bank_name',
         'branch_code',
         'open_date',
         'ifsc_code',
@@ -44,16 +45,15 @@ class Branch extends Model
     {
         return $this->hasMany(Member::class, 'general_branch');
     }
-  public function Shareholder()
+    public function Shareholder()
     {
-        return $this->hasMany(Shareholders::class,'branch_id');
-
+        return $this->hasMany(Shareholders::class, 'branch_id');
     }
     public function ShareCertificate()
     {
-        return $this->hasMany(ShareCertificate::class,'branch_id');
+        return $this->hasMany(ShareCertificate::class, 'branch_id');
     }
-        public function ddsAccounts()
+    public function ddsAccounts()
     {
         return $this->hasMany(DdsAccount::class, 'branch_id');
     }

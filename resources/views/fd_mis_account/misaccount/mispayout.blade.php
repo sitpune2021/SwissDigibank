@@ -15,13 +15,13 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-xl font-semibold">
-                MIS PAYOUTS — {{ 'MIS-' . $misAccount->id }}
+            <h1 class="text-lg font-semibold">
+                MIS PAYOUTS — {{  $misAccount->mis_account_no }}
             </h1>
-            <p class="text-gray-500 text-sm">
+            {{-- <p class="text-gray-500 text-sm">
                 <a href="" class="text-gray-500">MIS Accounts</a> >
                 <a href="#" class="text-gray-500">Payouts</a>
-            </p>
+            </p> --}}
         </div>
     </div>
 
@@ -30,18 +30,18 @@
             <table class="w-full whitespace-nowrap text-sm border-collapse">
                 <thead class="bg-secondary/5 text-black text-sm font-semibold uppercase tracking-wider">
                     <tr>
-                        <th class="px-4 py-2 text-lg text-start">Year</th>
-                        <th class="px-4 py-2 text-lg text-start">Period</th>
-                        <th class="px-4 py-2 text-lg text-start">Days</th>
-                        <th class="px-4 py-2 text-lg text-start">Principal</th>
-                        <th class="px-4 py-2 text-lg text-start">Interest (A)</th>
-                        <th class="px-4 py-2 text-lg text-start">TDS (B)</th>
-                        <th class="px-4 py-2 text-lg text-start">Net Interest (A - B)</th>
-                        <th class="px-4 py-2 text-lg text-start">NET INTERESTon DUE DATE</th>
-                        <th class="px-4 py-2 text-lg text-start">Due Date</th>
-                        <th class="px-4 py-2 text-lg text-start">Payout Status</th>
-                        <th class="px-4 py-2 text-lg text-start">Processed</th>
-                        <th class="px-4 py-2 text-lg text-start">Actions</th>
+                        <th class="px-4 py-3 text-lg text-start">Year</th>
+                        <th class="px-4 py-3 text-lg text-start">Period</th>
+                        <th class="px-4 py-3 text-lg text-start">Days</th>
+                        <th class="px-4 py-3 text-lg text-start">Principal</th>
+                        <th class="px-4 py-3 text-lg text-start">Interest (A)</th>
+                        <th class="px-4 py-3 text-lg text-start">TDS (B)</th>
+                        <th class="px-4 py-3 text-lg text-start">Net Interest (A - B)</th>
+                        <th class="px-4 py-3 text-lg text-start">NET INTERESTon DUE DATE</th>
+                        <th class="px-4 py-3 text-lg text-start">Due Date</th>
+                        <th class="px-4 py-3 text-lg text-start">Payout Status</th>
+                        <th class="px-4 py-3 text-lg text-start">Processed</th>
+                        <th class="px-4 py-3 text-lg text-start">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

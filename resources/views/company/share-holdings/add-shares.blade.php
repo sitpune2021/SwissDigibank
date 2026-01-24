@@ -112,7 +112,7 @@
                         <x-number-to-word for="amount" />
                     @endif
                     @if (in_array($id, ['first_share', 'share_no']))
-                        <small class="text-blue-500 text-sm">Enter Value between : 1 - 50000</small>
+                        <small class="text-primary text-sm">Enter Value between : 1 - 50000</small>
                     @endif
 
                 </div>

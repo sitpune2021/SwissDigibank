@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
 use App\Mail\AccountDepositMail;
+use App\Models\FdTransaction;
 
 class AccountsTransactionsHelper
 {
@@ -138,5 +139,115 @@ class AccountsTransactionsHelper
 
         // Balance = total credits - total debits
         return $totalCredit - $totalDebit;
+    }
+    public static function getFdAccountBalance($fdAccountIds)
+    {
+        if (!is_array($fdAccountIds)) {
+            $fdAccountIds = [$fdAccountIds];
+        }
+
+        // Get all approved FD transactions
+        $transactions = \App\Models\FdTransaction::whereIn('fd_account_id', $fdAccountIds)
+            ->where('status', 'approved')
+            ->get()
+            ->groupBy('fd_account_id');
+
+        $balances = [];
+
+        foreach ($fdAccountIds as $fdAccountId) {
+            $fdAccount = \App\Models\FdAccount::find($fdAccountId);
+
+            $balance = 0;
+            if ($fdAccount && $fdAccount->status == 1) { // Approved FD
+                $balance = $fdAccount->fd_amount;
+            }
+
+            if (isset($transactions[$fdAccountId])) {
+                $group = $transactions[$fdAccountId];
+                $credit = $group->where('transaction_type', 1)->sum('amount'); // 1 = Credit
+                $debit  = $group->where('transaction_type', 0)->sum('amount'); // 0 = Debit
+                $balance += ($credit - $debit);
+            }
+
+            $balances[$fdAccountId] = $balance;
+        }
+
+        return $balances;
+    }
+
+    // public static function getFdInterestSummary($fdAccountId)
+    // {
+    //     $txns = FdTransaction::where('fd_account_id', $fdAccountId)
+    //         ->where('status', 'approved')
+    //         ->get();
+
+    //     $interestCredit = $txns
+    //         ->where('transaction_purpose', 'interest')
+    //         ->where('transaction_type', 1) // credit
+    //         ->sum('amount');
+
+    //     $interestReleased = $txns
+    //         ->where('transaction_purpose', 'interest')
+    //         ->where('transaction_type', 0) // debit
+    //         ->sum('amount');
+
+    //     $tdsDeducted = $txns
+    //         ->where('transaction_purpose', 'tds')
+    //         ->where('transaction_type', 0) // debit
+    //         ->sum('amount');
+
+    //     $tdsReversed = $txns
+    //         ->where('transaction_purpose', 'tds')
+    //         ->where('transaction_type', 1) // credit
+    //         ->sum('amount');
+
+    //     return [
+    //         'interest_credited' => $interestCredit - $interestReleased,
+    //         'interest_released' => $interestReleased,
+    //         'tds_deducted'      => $tdsDeducted - $tdsReversed,
+    //     ];
+    // }
+    public static function getFdInterestSummary($fdAccountId)
+    {
+        $txns = FdTransaction::where('fd_account_id', $fdAccountId)
+            ->where('status', 'approved')
+            ->get();
+
+        // Interest
+        $interestCredit = $txns
+            ->where('transaction_purpose', 'interest')
+            ->where('transaction_type', 1)
+            ->sum('amount');
+
+        $interestDebit = $txns
+            ->where('transaction_purpose', 'interest')
+            ->where('transaction_type', 0)
+            ->sum('amount');
+
+        // TDS
+        $tdsDeducted = $txns
+            ->where('transaction_purpose', 'tds')
+            ->where('transaction_type', 0)
+            ->sum('amount');
+
+        $tdsReversed = $txns
+            ->where('transaction_purpose', 'tds')
+            ->where('transaction_type', 1)
+            ->sum('amount');
+
+        // Interest Credited (can be negative)
+        $interestCredited = $interestCredit - $interestDebit;
+
+        // Interest Released (positive sum of debits)
+        $interestReleased = $interestDebit;
+
+        // TDS Deducted (always positive sum of debit and reverse credit)
+        $tdsTotal = $tdsDeducted + $tdsReversed;
+
+        return [
+            'interest_credited' => $interestCredited,
+            'interest_released' => $interestReleased,
+            'tds_deducted'      => $tdsTotal,
+        ];
     }
 }

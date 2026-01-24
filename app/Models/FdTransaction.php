@@ -15,7 +15,8 @@ class FdTransaction extends Model
     protected $fillable = [
         'fd_account_id',
         'transaction_date',
-
+        'transaction_type',
+        'paid_on',
         'amount',
         'mode',
         'bank',
@@ -29,11 +30,30 @@ class FdTransaction extends Model
         'processed',
         'status',
         'due_date',
+        'transaction_purpose',
 
     ];
+
+  
 
     public function fdAccount()
     {
         return $this->belongsTo(FdAccount::class, 'fd_account_id');
+    }
+
+    public function getFinalStatusAttribute()
+    {
+        $fdStatus = $this->fdAccount->status;
+
+        // FD Approved OR Fore-close Approved
+        if ($fdStatus == 1) {
+            return 'approved';
+        }
+
+        if ($fdStatus == 0) {
+            return 'pending';
+        }
+
+        return 'rejected';
     }
 }

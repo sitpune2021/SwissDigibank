@@ -42,6 +42,7 @@ $settingLabel = '';
             </div>
         </div>
     </div>
+    
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
         <!-- Left: Details -->
         <div class="w-full overflow-hidden">

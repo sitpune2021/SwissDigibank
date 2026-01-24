@@ -196,29 +196,41 @@
         <!-- Header -->
         <div class="header">
             <!-- Logo (optional) -->
-            <div style="width:100%; position:relative;">
-                <div class="logo" style="padding: 10px; ">
-                    <!-- Replace src path or use base64 img -->
+            <div style="width:100%;">
+                        <div class="logo" style="width:30%">
+                            <!-- Replace src path or use base64 img -->
+                            <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
+                                style=" width:auto; height:50px;">
+                            {{-- @if($logo)
+                            <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
+                                style=" width:150px; height:50px;"> --}}
+                            {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo"
+                                style="max-width:90px; max-height:90px;"> --}}
+                            {{-- @else --}}
+                            {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
+                                style="max-width:90px; max-height:90px;"> --}}
+                            {{-- @endif --}}
 
-                    <img src="{{ public_path('assets/images/Loan_Management_Logo.png')}}" alt="logo"
-                        style="max-width:90px; max-height:90px;">
+                        </div>
 
-                </div>
+                        <div style=" text-align:left; ">
+                            <div class="company">
+                                {{-- SBC GLOBAL --}}
+                            </div>
+                            <div class="subtitle" style="font-weight: bold;">
+                                {{-- DEPOSIT CONFIRMATION/ RENEWAL ADVICE --}}
+                            </div>
+                            <div class="small muted">
+                                {{-- BRANCH : {{ $company_address ?? 'Address here' }} --}}
+                            </div>
+                            <div class="small muted">
+                                {{-- DATE :{{ $date ?? 'Address here' }} --}}
+                            </div>
+                        </div>
 
-                <div style="margin-left:30px; margin-right:120px; text-align:left; ">
-                    <div class="company">
-                        SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA LIMITED
+                        {{-- <div class="header-right"></div> --}}
+
                     </div>
-                    <div class="subtitle" style="font-weight: bold;"> DEPOSIT CONFIRMATION/ RENEWAL ADVICE</div>
-                    <div class="small muted">BRANCH : {{ $company_address ?? 'Address here' }}</div>
-                    <div class="small muted">
-                        DATE :{{ $date ?? 'Address here' }}
-                    </div>
-                </div>
-
-                {{-- <div class="header-right"></div> --}}
-
-            </div>
             <div class="clear"></div>
         </div>
 
@@ -227,14 +239,15 @@
             <tr>
                 <td style="width:60%" class="no-border">
                     <div>
+                         DATE :{{ $date ?? '' }} <br>
                         {{ $misaccount->member->member_info_first_name ?? 'N/A' }}
                         {{ $misaccount->member->member_info_last_name ?? '' }}
                     </div>
                     <div class="small muted">
                         {{ $misaccount->member_address ?? 'N/A' }}
                     </div>
-                    <div class="small mt-6">REPAYABLE TO:
-                        {{ $misaccount->nominee ?? 'N/A' }}
+                    <div class="small mt-6">REPAYABLE TO:<br>
+                        {{ $misaccount->nominee->first()->nominee_name ?? 'N/A' }}
                     </div>
                 </td>
                 <td style="width:40%" class="no-border right">
@@ -242,7 +255,7 @@
                         {{ $misaccount->member->member_no ?? '' }}
                     </div>
                     <div class="small"> MIS NO :
-                        {{ $misaccount->id ?? '' }}
+                        {{ $misaccount->mis_account_no ?? '' }}
                     </div>
                     <div class="small"> SCHEME :
                         {{ $misaccount->fdScheme->scheme_name ?? '' }}
@@ -304,13 +317,13 @@
 
                     <div class="big">₹ {{ $amount_in_words ?? ($amount_words ?? '') }} </div>
                 </td>
-                <td style="width:30%" class="no-border right">
+                <!-- <td style="width:30%" class="no-border right">
                     <div class="" style="text-align: center; margin-top: 6px;">
                         For SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA
                         LIMITED
                     </div>
 
-                </td>
+                </td> -->
             </tr>
         </table>
 
@@ -332,11 +345,11 @@
             THANK YOU FOR YOUR CONTINUED PATRONAGE WITH OUR SOCIETY
         </div>
         <div class="" style="text-align: center">
-            <strong> REGD OFFICE: </strong>
-            SBC GLOBAL TOWAR , CHANDABAI PLOT NEAR BUS STOP SHEGAON Maharashtra - 444001
+            {{-- <strong> REGD OFFICE: </strong>
+            SBC GLOBAL TOWAR , CHANDABAI PLOT NEAR BUS STOP SHEGAON Maharashtra - 444001 --}}
         </div>
         <div class="" style="text-align: center">
-            <strong>REG NO </strong>: 969/03-04
+            {{-- <strong>REG NO </strong>: 969/03-04 --}}
         </div>
 
     </div>

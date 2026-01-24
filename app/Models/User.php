@@ -93,4 +93,13 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'role_id');
     }
+    /* ================= Permission Logic ================= */
+    public function isSuperAdmin(): bool
+    {
+        return (int) $this->role_id === 1;
+    }
+    //  public function isSuperAdmin(): bool
+    // {
+    //     return optional($this->role)->name === 'Super Admin';
+    // }
 }

@@ -59,7 +59,7 @@
             </thead>
             <tbody>
                 @forelse ($directors as $index => $director)
-                <tr>
+                <tr class="border-b">
                     <td class="px-6 py-4">{{ $director->designation ?? 'N/A' }}</td>
                     <!-- {{-- <td class="px-6 py-4">{{ $director->member?->member_info_first_name ?? 'N/A' }}</td> --}} -->
                     <td class="py-3 px-6">

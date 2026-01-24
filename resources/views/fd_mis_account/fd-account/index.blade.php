@@ -1,8 +1,8 @@
 @extends('layout.main')
 @section('page-title', 'FD ACCOUNT')
 @section('action-button')
-<a class="btn-primary uppercase" href="{{ route('fd-mis-schemes.fd_create') }}">
-    <i class=" md:text-lg uppercase"></i>
+<a class="btn-primary uppercase " href="{{ route('fd-mis-schemes.fd_create') }}">
+    {{-- <i class=" md:text-lg  uppercase"></i> --}}
     Add
 </a>
 @endsection
@@ -13,8 +13,8 @@
         <x-alert />
     </div>
     <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
-        <div class="overflow-x-auto pb-4 lg:pb-6">
-            <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+        <div class="overflow-x-auto  whitespace-nowrap  pb-4 lg:pb-6">
+            <table class="w-full whitespace-nowrap overflow-x-auto select-all-table" id="transactionTable1">
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -27,8 +27,8 @@
                                 Group
                             </div>
                         </th>
-                        <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 uppercase">
+                        <th class="text-start px-6 !py-5 min-w-[100px] cursor-pointer">
+                            <div class=" uppercase">
                                 Fd. No
                             </div>
                         </th>
@@ -94,11 +94,11 @@
                 <tbody>
 
                     @foreach($accounts as $account)
-                    <tr>
+                    <tr class="border-b">
                         <td class="px-6 py-3">{{ $account->member->associate ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->member->group ?? '-' }}</td>
                         <td class="px-6 py-3">
-                            <a href="{{route('fd-mis-schemes.fd_show',$account->id)}}" style="color:green;">{{ "FD-".$account->id }}</a>
+                            <a href="{{route('fd-mis-schemes.fd_show',$account->id)}}" style="color:green;">{{ $account->fd_no }}</a>
                         </td>
                         <td class="px-6 py-3">
                             <a href="#" style="color:green;">

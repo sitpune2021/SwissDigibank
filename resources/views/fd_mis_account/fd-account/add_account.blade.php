@@ -229,7 +229,7 @@
                                 <span>Yes</span>
                             </label>
                             <label class="flex items-center gap-2">
-                                <input type="radio" name="tds_deduction" value="0" selected>
+                                <input type="radio" name="tds_deduction" value="0" checked>
                                 <span>No</span>
                             </label>
                         </div>
@@ -257,7 +257,7 @@
 
                         <div class="flex items-center gap-4">
                             <label class="flex items-center gap-2">
-                                <input type="radio" name="account_type" value="single" onclick="toggleSelect(false)">
+                                <input type="radio" name="account_type" value="single"  checked onclick="toggleSelect(false)">
                                 Single
                             </label>
                             <label class="flex items-center gap-2">
@@ -297,7 +297,7 @@
                                 <input type="radio" name="nominees" value="yes" onclick="toggleAddMore(true)"> Yes
                             </label>
                             <label class=" mt-2 flex items-center  gap-2">
-                                <input type="radio" name="nominees" value="no" onclick="toggleAddMore(false)"> No
+                                <input type="radio" name="nominees" value="no" checked  onclick="toggleAddMore(false)"> No
                             </label>
                             @error('nominees')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>

@@ -1,8 +1,8 @@
 @extends('layout.main')
 @section('page-title', 'BRANCHES')
 @section('action-button')
-    <a class="btn-primary" href="{{ route('branch.create') }}">
-        ADD
+    <a class="btn-primary uppercase btns-add-index" href="{{ route('branch.create') }}">
+        Add
     </a>
 @endsection
 
@@ -15,7 +15,7 @@
                 <thead class="custom-thead">
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center justify-center gap-1">
+                            <div class="flex items-start justify-start gap-1">
                                 BRANCH NAME
                             </div>
                         </th>
@@ -54,30 +54,34 @@
                 </thead>
                 <tbody>
                     @forelse ($branches as $branch)
-                        <tr class="even:bg-secondary/5 dark:even:bg-bg3">
-                            <td class="px-2 py-5 text-center">
-                                <div>
-                                    <a href="{{ $branch?->id ? route('branch.show', base64_encode($branch->id)) : '#' }}" class="text-primary hover:underline">
-                                        <p class="mb-1 font-medium">{{ $branch?->branch_name??'' }}</p>
+                        <tr class=" dark:even:bg-bg3  border-b">
+                            <td class="px-4 py-5 text-start">
+                                <div class="px-4">
+                                    <a href="{{ $branch?->id ? route('branch.show', base64_encode($branch->id)) : '#' }}"
+                                        class="text-primary hover:underline">
+                                        <p class="mb-1 font-medium">{{ $branch?->branch_name ?? '' }}</p>
                                     </a>
                                 </div>
                             </td>
-                            <td class="px-6 py-5 text-center">{{ $branch?->branch_code??'' }}</td>
-                            <td class="px-6 py-5 text-center">{{ $branch?->city??'' }}</td>
-                            <td class="px-6 py-5 text-center">{{ $branch->State?->name??'' }}</td>
+                            <td class="px-6 py-5 text-start">
+                                {{ $branch?->branch_code ?? '' }}
+                            </td>
+                            <td class="px-6 py-5 text-center">{{ $branch?->city ?? '' }}</td>
+                            <td class="px-6 py-5 text-center">{{ $branch->State?->name ?? '' }}</td>
                             <td class="px-6 py-5 text-center">
-                                {{ $branch->open_date->format('d-m-Y') }}
+                                {{ $branch->open_date ? \Carbon\Carbon::parse($branch->open_date)->format('d-m-Y') : '' }}
+
                             </td>
                             <td class="px-7 py-5 text-center">{{ $branch->Member->count() }}</td>
                             <td class="px-6 py-5  text-center">
                                 @if ($branch->active == 'Yes')
                                     <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2  text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
                                         Yes
                                     </span>
                                 @else
                                     <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                        class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
                                         {{ $branch->active }}
                                     </span>
                                 @endif

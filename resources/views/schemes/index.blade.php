@@ -3,8 +3,8 @@
 @section('content')
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
-        <h4 class="h2">SCHEMES</h4>
-        <a class="btn-primary" href="{{ route('schemes.create') }}">
+        <h4 class="text-lg uppercase">SCHEMES</h4>
+        <a class="btn-primary text-sm" href="{{ route('schemes.create') }}">
             ADD
         </a>
     </div>
@@ -15,7 +15,7 @@
             <x-alert />
         </div>
         <div class="overflow-x-auto pb-4 lg:pb-6">
-            <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+            <table class="w-full overflow-x-auto whitespace-nowrap select-all-table" id="transactionTable1">
                 <thead class="custom-thead">
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-2 px-3">CODE</th>
@@ -29,7 +29,7 @@
                         <th class="text-center !py-5">ACTION</th>
                 <tbody>
                     @foreach ($schemes as $scheme)
-                    <tr class="even:bg-secondary/5 dark:even:bg-bg3">
+                    <tr class="border-b dark:even:bg-bg3">
                         <td class="py-5 px-6">
                             <a href="{{ $scheme?->id ? route('schemes.show', $scheme->id) : '#' }}" class="text-primary hover:underline">
                                 {{ $scheme->scheme_code }}
@@ -49,7 +49,7 @@
                             </span>
                             @else
                             <span
-                                class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
                                 No
                             </span>
                             @endif

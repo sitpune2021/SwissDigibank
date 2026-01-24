@@ -336,7 +336,7 @@
 
          
            <!-- Buttons -->
-          <div class="flex mt-4 justify-center gap-4 pt-6">
+          <div class="flex justify-center gap-4 pt-6">
             <button type="submit" class="btn-primary">CALCULATE</button>
             <a href="" class="btn-outline">Back</a>
           </div>
