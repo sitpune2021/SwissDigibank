@@ -552,6 +552,9 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('/mis-account/{id}/closing-form', [MisaccountController::class, 'misClosingForm'])
         ->name('misaccount.closingform');
 
+  Route::get('/sweep-in-accounts', [FdController::class, 'sweepInAccount'])
+        ->name('sweep-in-accounts');
+
 });
 
 Route::group(['prefix' => 'mds-rds-dds'], function () {
@@ -2512,6 +2515,28 @@ Route::get('/proceding-book', [PrintDocumentsController::class, 'procedingBook']
 //     '/form-j/{member}',
 //     [PrintDocumentsController::class, 'generateFormJ']
 // )->name('formj.download');
+
+
+// form e
+
+Route::get('/index-from-e', [PrintDocumentsController::class, 'index_forme'])
+    ->name('index-from-e');
+    
+Route::get('/letterhead-e', [PrintDocumentsController::class, 'letterheadView'])
+    ->name('letterhead-e');
+Route::get('/letterhead-e-pdf', [PrintDocumentsController::class, 'letterhead'])
+    ->name('letterhead-e.pdf');
+
+Route::get('/e-one-view', [PrintDocumentsController::class, 'eOneView'])
+    ->name('eOneView');
+    Route::get('/e-one', [PrintDocumentsController::class, 'eOneForm'])
+    ->name('eOneForm');
+ 
+Route::get('/e-two-view', [PrintDocumentsController::class, 'eTwoView'])
+    ->name('eTwoView');   
+    Route::get('/e-two', [PrintDocumentsController::class, 'eTwo'])
+    ->name('eTwoForm'); 
+
 
 /////////////////////////////print-documents-end //////////////////////////
 
