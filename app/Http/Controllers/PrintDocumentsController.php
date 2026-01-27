@@ -321,7 +321,7 @@ $members = Member::with([
 
     
   
-    return view(        'print-documents.form-i-and-j.proceding-book-view',
+    return view('print-documents.form-i-and-j.proceding-book-view',
         compact('members'));
 }
 public function procedingBook()
@@ -350,6 +350,101 @@ $members = Member::with([
     )->header('Content-Type', 'application/pdf');
 }
 
+ public function index_forme(){
+    // $members = Member::orderBy('id', 'asc')->get();
+    $members = Member::with([
+            'address.state'
+        ])
+        ->orderBy('id', 'asc')
+        ->get();
+    return view('print-documents.form-e.index-form-e',compact('members')) ;
 
-   
+  }
+   public function letterheadView()
+{
+    $members = Member::with('address.state')
+        ->orderBy('id', 'asc')
+        ->get();
+
+    return view('print-documents.form-e.letterhead' , compact('members'));
+}
+  public function letterhead()
+{
+         
+$members = Member::with([
+            'address.state'
+        ])
+        ->orderBy('id', 'asc')
+        ->get();
+
+    $html = view(
+        'print-documents.form-e.letterhead-download',
+        compact('members')
+    )->render();
+
+    $mpdf = $this->getMarathiMpdf();
+    // $mpdf->AddPage('L');  
+    $mpdf->WriteHTML($html);
+
+    return response(
+        $mpdf->Output('letter_head_Book.pdf', 'D')
+    )->header('Content-Type', 'application/pdf');
+}
+
+ public function eOneView(){
+    // $members = Member::orderBy('id', 'asc')->get();
+    
+    return view('print-documents.form-e.form-e-one-view') ;
+
+  }
+ public function eOneForm(){
+    // $members = Member::orderBy('id', 'asc')->get();
+    $members = Member::with([
+            'address.state'
+        ])
+        ->orderBy('id', 'asc')
+        ->get();
+     $html = view(
+        'print-documents.form-e.form-e-one',
+        compact('members')
+    )->render();
+
+    $mpdf = $this->getMarathiMpdf();
+    // $mpdf->AddPage('L');  
+    $mpdf->WriteHTML($html);
+
+    return response(
+        $mpdf->Output('Form_E1.pdf', 'D')
+    )->header('Content-Type', 'application/pdf');
+
+  }
+
+ public function eTwoView(){
+    // $members = Member::orderBy('id', 'asc')->get();
+    
+    return view('print-documents.form-e.form-e-two-view') ;
+
+  }
+   public function eTwo(){
+    // $members = Member::orderBy('id', 'asc')->get();
+    $members = Member::with([
+            'address.state'
+        ])
+        ->orderBy('id', 'asc')
+        ->get();
+     $html = view(
+        'print-documents.form-e.form-e-two',
+        compact('members')
+    )->render();
+
+    $mpdf = $this->getMarathiMpdf();
+    // $mpdf->AddPage('L');  
+    $mpdf->WriteHTML($html);
+
+    return response(
+        $mpdf->Output('Form_E2.pdf', 'D')
+    )->header('Content-Type', 'application/pdf');
+
+  }
+  
 }

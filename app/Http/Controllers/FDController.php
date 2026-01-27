@@ -1832,6 +1832,9 @@ class FDController extends Controller
         return $pdf->download('fd-closing-form-' . $fdAccount->id . '.pdf');
     }
 
+public function sweepInAccount(){
 
+return view('fd_mis_account.sweep-in-accounts.index');
+    }
  
 }
