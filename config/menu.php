@@ -79,6 +79,7 @@ return [
             ['title' => 'CALCULATOR', 'route' => 'calculator.index'],
             ['title' => 'FD ACCOUNTS', 'route' => 'fd-mis-schemes.fd_index'],
             ['title' => 'MIS ACCOUNTS', 'route' => 'misaccount.index'],
+             ['title' => 'SWEEP IN ACCOUNTS', 'route' => 'sweep-in-accounts']
         ]
     ],
     [
@@ -266,6 +267,8 @@ return [
             ['title' => 'RD/DD BOND', 'route' => 'print.rd-dd-bond.index'],
             ['title' => 'LETTER HEAD', 'route' => 'letterhead.download'],
             ['title' => 'FORM I AND J', 'route' => 'index-from-i'],
+            ['title' => 'FORM E', 'route' => 'index-from-e'],
+ 
 
         ],
     ],
