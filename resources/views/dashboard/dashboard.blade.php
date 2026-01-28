@@ -569,7 +569,9 @@ use Illuminate\Support\Facades\Storage;
             </div>
         </a>
     </div>
- <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
+
+  <!-- MIS REPORT  -->  
+  {{--<div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
         <a href="{{ route('mis_index') }}">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
                 <span class="font-medium uppercase">MIS Report</span><span aria-expanded="false"><svg
@@ -588,12 +590,12 @@ use Illuminate\Support\Facades\Storage;
 
                 </div>
                 <div>
-                    {{-- <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['vehicalloan'] }}</h4> --}}
+                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['vehicalloan'] }}</h4> 
                 </div>
             </div>
-        </a>
+        </a> 
     </div>
-   
+   --}}
 
 
 </div>
