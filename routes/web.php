@@ -2481,7 +2481,7 @@ Route::get('/dd/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
 // Route::get('/fd-mis-passbook/accounts/{type}', [PrintDocumentsController::class, 'getAccountsByType']);
 
 //letter head
-Route::get('/print/letter-head', [PrintDocumentsController::class, 'letter_head'])->name('print.letter-head');
+Route::get('/view/letter-head', [PrintDocumentsController::class, 'letter_head'])->name('print.letter-head');
 
 Route::get('/letter-head', [PrintDocumentsController::class, 'print_letter_head'])
     ->name('letterhead.download');
