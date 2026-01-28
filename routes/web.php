@@ -2535,8 +2535,20 @@ Route::get('/e-one-view', [PrintDocumentsController::class, 'eOneView'])
 Route::get('/e-two-view', [PrintDocumentsController::class, 'eTwoView'])
     ->name('eTwoView');   
     Route::get('/e-two', [PrintDocumentsController::class, 'eTwo'])
-    ->name('eTwoForm'); 
+    ->name('eTwoForm');
 
+//Management Information Systems
+     Route::get('/mis-index', [PrintDocumentsController::class, 'mis_index'])
+    ->name('mis_index');
+     Route::get('/mis-one-view', [PrintDocumentsController::class, 'MisOneView'])
+    ->name('MisOneView');
+ Route::get('/mis-one', [PrintDocumentsController::class, 'MisOneForm'])
+    ->name('MisOneForm');
+
+     Route::get('/management-info-two-view', [PrintDocumentsController::class, 'MisTwoView'])
+    ->name('MisTwoView');
+      Route::get('/management-info-two', [PrintDocumentsController::class, 'MisTwo'])
+    ->name('MisTwo');
 
 /////////////////////////////print-documents-end //////////////////////////
 
