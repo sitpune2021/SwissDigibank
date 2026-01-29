@@ -410,7 +410,7 @@ use Illuminate\Support\Facades\Storage;
             <div class="flex items-center gap-4 xl:gap-6">
                 <div
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-file-invoice-dollar"></i>
+                      <i class="text-3xl las xl:text-5xl la-coins"></i>
                 </div>
 
                 <div>
@@ -436,7 +436,7 @@ use Illuminate\Support\Facades\Storage;
             <div class="flex items-center gap-4 xl:gap-6">
                 <div
                     class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-file-invoice-dollar"></i>
+                    <i class="text-3xl las xl:text-5xl la-coins"></i>
                 </div>
                 <div>
                     <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['loanagainst'] }}</h4>
@@ -734,8 +734,10 @@ use Illuminate\Support\Facades\Storage;
                         </div>
                         <div id="asset-chart"></div>
                     </div> -->
+
+
     <!-- Latest Transactions -->
-    <div class="col-span-12 box lg:col-span-6">
+    {{-- <div class="col-span-12 box lg:col-span-6">
         <div class="flex flex-wrap items-center justify-between gap-4 pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
             <h4 class="h4">LATEST TRANSACTION</h4>
             @include('partials._horizontal-options')
@@ -785,9 +787,9 @@ use Illuminate\Support\Facades\Storage;
             See More
             <i class="duration-300 las la-arrow-right group-hover:pl-2"></i>
         </a>
-    </div>
+    </div> --}}
     <!-- Transaction account -->
-    <div class="col-span-12 box lg:col-span-6">
+    {{-- <div class="col-span-12 box lg:col-span-6">
         <div class="flex flex-wrap items-center justify-between gap-4 pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
             <h4 class="h4">TRANSACTION ACCOUNT</h4>
             @include('partials._horizontal-options')
@@ -958,6 +960,6 @@ use Illuminate\Support\Facades\Storage;
             See More
             <i class="duration-300 las la-arrow-right group-hover:pl-2"></i>
         </a>
-    </div>
+    </div> --}}
 </div>
 @endsection
