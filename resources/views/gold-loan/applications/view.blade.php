@@ -195,11 +195,45 @@
             <div id="printDropdown"
                 class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
                 <div class="py-1 px-3">
-                    <a href="{{ route('loan.loanAgreement', $application->id) }}"
+                    <a href="{{ route('loan.payout_chart_loan_application_view', $application->id) }}"
+                        class="flex items-center gap-2 px-4 uppercase   py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="las la-print text-secondary"></i>  
+                        Emi SCHEDULE Chart
+                    </a>
+                </div>
+                 <div class="py-1 px-3">
+                    <a href="{{ route('loan.sanction_letter-view', $application->id) }}"
+                        class="flex items-center gap-2 px-4 uppercase   py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="las la-print text-secondary"></i>  
+                        SANCTION LETTER
+                    </a>
+                </div>
+                <div class="py-1 px-3">
+                    <a href="{{ route('loan.loanAgreement-view', $application->id) }}"
                         class="flex items-center gap-2 px-4   py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> LOAN AGREEMENT
                     </a>
                 </div>
+                 <div class="py-1 px-3">
+                    <a href="{{ route('loan.disburse_letter.view', $application->id) }}"
+                        class="flex items-center gap-2 px-4 uppercase   py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="las la-print text-secondary"></i> Disburse Letter
+                    </a>
+                </div>
+                 <div class="py-1 px-3">
+                    <a href="{{ route('loan.letter_udertaking_gold-view', $application->id) }}"
+                        class="flex items-center gap-2 px-4 uppercase   py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="las la-print text-secondary"></i>  Letter Of Undertaking
+                    </a>
+                </div>
+                 <div class="py-1 px-3">
+                    <a href="{{ route('loan.gold_loan_application-view-promisary', $application->id) }}"
+                        class="flex items-center gap-2 px-4 uppercase   py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="las la-print text-secondary"></i> 
+                        PROMISSORY NOTE
+                    </a>
+                </div>
+                
             </div>
         </div>
 
