@@ -21,7 +21,7 @@
                         Account Type <span class="text-error">*</span>
                     </label>
 
-                    <select id="account_type" name="account_type" class="w-full border rounded-10 px-3 py-3 text-sm">
+                    <select id="account_type" name="account_type" class="w-full border bg-secondary/5 rounded-10 px-3 py-3 text-sm">
                         <option value="">Select</option>
 
                         <option value="RD" {{ old('account_type', $type ?? '' )==='RD' ? 'selected' : '' }}>
@@ -45,7 +45,7 @@
 
                     <select id="account_no"
         name="account_no"
-        class="w-full border rounded-10 px-3 py-3 text-sm"
+        class="w-full bg-secondary/5 border rounded-10 px-3 py-3 text-sm"
         {{ empty($type) ? 'disabled' : '' }}>
 
     <option value="">Select Account No</option>
