@@ -10,12 +10,13 @@ $roleName = optional($user->role)->name; // safely get role name
 @php
 use App\Models\logo_letterhead_img_uploads;
 use App\Models\User;
-// use Illuminate\Support\Facades\Auth;
+//  use Illuminate\Support\Facades\Auth;
 
 // Find Super Admin
 $superAdmin = User::whereHas('role', function ($q) {
-    $q->where('name', 'Super Admin');
+    $q->where('id', 1);
 })->first();
+
 
 // Fetch logo uploaded by Super Admin
 $sidebarLogo = null;
@@ -24,27 +25,23 @@ if ($superAdmin) {
     $sidebarLogo = logo_letterhead_img_uploads::where('type', 'logo')
         ->where('uploaded_by', $superAdmin->id)
         ->latest()
-        ->first();
+        ->first();       
 }
 
 // Final logo path with fallback
 $logoPath = $sidebarLogo 
     ? asset('storage/' . $sidebarLogo->image_path)
-    : asset('assets/images/SBC_Logo.png');
+    :  asset('assets/images/SBC_Logo.png');
 @endphp
 
 {{-- @php
-
 use App\Models\logo_letterhead_img_uploads;
-
 $sidebarLogo = null;
-
 if (Auth::check()) {
 $sidebarLogo = logo_letterhead_img_uploads::where('type', 'logo')
 ->where('uploaded_by', Auth::id())
 ->first();
 }
-
 $logoPath = $sidebarLogo
 ? asset($sidebarLogo->image_path)
 : asset('assets/images/SBC_Logo.png');
@@ -55,15 +52,12 @@ $logoPath = $sidebarLogo
         <div class="logo-column">
             <div class="logo-container">
                 <div class="logo-inner">
-                    {{-- <a href="{{ route('index1') }}" class="logo-wrapper">
-                        <img src="{{ asset('assets/images/SBC_Logo.png') }}" width="174" height="38" class="logo-full"
-                            alt="logo" />
-                        <img src="{{ asset('assets/images/SBC_Logo.png') }}" width="37" height="36"
-                            class="logo-icon hidden" alt="logo" />
-                    </a> --}}
+                    
+
+                    
                     <a href="{{ route('index1') }}" class="logo-wrapper">
                         <!-- Full Logo -->
-                        <img src="{{ $logoPath }}" width="174" height="38" class="logo-full" alt="logo" />
+                        <img src="{{ $logoPath }} " width="174" height="50" class="logo-full" alt="logo"  />
 
                         <!-- Icon Logo -->
                         <img src="{{ $logoPath }}" width="37" height="36" class="logo-icon hidden" alt="logo" />
