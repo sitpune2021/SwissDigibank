@@ -11,6 +11,8 @@ use App\Http\Controllers\MasterSettingsController;
 use App\Http\Controllers\MortgageLoanPrintDocumentsController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\PrintDocumentsController;
+use App\Http\Controllers\SmsController;
+use App\Http\Controllers\SmsTemplateController;
 use App\Http\Controllers\SoftwareSettingsController;
 use App\Http\Controllers\UnencumberedDepositController;
 use Illuminate\Support\Facades\Artisan;
@@ -2384,6 +2386,15 @@ Route::get('payments-to-release/payments-history', [PaymentsToCollectController:
 
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
     Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');
+    // Change password page
+    Route::get('/profile/change-password', [SettingsController::class, 'change_password'])->name('profile-change-password');
+    // Wrapper POST route
+    Route::post('/profile/change-password', [SettingsController::class, 'updatePasswordFromProfile'])
+        ->name('profile-update-password');
+
+   Route::post('/profile/photo', [SettingsController::class, 'updateProfilePhoto'])
+    ->name('profile-photo.update');;
+
     Route::get('/security', [SettingsController::class, 'security'])->name('security');
     Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');
     Route::get('/notification', [SettingsController::class, 'notification'])->name('notification');
@@ -2626,13 +2637,27 @@ Route::get('master-settings/edit-daily-weekly-settings', [MasterSettingControlle
 
 
 
+//sms settings
 
+Route::get('software-settings/add-sms', [SmsTemplateController::class, 'add_sms'])->name('software-settings.add-sms');
+Route::post('/sms/store', [SmsTemplateController::class, 'store'])->name('sms.store');
 
-Route::get('software-settings/sms-list', [SoftwareSettingsController::class, 'sms_list'])->name('software-settings.sms-list');
-Route::get('software-settings/view-sms-list', [SoftwareSettingsController::class, 'view_sms_list'])->name('software-settings.view-sms-list');
+Route::get('software-settings/sms-list', [SmsTemplateController::class, 'sms_list'])->name('software-settings.sms-list');
 
-Route::get('software-settings/edit-sms-setting', [SoftwareSettingsController::class, 'edit_sms_setting'])->name('software-settings.edit-sms-setting');
+Route::post('/toggle-sms-status', [SmsTemplateController::class, 'toggleStatus'])
+    ->name('software-settings.toggle-sms-status');
 
+Route::get('software-settings/view-sms-list/{id}', [SmsTemplateController::class, 'view_sms_list'])->name('software-settings.view-sms-list');
+
+Route::get('software-settings/edit-sms-setting/{id}', [SmsTemplateController::class, 'edit_sms_setting'])->name('software-settings.edit-sms-setting');
+
+Route::post(
+    'software-settings/update-sms-setting/{id}',
+    [SmsTemplateController::class, 'update_sms_setting']
+)->name('software-settings.update-sms-setting');
+
+Route::post('software-settings/send-test-sms/{id}', [SmsTemplateController::class, 'sendTestSms'])
+    ->name('software-settings.send-test-sms');
 
 
 Route::get('software-settings/sms-history', [SoftwareSettingsController::class, 'sms_history'])->name('software-settings.sms-history');
