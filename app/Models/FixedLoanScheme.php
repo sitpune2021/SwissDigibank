@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DailyWeeklyScheme extends Model
+class FixedLoanScheme extends Model
 {
     use HasFactory;
+
+    protected $table = 'fixed_loan_scheme';
 
    protected $fillable = [
     'scheme_name',
@@ -38,7 +40,7 @@ class DailyWeeklyScheme extends Model
 
     public function applications()
     {
-        return $this->hasMany(DailyWeeklyApplication::class, 'scheme_id');
+        return $this->hasMany(FixedLoanApplication::class, 'scheme_id');
     }
 
 
