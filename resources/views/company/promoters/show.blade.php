@@ -467,7 +467,7 @@
 
                                 @if ($photo && $photo->file_path)
                                 {{-- View Button --}}
-                                <button type="button" class="text-blue-600 underline"
+                                <button type="button" class="text-primary underline"
                                     onclick="window.open('{{ asset('storage/' . $photo->file_path) }}','_blank')">
                                     View
                                 </button>
@@ -476,7 +476,11 @@
                         </tr>
 
                         {{-- Signature --}}
-                        @php $signature = $documents->where('document_category', 'signature')->first(); @endphp
+                        @php
+                        $signature = $documents->get('signature'); // use keyBy for easy access
+                        @endphp
+                        {{-- @php $signature = $documents->where('document_category', 'signature')->first(); @endphp
+                        --}}
                         <tr class="border-b">
                             <th class="px-6 py-2 font-semibold text-start">
                                 <div class="flex items-center uppercase gap-3">
@@ -485,8 +489,10 @@
                             </th>
                             <td class="px-6 py-2 text-start">
                                 @if ($signature && $signature->file_path)
-                                <button type="button" class="text-blue-600 underline"
-                                    onclick="previewDoc('{{ asset('storage/' . addslashes($signature->file_path)) }}','Signature')">
+                                <button type="button" class="text-primary underline" {{--
+                                    onclick="previewDoc('{{ asset('storage/' . addslashes($signature->file_path)) }}','Signature')"
+                                    --}}
+                                    onclick="window.open('{{ asset('storage/' . $signature->file_path) }}','_blank')">
                                     View
                                 </button>
                                 @endif
@@ -503,8 +509,8 @@
                             </th>
                             <td class="px-6 py-2 text-start">
                                 @if ($idProof && $idProof->file_path)
-                                <button type="button" class="text-blue-600 underline"
-                                    onclick="previewDoc('{{ asset('storage/' . addslashes($idProof->file_path)) }}','ID Proof')">
+                                <button type="button" class="text-primary underline"
+                                    onclick="window.open('{{ asset('storage/' . $idProof->file_path) }}','_blank')">
                                     View
                                 </button>
                                 @endif
@@ -521,8 +527,8 @@
                             </th>
                             <td class="px-6 py-2 text-start">
                                 @if ($idProofBack && $idProofBack->file_path)
-                                <button type="button" class="text-blue-600 underline"
-                                    onclick="previewDoc('{{ asset('storage/' . addslashes($idProofBack->file_path)) }}','ID Proof Back')">
+                                <button type="button" class="text-primary underline"
+                                    onclick="window.open('{{ asset('storage/' . $idProofBack->file_path) }}','_blank')">
                                     View
                                 </button>
                                 @endif
@@ -539,8 +545,8 @@
                             </th>
                             <td class="px-6 py-2 text-start">
                                 @if ($addressProof && $addressProof->file_path)
-                                <button type="button" class="text-blue-600 underline"
-                                    onclick="previewDoc('{{ asset('storage/' . addslashes($addressProof->file_path)) }}','Address Proof')">
+                                <button type="button" class="text-primary underline"
+                                    onclick="window.open('{{ asset('storage/' . $addressProof->file_path) }}','_blank')">
                                     View
                                 </button>
                                 @endif
@@ -558,8 +564,8 @@
                             </th>
                             <td class="px-6 py-2 text-start">
                                 @if ($addressProofBack && $addressProofBack->file_path)
-                                <button type="button" class="text-blue-600 underline"
-                                    onclick="previewDoc('{{ asset('storage/' . addslashes($addressProofBack->file_path)) }}','Address Proof Back')">
+                                <button type="button" class="text-primary underline"
+                                    onclick="window.open('{{ asset('storage/' . $addressProofBack->file_path) }}','_blank')">
                                     View
                                 </button>
                                 @endif
@@ -567,7 +573,7 @@
                         </tr>
 
                         {{-- PAN --}}
-                        @php $pan = $documents->where('document_category', 'pan')->first(); @endphp
+                        @php $pan = $documents->where('document_category', 'pan_number')->first(); @endphp
                         <tr class="border-b">
                             <th class="px-6 py-2 font-semibold text-start">
 
@@ -577,8 +583,10 @@
                             </th>
                             <td class="px-6 py-2 text-start">
                                 @if ($pan && $pan->file_path)
-                                <button type="button" class="text-blue-600 underline"
-                                    onclick="previewDoc('{{ asset('storage/' . addslashes($pan->file_path)) }}','PAN')">
+
+
+                                <button type="button" class="text-primary underline"
+                                    onclick="window.open('{{ asset('storage/' . $pan->file_path) }}','_blank')">
                                     View
                                 </button>
                                 @endif
@@ -629,553 +637,406 @@
 
                 <div class="flex items-center justify-between px-4 py-2 border-b">
                     <span class="font-semibold text-gray-700 uppercase">Current KYC Status</span>
-                    <span class="px-2 py-2 text-xs font-bold  bg-error/20 text-error rounded ">PENDING</span>
+                    <span class="px-2 py-2 text-xs font-bold rounded
+    @if($promoter->kyc?->kyc_status === 'pending') bg-warning text-white
+    @elseif($promoter->kyc?->kyc_status === 'in_progress') bg-primary text-white
+    @elseif($promoter->kyc?->kyc_status === 'completed') bg-primary text-white
+    @elseif($promoter->kyc?->kyc_status === 'rejected') bg-error text-white
+    @else bg-gray-100 text-gray-600
+    @endif
+">
+                        {{ strtoupper(str_replace('_', ' ', $promoter->kyc?->kyc_status ?? 'not submitted')) }}
+                    </span>
+
                 </div>
-                <div class="flex items-center justify-between p-4">
-                    <label class="font-semibold text-gray-700 uppercase">KYC Status</label>
-                    <div class="flex gap-2">
-                        <select class="px-3 py-3 rounded-10 bg-secondary/5 text-sm border rounded-l focus:outline-none">
-                            <option>Pending</option>
-                            <option>Approved</option>
-                        </select>
-                        <button
-                            class="px-4 py-1 text-sm rounded-10 text-white bg-green-500 rounded-r hover:bg-green-600">
-                            UPDATE
-                        </button>
-                    </div>
+                <div class=" flex items-center justify-between p-4">
+                    <form action="{{ route('promotor-kyc.updateStatus', $promoter->id) }}" method="POST">
+                        @csrf
+
+                        <label class="font-semibold text-gray-700 uppercase">KYC Status</label>
+
+                        <div class="flex gap-2 mt-3">
+                            <select name="kyc_status"
+                                class="w-full px-3 py-3 bg-secondary/5 text-sm border rounded-10 focus:outline-none">
+
+                                @php
+                                $currentStatus = $promoter->kyc?->kyc_status;
+                                @endphp
+
+                                <option value="pending" {{ $currentStatus==='pending' ? 'selected' : '' }}>
+                                    Pending
+                                </option>
+
+                                <option value="in_progress" {{ $currentStatus==='in_progress' ? 'selected' : '' }}>
+                                    MIN KYC
+                                </option>
+
+                                <option value="completed" {{ $currentStatus==='completed' ? 'selected' : '' }}>
+                                    Full KYC
+                                </option>
+
+                                <option value="rejected" {{ $currentStatus==='rejected' ? 'selected' : '' }}>
+                                    Rejected
+                                </option>
+                            </select>
+
+                            <button type="submit"
+                                class=" w-28 px-4 py-1 text-sm text-white bg-green-500 rounded-10 hover:bg-green-600">
+                                UPDATE
+                            </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- Settings Section -->
+        <div class="mt-4 overflow-hidden box rounded shadow">
+            {{-- <div class="h-1 bg-red-500"></div> --}}
+            <div class="px-4 py-2 font-semibold uppercase text-lg bg-white border-b">Settings</div>
+            <div class="p-4 space-y-4 bg-white">
+                <div class="flex items-center font-semibold text-lg uppercase justify-between">
+                    <span>Internet Banking / Mob App Enabled</span>
+                    <input type="checkbox" class="w-5 h-5 ">
+                </div>
+                <div class="flex items-center font-semibold text-lg uppercase justify-between">
+                    <span>Money Transfer</span>
+                    <input type="checkbox" class="w-5 h-5 " checked>
+                </div>
+                <div class="flex items-center font-semibold text-lg uppercase justify-between">
+                    <span>Account Locked</span>
+                    <input type="checkbox" class="w-5 h-5 ">
+                </div>
+                <div class="flex items-center font-semibold text-lg uppercase justify-between">
+                    <span>SMS</span>
+                    <input type="checkbox" class="w-5 h-5 " checked>
                 </div>
             </div>
-            <!-- Settings Section -->
-            <div class="mt-4 overflow-hidden box rounded shadow">
-                {{-- <div class="h-1 bg-red-500"></div> --}}
-                <div class="px-4 py-2 font-semibold uppercase text-lg bg-white border-b">Settings</div>
-                <div class="p-4 space-y-4 bg-white">
-                    <div class="flex items-center font-semibold text-lg uppercase justify-between">
-                        <span>Internet Banking / Mob App Enabled</span>
-                        <input type="checkbox" class="w-5 h-5 ">
+        </div>
+        {{-- Internet Banking section --}}
+        <div class="mt-4 bg-white box  rounded shadow-sm">
+
+
+            <!-- Header -->
+            <div class="px-4 py-3 bg-white border-b">
+                <h3 class="text-lg  font-semibold tracking-wide text-gray-700">INTERNET BANKING USERNAME</h3>
+            </div>
+
+            <!-- Body -->
+            <div class="flex items-center justify-between px-6 py-4">
+                <!-- Left label -->
+                <div class="flex-1">
+                    <div class="text-lg font-semibold text-gray-700 uppercase">
+                        <span>USERNAME</span>
                     </div>
-                    <div class="flex items-center font-semibold text-lg uppercase justify-between">
-                        <span>Money Transfer</span>
-                        <input type="checkbox" class="w-5 h-5 " checked>
-                    </div>
-                    <div class="flex items-center font-semibold text-lg uppercase justify-between">
-                        <span>Account Locked</span>
-                        <input type="checkbox" class="w-5 h-5 ">
-                    </div>
-                    <div class="flex items-center font-semibold text-lg uppercase justify-between">
-                        <span>SMS</span>
-                        <input type="checkbox" class="w-5 h-5 " checked>
-                    </div>
+                </div>
+
+                <!-- Center username -->
+                <div class="flex-1 text-center">
+                    <span class="text-lg font-semibold text-gray-700">
+                        demo04421
+                    </span>
+                </div>
+
+                <!-- Right small action buttons -->
+                <div class="flex justify-end flex-1 gap-4">
+                    <button type="button" class="flex items-center justify-center btn-primary px-3"
+                        title="Reset username">
+                        <i class="fa fa-undo"></i>
+                    </button>
+
+                    <button type="button" class="flex items-center justify-center btn-primary px-3 py-2"
+                        title="Send username">
+                        <i class="fa fa-share-square-o"></i>
+                    </button>
                 </div>
             </div>
-            {{-- Internet Banking section --}}
-            <div class="mt-4 bg-white box  rounded shadow-sm">
-
-
-                <!-- Header -->
-                <div class="px-4 py-3 bg-white border-b">
-                    <h3 class="text-lg  font-semibold tracking-wide text-gray-700">INTERNET BANKING USERNAME</h3>
-                </div>
-
-                <!-- Body -->
-                <div class="flex items-center justify-between px-6 py-4">
-                    <!-- Left label -->
-                    <div class="flex-1">
-                        <div class="text-lg font-semibold text-gray-700 uppercase">
-                            <span>USERNAME</span>
-                        </div>
-                    </div>
-
-                    <!-- Center username -->
-                    <div class="flex-1 text-center">
-                        <span class="text-lg font-semibold text-gray-700">
-                            demo04421
-                        </span>
-                    </div>
-
-                    <!-- Right small action buttons -->
-                    <div class="flex justify-end flex-1 gap-4">
-                        <button type="button" class="flex items-center justify-center btn-primary px-3"
-                            title="Reset username">
-                            <i class="fa fa-undo"></i>
-                        </button>
-
-                        <button type="button" class="flex items-center justify-center btn-primary px-3 py-2"
-                            title="Send username">
-                            <i class="fa fa-share-square-o"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div x-data="{
+        </div>
+        <div x-data="{
                         showMobile: false,
                         editing: false
                     }" class="mt-4  rounded shadow">
 
-                <!-- MINORS -->
-                <div class="mt-4 bg-white p-3 rounded shadow">
-                    {{-- <div class="h-1 bg-green-500"></div> --}}
+            <!-- MINORS -->
+            <div class="mt-4 bg-white p-3 rounded shadow">
+                {{-- <div class="h-1 bg-green-500"></div> --}}
 
-                    <!-- Header -->
-                    <div class="flex items-center justify-between px-4 py-2 rounded-t">
-                        <span class="font-semibold  text-lg uppercase">
-                            {{ isset($promoter) ? $promoter->first_name : 'Add Promoter' }}
-                        </span>
+                <!-- Header -->
+                <div class="flex items-center justify-between px-4 py-2 rounded-t">
+                    <span class="font-semibold  text-lg uppercase">
+                        {{ isset($promoter) ? $promoter->first_name : 'Add Promoter' }}
+                    </span>
 
-                        <!-- Redirect to create page -->
-                        <a href="{{ isset($promoter) ? route('minor.create', ['promotor_id' => $promoter->id, 'type' => 'promotor']) : '#' }}"
-                            class="px-4 py-2 uppercase rounded-10 text-sm text-white bg-primary 
+                    <!-- Redirect to create page -->
+                    <a href="{{ isset($promoter) ? route('minor.create', ['promotor_id' => $promoter->id, 'type' => 'promotor']) : '#' }}"
+                        class="px-4 py-2 uppercase rounded-10 text-sm text-white bg-primary 
                             {{ isset($promoter) ? 'rounded-r hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed' }}"
-                            {{ isset($promoter) ? '' : 'onclick="return false;"' }}>
-                            + Minor
-                        </a>
-                    </div>
-
-                    <!-- Table for minors -->
-                    <div class="p-4">
-                        <table class="w-full text-sm text-left">
-                            <thead>
-                                <tr class="border-b px-4 bg-secondary/5 py-2">
-                                    <th class="font-semibold  px-4 py-2 text-start ">NAME</th>
-                                    <th class="font-semibold text-gray-ft-600 px-4 py-2 text-start">DOB</th>
-                                    <th class="font-semibold text-gray-ft-600 py-8 text-left">ACTIONS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (!empty($promoter->minor) && is_iterable($promoter->minor))
-                                @foreach ($promoter->minor as $minors)
-                                <tr class="border-b">
-                                    <td class=" px-4 py-2">{{ $minors?->first_name ?? '' }}
-                                        {{ $minors?->last_name ?? '' }}
-                                    </td>
-                                    <td class=" px-4 py-2">
-                                        {{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}
-                                    </td>
-                                    <td class=" px-4 py-2">
-                                        <div class="flex items-center gap-3 justify-center">
-                                            <a href="{{ route('minor.show', $minors->id) }}" title="View"
-                                                class="btn-primary p-2 mr-2">
-                                                <i class="fa fa-eye" aria-hidden="true"></i>
-                                            </a>
-                                            <a href="{{ route('minor.edit', $minors->id) }}" title="Edit"
-                                                class="btn-primary p-2">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
-                                @else
-                                <tr>
-                                    <td colspan="3" class="border px-4 py-2 text-center text-gray-500">No
-                                        minors available.</td>
-                                </tr>
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
+                        {{ isset($promoter) ? '' : 'onclick="return false;"' }}>
+                        + Minor
+                    </a>
                 </div>
 
-                {{-- Share Holdings section - table format --}}
-                <div class="mt-4 bg-white rounded-10 p-3 rounded shadow-sm">
-
-                    <!-- Top red border -->
-                    {{-- <div class="h-1 rounded-t" style="background:red;"></div> --}}
-
-                    <!-- Header -->
-                    <div class="px-4 py-3 bg-white border-b flex justify-between">
-                        <h6 class="font-medium tracking-wide text-gray-700 text-lg">
-                            SHARE HOLDING DETAILS
-                        </h6>
-
-                        @php
-                        $firstNominee = $promoter->nominees->first();
-                        @endphp
-
-                        @if ($firstNominee)
-                        <a href="{{ route('nominee.edit', $firstNominee->id) }}"
-                            class="px-4 py-2 uppercase text-sm btn-primary rounded-10 ">
-                            + Nominee
-                        </a>
-                        @else
-                        <a href="{{ route('nominee.edit', $promoter->nominees()->create([])->id) }}"
-                            class="px-4 py-2 uppercase text-sm btn-primary rounded-10 ">
-                            + Nominee
-                        </a>
-                        @endif
-                    </div>
-                    <!-- Table Body -->
-                    <div class="px-6 py-4">
-                        <table class="w-full border-collapse">
-                            <tbody>
-                                <tr>
-                                    <th class="px-4 py-2 text-lg     font-semibold text-start text-gray-700 uppercase">
-                                        <span>No. of Shares</span>
-                                    </th>
-                                    <td class="px-4 py-2 text-lg text-center text-gray-700">
-                                        <span> {{ $totalShares ?? 0 }}</span>
-                                    </td>
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <!-- Table for minors -->
+                <div class="p-4">
+                    <table class="w-full text-sm text-left">
+                        <thead>
+                            <tr class="border-b px-4 bg-secondary/5 py-2">
+                                <th class="font-semibold  px-4 py-2 text-start ">NAME</th>
+                                <th class="font-semibold text-gray-ft-600 px-4 py-2 text-start">DOB</th>
+                                <th class="font-semibold text-gray-ft-600 py-8 text-left">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!empty($promoter->minor) && is_iterable($promoter->minor))
+                            @foreach ($promoter->minor as $minors)
+                            <tr class="border-b">
+                                <td class=" px-4 py-2">{{ $minors?->first_name ?? '' }}
+                                    {{ $minors?->last_name ?? '' }}
+                                </td>
+                                <td class=" px-4 py-2">
+                                    {{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}
+                                </td>
+                                <td class=" px-4 py-2">
+                                    <div class="flex items-center gap-3 justify-center">
+                                        <a href="{{ route('minor.show', $minors->id) }}" title="View"
+                                            class="btn-primary p-2 mr-2">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                        </a>
+                                        <a href="{{ route('minor.edit', $minors->id) }}" title="Edit"
+                                            class="btn-primary p-2">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                            @else
+                            <tr>
+                                <td colspan="3" class="border px-4 py-2 text-center text-gray-500">No
+                                    minors available.</td>
+                            </tr>
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
-                @if ($promoter->nominees->count() > 0)
-                <div class="box mt-5">
-                    <div class=" bg-secondary/5 text-black py-2 rounded-10 shadow"
-                        x-data="{ showPromoterAccounts: false }">
-                        <div class="flex items-center justify-between px-4 py-2 rounded-t">
-                            <span class="font-semibold text-lg uppercase">
-                                SHARE HOLDING NOMINEE'S INFO
-                            </span>
-                            <div class="flex gap-2 space-x-2">
-                                <i class="cursor-pointer fa" :class="showPromoterAccounts ? 'fa-minus' : 'fa-plus'"
-                                    @click="showPromoterAccounts = !showPromoterAccounts"></i>
-                            </div>
+            </div>
+
+            {{-- Share Holdings section - table format --}}
+            <div class="mt-4 bg-white rounded-10 p-3 rounded shadow-sm">
+
+                <!-- Top red border -->
+                {{-- <div class="h-1 rounded-t" style="background:red;"></div> --}}
+
+                <!-- Header -->
+                <div class="px-4 py-3 bg-white border-b flex justify-between">
+                    <h6 class="font-medium tracking-wide text-gray-700 text-lg">
+                        SHARE HOLDING DETAILS
+                    </h6>
+
+                    @php
+                    $firstNominee = $promoter->nominees->first();
+                    @endphp
+
+                    @if ($firstNominee)
+                    <a href="{{ route('nominee.edit', $firstNominee->id) }}"
+                        class="px-4 py-2 uppercase text-sm btn-primary rounded-10 ">
+                        + Nominee
+                    </a>
+                    @else
+                    <a href="{{ route('nominee.edit', $promoter->nominees()->create([])->id) }}"
+                        class="px-4 py-2 uppercase text-sm btn-primary rounded-10 ">
+                        + Nominee
+                    </a>
+                    @endif
+                </div>
+                <!-- Table Body -->
+                <div class="px-6 py-4">
+                    <table class="w-full border-collapse">
+                        <tbody>
+                            <tr>
+                                <th class="px-4 py-2 text-lg     font-semibold text-start text-gray-700 uppercase">
+                                    <span>No. of Shares</span>
+                                </th>
+                                <td class="px-4 py-2 text-lg text-center text-gray-700">
+                                    <span> {{ $totalShares ?? 0 }}</span>
+                                </td>
+
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @if ($promoter->nominees->count() > 0)
+            <div class="box mt-5">
+                <div class=" bg-secondary/5 text-black py-2 rounded-10 shadow" x-data="{ showPromoterAccounts: false }">
+                    <div class="flex items-center justify-between px-4 py-2 rounded-t">
+                        <span class="font-semibold text-lg uppercase">
+                            SHARE HOLDING NOMINEE'S INFO
+                        </span>
+                        <div class="flex gap-2 space-x-2">
+                            <i class="cursor-pointer fa" :class="showPromoterAccounts ? 'fa-minus' : 'fa-plus'"
+                                @click="showPromoterAccounts = !showPromoterAccounts"></i>
                         </div>
+                    </div>
 
-                        <div class="p-4 text-sm bg-white" x-show="showPromoterAccounts" x-transition>
-                            <div class="py-2">
-                                <table class="w-full overflow-x-auto whitespace-nowrap text-sm text-left">
-                                    <thead>
-                                        <tr class="border-b bg-secondary/5">
-                                            <th class="font-semibold px-4 py-2 text-start">NAME</th>
-                                            <th class="font-semibold px-4 py-2 text-start">RELATION</th>
-                                            <th class="font-semibold px-4 py-2 text-start">ADDRESS</th>
-                                            <th class="font-semibold px-4 py-2 text-start">SHARE %</th>
-                                            <th class="font-semibold px-4 py-2 text-start">ACTION</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($promoter->nominees as $nom)
-                                        <tr class="border-b">
-                                            <td class="px-4 py-2">{{ $nom->name }}</td>
-                                            <td class="px-4 py-2">{{ $nom->relation }}</td>
-                                            <td class="px-4 py-2">{{ $nom->address }}</td>
-                                            <td class="px-4 py-2">
-                                                {{ $nom->share_holding ? $nom->share_holding . '%' : '%' }}
-                                            </td>
-                                            <td class="px-4 py-2">
-                                                @if ($promoter->nominees->count() > 0)
-                                                <a href="{{ route('nominee.edit', $nom->id) }}" class="btn-primary p-2">
-                                                    <i class="fa fa-edit "></i>
-                                                </a>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                    <div class="p-4 text-sm bg-white" x-show="showPromoterAccounts" x-transition>
+                        <div class="py-2">
+                            <table class="w-full overflow-x-auto whitespace-nowrap text-sm text-left">
+                                <thead>
+                                    <tr class="border-b bg-secondary/5">
+                                        <th class="font-semibold px-4 py-2 text-start">NAME</th>
+                                        <th class="font-semibold px-4 py-2 text-start">RELATION</th>
+                                        <th class="font-semibold px-4 py-2 text-start">ADDRESS</th>
+                                        <th class="font-semibold px-4 py-2 text-start">SHARE %</th>
+                                        <th class="font-semibold px-4 py-2 text-start">ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($promoter->nominees as $nom)
+                                    <tr class="border-b">
+                                        <td class="px-4 py-2">{{ $nom->name }}</td>
+                                        <td class="px-4 py-2">{{ $nom->relation }}</td>
+                                        <td class="px-4 py-2">{{ $nom->address }}</td>
+                                        <td class="px-4 py-2">
+                                            {{ $nom->share_holding ? $nom->share_holding . '%' : '%' }}
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            @if ($promoter->nominees->count() > 0)
+                                            <a href="{{ route('nominee.edit', $nom->id) }}" class="btn-primary p-2">
+                                                <i class="fa fa-edit "></i>
+                                            </a>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-                @endif
+            </div>
+            @endif
 
 
-                <!-- ADDRESS & CONTACT INFO -->
-                <div class="mt-4 box rounded shadow">
-                    <div class="flex items-center justify-between px-4 py-3  rounded-10 bg-secondary/5">
-                        <span class="font-semibold text-lg uppercase">Address & Contact Info</span>
-                        <div class="flex items-center gap-4">
-                            <a class="btn-primary p-1"
-                                href="{{ isset($promoter) ? route('promotor.address', ['id' => $promoter->id, 'type' => 'promoter']) : '#' }}">
+            <!-- ADDRESS & CONTACT INFO -->
+            <div class="mt-4 box rounded shadow">
+                <div class="flex items-center justify-between px-4 py-3  rounded-10 bg-secondary/5">
+                    <span class="font-semibold text-lg uppercase">Address & Contact Info</span>
+                    <div class="flex items-center gap-4">
+                        <a class="btn-primary p-1"
+                            href="{{ isset($promoter) ? route('promotor.address', ['id' => $promoter->id, 'type' => 'promoter']) : '#' }}">
+                            <i class="cursor-pointer las la-pencil-alt"></i>
+                        </a>
+                        <i class="cursor-pointer fa" :class="showAddress ? 'fa-minus' : 'fa-plus'"
+                            @click="showAddress = !showAddress"></i>
+                    </div>
+                </div>
+                <div class="p-4 space-y-4 text-sm overflow-x-auto whitespace-nowrap bg-white" x-show="showAddress"
+                    x-transition>
+                    <h5 class="mb-2 font-semibold uppercase text-center">
+                        Correspondence Address
+                    </h5>
+                    <div class="flex justify-between  text-lg border-b">
+                        <span class="font-semibold uppercase ">Address</span>
+                        {{-- <span>{{ $member->address->member_address_line_1 }}</span> --}}
+                    </div>
+                    <div class="flex justify-between text-lg  border-b">
+                        <span class="font-semibold uppercase ">Para/ Ward/ Panchayat/ Area</span>
+
+                        {{-- <span>
+                            {{ $member->address->member_address_para }}/
+                            {{ $member->address->member_address_ward }}/
+                            {{ $member->address->member_address_panchayat }}/
+                            {{ $member->address->member_address_area }}
+                        </span> --}}
+                    </div>
+                    <div class="flex justify-between text-lg border-b ">
+                        <span class="font-semibold uppercase ">Landmark</span>
+                        {{-- <span>{{ $member->address->member_address_landmark }}</span> --}}
+                    </div>
+                    <div class="flex justify-between text-lg border-b ">
+                        <span class="font-semibold uppercase">GPS Lat/ Log</span>
+                        {{-- <span>{{ $member->address->member_gps_location_latitude }}
+                            {{ $member->address->member_gps_location_latitude }}
+                        </span> --}}
+                    </div>
+                    <div class="flex justify-between text-lg border-b ">
+                        <span class="font-semibold uppercase">Email </span>
+                        {{-- <span>{{ $member->address->member_address_landmark }}</span> --}}
+                    </div>
+                    <div class="flex justify-between text-lg border-b ">
+                        <span class="font-semibold uppercase">Mobile No.</span>
+                        {{-- <span>{{ $member->address->member_address_landmark }}</span> --}}
+                    </div>
+                </div>
+            </div>
+            <!-- BANK DETAILS -->
+            <div class="box mt-5">
+                <div class="mt-2  bg-secondary/5 rounded-10 shadow" x-data="{ showBankDetails: false }">
+                    <div class="flex items-center justify-between px-2 py-3 rounded-10  ">
+                        <span class="font-semibold uppercase text-lg">Bank Details(static)</span>
+                        <div class="flex gap-4 items-center  space-x-2 px-2">
+                            <a href="" class="btn-primary p-1">
                                 <i class="cursor-pointer las la-pencil-alt"></i>
                             </a>
-                            <i class="cursor-pointer fa" :class="showAddress ? 'fa-minus' : 'fa-plus'"
-                                @click="showAddress = !showAddress"></i>
+                            <i class="cursor-pointer fa" :class="showBankDetails ? 'fa-minus' : 'fa-plus'"
+                                @click="showBankDetails = !showBankDetails"></i>
                         </div>
                     </div>
-                    <div class="p-4 space-y-4 text-sm overflow-x-auto whitespace-nowrap bg-white" x-show="showAddress"
-                        x-transition>
-                        <h5 class="mb-2 font-semibold uppercase text-center">
-                            Correspondence Address
-                        </h5>
-                        <div class="flex justify-between  text-lg border-b">
-                            <span class="font-semibold uppercase ">Address</span>
-                            {{-- <span>{{ $member->address->member_address_line_1 }}</span> --}}
+                    <div class="p-4 text-sm bg-white" x-show="showBankDetails" x-transition>
+                        <div class="flex justify-between py-2 border-b">
+                            <span class="font-semibold uppercase">Bank Name</span>
+                            <span>{{ $promoter->branch->branch_name ?? '' }}</span>
                         </div>
-                        <div class="flex justify-between text-lg  border-b">
-                            <span class="font-semibold uppercase ">Para/ Ward/ Panchayat/ Area</span>
-
-                            {{-- <span>
-                                {{ $member->address->member_address_para }}/
-                                {{ $member->address->member_address_ward }}/
-                                {{ $member->address->member_address_panchayat }}/
-                                {{ $member->address->member_address_area }}
-                            </span> --}}
+                        <div class="flex justify-between py-2 border-b">
+                            <span class="font-semibold uppercase">IFSC Code</span>
+                            <span>{{ $promoter->branch->ifsc_code }}</span>
                         </div>
-                        <div class="flex justify-between text-lg border-b ">
-                            <span class="font-semibold uppercase ">Landmark</span>
-                            {{-- <span>{{ $member->address->member_address_landmark }}</span> --}}
+                        <div class="flex justify-between py-2 border-b">
+                            <span class="font-semibold uppercase">Account Type</span>
+                            {{-- <span>{{ $promoter->account->account_type }}</span> --}}
                         </div>
-                        <div class="flex justify-between text-lg border-b ">
-                            <span class="font-semibold uppercase">GPS Lat/ Log</span>
-                            {{-- <span>{{ $member->address->member_gps_location_latitude }}
-                                {{ $member->address->member_gps_location_latitude }}
-                            </span> --}}
-                        </div>
-                        <div class="flex justify-between text-lg border-b ">
-                            <span class="font-semibold uppercase">Email </span>
-                            {{-- <span>{{ $member->address->member_address_landmark }}</span> --}}
-                        </div>
-                        <div class="flex justify-between text-lg border-b ">
-                            <span class="font-semibold uppercase">Mobile No.</span>
-                            {{-- <span>{{ $member->address->member_address_landmark }}</span> --}}
+                        <div class="flex justify-between py-2">
+                            <span class="font-semibold uppercase">Account No.</span>
+                            {{-- <span>{{ $promoter->account->account_no }}</span> --}}
                         </div>
                     </div>
                 </div>
-                <!-- BANK DETAILS -->
-                <div class="box mt-5">
-                    <div class="mt-2  bg-secondary/5 rounded-10 shadow" x-data="{ showBankDetails: false }">
-                        <div class="flex items-center justify-between px-2 py-3 rounded-10  ">
-                            <span class="font-semibold uppercase text-lg">Bank Details(static)</span>
-                            <div class="flex gap-4 items-center  space-x-2 px-2">
-                                <a href="" class="btn-primary p-1">
-                                    <i class="cursor-pointer las la-pencil-alt"></i>
-                                </a>
-                                <i class="cursor-pointer fa" :class="showBankDetails ? 'fa-minus' : 'fa-plus'"
-                                    @click="showBankDetails = !showBankDetails"></i>
-                            </div>
-                        </div>
-                        <div class="p-4 text-sm bg-white" x-show="showBankDetails" x-transition>
-                            <div class="flex justify-between py-2 border-b">
-                                <span class="font-semibold uppercase">Bank Name</span>
-                                <span>{{ $promoter->branch->branch_name ?? '' }}</span>
-                            </div>
-                            <div class="flex justify-between py-2 border-b">
-                                <span class="font-semibold uppercase">IFSC Code</span>
-                                <span>{{ $promoter->branch->ifsc_code }}</span>
-                            </div>
-                            <div class="flex justify-between py-2 border-b">
-                                <span class="font-semibold uppercase">Account Type</span>
-                                {{-- <span>{{ $promoter->account->account_type }}</span> --}}
-                            </div>
-                            <div class="flex justify-between py-2">
-                                <span class="font-semibold uppercase">Account No.</span>
-                                {{-- <span>{{ $promoter->account->account_no }}</span> --}}
-                            </div>
+            </div>
+
+            <!-- Promoter AccountsS -->
+            <div class="box mt-5">
+                <div class=" bg-secondary/5 py-2  rounded-10 shadow" x-data="{ showPromoterAccounts: false }">
+                    <div class="flex items-center justify-between px-4  py-2 rounded-10">
+                        <span class="font-semibold uppercase text-lg ">Promoter Accounts(static)</span>
+                        <div class="flex gap-2 space-x-2">
+                            <i class="cursor-pointer fa" :class="showPromoterAccounts ? 'fa-minus' : 'fa-plus'"
+                                @click="showPromoterAccounts = !showPromoterAccounts"></i>
                         </div>
                     </div>
-                </div>
 
-                <!-- Promoter AccountsS -->
-                <div class="box mt-5">
-                    <div class=" bg-secondary/5 py-2  rounded-10 shadow" x-data="{ showPromoterAccounts: false }">
-                        <div class="flex items-center justify-between px-4  py-2 rounded-10">
-                            <span class="font-semibold uppercase text-lg ">Promoter Accounts(static)</span>
-                            <div class="flex gap-2 space-x-2">
-                                <i class="cursor-pointer fa" :class="showPromoterAccounts ? 'fa-minus' : 'fa-plus'"
-                                    @click="showPromoterAccounts = !showPromoterAccounts"></i>
-                            </div>
-                        </div>
-
-                        <div class="p-4 text-sm bg-white" x-show="showPromoterAccounts" x-transition>
-                            <div class="p-2 overflow-x-auto whitespace-nowrap">
-                                <table class="w-full text-sm text-left">
-                                    <thead>
-                                        <tr class="bg-secondary/5 ">
-                                            <th class="font-semibold  py-2 text-start">ACCOUNT TYPE</th>
-                                            <th class="font-semibold  py-2 text-start">ACCOUNT NO.</th>
-                                            <th class="font-semibold  py-2 text-start">OPEN DATE</th>
-                                            <th class="font-semibold  py-2 text-start">STATUS</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (!empty($promoter->minor) && is_iterable($promoter->minor))
-                                        @foreach ($promoter->minor as $minors)
-                                        <tr>
-                                            <td>{{ $minors?->first_name ?? '' }}
-                                                {{ $minors?->last_name ?? '' }}
-                                            </td>
-                                            <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
-                                            <td>
-                                                <div class="flex items-center gap-2 py-2 ">
-                                                    <a href="{{ route('minor.show', $minors->id) }}" title="View"
-                                                        class="btn-primary p-1 hover:underline mr-2">
-                                                        <i class="las la-eye" aria-hidden="true"></i>
-                                                    </a>
-                                                    <a href="{{ route('minor.edit', $minors->id) }}" title="Edit"
-                                                        class="btn-primary p-1 hover:underline">
-                                                        <i class="las la-edit"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        @else
-                                        <tr>
-                                            <td colspan="4" class="border px-4 py-2 text-center text-gray-500">
-                                                No minors available.
-                                            </td>
-                                        </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- JOINT ACCOUNTS -->
-                <div class="box mt-5">
-                    <div class=" bg-secondary/5  rounded-10 py-2 shadow" x-data="{ showJointAccounts: false }">
-                        <div class="flex items-center justify-between px-4 py-2 rounded-10">
-                            <span class="font-semibold uppercase text-lg">JOINT ACCOUNTS(static)</span>
-                            <div class="flex gap-2 space-x-2">
-                                <i class="cursor-pointer fa" :class="showJointAccounts ? 'fa-minus' : 'fa-plus'"
-                                    @click="showJointAccounts = !showJointAccounts"></i>
-                            </div>
-                        </div>
-
-                        <div class="p-4 text-sm bg-white" x-show="showJointAccounts" x-transition>
-                            <div class="overflow-x-auto whitespace-nowrap">
-                                <table class="w-full text-sm overflow-x-auto whitespace-nowrap text-left">
-                                    <thead>
-                                        <tr class="bg-secondary/5">
-                                            <th class="font-semibold px-2 py-2 text-start">ACCOUNT TYPE</th>
-                                            <th class="font-semibold px-2 py-2 text-start">ACCOUNT NO.</th>
-                                            <th class="font-semibold px-2 py-2 text-start">OPEN DATE</th>
-                                            <th class="font-semibold px-2 py-2 text-start">STATUS</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (!empty($promoter->minor) && is_iterable($promoter->minor))
-                                        @foreach ($promoter->minor as $minors)
-                                        <tr class="py-2">
-                                            <td class="text-center">{{ $minors?->first_name ?? '' }}
-                                                {{ $minors?->last_name ?? '' }}
-                                            </td>
-                                            <td class="text-center">{{
-                                                \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
-                                            <td class="text-center">{{
-                                                \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
-                                            <td class="text-center py-2">
-                                                <div class="flex gap-2 justify-center">
-                                                    <a href="{{ route('minor.show', $minors->id) }}" title="View"
-                                                        class="btn-primary p-1 hover:underline mr-2">
-                                                        <i class="las la-eye" aria-hidden="true"></i>
-                                                    </a>
-                                                    <a href="{{ route('minor.edit', $minors->id) }}" title="Edit"
-                                                        class="btn-primary p-1 hover:underline">
-                                                        <i class="las la-edit"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        @else
-                                        <tr>
-                                            <td colspan="4" class="border px-4 py-2 text-center text-gray-500">
-                                                No minors available.
-                                            </td>
-                                        </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CO APPLICANT LOANS -->
-                <div class="box  mt-5">
-                    <div class="py-2 bg-secondary/5   rounded-10 shadow" x-data="{ showCoApplicantLoans: false }">
-                        <div class="flex items-center justify-between px-4 py-2 rounded-10">
-                            <span class="font-semibold uppercase text-lg">CO APPLICANT LOANS (static)</span>
-                            <div class="flex gap-2 space-x-2">
-                                <i class="cursor-pointer fa" :class="showCoApplicantLoans ? 'fa-minus' : 'fa-plus'"
-                                    @click="showCoApplicantLoans = !showCoApplicantLoans"></i>
-                            </div>
-                        </div>
-
-                        <div class="p-4 text-sm bg-white" x-show="showCoApplicantLoans" x-transition>
-                            <div class="p-2 whitespace-nowrap overflow-x-auto">
-                                <table class="w-full text-sm text-left whitespace-nowrap overflow-x-auto">
-                                    <thead>
-                                        <tr class="bg-secondary/5">
-                                            <th class="font-semibold px-4 py-2 text-start">ACCOUNT TYPE</th>
-                                            <th class="font-semibold px-4 py-2 text-start">ACCOUNT NO.</th>
-                                            <th class="font-semibold px-4 py-2 text-start">OPEN DATE</th>
-                                            <th class="font-semibold px-4 py-2 text-start">STATUS</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (!empty($promoter->minor) && is_iterable($promoter->minor))
-                                        @foreach ($promoter->minor as $minors)
-                                        <tr>
-                                            <td class="text-center">{{ $minors?->first_name ?? '' }}
-                                                {{ $minors?->last_name ?? '' }}
-                                            </td>
-                                            <td class="text-center">{{
-                                                \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
-                                            <td class="text-center">{{
-                                                \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
-                                            <td class="text-center py-2">
-                                                <div class="flex justify-center items-center gap-2">
-                                                    <a href="{{ route('minor.show', $minors->id) }}" title="View"
-                                                        class="btn-primary p-1 hover:underline mr-2">
-                                                        <i class="las la-eye" aria-hidden="true"></i>
-                                                    </a>
-                                                    <a href="{{ route('minor.edit', $minors->id) }}" title="Edit"
-                                                        class="btn-primary p-1 hover:underline">
-                                                        <i class="las la-edit"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        @else
-                                        <tr>
-                                            <td colspan="4" class="border px-4 py-2 text-center text-gray-500">
-                                                No minors available.
-                                            </td>
-                                        </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MY GUARANTOR SHIP -->
-                <div class="box mt-5">
-                    <div class=" bg-secondary/5 py-2 rounded-10 shadow" x-data="{ showGuarantorShip: false }"
-                        style="">
-
-                        <div class="flex items-center justify-between px-4 py-2  rounded-t">
-                            <span class="font-semibold uppercase text-lg">MY GUARANTOR SHIP (static)</span>
-                            <div class="flex gap-2 space-x-2">
-                                <i class="cursor-pointer fa" :class="showGuarantorShip ? 'fa-minus' : 'fa-plus'"
-                                    @click="showGuarantorShip = !showGuarantorShip"></i>
-                            </div>
-                        </div>
-
-                        <div class="p-4 text-sm bg-white" x-show="showGuarantorShip" x-transition>
-                            <div class="">
-                                <table class="w-full text-sm text-left overflow-x-auto whitespace-nowrap">
-                                    <thead>
-                                        <tr class="bg-secondary/5 first:">
-                                            <th class="font-semibold px-4 py-2 text-start">ACCOUNT TYPE</th>
-                                            <th class="font-semibold px-4 py-2 text-start">ACCOUNT NO.</th>
-                                            <th class="font-semibold px-4 py-2 text-start">OPEN DATE</th>
-                                            <th class="font-semibold px-4 py-2 text-start">STATUS</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (!empty($promoter->minor) && is_iterable($promoter->minor))
-                                        @foreach ($promoter->minor as $minors)
-                                        <tr>
-                                            <td class="text-center py-2">{{ $minors?->first_name ?? '' }}
-                                                {{ $minors?->last_name ?? '' }}
-                                            </td>
-                                            <td class="text-center py-2">{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
-                                            <td class="text-center py-2">{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
-                                            <td class="text-center py-2">
+                    <div class="p-4 text-sm bg-white" x-show="showPromoterAccounts" x-transition>
+                        <div class="p-2 overflow-x-auto whitespace-nowrap">
+                            <table class="w-full text-sm text-left">
+                                <thead>
+                                    <tr class="bg-secondary/5 ">
+                                        <th class="font-semibold  py-2 text-start">ACCOUNT TYPE</th>
+                                        <th class="font-semibold  py-2 text-start">ACCOUNT NO.</th>
+                                        <th class="font-semibold  py-2 text-start">OPEN DATE</th>
+                                        <th class="font-semibold  py-2 text-start">STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (!empty($promoter->minor) && is_iterable($promoter->minor))
+                                    @foreach ($promoter->minor as $minors)
+                                    <tr>
+                                        <td>{{ $minors?->first_name ?? '' }}
+                                            {{ $minors?->last_name ?? '' }}
+                                        </td>
+                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                        <td>
+                                            <div class="flex items-center gap-2 py-2 ">
                                                 <a href="{{ route('minor.show', $minors->id) }}" title="View"
                                                     class="btn-primary p-1 hover:underline mr-2">
                                                     <i class="las la-eye" aria-hidden="true"></i>
@@ -1184,28 +1045,211 @@
                                                     class="btn-primary p-1 hover:underline">
                                                     <i class="las la-edit"></i>
                                                 </a>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        @else
-                                        <tr>
-                                            <td colspan="4" class="border px-4 py-2 text-center text-gray-500">
-                                                No minors available.
-                                            </td>
-                                        </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                            </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    @else
+                                    <tr>
+                                        <td colspan="4" class="border px-4 py-2 text-center text-gray-500">
+                                            No minors available.
+                                        </td>
+                                    </tr>
+                                    @endif
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-
             </div>
-        </div>
 
-        <!-- Modal HTML -->
-        <!-- <div id="docPreviewModal"
+            <!-- JOINT ACCOUNTS -->
+            <div class="box mt-5">
+                <div class=" bg-secondary/5  rounded-10 py-2 shadow" x-data="{ showJointAccounts: false }">
+                    <div class="flex items-center justify-between px-4 py-2 rounded-10">
+                        <span class="font-semibold uppercase text-lg">JOINT ACCOUNTS(static)</span>
+                        <div class="flex gap-2 space-x-2">
+                            <i class="cursor-pointer fa" :class="showJointAccounts ? 'fa-minus' : 'fa-plus'"
+                                @click="showJointAccounts = !showJointAccounts"></i>
+                        </div>
+                    </div>
+
+                    <div class="p-4 text-sm bg-white" x-show="showJointAccounts" x-transition>
+                        <div class="overflow-x-auto whitespace-nowrap">
+                            <table class="w-full text-sm overflow-x-auto whitespace-nowrap text-left">
+                                <thead>
+                                    <tr class="bg-secondary/5">
+                                        <th class="font-semibold px-2 py-2 text-start">ACCOUNT TYPE</th>
+                                        <th class="font-semibold px-2 py-2 text-start">ACCOUNT NO.</th>
+                                        <th class="font-semibold px-2 py-2 text-start">OPEN DATE</th>
+                                        <th class="font-semibold px-2 py-2 text-start">STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (!empty($promoter->minor) && is_iterable($promoter->minor))
+                                    @foreach ($promoter->minor as $minors)
+                                    <tr class="py-2">
+                                        <td class="text-center">{{ $minors?->first_name ?? '' }}
+                                            {{ $minors?->last_name ?? '' }}
+                                        </td>
+                                        <td class="text-center">{{
+                                            \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                        <td class="text-center">{{
+                                            \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                        <td class="text-center py-2">
+                                            <div class="flex gap-2 justify-center">
+                                                <a href="{{ route('minor.show', $minors->id) }}" title="View"
+                                                    class="btn-primary p-1 hover:underline mr-2">
+                                                    <i class="las la-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="{{ route('minor.edit', $minors->id) }}" title="Edit"
+                                                    class="btn-primary p-1 hover:underline">
+                                                    <i class="las la-edit"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    @else
+                                    <tr>
+                                        <td colspan="4" class="border px-4 py-2 text-center text-gray-500">
+                                            No minors available.
+                                        </td>
+                                    </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CO APPLICANT LOANS -->
+            <div class="box  mt-5">
+                <div class="py-2 bg-secondary/5   rounded-10 shadow" x-data="{ showCoApplicantLoans: false }">
+                    <div class="flex items-center justify-between px-4 py-2 rounded-10">
+                        <span class="font-semibold uppercase text-lg">CO APPLICANT LOANS (static)</span>
+                        <div class="flex gap-2 space-x-2">
+                            <i class="cursor-pointer fa" :class="showCoApplicantLoans ? 'fa-minus' : 'fa-plus'"
+                                @click="showCoApplicantLoans = !showCoApplicantLoans"></i>
+                        </div>
+                    </div>
+
+                    <div class="p-4 text-sm bg-white" x-show="showCoApplicantLoans" x-transition>
+                        <div class="p-2 whitespace-nowrap overflow-x-auto">
+                            <table class="w-full text-sm text-left whitespace-nowrap overflow-x-auto">
+                                <thead>
+                                    <tr class="bg-secondary/5">
+                                        <th class="font-semibold px-4 py-2 text-start">ACCOUNT TYPE</th>
+                                        <th class="font-semibold px-4 py-2 text-start">ACCOUNT NO.</th>
+                                        <th class="font-semibold px-4 py-2 text-start">OPEN DATE</th>
+                                        <th class="font-semibold px-4 py-2 text-start">STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (!empty($promoter->minor) && is_iterable($promoter->minor))
+                                    @foreach ($promoter->minor as $minors)
+                                    <tr>
+                                        <td class="text-center">{{ $minors?->first_name ?? '' }}
+                                            {{ $minors?->last_name ?? '' }}
+                                        </td>
+                                        <td class="text-center">{{
+                                            \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                        <td class="text-center">{{
+                                            \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                        <td class="text-center py-2">
+                                            <div class="flex justify-center items-center gap-2">
+                                                <a href="{{ route('minor.show', $minors->id) }}" title="View"
+                                                    class="btn-primary p-1 hover:underline mr-2">
+                                                    <i class="las la-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="{{ route('minor.edit', $minors->id) }}" title="Edit"
+                                                    class="btn-primary p-1 hover:underline">
+                                                    <i class="las la-edit"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    @else
+                                    <tr>
+                                        <td colspan="4" class="border px-4 py-2 text-center text-gray-500">
+                                            No minors available.
+                                        </td>
+                                    </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MY GUARANTOR SHIP -->
+            <div class="box mt-5">
+                <div class=" bg-secondary/5 py-2 rounded-10 shadow" x-data="{ showGuarantorShip: false }" style="">
+
+                    <div class="flex items-center justify-between px-4 py-2  rounded-t">
+                        <span class="font-semibold uppercase text-lg">MY GUARANTOR SHIP (static)</span>
+                        <div class="flex gap-2 space-x-2">
+                            <i class="cursor-pointer fa" :class="showGuarantorShip ? 'fa-minus' : 'fa-plus'"
+                                @click="showGuarantorShip = !showGuarantorShip"></i>
+                        </div>
+                    </div>
+
+                    <div class="p-4 text-sm bg-white" x-show="showGuarantorShip" x-transition>
+                        <div class="">
+                            <table class="w-full text-sm text-left overflow-x-auto whitespace-nowrap">
+                                <thead>
+                                    <tr class="bg-secondary/5 first:">
+                                        <th class="font-semibold px-4 py-2 text-start">ACCOUNT TYPE</th>
+                                        <th class="font-semibold px-4 py-2 text-start">ACCOUNT NO.</th>
+                                        <th class="font-semibold px-4 py-2 text-start">OPEN DATE</th>
+                                        <th class="font-semibold px-4 py-2 text-start">STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (!empty($promoter->minor) && is_iterable($promoter->minor))
+                                    @foreach ($promoter->minor as $minors)
+                                    <tr>
+                                        <td class="text-center py-2">{{ $minors?->first_name ?? '' }}
+                                            {{ $minors?->last_name ?? '' }}
+                                        </td>
+                                        <td class="text-center py-2">{{
+                                            \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                        <td class="text-center py-2">{{
+                                            \Carbon\Carbon::parse($minors->dob)->format('d-m-Y') }}</td>
+                                        <td class="text-center py-2">
+                                            <a href="{{ route('minor.show', $minors->id) }}" title="View"
+                                                class="btn-primary p-1 hover:underline mr-2">
+                                                <i class="las la-eye" aria-hidden="true"></i>
+                                            </a>
+                                            <a href="{{ route('minor.edit', $minors->id) }}" title="Edit"
+                                                class="btn-primary p-1 hover:underline">
+                                                <i class="las la-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    @else
+                                    <tr>
+                                        <td colspan="4" class="border px-4 py-2 text-center text-gray-500">
+                                            No minors available.
+                                        </td>
+                                    </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal HTML -->
+    <!-- <div id="docPreviewModal"
                                                                                             class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
                                                                                             <div class="bg-white rounded-lg shadow-lg p-4 max-w-3xl w-full relative">
                                                                                                 <button onclick="closePreview()"
@@ -1216,9 +1260,9 @@
                                                                                             </div>
                                                                                         </div> -->
 
-        <!-- JS Script -->
-        <script>
-            function previewDoc(fileUrl, title) {
+    <!-- JS Script -->
+    <script>
+        function previewDoc(fileUrl, title) {
                     const modal = document.getElementById("docPreviewModal");
                     const content = document.getElementById("docContent");
                     const docTitle = document.getElementById("docTitle");
@@ -1243,6 +1287,6 @@
                 function closePreview() {
                     document.getElementById("docPreviewModal").classList.add("hidden");
                 }
-        </script>
-    </div>
-    @endsection
+    </script>
+</div>
+@endsection
