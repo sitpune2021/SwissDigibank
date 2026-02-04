@@ -201,6 +201,18 @@ return [
         ],
     ],
     [
+        'title' => 'FIXED LOAN',
+        'icon' => 'las la-university',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'fixed_loan.schemes.index'],
+            ['title' => 'APPLICATIONS', 'route' => 'fixed_loan.applications.index'],
+            ['title' => 'DISBURSEMENTS', 'route' => 'fixed_loan.disbursements.index'],
+            ['title' => 'ACCOUNTS', 'route' => 'fixed_loan.account.index'],
+        ],
+    ],
+    [
         'title' => 'LOCKERS',
         'icon' => 'las la-lock',
         'position' => '9',

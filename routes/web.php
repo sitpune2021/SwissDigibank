@@ -92,6 +92,7 @@ use App\Http\Controllers\VendorController;
 use App\Http\Middleware\SessionProtection;
 use App\Http\Controllers\EmployeeAkash;
 use App\Http\Controllers\GoldLoanPrintDocument;
+use App\Http\Controllers\FixedLoanController;
 
 
 // Clear cache 
@@ -1921,6 +1922,169 @@ Route::group(['prefix' => 'vehical'], function () {
 
 
 /////////////////////////////////////  END Vehical LOAN   ////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////   Fixed Loan   ////////////////////////////////////////////////////////
+
+
+Route::group(['prefix' => 'fixed_loan'], function () {
+
+    // fixed_loan Loan Scheme
+    Route::get('scheme/index', [FixedLoanController::class, 'index'])
+        ->name('fixed_loan.schemes.index');
+
+    // create form
+    Route::get('scheme/create', [FixedLoanController::class, 'create'])
+        ->name('fixed_loan.schemes.create');
+    // store form data
+    Route::post('scheme/store', [FixedLoanController::class, 'store'])
+        ->name('fixed_loan.schemes.store');
+
+    // view list
+    Route::get('scheme/{id}', [FixedLoanController::class, 'show'])
+        ->name('fixed_loan.schemes.show');
+
+    // edit form
+    Route::get('scheme/{id}/edit', [FixedLoanController::class, 'edit'])
+        ->name('fixed_loan.schemes.edit');
+    Route::put('scheme/{id}', [FixedLoanController::class, 'update'])
+        ->name('fixed_loan.schemes.update');
+
+    Route::get('scheme/view/{id}', [FixedLoanController::class, 'view'])
+        ->name('fixed_loan.schemes.view');
+
+
+    // fixed_loan Application page
+    Route::get('applications/index', [FixedLoanController::class, 'appindex'])
+        ->name('fixed_loan.applications.index');
+
+    Route::get('applications/create', [FixedLoanController::class, 'appcreate'])
+        ->name('fixed_loan.applications.create');
+
+    Route::post('/fixedloan/store', [FixedLoanController::class, 'storeLoanApplication'])->name('fixed_loan.store');
+
+    Route::get('/members/{id}/info', [FixedLoanController::class, 'getMemberInfo'])
+        ->name('members.info');
+
+    Route::get('fixed_loan/applications/view/{id}', [FixedLoanController::class, 'appview'])
+        ->name('fixed_loan.applications.view');
+
+    // Edit form
+    Route::get('/fixed_loan/applications/{id}/edit', [FixedLoanController::class, 'appedit'])
+        ->name('fixed_loan.applications.edit');
+
+    // Update
+    Route::put('/fixed_loan/applications/{id}', [FixedLoanController::class, 'appupdate'])
+        ->name('fixed_loan.applications.update');
+
+    Route::get('applications/show-emi-chart', [FixedLoanController::class, 'showEmiChart'])
+        ->name('fixed_loan.applications.view-buttons.show-emi-chart');
+
+    Route::get('cc-od/credit-score/upload/{id}', [FixedLoanController::class, 'upload'])
+        ->name('fixed_loan.credit_score.upload');
+
+
+    // Disbursement fixed_loan Loan
+    Route::get('disbursements/index', [DailyWeeklyDisburments::class, 'index'])
+        ->name('fixed_loan.disbursements.index');
+    Route::post('/fixed_loan/disbursements/cancel/{id}', [DailyWeeklyDisburments::class, 'cancelLoan'])->name('daily_weekly.cancel');
+
+    // disburse-loan page  
+    Route::get('disbursements/disburse-loan/{id}', [DailyWeeklyDisburments::class, 'show'])
+        ->name('fixed_loan.disbursements.disburse-loan');
+    Route::post('/fixed_loan/disbursements/store', [DailyWeeklyDisburments::class, 'store'])->name('fixed_loan_disbursment.store');
+
+
+    // account section start
+
+    Route::get('account/index', [DailyWeeklyAccount::class, 'index'])->name('fixed_loan.account.index');
+    Route::get('account/show/{id}', [DailyWeeklyAccount::class, 'show'])
+        ->name('fixed_loan.account.show');
+    // emi chart for process button
+    Route::post('/emi/save-status', [DailyWeeklyAccount::class, 'saveEmiStatus'])
+        ->name('fixed_loan.emi.saveEmiStatus');
+
+    // pay emi tab
+    Route::get('fixed_loan-account/payemi/{id}', [DailyWeeklyAccount::class, 'mortgagePayEmi'])
+        ->name('fixed_loan.account.pay-emi');
+    Route::post('fixed_loan-account/payemi/{id}/pay', [DailyWeeklyAccount::class, 'mortgagepayEmiLoan'])->name('daily_weekly.payEmiLoan');
+
+    // View Transction tab
+    Route::get('fixed_loan-account/transaction/{id}', [DailyWeeklyAccount::class, 'mortgageTransaction'])
+        ->name('fixed_loan.account.transaction');
+
+    // loan extension tab
+    Route::get('account/extension/{id}', [DailyWeeklyAccount::class, 'loanextension'])
+        ->name('fixed_loan.account.extension');
+    // POST - FINAL SAVE loan extension
+    Route::post('/loan-extension/store/{id}', [DailyWeeklyAccount::class, 'storeLoanExtension'])->name('daily_weekly.extension.store');
+
+    // only pay tab
+    Route::get('fixed_loan-account/pay/{id}', [DailyWeeklyAccount::class, 'mortgagePay'])
+        ->name('fixed_loan.account.pay');
+    Route::post('/update-emi-status', [DailyWeeklyAccount::class, 'updateEmiStatus'])->name('emi.updateStatus');
+    Route::post('/fixed_loan/pay-emi', [DailyWeeklyAccount::class, 'payEmi'])->name('daily_weekly.payEmi');
+
+    // foure close account
+    Route::get('account/fourcloser/{id}', [DailyWeeklyAccount::class, 'fourcloser'])
+        ->name('fixed_loan.account.fourcloser');
+    Route::post('account/fourcloser/store/{id}', [DailyWeeklyAccount::class, 'storeForeCloser'])
+        ->name('fixed_loan.account.forecloser.store');
+
+    // link saving account
+    Route::get('account/linksaving/{id}', [DailyWeeklyAccount::class, 'linksaving'])
+        ->name('fixed_loan.account.linksaving');
+    Route::post('account/linksaving/{id}', [DailyWeeklyAccount::class, 'storeSavingAccount'])
+        ->name('fixed_loan.account.storeSavingAccount');
+
+    // Remove account (POST to avoid CSRF problems with GET)
+    Route::post('/fixed_loan/{id}/remove', [DailyWeeklyAccount::class, 'removeAccount'])
+        ->name('fixed_loan.remove');
+
+    // show audit trial tab
+    Route::get('account/audit', [DailyWeeklyAccount::class, 'audit'])
+        ->name('fixed_loan.account.audit-trail');
+
+    // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
+    Route::get('/fixed_loan/{id}/debit-charges-list', [DailyWeeklyAccount::class, 'showDebitChargesList'])
+        ->name('fixed_loan.debitChargesList.form');
+
+    // debit other charge page    
+    Route::get('/fixed_loan/{id}/debit-other-charges', [DailyWeeklyAccount::class, 'DebitOtherCharges'])
+        ->name('fixed_loan.debitOtherCharges.form');
+    // Store Debit Other Charges page
+    Route::post('/fixed_loan/{id}/debit-other-charges', [DailyWeeklyAccount::class, 'storeDebitOtherCharges'])
+        ->name('fixed_loan.debitOtherCharges.store');
+
+    //clear due 
+    Route::get('/fixed_loan/{id}/clear-due', [DailyWeeklyAccount::class, 'mortgageLoanClearDues'])
+        ->name('fixed_loan.clear-due.form');
+    Route::post('/fixed_loan/{loan_id}/other-charge', [DailyWeeklyAccount::class, 'clearDue'])->name('daily_weekly.clear-due');
+
+    // account section end
+
+
+    // Collect Processing fee page in application view page
+    Route::get('fixed_loan/col-process-fee/{id}', [FixedLoanController::class, 'col_process_fee'])
+        ->name('fixed_loan.applications.view-buttons.col_process_fee');
+    Route::post('fixed_loan/col-process-fee/store/{id}', [FixedLoanController::class, 'storeProcessFee'])
+        ->name('fixed_loan.col_process_fee.store');
+
+
+    // Show EMI chart in a new tab
+    Route::get('fixed_loan/{id}/emi-chart', [FixedLoanController::class, 'emiChart'])
+        ->name('fixed_loan.applications.view-buttons.show-emi-chart');
+
+    // Disbusrment setting
+    Route::get('fixed_loan/{id}/disbursment', [FixedLoanController::class, 'disbursment'])
+        ->name('fixed_loan.applications.view-buttons.disburse-setting');
+
+    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+        ->name('applications.submitForApproval');
+});
+
+
+/////////////////////////////////////   END Fixed LOAN   ////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////    START LOCKER    ///////////////////////////////////////////////
