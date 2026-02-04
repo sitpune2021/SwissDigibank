@@ -139,6 +139,9 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/promotor/{id}/nominee/edit', [PromotorController::class, 'editNominee'])
             ->name('nominee.edit');
 
+        Route::post('/promotor-kyc/{id}/status', [PromotorController::class, 'updateStatus'])
+            ->name('promotor-kyc.updateStatus');
+            
         // Save updated nominee
         Route::put('/promotor/{id}/nominee', [PromotorController::class, 'updateNominee'])
             ->name('nominee.update');
@@ -2392,8 +2395,9 @@ Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
     Route::post('/profile/change-password', [SettingsController::class, 'updatePasswordFromProfile'])
         ->name('profile-update-password');
 
-   Route::post('/profile/photo', [SettingsController::class, 'updateProfilePhoto'])
-    ->name('profile-photo.update');;
+    Route::post('/profile/photo', [SettingsController::class, 'updateProfilePhoto'])
+        ->name('profile-photo.update');
+    ;
 
     Route::get('/security', [SettingsController::class, 'security'])->name('security');
     Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');
