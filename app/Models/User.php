@@ -102,4 +102,10 @@ class User extends Authenticatable
     // {
     //     return optional($this->role)->name === 'Super Admin';
     // }
+
+
+    public function profilePhoto()
+{
+    return $this->hasOne(ProfilePhoto::class);
+}
 }

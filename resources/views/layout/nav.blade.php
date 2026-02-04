@@ -164,7 +164,7 @@
                     <ul>
                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                             <a href="{{ route('index-from-i') }}" class="uppercase">
-                              <i class="las la-file-contract"></i> 
+                                <i class="las la-file-contract"></i>
                                 form I And J
                             </a>
                         </li>
@@ -174,14 +174,14 @@
                                 form E</a>
                         </li>
                         <li class="px-4 py-2 hover:bg-gray-100  cursor-pointer uppercase">
-                          <a href="{{ route('mis_index') }}">
-                            <div class="flex gap-1">
-                            
-                               <p> <i class="las la-file-invoice"></i></p>
-                                <p>
-                                   Management  Information Systems
-                                </p>
-                           </div>
+                            <a href="{{ route('mis_index') }}">
+                                <div class="flex gap-1">
+
+                                    <p> <i class="las la-file-invoice"></i></p>
+                                    <p>
+                                        Management Information Systems
+                                    </p>
+                                </div>
                             </a>
                         </li>
 
@@ -311,15 +311,24 @@
             <!-- Profile dropdown -->
             <div class="relative shrink-0">
                 <div id="profile-btn" class="w-10 cursor-pointer md:w-12">
-                    <img src="{{ asset('assets/images/user-big-4.png') }}" class="rounded-full" width="48" height="48"
-                        alt="profile img" />
+                    <img src="{{ auth()->user()->profilePhoto
+            ? asset('storage/profile_photos/' . auth()->user()->profilePhoto->filename)
+            : asset('assets/images/user-big-4.png') }}" class="rounded-full"
+                        style="width: 50px; height:50px; object-fit: cover;" alt="profile img" />
+                    {{-- <img src="{{ asset('assets/images/user-big-4.png') }}" class="rounded-full" width="48"
+                        height="48" alt="profile img" /> --}}
                 </div>
                 <div id="profile"
                     class="hide absolute top-full z-20 rounded-md bg-n0 shadow-[0px_6px_30px_0px_rgba(0,0,0,0.08)] duration-300 dark:bg-bg4 ltr:right-0 ltr:origin-top-right rtl:left-0 rtl:origin-top-left">
                     <div class="flex flex-col items-center border-b p-3 text-center dark:border-n500 lg:p-4">
-                        <img src="{{ asset('assets/images/user-big-4.png') }}" width="60" height="60"
-                            class="rounded-full" alt="profile img" />
-                        <h6 class="h6 mt-2">
+                        <img src="{{ auth()->user()->profilePhoto
+            ? asset('storage/profile_photos/' . auth()->user()->profilePhoto->filename)
+            : asset('assets/images/user-big-4.png') }}" class="rounded-full "
+                            style="width: 50px; height:50px; object-fit: cover;" alt="profile img" />
+                        <h6 class="h6 mt-2 uppercase">
+                            {{ auth()->user()->fname .' '. auth()->user()->lname}}
+                        </h6>
+                        <h6 class="h6 ">
                             {{ auth()->user()->name}}
                         </h6>
                         <span class="text-sm">{{auth()->user()->email}}</span>

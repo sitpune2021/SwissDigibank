@@ -88,7 +88,7 @@ class PromotorController extends Controller
                 'last_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'branch_id' => 'required|exists:branches,id',
                 'date_of_birth' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
-                'occupation' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+                'occupation' => 'nullable|string|max:255',
                 'father_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'marital_statuses_id' => 'nullable|exists:marital_statuses,id',
@@ -243,7 +243,9 @@ class PromotorController extends Controller
     {
         try {
             $decryptedId =  base64_decode($id);
-            $promoter = Promotor::with('minor')->findOrFail($decryptedId);
+            // $promoter = Promotor::with('minor')->findOrFail($decryptedId);
+            $promoter = Promotor::with(['minor', 'nominees', 'kyc'])->findOrFail($decryptedId);
+
             $route = route('promotor.update', $promoter->id);
             $dynamicOptions = [
                 'branches' => Branch::pluck('branch_name', 'id'),
@@ -271,7 +273,7 @@ class PromotorController extends Controller
                 'last_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'branch_id' => 'required|exists:branches,id',
                 'date_of_birth' => 'required|before:today',
-                'occupation' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+                'occupation' => 'nullable|string|max:255',
                 'father_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'marital_statuses_id' => 'nullable|exists:marital_statuses,id',
@@ -760,4 +762,41 @@ class PromotorController extends Controller
         $promotor = Promotor::findOrFail($id);
         return view('company.promoters.view-transactions', compact('id'));
     }
+
+public function updateStatus(Request $request, $id)
+{
+    $request->validate([
+        'kyc_status' => 'required|in:pending,in_progress,completed,rejected',
+    ]);
+
+    // Find KYC by promoter_id
+    $kyc = PromotorKyc::where('promotor_id', $id)->firstOrFail();
+
+    $oldStatus = $kyc->kyc_status;
+    $newStatus = $request->kyc_status;
+
+    Log::info('KYC status update requested', [
+        'kyc_id'      => $kyc->id,
+        'promoter_id' => $id,
+        'old_status'  => $oldStatus,
+        'new_status'  => $newStatus,
+        'updated_by'  => auth()->id(),
+    ]);
+
+    $kyc->update([
+        'kyc_status' => $newStatus
+    ]);
+
+    Log::notice('KYC status updated successfully', [
+        'kyc_id'      => $kyc->id,
+        'final_status'=> $newStatus,
+        'updated_by'  => auth()->id(),
+    ]);
+
+    return back()->with('success', 'KYC status updated successfully.');
+}
+
+
+
+  
 }
