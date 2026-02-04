@@ -1,9 +1,4 @@
 @extends('layout.main')
-@section('page-title', isset($promoter) ? $promoter->first_name : 'Add Promoter')
-
-@section('content')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <style>
     input[type="radio"] {
         width: 24px;
@@ -20,6 +15,12 @@
         /* Modern browsers */
     }
 </style>
+@section('page-title', isset($promoter) ? $promoter->first_name : 'Add Promoter')
+
+@section('content')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
 
 <div class="flex flex-wrap gap-4 justify-between mb-2 pb-4 lg:mb-3 lg:pb-3" style="flex-direction: row-reverse;">
     <x-alert />
@@ -243,15 +244,15 @@
         </div>
 
         {{-- Member KYC Info --}}
-        <div x-data="{ open: true }" class="mt-4 box rounded-md shadow">
+        <div 
+         class=" toggle-box mt-4 box rounded-md shadow">
             <!-- Header -->
-            <div class="flex items-center justify-between px-4 py-3 bg-secondary/5 rounded-10 cursor-pointer"
-                @click="open = !open">
+            <div class="toggle-header flex items-center justify-between px-4 py-3 bg-secondary/5 rounded-10 cursor-pointer">
                 <span class="font-semibold text-lg uppercase">Member KYC Info</span>
-                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                <i  class="toggle-icon las la-minus"></i>
             </div>
             <!-- Content -->
-            <div x-show="open" x-transition class="bg-white rounded-md">
+            <div class= "toggle-content bg-white rounded-md">
                 <table class="w-full text-sm">
                     <tbody>
                         <tr class="border-b">
@@ -346,13 +347,12 @@
         </div>
 
         {{-- Member Nominee Info --}}
-        <div x-data="{ open: true }" class="mt-4 rounded-10 box shadow">
-            <div class="flex items-center justify-between px-4 py-3 bg-secondary/5  rounded-10 cursor-pointer"
-                @click="open = !open">
+        <div  class="toggle-box mt-4 rounded-10 box shadow">
+            <div class="toggle-header flex items-center justify-between px-4 py-3 bg-secondary/5  rounded-10 cursor-pointer">
                 <span class="font-semibold text-lg uppercase">Nominee Info</span>
-                <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                <i class="toggle-icon las la-minus"></i>
             </div>
-            <div x-show="open" x-transition class="bg-white">
+            <div  class="toggle-content bg-white">
                 <table class="w-full  text-sm">
                     <tbody>
                         <tr class="border-b">
@@ -433,10 +433,10 @@
                 </table>
             </div>
         </div>
-        <div x-data="{ open: true }" class="mt-4 rounded shadow box">
+
+        <div  class="toggle-box mt-4 rounded shadow box">
             <!-- Header -->
-            <div class="flex items-center justify-between px-4 py-2 bg-secondary/5 rounded-10 cursor-pointer"
-                @click="open = !open">
+            <div class="toggle-header flex items-center justify-between px-4 py-2 bg-secondary/5 rounded-10 cursor-pointer">
                 <span class="font-semibold uppercase py-2 text-lg">Documents</span>
                 <div class="flex gap-4 space-x-2 items-center">
                     {{-- <i class="cursor-pointer fa fa-pencil"></i> --}}
@@ -445,12 +445,12 @@
                         <i class="cursor-pointer las la-pencil-alt "></i>
                     </a>
 
-                    <i :class="open ? 'fa fa-minus' : 'fa fa-plus'"></i>
+                    <i  class="toggle-icon las la-minus"></i>
                 </div>
             </div>
 
             <!-- Content -->
-            <div x-show="open" x-transition class="bg-white">
+            <div  class="toggle-content bg-white">
                 <table class="w-full text-sm ">
                     <tbody>
                         {{-- Photo --}}
@@ -868,18 +868,17 @@
             </div>
             @if ($promoter->nominees->count() > 0)
             <div class="box mt-5">
-                <div class=" bg-secondary/5 text-black py-2 rounded-10 shadow" x-data="{ showPromoterAccounts: false }">
-                    <div class="flex items-center justify-between px-4 py-2 rounded-t">
+                <div class="toggle-box bg-secondary/5 text-black py-2 rounded-10 shadow" >
+                    <div class="toggle-header cursor-pointer flex items-center justify-between px-4 py-2 rounded-t">
                         <span class="font-semibold text-lg uppercase">
                             SHARE HOLDING NOMINEE'S INFO
                         </span>
                         <div class="flex gap-2 space-x-2">
-                            <i class="cursor-pointer fa" :class="showPromoterAccounts ? 'fa-minus' : 'fa-plus'"
-                                @click="showPromoterAccounts = !showPromoterAccounts"></i>
+                            <i class="toggle-icon las la-minus"></i>
                         </div>
                     </div>
 
-                    <div class="p-4 text-sm bg-white" x-show="showPromoterAccounts" x-transition>
+                    <div class=" toggle-content p-4 text-sm bg-white" >
                         <div class="py-2">
                             <table class="w-full overflow-x-auto whitespace-nowrap text-sm text-left">
                                 <thead>
@@ -919,20 +918,20 @@
 
 
             <!-- ADDRESS & CONTACT INFO -->
-            <div class="mt-4 box rounded shadow">
-                <div class="flex items-center justify-between px-4 py-3  rounded-10 bg-secondary/5">
-                    <span class="font-semibold text-lg uppercase">Address & Contact Info</span>
+            <div class="toggle-box mt-4 box rounded shadow">
+                <div class="toggle-header flex items-center justify-between px-4 py-3  rounded-10 bg-secondary/5">
+                    <span class="font-semibold text-lg uppercase">
+                        Address & Contact Info
+                    </span>
                     <div class="flex items-center gap-4">
                         <a class="btn-primary p-1"
                             href="{{ isset($promoter) ? route('promotor.address', ['id' => $promoter->id, 'type' => 'promoter']) : '#' }}">
                             <i class="cursor-pointer las la-pencil-alt"></i>
                         </a>
-                        <i class="cursor-pointer fa" :class="showAddress ? 'fa-minus' : 'fa-plus'"
-                            @click="showAddress = !showAddress"></i>
+                        <i class="toggle-icon las la-minus"></i>
                     </div>
                 </div>
-                <div class="p-4 space-y-4 text-sm overflow-x-auto whitespace-nowrap bg-white" x-show="showAddress"
-                    x-transition>
+                <div class="toggle-content p-4 space-y-4 text-sm overflow-x-auto whitespace-nowrap bg-white">
                     <h5 class="mb-2 font-semibold uppercase text-center">
                         Correspondence Address
                     </h5>
@@ -972,18 +971,17 @@
             </div>
             <!-- BANK DETAILS -->
             <div class="box mt-5">
-                <div class="mt-2  bg-secondary/5 rounded-10 shadow" x-data="{ showBankDetails: false }">
-                    <div class="flex items-center justify-between px-2 py-3 rounded-10  ">
+                <div class="toggle-box mt-2  bg-secondary/5 rounded-10 shadow" >
+                    <div class=" toggle-header flex items-center justify-between px-2 py-3 rounded-10  ">
                         <span class="font-semibold uppercase text-lg">Bank Details(static)</span>
-                        <div class="flex gap-4 items-center  space-x-2 px-2">
+                        <div class="cursor-pointer flex gap-4 items-center  space-x-2 px-2">
                             <a href="" class="btn-primary p-1">
                                 <i class="cursor-pointer las la-pencil-alt"></i>
                             </a>
-                            <i class="cursor-pointer fa" :class="showBankDetails ? 'fa-minus' : 'fa-plus'"
-                                @click="showBankDetails = !showBankDetails"></i>
+                             <i class="toggle-icon las la-minus"></i>
                         </div>
                     </div>
-                    <div class="p-4 text-sm bg-white" x-show="showBankDetails" x-transition>
+                    <div class=" toggle-content p-4 text-sm bg-white" >
                         <div class="flex justify-between py-2 border-b">
                             <span class="font-semibold uppercase">Bank Name</span>
                             <span>{{ $promoter->branch->branch_name ?? '' }}</span>
@@ -1006,16 +1004,15 @@
 
             <!-- Promoter AccountsS -->
             <div class="box mt-5">
-                <div class=" bg-secondary/5 py-2  rounded-10 shadow" x-data="{ showPromoterAccounts: false }">
-                    <div class="flex items-center justify-between px-4  py-2 rounded-10">
-                        <span class="font-semibold uppercase text-lg ">Promoter Accounts(static)</span>
+                <div class="toggle-box bg-secondary/5 py-2  rounded-10 shadow" >
+                    <div class=" toggle-header cursor-pointer flex items-center justify-between px-4  py-2 rounded-10">
+                        <span class=" font-semibold uppercase text-lg ">Promoter Accounts(static)</span>
                         <div class="flex gap-2 space-x-2">
-                            <i class="cursor-pointer fa" :class="showPromoterAccounts ? 'fa-minus' : 'fa-plus'"
-                                @click="showPromoterAccounts = !showPromoterAccounts"></i>
+                             <i class="toggle-icon las la-minus"></i>
                         </div>
                     </div>
 
-                    <div class="p-4 text-sm bg-white" x-show="showPromoterAccounts" x-transition>
+                    <div class="toggle-content p-4 text-sm bg-white" >
                         <div class="p-2 overflow-x-auto whitespace-nowrap">
                             <table class="w-full text-sm text-left">
                                 <thead>
@@ -1065,16 +1062,15 @@
 
             <!-- JOINT ACCOUNTS -->
             <div class="box mt-5">
-                <div class=" bg-secondary/5  rounded-10 py-2 shadow" x-data="{ showJointAccounts: false }">
-                    <div class="flex items-center justify-between px-4 py-2 rounded-10">
+                <div class="toggle-box bg-secondary/5  rounded-10 py-2 shadow">
+                    <div class=" toggle-header cursor-pointer flex items-center justify-between px-4 py-2 rounded-10">
                         <span class="font-semibold uppercase text-lg">JOINT ACCOUNTS(static)</span>
                         <div class="flex gap-2 space-x-2">
-                            <i class="cursor-pointer fa" :class="showJointAccounts ? 'fa-minus' : 'fa-plus'"
-                                @click="showJointAccounts = !showJointAccounts"></i>
+                             <i class="toggle-icon las la-minus"></i>
                         </div>
                     </div>
 
-                    <div class="p-4 text-sm bg-white" x-show="showJointAccounts" x-transition>
+                    <div class=" toggle-content p-4 text-sm bg-white">
                         <div class="overflow-x-auto whitespace-nowrap">
                             <table class="w-full text-sm overflow-x-auto whitespace-nowrap text-left">
                                 <thead>
@@ -1126,16 +1122,15 @@
 
             <!-- CO APPLICANT LOANS -->
             <div class="box  mt-5">
-                <div class="py-2 bg-secondary/5   rounded-10 shadow" x-data="{ showCoApplicantLoans: false }">
-                    <div class="flex items-center justify-between px-4 py-2 rounded-10">
+                <div class="toggle-box py-2 bg-secondary/5   rounded-10 shadow">
+                    <div class="toggle-header flex items-center cursor-pointer justify-between px-4 py-2 rounded-10">
                         <span class="font-semibold uppercase text-lg">CO APPLICANT LOANS (static)</span>
                         <div class="flex gap-2 space-x-2">
-                            <i class="cursor-pointer fa" :class="showCoApplicantLoans ? 'fa-minus' : 'fa-plus'"
-                                @click="showCoApplicantLoans = !showCoApplicantLoans"></i>
+                            <i class="toggle-icon las la-minus"></i>
                         </div>
                     </div>
 
-                    <div class="p-4 text-sm bg-white" x-show="showCoApplicantLoans" x-transition>
+                    <div class="toggle-content p-4 text-sm bg-white" >
                         <div class="p-2 whitespace-nowrap overflow-x-auto">
                             <table class="w-full text-sm text-left whitespace-nowrap overflow-x-auto">
                                 <thead>
@@ -1187,17 +1182,16 @@
 
             <!-- MY GUARANTOR SHIP -->
             <div class="box mt-5">
-                <div class=" bg-secondary/5 py-2 rounded-10 shadow" x-data="{ showGuarantorShip: false }" style="">
+                <div class="toggle-box  bg-secondary/5 py-2 rounded-10 shadow" style="">
 
-                    <div class="flex items-center justify-between px-4 py-2  rounded-t">
-                        <span class="font-semibold uppercase text-lg">MY GUARANTOR SHIP (static)</span>
+                    <div class="toggle-header flex items-center justify-between px-4 py-2  rounded-t">
+                        <span class="font-semibold cursor-pointer uppercase text-lg">MY GUARANTOR SHIP (static)</span>
                         <div class="flex gap-2 space-x-2">
-                            <i class="cursor-pointer fa" :class="showGuarantorShip ? 'fa-minus' : 'fa-plus'"
-                                @click="showGuarantorShip = !showGuarantorShip"></i>
+                           <i class="toggle-icon las la-minus"></i>
                         </div>
                     </div>
 
-                    <div class="p-4 text-sm bg-white" x-show="showGuarantorShip" x-transition>
+                    <div class="toggle-content p-4 text-sm bg-white" >
                         <div class="">
                             <table class="w-full text-sm text-left overflow-x-auto whitespace-nowrap">
                                 <thead>
@@ -1261,6 +1255,27 @@
                                                                                         </div> -->
 
     <!-- JS Script -->
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.toggle-box').forEach(box => {
+        const header = box.querySelector('.toggle-header');
+        const content = box.querySelector('.toggle-content');
+        const icon = box.querySelector('.toggle-icon');
+
+        let open = true; // default open
+
+        header.addEventListener('click', function () {
+            open = !open;
+
+            content.style.display = open ? 'block' : 'none';
+
+            icon.classList.toggle('la-minus', open);
+            icon.classList.toggle('la-plus', !open);
+        });
+    });
+});
+</script>
+
     <script>
         function previewDoc(fileUrl, title) {
                     const modal = document.getElementById("docPreviewModal");

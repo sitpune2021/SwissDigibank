@@ -20,6 +20,15 @@ return [
             'default' => now()->format('d-m-Y'),
             'required' => true,
         ],
+        [
+            'label' => 'MEMBER',
+            'name' => 'member_id',
+            'id' => 'memberDropdown',
+            'type' => 'select',
+            'required' => true,
+            'dynamic' => true,
+            'options_key' => 'members',
+        ],
     ],
 
     // Step 2: Promotor Info
