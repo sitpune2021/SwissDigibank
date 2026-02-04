@@ -25,6 +25,7 @@ class Promotor extends Model
         'middle_name',
         'last_name',
         'branch_id',
+        'member_id',
         'date_of_birth',
         'occupation',
         'father_name',
