@@ -115,7 +115,7 @@
       <a href="#" class="btn-primary p-3" onclick="printPassbook()">
         <i class="las la-print mr-2"></i>
       </a>
-      <select class="w-64 bg-secondary/5 border border-n30 rounded-10 px-3 py-3"" id=" headerColorSelect"
+      <select class="w-64 bg-secondary/5 border border-n30 rounded-10 px-3 py-3" id=" headerColorSelect"
         onchange="changeHeaderColor(this.value)">
         <option value="#e0e0e0" selected>Grey </option>
         <option value="#FEB05D">Orange</option>
@@ -372,7 +372,7 @@
 
   {{-- <body style="font-family: Arial, sans-serif; font-size: 12px; margin: 0; display: flex; flex-direction:column; justify-content: center; align-items: flex-start; padding-top: 20px;"> --}}
   <div class="print-wrapper">
-    <div style=" padding: 18px 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;">
+    <div style=" padding: 5px 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;">
 
       <!-- Main Content -->
       <div style=
@@ -380,7 +380,7 @@
       >
 
         <!-- Left Section -->
-        <div style="display:flex; gap:15px; padding-bottom:20px;">
+        <div style="display:flex; gap:15px; ">
           <div style=" width:30%;">
              <img src="{{ asset('assets/images/SBC_Logo_gpg.jpg') }}" alt="Logo" style="height: 50px; width: auto;">
           </div>
@@ -413,13 +413,13 @@
             </div>
           </div>
         </div>
-         <hr>
+         
         <!-- Right Section -->
         <div style="flex: 1; font-size: 13px;">
 
          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
   <div style="width:30%;"></div>
-  <div style="width:40%; text-align:center; font-weight:bold; font-size:20px;">Saving Account Statement</div>
+  
   <div style="width:30%; text-align:right; font-weight:bold;"> </div>
   </div>
 
@@ -526,6 +526,12 @@
     <div  style="width: 100%;">
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
+              <td style="width: 40%; font-weight: bold; padding: 1px 4px; font-size:14px; vertical-align: top;">BRANCH NAME</td>
+              <td style="width: 2%; text-align: center; padding: 1px 4px; font-size:14px; vertical-align: top;">:</td>
+              <td style="width: 58%; padding: 1px 4px; font-size:14px; vertical-align: top; " class="uppercase">
+               ${accountData.branch?.branch_name ?? '-'}</td>
+            </tr>
+            <tr>
               <td style="width: 40%; font-weight: bold; padding: 1px 4px; font-size:14px; vertical-align: top;">BRANCH CODE</td>
               <td style="width: 2%; text-align: center; padding: 1px 4px; font-size:14px; vertical-align: top;">:</td>
               <td style="width: 58%; padding: 1px 4px; font-size:14px; vertical-align: top; " class="uppercase">
@@ -628,7 +634,8 @@
 
         </div>
       </div>
-<div class="page-break"></div>
+      {{--<div class="page-break"></div>  --}}
+<div style="width:100%; text-align:center; font-weight:bold; font-size:20px;">Saving Account Statement</div>
 
   <table style="width:100%; border-collapse:collapse;">
   <tr  id="uiHeaderPreview" >
@@ -927,12 +934,12 @@
           <title>Passbook</title>
           <style>
            @page {
-              size: A4 ;
-              margin: 15mm;
+               size: A4 ;
+               margin: 15mm;
                @bottom-center {
-      content: "Page " counter(page) " of " counter(pages);
-      font-size: 11px;
-    }
+                content: "Page " counter(page) " of " counter(pages);
+               font-size: 11px;
+               }
             }
                .page-break {
                 page-break-after: always;
@@ -967,10 +974,7 @@
       }
         .print-wrapper {
         width: 100%;
-      }
-        
-           
-            
+      }  
           </style>
         </head>
         <body>

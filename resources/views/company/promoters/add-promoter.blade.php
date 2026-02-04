@@ -1,235 +1,290 @@
-  @php
-      $sections = config('promoter_form');
-  @endphp
-  @extends('layout.main')
-  @section('page-title', isset($promoter) ? (!empty($show) ? 'VIEW ' . $promoter->first_name . ' PROMOTER' : 'EDIT ' .
-      $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
+@php
+$sections = config('promoter_form');
+@endphp
+@extends('layout.main')
+@section('page-title', isset($promoter) ? (!empty($show) ? 'VIEW ' . $promoter->first_name . ' PROMOTER' : 'EDIT ' .
+$promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
 
-      @push('style')
-          <style>
-              .switch {
-                  position: relative;
-                  display: inline-block;
-                  width: 60px;
-                  height: 30px;
-              }
+@push('style')
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
 
-              .switch input {
-                  opacity: 0;
-                  width: 0;
-                  height: 0;
-              }
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
 
-              .slider {
-                  position: absolute;
-                  cursor: pointer;
-                  top: 0;
-                  left: 0;
-                  right: 0;
-                  bottom: 0;
-                  background-color: #ccc;
-                  transition: .4s;
-                  border-radius: 30px;
-                  text-align: center;
-                  line-height: 30px;
-                  font-size: 12px;
-                  font-weight: bold;
-                  color: white;
-              }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 30px;
+        text-align: center;
+        line-height: 30px;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+    }
 
-              .slider:before {
-                  position: absolute;
-                  content: "";
-                  height: 22px;
-                  width: 22px;
-                  left: 4px;
-                  bottom: 4px;
-                  background-color: white;
-                  transition: .4s;
-                  border-radius: 50%;
-              }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
 
-              input:checked+.slider {
-                  background-color: #4CAF50;
-              }
+    input:checked+.slider {
+        background-color: #4CAF50;
+    }
 
-              input:checked+.slider:before {
-                  transform: translateX(30px);
-              }
+    input:checked+.slider:before {
+        transform: translateX(30px);
+    }
 
-              .slider .switch-on,
-              .slider .switch-off {
-                  position: absolute;
-                  top: 0;
-                  bottom: 0;
-                  width: 50%;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-              }
+    .slider .switch-on,
+    .slider .switch-off {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-              .slider .switch-on {
-                  left: 0;
-                  font-size: 12px;
+    .slider .switch-on {
+        left: 0;
+        font-size: 12px;
 
-              }
+    }
 
-              button[type="reset"]:active {
-                  transform: scale(0.95);
-                  opacity: 0.7;
-                  transition: 0.1s;
-              }
+    button[type="reset"]:active {
+        transform: scale(0.95);
+        opacity: 0.7;
+        transition: 0.1s;
+    }
 
-              .slider .switch-off {
-                  right: 0;
-                  font-size: 12px;
+    .slider .switch-off {
+        right: 0;
+        font-size: 12px;
 
-              }
-          </style>
-      @endpush
+    }
+</style>
+@endpush
 
-  @section('content')
+@section('content')
 
-      <head>
-          <style>
-              input[type="radio"] {
+<head>
+    <style>
+        input[type="radio"] {
 
-                  width: 24px;
+            width: 24px;
 
-                  height: 24px;
+            height: 24px;
 
-                  accent-color: green;
+            accent-color: green;
 
-              }
-          </style>
-      </head>
-      @include('fields.errormessage')
+        }
+    </style>
+</head>
+@include('fields.errormessage')
 
-      <div class="box mb-4 xxxl:mb-6">
-          <form id="companyForm" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
-              @csrf
-              @if ($method == 'PUT')
-                  @method('PUT')
-              @endif
+<div class="box mb-4 xxxl:mb-6">
+    <form id="companyForm" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
+        @csrf
+        @if ($method == 'PUT')
+        @method('PUT')
+        @endif
 
-              @foreach ($sections as $sectionName => $fields)
-                  @php
-                      $cleanSectionName = trim($sectionName ?? '');
-                      $formattedSectionName = $cleanSectionName
-                          ? ucwords(str_replace('_', ' ', $cleanSectionName))
-                          : '';
-                  @endphp
+        @foreach ($sections as $sectionName => $fields)
+        @php
+        $cleanSectionName = trim($sectionName ?? '');
+        $formattedSectionName = $cleanSectionName
+        ? ucwords(str_replace('_', ' ', $cleanSectionName))
+        : '';
+        @endphp
 
-                  @if ($sectionName)
-                      <div class="col-span-2">
-                          <h4
-                              class="pb-4 mb-4 bb-dashed md:mb-6 md:pb-6 font-semibold text-center text-gray-800  capitalize">
-                              {{ $formattedSectionName }}
-                          </h4>
-                      </div>
-                  @endif
-                  @foreach ($fields as $field)
-                      @php
-                          $name = $field['name'] ?? null;
-                          $type = $field['type'] ?? 'text';
-                          $label = $field['label'];
-                          $id = $field['id'] ?? $name;
-                          $required = $field['required'] ?? false;
+        @if ($sectionName)
+        <div class="col-span-2">
+            <h4 class="pb-2 mt-4  font-semibold text-center text-gray-800  capitalize">
+                {{ $formattedSectionName }}
+            </h4>
+        </div>
+        @endif
+        @foreach ($fields as $field)
+        @php
+        $name = $field['name'] ?? null;
+        $type = $field['type'] ?? 'text';
+        $label = $field['label'];
+        $id = $field['id'] ?? $name;
+        $required = $field['required'] ?? false;
 
-                          // Extract nominee field name by removing 'nominee_' prefix:
-                          $nomineeField = null;
-                          if (str_starts_with($name, 'nominee_')) {
-                              $nomineeField = substr($name, strlen('nominee_')); // e.g. 'name', 'relation'
-                          }
+        // Extract nominee field name by removing 'nominee_' prefix:
+        $nomineeField = null;
+        if (str_starts_with($name, 'nominee_')) {
+        $nomineeField = substr($name, strlen('nominee_')); // e.g. 'name', 'relation'
+        }
 
-                          if (
-                              isset($promoter?->kyc) &&
-                              in_array($name, [
-                                  'aadhaar_no',
-                                  'voter_id_no',
-                                  'pan_no',
-                                  'ration_card_no',
-                                  'meter_no',
-                                  'ci_no',
-                                  'ci_relation',
-                                  'dl_no',
-                              ])
-                          ) {
-                              $value = old($name, $promoter?->kyc?->$name ?? ($field['default'] ?? ''));
-                          } elseif (
-                              $nomineeField !== null &&
-                              $promoter?->nominees?->isNotEmpty() &&
-                              in_array($nomineeField, [
-                                  'name',
-                                  'relation',
-                                  'mobile_no',
-                                  'aadhaar_no',
-                                  'voter_id_no',
-                                  'pan_no',
-                                  'address',
-                              ])
-                          ) {
-                              $firstNominee = $promoter?->nominees?->first();
-                              $value = old($name, $firstNominee?->$nomineeField ?? ($field['default'] ?? ''));
-                          } elseif ($name === 'enrollment_date' || $name === 'date_of_birth') {
-                              $value = old(
-                                  $name,
-                                  $promoter?->$name instanceof \Carbon\Carbon
-                                      ? $promoter?->$name->format('d-m-Y')
-                                      : $promoter?->$name ?? ($field['default'] ?? ''),
-                              );
-                          } else {
-                              $value = old($name, $promoter?->$name ?? ($field['default'] ?? ''));
-                          }
-                      @endphp
+        if (
+        isset($promoter?->kyc) &&
+        in_array($name, [
+        'aadhaar_no',
+        'voter_id_no',
+        'pan_no',
+        'ration_card_no',
+        'meter_no',
+        'ci_no',
+        'ci_relation',
+        'dl_no',
+        ])
+        ) {
+        $value = old($name, $promoter?->kyc?->$name ?? ($field['default'] ?? ''));
+        } elseif (
+        $nomineeField !== null &&
+        $promoter?->nominees?->isNotEmpty() &&
+        in_array($nomineeField, [
+        'name',
+        'relation',
+        'mobile_no',
+        'aadhaar_no',
+        'voter_id_no',
+        'pan_no',
+        'address',
+        ])
+        ) {
+        $firstNominee = $promoter?->nominees?->first();
+        $value = old($name, $firstNominee?->$nomineeField ?? ($field['default'] ?? ''));
+        } elseif ($name === 'enrollment_date' || $name === 'date_of_birth') {
+        $value = old(
+        $name,
+        $promoter?->$name instanceof \Carbon\Carbon
+        ? $promoter?->$name->format('d-m-Y')
+        : $promoter?->$name ?? ($field['default'] ?? ''),
+        );
+        } else {
+        $value = old($name, $promoter?->$name ?? ($field['default'] ?? ''));
+        }
+        @endphp
 
-                      <div class="col-span-2 md:col-span-1">
-                          @include('fields.label', [
-                              'id' => $id,
-                              'label' => $label,
-                              'required' => $required,
-                          ])
+        <div class="col-span-2 md:col-span-1">
+            @include('fields.label', [
+            'id' => $id,
+            'label' => $label,
+            'required' => $required,
+            ])
 
-                          @include('fields.inputs', [
-                              'id' => $id,
-                              'label' => $label,
-                              'required' => $required,
-                              'type' => $type,
-                              'name' => $name,
-                              'value' => $value,
-                              'readonly' => empty($show) ? '' : 'readonly',
-                              'field' => $field,
-                          ])
+            @include('fields.inputs', [
+            'id' => $id,
+            'label' => $label,
+            'required' => $required,
+            'type' => $type,
+            'name' => $name,
+            'value' => $value,
+            'readonly' => empty($show) ? '' : 'readonly',
+            'field' => $field,
+            ])
 
-                          @error($name)
-                              <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                          @enderror
-                      </div>
-                  @endforeach
-              @endforeach
-              <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
-                  @if (empty($show))
-                      <button class="btn-primary" type="submit">
-                          {{ $method === 'PUT' ? 'UPDATE' : 'SAVE' }} PROMOTER
-                      </button>
+            @error($name)
+            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+            @enderror
+        </div>
+        @endforeach
+        @endforeach
+        <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
+            @if (empty($show))
+            <button class="btn-primary" type="submit">
+                {{ $method === 'PUT' ? 'UPDATE' : 'SAVE' }} PROMOTER
+            </button>
 
-                      @if ($method === 'POST')
-                          <button class="btn-outline" type="reset"
-                              onclick="document.getElementById('companyForm').reset();">
-                              RESET
-                          </button>
-                      @endif
-                  @endif
+            @if ($method === 'POST')
+            <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
+                RESET
+            </button>
+            @endif
+            @endif
 
-                  <a href="{{ route('promotor.index') }}" class="btn-outline inline-flex items-center justify-center">
-                      BACK
-                  </a>
-              </div>
+            <a href="{{ route('promotor.index') }}" class="btn-outline inline-flex items-center justify-center">
+                BACK
+            </a>
+        </div>
 
-          </form>
-      </div>
-      <script>
-          document.addEventListener('DOMContentLoaded', function() {
+    </form>
+</div>
+
+
+<script>
+    const members = @json($membersData);
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+   const memberSelect = document.getElementById('memberDropdown');
+
+
+    if (!memberSelect) return;
+
+    memberSelect.addEventListener('change', function () {
+        const member = members[this.value];
+        if (!member) return;
+
+        // Text inputs
+        document.getElementById('first_name').value = member.member_info_first_name ?? '';
+        document.getElementById('middle_name').value = member.member_info_middle_name ?? '';
+        document.getElementById('last_name').value = member.member_info_last_name ?? '';
+        document.getElementById('occupation').value = member.member_info_occupation ?? '';
+        document.getElementById('father_name').value = member.member_info_father_name ?? '';
+        document.getElementById('mother_name').value = member.member_info_mother_name ?? '';
+        document.getElementById('spouse').value = member.member_info_spouse_name ?? '';
+        document.getElementById('mobile').value = member.member_info_mobile_no ?? '';
+        document.getElementById('email').value = member.member_info_email ?? '';
+
+        // Date
+       if (member.member_info_dob) {
+    const dob = new Date(member.member_info_dob);
+
+    const day = String(dob.getDate()).padStart(2, '0');
+    const month = String(dob.getMonth() + 1).padStart(2, '0');
+    const year = dob.getFullYear();
+
+    document.getElementById('datep').value = `${day}-${month}-${year}`;
+}
+
+        // Selects
+        // document.getElementById('marital_statuses_id').value = member.member_info_marital_status ?? '';
+        document.getElementById('religions_id').value = member.member_info_religion ?? '';
+
+        // Radio buttons (Title)
+        document.querySelectorAll('input[name="title"]').forEach(r => {
+            r.checked = (r.value === member.member_info_title);
+        });
+
+        // Radio buttons (Gender)
+       document.querySelectorAll('input[name="gender"]').forEach(r => {
+    r.checked = r.value.toLowerCase() === (member.member_info_gender ?? '').toLowerCase();
+});
+    });
+
+});
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
 
               const titleRadios = document.querySelectorAll('input[name="title"]');
               const genderRadios = document.querySelectorAll('input[name="gender"]');
@@ -255,12 +310,13 @@
               });
 
           });
-      </script>
+</script>
 
-  @endsection
-  @push('script')
-      <script>
-          document.addEventListener('DOMContentLoaded', () => {
+@endsection
+@push('script')
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
 
               const applyDigitValidation = (id, maxLength, exactLength = false) => {
                   const input = document.getElementById(id);
@@ -273,8 +329,8 @@
                   if (exactLength) {
                       input.addEventListener('blur', () => {
                           if (input.value.length !== maxLength) {
-                              alert(`${formatLabel(id)} must be exactly ${maxLength} digits.`);
-                              input.focus();
+                            //   alert(`${formatLabel(id)} must be exactly ${maxLength} digits.`);
+                            //   input.focus();
                           }
                       });
                   }
@@ -330,5 +386,5 @@
               applyAlphaNumValidation('dl_no', 16);
               applyAlphaNumValidation('ci_relation', 20);
           });
-      </script>
-  @endpush
+</script>
+@endpush
