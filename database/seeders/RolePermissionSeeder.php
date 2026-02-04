@@ -14,41 +14,41 @@ class RolePermissionSeeder extends Seeder
     public function run(): void
     {
         // Create Permissions First
-        // $permissions = [
-        //     'manage_companies',
-        //     'manage_branches',
-        //     'manage_members',
-        //     'view_reports',
-        //     'approve_loans',
-        //     'create_member',
-        //     'view_own_profile',
-        // ];
+        $permissions = [
+            'manage_companies',
+            'manage_branches',
+            'manage_members',
+            'view_reports',
+            'approve_loans',
+            'create_member',
+            'view_own_profile',
+        ];
 
-        // foreach ($permissions as $permission) {
-        //     Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
-        // }
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+        }
 
-        // // Create Roles
-        // $roles = ['Super Admin', 'Company', 'Branch', 'Member'];
+        // Create Roles
+        $roles = ['Super Admin', 'Company', 'Branch', 'Member'];
 
-        // foreach ($roles as $role) {
-        //     Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
-        // }
+        foreach ($roles as $role) {
+            Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
+        }
 
-        // //  Assign Permissions to Roles
-        // foreach ($roles as $roleName) {
-        //     $role = Role::where('name', $roleName)->first();
+        //  Assign Permissions to Roles
+        foreach ($roles as $roleName) {
+            $role = Role::where('name', $roleName)->first();
 
-        //     if ($roleName === 'Super Admin') {
-        //         $role->syncPermissions(Permission::all());
-        //     } elseif ($roleName === 'Company') {
-        //         $role->syncPermissions(['manage_branches', 'manage_members', 'view_reports']);
-        //     } elseif ($roleName === 'Branch') {
-        //         $role->syncPermissions(['create_member']);
-        //     } elseif ($roleName === 'Member') {
-        //         $role->syncPermissions(['view_own_profile']);
-        //     }
-        // }
+            if ($roleName === 'Super Admin') {
+                $role->syncPermissions(Permission::all());
+            } elseif ($roleName === 'Company') {
+                $role->syncPermissions(['manage_branches', 'manage_members', 'view_reports']);
+            } elseif ($roleName === 'Branch') {
+                $role->syncPermissions(['create_member']);
+            } elseif ($roleName === 'Member') {
+                $role->syncPermissions(['view_own_profile']);
+            }
+        }
 
         // Create Super Admin User
         $user = User::firstOrCreate(
