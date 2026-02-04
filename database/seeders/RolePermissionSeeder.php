@@ -55,9 +55,9 @@ class RolePermissionSeeder extends Seeder
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Super Admin',
-                'fname' => 'Anuradha',
-                'lname' => 'Jamdade',
-                'mobile' => 9503654539,
+                'fname' => 'Shekhar',
+                'lname' => 'Mudme',
+                'mobile' => 8421309533,
                 'password' => Hash::make('123456'),
                 'role_id' => 1,  // Optional, only if your users table has role_id
             ]
