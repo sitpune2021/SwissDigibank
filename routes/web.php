@@ -11,6 +11,8 @@ use App\Http\Controllers\MasterSettingsController;
 use App\Http\Controllers\MortgageLoanPrintDocumentsController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\PrintDocumentsController;
+use App\Http\Controllers\SmsController;
+use App\Http\Controllers\SmsTemplateController;
 use App\Http\Controllers\SoftwareSettingsController;
 use App\Http\Controllers\UnencumberedDepositController;
 use Illuminate\Support\Facades\Artisan;
@@ -137,6 +139,9 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/promotor/{id}/nominee/edit', [PromotorController::class, 'editNominee'])
             ->name('nominee.edit');
 
+        Route::post('/promotor-kyc/{id}/status', [PromotorController::class, 'updateStatus'])
+            ->name('promotor-kyc.updateStatus');
+            
         // Save updated nominee
         Route::put('/promotor/{id}/nominee', [PromotorController::class, 'updateNominee'])
             ->name('nominee.update');
@@ -174,7 +179,7 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/dds-accounts/store', [DdsAccountsController::class, 'store'])->name('dds-accounts.store');
         Route::get('/ajax/members/{id}', [DdsAccountsController::class, 'getMemberDetails'])
             ->name('ajax.members.show');
-            
+
         Route::get('/dds-accounts/{id}', [DdsAccountsController::class, 'show'])->name('dds-accounts.show');
 
         Route::get('/dds-accounts/{id}/edit', [DdsAccountsController::class, 'edit'])->name('dds-accounts.edit');
@@ -256,13 +261,13 @@ Route::middleware('auth.user')->group(function () {
         Route::get('ddsaccounts/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
             ->name('dd.bond.form');
 
-            
+
         Route::get('ddsaccounts/opening-form-view/{id}', [DdsAccountsController::class, 'ddOpeningFormView'])
             ->name('dd.opening-view');
         Route::get('ddsaccounts/opening-form/{id}', [DdsAccountsController::class, 'ddOpeningForm'])
             ->name('dd.opening.form');
 
-             Route::get('ddsaccounts/closing-form-view/{id}', [DdsAccountsController::class, 'ddClosingFormView'])
+        Route::get('ddsaccounts/closing-form-view/{id}', [DdsAccountsController::class, 'ddClosingFormView'])
             ->name('dd.closing-view');
         Route::get('ddsaccounts/closing-form/{id}', [DdsAccountsController::class, 'ddClosingForm'])
             ->name('dd.closing.form');
@@ -376,16 +381,17 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
 
     Route::get('/accounts/close-account/{id}', [AccountsController::class, 'closeAccount'])->name('saving.accounts.close.account');
     // Preview (Blade)
-Route::get('/saving-account/open-form/{id}',
-    [AccountsController::class, 'accountOpenFormPreview']
-)->name('saving.account.openform.preview');
+    Route::get(
+        '/saving-account/open-form/{id}',
+        [AccountsController::class, 'accountOpenFormPreview']
+    )->name('saving.account.openform.preview');
     // Download PDF
-Route::get(
-    '/saving-account/{id}/opening-form',
-    [AccountsController::class, 'accountOpenFormDownload']
-)->name('saving.account.opening.pdf');
+    Route::get(
+        '/saving-account/{id}/opening-form',
+        [AccountsController::class, 'accountOpenFormDownload']
+    )->name('saving.account.opening.pdf');
 
-}); 
+});
 
 Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::resource('fd-mis-schemes', FDController::class);
@@ -545,12 +551,16 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
         [MisaccountController::class, 'misOpeningFormPreview']
     )->name('misaccount.openingform.preview');
     Route::get('/mis-opening-form/{id}', [MisaccountController::class, 'misOpeningForm'])->name('misaccount.openingform');
-    Route::get('/mis-account/{id}/closing-form/view', 
-    [MisaccountController::class, 'misClosingFormPreview']
-)->name('misaccount.closingform.preview');
+    Route::get(
+        '/mis-account/{id}/closing-form/view',
+        [MisaccountController::class, 'misClosingFormPreview']
+    )->name('misaccount.closingform.preview');
 
     Route::get('/mis-account/{id}/closing-form', [MisaccountController::class, 'misClosingForm'])
         ->name('misaccount.closingform');
+
+    Route::get('/sweep-in-accounts', [FdController::class, 'sweepInAccount'])
+        ->name('sweep-in-accounts');
 
 });
 
@@ -605,7 +615,7 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
     Route::get('/rdaccount/opening-form-view/{id}', [RdAccountController::class, 'rdOpeningFormView'])->name('opening.form-view');
     Route::get('/rdaccount/opening-form/{id}', [RdAccountController::class, 'rdOpeningForm'])->name('opening.form');
 
-     Route::get('/rdaccount/closing-form-view/{id}', [RdAccountController::class, 'rdClosingFormView'])->name('closing.form-view');
+    Route::get('/rdaccount/closing-form-view/{id}', [RdAccountController::class, 'rdClosingFormView'])->name('closing.form-view');
 
     Route::get('/rdaccount/closing-form/{id}', [RdAccountController::class, 'rdClosingForm'])->name('closing.form');
 
@@ -849,10 +859,33 @@ Route::group(['prefix' => 'gold-loan'], function () {
     // Print Document
     //Route::get('agreement', [GoldLoanPrintDocument::class, 'loan_agreement'])->name('loan.agreement.pdf');
     Route::get(
+        '/loan/{loan}/loan-agreement-view',
+        [GoldLoanPrintDocument::class, 'loanAgreementView']
+    )->name('loan.loanAgreement-view');
+    Route::get(
         '/loan/{loan}/loan-agreement',
         [GoldLoanPrintDocument::class, 'loanAgreement']
     )->name('loan.loanAgreement');
 
+    Route::get('/disburse-letter-view/{loan}', [GoldLoanPrintDocument::class, 'disburse_letter_view'])
+        ->name('loan.disburse_letter.view');
+
+    Route::get('/disburse-letter/{loan}', [GoldLoanPrintDocument::class, 'disburse_letter'])
+        ->name('loan.disburse_letter.pdf');
+
+    Route::get('/letter-udertaking-gold-view/{loan}', [GoldLoanPrintDocument::class, 'letter_udertaking_gold_view'])->name('loan.letter_udertaking_gold-view');
+    Route::get('/letter-udertaking-gold/{loan}', [GoldLoanPrintDocument::class, 'letter_udertaking_gold'])->name('loan.letter_udertaking_gold.pdf');
+
+    Route::get('/payout-chart-view/{loan}', [GoldLoanPrintDocument::class, 'payout_chart_gold_appli_view'])->name('loan.payout_chart_loan_application_view');
+    Route::get('/payout-chart/{loan}', [GoldLoanPrintDocument::class, 'payout_chart_gold_appli'])->name('loan.payout_chart_loan_application.pdf');
+
+    Route::get('/promissory-note-view/{loan}', [GoldLoanPrintDocument::class, 'promisary_note_view'])->name('loan.gold_loan_application-view-promisary');
+
+    Route::get('/promissory-note/{loan}', [GoldLoanPrintDocument::class, 'promisary_note'])->name('loan.payout_chart_gold_loan_application.pdf');
+
+
+    Route::get('/gold-loan-app/sanction-letter-view/{loan}', [GoldLoanPrintDocument::class, 'sanction_letter_view'])->name('loan.sanction_letter-view');
+    Route::get('/gold-loan-app/sanction-letter/{loan}', [GoldLoanPrintDocument::class, 'sanction_letter'])->name('loan.sanction_letter.pdf');
 });
 
 
@@ -2356,6 +2389,16 @@ Route::get('payments-to-release/payments-history', [PaymentsToCollectController:
 
 Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
     Route::get('/profile', [SettingsController::class, 'profile'])->name('profile');
+    // Change password page
+    Route::get('/profile/change-password', [SettingsController::class, 'change_password'])->name('profile-change-password');
+    // Wrapper POST route
+    Route::post('/profile/change-password', [SettingsController::class, 'updatePasswordFromProfile'])
+        ->name('profile-update-password');
+
+    Route::post('/profile/photo', [SettingsController::class, 'updateProfilePhoto'])
+        ->name('profile-photo.update');
+    ;
+
     Route::get('/security', [SettingsController::class, 'security'])->name('security');
     Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');
     Route::get('/notification', [SettingsController::class, 'notification'])->name('notification');
@@ -2478,7 +2521,7 @@ Route::get('/dd/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
 // Route::get('/fd-mis-passbook/accounts/{type}', [PrintDocumentsController::class, 'getAccountsByType']);
 
 //letter head
-Route::get('/print/letter-head', [PrintDocumentsController::class, 'letter_head'])->name('print.letter-head');
+Route::get('/view/letter-head', [PrintDocumentsController::class, 'letter_head'])->name('print.letter-head');
 
 Route::get('/letter-head', [PrintDocumentsController::class, 'print_letter_head'])
     ->name('letterhead.download');
@@ -2512,6 +2555,40 @@ Route::get('/proceding-book', [PrintDocumentsController::class, 'procedingBook']
 //     '/form-j/{member}',
 //     [PrintDocumentsController::class, 'generateFormJ']
 // )->name('formj.download');
+
+
+// form e
+
+Route::get('/index-from-e', [PrintDocumentsController::class, 'index_forme'])
+    ->name('index-from-e');
+
+Route::get('/letterhead-e', [PrintDocumentsController::class, 'letterheadView'])
+    ->name('letterhead-e');
+Route::get('/letterhead-e-pdf', [PrintDocumentsController::class, 'letterhead'])
+    ->name('letterhead-e.pdf');
+
+Route::get('/e-one-view', [PrintDocumentsController::class, 'eOneView'])
+    ->name('eOneView');
+Route::get('/e-one', [PrintDocumentsController::class, 'eOneForm'])
+    ->name('eOneForm');
+
+Route::get('/e-two-view', [PrintDocumentsController::class, 'eTwoView'])
+    ->name('eTwoView');
+Route::get('/e-two', [PrintDocumentsController::class, 'eTwo'])
+    ->name('eTwoForm');
+
+//Management Information Systems
+Route::get('/mis-index', [PrintDocumentsController::class, 'mis_index'])
+    ->name('mis_index');
+Route::get('/mis-one-view', [PrintDocumentsController::class, 'MisOneView'])
+    ->name('MisOneView');
+Route::get('/mis-one', [PrintDocumentsController::class, 'MisOneForm'])
+    ->name('MisOneForm');
+
+Route::get('/management-info-two-view', [PrintDocumentsController::class, 'MisTwoView'])
+    ->name('MisTwoView');
+Route::get('/management-info-two', [PrintDocumentsController::class, 'MisTwo'])
+    ->name('MisTwo');
 
 /////////////////////////////print-documents-end //////////////////////////
 
@@ -2564,13 +2641,27 @@ Route::get('master-settings/edit-daily-weekly-settings', [MasterSettingControlle
 
 
 
+//sms settings
 
+Route::get('software-settings/add-sms', [SmsTemplateController::class, 'add_sms'])->name('software-settings.add-sms');
+Route::post('/sms/store', [SmsTemplateController::class, 'store'])->name('sms.store');
 
-Route::get('software-settings/sms-list', [SoftwareSettingsController::class, 'sms_list'])->name('software-settings.sms-list');
-Route::get('software-settings/view-sms-list', [SoftwareSettingsController::class, 'view_sms_list'])->name('software-settings.view-sms-list');
+Route::get('software-settings/sms-list', [SmsTemplateController::class, 'sms_list'])->name('software-settings.sms-list');
 
-Route::get('software-settings/edit-sms-setting', [SoftwareSettingsController::class, 'edit_sms_setting'])->name('software-settings.edit-sms-setting');
+Route::post('/toggle-sms-status', [SmsTemplateController::class, 'toggleStatus'])
+    ->name('software-settings.toggle-sms-status');
 
+Route::get('software-settings/view-sms-list/{id}', [SmsTemplateController::class, 'view_sms_list'])->name('software-settings.view-sms-list');
+
+Route::get('software-settings/edit-sms-setting/{id}', [SmsTemplateController::class, 'edit_sms_setting'])->name('software-settings.edit-sms-setting');
+
+Route::post(
+    'software-settings/update-sms-setting/{id}',
+    [SmsTemplateController::class, 'update_sms_setting']
+)->name('software-settings.update-sms-setting');
+
+Route::post('software-settings/send-test-sms/{id}', [SmsTemplateController::class, 'sendTestSms'])
+    ->name('software-settings.send-test-sms');
 
 
 Route::get('software-settings/sms-history', [SoftwareSettingsController::class, 'sms_history'])->name('software-settings.sms-history');

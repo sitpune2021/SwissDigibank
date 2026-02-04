@@ -105,23 +105,23 @@ class PrintDocumentsController extends Controller
 
 
         if ($request->account_type === 'RD') {
-        $accounts = RdAccount::select('id', 'rd_no')->get();
-        $account  = RdAccount::findOrFail($request->account_no);
-    } else {
-        $accounts = DdsAccount::select('id', 'dd_no')->get();
-        $account  = DdsAccount::findOrFail($request->account_no);
-    }
+            $accounts = RdAccount::select('id', 'rd_no')->get();
+            $account = RdAccount::findOrFail($request->account_no);
+        } else {
+            $accounts = DdsAccount::select('id', 'dd_no')->get();
+            $account = DdsAccount::findOrFail($request->account_no);
+        }
 
         // if ($request->account_type === 'RD') {
         //     $account = RdAccount::find($request->account_no);
         // } else {
         //     $account = DdsAccount::find($request->account_no);
         // }
-           return view('print-documents.rd-dd-bond.index', [
-        'type'     => $request->account_type,
-        'account'  => $account,
-        'accounts' => $accounts, // THIS FIXES IT
-    ]);
+        return view('print-documents.rd-dd-bond.index', [
+            'type' => $request->account_type,
+            'account' => $account,
+            'accounts' => $accounts, // THIS FIXES IT
+        ]);
 
         // return view('print-documents.rd-dd-bond.index', [
         //     'account' => $account,
@@ -198,158 +198,309 @@ class PrintDocumentsController extends Controller
     // }
 
 
-  public function index_formi(){
-    // $members = Member::orderBy('id', 'asc')->get();
-    $members = Member::with([
+    public function index_formi()
+    {
+        // $members = Member::orderBy('id', 'asc')->get();
+        $members = Member::with([
             'address.state'
         ])
-        ->orderBy('id', 'asc')
-        ->get();
-    return view('print-documents.form-i-and-j.index-from-i',compact('members')) ;
+            ->orderBy('id', 'asc')
+            ->get();
+        return view('print-documents.form-i-and-j.index-from-i', compact('members'));
 
-  }
-private function getMarathiMpdf()
-{
-    $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-    $fontDirs = $defaultConfig['fontDir'];
+    }
+    private function getMarathiMpdf()
+    {
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
 
-    $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-    $fontData = $defaultFontConfig['fontdata'];
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
 
-    $fontData['marathi'] = [
-        'R' => 'TiroDevanagariMarathi-Regular.ttf',
-        'B' => 'TiroDevanagariMarathi-Italic.ttf',
-    ];
+        $fontData['marathi'] = [
+            'R' => 'TiroDevanagariMarathi-Regular.ttf',
+            'B' => 'TiroDevanagariMarathi-Italic.ttf',
+        ];
 
-    return new Mpdf([
-        'mode' => 'utf-8',
-        'format' => 'A4',
-        'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
-        'fontdata' => $fontData,
-        'default_font' => 'marathi',
-        'autoScriptToLang' => true,
-        'autoLangToFont' => true,
-        'margin_left' => 10,
-        'margin_right' => 10,
-        'margin_top' => 10,
-        'margin_bottom' => 10,
-    ]);
-}
+        return new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
+            'fontdata' => $fontData,
+            'default_font' => 'marathi',
+            'autoScriptToLang' => true,
+            'autoLangToFont' => true,
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
+    }
 
-public function generateFormJview()
-{
-    // $members = Member::orderBy('id', 'asc')->get();
+    public function generateFormJview()
+    {
+        // $members = Member::orderBy('id', 'asc')->get();
 //   $members = Member::with('address')
 //         ->orderBy('id', 'asc')
 //         ->get();
-$members = Member::with([
+        $members = Member::with([
             'address.state'
         ])
-        ->orderBy('id', 'asc')
-        ->get();
-
-    
+            ->orderBy('id', 'asc')
+            ->get();
 
 
-    return  view('print-documents.form-i-and-j.form-j-view', compact('members'));
-}
-public function generateFormJ()
-{
-    // $members = Member::orderBy('id', 'asc')->get();
+
+
+        return view('print-documents.form-i-and-j.form-j-view', compact('members'));
+    }
+    public function generateFormJ()
+    {
+        // $members = Member::orderBy('id', 'asc')->get();
 //   $members = Member::with('address')
 //         ->orderBy('id', 'asc')
 //         ->get();
-$members = Member::with([
+        $members = Member::with([
             'address.state'
         ])
-        ->orderBy('id', 'asc')
-        ->get();
+            ->orderBy('id', 'asc')
+            ->get();
 
-    $html = view(
-        'print-documents.form-i-and-j.form-j',
-        compact('members')
-    )->render();
+        $html = view(
+            'print-documents.form-i-and-j.form-j',
+            compact('members')
+        )->render();
 
-    $mpdf = $this->getMarathiMpdf();
-    $mpdf->WriteHTML($html);
+        $mpdf = $this->getMarathiMpdf();
+        $mpdf->WriteHTML($html);
 
-    return response(
-        $mpdf->Output('form-j-all-members.pdf', 'D')
-    )->header('Content-Type', 'application/pdf');
-}
+        return response(
+            $mpdf->Output('form-j-all-members.pdf', 'D')
+        )->header('Content-Type', 'application/pdf');
+    }
 
 
-public function formiView()
-{
-    $members = Member::with('address.state')
-        ->orderBy('id', 'asc')
-        ->get();
+    public function formiView()
+    {
+        $members = Member::with('address.state')
+            ->orderBy('id', 'asc')
+            ->get();
 
-    
 
-    return view('print-documents.form-i-and-j.form-i-view' , compact('members'));
-}
-public function generateFormI()
-{
-    $members = Member::with('address.state')
-        ->orderBy('id', 'asc')
-        ->get();
 
-    $html = view(
-        'print-documents.form-i-and-j.form-i',
-        compact('members')
-    )->render();
+        return view('print-documents.form-i-and-j.form-i-view', compact('members'));
+    }
+    public function generateFormI()
+    {
+        $members = Member::with('address.state')
+            ->orderBy('id', 'asc')
+            ->get();
 
-    $mpdf = $this->getMarathiMpdf();
-    $mpdf->WriteHTML($html);
+        $html = view(
+            'print-documents.form-i-and-j.form-i',
+            compact('members')
+        )->render();
 
-    return response(
-        $mpdf->Output('form-i.pdf', 'D')
-    )->header('Content-Type', 'application/pdf');
-}
-public function procedingBookView()
-{
-    // $members = Member::orderBy('id', 'asc')->get();
+        $mpdf = $this->getMarathiMpdf();
+        $mpdf->WriteHTML($html);
+
+        return response(
+            $mpdf->Output('form-i.pdf', 'D')
+        )->header('Content-Type', 'application/pdf');
+    }
+    public function procedingBookView()
+    {
+        // $members = Member::orderBy('id', 'asc')->get();
 //   $members = Member::with('address')
 //         ->orderBy('id', 'asc')
 //         ->get();
-$members = Member::with([
+        $members = Member::with([
             'address.state'
         ])
-        ->orderBy('id', 'asc')
-        ->get();
+            ->orderBy('id', 'asc')
+            ->get();
 
-    
-  
-    return view(        'print-documents.form-i-and-j.proceding-book-view',
-        compact('members'));
-}
-public function procedingBook()
-{
-    // $members = Member::orderBy('id', 'asc')->get();
+
+
+        return view(
+            'print-documents.form-i-and-j.proceding-book-view',
+            compact('members')
+        );
+    }
+    public function procedingBook()
+    {
+        // $members = Member::orderBy('id', 'asc')->get();
 //   $members = Member::with('address')
 //         ->orderBy('id', 'asc')
 //         ->get();
-$members = Member::with([
+        $members = Member::with([
             'address.state'
         ])
-        ->orderBy('id', 'asc')
-        ->get();
+            ->orderBy('id', 'asc')
+            ->get();
 
-    $html = view(
-        'print-documents.form-i-and-j.proceding-book',
-        compact('members')
-    )->render();
+        $html = view(
+            'print-documents.form-i-and-j.proceding-book',
+            compact('members')
+        )->render();
 
-    $mpdf = $this->getMarathiMpdf();
-    $mpdf->AddPage('L');  
-    $mpdf->WriteHTML($html);
+        $mpdf = $this->getMarathiMpdf();
+        $mpdf->AddPage('L');
+        $mpdf->WriteHTML($html);
 
-    return response(
-        $mpdf->Output('Proceeding Book.pdf', 'D')
-    )->header('Content-Type', 'application/pdf');
-}
+        return response(
+            $mpdf->Output('Proceeding Book.pdf', 'D')
+        )->header('Content-Type', 'application/pdf');
+    }
 
+    public function index_forme()
+    {
+        // $members = Member::orderBy('id', 'asc')->get();
+        $members = Member::with([
+            'address.state'
+        ])
+            ->orderBy('id', 'asc')
+            ->get();
+        return view('print-documents.form-e.index-form-e', compact('members'));
 
+    }
+    public function letterheadView()
+    {
+        $members = Member::with('address.state')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return view('print-documents.form-e.letterhead', compact('members'));
+    }
+    public function letterhead()
+    {
+
+        $members = Member::with([
+            'address.state'
+        ])
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $html = view(
+            'print-documents.form-e.letterhead-download',
+            compact('members')
+        )->render();
+
+        $mpdf = $this->getMarathiMpdf();
+        // $mpdf->AddPage('L');  
+        $mpdf->WriteHTML($html);
+
+        return response(
+            $mpdf->Output('letter_head_Book.pdf', 'D')
+        )->header('Content-Type', 'application/pdf');
+    }
+
+    public function eOneView()
+    {
+        // $members = Member::orderBy('id', 'asc')->get();
+
+        return view('print-documents.form-e.form-e-one-view');
+
+    }
+    public function eOneForm()
+    {
+        // $members = Member::orderBy('id', 'asc')->get();
+        $members = Member::with([
+            'address.state'
+        ])
+            ->orderBy('id', 'asc')
+            ->get();
+        $html = view(
+            'print-documents.form-e.form-e-one',
+            compact('members')
+        )->render();
+
+        $mpdf = $this->getMarathiMpdf();
+        // $mpdf->AddPage('L');  
+        $mpdf->WriteHTML($html);
+
+        return response(
+            $mpdf->Output('Form_E1.pdf', 'D')
+        )->header('Content-Type', 'application/pdf');
+
+    }
+
+    public function eTwoView()
+    {
+        // $members = Member::orderBy('id', 'asc')->get();
+
+        return view('print-documents.form-e.form-e-two-view');
+
+    }
+    public function eTwo()
+    {
+        // $members = Member::orderBy('id', 'asc')->get();
+        $members = Member::with([
+            'address.state'
+        ])
+            ->orderBy('id', 'asc')
+            ->get();
+        $html = view(
+            'print-documents.form-e.form-e-two',
+            compact('members')
+        )->render();
+
+        $mpdf = $this->getMarathiMpdf();
+        // $mpdf->AddPage('L');  
+        $mpdf->WriteHTML($html);
+
+        return response(
+            $mpdf->Output('Form_E2.pdf', 'D')
+        )->header('Content-Type', 'application/pdf');
+
+    }
+
+    public function mis_index(){
+      return view('print-documents.management-info-systems.index');
+   }
+     public function MisOneView()
+    {
+       
+        return view('print-documents.management-info-systems.management-info-one-view');
+
+    }
    
+    public function MisOneForm()
+    {
+        $html = view(
+            'print-documents.management-info-systems.management-info-sys-one'
+        )->render();
+
+        $mpdf = $this->getMarathiMpdf();
+        // $mpdf->AddPage('L');  
+        $mpdf->WriteHTML($html);
+
+        return response(
+            $mpdf->Output('MIS-1.pdf', 'D')
+        )->header('Content-Type', 'application/pdf');
+    }
+ public function MisTwoView()
+ { 
+        return view('print-documents.management-info-systems.management-info-two-view');
+
+    }
+
+     public function MisTwo()
+{
+    $html = view(
+        'print-documents.management-info-systems.management-info-two'
+    )->render();
+
+    $mpdf = $this->getMarathiMpdf();
+
+    // ADD LANDSCAPE PAGE
+    $mpdf->AddPage('L');   // L = Landscape, P = Portrait
+
+    $mpdf->WriteHTML($html);
+
+    return response(
+        $mpdf->Output('MIS-2.pdf', 'D')
+    )->header('Content-Type', 'application/pdf');
+}
+    
 }

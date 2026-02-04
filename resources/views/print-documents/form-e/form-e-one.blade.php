@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="mr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Form E-1</title>
+
+    <style>
+        /* @page {
+            size: A4;
+            margin: 10mm 10mm 10mm 10mm;
+        } */
+
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .sub-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 4px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        th {
+            font-weight: bold;
+        }
+
+        .left {
+            text-align: left;
+        }
+
+        .small {
+            font-size: 11px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="width:100%; font-family: dejavusans; ">
+
+        <!-- Logo -->
+        <div style="float:left; width:50%; padding: 0px 5px; text-align:left;">
+            <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
+                style="width:auto; height:50px;">
+        </div>
+
+        <!-- Title Section -->
+        <div style="float:left; width:50%; text-align:center;">
+            <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; ">
+                {{-- SBC Global --}}
+            </div>
+
+            <div style="height:10px; margin-top: 40px;">&nbsp;</div>
+
+
+        </div>
+
+        <!-- Clear Float -->
+        <div style="clear:both; "></div>
+        <h4 style=" padding-bottom: 5px;  margin:0; text-align: center;  font-size:18px; font-weight:bold;">
+            <div class="title">नमुना ई-1</div>
+        </h4>
+        <div class="sub-title">
+            ________________र. नं. ____________ &nbsp;&nbsp;&nbsp;
+            ता. ____________ , जि.___________
+        </div>
+        <hr>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2" style="width: 5%;">अ.क्र.</th>
+                <th rowspan="2" style="width: 7%;">विभाग</th>
+                <th rowspan="2" style="width: 7%;">जिल्हा</th>
+                <th rowspan="2" style="width: 7%;">तालुका/प्रभाग</th>
+                <th rowspan="2" style="width: 15%;">संस्थेचे नाव व नोंदणी क्रमांक व संपूर्ण पत्ता</th>
+                <th rowspan="2" style="width: 10%;">सदस्यांची संख्या दर्शविणारा पोटनियम क्रमांक</th>
+                <th colspan="2" style="width: 25%;">एकूण निवडायचे सदस्य </th>
+                <th rowspan="2" style="width: 10%;">
+                    व्यवस्थापक समितीची शेवटची निवडणुक झाली त्याचा दिनांक
+                </th>
+                <th rowspan="2" style="width: 10%;">व्यवस्थापक समितीची मुदत संपण्याचा दिनांक</th>
+                <th rowspan="2" style="width: 7%;">शेरा</th>
+            </tr>
+            <tr style="">
+                <th>मतदार संघाचा प्रकार</th>
+                <th style="width: 6%">सदस्य संख्या</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="left"></td>
+                <td class="left" style="border-right: none"></td>
+
+                <!-- Reservation Category Column -->
+               <td class="" colspan="2" style="padding: 0;border:none " >
+                        <table class="" style="width:100%; border:none !important;">
+                            <tr >
+                                <td style="width: 45%; ">
+                                   1. सर्वसाधारण प्रतिनिधी
+                                </td>
+                                <td style="width: 50%; ">
+                                
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 45%; "   >
+                                 2.अनुसुचित जाती/जमाती साठी राखीव.
+                                </td>
+                                <td style="width: 50%; ">
+                                
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 45%; ">
+                                    3. महिला प्रतिनिधी राखीव
+                                </td>
+                                <td style="width: 20%; ">
+                                
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 45%; "   >
+                                   4. इतर मागासवर्गीयासाठी राखीव
+                                </td>
+                                <td style="width: 20%; ">
+                                
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:76%; "   >
+                                 5. भटक्या विमुक्त जाती/जमाती विशेष मागास प्रवर्ग
+                                </td>
+                                <td style="width: 20%; ">
+                                
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 45%; "><strong>एकुण</strong></td>
+                                <td style="width: 20%; ">
+                                
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+
+                <td style="border-left: none">
+
+                </td>
+                {{-- <td></td> --}}
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="" style="text-align: right; margin-top: 55px; font-size: 14px; font-weight: 700;">
+        सचिव/ व्यवस्थाक/ कार्यकारी संचालक
+    </div>
+    </div>
+</body>
+
+</html>
