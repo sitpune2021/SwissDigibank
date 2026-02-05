@@ -42,7 +42,7 @@ class DirectorController extends Controller
                     });
             }
 
-            $directors = $query->orderBy('created_at', 'desc')->paginate(10);
+            $directors = $query->orderBy('created_at', 'desc')->paginate(25);
 
             // dd(  $directors );
             return view('company.director.index', compact('directors'));
