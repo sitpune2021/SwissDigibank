@@ -75,12 +75,12 @@
                 @if(!empty($account))
                     <div class="mt-6 text-center">
                         @if($type === 'FD')
-                            <a href="{{ route('fd.bond.download', $account->id) }}" class="btn-primary" target="_blank">
-                                Download FD Bond
+                            <a href="{{ route('fd.bond.view', $account->id) }}" class="btn-primary" target="_blank">
+                                Show FD Bond
                             </a>
                         @elseif($type === 'MIS')
-                            <a href="{{ route('mis.bond.download', $account->id) }}" class="btn-primary" target="_blank">
-                                Download MIS Bond
+                            <a href="{{ route('misaccount.printbond.view', $account->id) }}" class="btn-primary" target="_blank">
+                                Show MIS Bond
                             </a>
                         @else
                             <p class="text-error font-medium">

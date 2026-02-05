@@ -34,14 +34,14 @@
 
     <table style="width:100%; font-size:20px; margin-bottom:10px; border:none;">
         <tr>
-            <td style="width:33%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
-                सहकारी
+            <td style="width:25%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
+                {{-- सहकारी --}}
             </td>
-            <td style="width:34%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
-                संस्था म.
+            <td style="width:50%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
+                {{ $companyName }}
             </td>
             <td style="width:33%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
-                र. नं.
+                र. नं. 12345 
             </td>
         </tr>
     </table>
@@ -138,6 +138,7 @@
                 <th style="border:1px solid #000;">९</th>
                 <th style="border:1px solid #000; border-right: none  !important;">१० </th>
             </tr>
+
         </thead>
         <tbody>
             <tr style=" height: 200px;">

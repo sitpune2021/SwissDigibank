@@ -65,6 +65,11 @@
        Management Information System
     </h1>
 <div class="text-center flex justify-center gap-5 mt-4" >
+      <a href=" {{ route('MisOneFormPrint') }}"
+   class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; "
+   target="_blank">
+   <i class="las la-print"></i> Print
+</a>
      <a href=" {{ route('MisOneForm') }}"
    class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; "
    target="_blank">
@@ -82,7 +87,7 @@
 
     <!-- Header -->
     <div class="header">
-       ___________________________________ यांची माहिती व्यवस्थापन प्रणाली
+       {{ $companyName }} यांची माहिती व्यवस्थापन प्रणाली
     </div>
     <div class="header">
         अहवाल माहे ________________अखेर
@@ -214,7 +219,9 @@
 
     <!-- Signature -->
     
-
+<div class=" " style="text-align: right; padding:5px 30px;">
+        <h5>{{ $companyName }}</h5>
+    </div>
 
 </div>
 

@@ -31,6 +31,9 @@
         Letter Head
     </h1>
 <div class="text-center flex justify-center gap-5 mt-4" >
+     <a href="{{ route('letterheadPrint') }}" target="_blank" class="px-4 py-2 btn-primary uppercase">
+    <i class="las la-print"></i> Print
+</a>
      <a href=" {{ route('letterhead-e.pdf') }}"
    class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; "
    target="_blank">
@@ -68,7 +71,7 @@
                 <!-- Clear Float -->
                 <div style="clear:both; "></div>
                 <h4 style=" padding-bottom: 5px;  margin:0; text-align: center;  font-size:18px; font-weight:bold;">
-          _________________________________________________र.नं.
+                   {{ $companyName }} &nbsp; र.नं.12345
                 </h4 >
                 <hr>
             </div>

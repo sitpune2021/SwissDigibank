@@ -72,7 +72,7 @@
                 <!-- Clear Float -->
                 <div style="clear:both; "></div>
                 <h4 style=" padding-bottom: 5px;  margin:0; text-align: center;  font-size:18px; font-weight:bold;">
-          _________________________________________________र.नं.
+          {{ $companyName }} &nbsp; र.नं.12345
                 </h4 >
                 <hr>
             </div>
