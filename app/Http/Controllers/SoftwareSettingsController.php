@@ -6,18 +6,22 @@ use Illuminate\Http\Request;
 
 class SoftwareSettingsController extends Controller
 {
-     public function sms_list()
-    {
-        return view("software-settings.sms-list");
-    }
-     public function view_sms_list()
-    {
-        return view("software-settings.view-sms-list");
-    }
-     public function edit_sms_setting()
-    {
-        return view("software-settings.edit-sms-setting");
-    }
+//   public function add_sms()
+//     {
+//         return view("software-settings.add-sms");
+//     }
+//      public function sms_list()
+//     {
+//         return view("software-settings.sms-list");
+//     }
+//      public function view_sms_list()
+//     {
+//         return view("software-settings.view-sms-list");
+//     }
+//      public function edit_sms_setting()
+//     {
+//         return view("software-settings.edit-sms-setting");
+//     }
        public function all_event_list()
     {
         return view("software-settings.event-calender.all-event-list");

@@ -144,7 +144,7 @@ Route::middleware('auth.user')->group(function () {
 
         Route::post('/promotor-kyc/{id}/status', [PromotorController::class, 'updateStatus'])
             ->name('promotor-kyc.updateStatus');
-            
+
         // Save updated nominee
         Route::put('/promotor/{id}/nominee', [PromotorController::class, 'updateNominee'])
             ->name('nominee.update');
@@ -547,7 +547,10 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
         ->name('misaccount.printbond.view');
 
     Route::get('/misaccount/{id}/print-bond', [MisaccountController::class, 'misBondForm'])->name('misaccount.printbond');
-
+    Route::get('/mis-bond/{id}/print', [MisaccountController::class, 'misBondPrint'])
+    ->name('misBondPrint');
+Route::get('/mis-bond/{id}/print-view', [MisaccountController::class, 'misBondPrintView'])
+    ->name('misBondPrintView');
     // Preview (Blade)
     Route::get(
         '/mis-opening-form/{id}/view',
@@ -2711,6 +2714,7 @@ Route::get(
     '/form-i-and-j',
     [PrintDocumentsController::class, 'generateFormJ']
 )->name('formj.download');
+Route::get('/form-i-and-j/print', [PrintDocumentsController::class, 'generateFormJPrint'])->name('generateFormJPrint');
 
 
 Route::get('/from-i-view', [PrintDocumentsController::class, 'formiView'])
@@ -2718,11 +2722,13 @@ Route::get('/from-i-view', [PrintDocumentsController::class, 'formiView'])
 
 Route::get('/form-i-pdf', [PrintDocumentsController::class, 'generateFormI'])
     ->name('formi.pdf');
+    Route::get('/form-i-pdf/print', [PrintDocumentsController::class, 'generateFormIPrint'])->name('generateFormIPrint');
 
 Route::get('/proceding-book-view', [PrintDocumentsController::class, 'procedingBookView'])
     ->name('proceding-book.view');
 Route::get('/proceding-book', [PrintDocumentsController::class, 'procedingBook'])
     ->name('proceding-book.pdf');
+Route::get('/proceding-book/print', [PrintDocumentsController::class, 'procedingBookPrint'])->name('procedingBookPrint');
 //   Route::get(
 //     '/form-j/{member}',
 //     [PrintDocumentsController::class, 'generateFormJ']
@@ -2739,15 +2745,20 @@ Route::get('/letterhead-e', [PrintDocumentsController::class, 'letterheadView'])
 Route::get('/letterhead-e-pdf', [PrintDocumentsController::class, 'letterhead'])
     ->name('letterhead-e.pdf');
 
+Route::get('/letterheadPrint/print', [PrintDocumentsController::class, 'letterheadPrint'])->name('letterheadPrint');
 Route::get('/e-one-view', [PrintDocumentsController::class, 'eOneView'])
     ->name('eOneView');
 Route::get('/e-one', [PrintDocumentsController::class, 'eOneForm'])
     ->name('eOneForm');
+Route::get('/form-e1/print', [PrintDocumentsController::class, 'eOnePrint'])->name('eOnePrint');
 
 Route::get('/e-two-view', [PrintDocumentsController::class, 'eTwoView'])
     ->name('eTwoView');
 Route::get('/e-two', [PrintDocumentsController::class, 'eTwo'])
     ->name('eTwoForm');
+    
+Route::get('/form-e2/print', [PrintDocumentsController::class, 'eTwoPrint'])->name('eTwoPrint');
+
 
 //Management Information Systems
 Route::get('/mis-index', [PrintDocumentsController::class, 'mis_index'])
@@ -2756,12 +2767,14 @@ Route::get('/mis-one-view', [PrintDocumentsController::class, 'MisOneView'])
     ->name('MisOneView');
 Route::get('/mis-one', [PrintDocumentsController::class, 'MisOneForm'])
     ->name('MisOneForm');
+  Route::get('/mis-one/print', [PrintDocumentsController::class, 'MisOneFormPrint'])->name('MisOneFormPrint');
+
 
 Route::get('/management-info-two-view', [PrintDocumentsController::class, 'MisTwoView'])
     ->name('MisTwoView');
 Route::get('/management-info-two', [PrintDocumentsController::class, 'MisTwo'])
     ->name('MisTwo');
-
+Route::get('/mis-two/print', [PrintDocumentsController::class, 'MisTwoPrint'])->name('MisTwoPrint');
 /////////////////////////////print-documents-end //////////////////////////
 
 ///////////////  Logo Img Upload  /////////////////////////////

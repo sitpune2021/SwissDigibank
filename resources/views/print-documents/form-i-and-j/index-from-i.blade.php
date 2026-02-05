@@ -38,19 +38,19 @@
                 </a>
             </div>
         </div>
-        <div class="pb-4 overflow-x-auto lg:pb-6">
+        <div class="pb-4  lg:pb-6">
 
             <table class="w-full  select-all-table" id="">
 
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
-                        <th class="text-start !py-5 px-3 min-w-[100px] cursor-pointer">
-                            <div class="flex text-center uppercase justify-start gap-1">
+                        <th class="text-start !py-5 px-3  cursor-pointer">
+                            <div class="flex text-start uppercase justify-start gap-1">
                                 SR.NO.
                             </div>
                         </th>
-                        <th class="text-start !py-5 px-3 min-w-[100px] cursor-pointer">
-                            <div class="flex text-center uppercase justify-start gap-1">
+                        <th class="text-start !py-5 px-3  cursor-pointer">
+                            <div class="flex text-start uppercase justify-start gap-1">
                                 CUSTOMER NO
                             </div>
                         </th>

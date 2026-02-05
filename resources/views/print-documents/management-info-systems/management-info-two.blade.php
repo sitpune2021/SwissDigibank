@@ -69,7 +69,8 @@
 <body>
 
     <div class="header" style="font-size: 14px;">
-       _________________________ र. नं.____________
+      {{ $companyName }} &nbsp; र. नं. &nbsp; 12345
+       {{-- _________________________ र. नं.____________ --}}
     </div>
     <div class="header" style="font-size: 14px;margin-top: 20px; ">
         प्रगती (एम आय एस) अहवाल माहे______________अखेर
@@ -184,7 +185,9 @@
     </table>
 
     <!-- SIGNATURE -->
-   
+   <div class=" " style="text-align: right; padding:80px 30px;">
+        <h5 style="font-size: 16px;">{{ $companyName }}</h5>
+    </div>
 
 </body>
 </html>

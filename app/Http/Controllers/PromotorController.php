@@ -42,7 +42,7 @@ class PromotorController extends Controller
                 });
             }
 
-            $promotors = $query->orderBy('created_at', 'desc')->paginate(10);
+            $promotors = $query->orderBy('created_at', 'desc')->paginate(25);
 
             foreach ($promotors as $promotor) {
                 if ($promotor->date_of_birth) {
@@ -122,9 +122,9 @@ class PromotorController extends Controller
                 'mobile' => 'required|digits:10|unique:promotors,mobile',
                 'sms' => 'boolean',
 
-                'aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:promotor_k_y_c_s,aadhaar_no',
+                'aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:promotor_k_y_c_s,aadhaar_no',
                 'voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/|unique:promotor_k_y_c_s,voter_id_no',
-                'pan_no' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/|unique:promotor_k_y_c_s,pan_no',
+                'pan_no' => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/|unique:promotor_k_y_c_s,pan_no',
                 'ration_card_no' => 'nullable|string|max:20|unique:promotor_k_y_c_s,ration_card_no',
                 'meter_no' => 'nullable|string|max:20|unique:promotor_k_y_c_s,meter_no',
                 'ci_no' => 'nullable|string|max:20',
@@ -338,7 +338,7 @@ class PromotorController extends Controller
                 // 'ration_card_no' => 'nullable|string|max:20',
                 // 'meter_no' => 'nullable|string|max:20',
                 'aadhaar_no' => [
-                    'required',
+                    'nullable',
                     'digits:12',
                     'regex:/^[2-9]{1}[0-9]{11}$/',
                     Rule::unique('promotor_k_y_c_s', 'aadhaar_no')->ignore(optional($promotor->kyc)->id),
@@ -349,7 +349,7 @@ class PromotorController extends Controller
                     Rule::unique('promotor_k_y_c_s', 'voter_id_no')->ignore(optional($promotor->kyc)->id),
                 ],
                 'pan_no' => [
-                    'required',
+                    'nullable',
                     'regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
                     Rule::unique('promotor_k_y_c_s', 'pan_no')->ignore(optional($promotor->kyc)->id),
                 ],

@@ -877,7 +877,7 @@ class AccountsController extends Controller
             ->setPaper('A4', 'portrait');
 
         // Stream in browser
-        return $pdf->stream('saving-account-opening-form.pdf');
+        return $pdf->download('saving-account-opening-form.pdf');
     }
 
 }

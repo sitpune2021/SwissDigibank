@@ -64,7 +64,7 @@ return [
             'name' => 'aadhaar_no',
             'id' => 'aadhaar_no',
             'type' => 'text',
-            'required' => true,
+            'required' => false,
         ],
         ['label' => 'VOTER ID NO.', 'name' => 'voter_id_no', 'id' => 'voter_id_no', 'type' => 'text', 'required' => false],
         [
@@ -72,7 +72,7 @@ return [
             'name' => 'pan_no',
             'id' => 'pan_no',
             'type' => 'text',
-            'required' => true,
+            'required' => false,
         ],
         ['label' => 'RATION CARD NO.', 'name' => 'ration_card_no', 'id' => 'ration_card_no', 'type' => 'text', 'required' => false],
         ['label' => 'METER NO.', 'name' => 'meter_no', 'id' => 'meter_no', 'type' => 'text', 'required' => false],

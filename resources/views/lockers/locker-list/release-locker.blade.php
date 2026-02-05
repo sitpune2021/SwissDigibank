@@ -50,7 +50,7 @@
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h3 class=" flex text-xl block  uppercase  font-bold">
+            <h3 class=" flex text-lg block  uppercase  font-bold">
                Release Locker
             </h3>
         </div>
