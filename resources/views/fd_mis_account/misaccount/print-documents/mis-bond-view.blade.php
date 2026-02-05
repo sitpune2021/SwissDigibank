@@ -186,6 +186,11 @@
     <div class="main-inner">
         <h1 class="text-lg font-semibold">MIS ACCOUNT - {{ $misaccount->mis_account_no }}</h1>
         <div class="text-center flex justify-center gap-5 mt-4">
+           <a href="{{ route('misBondPrintView', $misaccount->id) }}"
+   target="_blank"
+   class="px-3 py-2 btn-primary uppercase">
+   <i class="las la-print"></i> Print
+</a>
             <a href="{{ route('misaccount.printbond', $misaccount->id) }}" class="px-4 py-2 btn-primary uppercase"
                 target="_blank">
                 <i class="las la-download"></i> Download

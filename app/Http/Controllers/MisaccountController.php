@@ -1199,7 +1199,34 @@ public function misBondPreview($id)
 
         // return $pdf->stream('mis-bond-' . $deposit->id . '.pdf');
     }
+   
+public function misBondPrint($id)
+{
+    $misaccount = Misaccount::with(['member','nominee','fdScheme.fdslabs'])->findOrFail($id);
 
+    $amountWords = $this->numToWords((int) round($misaccount->maturity_amount)) . ' Only';
+
+    $data = [
+        'misaccount' => $misaccount,
+        'amount_words' => $amountWords,
+        'company_address' => 'HEAD OFFICE',
+        'date' => now()->format('d-m-Y'),
+        'company_reg_no' => 'Reg. No. 969/03-04',
+    ];
+
+    $pdf = app('dompdf.wrapper')
+        ->loadView('fd_mis_account.misaccount.print-documents.misbond', $data)
+        ->setPaper('a4', 'portrait');
+
+    return $pdf->stream('mis-bond-'.$misaccount->id.'.pdf'); // OPEN in browser
+}
+
+public function misBondPrintView($id)
+{
+    $pdfUrl = route('misBondPrint', $id);
+
+    return view('fd_mis_account.misaccount.print-documents.mis-bond-print', compact('pdfUrl'));
+}
     protected function numToWords($number)
     {
         $words = [
