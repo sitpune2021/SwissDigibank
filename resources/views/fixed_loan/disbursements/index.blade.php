@@ -49,9 +49,8 @@
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h1 class=" flex text-lg block  uppercase font-semibold">
-                Daily Weekly Disbursements
+                Fixed Loan Disbursements
             </h1>
-            
         </div>
 
         <div class="col-span-12 box lg:col-span-12">
@@ -75,7 +74,6 @@
                                 </div>
                             </th>
 
-
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                    CUSTOMER NAME
@@ -87,12 +85,7 @@
                                   BRANCH
                                 </div>
                             </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    SCHEME
-                                </div>
-                            </th>
-
+                           
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                    	APPROVED AMT.
@@ -112,83 +105,77 @@
                             </th>
                         </tr>
                     </thead>
-                   <tbody>
-    @foreach($disbursements as $disbursement)
-        <tr class="border-b dark:border-bg3">
-            <td class="text-start !py-5 px-6">
-               <a href="{{ route('daily_weekly.applications.view', $disbursement->id) }}" 
-                class="text-green-600 hover:underline">
-                    {{-- {{ $disbursement->id }} --}}
-                      {{ str_pad($disbursement->id, 10, '0', STR_PAD_LEFT) }}
-                </a>
-            </td>
-            <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1">
-                    {{ \Carbon\Carbon::parse($disbursement->application_date)->format('d-m-Y') }}
-                </div>
-            </td>
-            <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1 text-secondary">
-                    <a href="{{ url('members/member/' . $disbursement->member_id) }}" 
-                class="text-green-600 hover:underline">
-                    {{ str_pad($disbursement->member_id, 6, '0', STR_PAD_LEFT) }}
-                </a>
-                </div>
-            </td>
-            <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1">
-                    {{ $disbursement->member->member_info_first_name ?? 'N/A' }}
-                </div>
-            </td>
-            <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1">
-                    {{ $disbursement->branch->branch_name ?? 'N/A' }}
-                </div>
-            </td>
-            <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1 uppercase">
-                    {{ $disbursement->scheme->scheme_name ?? 'N/A' }}
-                </div>
-            </td>
-            <td class="text-start !py-5 px-6">
-                <div class="flex items-center gap-1">
-                    {{ number_format($disbursement->approved_loan_amount, 2) }}
-                </div>
-            </td>
-           <td class="text-start !py-5 px-6">
-                @if($disbursement->status == 0)
-                    Draft
-                @elseif($disbursement->status == 1)
-                    Approved
-                @else
-                    Disbursed
-                @endif
-            </td>
+                    <tbody>
+                        @foreach($disbursements as $disbursement)
+                            <tr class="border-b dark:border-bg3">
+                                <td class="text-start !py-5 px-6">
+                                <a href="{{ route('daily_weekly.applications.view', $disbursement->id) }}" 
+                                    class="text-green-600 hover:underline">
+                                        {{-- {{ $disbursement->id }} --}}
+                                        {{ str_pad($disbursement->id, 10, '0', STR_PAD_LEFT) }}
+                                    </a>
+                                </td>
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex items-center gap-1">
+                                        {{ \Carbon\Carbon::parse($disbursement->application_date)->format('d-m-Y') }}
+                                    </div>
+                                </td>
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex items-center gap-1 text-secondary">
+                                        <a href="{{ url('members/member/' . $disbursement->member_id) }}" 
+                                    class="text-green-600 hover:underline">
+                                        {{ str_pad($disbursement->member_id, 6, '0', STR_PAD_LEFT) }}
+                                    </a>
+                                    </div>
+                                </td>
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex items-center gap-1">
+                                        {{ $disbursement->member->member_info_first_name ?? 'N/A' }}
+                                    </div>
+                                </td>
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex items-center gap-1">
+                                        {{ $disbursement->branch->branch_name ?? 'N/A' }}
+                                    </div>
+                                </td>
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex items-center gap-1">
+                                        {{ number_format($disbursement->loan_amount, 2) }}
+                                    </div>
+                                </td>
+                                <td class="text-start !py-5 px-6">
+                                    @if($disbursement->status == 0)
+                                        Draft
+                                    @elseif($disbursement->status == 1)
+                                        Approved
+                                    @else
+                                        Disbursed
+                                    @endif
+                                </td>
 
-            <td class="text-start !py-5 px-6">
-                <div class="flex justify-center">
-                    <div class="relative">
-                        <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                        <ul class="horiz-option popover-content">
-                             <li>
-                               <a href="{{ route('daily_weekly.disbursements.disburse-loan', $disbursement->id) }}" class="single-option uppercase">Disburse Loan</a>
-                            </li>
-                            <li>
-                                <form action="{{ route('daily_weekly.cancel', $disbursement->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this loan?');">
-                                    @csrf
-                                    <button type="submit" class="single-option uppercase text-red-600 hover:underline">
-                                        Cancel Loan
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    @endforeach
-</tbody>
-
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex justify-center">
+                                        <div class="relative">
+                                            <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+                                            <ul class="horiz-option popover-content">
+                                                <li>
+                                                <a href="{{ route('fixed_loan.disbursements.disburse-loan', $disbursement->id) }}" class="single-option uppercase">Disburse Loan</a>
+                                                </li>
+                                                <li>
+                                                    <form action="{{ route('fixed_loan.cancel', $disbursement->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this loan?');">
+                                                        @csrf
+                                                        <button type="submit" class="single-option uppercase text-red-600 hover:underline">
+                                                            Cancel Loan
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                 </table>
                  <!-- Pagination Links -->
                 <div class="mt-4">

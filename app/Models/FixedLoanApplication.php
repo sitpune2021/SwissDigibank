@@ -10,52 +10,51 @@ class FixedLoanApplication extends Model
     use HasFactory;
     
     protected $fillable = [
+
+        // 🔹 Basic Application Info
         'application_date',
+        'application_no',
         'member_id',
-        'co_applicant_1_id',
-        'co_applicant_2_id',
         'branch_id',
         'advisor_id',
+
+        // 🔹 Co-Applicants
+        'co_applicant_1_id',
+        'relation_co_applicant_1',
+        'co_applicant_2_id',
+        'relation_co_applicant_2',
+
+        // 🔹 Guarantors
         'guarantor_1_id',
+        'relation_guarantor_1',
         'guarantor_2_id',
+        'relation_guarantor_2',
         'guarantor_3_id',
+        'relation_guarantor_3',
         'guarantor_4_id',
-        'scheme_id',
+        'relation_guarantor_4',
+
+        // 🔹 Loan & Scheme
+        'scheme_id',              // optional / nullable
         'credit_period',
         'net_loan_amount',
         'purpose_of_loan',
-        'processing_fee_gst',
-        'processing_fee_sgst',
-        'processing_fee_cgst',
-        'processing_fee_igst',
-        'processing_fee_total',
-        'fee_mode',
-        'bank_id',
-        'cheque_no',
-        'cheque_date',
-        'transfer_date',
-        'utr_no',
-        'transfer_mode',
-        'credited',
-        'collect_principal_as_emi',
-        'collect_advance_processing_fee',
-        'max_loan_amount',
-        'maximum_approvable_amount',
-        'approved_loan_amount',
 
+        'stamp_duty',
+        'fitness_fee',
+        'insurance_fee',
+        'credited',
+
+        // 🔹 EMI & Tenure
         'tenure_value',
         'loan_amount',
         'emi_collection',
         'emi_amount',
-        'processing_fee',
-        'stamp_duty',
-        'fitness_fee',
-        'insurance_fee',
 
-        'charges_per_emi',
+        // 🔹 Calculated Fields (FINAL values only)
+        'charge_per_emi',
         'net_emi_with_charges',
         'total_recovered_amount',
-
     ];
 
 

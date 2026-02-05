@@ -71,6 +71,7 @@ use App\Helpers\SmsHelper;
 use App\Http\Controllers\AdvisorController;
 use App\Http\Controllers\BusinessLoan;
 use App\Http\Controllers\CcOdLoanController;
+use App\Http\Controllers\FixedLoanDisburments;
 use App\Http\Controllers\CcOdLoanControllerDisburments;
 use App\Http\Controllers\CcOdLoanControllerAccount;
 use App\Http\Controllers\BusinessLoanDisburments;
@@ -79,6 +80,7 @@ use App\Http\Controllers\CutReportController;
 use App\Http\Controllers\DailyWeeklyController;
 use App\Http\Controllers\DailyWeeklyDisburments;
 use App\Http\Controllers\DailyWeeklyAccount;
+use App\Http\Controllers\FixedLoanAccount;
 use App\Http\Controllers\DaybookController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LedgergroupController;
@@ -1181,7 +1183,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::post('col-process-fee/store/{id}', [LoanAgainstController::class, 'loanagainststoreProcessFee'])
         ->name('loanagainst.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    Route::post('applications/{id}/submit-for-approval', [LoanAgainstController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
 });
 
@@ -1347,7 +1349,7 @@ Route::group(['prefix' => 'bussiness'], function () {
     Route::post('col-process-fee/store/{id}', [BusinessLoan::class, 'bussinessstoreProcessFee'])
         ->name('bussiness.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    Route::post('applications/{id}/submit-for-approval', [BusinessLoan::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
 });
 
@@ -1502,7 +1504,7 @@ Route::group(['prefix' => 'cc_od'], function () {
     Route::post('cc-od/col-process-fee/store/{id}', [CcOdLoanController::class, 'storeProcessFee'])
         ->name('ccod.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    Route::post('applications/{id}/submit-for-approval', [CcOdLoanController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
 });
 
@@ -1666,7 +1668,7 @@ Route::group(['prefix' => 'daily_weekly'], function () {
     Route::get('daily_weekly/{id}/disbursment', [DailyWeeklyController::class, 'disbursment'])
         ->name('daily_weekly.applications.view-buttons.disburse-setting');
 
-    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    Route::post('applications/{id}/submit-for-approval', [DailyWeeklyController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
 });
 
@@ -1784,7 +1786,7 @@ Route::group(['prefix' => 'personal'], function () {
     Route::post('col-process-fee/store/{id}', [PersonalController::class, 'personalstoreProcessFee'])
         ->name('personal.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    Route::post('applications/{id}/submit-for-approval', [PersonalController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
 });
 
@@ -1916,7 +1918,7 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::post('col-process-fee/store/{id}', [VehicalController::class, 'VehicalstoreProcessFee'])
         ->name('vehical.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    Route::post('applications/{id}/submit-for-approval', [VehicalController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
 });
 
@@ -1968,6 +1970,12 @@ Route::group(['prefix' => 'fixed_loan'], function () {
 
     Route::get('fixed_loan/applications/view/{id}', [FixedLoanController::class, 'appview'])
         ->name('fixed_loan.applications.view');
+    
+    Route::put(
+        'fixed-loan/applications/{id}/disapprove',
+        [FixedLoanController::class, 'disapprove']
+    )->name('fixed-loan.applications.disapprove');
+
 
     // Edit form
     Route::get('/fixed_loan/applications/{id}/edit', [FixedLoanController::class, 'appedit'])
@@ -1985,81 +1993,81 @@ Route::group(['prefix' => 'fixed_loan'], function () {
 
 
     // Disbursement fixed_loan Loan
-    Route::get('disbursements/index', [DailyWeeklyDisburments::class, 'index'])
+    Route::get('disbursements/index', [FixedLoanDisburments::class, 'index'])
         ->name('fixed_loan.disbursements.index');
-    Route::post('/fixed_loan/disbursements/cancel/{id}', [DailyWeeklyDisburments::class, 'cancelLoan'])->name('daily_weekly.cancel');
+    Route::post('/fixed_loan/disbursements/cancel/{id}', [FixedLoanDisburments::class, 'cancelLoan'])->name('fixed_loan.cancel');
 
     // disburse-loan page  
-    Route::get('disbursements/disburse-loan/{id}', [DailyWeeklyDisburments::class, 'show'])
+    Route::get('disbursements/disburse-loan/{id}', [FixedLoanDisburments::class, 'show'])
         ->name('fixed_loan.disbursements.disburse-loan');
-    Route::post('/fixed_loan/disbursements/store', [DailyWeeklyDisburments::class, 'store'])->name('fixed_loan_disbursment.store');
+    Route::post('/fixed_loan/disbursements/store', [FixedLoanDisburments::class, 'store'])->name('fixed_loan_disbursment.store');
 
 
     // account section start
 
-    Route::get('account/index', [DailyWeeklyAccount::class, 'index'])->name('fixed_loan.account.index');
-    Route::get('account/show/{id}', [DailyWeeklyAccount::class, 'show'])
+    Route::get('account/index', [FixedLoanAccount::class, 'index'])->name('fixed_loan.account.index');
+    Route::get('account/show/{id}', [FixedLoanAccount::class, 'show'])
         ->name('fixed_loan.account.show');
     // emi chart for process button
-    Route::post('/emi/save-status', [DailyWeeklyAccount::class, 'saveEmiStatus'])
+    Route::post('/emi/save-status', [FixedLoanAccount::class, 'saveEmiStatus'])
         ->name('fixed_loan.emi.saveEmiStatus');
 
     // pay emi tab
-    Route::get('fixed_loan-account/payemi/{id}', [DailyWeeklyAccount::class, 'mortgagePayEmi'])
+    Route::get('fixed_loan-account/payemi/{id}', [FixedLoanAccount::class, 'mortgagePayEmi'])
         ->name('fixed_loan.account.pay-emi');
-    Route::post('fixed_loan-account/payemi/{id}/pay', [DailyWeeklyAccount::class, 'mortgagepayEmiLoan'])->name('daily_weekly.payEmiLoan');
+    Route::post('fixed_loan-account/payemi/{id}/pay', [FixedLoanAccount::class, 'mortgagepayEmiLoan'])->name('daily_weekly.payEmiLoan');
 
     // View Transction tab
-    Route::get('fixed_loan-account/transaction/{id}', [DailyWeeklyAccount::class, 'mortgageTransaction'])
+    Route::get('fixed_loan-account/transaction/{id}', [FixedLoanAccount::class, 'mortgageTransaction'])
         ->name('fixed_loan.account.transaction');
 
     // loan extension tab
-    Route::get('account/extension/{id}', [DailyWeeklyAccount::class, 'loanextension'])
+    Route::get('account/extension/{id}', [FixedLoanAccount::class, 'loanextension'])
         ->name('fixed_loan.account.extension');
     // POST - FINAL SAVE loan extension
-    Route::post('/loan-extension/store/{id}', [DailyWeeklyAccount::class, 'storeLoanExtension'])->name('daily_weekly.extension.store');
+    Route::post('/loan-extension/store/{id}', [FixedLoanAccount::class, 'storeLoanExtension'])->name('daily_weekly.extension.store');
 
     // only pay tab
-    Route::get('fixed_loan-account/pay/{id}', [DailyWeeklyAccount::class, 'mortgagePay'])
+    Route::get('fixed_loan-account/pay/{id}', [FixedLoanAccount::class, 'mortgagePay'])
         ->name('fixed_loan.account.pay');
-    Route::post('/update-emi-status', [DailyWeeklyAccount::class, 'updateEmiStatus'])->name('emi.updateStatus');
-    Route::post('/fixed_loan/pay-emi', [DailyWeeklyAccount::class, 'payEmi'])->name('daily_weekly.payEmi');
+    Route::post('/update-emi-status', [FixedLoanAccount::class, 'updateEmiStatus'])->name('emi.updateStatus');
+    Route::post('/fixed_loan/pay-emi', [FixedLoanAccount::class, 'payEmi'])->name('daily_weekly.payEmi');
 
     // foure close account
-    Route::get('account/fourcloser/{id}', [DailyWeeklyAccount::class, 'fourcloser'])
+    Route::get('account/fourcloser/{id}', [FixedLoanAccount::class, 'fourcloser'])
         ->name('fixed_loan.account.fourcloser');
-    Route::post('account/fourcloser/store/{id}', [DailyWeeklyAccount::class, 'storeForeCloser'])
+    Route::post('account/fourcloser/store/{id}', [FixedLoanAccount::class, 'storeForeCloser'])
         ->name('fixed_loan.account.forecloser.store');
 
     // link saving account
-    Route::get('account/linksaving/{id}', [DailyWeeklyAccount::class, 'linksaving'])
+    Route::get('account/linksaving/{id}', [FixedLoanAccount::class, 'linksaving'])
         ->name('fixed_loan.account.linksaving');
-    Route::post('account/linksaving/{id}', [DailyWeeklyAccount::class, 'storeSavingAccount'])
+    Route::post('account/linksaving/{id}', [FixedLoanAccount::class, 'storeSavingAccount'])
         ->name('fixed_loan.account.storeSavingAccount');
 
     // Remove account (POST to avoid CSRF problems with GET)
-    Route::post('/fixed_loan/{id}/remove', [DailyWeeklyAccount::class, 'removeAccount'])
+    Route::post('/fixed_loan/{id}/remove', [FixedLoanAccount::class, 'removeAccount'])
         ->name('fixed_loan.remove');
 
     // show audit trial tab
-    Route::get('account/audit', [DailyWeeklyAccount::class, 'audit'])
+    Route::get('account/audit', [FixedLoanAccount::class, 'audit'])
         ->name('fixed_loan.account.audit-trail');
 
     // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
-    Route::get('/fixed_loan/{id}/debit-charges-list', [DailyWeeklyAccount::class, 'showDebitChargesList'])
+    Route::get('/fixed_loan/{id}/debit-charges-list', [FixedLoanAccount::class, 'showDebitChargesList'])
         ->name('fixed_loan.debitChargesList.form');
 
     // debit other charge page    
-    Route::get('/fixed_loan/{id}/debit-other-charges', [DailyWeeklyAccount::class, 'DebitOtherCharges'])
+    Route::get('/fixed_loan/{id}/debit-other-charges', [FixedLoanAccount::class, 'DebitOtherCharges'])
         ->name('fixed_loan.debitOtherCharges.form');
     // Store Debit Other Charges page
-    Route::post('/fixed_loan/{id}/debit-other-charges', [DailyWeeklyAccount::class, 'storeDebitOtherCharges'])
+    Route::post('/fixed_loan/{id}/debit-other-charges', [FixedLoanAccount::class, 'storeDebitOtherCharges'])
         ->name('fixed_loan.debitOtherCharges.store');
 
     //clear due 
-    Route::get('/fixed_loan/{id}/clear-due', [DailyWeeklyAccount::class, 'mortgageLoanClearDues'])
+    Route::get('/fixed_loan/{id}/clear-due', [FixedLoanAccount::class, 'mortgageLoanClearDues'])
         ->name('fixed_loan.clear-due.form');
-    Route::post('/fixed_loan/{loan_id}/other-charge', [DailyWeeklyAccount::class, 'clearDue'])->name('daily_weekly.clear-due');
+    Route::post('/fixed_loan/{loan_id}/other-charge', [FixedLoanAccount::class, 'clearDue'])->name('daily_weekly.clear-due');
 
     // account section end
 
@@ -2079,7 +2087,7 @@ Route::group(['prefix' => 'fixed_loan'], function () {
     Route::get('fixed_loan/{id}/disbursment', [FixedLoanController::class, 'disbursment'])
         ->name('fixed_loan.applications.view-buttons.disburse-setting');
 
-    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
+    Route::post('applications/{id}/submit-for-approval', [FixedLoanController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
 });
 
