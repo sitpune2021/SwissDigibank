@@ -131,7 +131,11 @@ class PrintDocumentsController extends Controller
 
     public function letter_head()
     {
-        return view('print-documents.letter-head.index');
+        $data = [
+            'bank_name' => 'SBC Global',
+            'address' => 'SBC GLOBAL TOWAR ,  SHEGAON Maharashtra - 444001  ',
+        ];
+        return view('print-documents.letter-head.index',$data);
     }
     public function print_letter_head()
     {

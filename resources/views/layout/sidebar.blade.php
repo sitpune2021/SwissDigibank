@@ -51,10 +51,7 @@ $logoPath = $sidebarLogo
     <div class="sidebar-inner relative">
         <div class="logo-column">
             <div class="logo-container">
-                <div class="logo-inner">
-                    
-
-                    
+                <div class="logo-inner">                   
                     <a href="{{ route('index1') }}" class="logo-wrapper">
                         <!-- Full Logo -->
                         <img src="{{ $logoPath }} " width="174" height="50" class="logo-full" alt="logo"  />
@@ -72,7 +69,8 @@ $logoPath = $sidebarLogo
             </div>
 
             <div class="menu-container pb-28">
-                <div class="menu-wrapper">
+                {{-- <div class="menu-wrapper"> --}}
+                    <div class=""  style="padding: 0px 10px">
                     <ul class="menu-ul">
                         @foreach ($menuItems as $item)
                         @php
@@ -108,7 +106,7 @@ $logoPath = $sidebarLogo
                         <hr style="margin: 10px 0; border-color: #ccc;">
                         @endif
 
-                        <li class="menu-li {{ $isActive || $submenuActive ? 'active' : '' }}   ">
+                        <li class="menu-li {{ $isActive || $submenuActive ? 'active' : '' }}    ">
                             @if ($item->submenus->isNotEmpty())
                             <button style="padding: 5px 13px;"
                                 class="menu-btn group bg-n0 dark:!border-n500  dark:!bg-bg4 {{ $isActive || $submenuActive ? 'active' : '' }}"
@@ -149,9 +147,9 @@ $logoPath = $sidebarLogo
                                     <span class="menu-icon ">
                                         <i class="{{ $item->icon }}"></i>
                                     </span>
-                                    <span class="menu-title font-medium" style="font-size: 14px !important ;">{{
-                                        $item->title }}</span>
-
+                                    <span class="menu-title font-medium" style="font-size: 14px !important ;">
+                                        {{ $item->title }}
+                                    </span>
                                 </span>
                                 <span class="plus-minus" style="font-size: 14px !important;">
                                     <i class="las la-plus text-xl {{ $submenuActive ? 'show' : '' }}"
@@ -166,7 +164,7 @@ $logoPath = $sidebarLogo
                         {{-- ✅ Always add
                         <hr> AFTER HR MANAGEMENT --}}
                         @if ($item->title === 'HR MANAGEMENT')
-                        <hr style="margin: 10px 0; border-color: #ccc;">
+                        {{-- <hr style="margin: 10px 0; border-color: #ccc;"> --}}
                         @endif
                         @endforeach
                     </ul>

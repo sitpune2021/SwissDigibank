@@ -74,10 +74,10 @@
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h3 class=" flex text-xl block  uppercase  font-bold">
+            <h3 class=" flex text-lg   uppercase  font-bold">
               Lockers 
             </h3>
-            <a href="{{ route('lockers.locker-list.add') }}" class=" block flex btn-primary uppercase ">
+            <a href="{{ route('lockers.locker-list.add') }}" class="  flex btn-primary uppercase ">
                 add 
             </a>
         </div>
@@ -88,7 +88,7 @@
                 
                     <div class="overflow-x-auto">
 
-                        <table class="w-full border-collapse whitespace-nowrap text-sm">
+                        <table class="w-full border-collapse whitespace-nowrap ">
                             <thead>
                                 <tr class="bg-secondary/5 dark:bg-bg3">
                                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
