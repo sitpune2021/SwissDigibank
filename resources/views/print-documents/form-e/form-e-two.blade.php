@@ -107,7 +107,7 @@ h2, h3 {
                         {{-- SBC Global --}}
                     </div>
 
-                    <div style="height:10px; margin-top: 40px;">&nbsp;</div>
+                    <div style="height:10px;">&nbsp;</div>
 
 
                 </div>
@@ -116,7 +116,7 @@ h2, h3 {
             </div>
         <h2>नमुना ई-2</h2>
         <h3>(नियम 5 (2) पहा)</h3>
-        <h3>___________________र. नं. ______ तालुका ______ जि._________</h3>
+        <h3>{{ $companyName }} &nbsp; र. नं. 12345  &nbsp;  तालुका ______ जि._________</h3>
 
         <table class="main-table">
             <thead>

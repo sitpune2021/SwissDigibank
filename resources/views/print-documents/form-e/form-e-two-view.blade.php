@@ -96,6 +96,9 @@
         Form E2
     </h1>
     <div class="text-center flex justify-center gap-5 mt-4">
+         <a href="{{ route('eTwoPrint') }}" target="_blank" class="px-4 py-2 btn-primary uppercase">
+    <i class="las la-print"></i> Print
+</a>
         <a href="{{ route('eTwoForm') }}" class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; " target="_blank">
             <i class="las la-download"></i> Download
         </a>
@@ -128,7 +131,7 @@
 
         <h2 style="margin-top:70px; text-align: center;">नमुना ई-2</h2>
         <h3 >(नियम 5 (2) पहा)</h3>
-        <h3>___________________र. नं. ______ तालुका ______ जि._________</h3>
+        <h3 style="margin-bottom: 10px">{{ $companyName }} &nbsp; र. नं. 12345  &nbsp;  तालुका ______ जि._________</h3>
 
         <table class="main-table">
             <thead>

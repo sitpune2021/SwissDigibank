@@ -4,7 +4,7 @@
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h3 class=" flex text-lg   uppercase font-semibold">Collection Centers</h3>
-            <a href="{{ route('collection-centers.create') }}" class="btn-primary">Add</a>
+            <a href="{{ route('collection-centers.create') }}" class="btn-primary uppercase">Add</a>
         </div>
         @if(session('success'))
             <div class="">

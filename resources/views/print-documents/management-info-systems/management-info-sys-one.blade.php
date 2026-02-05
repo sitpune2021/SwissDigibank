@@ -67,7 +67,7 @@
 
     <!-- Header -->
     <div class="header">
-       ___________________________________ यांची माहिती व्यवस्थापन प्रणाली
+       {{ $companyName }} यांची माहिती व्यवस्थापन प्रणाली
     </div>
     <div class="header">
         अहवाल माहे ________________अखेर
@@ -198,7 +198,9 @@
 
 
     <!-- Signature -->
-    
+    <div class=" " style="text-align: right; padding:5px 20px;">
+        <h5 style="font-size: 16px;">{{ $companyName }}</h5>
+    </div>
 
 
 </body>

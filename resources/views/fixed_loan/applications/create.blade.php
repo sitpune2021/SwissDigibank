@@ -71,20 +71,19 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-    <label class="md:text-lg font-medium block mb-4">
-        Application No <span class="text-red-500">*</span>
-    </label>
+                            <label class="md:text-lg font-medium block mb-4">
+                                Application No <span class="text-red-500">*</span>
+                            </label>
 
-    <input type="text" name="application_no"
-        value="{{ old('application_no', $application->application_no ?? '') }}"
-        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-        placeholder="Enter Application No">
-        
-    @error('application_no')
-        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-    @enderror
-</div>
-
+                            <input type="text" name="application_no"
+                                value="{{ old('application_no', $application->application_no ?? '') }}"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="Enter Application No">
+                                
+                            @error('application_no')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>          
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="member_id" class="md:text-lg font-medium block mb-4">
@@ -109,29 +108,24 @@
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
-    <label class="md:text-lg font-medium block mb-4">
-        1st Co-Applicant Relationship <span class="text-red-500">*</span>
-    </label>
+                            <label class="md:text-lg font-medium block mb-4">
+                                1st Co-Applicant Relationship
+                            </label>
 
-    <select name="relationship"
-        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-        
-        <option value="">Select Relationship</option>
-        <option value="father" {{ old('relationship', $application->relationship ?? '') == 'father' ? 'selected' : '' }}>Father</option>
-        <option value="mother" {{ old('relationship', $application->relationship ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
-        <option value="son" {{ old('relationship', $application->relationship ?? '') == 'son' ? 'selected' : '' }}>Son</option>
-        <option value="daughter" {{ old('relationship', $application->relationship ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
-        <option value="spouse" {{ old('relationship', $application->relationship ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
-        <option value="brother" {{ old('relationship', $application->relationship ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
-        <option value="sister" {{ old('relationship', $application->relationship ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
-        <option value="other" {{ old('relationship', $application->relationship ?? '') == 'other' ? 'selected' : '' }}>Other</option>
-    </select>
-
-    @error('relationship')
-        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-    @enderror
-</div>
-
+                            <select name="relation_co_applicant_1"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                
+                                <option value="">Select Co Applicant Relationship 1</option>
+                                <option value="father" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
+                                <option value="mother" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
+                                <option value="son" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
+                                <option value="daughter" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
+                                <option value="spouse" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
+                                <option value="brother" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
+                                <option value="sister" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
+                                <option value="other" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                            </select>
+                        </div>
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
@@ -147,29 +141,26 @@
                                 @endforeach
                             </select>
                         </div>
-  <div class="col-span-2 md:col-span-1">
-    <label class="md:text-lg font-medium block mb-4">
-        2nd Co-Applicant Relationship <span class="text-red-500">*</span>
-    </label>
 
-    <select name="relationship"
-        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-        
-        <option value="">Select Relationship</option>
-        <option value="father" {{ old('relationship', $application->relationship ?? '') == 'father' ? 'selected' : '' }}>Father</option>
-        <option value="mother" {{ old('relationship', $application->relationship ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
-        <option value="son" {{ old('relationship', $application->relationship ?? '') == 'son' ? 'selected' : '' }}>Son</option>
-        <option value="daughter" {{ old('relationship', $application->relationship ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
-        <option value="spouse" {{ old('relationship', $application->relationship ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
-        <option value="brother" {{ old('relationship', $application->relationship ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
-        <option value="sister" {{ old('relationship', $application->relationship ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
-        <option value="other" {{ old('relationship', $application->relationship ?? '') == 'other' ? 'selected' : '' }}>Other</option>
-    </select>
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="md:text-lg font-medium block mb-4">
+                                2nd Co-Applicant Relationship
+                            </label>
 
-    @error('relationship')
-        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-    @enderror
-</div>
+                            <select name="relation_co_applicant_2"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                
+                                <option value="">Select 2nd Co-Applicant Relationship</option>
+                                <option value="father" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
+                                <option value="mother" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
+                                <option value="son" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
+                                <option value="daughter" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
+                                <option value="spouse" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
+                                <option value="brother" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
+                                <option value="sister" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
+                                <option value="other" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                            </select>
+                        </div>
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
@@ -215,29 +206,26 @@
                                 <option value="">select Advisor/ Staff </option>
                             </select>
                         </div>
-  <div class="col-span-2 md:col-span-1">
-    <label class="md:text-lg font-medium block mb-4">
-        1st Guarantor Relationship <span class="text-red-500">*</span>
-    </label>
 
-    <select name="relationship"
-        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-        
-        <option value="">Select Relationship</option>
-        <option value="father" {{ old('relationship', $application->relationship ?? '') == 'father' ? 'selected' : '' }}>Father</option>
-        <option value="mother" {{ old('relationship', $application->relationship ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
-        <option value="son" {{ old('relationship', $application->relationship ?? '') == 'son' ? 'selected' : '' }}>Son</option>
-        <option value="daughter" {{ old('relationship', $application->relationship ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
-        <option value="spouse" {{ old('relationship', $application->relationship ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
-        <option value="brother" {{ old('relationship', $application->relationship ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
-        <option value="sister" {{ old('relationship', $application->relationship ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
-        <option value="other" {{ old('relationship', $application->relationship ?? '') == 'other' ? 'selected' : '' }}>Other</option>
-    </select>
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="md:text-lg font-medium block mb-4">
+                                1st Guarantor Relationship
+                            </label>
 
-    @error('relationship')
-        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-    @enderror
-</div>
+                            <select name="relation_guarantor_1"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                
+                                <option value="">Select 1st Guarantor Relationship</option>
+                                <option value="father" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
+                                <option value="mother" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
+                                <option value="son" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
+                                <option value="daughter" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
+                                <option value="spouse" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
+                                <option value="brother" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
+                                <option value="sister" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
+                                <option value="other" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                            </select>
+                        </div>
 
                         <div class="col-span-2 md:col-span-1">
                             <label for="" class="md:text-lg font-medium block mb-4">
@@ -254,29 +242,26 @@
                                 @endforeach
                             </select>
                         </div>
-                         <div class="col-span-2 md:col-span-1">
-    <label class="md:text-lg font-medium block mb-4">
-        2nd Guarantor Relationship <span class="text-red-500">*</span>
-    </label>
 
-    <select name="relationship"
-        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-        
-        <option value="">Select Relationship</option>
-        <option value="father" {{ old('relationship', $application->relationship ?? '') == 'father' ? 'selected' : '' }}>Father</option>
-        <option value="mother" {{ old('relationship', $application->relationship ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
-        <option value="son" {{ old('relationship', $application->relationship ?? '') == 'son' ? 'selected' : '' }}>Son</option>
-        <option value="daughter" {{ old('relationship', $application->relationship ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
-        <option value="spouse" {{ old('relationship', $application->relationship ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
-        <option value="brother" {{ old('relationship', $application->relationship ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
-        <option value="sister" {{ old('relationship', $application->relationship ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
-        <option value="other" {{ old('relationship', $application->relationship ?? '') == 'other' ? 'selected' : '' }}>Other</option>
-    </select>
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="md:text-lg font-medium block mb-4">
+                                2nd Guarantor Relationship
+                            </label>
 
-    @error('relationship')
-        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-    @enderror
-</div>
+                            <select name="relation_guarantor_2"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+
+                                <option value="">Select 2nd Guarantor Relationship</option>
+                                <option value="father" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
+                                <option value="mother" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
+                                <option value="son" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
+                                <option value="daughter" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
+                                <option value="spouse" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
+                                <option value="brother" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
+                                <option value="sister" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
+                                <option value="other" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                            </select>
+                        </div>
 
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
@@ -295,29 +280,26 @@
                             </div>
                         </div>
 
-                         <div class="col-span-2 md:col-span-1">
-    <label class="md:text-lg font-medium block mb-4">
-        3rd Guarantor Relationship <span class="text-red-500">*</span>
-    </label>
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="md:text-lg font-medium block mb-4">
+                                3rd Guarantor Relationship
+                            </label>
 
-    <select name="relationship"
-        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-        
-        <option value="">Select Relationship</option>
-        <option value="father" {{ old('relationship', $application->relationship ?? '') == 'father' ? 'selected' : '' }}>Father</option>
-        <option value="mother" {{ old('relationship', $application->relationship ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
-        <option value="son" {{ old('relationship', $application->relationship ?? '') == 'son' ? 'selected' : '' }}>Son</option>
-        <option value="daughter" {{ old('relationship', $application->relationship ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
-        <option value="spouse" {{ old('relationship', $application->relationship ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
-        <option value="brother" {{ old('relationship', $application->relationship ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
-        <option value="sister" {{ old('relationship', $application->relationship ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
-        <option value="other" {{ old('relationship', $application->relationship ?? '') == 'other' ? 'selected' : '' }}>Other</option>
-    </select>
+                            <select name="relation_guarantor_3"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
 
-    @error('relationship')
-        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-    @enderror
-</div>
+                            <option value="">Select 3rd Guarantor Relationship</option>
+                            <option value="father" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
+                            <option value="mother" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
+                            <option value="son" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
+                            <option value="daughter" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
+                            <option value="spouse" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
+                            <option value="brother" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
+                            <option value="sister" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
+                            <option value="other" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                            </select>
+                        </div>
+
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
                                 <label for="" class="md:text-lg font-medium block mb-4">
@@ -335,29 +317,25 @@
                             </div>
                         </div>
 
-                         <div class="col-span-2 md:col-span-1">
-    <label class="md:text-lg font-medium block mb-4">
-        4th Guarantor Relationship <span class="text-red-500">*</span>
-    </label>
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="md:text-lg font-medium block mb-4">
+                                4th Guarantor Relationship
+                            </label>
 
-    <select name="relationship"
-        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-        
-        <option value="">Select Relationship</option>
-        <option value="father" {{ old('relationship', $application->relationship ?? '') == 'father' ? 'selected' : '' }}>Father</option>
-        <option value="mother" {{ old('relationship', $application->relationship ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
-        <option value="son" {{ old('relationship', $application->relationship ?? '') == 'son' ? 'selected' : '' }}>Son</option>
-        <option value="daughter" {{ old('relationship', $application->relationship ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
-        <option value="spouse" {{ old('relationship', $application->relationship ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
-        <option value="brother" {{ old('relationship', $application->relationship ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
-        <option value="sister" {{ old('relationship', $application->relationship ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
-        <option value="other" {{ old('relationship', $application->relationship ?? '') == 'other' ? 'selected' : '' }}>Other</option>
-    </select>
+                            <select name="relation_guarantor_4"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <option value="">Select 4th Guarantor Relationship</option>
+                                <option value="father" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
+                                <option value="mother" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
+                                <option value="son" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
+                                <option value="daughter" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
+                                <option value="spouse" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
+                                <option value="brother" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
+                                <option value="sister" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
+                                <option value="other" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                            </select>
+                        </div>
 
-    @error('relationship')
-        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-    @enderror
-</div>
                         <div class="col-span-2 md:col-span-1">
                             <div class="col-sm-7">
                                 <label for="" class="md:text-lg font-medium block mb-4">
@@ -382,8 +360,7 @@
                             </label>
                             <input type="number" id="tenure_value" name="tenure_value"
                                 value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                readonly>
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             @error('tenure_value')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -396,8 +373,7 @@
                             </label>
                             <input type="number" id="loan_amount" name="loan_amount"
                                 value="{{ old('loan_amount', $application->loan_amount ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                readonly>
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             @error('loan_amount')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -446,8 +422,7 @@
                             </label>
                             <input type="number" id="processing_fee" name="processing_fee"
                                 value="{{ old('processing_fee', $application->processing_fee ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 mt-7 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                readonly>
+                                class="w-full text-sm bg-secondary/5 mt-7 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             @error('processing_fee')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -460,8 +435,7 @@
                             </label>
                             <input type="number" id="stamp_duty" name="stamp_duty"
                                 value="{{ old('stamp_duty', $application->stamp_duty ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                readonly>
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             @error('stamp_duty')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -487,8 +461,7 @@
                             </label>
                             <input type="number" id="insurance_fee" name="insurance_fee"
                                 value="{{ old('insurance_fee', $application->insurance_fee ?? '') }}"
-                                class="w-full text-sm mt-5 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                readonly>
+                                class="w-full text-sm mt-5 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             @error('insurance_fee')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -560,7 +533,7 @@
 
             <!-- Calculation Result Box -->
             <!-- Hidden fields for backend -->
-            <input type="hidden" id="inputChargesPerEmi" name="charges_per_emi">
+            <input type="hidden" id="inputChargesPerEmi" name="charge_per_emi">
             <input type="hidden" id="inputNetEmiWithCharges" name="net_emi_with_charges">
             <input type="hidden" id="inputTotalRecovered" name="total_recovered_amount">
 
@@ -645,63 +618,76 @@
 
 <!-- Calculation and auto populate when select scheme -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
+
     let isCalculated = false;
     const calcBtn = document.getElementById("calculateBtn");
-    calcBtn.type = "button";
+    const calculationBox = document.getElementById("calculationBox");
+
+    const resetFields = [
+        "loan_amount",
+        "tenure_value",
+        "processing_fee",
+        "stamp_duty",
+        "insurance_fee",
+        "fitness_fee"
+    ];
+
+    resetFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener("input", resetCalculation);
+            el.addEventListener("change", resetCalculation);
+        }
+    });
+
+    function resetCalculation() {
+        if (isCalculated) {
+            isCalculated = false;
+            calculationBox.classList.add("hidden");
+            calcBtn.textContent = "Calculate";
+            calcBtn.type = "button";
+        }
+    }
 
     calcBtn.addEventListener("click", function (e) {
-        const button = this;
 
-        const loanAmount = parseFloat(document.getElementById("loan_amount")?.value) || 0;
+        if (isCalculated) return;
 
-        const scheme = document.getElementById("scheme_id");
-        const selected = scheme.options[scheme.selectedIndex];
+        const loanAmount = parseFloat(document.getElementById("loan_amount").value) || 0;
+        const tenure = parseInt(document.getElementById("tenure_value").value) || 1;
+        const emiAmount = parseFloat(document.getElementById("emi_amount").value) || 0;
 
-        const maxLoan = parseFloat(selected.getAttribute("data-max")) || loanAmount;
-        const approvable = Math.min(loanAmount, maxLoan);
+        // Charges Per EMI ignored
+        const chargesPerEmi = 0;
 
-        const processingFee = parseFloat(selected.getAttribute("data-processing")) || 0;
-        const stampDuty = parseFloat(selected.getAttribute("data-stamp")) || 0;
-        const insuranceFee = parseFloat(selected.getAttribute("data-insurance")) || 0;
-        const smsFee = parseFloat(selected.getAttribute("data-sms")) || 0;
-        const fuelFee = parseFloat(selected.getAttribute("data-fuel")) || 0;
-        const stationaryFee = parseFloat(selected.getAttribute("data-stationary")) || 0;
-        const maintenanceFee = parseFloat(selected.getAttribute("data-maintenance")) || 0;
+        // Net EMI = just EMI Amount from form (fixed)
+        const netEmiWithCharges = emiAmount;
 
-        const noOfEmi = parseInt(document.getElementById("tenure_value")?.value) 
-                        || parseInt(selected.getAttribute("data-emi")) 
-                        || 1;
+        // Total Recovered = EMI * No of EMIs
+        const totalRecovered = parseFloat((netEmiWithCharges * tenure).toFixed(2));
 
-        const totalCharges = processingFee + stampDuty + insuranceFee + smsFee + fuelFee + stationaryFee + maintenanceFee;
-        const chargesPerEmi = totalCharges / noOfEmi;
-
-        const netEmiWithCharges = (loanAmount / noOfEmi) + chargesPerEmi;
-        const totalRecovered = netEmiWithCharges * noOfEmi;
-
+        // Fill the Calculation Box
         document.getElementById("reqLoan").textContent = loanAmount.toFixed(2);
         document.getElementById("chargesPerEmi").textContent = chargesPerEmi.toFixed(2);
         document.getElementById("netEmiWithCharges").textContent = netEmiWithCharges.toFixed(2);
         document.getElementById("totalRecovered").textContent = totalRecovered.toFixed(2);
 
-        const emiInput = document.getElementById("emi_amount");
-        if (emiInput) {
-            emiInput.value = netEmiWithCharges.toFixed(2);
-            emiInput.setAttribute("readonly", true);
-        }
-
+        // Hidden Inputs for backend
         document.getElementById("inputChargesPerEmi").value = chargesPerEmi.toFixed(2);
         document.getElementById("inputNetEmiWithCharges").value = netEmiWithCharges.toFixed(2);
         document.getElementById("inputTotalRecovered").value = totalRecovered.toFixed(2);
 
-        document.getElementById("calculationBox").classList.remove("hidden");
+        // Do NOT change EMI Amount field
+        // document.getElementById("emi_amount").value = netEmiWithCharges.toFixed(2);
 
-        if (!isCalculated) {
-            e.preventDefault();
-            button.textContent = "Submit";
-            button.type = "submit";
-            isCalculated = true;
-        }
+        // Show Calculation Box
+        calculationBox.classList.remove("hidden");
+
+        e.preventDefault();
+        calcBtn.textContent = "Submit";
+        calcBtn.type = "submit";
+        isCalculated = true;
     });
 });
 </script>

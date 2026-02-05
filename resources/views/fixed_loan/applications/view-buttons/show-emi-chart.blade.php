@@ -20,21 +20,21 @@
     }
 </style>
 
-
 <div class="main-inner ">
+
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <h1 class="text-2xl font-semibold">
-                Daily / Weekly Loan Application - EMI Chart </h1>
+                Fixed Loan Application - EMI Chart </h1>
         </div>
     </div>
     
-   
+
     <div class="container mx-auto p-6">
 
         <div class="loan-info mb-6 p-4 rounded-lg shadow" style="background-color: #f9fafb;">
             <h2 class="text-lg font-semibold uppercase border-b pb-2 mb-3" style="color:#374151;">
-            <center>Loan Information</center> 
+                <center>Loan Information</center> 
             </h2>
 
             <table class="w-full text-sm border border-gray-400 rounded-lg">
@@ -98,7 +98,6 @@
         }
         </style>
 
-
         <div class="mt-6">
             <h3 class="text-lg font-semibold"><center>EMI Chart</center></h3>
             <div class="overflow-x-auto mt-3">
@@ -116,7 +115,6 @@
                         </tr>
                     </thead>
 
-                    <!-- Ye New Row Yaha Add Karni Thi -->
                     <tbody>
                         <tr class="bg-blue-50 font-semibold">
                             <td colspan="7" class="border px-2 py-2 text-right">Starting Balance</td>
@@ -150,11 +148,6 @@
                 </table>
             </div>
         </div>
-
-        <!-- <div class="mt-6 flex gap-3">
-            <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded">Print</button>
-            <a href="{{ url()->previous() }}" class="px-4 py-2 bg-gray-200 rounded">Back</a>
-        </div> -->
 
     </div>
 

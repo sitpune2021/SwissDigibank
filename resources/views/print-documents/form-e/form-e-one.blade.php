@@ -72,7 +72,7 @@
                 {{-- SBC Global --}}
             </div>
 
-            <div style="height:10px; margin-top: 40px;">&nbsp;</div>
+            <div style="height:10px; ">&nbsp;</div>
 
 
         </div>
@@ -82,9 +82,7 @@
         <h4 style=" padding-bottom: 5px;  margin:0; text-align: center;  font-size:18px; font-weight:bold;">
             <div class="title">नमुना ई-1</div>
         </h4>
-        <div class="sub-title">
-            ________________र. नं. ____________ &nbsp;&nbsp;&nbsp;
-            ता. ____________ , जि.___________
+        <div class="sub-title">{{ $companyName }} &nbsp; र. नं. 12345  &nbsp;  तालुका ______ जि._________
         </div>
         <hr>
     </div>

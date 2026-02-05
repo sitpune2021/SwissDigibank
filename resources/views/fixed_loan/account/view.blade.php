@@ -137,7 +137,7 @@ $settingLabel = '';
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-lg uppercase font-semibold">DAILY WEEKLY LOAN - 
+            <h1 class="text-lg uppercase font-semibold">FIXED LOAN - 
                 {{-- {{$goldLoan->id}} --}}
              {{ str_pad($goldLoan->id, 10, '0', STR_PAD_LEFT) }}    
             </h1>
@@ -146,45 +146,29 @@ $settingLabel = '';
     </div>
 
     <div class="flex flex-wrap gap-3">
-        <a href="{{route('daily_weekly.account.transaction',$goldLoan->id)}}" class="btn-secondary uppercase text-sm px-2 py-2 rounded-10 ">
+        <a href="{{route('fixed_loan.account.transaction',$goldLoan->id)}}" class="btn-secondary uppercase text-sm px-2 py-2 rounded-10 ">
             View Transaction
         </a>
-        @if(
-                strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi'
-                
-            )
+        
             <a href="{{route('daily_weekly.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase text-sm px-2 py-2 rounded-10 ">
                 Pay Emi
             </a>
-            @if(strtolower($goldLoan->scheme->gold_loan_setting) == 'flat_advanced_interest')
-                <a href="{{ route('daily_weekly.account.extension',$goldLoan->id) }}" class="btn-error uppercase text-sm px-2 py-2 rounded-10 ">
+             <a href="{{ route('daily_weekly.account.extension',$goldLoan->id) }}" class="btn-error uppercase text-sm px-2 py-2 rounded-10 ">
                     LOAN EXTENSION
                 </a>
-            @endif
-           
-        @endif
 
-        @if(strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
-            <a href="" class="btn-primary text-sm  uppercase px-2 py-2 rounded-10 ">
+         <a href="" class="btn-primary text-sm  uppercase px-2 py-2 rounded-10 ">
                 Re-Update Emi Chart
-            </a>
-        @endif
-
-        @if(in_array(strtolower($goldLoan->scheme->gold_loan_setting), ['flat_emi', 'reducing_emi']))
-            <a href="" class="btn-primary uppercase text-sm px-2 py-2 rounded-10">
+        
+                <a href="" class="btn-primary uppercase text-sm px-2 py-2 rounded-10">
                 RE-SCHEDULE EMIs
             </a>
-        @endif
-
-        @if(
-                strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest' &&
-                strtolower($goldLoan->scheme->gold_loan_setting) != 'reducing_emi'
-            )
+        
             <a href="{{ route('daily_weekly.account.pay', $goldLoan->id) }}"
             class="btn-primary uppercase text-sm px-2 py-2 rounded-10">
                 Pay
             </a>
-        @endif  
+        
 
         <a href="{{ route('daily_weekly.account.fourcloser', $goldLoan->id) }}" class="btn-error uppercase text-sm px-2 py-2 rounded-10 ">
             Fore CloseLoan
@@ -707,7 +691,7 @@ $settingLabel = '';
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black uppercase ">
-                        DAILY WEEKLY LOAN SCHEME INFO
+                        FIXED LOAN SCHEME INFO
                     </h3>
                     <div class="">
                         <button type="button" class="p-1 rounded transition"
@@ -933,7 +917,7 @@ $settingLabel = '';
 
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black uppercase ">
-                        DAILY WEEKLY LOAN BASIC DETAILS
+                        FIXED LOAN BASIC DETAILS
                     </h3>
                     <div class="">
                         <button type="button" class="p-1 rounded transition"
@@ -1051,14 +1035,6 @@ $settingLabel = '';
                     class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
                     data-tab="tab2">
                     Current Statement
-                </button>
-            </li>
-           
-            <li>
-                <button
-                    class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
-                    data-tab="tab4">
-                    EIR Payout Chart
                 </button>
             </li>
             
@@ -1195,62 +1171,8 @@ $settingLabel = '';
                 </div>
             </div>
 
-
-            <div id="tab4" class="tab-pane hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full border-collapse whitespace-nowrap text-sm">
-
-                        {{-- HEADER --}}
-                        <thead>
-                            <tr class="bg-gray-200 text-left">
-                                <th class="p-2 border">EMI No.</th>
-                                <th class="p-2 border">EMI DATE</th>
-                                <th class="p-2 border">EMI DUE DATE</th>
-                                <th class="p-2 border">EIR PRINCIPAL</th>
-                                <th class="p-2 border">EIR INTEREST</th>
-                                <th class="p-2 border">EIR OTHER CHRG.</th>
-                                <th class="p-2 border">EIR EMI</th>
-                                <th class="p-2 border">EIR BAL. PRINCIPAL</th>
-                                <th class="p-2 border">REMAINING AMT</th>
-                            </tr>
-                        </thead>
-
-                        {{-- FIRST ROW — LOAN AMOUNT --}}
-                        <tr class="bg-yellow-100 font-semibold">
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td colspan="9" class="p-2 border text-left">
-                                {{ number_format($goldLoan->loan_amount, 2) }}
-                            </td>
-                        </tr>
-
-                        {{-- EMI ROWS --}}
-                        <tbody>
-                            @foreach($eirSchedule as $row)
-                                <tr>
-                                    <td class="p-2 border">{{ $row['emi_no'] }}</td>
-                                    <td class="p-2 border">{{ $row['emi_date'] }}</td>
-                                    <td class="p-2 border">{{ $row['emi_due_date'] }}</td>
-                                    <td class="p-2 border">{{ $row['principal'] }}</td>
-                                    <td class="p-2 border">{{ $row['interest'] }}</td>
-                                    <td class="p-2 border">{{ $row['other_charges'] }}</td>
-                                    <td class="p-2 border">{{ $row['emi_amount'] }}</td>
-                                    <td class="p-2 border">{{ $row['balance_principal'] }}</td>
-                                    <td class="p-2 border">{{ $row['remaining_amount'] }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-
-                    </table>
-                </div>
-            </div>
-
         </div>
+
     </div>
 
 
@@ -1371,7 +1293,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 row.querySelector("td:nth-child(9)").textContent.replace(/,/g, "")
             );
 
-            fetch("{{ route('daily_weekly.emi.saveEmiStatus') }}", {
+            fetch("{{ route('fixed_loan.emi.saveEmiStatus') }}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -1409,7 +1331,6 @@ function confirmRemove(id) {
     document.getElementById('remove-account-form-' + id).submit();
 }
 </script>
-
 
 
 @endsection

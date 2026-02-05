@@ -31,6 +31,11 @@
         FORM I
     </h1>
 <div class="text-center flex justify-center gap-5 mt-4" >
+      <a href=" {{ route('generateFormIPrint') }}"
+   class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; "
+   target="_blank">
+   <i class="las la-print"></i> Print
+</a>
      <a href=" {{ route('formi.pdf') }}"
    class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; "
    target="_blank">
@@ -49,13 +54,14 @@
     <table style="width:100%; font-size:20px; margin-bottom:10px; border:none;">
         <tr>
             <td style="width:33%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
-                सहकारी
+                {{-- सहकारी --}}
             </td>
             <td style="width:34%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
-                संस्था म.
+               {{ $companyName }}   
+               {{-- संस्था म. --}}
             </td>
             <td style="width:33%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
-                र. नं.
+                {{-- र. नं. --}} र. नं. 12345 
             </td>
         </tr>
     </table>

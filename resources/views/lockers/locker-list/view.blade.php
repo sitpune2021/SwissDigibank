@@ -50,15 +50,15 @@
 
     <div class="main-inner">
 
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h3 class=" flex text-xl block  uppercase  font-bold">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6  lg:mb-8">
+            <h3 class=" flex text-lg   uppercase  font-bold">
                 Locker - {{ $locker->locker_no }}
             </h3>
         </div>
 
-        <div class="">
+        <div class=" ">
             @if($locker->assigned != 1)
-            <a href="{{ route('lockers.locker-list.assign-locker', $locker->id) }}" class="btn-primary rounded-10 py-2 uppercase">
+            <a href="{{ route('lockers.locker-list.assign-locker', $locker->id) }}" class="btn-primary text-sm rounded-10 py-2 uppercase">
                 Assign
             </a>
             @endif
@@ -70,7 +70,7 @@
 
                 <div class="mb-3 flex justify-end">
                     @if($locker->assigned != 1)
-                    <a href="{{ route('lockers.locker-list.edit', $locker->id) }}" class="btn-primary rounded-10 p-2">
+                    <a href="{{ route('lockers.locker-list.edit', $locker->id) }}" class="btn-primary  p-2">
                         <i class="las la-pencil-alt"></i>
                     </a>
                     @endif
@@ -93,7 +93,7 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold uppercase text-lg text-gray-700 px-4 py-2">Assigned</td>
-                            <td class="text-start !py-5 px-6">
+                            <td class="text-start py-2 px-4">
                                 @if($locker->assigned == 1)
                                     <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
                                         Yes
@@ -120,11 +120,11 @@
                 <div class="bg-white dark:bg-gray-900">
                     <div class="overflow-x-auto whitespace-nowrap">
 
-                        <table class="w-full whitespace-nowrap divide-y divide-gray-200 dark:divide-gray-700">
+                        <table class="w-full whitespace-nowrap mt-5 divide-y divide-gray-200 dark:divide-gray-700">
                             
-                            <thead class="bg-gray-100 dark:bg-gray-800">
+                            <thead class="bg-secondary/5  dark:bg-gray-800">
                                 <tr class="border-b">
-                                    <th class="px-4 py-2 text-start text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase">
+                                    <th class=" px-4 py-2 text-start text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase">
                                         Customer Name
                                     </th>
                                     <th class="px-4 py-2 text-start text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase">
@@ -157,18 +157,18 @@
                                     @endphp
 
                                     <tr>
-                                        <td>
+                                        <td class="px-4 py-2 text-start text-sm">
                                             {{ $member ? $member->member_info_first_name : 'Unknown' }}
 
                                         </td>
 
                                         {{-- Account No (ab yahan 100% show hoga) --}}
-                                        <td>
+                                        <td class="px-4 py-2 text-start text-sm">
                                             {{ $member->account_no ?? '—' }}
                                         </td>
 
-                                        <td>{{ $assignDate ? \Carbon\Carbon::parse($assignDate)->format('d-m-Y') : '—' }}</td>
-                                        <td>{{ $releaseDate ? \Carbon\Carbon::parse($releaseDate)->format('d-m-Y') : '—' }}</td>
+                                        <td class="px-4 py-2 text-start text-sm">{{ $assignDate ? \Carbon\Carbon::parse($assignDate)->format('d-m-Y') : '—' }}</td>
+                                        <td class="px-4 py-2 text-start text-sm">{{ $releaseDate ? \Carbon\Carbon::parse($releaseDate)->format('d-m-Y') : '—' }}</td>
                                     </tr>
                                 @endforeach
 
