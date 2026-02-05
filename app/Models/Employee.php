@@ -70,6 +70,10 @@ class Employee extends Model
     {
         return $this->belongsTo(Relation::class, 'nominee_relation');
     }
+    public function attendances()
+{
+    return $this->hasMany(EmployeeAttendence::class);
+}
 
 
 }

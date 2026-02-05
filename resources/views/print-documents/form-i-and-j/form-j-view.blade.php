@@ -31,6 +31,11 @@
         FORM J
     </h1>
 <div class="text-center flex justify-center gap-5 mt-4" >
+    <a href=" {{ route('generateFormJPrint') }}"
+   class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; "
+   target="_blank">
+   <i class="las la-print"></i> Print
+</a>
      <a href=" {{ route('formj.download') }}"
    class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; "
    target="_blank">
@@ -51,7 +56,7 @@
     <div class="subtitle" style="font-size:14px; text-align: center;  ">नियम ३२ (कलम ३९ अन्वये)</div>
 
     <div class="header" style="font-size: 20px; text-align: center;">
-        सहकारी ____________________ संस्था म. ____________ र. नं. ____________
+         {{$companyName}} र. नं. 12345
     </div>
 
     <div style="text-align:center; font-weight:bold;font-size: 20px;  margin-top: 12px; ">

@@ -65,6 +65,11 @@
        Management Information System
     </h1>
 <div class="text-center flex justify-center gap-5 mt-4" >
+    <a href=" {{ route('MisTwoPrint') }}"
+   class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; "
+   target="_blank">
+   <i class="las la-print"></i> Print
+</a>
      <a href=" {{ route('MisTwo') }}"
    class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; "
    target="_blank">
@@ -81,7 +86,7 @@
    <div class="box mt-5">
 
     <div class="header" style="font-size: 14px;">
-       _________________________ र. नं.____________
+      {{ $companyName }} &nbsp;  र. नं. 12345
     </div>
     <div class="header" style="margin-top: 20px; font-size: 14px;">
         प्रगती (एम आय एस) अहवाल माहे__________ अखेर
@@ -197,7 +202,9 @@
 
     <!-- SIGNATURE -->
     
-
+<div class=" " style="text-align: right; padding:80px 30px;">
+        <h5>{{ $companyName }}</h5>
+    </div>
 </div>
 
 </div>

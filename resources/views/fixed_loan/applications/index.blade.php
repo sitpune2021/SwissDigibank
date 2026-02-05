@@ -53,12 +53,6 @@
                                   BRANCH
                                 </div>
                             </th>
-
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                   SCHEME
-                                </div>
-                            </th>
                              
                              <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
@@ -78,7 +72,7 @@
                             <tr class="border-b dark:border-bg3">
                             
                                 <!-- Application No. -->
-                            <td class="text-start !py-5 px-6">
+                                <td class="text-start !py-5 px-6">
                                     <a href="{{ route('fixed_loan.applications.view', $application->id) }}" 
                                     class="text-green-600 hover:underline">
                                         {{-- {{ $application->id }} --}}
@@ -99,7 +93,6 @@
                                     </a>
                                 </td>
 
-
                                 <!-- Member Name ( relation member->name, member_id ) -->
                                 <td class="text-start !py-5 px-6">
                                     {{ $application->member->member_info_first_name ?? 'N/A' }}
@@ -110,12 +103,7 @@
                                     {{ $application->branch->branch_name ?? 'N/A' }}
                                 </td>
 
-                                <!-- Scheme -->
-                                <td class="text-start !py-5 px-6">
-                                    {{ $application->scheme->scheme_name ?? 'N/A' }}
-                                </td>
-
-                            <!-- Status -->
+                                <!-- Status -->
                                 <td class="text-start !py-5 px-6">
                                     @if($application->status == 0)
                                         DRAFT

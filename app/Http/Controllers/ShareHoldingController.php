@@ -43,7 +43,7 @@ class ShareHoldingController extends Controller
                     }),
             ];
 
-            $share_holdings = $query->with('promotor')->orderBy('created_at', 'desc')->paginate(10);
+            $share_holdings = $query->with('promotor')->orderBy('created_at', 'desc')->paginate(25);
             $transfoer = Promotor::where('is_transfer', true)->first();
             return view('company.share-holdings.manage-shareholding', compact('share_holdings', 'dynamicOptions', 'transfoer'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

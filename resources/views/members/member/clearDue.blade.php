@@ -189,13 +189,13 @@ TRANSACTIONS')
                         <div id="Cash" class="hidden"></div>
 
                         <!-- Online Transfer Fields -->
-                        <div id="Online" class="hidden grid grid-cols-2 gap-4 xl:mt-8 2xl:gap-6 mt-4">
+                        <div id="Online" class="hidden  gap-4 xl:mt-8 2xl:gap-6 mt-4">
                             <!-- Transfer Date -->
                             <x-datepicker-disabled label="Transfer Date" name="transfer_date"
                                 value="{{ old('transfer_date') }}" inputId="transfer_date" />
 
                             <!-- UTR / Transaction No -->
-                            <div class="col-span-2 md:col-span-1 mt-4">
+                            <div class="col-span-1 md:col-span-1 mt-4">
                                 <label class="font-medium block mb-2 uppercase">UTR / Transaction No <span
                                         class="text-red-500">*</span></label>
                                 <input type="text" name="utr_no" placeholder="Enter UTR / Transaction No"
@@ -206,7 +206,7 @@ TRANSACTIONS')
                             </div>
 
                             <!-- Transfer Mode -->
-                            <div class="col-span-2 md:col-span-1 mt-4">
+                            <div class="col-span-1 md:col-span-1 mt-4">
                                 <label class="font-medium block mb-1 uppercase">Transfer Mode <span
                                         class="text-red-500">*</span></label>
                                 <div class="flex flex-wrap gap-4 mt-2">

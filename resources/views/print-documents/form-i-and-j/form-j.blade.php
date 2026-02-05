@@ -68,7 +68,7 @@
     <div class="subtitle" style="font-size:14px;  ">नियम ३२ (कलम ३९ अन्वये)</div>
 
     <div class="header" style="font-size: 20px;">
-        सहकारी ____________________ संस्था म. ____________ र. नं. ____________
+         {{$companyName}} र. नं. 12345
     </div>
 
     <div style="text-align:center; font-weight:bold;font-size: 20px;    ">

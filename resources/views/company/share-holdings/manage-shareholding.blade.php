@@ -22,10 +22,10 @@
         </form>
         <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
             <form action="{{ route('shareholding.index') }}"
-                class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xxl:max-w-[319px] w-full">
+                class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xxl:max-w-[319px] ">
                 <input type="text" name="search" id="transaction-search" placeholder="Search"
                     value="{{ request('search') }}"
-                    class="bg-transparent border-none text-sm ltr:pl-4 rtl:pr-4 py-1 w-full" />
+                    class="bg-transparent  border-none text-sm ltr:pl-4 rtl:pr-4 py-1 w-full" />
                 <button
                     class="bg-primary shrink-0 rounded-full w-7 h-7 lg:w-8 lg:h-8 flex justify-center items-center text-n0">
                     <i class="las la-search text-lg"></i>
@@ -43,33 +43,33 @@
     <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
         <x-alert />
     </div>
-    <div class="overflow-x-auto pb-4 lg:pb-6">
-        <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+    <div class="overflow-x-auto pb-4  lg:pb-6">
+        <table class="w-full whitespace-nowrap overflow-x-auto  select-all-table " id="transactionTable1">
             <thead class="custom-thead">
                 <tr class="bg-secondary/5 dark:bg-bg3">
-                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                    <th class="text-start !py-5 px-4 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
                             PROMOTERS
                         </div>
                     </th>
-                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                    <th class="text-start !py-5 px-4 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            FIRST DISTINCTIVE<br> NO.
+                            FIRST DISTINCTIVE NO.
                         </div>
                     </th>
                     <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            LAST DISTINCTIVE<br>NO.
+                            LAST DISTINCTIVENO.
                         </div>
                     </th>
                     <th class="text-start !py-5 min-w-[130px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            TOTAL SHARES<br>HELD
+                            TOTAL SHARESHELD
                         </div>
                     </th>
                     <th class="text-start !py-5 cursor-pointer">
                         <div class="flex items-center gap-1">
-                            SHARE NOMINAL<br>Val.
+                            SHARE NOMINALVal.
                         </div>
                     </th>
                     <th class="text-start !py-5 cursor-pointer">
@@ -83,16 +83,16 @@
             <tbody>
                 @forelse($share_holdings as $index => $share)
                 <tr class="border-b">
-                    <td class="px-6 py-4">
+                    <td class="px-5 py-4">
                         <a href="{{ $share?->promotor?->id ? route('promotor.show', base64_encode($share->promotor->id)) : '#' }}" class="text-primary hover:underline">
                           000{{ $share->promotor->id ?? 'N/A' }}-{{ $share->promotor->first_name ?? 'N/A' }}
                         </a>
                     </td>
                     <td class="px-6 py-4">{{ $share->first_share }}</td>
-                    <td class="px-6 py-4">{{ $share->share_no }}</td>
-                    <td class="px-6 py-4">{{ $share->total_share_held ?? '-' }}</td>
-                    <td class="px-6 py-4">{{ $share->nominal_value ?? '-' }}</td>
-                    <td class="px-6 py-4">{{ $share->total_share_value ?? '-' }}</td>
+                    <td class="px-4 py-4">{{ $share->share_no }}</td>
+                    <td class="px-4 py-4">{{ $share->total_share_held ?? '-' }}</td>
+                    <td class="px-4 py-4">{{ $share->nominal_value ?? '-' }}</td>
+                    <td class="px-4 py-4">{{ $share->total_share_value ?? '-' }}</td>
                     <!-- <td class="px-6 py-4">{{ \Carbon\Carbon::parse($share->allotment_date)->format('d-m-Y') }}</td> -->
                     <td class="py-2 px-6">
                         <div class="flex justify-center">
@@ -114,8 +114,8 @@
     </div>
     <x-pagination :paginator="$share_holdings" />
 </div>
-<br>
-<div class="flex items-center justify-center gap-4 xxl:gap-6">
+
+<div class="flex items-center mt-5 justify-center gap-4 xxl:gap-6">
     <div class="col-span-12 lg:col-span-7 xxl:col-span-8">
         <div class="box xl:p-8">
             <h4 class="h4 bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
@@ -143,7 +143,7 @@
                 @error($name)
                 <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                 @enderror
-                <button class="btn-primary " type="submit"> UPDATE </button>
+                <button class="btn-primary rounded-10 " type="submit"> UPDATE </button>
             </form>
         </div>
     </div>

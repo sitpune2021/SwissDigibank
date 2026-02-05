@@ -64,6 +64,11 @@
       Proceeding Book
     </h1>
 <div class="text-center flex justify-center gap-5 mt-4" >
+     <a href=" {{ route('procedingBookPrint') }}"
+   class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; "
+   target="_blank">
+   <i class="las la-print"></i> Print
+</a>
      <a href=" {{ route('proceding-book.pdf') }}"
    class="px-4 py-2 btn-primary uppercase" style="font-family: sans-serif !important; "
    target="_blank">
@@ -80,7 +85,7 @@
    <div class="box mt-5">
   
 
-    <div class="title" style="font-size:24px;  ">सहकारी संस्था मर्यादीत &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; र. नं.</div>
+    <div class="title" style="font-size:24px;  ">{{$companyName}} र. नं. 12345</div>
     <div class="subtitle" style="font-size:18px; font-weight: bold; ">मासिक / वार्षिक प्रोसिडींग बुक</div>
 
    

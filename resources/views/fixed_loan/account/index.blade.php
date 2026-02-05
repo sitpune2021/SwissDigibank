@@ -3,7 +3,7 @@
 <div class="main-inner">
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-        <h1 class=" flex text-lg   uppercase font-semibold">DAILY WEEKLY LOAN</h1>
+        <h1 class=" flex text-lg   uppercase font-semibold">Fixed LOAN</h1>
     </div>
      @if(session('success'))
             <div class="">
@@ -53,11 +53,6 @@
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                SCHEME
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
                                 EMI COLLECTION
                             </div>
                         </th>
@@ -94,8 +89,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
-                    
+                <tbody>                  
                     @foreach ($goldLoan as $loan)
                         <tr class="border-b dark:border-bg3">
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -110,7 +104,7 @@
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center text-secondary gap-1">
-                                    <a href="{{ route('daily_weekly.account.show', $loan->id) }}" 
+                                    <a href="{{ route('fixed_loan.account.show', $loan->id) }}" 
                                         class="text-green-600 hover:underline">
                                         {{-- {{ $loan->id }} --}}
                                          {{ str_pad($loan->id, 10, '0', STR_PAD_LEFT) }}
@@ -133,12 +127,6 @@
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     {{ $loan->branch->branch_name ?? 'N/A' }}
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 capitalize">
-                                    <!-- {{ $loan->purpose_of_loan ?? 'N/A' }} -->
-                                    {{ $loan->scheme->scheme_name ?? 'N/A' }}
                                 </div>
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -176,7 +164,7 @@
                                 <div class="flex justify-center">
                                     @include('partials._vertical-options', [
                                         'id' => $loan->id,
-                                        'viewRoute' => 'daily_weekly.account.show',
+                                        'viewRoute' => 'fixed_loan.account.show',
                                     ])
                                 </div>
                             </td>
@@ -190,7 +178,6 @@
                             </td>
                         </tr>
                     @endif
-
                 </tbody>
 
             </table>

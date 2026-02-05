@@ -48,7 +48,7 @@ class BranchController extends Controller
                     abort(403, 'Branch record not found for this user.');
                 }
             }
-            $perPage = $request->input('perPage', 10);
+            $perPage = $request->input('perPage', 25);
 
             $query = Branch::with(['State'])
                 ->where('active', 'Yes')

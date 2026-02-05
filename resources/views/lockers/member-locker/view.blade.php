@@ -50,15 +50,15 @@
 
     <div class="main-inner">
 
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h3 class=" flex text-xl block  uppercase  font-bold">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6  lg:mb-8">
+            <h3 class=" flex text-lg   uppercase  font-bold">
                Member Locker - {{ $locker->locker_no }}
             </h3>
         </div>
 
         <div class="">
             @if($locker->assigned != 1)
-            <a href="{{ route('lockers.locker-list.assign-locker', $locker->id) }}" class="btn-primary rounded-10 py-2 uppercase">
+            <a href="{{ route('lockers.locker-list.assign-locker', $locker->id) }}" class="btn-primary rounded-10 py-2 text-sm uppercase">
                 Assign
             </a>
             @endif
@@ -70,7 +70,7 @@
 
                 <div class="mb-3 flex justify-end">
                     @if($locker->assigned != 1)
-                    <a href="{{ route('lockers.locker-list.edit', $locker->id) }}" class="btn-primary rounded-10 p-2">
+                    <a href="{{ route('lockers.locker-list.edit', $locker->id) }}" class="btn-primary  p-2">
                         <i class="las la-pencil-alt"></i>
                     </a>
                     @endif
@@ -98,16 +98,16 @@
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold uppercase text-lg text-gray-700 px-4 py-2">Assigned Date</td>
-                                <td class="px-4 py-2 text-gray-600">{{ $member->assign_date }}</td>
+                                <td class="px-4 py-2 text-gray-600">{{ \Carbon\Carbon::parse($member->assign_date)->format('d-m-Y') }}</td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold uppercase text-lg text-gray-700 px-4 py-2">Release Date</td>
-                                <td class="px-4 py-2 text-gray-600">{{ $member->release_date ?: '—' }}</td>
+                                <td class="px-4 py-2 text-gray-600">{{ \Carbon\Carbon::parse( $member->release_date ?: '—' )->format('d-m-Y') }}</td>
                             </tr>
                         @endif
                         <tr class="border-b">
                             <td class="font-semibold uppercase text-lg text-gray-700 px-4 py-2">Assigned</td>
-                            <td class="text-start !py-5 px-6">
+                            <td class="text-start py-2 px-4">
                                 @if($locker->assigned == 1)
                                     <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
                                         Yes

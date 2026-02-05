@@ -90,7 +90,7 @@
 
 <body>
 
-    <div class="title" style="font-size:24px;  ">सहकारी संस्था मर्यादीत &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; र. नं.</div>
+    <div class="title" style="font-size:24px;  ">{{$companyName}} र. नं.12345</div>
     <div class="subtitle" style="font-size:18px; font-weight: bold; ">मासिक / वार्षिक प्रोसिडींग बुक</div>
 
    
