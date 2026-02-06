@@ -26,7 +26,7 @@ class Shareholding extends Model
         'transfer_date',
         'utr_no',
         'transfer_mode',
-        'bank_id ',
+        'bank_id',
         'bank_name',
         'cheque_no',
         'cheque_date'
