@@ -71,23 +71,10 @@
 
 <div class="main-inner">
 
-    {{-- Alerts --}}
-    {{-- @if (session('success'))
-    <div id="success-alert" class="alert alert-success">
-        <strong>Success:</strong> {{ session('success') }}
-        <span onclick="this.parentElement.style.display='none';" style="cursor: pointer;">&times;</span>
+    <div class="mb-2">
+        <h3 class="text-xl font-semibold uppercase">FD/ MIS CALCULATOR</h3>
     </div>
-    @endif
 
-    @if (session('error'))
-    <div id="error-alert" class="alert alert-danger">
-        <strong>Error:</strong> {{ session('error') }}
-        <span onclick="this.parentElement.style.display='none';" style="cursor: pointer;">&times;</span>
-    </div>
-    @endif --}}
-<div class="mb-2">
-   <h3 class="text-xl font-semibold uppercase">FD/ MIS CALCULATOR</h3>
-</div>
     <div class=" ">
         <div class="grid grid-cols-2 md:grid-cols-3 gap-6 p-6 min-h-screen">
          <div class="col-span-2 md:col-span-1 box  dark:bg-bg3 rounded-2xl p-6">

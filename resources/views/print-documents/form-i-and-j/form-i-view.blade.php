@@ -51,20 +51,23 @@
 </div>
    <div class="box mt-5">
      
-    <table style="width:100%; font-size:20px; margin-bottom:10px; border:none;">
+    <div class="" style=" text-align:center; border:none; font-size: 18px;  font-weight: bold;">
+          {{ $companyName }}  &nbsp; र. नं. 12345 
+    </div>
+    {{-- <table style="width:100%; font-size:20px; margin-bottom:10px; border:none;">
         <tr>
-            <td style="width:33%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
+            <td style="width:33%; text-align:center; border:none; font-size: 18px;  font-weight: bold;"> --}}
                 {{-- सहकारी --}}
-            </td>
+            {{-- </td>
             <td style="width:34%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
-               {{ $companyName }}   
+               {{ $companyName }}    --}}
                {{-- संस्था म. --}}
-            </td>
-            <td style="width:33%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
-                {{-- र. नं. --}} र. नं. 12345 
-            </td>
+            {{-- </td>
+            <td style="width:33%; text-align:center; border:none; font-size: 18px;  font-weight: bold;"> --}}
+                {{-- र. नं. --}}
+            {{-- </td>
         </tr>
-    </table>
+    </table> --}}
 
 
     <div class="title" style="font-size:24px;  ">नमुना "आय" सदस्याचे नोंदणी पुस्तक</div>
@@ -94,7 +97,8 @@
             </td>
         </tr>
     </table>
-    <hr>
+     
+    {{-- <hr> --}}
     <p style="padding: 0px 20px; font-size: 14px;">
         ५)पत्ता___________________________________________________________________________________________
     </p>
@@ -161,7 +165,7 @@
         </thead>
         <tbody>
             <tr style=" height: 200px;">
-                <td style="  height: 220px;border-left: 1px solid #000 !important; "></td>
+                <td style="  height: 220px; border-left: none; "></td>
                 <td></td>
                  <td></td>
                  <td></td>
@@ -220,7 +224,7 @@
         </thead>
         <tbody>
             <tr style="">
-                <td style="height: 100px; border-left: 1px solid #000 !important; "></td>
+                <td style="height: 100px; border-left: none "></td>
                 <td></td>
                 <td></td>
                 <td></td>

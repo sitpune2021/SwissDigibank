@@ -32,19 +32,23 @@
 
 <body>
 
-    <table style="width:100%; font-size:20px; margin-bottom:10px; border:none;">
-        <tr>
-            <td style="width:25%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
+    <div class="" style=" text-align:center; border:none; font-size: 18px;  font-weight: bold;">
+          {{ $companyName }}  &nbsp; र. नं. 12345 
+    </div>
+
+    {{-- <table style="width:100%; font-size:20px; margin-bottom:10px; border:none;">
+        <tr> --}}
+            {{-- <td style="width:20%; text-align:center; border:none; font-size: 18px;  font-weight: bold;"> --}}
                 {{-- सहकारी --}}
-            </td>
-            <td style="width:50%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
+            {{-- </td> --}}
+            {{-- <td style="width:70%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
                 {{ $companyName }}
             </td>
-            <td style="width:33%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
+            <td style="width:30%; text-align:center; border:none; font-size: 18px;  font-weight: bold;">
                 र. नं. 12345 
             </td>
         </tr>
-    </table>
+    </table> --}}
 
 
     <div class="title" style="font-size:24px;  ">नमुना "आय" सदस्याचे नोंदणी पुस्तक</div>
@@ -71,10 +75,15 @@
             </td>
             <td style="width:50%; border:none;">
                 ४) संपुर्ण नाव ______________________________
+                
             </td>
+            
         </tr>
     </table>
-    <hr>
+    {{-- <div class="" style="width:100%; margin-left: 20px;">
+        ______________________________________________________________________________________________________________
+    </div> --}}
+    {{-- <hr> --}}
     <p style="padding: 0px 20px; font-size: 14px;">
         ५)पत्ता___________________________________________________________________________________________
     </p>

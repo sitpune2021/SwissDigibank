@@ -51,7 +51,7 @@ class Misaccount extends Model
         return $this->hasMany(MisTransaction::class, 'misaccount_id');
     }
 
-    public function nominee()
+    public function nominees()
     {
         return $this->hasMany(AccountNominee::class, 'mis_account_id');
     }

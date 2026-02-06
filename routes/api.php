@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\SimVerificationController;
 use App\Http\Controllers\Api\ForgotLoginPasswordController;
 use App\Http\Controllers\Api\TabController;
 use App\Http\Controllers\Api\LoanTypeController;
+use App\Http\Controllers\Api\GoldLoanController;
 
 // login and logout route
 Route::post('login', [AuthController::class, 'login']);
@@ -48,6 +49,24 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('loan-types', [LoanTypeController::class, 'loanTypes']);
 Route::get('/loan-types/{loanType}/schemes', [LoanTypeController::class, 'getSchemes']);
 
+
+// Gold loan enquiry 
+Route::prefix('gold-loan') ->middleware('auth:sanctum')->group(function () {
+        Route::get('/dropdowns', [GoldLoanController::class, 'getDropdownOptions']);
+        Route::post('/personal-details/save', [GoldLoanController::class, 'savePersonalDetails']);
+        Route::post('/step2-ornaments', [GoldLoanController::class, 'step2Ornaments']);
+        Route::post('/step3-loan', [GoldLoanController::class, 'step3Loan']);
+        Route::post('/step4-account', [GoldLoanController::class, 'step4Account']);
+        Route::post('/step5-branch', [GoldLoanController::class, 'step5Branch']);
+        Route::get('/summary/{loan_enquiry_id}', [GoldLoanController::class, 'step6Summary']);
+    });
+
+
+Route::middleware('auth:sanctum')->prefix('gold')->group(function () {
+
+    Route::get('gold-loan/personal-options', [GoldLoanController::class, 'getPersonalDetailsOptions']);
+    // Route::post('gold-loan/enquiry', [GoldLoanController::class, 'submitEnquiry']);
+});
 // Route::get('loan-types/{id}/schemes', [LoanTypeController::class, 'loanSchemes']);
 
 // MUFIN PAY CallBack Url 

@@ -59,9 +59,9 @@ class ShareHoldingController extends Controller
             $formFields = config('share_form');
             $method = 'POST';
             $isAdd = true;
-            $nominal_value = 10.00;
-            $formFieldsConfig = config('share_form');
-            $banks = Bank::select('id', 'name')->get();
+            $nominal_value = 10.00; $formFieldsConfig = config('share_form');
+            // $banks = Bank::select('id', 'name')->get();
+$banks = Bank::pluck('name', 'id');
 
             $formFields = [];
 
@@ -113,7 +113,8 @@ class ShareHoldingController extends Controller
                 'transfer_mode'     => 'required_if:pay_mode,online_tr|nullable|in:IMPS,VPA,NEFT/RTGS',
 
                 // Cheque
-                'bank_name'           => 'required_if:pay_mode,cheque|nullable|exists:banks,id',
+                // 'bank_name'           => 'required_if:pay_mode,cheque|nullable|exists:banks,id',
+                 'bank_id'           => 'required_if:pay_mode,cheque|nullable|exists:banks,id',
                 'cheque_no'         => 'required_if:pay_mode,cheque|nullable|string|max:255',
                 'cheque_date'       => 'required_if:pay_mode,cheque|date',
 
@@ -144,6 +145,11 @@ class ShareHoldingController extends Controller
                 ]);
             }
 
+            $bank = null;
+
+if ($request->pay_mode === 'cheque' && $request->bank_id) {
+    $bank = Bank::find($request->bank_id);
+}
             // 3️⃣ Prepare data for insert
             $data = [
                 'promotor_id'       => $request->promotor_id,
@@ -161,7 +167,9 @@ class ShareHoldingController extends Controller
                 'transfer_date'     => $request->pay_mode === 'online_tr' && $request->transfer_date ? \Carbon\Carbon::parse($request->transfer_date)->format('Y-m-d') : null,
                 'utr_no'            => $request->pay_mode === 'online_tr' ? $request->utr_no : null,
                 'transfer_mode'     => $request->pay_mode === 'online_tr' ? $request->transfer_mode : null,
-                'bank_name'           => $request->pay_mode === 'cheque' ? $request->bank_name : null,
+                // 'bank_name'           => $request->pay_mode === 'cheque' ? $request->bank_name : null,
+                'bank_id'           => $bank?->id,
+    'bank_name'         => $bank?->name,
                 'cheque_no'         => $request->pay_mode === 'cheque' ? $request->cheque_no : null,
                 'cheque_date'       => $request->pay_mode === 'cheque' && $request->cheque_date ? \Carbon\Carbon::parse($request->cheque_date)->format('Y-m-d') : null,
                 'saving_account_id' => $request->pay_mode === 'saving_ac' ? $request->saving_account_id : null,

@@ -246,7 +246,8 @@ class FDController extends Controller
         $members = Member::all();
         $schemes = FDScheme::all();
         $savings = Account::with('members')->get();
-        $banks = Bank::all(); // assuming you have a Bank model
+        // $banks = Bank::all(); // assuming you have a Bank model
+       $banks = Bank::pluck('name', 'id');
 
         $membersData = Member::with('address', 'minors', 'branch')->get()
             ->mapWithKeys(function ($m) {
@@ -304,7 +305,8 @@ class FDController extends Controller
                 'pay1_mode'       => 'required|string|in:cash,cheque,online,saving',
 
                 // Cheque
-                'pay1_bank'       => 'nullable|required_if:pay1_mode,cheque|string|max:255',
+                // 'pay1_bank'       => 'nullable|required_if:pay1_mode,cheque|string|max:255',
+                'bank_id'          => 'nullable|required_if:pay1_mode,cheque|exists:banks,id',
                 'pay1_cheque_no'  => 'nullable|required_if:pay1_mode,cheque|string|max:255',
                 'pay1_cheque_date' => 'nullable|required_if:pay1_mode,cheque|date',
 
@@ -439,7 +441,8 @@ class FDController extends Controller
                     : now(),
                 'amount'          => $request->pay1_amount,
                 'mode'            => $request->pay1_mode,
-                'bank'            => $request->pay1_bank ?? null,
+                // 'bank'            => $request->pay1_bank ?? null,
+                 'bank'          => $request->bank_id,
                 'cheque_no'       => $request->pay1_cheque_no ?? null,
                 'cheque_date'     => $request->pay1_cheque_date ? Carbon::parse($request->pay1_cheque_date) : null,
                 'transfer_date'   => $request->pay1_transfer_date ? Carbon::createFromFormat('d-m-Y', $request->pay1_transfer_date) : null,
