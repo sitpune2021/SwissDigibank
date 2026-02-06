@@ -213,6 +213,15 @@ return [
         ],
     ],
     [
+        'title' => 'AGRICULTURAL LOAN',
+        'icon' => 'las la-university',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'agricultural_loan.schemes.index'],
+        ],
+    ],
+    [
         'title' => 'LOCKERS',
         'icon' => 'las la-lock',
         'position' => '9',
