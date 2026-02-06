@@ -95,6 +95,7 @@ use App\Http\Middleware\SessionProtection;
 use App\Http\Controllers\EmployeeAkash;
 use App\Http\Controllers\GoldLoanPrintDocument;
 use App\Http\Controllers\FixedLoanController;
+use App\Http\Controllers\AgriculturController;
 
 
 // Clear cache 
@@ -2096,6 +2097,21 @@ Route::group(['prefix' => 'fixed_loan'], function () {
 
 
 /////////////////////////////////////   END Fixed LOAN   ////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////   Agricultural Loan   ////////////////////////////////////////////////////////
+
+
+Route::group(['prefix' => 'Agricultural_loan'], function () {
+
+    // Agricultural loan Loan Scheme
+    Route::get('scheme/index', [AgriculturController::class, 'index'])
+        ->name('agricultural_loan.schemes.index');
+
+});
+
+
+/////////////////////////////////////   End Agricultural Loan   ////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////    START LOCKER    ///////////////////////////////////////////////
