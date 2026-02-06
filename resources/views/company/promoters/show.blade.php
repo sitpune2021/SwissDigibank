@@ -244,15 +244,15 @@
         </div>
 
         {{-- Member KYC Info --}}
-        <div 
-         class=" toggle-box mt-4 box rounded-md shadow">
+        <div class=" toggle-box mt-4 box rounded-md shadow">
             <!-- Header -->
-            <div class="toggle-header flex items-center justify-between px-4 py-3 bg-secondary/5 rounded-10 cursor-pointer">
+            <div
+                class="toggle-header flex items-center justify-between px-4 py-3 bg-secondary/5 rounded-10 cursor-pointer">
                 <span class="font-semibold text-lg uppercase">Member KYC Info</span>
-                <i  class="toggle-icon las la-minus"></i>
+                <i class="toggle-icon las la-minus"></i>
             </div>
             <!-- Content -->
-            <div class= "toggle-content bg-white rounded-md">
+            <div class="toggle-content bg-white rounded-md">
                 <table class="w-full text-sm">
                     <tbody>
                         <tr class="border-b">
@@ -347,12 +347,13 @@
         </div>
 
         {{-- Member Nominee Info --}}
-        <div  class="toggle-box mt-4 rounded-10 box shadow">
-            <div class="toggle-header flex items-center justify-between px-4 py-3 bg-secondary/5  rounded-10 cursor-pointer">
+        <div class="toggle-box mt-4 rounded-10 box shadow">
+            <div
+                class="toggle-header flex items-center justify-between px-4 py-3 bg-secondary/5  rounded-10 cursor-pointer">
                 <span class="font-semibold text-lg uppercase">Nominee Info</span>
                 <i class="toggle-icon las la-minus"></i>
             </div>
-            <div  class="toggle-content bg-white">
+            <div class="toggle-content bg-white">
                 <table class="w-full  text-sm">
                     <tbody>
                         <tr class="border-b">
@@ -434,9 +435,10 @@
             </div>
         </div>
 
-        <div  class="toggle-box mt-4 rounded shadow box">
+        <div class="toggle-box mt-4 rounded shadow box">
             <!-- Header -->
-            <div class="toggle-header flex items-center justify-between px-4 py-2 bg-secondary/5 rounded-10 cursor-pointer">
+            <div
+                class="toggle-header flex items-center justify-between px-4 py-2 bg-secondary/5 rounded-10 cursor-pointer">
                 <span class="font-semibold uppercase py-2 text-lg">Documents</span>
                 <div class="flex gap-4 space-x-2 items-center">
                     {{-- <i class="cursor-pointer fa fa-pencil"></i> --}}
@@ -445,12 +447,12 @@
                         <i class="cursor-pointer las la-pencil-alt "></i>
                     </a>
 
-                    <i  class="toggle-icon las la-minus"></i>
+                    <i class="toggle-icon las la-minus"></i>
                 </div>
             </div>
 
             <!-- Content -->
-            <div  class="toggle-content bg-white">
+            <div class="toggle-content bg-white">
                 <table class="w-full text-sm ">
                     <tbody>
                         {{-- Photo --}}
@@ -868,7 +870,7 @@
             </div>
             @if ($promoter->nominees->count() > 0)
             <div class="box mt-5">
-                <div class="toggle-box bg-secondary/5 text-black py-2 rounded-10 shadow" >
+                <div class="toggle-box bg-secondary/5 text-black py-2 rounded-10 shadow">
                     <div class="toggle-header cursor-pointer flex items-center justify-between px-4 py-2 rounded-t">
                         <span class="font-semibold text-lg uppercase">
                             SHARE HOLDING NOMINEE'S INFO
@@ -878,7 +880,7 @@
                         </div>
                     </div>
 
-                    <div class=" toggle-content p-4 text-sm bg-white" >
+                    <div class=" toggle-content p-4 text-sm bg-white">
                         <div class="py-2">
                             <table class="w-full overflow-x-auto whitespace-nowrap text-sm text-left">
                                 <thead>
@@ -971,17 +973,17 @@
             </div>
             <!-- BANK DETAILS -->
             <div class="box mt-5">
-                <div class="toggle-box mt-2  bg-secondary/5 rounded-10 shadow" >
+                <div class="toggle-box mt-2  bg-secondary/5 rounded-10 shadow">
                     <div class=" toggle-header flex items-center justify-between px-2 py-3 rounded-10  ">
                         <span class="font-semibold uppercase text-lg">Bank Details(static)</span>
                         <div class="cursor-pointer flex gap-4 items-center  space-x-2 px-2">
                             <a href="" class="btn-primary p-1">
                                 <i class="cursor-pointer las la-pencil-alt"></i>
                             </a>
-                             <i class="toggle-icon las la-minus"></i>
+                            <i class="toggle-icon las la-minus"></i>
                         </div>
                     </div>
-                    <div class=" toggle-content p-4 text-sm bg-white" >
+                    <div class=" toggle-content p-4 text-sm bg-white">
                         <div class="flex justify-between py-2 border-b">
                             <span class="font-semibold uppercase">Bank Name</span>
                             <span>{{ $promoter->branch->branch_name ?? '' }}</span>
@@ -1004,15 +1006,15 @@
 
             <!-- Promoter AccountsS -->
             <div class="box mt-5">
-                <div class="toggle-box bg-secondary/5 py-2  rounded-10 shadow" >
+                <div class="toggle-box bg-secondary/5 py-2  rounded-10 shadow">
                     <div class=" toggle-header cursor-pointer flex items-center justify-between px-4  py-2 rounded-10">
                         <span class=" font-semibold uppercase text-lg ">Promoter Accounts(static)</span>
                         <div class="flex gap-2 space-x-2">
-                             <i class="toggle-icon las la-minus"></i>
+                            <i class="toggle-icon las la-minus"></i>
                         </div>
                     </div>
 
-                    <div class="toggle-content p-4 text-sm bg-white" >
+                    <div class="toggle-content p-4 text-sm bg-white">
                         <div class="p-2 overflow-x-auto whitespace-nowrap">
                             <table class="w-full text-sm text-left">
                                 <thead>
@@ -1066,7 +1068,7 @@
                     <div class=" toggle-header cursor-pointer flex items-center justify-between px-4 py-2 rounded-10">
                         <span class="font-semibold uppercase text-lg">JOINT ACCOUNTS(static)</span>
                         <div class="flex gap-2 space-x-2">
-                             <i class="toggle-icon las la-minus"></i>
+                            <i class="toggle-icon las la-minus"></i>
                         </div>
                     </div>
 
@@ -1130,7 +1132,7 @@
                         </div>
                     </div>
 
-                    <div class="toggle-content p-4 text-sm bg-white" >
+                    <div class="toggle-content p-4 text-sm bg-white">
                         <div class="p-2 whitespace-nowrap overflow-x-auto">
                             <table class="w-full text-sm text-left whitespace-nowrap overflow-x-auto">
                                 <thead>
@@ -1187,11 +1189,11 @@
                     <div class="toggle-header flex items-center justify-between px-4 py-2  rounded-t">
                         <span class="font-semibold cursor-pointer uppercase text-lg">MY GUARANTOR SHIP (static)</span>
                         <div class="flex gap-2 space-x-2">
-                           <i class="toggle-icon las la-minus"></i>
+                            <i class="toggle-icon las la-minus"></i>
                         </div>
                     </div>
 
-                    <div class="toggle-content p-4 text-sm bg-white" >
+                    <div class="toggle-content p-4 text-sm bg-white">
                         <div class="">
                             <table class="w-full text-sm text-left overflow-x-auto whitespace-nowrap">
                                 <thead>
@@ -1256,7 +1258,7 @@
 
     <!-- JS Script -->
     <script>
-document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.toggle-box').forEach(box => {
         const header = box.querySelector('.toggle-header');
         const content = box.querySelector('.toggle-content');
@@ -1274,7 +1276,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-</script>
+    </script>
 
     <script>
         function previewDoc(fileUrl, title) {

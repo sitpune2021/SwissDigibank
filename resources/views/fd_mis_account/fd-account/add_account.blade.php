@@ -1,517 +1,551 @@
 @extends('layout.main')
 @section('content')
-    <style>
-        input[type="checkbox"] {
-            width: 28px;
-            height: 28px;
-            accent-color: green;
-            /* For modern browsers */
-        }
+<style>
+    input[type="checkbox"] {
+        width: 28px;
+        height: 28px;
+        accent-color: green;
+        /* For modern browsers */
+    }
 
-        /* Fallback for browsers without accent-color support */
-        input[type="checkbox"]:checked {
-            background-color: green;
-            border: none;
-        }
+    /* Fallback for browsers without accent-color support */
+    input[type="checkbox"]:checked {
+        background-color: green;
+        border: none;
+    }
 
-        input[type="radio"] {
-            width: 24px;
-            height: 24px;
-            accent-color: green;
-            /* Modern browser support */
-        }
+    input[type="radio"] {
+        width: 24px;
+        height: 24px;
+        accent-color: green;
+        /* Modern browser support */
+    }
 
-        .tableWidth {
-            width: 90%;
-            margin: auto;
+    .tableWidth {
+        width: 90%;
+        margin: auto;
 
-        }
+    }
 
-        .bg-yellow {
-            background-color: #e17100;
-        }
+    .bg-yellow {
+        background-color: #e17100;
+    }
 
-        button[type="reset"]:active {
-            transform: scale(0.95);
-            opacity: 0.7;
-            transition: 0.1s;
-        }
-    </style>
+    button[type="reset"]:active {
+        transform: scale(0.95);
+        opacity: 0.7;
+        transition: 0.1s;
+    }
+</style>
 
-    <div class="main-inner">
-        <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
-            <div class="flex items-start flex-col  gap-2">
-                <h1 class="text-xl font-semibold uppercase">New FD Account</h1>
-            </div>
+<div class="main-inner">
+    <div class="mb-6 flex flex-wrap items-start  justify-between gap-4 lg:mb-8">
+        <div class="flex items-start flex-col  gap-2">
+            <h1 class="text-xl font-semibold uppercase">New FD Account</h1>
         </div>
+    </div>
 
-        <div class="col-span-12 box lg:col-span-12">
-            <form method="post" action="{{ route('fd-mis-schemes.fd_store') }}" id="FDForm">
-                @csrf
-                <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
-                    <div class="col-span-2 md:col-span-1">
-                        <label class="md:text-lg font-medium block mb-4 uppercase">
-                            Customer <span class="text-red-500">*</span>
+    <div class="col-span-12 box lg:col-span-12">
+        <form method="post" action="{{ route('fd-mis-schemes.fd_store') }}" id="FDForm">
+            @csrf
+            <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
+                <div class="col-span-2 md:col-span-1">
+                    <label class="md:text-lg font-medium block mb-4 uppercase">
+                        Customer <span class="text-red-500">*</span>
+                    </label>
+                    <select id="member_id" name="member_id"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
+                        <option value="">Select Customer</option>
+                        @foreach ($members as $member)
+                        <option value="{{ $member->id }}">{{ $member->member_info_first_name }}
+                            {{ $member->member_info_last_name }}</option>
+                        @endforeach
+                    </select>
+                    @error('member_id')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label class="md:text-lg font-medium block mb-4 uppercase">Customer Name</label>
+                    <input type="text" id="member_name" placeholder="Enter Name"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3"
+                        disabled>
+                    @error('member_name')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label class="md:text-lg font-medium block mb-4 uppercase">Customer Address</label>
+                    <input type="text" id="member_address" placeholder="Enter Address"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3"
+                        disabled>
+                    @error('member_address')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label class="md:text-lg font-medium block mb-4 uppercase">Customer Mobile No.</label>
+                    <div class="flex gap-2">
+                        <input type="text"
+                            class="text-sm bg-secondary/5 w-20 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3"
+                            value="+91" disabled>
+                        <input type="text" id="member_mobile" placeholder="Enter Mobile"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3"
+                            disabled>
+                        @error('member_mobile')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label class="md:text-lg font-medium block mb-4 uppercase">Minor</label>
+                    <select id="minor_id" name="minor_id"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
+                        <option value="">Select minor</option>
+                    </select>
+                    @error('minor_id')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="col-span-2 md:col-span-1 pt-3 ">
+                    <p class="text-blue-500">
+                    </p>
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                        Branch
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <select name="branch_id" id="branch_id"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6  py-3 md:py-3">
+                        <!-- <option value="">select branch</option> -->
+                    </select>
+                    @error('branch_id')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                        Advisor/ Staff
+                    </label>
+                    <select name="advisor_staff" id="advisor_staff"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3">
+                        <option value="">select associate/user code</option>
+                        <option value="1">ABC</option>
+                        <option value="2">XYZ</option>
+                    </select>
+                    @error('advisor_staff')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                        Open Date
+                        <span class="text-red-500">*</span>
+                    </label>
+
+                    <input type="text" id="date" name="date" placeholder="DD/MM/YYYY"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
+                    @error('date')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                        Tenure Period
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <div class="md:w-2/3 flex flex-row gap-2  my-2  space-y-2 md:flex-row md:space-y-0 md:space-x-2">
+                        <input type="number" name="tenure_year" placeholder="Year"
+                            class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
+                        <input type="number" name="tenure_month" placeholder="Month"
+                            class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
+
+                        <input type="number" name="tenure_day" placeholder="Days"
+                            class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
+                    </div>
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                        Scheme
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <select id="scheme_id" name="scheme_id"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
+                        <option value="">Select Scheme</option>
+                        @foreach ($schemes as $scheme)
+                        <option value="{{ $scheme->id }}">{{ $scheme->scheme_name }}</option>
+                        @endforeach
+                    </select>
+                    @error('scheme_id')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+
+                    <x-amount-input name="fd_amount" id="fd_amount" label="FD AMOUNT" />
+                    @error('fd_amount')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                        Interest Payout Type
+                    </label>
+
+                    <select name="payout" id="payout"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3">
+                        <option value="Cumulative Yearly">Cumulative Yearly</option>
+                        <option value="Cumulative Half Yearly">Cumulative Half Yearly</option>
+                        <option value="Cumulative Quarterly">Cumulative Quarterly</option>
+                        <option value="Cumulative Monthly">Cumulative Monthly</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Quarterly">Quarterly</option>
+                        <option value="Half Yearly">Half Yearly</option>
+                        <option value="Yearly">Yearly</option>
+                    </select>
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                        TDS Deduction
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex items-center gap-6">
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="tds_deduction" value="1">
+                            <span>Yes</span>
                         </label>
-                        <select id="member_id" name="member_id"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
-                            <option value="">Select Customer</option>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="tds_deduction" value="0" checked>
+                            <span>No</span>
+                        </label>
+                    </div>
+                    @error('tds_deduction')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <label class="md:w-1/3 font-medium uppercase">Senior Citizen <span
+                            class="text-red-500 ">*</span></label>
+                    <div class="md:w-2/3 my-2 ">
+                        <input type="checkbox" name="senior_citizen" value="1" class="w-5 h-5" checked>
+                    </div>
+                    @error('senior_citizen')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <!-- Step 1 -->
+                    <label class="md:text-lg font-medium block mb-4 uppercase">
+                        Account Type <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="flex items-center gap-4">
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="account_type" value="single" checked
+                                onclick="toggleSelect(false)">
+                            Single
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="account_type" value="joint" onclick="toggleSelect(true)">
+                            Joint A/C
+                        </label>
+                    </div>
+
+                    <!-- Select list (shown only if Joint A/C) -->
+                    <div id="accountSelect" class="hidden mt-4">
+                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                            Joint A/C Member <span class="text-red-500">*</span>
+                        </label>
+                        <select name="joint_member_id"
+                            class="text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6  py-3  md:py-3 w-full">
+
+                            <option value="">select member or name</option>
                             @foreach ($members as $member)
-                                <option value="{{ $member->id }}">{{ $member->member_info_first_name }}
-                                    {{ $member->member_info_last_name }}</option>
+                            <option value="{{ $member->id }}">{{ $member->member_info_first_name }}</option>
                             @endforeach
                         </select>
-                        @error('member_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @error('joint_member_id')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label class="md:text-lg font-medium block mb-4 uppercase">Customer Name</label>
-                        <input type="text" id="member_name" placeholder="Enter Name"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3"
-                            disabled>
-                        @error('member_name')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label class="md:text-lg font-medium block mb-4 uppercase">Customer Address</label>
-                        <input type="text" id="member_address" placeholder="Enter Address"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3"
-                            disabled>
-                        @error('member_address')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label class="md:text-lg font-medium block mb-4 uppercase">Customer Mobile No.</label>
-                        <div class="flex gap-2">
-                            <input type="text"
-                                class="text-sm bg-secondary/5 w-20 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3"
-                                value="+91" disabled>
-                            <input type="text" id="member_mobile" placeholder="Enter Mobile"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3"
-                                disabled>
-                            @error('member_mobile')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label class="md:text-lg font-medium block mb-4 uppercase">Minor</label>
-                        <select id="minor_id" name="minor_id"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
-                            <option value="">Select minor</option>
-                        </select>
-                        @error('minor_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1 pt-3 ">
-                        <p class="text-blue-500">
-                        </p>
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                            Branch
-                            <span class="text-red-500">*</span>
-                        </label>
-                        <select name="branch_id" id="branch_id"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6  py-3 md:py-3">
-                            <!-- <option value="">select branch</option> -->
-                        </select>
-                        @error('branch_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                            Advisor/ Staff
-                        </label>
-                        <select name="advisor_staff" id="advisor_staff"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3">
-                            <option value="">select associate/user code</option>
-                            <option value="1">ABC</option>
-                            <option value="2">XYZ</option>
-                        </select>
-                        @error('advisor_staff')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                            Open Date
-                            <span class="text-red-500">*</span>
-                        </label>
-
-                        <input type="text" id="date" name="date" placeholder="DD/MM/YYYY"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
-                        @error('date')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                            Tenure Period
-                            <span class="text-red-500">*</span>
-                        </label>
-                        <div class="md:w-2/3 flex flex-row gap-2  my-2  space-y-2 md:flex-row md:space-y-0 md:space-x-2">
-                            <input type="number" name="tenure_year" placeholder="Year"
-                                class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
-                            <input type="number" name="tenure_month" placeholder="Month"
-                                class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
-
-                            <input type="number" name="tenure_day" placeholder="Days"
-                                class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
-                        </div>
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                            Scheme
-                            <span class="text-red-500">*</span>
-                        </label>
-                        <select id="scheme_id" name="scheme_id"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
-                            <option value="">Select Scheme</option>
-                            @foreach ($schemes as $scheme)
-                                <option value="{{ $scheme->id }}">{{ $scheme->scheme_name }}</option>
-                            @endforeach
-                        </select>
-                        @error('scheme_id')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-
-                        <x-amount-input name="fd_amount" id="fd_amount" label="FD AMOUNT" />
-                        @error('fd_amount')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                            Interest Payout Type
-                        </label>
-
-                        <select name="payout" id="payout"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3">
-                            <option value="Cumulative Yearly">Cumulative Yearly</option>
-                            <option value="Cumulative Half Yearly">Cumulative Half Yearly</option>
-                            <option value="Cumulative Quarterly">Cumulative Quarterly</option>
-                            <option value="Cumulative Monthly">Cumulative Monthly</option>
-                            <option value="Monthly">Monthly</option>
-                            <option value="Quarterly">Quarterly</option>
-                            <option value="Half Yearly">Half Yearly</option>
-                            <option value="Yearly">Yearly</option>
-                        </select>
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                            TDS Deduction
-                            <span class="text-red-500">*</span>
-                        </label>
-                        <div class="flex items-center gap-6">
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="tds_deduction" value="1">
-                                <span>Yes</span>
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="tds_deduction" value="0" checked>
-                                <span>No</span>
-                            </label>
-                        </div>
-                        @error('tds_deduction')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <label class="md:w-1/3 font-medium uppercase">Senior Citizen <span
-                                class="text-red-500 ">*</span></label>
-                        <div class="md:w-2/3 my-2 ">
-                            <input type="checkbox" name="senior_citizen" value="1" class="w-5 h-5" checked>
-                        </div>
-                        @error('senior_citizen')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1">
-                        <!-- Step 1 -->
-                        <label class="md:text-lg font-medium block mb-4 uppercase">
-                            Account Type <span class="text-red-500">*</span>
-                        </label>
-
-                        <div class="flex items-center gap-4">
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="account_type" value="single"  checked onclick="toggleSelect(false)">
-                                Single
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="account_type" value="joint" onclick="toggleSelect(true)">
-                                Joint A/C
-                            </label>
-                        </div>
-
-                        <!-- Select list (shown only if Joint A/C) -->
-                        <div id="accountSelect" class="hidden mt-4">
-                            <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                                Joint A/C Member <span class="text-red-500">*</span>
-                            </label>
-                            <select name="joint_member_id"
-                                class="text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6  py-3  md:py-3 w-full">
-
-                                <option value="">select member or name</option>
-                                @foreach ($members as $member)
-                                    <option value="{{ $member->id }}">{{ $member->member_info_first_name }}</option>
-                                @endforeach
-                            </select>
-                            @error('joint_member_id')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!--  Nominee  -->
-                    <div class="mt-4 col-span-2 md:col-span-1 ">
-
-                        <p class="font-medium uppercase">
-                            Nominee
-                            <span class="text-red-500">*</span>
-                        </p>
-                        <div class="flex items-center  gap-2">
-                            <label class=" mt-2 flex items-center  gap-2">
-                                <input type="radio" name="nominees" value="yes" onclick="toggleAddMore(true)"> Yes
-                            </label>
-                            <label class=" mt-2 flex items-center  gap-2">
-                                <input type="radio" name="nominees" value="no" checked  onclick="toggleAddMore(false)"> No
-                            </label>
-                            @error('nominees')
-                                <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <!-- Add More Button -->
-                        <div id="addMoreText" class="hidden mt-3">
-                            <p class="text-blue-600 underline cursor-pointer uppercase" onclick="addNomineeInputs()">+ ADD
-                                MORE NOMINEE</p>
-                        </div>
-
                     </div>
                 </div>
 
-                <div id="extraInputs" class="mt-3 w-full space-y-3"></div>
+                <!--  Nominee  -->
+                <div class="mt-4 col-span-2 md:col-span-1 ">
 
-                <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                            Final Amount
+                    <p class="font-medium uppercase">
+                        Nominee
+                        <span class="text-red-500">*</span>
+                    </p>
+                    <div class="flex items-center  gap-2">
+                        <label class=" mt-2 flex items-center  gap-2">
+                            <input type="radio" name="nominees" value="yes" onclick="toggleAddMore(true)"> Yes
                         </label>
-
-                        <input type="text" id="final_amount" name="final_amount"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3"
-                            placeholder="0" value="">
+                        <label class=" mt-2 flex items-center  gap-2">
+                            <input type="radio" name="nominees" value="no" checked onclick="toggleAddMore(false)"> No
+                        </label>
+                        @error('nominees')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
                     </div>
-                    <div class="col-span-2 md:col-span-1">
-                        <label for="" class="md:text-lg font-medium block mb-4 uppercase">
-                            T. Date
-                            <span class="text-red-500">*</span>
-                        </label>
 
-                        <input type="text" id="date2" name="transaction_date" placeholder="DD/MM/YYYY"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6 
+                    <!-- Add More Button -->
+                    <div id="addMoreText" class="hidden mt-3">
+                        <p class="text-blue-600 underline cursor-pointer uppercase" onclick="addNomineeInputs()">+ ADD
+                            MORE NOMINEE</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="extraInputs" class="mt-3 w-full space-y-3"></div>
+
+            <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
+                <div class="col-span-2 md:col-span-1">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                        Final Amount
+                    </label>
+
+                    <input type="text" id="final_amount" name="final_amount"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3"
+                        placeholder="0" value="">
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                    <label for="" class="md:text-lg font-medium block mb-4 uppercase">
+                        T. Date
+                        <span class="text-red-500">*</span>
+                    </label>
+
+                    <input type="text" id="date2" name="transaction_date" placeholder="DD/MM/YYYY" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6 
                             py-3 md:py-3">
+                </div>
+
+                <!-- pay mode 1-->
+                <div class="col-span-2 md:col-span-1 bg-secondary/5 p-4 rounded-lg shadow">
+                    <!-- Section Title -->
+                    <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-2 uppercase">Pay Mode</h4>
+                    <!-- Amount Field -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center uppercase">
+                        <label for="" class="text-sm font-medium text-gray-700">
+                            Amount <span class="text-red-500">*</span>
+                        </label>
+                        <div class="md:col-span-2">
+                            <input type="number" id="pay1_amount" name="pay1_amount" placeholder="Enter Amount"
+                                class="w-full border rounded-10 px-3 py-3 text-sm bg-white/5 ">
+
+                        </div>
                     </div>
 
-                    <!-- pay mode 1-->
-                    <div class="col-span-2 md:col-span-1 bg-secondary/5 p-4 rounded-lg shadow">
-                        <!-- Section Title -->
-                        <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-2 uppercase">Pay Mode</h4>
-                        <!-- Amount Field -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center uppercase">
-                            <label for="" class="text-sm font-medium text-gray-700">
-                                Amount <span class="text-red-500">*</span>
+                    <!-- Pay Mode -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-start">
+                        <label class="text-sm font-medium text-gray-700 uppercase">
+                            Pay Mode <span class="text-red-500">*</span>
+                        </label>
+                        <div class="md:col-span-2 flex flex-wrap gap-4">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="pay1_mode" id="payMode" value="cash" checked
+                                    class="text-green-500 focus:ring-green-500">
+                                <span class="text-sm text-gray-700">Cash</span>
                             </label>
-                            <div class="md:col-span-2">
-                                <input type="number" id="pay1_amount" name="pay1_amount" placeholder="Enter Amount"
-                                    class="w-full border rounded-10 px-3 py-3 text-sm bg-white/5 ">
-
-                            </div>
-                        </div>
-
-                        <!-- Pay Mode -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-start">
-                            <label class="text-sm font-medium text-gray-700 uppercase">
-                                Pay Mode <span class="text-red-500">*</span>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="pay1_mode" value="cheque" id="payMode"
+                                    class="text-green-500 focus:ring-green-500">
+                                <span class="text-sm text-gray-700">Cheque</span>
                             </label>
-                            <div class="md:col-span-2 flex flex-wrap gap-4">
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="pay1_mode" id="payMode" value="cash" checked
-                                        class="text-green-500 focus:ring-green-500">
-                                    <span class="text-sm text-gray-700">Cash</span>
-                                </label>
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="pay1_mode" value="cheque" id="payMode"
-                                        class="text-green-500 focus:ring-green-500">
-                                    <span class="text-sm text-gray-700">Cheque</span>
-                                </label>
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="pay1_mode" value="online" id="payMode"
-                                        class="text-green-500 focus:ring-green-500">
-                                    <span class="text-sm text-gray-700">Online Tr.</span>
-                                </label>
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="pay1_mode" value="saving" id="payMode"
-                                        class="text-green-500 focus:ring-green-500">
-                                    <span class="text-sm text-gray-700">Saving Ac.</span>
-                                </label>
-                            </div>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="pay1_mode" value="online" id="payMode"
+                                    class="text-green-500 focus:ring-green-500">
+                                <span class="text-sm text-gray-700">Online Tr.</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="pay1_mode" value="saving" id="payMode"
+                                    class="text-green-500 focus:ring-green-500">
+                                <span class="text-sm text-gray-700">Saving Ac.</span>
+                            </label>
                         </div>
+                    </div>
 
-                        <!-- Cheque Fields -->
-                        <div id="chequeFields" class="space-y-4 hidden">
-                            <div class="mt-3">
-                                <label class="block text-sm font-medium text-gray-700 uppercase">Bank Name <span
-                                        class="text-red-500">*</span></label>
-                                <x-searchable-dropdown :items="$banks" label="Bank Name" name="pay1_bank"
-                                    display-field="name" value-field="id" :selected="old('pay1_bank')" />
-                                @error('pay1_bank')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <!-- Cheque Fields -->
+                    <div id="chequeFields" class="space-y-4 hidden">
+                        <div class="mt-3">
+                            {{-- <label class="block text-sm font-medium text-gray-700 uppercase">Bank Name <span
+                                    class="text-red-500">*</span></label> --}}
+                            
+                            {{-- <x-searchable-dropdown :items="$banks" label="Bank Name" name="pay1_bank"
+                                display-field="name" value-field="id" :selected="old('pay1_bank')" /> --}}
+                            <div id="bankDropdownWrapper" class="mt-3 ">
+
+                                <select name="bank_id" id="bank_id" class="w-full rounded-10 border px-3 py-3 text-sm">
+    <option value="">-- Select Bank --</option>
+
+    @foreach($banks as $id => $name)
+        <option value="{{ $id }}" {{ old('bank_id') == $id ? 'selected' : '' }}>
+            {{ $name }}
+        </option>
+    @endforeach
+</select>
+
+                                @error('bank_id')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
 
-                                @error('pay1_bank')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
+                                <!-- Cheque No -->
+                                {{-- <div class="mt-3">
+                                    <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
+                                    <input type="text" name="cheque_no"
+                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                        placeholder="Enter Cheque No"
+                                        value="  {{ old('cheque_no', $application->cheque_no ?? '') }}">
+                                </div> --}}
+
+                                <!-- Cheque Date -->
+                                {{-- <div class="mt-3">
+                                    <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
+                                    <input type="text" id="cheque_date" name="cheque_date"
+                                        value="{{ old('cheque_date', isset($application->cheque_date) ? \Carbon\Carbon::parse($application->cheque_date)->format('d-m-Y') : '') }}"
+                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                </div> --}}
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 uppercase">Cheque No.<span
-                                        class="text-red-500">*</span></label>
-                                <input type="text" name="pay1_cheque_no"
-                                    class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
-                                    placeholder="Enter Cheque No.">
-                                @error('pay1_cheque_no')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 uppercase">Cheque Date <span
-                                        class="text-red-500">*</span></label>
-                                <input type="text" id="date4" name="pay1_cheque_date"
-                                    class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
-                                    placeholder="DD/MM/YYYY">
-                                @error('pay1_cheque_date')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
-                            </div>
+                            @error('pay1_bank')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+
+                            @error('pay1_bank')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
-
-                        <!-- Online Transaction Fields -->
-                        <div id="onlineFields" class="space-y-4 hidden">
-                            <div class="mt-3">
-                                <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Date <span
-                                        class="text-red-500">*</span></label>
-                                <input type="text" id="date3" name="pay1_transfer_date"
-                                    class="w-full border rounded-10 px-3 py-3 dark:bg-bg3 text-sm bg-white"
-                                    placeholder="DD/MM/YYYY">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 uppercase">UTR / Transaction No.
-                                    <span class="text-red-500">*</span></label>
-                                <input type="text" name="pay1_transfer_utr"
-                                    class="w-full border rounded-10 px-3 py-3 text-sm dark:bg-bg3 bg-white"
-                                    placeholder="Enter Transaction No.">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Mode <span
-                                        class="text-red-500">*</span></label>
-                                <div class="flex gap-4 mt-2">
-                                    <label class="flex items-center gap-2">
-                                        <input type="radio" name="transferMode" value="neft"
-                                            class="text-green-500 focus:ring-green-500">
-                                        <span>IMPS</span>
-                                    </label>
-                                    <label class="flex items-center gap-2">
-                                        <input type="radio" name="transferMode" value="rtgs"
-                                            class="text-green-500 focus:ring-green-500">
-                                        <span>VPA</span>
-                                    </label>
-                                    <label class="flex items-center gap-2">
-                                        <input type="radio" name="transferMode" value="upi"
-                                            class="text-green-500 focus:ring-green-500">
-                                        <span>NEFT/RTGS</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 uppercase">Credited in Company
-                                    Account <span class="text-red-500">*</span></label>
-                                <div class="flex gap-4 mt-2">
-                                    <label class="flex items-center gap-2">
-                                        <input type="radio" name="credited" value="yes"
-                                            class="text-green-500 focus:ring-green-500">
-                                        <span>Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-2">
-                                        <input type="radio" name="credited" value="no"
-                                            class="text-green-500 focus:ring-green-500">
-                                        <span>No</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Saving Account Fields -->
-                        <div id="savingFields" class="space-y-4 hidden mt-3">
-                            <label class="block text-sm font-medium text-gray-700 uppercase">Select Saving Account <span
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 uppercase">Cheque No.<span
                                     class="text-red-500">*</span></label>
-                            <select class="w-full border rounded-10 dark:bg-bg3 px-3 py-3 text-sm bg-white saving-account">
-                                <option value="">Select Account</option>
-                                @foreach ($savings as $saving)
-                                    <option value="{{ $saving->id }}">{{ $saving->account_no }}</option>
-                                @endforeach
-                            </select>
-                            <span id="accountBalance" style="color:red"></span>
-                            <span id="accountBalance2" style="color:red"></span>
-                            <!-- Balance display -->
+                            <input type="text" name="pay1_cheque_no"
+                                class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
+                                placeholder="Enter Cheque No.">
+                            @error('pay1_cheque_no')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 uppercase">Cheque Date <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" id="date4" name="pay1_cheque_date"
+                                class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
+                                placeholder="DD/MM/YYYY">
+                            @error('pay1_cheque_date')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
+
+                    <!-- Online Transaction Fields -->
+                    <div id="onlineFields" class="space-y-4 hidden">
+                        <div class="mt-3">
+                            <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Date <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" id="date3" name="pay1_transfer_date"
+                                class="w-full border rounded-10 px-3 py-3 dark:bg-bg3 text-sm bg-white"
+                                placeholder="DD/MM/YYYY">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 uppercase">UTR / Transaction No.
+                                <span class="text-red-500">*</span></label>
+                            <input type="text" name="pay1_transfer_utr"
+                                class="w-full border rounded-10 px-3 py-3 text-sm dark:bg-bg3 bg-white"
+                                placeholder="Enter Transaction No.">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Mode <span
+                                    class="text-red-500">*</span></label>
+                            <div class="flex gap-4 mt-2">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="transferMode" value="neft"
+                                        class="text-green-500 focus:ring-green-500">
+                                    <span>IMPS</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="transferMode" value="rtgs"
+                                        class="text-green-500 focus:ring-green-500">
+                                    <span>VPA</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="transferMode" value="upi"
+                                        class="text-green-500 focus:ring-green-500">
+                                    <span>NEFT/RTGS</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 uppercase">Credited in Company
+                                Account <span class="text-red-500">*</span></label>
+                            <div class="flex gap-4 mt-2">
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="credited" value="yes"
+                                        class="text-green-500 focus:ring-green-500">
+                                    <span>Yes</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="credited" value="no"
+                                        class="text-green-500 focus:ring-green-500">
+                                    <span>No</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Saving Account Fields -->
+                    <div id="savingFields" class="space-y-4 hidden mt-3">
+                        <label class="block text-sm font-medium text-gray-700 uppercase">Select Saving Account <span
+                                class="text-red-500">*</span></label>
+                        <select class="w-full border rounded-10 dark:bg-bg3 px-3 py-3 text-sm bg-white saving-account">
+                            <option value="">Select Account</option>
+                            @foreach ($savings as $saving)
+                            <option value="{{ $saving->id }}">{{ $saving->account_no }}</option>
+                            @endforeach
+                        </select>
+                        <span id="accountBalance" style="color:red"></span>
+                        <span id="accountBalance2" style="color:red"></span>
+                        <!-- Balance display -->
+                    </div>
                 </div>
+            </div>
 
-                <div class="flex flex-col sm:flex-row justify-center  gap-3 mt-5 w-full">
-                    <button type="submit" class=" sm:w-auto  justify-center btn-primary uppercase open_fd">
-                        open fd
-                    </button>
-                    <button type="reset" class="sm:w-auto  justify-center uppercase btn-outline"
-                        onclick="document.getElementById('FDForm').reset();">
-                        Reset
-                    </button>
-                    <button type="button" class=" sm:w-auto  justify-center uppercase btn-outline"
-                        onclick="window.location.href='{{ route('fd-mis-schemes.fd_index') }}'">
-                        back
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="flex flex-col sm:flex-row justify-center  gap-3 mt-5 w-full">
+                <button type="submit" class=" sm:w-auto  justify-center btn-primary uppercase open_fd">
+                    open fd
+                </button>
+                <button type="reset" class="sm:w-auto  justify-center uppercase btn-outline"
+                    onclick="document.getElementById('FDForm').reset();">
+                    Reset
+                </button>
+                <button type="button" class=" sm:w-auto  justify-center uppercase btn-outline"
+                    onclick="window.location.href='{{ route('fd-mis-schemes.fd_index') }}'">
+                    back
+                </button>
+            </div>
+        </form>
     </div>
-    </div>
+</div>
+</div>
 
 
-    <!--nomine -->
-    <script>
-        //nomine
+<!--nomine -->
+<script>
+    //nomine
         function toggleSelect(show) {
             document.getElementById("accountSelect").classList.toggle("hidden", !show);
         }
@@ -600,11 +634,11 @@
                 container.innerHTML = "";
             }
         }
-    </script>
+</script>
 
-    <!--payment mode1-->
-    <script>
-        //payment mode1
+<!--payment mode1-->
+<script>
+    //payment mode1
         const payModeRadios = document.querySelectorAll('input[name="pay1_mode"]');
         const onlineFields = document.getElementById('onlineFields');
         const chequeFields = document.getElementById('chequeFields');
@@ -621,10 +655,10 @@
                 if (radio.value === 'saving') savingFields.classList.remove('hidden');
             });
         });
-    </script>
+</script>
 
-    <script>
-        //pay mode 2
+<script>
+    //pay mode 2
         (function() {
             const payModeRadios2 = document.querySelectorAll('input[name="payMode2"]');
             const onlineFields2 = document.getElementById('onlineFields2');
@@ -643,12 +677,12 @@
                 });
             });
         })();
-    </script>
+</script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        const membersData = @json($membersData);
+<script>
+    const membersData = @json($membersData);
         $(document).ready(function() {
             $('#member_id').on('change', function() {
                 const memberId = $(this).val();
@@ -726,9 +760,9 @@
                 }
             });
         });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
             const fdAmountInput = document.getElementById("fd_amount");
             const finalAmountInput = document.getElementById("final_amount");
             const pay1AmountInput = document.getElementById("pay1_amount");
@@ -740,9 +774,9 @@
                 pay1AmountInput.value = value;
             });
         });
-    </script>
-    <script>
-        $(".saving-account").on("change", function() {
+</script>
+<script>
+    $(".saving-account").on("change", function() {
             let accountId = $(this).val(); // get selected account id
             if (accountId) {
                 $.ajax({
@@ -803,5 +837,48 @@
                 });
             }
         });
-    </script>
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const radios = document.querySelectorAll('input[name="fee_mode"]');
+        const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
+        const onlineFields = document.getElementById("onlineFields");
+
+        radios.forEach(radio => {
+            radio.addEventListener("change", () => {
+                bankDropdownWrapper.classList.add("hidden");
+                onlineFields.classList.add("hidden");
+
+                if (radio.value === "cheque" && radio.checked) {
+                    bankDropdownWrapper.classList.remove("hidden");
+                }
+                if (radio.value === "online" && radio.checked) {
+                    onlineFields.classList.remove("hidden");
+                }
+            });
+        });
+
+            // ---- FIX: Set default date as d-m-Y ----
+            function getDMY() {
+                const d = new Date();
+                let day = String(d.getDate()).padStart(2, '0');
+                let month = String(d.getMonth() + 1).padStart(2, '0');
+                let year = d.getFullYear();
+                return `${day}-${month}-${year}`;
+            }
+
+            const chequeDateInput = document.getElementById("cheque_date");
+            if (chequeDateInput && !chequeDateInput.value) {
+                chequeDateInput.value = getDMY();
+            }
+
+            const transferDateInput = document.getElementById("transfer_date");
+            if (transferDateInput && !transferDateInput.value) {
+                transferDateInput.value = getDMY();
+            }
+
+        });
+</script>
 @endsection

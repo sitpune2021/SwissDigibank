@@ -38,7 +38,8 @@ class MisaccountController extends Controller
         $members        = Member::with(['address', 'branch'])->get();
         $minors         = Minor::all();
         $branches       = Branch::all();
-        $banks          = Bank::all();
+        // $banks          = Bank::all();
+         $banks = Bank::pluck('name', 'id');
         $savingAccounts = Account::where('account_type', 'SAVING')->get();
         $schemes        = FDScheme::all(); // fetch all FD schemes
 
@@ -750,7 +751,8 @@ class MisaccountController extends Controller
         $members        = Member::with(['address', 'branch'])->get();
         $minors         = Minor::all();
         $branches       = Branch::all();
-        $banks          = Bank::all();
+        // $banks          = Bank::all();
+          $banks = Bank::pluck('name', 'id');
         $savingAccounts = Account::where('account_type', 'SAVING')->get();
         $schemes        = FdScheme::all();
         $misaccount->load(['transactions', 'nominees']);
