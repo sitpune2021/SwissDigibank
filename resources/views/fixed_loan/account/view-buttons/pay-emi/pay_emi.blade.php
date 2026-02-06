@@ -12,31 +12,13 @@
         }
     </style>
 </head>
-@php
-$setting = $goldLoan->scheme->gold_loan_setting ?? '';
-switch ($setting) {
-case 'reducing_emi':
-$settingLabel = 'Reducing Emi';
-break;
-case 'flat_advanced_interest':
-$settingLabel = 'Flat Advanced Interest';
-break;
-case 'flat_emi':
-$settingLabel = 'Flat Emi';
-break;
-case 'no_emi':
-$settingLabel = 'No Emi';
-break;
-default:
-$settingLabel = '';
-}
-@endphp
+
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-end gap-2">
                 <h1 class="text-2xl font-semibold uppercase capitalize">
-                    DAILY WEEKLY LOAN
+                    Fixed LOAN
                 </h3>                 
             </div>
         </div>

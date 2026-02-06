@@ -38,14 +38,14 @@ $menuItems = Menu::where('active', 1)->with('submenus')->orderBy('position')->ge
                         ROLE NAME
                     </label>
 
-                    <select name="role_id"
+                    <input type="text" name="role_id"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                         placeholder="Select Role">
-                        <option value="">Select Role</option>
+                        <!-- <option value="">Select Role</option>
                         @foreach($roles as $role)
                             <option value="{{ $role->id }}">{{ $role->name }}</option>
                         @endforeach
-                    </select>
+                    </select> -->
                 </div>
 
                 <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">

@@ -156,16 +156,24 @@ class RoleController extends Controller
             ]);
 
             // Save to database
-            $rolePermission = RolePermission::create([
-                'role_id' => $request->role_id,
-                'role_position' => $request->role_position,
-                'permission_type' => $request->permission_type,
-                'active' => $request->active,
-                'permissions' => json_encode([
-                    'role_id' => $request->role_id,
-                    'permissions' => $request->permissions
-                ]), // store as JSON
-            ]);
+            // $rolePermission = RolePermission::create([
+            //     'role_id' => $request->role_id,
+            //     'role_position' => $request->role_position,
+            //     'permission_type' => $request->permission_type,
+            //     'active' => $request->active,
+            //     'permissions' => json_encode([
+            //         'role_id' => $request->role_id,
+            //         'permissions' => $request->permissions
+            //     ]), // store as JSON
+            // ]);
+
+           $rolePermission = RolePermission::create([
+    'role_id' => $request->role_id,
+    'role_position' => $request->role_position,
+    'permission_type' => $request->permission_type,
+    'active' => $request->active,
+    'permissions' => json_encode($request->permissions ?? []),
+]);
             Log::info('Role permission saved successfully', [
                 'id' => $rolePermission->id,
                 'role_id' => $rolePermission->role_id,

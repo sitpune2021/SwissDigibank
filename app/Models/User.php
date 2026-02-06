@@ -77,6 +77,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Branch::class, 'branche_id');
     }
+    
     public function companyCertificates()
     {
         return $this->hasOne(CompanyCertificate::class);

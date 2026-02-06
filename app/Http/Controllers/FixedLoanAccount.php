@@ -468,41 +468,39 @@ class FixedLoanAccount extends Controller
     }
 
     // process button status store
-  public function saveEmiStatus(Request $request)
-{
-    // DEBUG: log incoming data
-    \Log::info('saveEmiStatus payload', $request->all());
+    public function saveEmiStatus(Request $request)
+    {
+        // DEBUG: log incoming data
+        \Log::info('saveEmiStatus payload', $request->all());
 
-    // Validate
-    $request->validate([
-        'loan_id' => 'required|integer',
-        'emi_no' => 'required|integer',
-        'status' => 'required|string',
-        'remaining_amount' => 'required|numeric',
-    ]);
+        // Validate
+        $request->validate([
+            'loan_id' => 'required|integer',
+            'emi_no' => 'required|integer',
+            'status' => 'required|string',
+            'remaining_amount' => 'required|numeric',
+        ]);
 
-    $saved = DB::table('fixed_loan_emi_status')->updateOrInsert(
-        [
-            'loan_id' => $request->loan_id,
-            'emi_no'  => $request->emi_no,
-        ],
-        [
-            'status' => $request->status,
-            'remaining_amount' => $request->remaining_amount,
-            'paid_date' => null,
-            'updated_at' => now(),
-            'created_at' => now(),
-        ]
-    );
+        $saved = DB::table('fixed_loan_emi_status')->updateOrInsert(
+            [
+                'loan_id' => $request->loan_id,
+                'emi_no'  => $request->emi_no,
+            ],
+            [
+                'status' => $request->status,
+                'remaining_amount' => $request->remaining_amount,
+                'paid_date' => null,
+                'updated_at' => now(),
+                'created_at' => now(),
+            ]
+        );
 
-    return response()->json([
-        'success' => true,
-        'saved' => $saved,
-        'request' => $request->all()
-    ]);
-}
-
-
+        return response()->json([
+            'success' => true,
+            'saved' => $saved,
+            'request' => $request->all()
+        ]);
+    }
 
     // pay emi tab page
     public function mortgagePayEmi($id)
@@ -515,7 +513,7 @@ class FixedLoanAccount extends Controller
             'guarantor1'
         ])->findOrFail($id);
 
-        $emiType = $goldLoan->scheme->gold_loan_setting;
+        //$emiType = $goldLoan->scheme->gold_loan_setting;
         $totalLoan = $goldLoan->loan_amount;
         $interestRate = $goldLoan->scheme->interest_rate ?? 0;
         $emiCount = $goldLoan->scheme->emi_count ?? 12;
@@ -527,33 +525,33 @@ class FixedLoanAccount extends Controller
         $emiAmount = 0;
         $netDisbursed = 0;
 
-        switch ($emiType) {
-            case 'flat_advanced_interest':
-                $totalInterest = $totalLoan * ($interestRate / 100) * ($emiCount / 12);
-                $netDisbursed = $totalLoan - $totalInterest;
-                $emiAmount = round($totalLoan / $emiCount, 2);
-                $remainingAmount = $totalLoan - $totalPaid;
-                break;
+        // switch ($emiType) {
+        //     case 'flat_advanced_interest':
+        //         $totalInterest = $totalLoan * ($interestRate / 100) * ($emiCount / 12);
+        //         $netDisbursed = $totalLoan - $totalInterest;
+        //         $emiAmount = round($totalLoan / $emiCount, 2);
+        //         $remainingAmount = $totalLoan - $totalPaid;
+        //         break;
 
-            case 'flat_interest':
-                $totalInterest = $totalLoan * ($interestRate / 100) * ($emiCount / 12);
-                $totalPayable = $totalLoan + $totalInterest;
-                $emiAmount = $totalPayable / $emiCount;
-                $remainingAmount = $totalPayable - $totalPaid;
-                break;
+        //     case 'flat_interest':
+        //         $totalInterest = $totalLoan * ($interestRate / 100) * ($emiCount / 12);
+        //         $totalPayable = $totalLoan + $totalInterest;
+        //         $emiAmount = $totalPayable / $emiCount;
+        //         $remainingAmount = $totalPayable - $totalPaid;
+        //         break;
 
-            case 'reducing_interest':
-                $monthlyRate = $interestRate / (12 * 100);
-                $emiAmount = $totalLoan * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) / (pow(1 + $monthlyRate, $emiCount) - 1);
-                $totalPayable = $emiAmount * $emiCount;
-                $remainingAmount = $totalPayable - $totalPaid;
-                break;
+        //     case 'reducing_interest':
+        //         $monthlyRate = $interestRate / (12 * 100);
+        //         $emiAmount = $totalLoan * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) / (pow(1 + $monthlyRate, $emiCount) - 1);
+        //         $totalPayable = $emiAmount * $emiCount;
+        //         $remainingAmount = $totalPayable - $totalPaid;
+        //         break;
 
-            default:
-                $emiAmount = $totalLoan / $emiCount;
-                $remainingAmount = $totalLoan - $totalPaid;
-                break;
-        }
+        //     default:
+        //         $emiAmount = $totalLoan / $emiCount;
+        //         $remainingAmount = $totalLoan - $totalPaid;
+        //         break;
+        // }
 
         $overdueInterest = 0;
         $otherCharges = 0;
@@ -584,7 +582,7 @@ class FixedLoanAccount extends Controller
             ]);
         }
 
-        return view('daily_weekly.account.view-buttons.pay-emi.pay_emi', compact(
+        return view('fixed_loan.account.view-buttons.pay-emi.pay_emi', compact(
             'goldLoan',
             'emiAmount',
             'remainingAmount',
@@ -693,7 +691,7 @@ class FixedLoanAccount extends Controller
                 ]);
             }
 
-            return redirect()->route('daily_weekly.account.show', $loan->id)
+            return redirect()->route('fixed_loan.account.show', $loan->id)
                 ->with('success', 'EMI Payment recorded successfully!');
 
         } catch (\Exception $e) {

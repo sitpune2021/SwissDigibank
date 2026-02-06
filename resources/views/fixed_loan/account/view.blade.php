@@ -150,7 +150,7 @@ $settingLabel = '';
             View Transaction
         </a>
         
-            <a href="{{route('daily_weekly.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase text-sm px-2 py-2 rounded-10 ">
+            <a href="{{route('fixed_loan.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase text-sm px-2 py-2 rounded-10 ">
                 Pay Emi
             </a>
              <a href="{{ route('daily_weekly.account.extension',$goldLoan->id) }}" class="btn-error uppercase text-sm px-2 py-2 rounded-10 ">

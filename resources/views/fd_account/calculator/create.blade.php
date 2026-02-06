@@ -83,6 +83,23 @@
 
                 <form id="fdForm" class="space-y-6" onsubmit="event.preventDefault(); calculateFD();">
 
+                 <div class="mb-3">
+                <label for="scheme_id" class="form-label block font-medium mb-2 uppercase">
+                    FD Scheme 
+                    <span class="text-error">*</span>
+                </label>
+                <select name="scheme_id" id="scheme_id" class="form-select w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 ">
+                    <option value="">-- Select Scheme --</option>
+                </select>
+            </div>
+
+       <div class="mb-3">
+                <label for="" class="form-label  flex items-center gap-3 font-medium mb-2 uppercase">
+                                   
+                <input type="checkbox" id="" class="form-select w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 ">
+                <span class="block">Enter Values Manually</span>
+                </label>
+            </div>
                     {{-- Open Date --}}
                     <div>
                         <label class="font-medium uppercase mb-2 block">Open Date *</label>
@@ -554,4 +571,65 @@ response.results.details.forEach(function (yearData, index) {
 
 </script>
 
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("{{ route('fd.schemes.fetch') }}")
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                let dropdown = document.getElementById("scheme_id");
+                result.data.forEach(function (scheme) {
+                    let opt = document.createElement("option");
+                    opt.value = scheme.id;
+                    opt.textContent = scheme.scheme_name;
+                    dropdown.appendChild(opt);
+                });
+            }
+        })
+        .catch(err => console.error(err));
+});
+
+document.getElementById("scheme_id").addEventListener("change", function () {
+    let schemeId = this.value;
+
+    if (schemeId) {
+        fetch(`/fetch-scheme/${schemeId}`)
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    let s = result.data;
+                    document.getElementById("d_scheme_code").textContent = s.scheme_code;
+                    document.getElementById("d_scheme_name").textContent = s.scheme_name;
+                    document.getElementById("d_tenure").textContent = s.tenure + " MONTHS";
+                    document.getElementById("d_min_amount").textContent = s.min_amount + " INR";
+                    document.getElementById("d_interest_rate").textContent = s.annual_interest_rate + " %";
+
+                    document.getElementById("scheme-details").style.display = "block";
+
+                    // Auto-fill भी कर सकते हो
+                    document.getElementById("annual_interest_rate").value = s.annual_interest_rate;
+                    document.getElementById("tenure_month").value = s.tenure;
+                    document.getElementById("amount").value = s.min_amount;
+                     // Auto select payout type
+                    let payoutSelect = document.getElementById("interest_payout_type");
+                    if (s.tenure == 6) {
+                        payoutSelect.value = "HALF_YEARLY";
+                    } else if (s.tenure == 12) {
+                        payoutSelect.value = "YEARLY";
+                    } else {
+                        payoutSelect.value = ""; // default
+                    }
+
+                } else {
+                    document.getElementById("scheme-details").style.display = "none";
+                }
+            })
+            .catch(err => console.error(err));
+    } else {
+        document.getElementById("scheme-details").style.display = "none";
+    }
+});
+
+</script>
 @endpush

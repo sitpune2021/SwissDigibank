@@ -1,5 +1,5 @@
 <div>
-    <label class=" mb-2 font-medium block uppercase">
+    <label class=" mb-5 font-medium block uppercase">
         {{ $label ?? 'Date' }} <span class="text-red-500">*</span>
     </label>
     <div class="relative">
