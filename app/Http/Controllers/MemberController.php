@@ -96,7 +96,8 @@ class MemberController extends Controller
                 'branch'   => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id'),
             ];
-            $banks = Bank::all();
+            // $banks = Bank::all();
+             $banks = Bank::pluck('name', 'id');
             $sections = config('member_form');
             $member   = null;
             $route    = route('member.store');
@@ -472,7 +473,8 @@ class MemberController extends Controller
             ];
 
             $method = 'PUT';
-            $banks = Bank::all();
+            // $banks = Bank::all();
+             $banks = Bank::pluck('name', 'id');
 
             $memberModel = Member::with('address', 'kyc')->findOrFail($id);
 
