@@ -262,7 +262,7 @@
                                 </div>
                             </th>
                             <td class="flex items-center justify-between px-6 py-2 text-start">
-                                <span>{{ $promoter->kyc->aadhaar_no }}</span>
+                                <span>{{ $promoter->kyc?->aadhaar_no ?? '' }}</span>
                                 <i class="text-green-600 fa fa-check-circle"></i>
                             </td>
                         </tr> {{-- Added closing </tr> here --}}
@@ -273,7 +273,7 @@
                                 </div>
                             </th>
                             <td class="flex items-center justify-between px-6 py-2 text-start">
-                                <span>{{ $promoter->kyc->voter_id_no }}</span>
+                                <span>{{ $promoter->kyc?->voter_id_no ?? '' }}</span>
                             </td>
                         </tr>
                         <tr class="border-b">
@@ -284,7 +284,7 @@
                                 </div>
                             </th>
                             <td class="flex items-center justify-between px-6 py-2 text-start">
-                                <span>{{ $promoter->kyc->pan_no }}</span>
+                                <span>{{ $promoter->kyc?->pan_no ?? '' }}</span>
                                 <i class="text-green-600 fa fa-check-circle"></i>
                             </td>
                         </tr>
@@ -295,7 +295,7 @@
                                 </div>
                             </th>
                             <td class="flex items-center justify-between px-6 py-2 text-start">
-                                <span>{{ $promoter->kyc->ration_card_no }}</span>
+                                <span>{{ $promoter->kyc?->ration_card_no ?? ''}}</span>
                             </td>
                         </tr>
                         <tr class="border-b">
@@ -305,7 +305,7 @@
                                 </div>
                             </th>
                             <td class="px-6 py-2 text-start">
-                                <span>{{ $promoter->kyc->meter_no }}</span>
+                                <span>{{ $promoter->kyc?->meter_no ?? '' }}</span>
                             </td>
                         </tr>
                         <tr class="border-b">
@@ -316,7 +316,7 @@
                                 </div>
                             </th>
                             <td class="px-6 py-2 text-start">
-                                <span>{{ $promoter->kyc->ci_no }}</span>
+                                <span>{{ $promoter->kyc?->ci_no ?? '' }}</span>
                             </td>
                         </tr>
                         <tr class="border-b">
@@ -327,7 +327,7 @@
 
                             </th>
                             <td class="px-6 py-2 text-start">
-                                <span>{{ $promoter->kyc->ci_relation }}</span>
+                                <span>{{ $promoter->kyc?->ci_relation ?? ''}}</span>
                             </td>
                         </tr>
                         <tr class="border-b">
@@ -338,7 +338,7 @@
                                 </div>
                             </th>
                             <td class="px-6 py-2 text-start">
-                                <span>{{ $promoter->kyc->dl_no }}</span>
+                                <span>{{ $promoter->kyc?->dl_no ?? '' }}</span>
                             </td>
                         </tr>
                     </tbody>
