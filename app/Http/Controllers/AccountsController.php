@@ -62,13 +62,15 @@ class AccountsController extends Controller
     public function create()
     {
         try {
+           
             $members = Member::pluck('member_info_first_name', 'id', 'member_info_mobile_no');
             $branches = Branch::pluck('branch_name', 'id');
             $address = Address::pluck('member_address_line_1', 'id');
             $schemeMinimums = Scheme::pluck('min_opening_balance', 'id');
             $minors = Minor::pluck('first_name', 'id');
 
-            $banks = Bank::all();
+            // $banks = Bank::all();
+            $banks = Bank::pluck('name'); // returns collection of bank names
             $selectedBankId = 'bank_name';
 
             $schemes = Scheme::pluck('scheme_name', 'id');
@@ -143,7 +145,7 @@ class AccountsController extends Controller
             }
 
             if ($request->payment_mode === 'cheque') {
-                $rules['pay1_bank'] = 'required|string|max:50';
+                 $rules['bank_name'] = 'required|string|max:100';
                 $rules['pay1_cheque_no'] = 'required|numeric';
                 $rules['pay1_cheque_date'] = 'nullable|date';
             }
@@ -233,7 +235,7 @@ class AccountsController extends Controller
                 'transfer_mode' => $request->transfer_mode ?? null,
                 'transfer_date' => $request->pay1_transfer_date ? Carbon::parse($request->pay1_transfer_date)->format('Y-m-d') : null,
                 'credited_in' => $request->credited ?? null,
-                'bank_name' => $request->pay1_bank ?? null,
+                'bank_name' => $request->bank_name ?? null,
                 'cheque_no' => $request->pay1_cheque_no ?? null,
                 'cheque_date' => $request->pay1_cheque_date ? Carbon::parse($request->pay1_cheque_date)->format('Y-m-d') : null,
             ]);
