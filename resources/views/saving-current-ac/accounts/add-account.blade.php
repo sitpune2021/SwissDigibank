@@ -485,14 +485,43 @@
                         <div class="mt-3">
                             <label class="block text-sm font-medium text-gray-700">Bank Name <span
                                     class="text-red-500">*</span></label>
-                            <!-- <select name="pay1_bank" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3">
-                                                                <option value="">Select Bank</option>
-                                                                <option value="SBI">SBI</option>
-                                                                <option value="HDFC">HDFC</option>
-                                                                <option value="ICICI">ICICI</option>
-                                                            </select> -->
-                            <x-searchable-dropdown :items="$banks" label="Select Bank" name="pay1_bank"
-                                display-field="name" value-field="id" event="Bank-selected" :selected="null" />
+                          
+                            {{-- <x-searchable-dropdown :items="$banks" label="Select Bank" name="pay1_bank"
+                                display-field="name" value-field="id" event="Bank-selected" :selected="null" /> --}}
+                    <div id="bankDropdownWrapper" class="mt-3 ">
+
+                   <select name="bank_name" id="bank_name"
+    class="w-full bg-secondary/5 rounded-10 border px-3 py-3 text-sm">
+    <option value="">-- Select Bank --</option>
+
+    @foreach($banks as $bank)
+        <option value="{{ $bank }}" {{ old('bank_name') == $bank ? 'selected' : '' }}>
+            {{ $bank }}
+        </option>
+    @endforeach
+</select>
+
+                    @error('bank_name')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+
+                    <!-- Cheque No -->
+                    {{-- <div class="mt-3">
+                        <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
+                        <input type="text" name="cheque_no"
+                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                            placeholder="Enter Cheque No"
+                            value="  {{ old('cheque_no', $application->cheque_no ?? '') }}">
+                    </div> --}}
+
+                    <!-- Cheque Date -->
+                    {{-- <div class="mt-3">
+                        <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
+                        <input type="text" id="cheque_date" name="cheque_date"
+                            value="{{ old('cheque_date', isset($application->cheque_date) ? \Carbon\Carbon::parse($application->cheque_date)->format('d-m-Y') : '') }}"
+                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                    </div> --}}
+                </div>
                             @error('pay1_bank')
                                 <span class="text-red-500 text-sm">{{ $message }}</span>
                             @enderror
@@ -830,4 +859,50 @@
             }
         });
     </script>
+
+    
+
+{{-- bank dropdown code --}}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const radios = document.querySelectorAll('input[name="fee_mode"]');
+        const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
+        const onlineFields = document.getElementById("onlineFields");
+
+        radios.forEach(radio => {
+            radio.addEventListener("change", () => {
+                bankDropdownWrapper.classList.add("hidden");
+                onlineFields.classList.add("hidden");
+
+                if (radio.value === "cheque" && radio.checked) {
+                    bankDropdownWrapper.classList.remove("hidden");
+                }
+                if (radio.value === "online" && radio.checked) {
+                    onlineFields.classList.remove("hidden");
+                }
+            });
+        });
+
+            // ---- FIX: Set default date as d-m-Y ----
+            function getDMY() {
+                const d = new Date();
+                let day = String(d.getDate()).padStart(2, '0');
+                let month = String(d.getMonth() + 1).padStart(2, '0');
+                let year = d.getFullYear();
+                return `${day}-${month}-${year}`;
+            }
+
+            const chequeDateInput = document.getElementById("cheque_date");
+            if (chequeDateInput && !chequeDateInput.value) {
+                chequeDateInput.value = getDMY();
+            }
+
+            const transferDateInput = document.getElementById("transfer_date");
+            if (transferDateInput && !transferDateInput.value) {
+                transferDateInput.value = getDMY();
+            }
+
+        });
+</script>
 @endsection
