@@ -1,7 +1,7 @@
 <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
     {{-- Per Page Dropdown --}}
     <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 mb-4">
-        <label for="perPage" class="text-sm">Show</label>
+        {{-- <label for="perPage" class="text-sm">Show</label>
         <select name="perPage" id="perPage" onchange="this.form.submit()"
             class="border rounded px-2 py-1 text-sm">
             <option value="10" {{ request('perPage') == 10 ? 'selected' : '' }}>10</option>
@@ -9,7 +9,7 @@
             <option value="50" {{ request('perPage') == 50 ? 'selected' : '' }}>50</option>
             <option value="100" {{ request('perPage') == 100 ? 'selected' : '' }}>100</option>
         </select>
-        <span class="text-sm">entries</span>
+        <span class="text-sm">entries</span> --}}
     </form>
 
     {{-- Search Box --}}

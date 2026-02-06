@@ -53,7 +53,6 @@
                                 </div>
                             </th>
 
-
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     APPLICATION NO.
@@ -124,6 +123,7 @@
                                         @elseif($application->model_type === 'daily_weekly') text-green-600
                                         @elseif($application->model_type === 'personal') text-green-600
                                         @elseif($application->model_type === 'vehical') text-green-600
+                                        @elseif($application->model_type === 'fixed') text-green-600
                                         @endif
                                         hover:underline cursor-pointer">
                                     {{ $types[$application->model_type] ?? 'Unknown' }}
@@ -143,6 +143,8 @@
                                    {{ $application->loan_amount }}
                                    @elseif($application->model_type == 'mortgage')
                                    {{ $application->net_loan_amount }}
+                                   @elseif($application->model_type == 'fixed')
+                                   {{ $application->loan_amount }}
                                     @else
                                     {{ $application->max_loan_amount }}
                                     @endif
@@ -153,7 +155,9 @@
                                     @if($application->model_type == 'daily_weekly')
                                         {{ $application->loan_amount }}
                                     @elseif($application->model_type == 'personal')
-                                   {{ $application->approved_loan_amount }}
+                                        {{ $application->approved_loan_amount }}
+                                    @elseif($application->model_type == 'fixed')
+                                        {{ $application->total_recovered_amount }}
                                     @else
                                         {{ $application->maximum_approvable_amount }}
                                     @endif
@@ -165,6 +169,10 @@
                                     @if($application->model_type == 'daily_weekly')
                                         <input type="number"
                                             value="{{ $application->loan_amount }}"
+                                            class="py-2 rounded-10 px-3">
+                                    @elseif($application->model_type == 'fixed')
+                                        <input type="number"
+                                            value="{{ $application->total_recovered_amount }}"
                                             class="py-2 rounded-10 px-3">
                                     @else
                                         <input type="number"

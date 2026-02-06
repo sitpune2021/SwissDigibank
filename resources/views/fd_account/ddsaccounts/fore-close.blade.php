@@ -5,14 +5,15 @@
         <head>
             <style>
                 input[type="radio"] {
-                    width: 24px;
+                    width: 24px !important;
+                    width: 24px !important ;
                     height: 24px;
                     accent-color: green;
                 }
 
                 input[type="checkbox"] {
-                    width: 28px;
-                    height: 28px;
+                    width: 24px !important;
+                    height: 24px !important;
                     accent-color: green;
                     /* For modern browsers */
                 }
@@ -27,7 +28,7 @@
 
         <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
             <div class="flex items-center  flex-row gap-2">
-                <h3 class="uppercase text-xl font-semibold">
+                <h3 class="uppercase text-lg font-semibold">
                     Fore Close DD - DDA03631
                 </h3>
             </div>
@@ -44,7 +45,7 @@
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
                     <form action="">
                         <!-- Header -->
-                        <div class="px-4 py-3 ">
+                        <div class="px-2 py-3 ">
                             <h3 class="text-lg  border-b mb-4 font-semibold text-black">ACCOUNT DETAILS</h3>
                         </div>
                         <!-- Body -->
@@ -60,7 +61,7 @@
                                 placeholder="DD/MM/YYYY">
                         </div>
                         <div class="col-span-2 md:col-span-1">
-                            <label for="current_balance" class="md:text-md  uppercase font-medium block mb-4">
+                            <label for="current_balance" class="md:text-md  uppercase font-medium block mb-2">
                                 Current Balance (A)
                                 <span class="text-red-500">*</span>
                             </label>
@@ -71,7 +72,7 @@
                             <x-number-to-word for="current_balance" />
                         </div>
                         <div class="col-span-2 md:col-span-1 mb-2">
-                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-2">
                                 Interest Left to Paid (B)
                                 <span class="text-red-500">*</span>
                             </label>
@@ -83,7 +84,7 @@
 
                         </div>
                         <div class="col-span-2 md:col-span-1 mb-2">
-                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-2">
                                 TDS to be Deducted (C)
                                 <span class="text-red-500">*</span>
                             </label>
@@ -103,9 +104,9 @@
                                 <tbody>
                                     <!-- Column Labels -->
                                     <tr class="">
-                                        <th class="text-center px-3 py-1 ">Amount</th>
-                                        <th class="text-center px-3 py-1 ">GST Rate (%) </th>
-                                        <th class="text-center px-3 py-1 ">Total Amount</th>
+                                        <th class="text-center uppercase px-3 py-1 ">Amount</th>
+                                        <th class="text-center uppercase px-3 py-1 ">GST Rate (%) </th>
+                                        <th class="text-center uppercase px-3 py-1 ">Total Amount</th>
 
                                     </tr>
 
@@ -142,13 +143,13 @@
                                 Cancellation Charges (E)
 
                             </label>
-                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                            <table class="w-full text-sm md:text-base whitespace-nowrap">
                                 <tbody>
                                     <!-- Column Labels -->
                                     <tr class="">
-                                        <th class="text-center px-3 py-1 ">Amount</th>
-                                        <th class="text-center px-3 py-1 ">GST Rate (%) </th>
-                                        <th class="text-center px-3 py-1 ">Total Amount</th>
+                                        <th class="text-center uppercase px-3 py-1 ">Amount</th>
+                                        <th class="text-center uppercase px-3 py-1 ">GST Rate (%) </th>
+                                        <th class="text-center uppercase px-3 py-1 ">Total Amount</th>
 
                                     </tr>
 
@@ -248,7 +249,9 @@
                             <h3 class="text-lg font-semibold uppercase">
                                 DD Info
                             </h3>
-                            <span class="toggle-icon text-lg font-bold">+</span>
+                            <span class="toggle-icon text-lg font-bold">
+                             -   {{-- <i class="las la-minus"></i> --}}
+                            </span>
                         </button>
 
                     </div>

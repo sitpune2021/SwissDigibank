@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>MIS Bond / Deposit Receipt</title>
+    <title>DD Bond / Deposit Receipt</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
     <style>
@@ -191,44 +191,45 @@
 </head>
 
 <body>
-    <div class="sheet">
+    <div class="" style="border: 1px solid #111; padding: 2px 5px;">
 
         <!-- Header -->
-        <div class="header">
+        
+        <div class="header" style="padding : 10px 0px ; border-bottom:  1px solid black; ">
             <!-- Logo (optional) -->
-            <div style="width:100%; position:relative;">
-                <div class="logo" style="padding: 10px; ">
-                    <!-- Replace src path or use base64 img -->
+            <div style="width:100%; font-family: dejavusans; ">
 
-                    <img src="{{ public_path('assets/images/Loan_Management_Logo.png')}}" alt="logo"
-                        style="max-width:90px; max-height:90px;">
+            <!-- Logo -->
+            <div style="float:left; width:50%; padding: 0px 5px; text-align:left;">
+                <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
+                    style="width:auto; height:50px;">
+            </div>
 
+            <!-- Title Section -->
+            <div style="float:left; width:50%; text-align:center;">
+                <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; ">
+                    {{-- SBC Global --}}
                 </div>
 
-                <div style="margin-left:30px; margin-right:120px; text-align:center; ">
-                    <p>This is not a negotiable document</p>
-                    <div class="company">
-                        SBC GLOBAL
-                    </div>
+                <div style="height:10px; margin-top: 40px;">&nbsp;</div>
 
-                    <div class="" style="text-align: center">
-                        SBC GLOBAL TOWAR , CHANDABAI PLOT NEAR BUS STOP SHEGAON Maharashtra - 444001
-                    </div>
-                    <div class="" style="text-align: center">
-                        REG NO : 969/03-04
-                    </div>
-                    <div class="subtitle" style="font-weight: bold; text-align: center"> RECURRING DEPOSIT ADVICE <br>(In lieu of recurring deposit)</div>
-
-                </div>
-
-                {{-- <div class="header-right"></div> --}}
 
             </div>
-            <div class="clear"></div>
+
+            <!-- Clear Float -->
+            <div style="clear:both; "></div>
+            <h4 style="   margin:0; text-align: center;  font-size:18px; font-weight:bold;">
+               DAILY DEPOSIT ADVICE
+               <br>
+(In lieu of daily deposit)
+            </h4>
+        </div>
+            <div style="clear:both; "></div>
         </div>
 
         <!-- Member & Account info -->
-        <table class="no-border mt-6">
+        <div class="" style="">
+            <table class="no-border mt-6 " >
             <tr>
                 <td style="width:60%" class="no-border">
                     <div>
@@ -261,6 +262,7 @@
                 </td>
             </tr>
         </table>
+        </div>
 
         <div>
             <p style="font-size:11px;"> Dear Sir/ Madam<br>
@@ -275,45 +277,45 @@
             </tr>
         </table>
         <!-- Main table -->
-        <table class="btable mt-6">
+        <table class=" mt-6" style="border: 1px solid #111;">
             <thead>
                 <tr>
-                    <th>Account No</th>
-                    <th>Term</th>
-                    <th>Interest @</th>
-                    <th>Amount</th>
-                    <th>Frequency</th>
-                    <th>Open Date</th>
-                    <th>Maturity Date</th>
+                    <th style="" >Account No</th>
+                    <th style="border: 1px solid #111;" >Term</th>
+                    <th style="border: 1px solid #111;" >Interest @</th>
+                    <th style="border: 1px solid #111;" >Amount</th>
+                    <th style="border: 1px solid #111;" >Frequency</th>
+                    <th style="border: 1px solid #111;" >Open Date</th>
+                    <th style="border: 1px solid #111;" >Maturity Date</th>
                 </tr>
             </thead>
             <tbody>
             <tbody>
                 <tr>
-                    <td class="center">{{ $ddAccount->dd_no }}</td>
+                    <td style="border: 1px solid #111;" class="">{{ $ddAccount->dd_no }}</td>
 
-                    <td class="center">
+                    <td style="border: 1px solid #111;" class="">
                         {{ $ddAccount->scheme->tenure_of_rd_dd_value }}
                         {{ strtoupper($ddAccount->scheme->tenure_of_rd_dd_type) }}
                     </td>
 
-                    <td class="center">
+                    <td style="border: 1px solid #111;" class="">
                         {{ $ddAccount->scheme->anuual_interest_rate }} %
                     </td>
 
-                    <td class="right amount">
+                    <td style="border: 1px solid #111;" class="">
                         ₹ {{ number_format($ddAccount->dd_amount, 2) }}
                     </td>
 
-                    <td class="center">
+                    <td style="border: 1px solid #111;" class="">
                         {{ ucfirst($ddAccount->scheme->rd_dd_frequency) }}
                     </td>
 
-                    <td class="center">
+                    <td style="border: 1px solid #111;" class="">
                         {{ \Carbon\Carbon::parse($ddAccount->open_date)->format('d-m-Y') }}
                     </td>
 
-                    <td class="center">
+                    <td style="border: 1px solid #111;" class="">
                         {{ \Carbon\Carbon::parse($ddAccount->maturity_date)->format('d-m-Y') }}
                     </td>
                 </tr>

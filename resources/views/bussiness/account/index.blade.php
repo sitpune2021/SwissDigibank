@@ -5,7 +5,14 @@
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
         <h1 class=" flex text-lg block  uppercase font-semibold">BUSINESS LOAN</h1>
     </div>
-
+ @if(session('success'))
+            <div class="">
+                <div class="w-44 mb-5 flex justify-end">
+                    <x-alert />
+                </div>
+                {{-- {{ session('success') }} --}}
+            </div>
+        @endif
     <div class="col-span-12 box lg:col-span-12">
         <div class="pb-4 overflow-x-auto lg:pb-6">
 
@@ -103,15 +110,16 @@
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center text-secondary gap-1">
                                     <a href="{{ route('bussiness.account.show', $loan->id) }}" 
-                                        class="text-blue-600 hover:underline">
-                                        {{ $loan->id }}
+                                        class="text-primary hover:underline">
+                                        {{-- {{ $loan->id }} --}}
+                                         {{ str_pad($loan->id, 10, '0', STR_PAD_LEFT) }}
                                     </a>
                                 </div>
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center text-secondary gap-1">
                                     <a href="{{ url('members/member/' . $loan->member_id) }}" 
-                                        class="text-blue-600 hover:underline">
+                                        class="text-primary  hover:underline">
                                         {{ $loan->member->member_no ?? 'N/A' }}
                                     </a>
                                 </div>

@@ -10,7 +10,9 @@ use App\Models\Bank;
 use App\Models\FDScheme;
 use App\Models\FdSchemeSlab;
 use App\Models\FdTransaction;
+use App\Models\logo_letterhead_img_uploads;
 use App\Models\Member;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -378,8 +380,8 @@ class FDController extends Controller
                 'fd_account_no' => $fdAccount->account_no
             ]);
 
-            $fdAccount->account_no = 'SA' . str_pad($fdAccount->id, 5, '0', STR_PAD_LEFT);
-            $fdAccount->fd_no = 'FD' . str_pad($fdAccount->id, 5, '0', STR_PAD_LEFT);
+            $fdAccount->account_no = 'SA' . str_pad($fdAccount->id, 10, '0', STR_PAD_LEFT);
+            $fdAccount->fd_no = 'FD' . str_pad($fdAccount->id, 10, '0', STR_PAD_LEFT);
             $fdAccount->save();
 
             Log::info('🔄 FD Account Number Updated', [
@@ -1533,6 +1535,209 @@ class FDController extends Controller
         return view('fd_mis_account.fd-account.interest-tds.deduct_reverse_tds', compact('fdAccount', 'balance'));
     }
 
+    
+    public function fdBondFormView($id)
+{
+   // Load FD account with required relations
+    $fdAccount = FdAccount::with([
+        'member',
+        'nominee',        // hasMany (recommended)
+        'fdScheme.fdSlabs' // scheme + slabs
+    ])->findOrFail($id);
+
+     $amountWords = $this->numToWords((int) round($fdAccount->maturity_amount)) . ' Only';
+
+    // 🔹 Find Super Admin
+    $superAdmin = User::whereHas('role', function ($q) {
+        $q->where('name', 'Super Admin');
+    })->first();
+
+    // 🔹 Fetch letterhead uploaded by Super Admin
+    $logo = null;
+    if ($superAdmin) {
+        $logo = logo_letterhead_img_uploads::where('type', 'letterhead')
+       
+            ->where('uploaded_by', $superAdmin->id)
+            ->latest()
+            ->first();
+             
+    }
+    $data = [
+        'fdAccount'        => $fdAccount,
+        'amount_words'     => $amountWords,
+        'company_address'  => 'HEAD OFFICE',
+        'date'             => now()->format('d-m-Y'),
+        'company_reg_no'   => 'Reg. No. 969/03-04',
+         'logo'            => $logo,
+          
+    ];
+
+    $pdf = app('dompdf.wrapper')
+        ->loadView('fd_mis_account.fd-account.print-documents.fdbond', $data)
+        ->setPaper('a4', 'portrait');
+    return view('fd_mis_account.fd-account.print-documents.fd-bond-view', [
+        'fdAccount'       => $fdAccount,
+        'amount_words'    => $amountWords,
+        'company_address' => 'HEAD OFFICE',
+        'date'            => now()->format('d-m-Y'),
+        'company_reg_no'  => 'Reg. No. 969/03-04',
+        'logo'            => $logo, 
+    ]);
+}
+
+    public function fdBondForm($id)
+{
+    // Load FD account with required relations
+    $fdAccount = FdAccount::with([
+        'member',
+        'nominee',        // hasMany (recommended)
+        'fdScheme.fdSlabs' // scheme + slabs
+    ])->findOrFail($id);
+
+     $amountWords = $this->numToWords((int) round($fdAccount->maturity_amount)) . ' Only';
+
+    // 🔹 Find Super Admin
+    $superAdmin = User::whereHas('role', function ($q) {
+        $q->where('name', 'Super Admin');
+    })->first();
+
+    // 🔹 Fetch letterhead uploaded by Super Admin
+    $logo = null;
+    if ($superAdmin) {
+        $logo = logo_letterhead_img_uploads::where('type', 'letterhead')
+            ->where('uploaded_by', $superAdmin->id)
+            ->latest()
+            ->first();
+    }
+    $data = [
+        'fdAccount'        => $fdAccount,
+        'amount_words'     => $amountWords,
+        'company_address'  => 'HEAD OFFICE',
+        'date'             => now()->format('d-m-Y'),
+        'company_reg_no'   => 'Reg. No. 969/03-04',
+         'logo'            => $logo, 
+    ];
+
+    $pdf = app('dompdf.wrapper')
+        ->loadView('fd_mis_account.fd-account.print-documents.fdbond', $data)
+        ->setPaper('a4', 'portrait');
+
+    return $pdf->download('fd-bond-' . $fdAccount->id . '.pdf');
+}
+
+    protected function numToWords($number)
+    {
+        $words = [
+            0 => 'Zero',
+            1 => 'One',
+            2 => 'Two',
+            3 => 'Three',
+            4 => 'Four',
+            5 => 'Five',
+            6 => 'Six',
+            7 => 'Seven',
+            8 => 'Eight',
+            9 => 'Nine',
+            10 => 'Ten',
+            11 => 'Eleven',
+            12 => 'Twelve',
+            13 => 'Thirteen',
+            14 => 'Fourteen',
+            15 => 'Fifteen',
+            16 => 'Sixteen',
+            17 => 'Seventeen',
+            18 => 'Eighteen',
+            19 => 'Nineteen',
+            20 => 'Twenty',
+            30 => 'Thirty',
+            40 => 'Forty',
+            50 => 'Fifty',
+            60 => 'Sixty',
+            70 => 'Seventy',
+            80 => 'Eighty',
+            90 => 'Ninety'
+        ];
+
+        if ($number == 0) return 'Zero';
+
+        $crores = floor($number / 10000000);
+        $number -= $crores * 10000000;
+        $lakhs = floor($number / 100000);
+        $number -= $lakhs * 100000;
+        $thousands = floor($number / 1000);
+        $number -= $thousands * 1000;
+        $hundreds = floor($number / 100);
+        $number -= $hundreds * 100;
+        $tens = floor($number / 10) * 10;
+        $units = $number % 10;
+
+        $result = '';
+
+        if ($crores) $result .= $this->numToWords($crores) . ' Crore ';
+        if ($lakhs) $result .= $this->numToWords($lakhs) . ' Lakh ';
+        if ($thousands) $result .= $this->numToWords($thousands) . ' Thousand ';
+        if ($hundreds) $result .= $this->numToWords($hundreds) . ' Hundred ';
+
+        if ($tens || $units) {
+            if ($result != '') $result .= 'and ';
+            if ($tens < 20) {
+                $result .= $words[$tens + $units];
+            } else {
+                $result .= $words[$tens];
+                if ($units) $result .= '-' . $words[$units];
+            }
+        }
+
+        return trim($result);
+    }
+
+
+     public function fdOpeningFormView($id)
+    {
+        // Load FD account with required relations
+        $account = FdAccount::with([
+            'member.kyc',
+            'member.address.state',
+            'member.branch',
+            'fdScheme.fdslabs'
+        ])->findOrFail($id);
+
+        // FD slab-based interest calculation
+        $tenureMonths = $account->tenure_months ?? 0;
+
+        $slab = $account->fdScheme->fdslabs
+            ->where('from_month', '<=', $tenureMonths)
+            ->where('to_month', '>=', $tenureMonths)
+            ->first();
+
+        $interestRate = $slab->interest_rate ?? $account->rate_of_interest ?? 0;
+
+        $member = $account->member;
+  // 🔹 Find Super Admin
+    $superAdmin = User::whereHas('role', function ($q) {
+        $q->where('name', 'Super Admin');
+    })->first();
+
+    // 🔹 Fetch letterhead uploaded by Super Admin
+    $logo = null;
+    if ($superAdmin) {
+        $logo = logo_letterhead_img_uploads::where('type', 'letterhead')
+            ->where('uploaded_by', $superAdmin->id)
+            ->latest()
+            ->first();
+    }
+        $pdf = app('dompdf.wrapper')
+            ->loadView(
+                'fd_mis_account.fd-account.print-documents.accountopeningform',
+                compact('account', 'member', 'interestRate')
+            )
+            ->setPaper('a4', 'portrait');
+
+        return view(
+                'fd_mis_account.fd-account.print-documents.accountopeningformView',
+                compact('account', 'member', 'interestRate','logo')
+            );
+    }
     public function fdOpeningForm($id)
     {
         // Load FD account with required relations
@@ -1562,8 +1767,33 @@ class FDController extends Controller
             )
             ->setPaper('a4', 'portrait');
 
-        return $pdf->stream('fd-opening-' . $id . '.pdf');
+        return $pdf->download('fd-opening-' . $id . '.pdf');
     }
+
+    public function fdClosingFormview($id)
+{
+    $fdAccount = FdAccount::with(['member.branch'])->findOrFail($id);
+
+    $data = [
+        'fdAccount' => $fdAccount,
+        'name' => $fdAccount->member->member_info_first_name . ' ' .
+                  $fdAccount->member->member_info_last_name,
+        'date' => now()->format('d-m-Y'),
+        'agreement_no' => $fdAccount->fd_no ?? 'FD' . str_pad($fdAccount->id, 5, '0', STR_PAD_LEFT),
+        'holder_name' => strtoupper(
+            $fdAccount->member->member_info_first_name . ' ' .
+            $fdAccount->member->member_info_last_name
+        ),
+        'expiry_date' => \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y'),
+        'branch_name' => $fdAccount->member->branch->branch_name ?? '',
+        'branch_address' => $fdAccount->member->branch->branch_address ?? '',
+    ];
+
+    return view(
+        'fd_mis_account.fd-account.print-documents.closingformview',
+        $data
+    );
+}
 
     public function fdClosingForm($id)
     {
@@ -1599,6 +1829,12 @@ class FDController extends Controller
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isRemoteEnabled', true);
 
-        return $pdf->stream('fd-closing-form-' . $fdAccount->id . '.pdf');
+        return $pdf->download('fd-closing-form-' . $fdAccount->id . '.pdf');
     }
+
+public function sweepInAccount(){
+
+return view('fd_mis_account.sweep-in-accounts.index');
+    }
+ 
 }

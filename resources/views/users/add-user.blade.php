@@ -17,7 +17,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <!-- <h3 class="h2">Add User</h3> -->
-            <h4 class="h3"> {!! isset($show) && $show ? $user->fname : (isset($user) ? 'EDIT USER' : 'NEW USER') !!}</h4>
+            <h4 class="h3 uppercase"> {!! isset($show) && $show ? $user->fname : (isset($user) ? 'EDIT USER' : 'NEW USER') !!}</h4>
             <!-- Image + Button -->
             <!-- @if (isset($show))
     <div class="flex items-center gap-4">
@@ -122,7 +122,7 @@
                 <div class="col-span-2 md:col-span-1">
                     <label for="rate" class="md:text-lg font-medium block mb-4 uppercase">Employee
                         <select name="employee" id="employeeDropdown"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            class="w-full text-sm mt-3 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             @if ($isView) disabled @endif>
                             <option value="">Select Employee</option>
                             @foreach ($employees as $emp)
@@ -310,7 +310,7 @@
                     <label for="searchable_account" class="md:text-lg font-medium block mb-2 uppercase">
                         Searchable Accounts <span class="text-red-500">*</span>
                     </label>
-                    <div class="flex gap-4 items-center">
+                    <div class="flex gap-4 mt-7 items-center">
                         <label class="flex items-center gap-2">
                             <input type="radio" name="searchable_account" value="1"
                                 {{ old('searchable_account', '0') == '1' ? 'checked' : '' }}

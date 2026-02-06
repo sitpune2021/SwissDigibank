@@ -14,6 +14,11 @@
     <title>Swiss Payment - Digital Banking</title>
 
     <style>
+        ::-webkit-scrollbar {
+            width: 0.5em;
+            height: 0.5em;
+        }
+
         label {
             text-transform: uppercase;
         }
@@ -37,7 +42,12 @@
             accent-color: green;
             /* Modern browser support */
         }
+
         .uppercase {
+            text-transform: uppercase !important;
+        }
+
+        .btns-add-index {
             text-transform: uppercase !important;
         }
     </style>

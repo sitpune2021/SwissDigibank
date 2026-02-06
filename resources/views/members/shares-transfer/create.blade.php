@@ -9,7 +9,7 @@
                     ? 'Edit Allocated Shares'
                     : 'Allocate New Shares to Promoter') !!}
                             </h3> -->
-            <h3 class="h3">TRANSFER SHARES</h3>
+            <h3 class="text-lg">TRANSFER SHARES</h3>
         </div>
 
         @if (session('success'))
@@ -116,7 +116,7 @@
                         @endif
                     </div>
 
-                    <a href="{{ route('member.create') }}" style="color: blue; font-size: 13px;">Add New Customer</a>
+                    <a href="{{ route('member.create') }}"  class="text-primary" style=" font-size: 13px;">Add New Customer</a>
                 </div>
 
 
@@ -191,7 +191,7 @@
                     </div>
                 </div>
 
-                <div class="w-full col-span-2">
+                <div class="w-full mt-4 col-span-2">
                     <div class="bg-primary border-l-4 border-blue-500 text-white p-4 rounded-md mb-6 w-full">
                         <div class="font-semibold text-lg mb-2"> <i class="fa fa-info-circle mr-2"></i>INFO !!</div>
                         <h6>

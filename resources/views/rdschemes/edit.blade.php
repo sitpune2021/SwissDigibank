@@ -2,8 +2,8 @@
 @section('content')
 <style>
     input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
     }
 
@@ -13,8 +13,8 @@
     }
 
     input[type="radio"] {
-        width: 24px;
-        height: 24px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
 
     }
@@ -23,7 +23,7 @@
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
         <div class="flex items-center flex-col  gap-2">
-            <h1 class="text-xl font-semibold uppercase">New RD/ DD Scheme</h1>
+            <h1 class="text-lg font-semibold uppercase">New RD/ DD Scheme</h1>
         </div>
 
     </div>
@@ -48,7 +48,7 @@
                 </label>
 
                 <input type="text" id="" name="scheme_name" value="{{ old('scheme_name', $scheme->scheme_name) }}"
-                    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                     placeholder="Enter Scheme Name " disabled>
                 @error('scheme_name')
                 <span class="text-red-500">{{ $message }}</span>
@@ -60,7 +60,7 @@
                     <span class="text-red-500">*</span>
                 </label>
 
-                <input type="text" name="scheme_code" value="{{ old('scheme_name', $scheme->scheme_code) }}" class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 
+                <input type="text" name="scheme_code" value="{{ old('scheme_name', $scheme->scheme_code) }}" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
                                                       rounded-10 px-3 md:px-6 py-2 md:py-3 uppercase"
                     placeholder="Enter Scheme Code" disabled>
                 @error('scheme_code') <span class="text-red-500">{{ $message }}</span> @enderror
@@ -74,7 +74,7 @@
 
                 <input type="number" id="" name="min_rd_dd_amount"
                     value="{{ old('scheme_name', $scheme->min_rd_dd_amount) }}"
-                    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                     placeholder="Enter Min Opening Amount">
                 @error('min_rd_dd_amount') <span class="text-red-500">{{ $message }}</span> @enderror
             </div>
@@ -86,7 +86,7 @@
                 </label>
 
                 <select id="rd_dd_frequency" name="rd_dd_frequency"
-                    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
 
                     <option value="">Select frequency</option>
                     <option value="daily" {{ old('rd_dd_frequency', $scheme->rd_dd_frequency) == 'daily' ? 'selected' :
@@ -130,7 +130,7 @@
 
                 <input type="number" id="interes-rate" name="anuual_interest_rate"
                     value="{{ old('scheme_name', $scheme->anuual_interest_rate) }}"
-                    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                     placeholder="Enter Anuual Interest Rate(%) ">
                 @error('anuual_interest_rate') <span class="text-error">{{ $message }}</span> @enderror
             </div>
@@ -142,7 +142,7 @@
 
                 <input type="text" id="sr-citizen-interest-rate" name="sr_citizen_add_on_interest_rate"
                     value="{{ old('scheme_name', $scheme->sr_citizen_add_on_interest_rate) }}"
-                    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                     placeholder="0.0">
                 @error('sr_citizen_add_on_interest_rate') <span class="text-red-500">{{ $message }}</span> @enderror
             </div>
@@ -155,7 +155,7 @@
 
                         <!-- Left Select -->
                         <select name="bonus_rate_type" id="bonus-rate-type round-10"
-                            class="w-24 text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
+                            class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
                             <option value="percentage" {{ old('bonus_rate_type', $scheme->bonus_rate_type) ==
                                 'percentage' ? 'selected' : '' }}>%</option>
                             <option value="fixed" {{ old('bonus_rate_type', $scheme->bonus_rate_type) == 'fixed' ?
@@ -165,7 +165,7 @@
                         <!-- Main Input -->
                         <input type="number" id="bonus-rate" name="bonus_rate_value"
                             value="{{ old('scheme_name', $scheme->bonus_rate_value) }}"
-                            class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0">
                     </div>
                     @error('bonus_rate_value') <span class="text-red-500">{{ $message }}</span> @enderror
@@ -180,7 +180,7 @@
                 </label>
 
                 <select id="frequency" name="interest_compounding_interval"
-                    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
 
                     <option value="">Select frequency</option>
                     <option value="monthly" {{ old('interest_compounding_interval', $scheme->
@@ -203,7 +203,7 @@
                 </label>
 
                 <select id="rd-dd-lock-in-period" name="rd_dd_lock_in_period"
-                    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
 
                     <option value="">Select RD/ DD Lock In Period</option>
 
@@ -224,7 +224,7 @@
                 </label>
 
                 <select id="interest-lock-in-period" name="interest_lock_in_period"
-                    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
 
                     <option value="">Select Interest Lock In Period</option>
 
@@ -247,7 +247,7 @@
                 <div class="col-sm-7">
                     <div class="flex items-center gap-2">
                         <select name="tenure_of_rd_dd_type" id="tenure-type"
-                            class="w-20 text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
+                            class="w-32 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
 
                             <option value="days" {{ old('tenure_of_rd_dd_type', $scheme->tenure_of_rd_dd_type ?? '') ==
                                 'days' ? 'selected' : '' }}>DAYS</option>
@@ -260,7 +260,7 @@
 
                         <input type="number" id="tenure" name="tenure_of_rd_dd_value"
                             value="{{ old('scheme_name', $scheme->tenure_of_rd_dd_value) }}"
-                            class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter Tenure of RD/ DD">
                     </div>
                     @error('tenure_of_rd_dd_value') <span class="text-red-500">{{ $message }}</span> @enderror
@@ -279,7 +279,7 @@
                 <div class="col-sm-7">
                     <div class="flex items-center gap-2">
                         <select name="cancellation_charges_type" id="cancellation-charges-type"
-                            class="w-20 text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
+                            class="w-28 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
 
                             <option value="percentage" {{ old('cancellation_charges_type', $scheme->
                                 cancellation_charges_type ?? '') == 'percentage' ? 'selected' : '' }}>%</option>
@@ -290,7 +290,7 @@
 
                         <input type="number" id="cancellation-charges" name="cancellation_charges_value"
                             value="{{ old('scheme_name', $scheme->cancellation_charges_value) }}"
-                            class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter Cancellation Charges">
 
                     </div>
@@ -305,7 +305,7 @@
 
                 <input type="number" id="Stationary-charges" name="stationary_charges"
                     value="{{ old('scheme_name', $scheme->stationary_charges) }}"
-                    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                     placeholder="0.0">
                 @error('stationary_charges') <span class="text-red-500">{{ $message }}</span> @enderror
             </div>
@@ -317,7 +317,7 @@
                 <div class="col-sm-7">
                     <div class="flex items-center gap-2">
                         <select name="penalty_charges_type" id="penalty_charges_type"
-                            class="w-20 text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
+                            class="w-28 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
 
                             <option value="percentage" {{ old('penalty_charges_type', $scheme->penalty_charges_type ??
                                 '') == 'percentage' ? 'selected' : '' }}>%</option>
@@ -328,7 +328,7 @@
 
                         <input type="number" id="penalty_charges_value" name="penalty_charges_value"
                             value="{{ old('scheme_name', $scheme->penalty_charges_value) }}"
-                            class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter Penalty Charges">
 
                     </div>
@@ -342,7 +342,7 @@
                     <span class="text-red-500">*</span>
                 </label>
                 <select id="penal_charges" name="penal_charges"
-                    class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
 
                     <option value="0.0" {{ old('penal_charges', $scheme->penal_charges ?? '') == '0.0' ? 'selected' : ''
                         }}>0.0%</option>
@@ -418,17 +418,14 @@
 
 
             <!-- Buttons -->
-            <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
+            <div class="flex gap-5 justify-center mt-5">
                 <button class="btn-primary uppercase justify-center" type="submit" name="update_scheme">
                     Update Scheme
                 </button>
 
-                
                 <button class="btn-outline uppercase justify-center" type="reset">
                 <a href="{{route('rdschemes.index')}}" class=" no-underline ">   BAck</a> 
                 </button>
-                
-
             </div>
         </form>
     </div>

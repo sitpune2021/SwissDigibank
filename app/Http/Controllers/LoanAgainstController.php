@@ -771,25 +771,142 @@ class LoanAgainstController extends Controller
         /* -------------------------------------------------------
              4(C). REDUCING EMI — FULLY FIXED 
         ---------------------------------------------------------*/
+        // elseif ($interestType === 'reducing') 
+        // {
+        //     $monthlyRate = ($annualRate / 12) / 100;
+        //     $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+
+        //     $remaining_principal = $loan;
+        //     $totalInterestAll = 0;
+
+        //     for ($i = 1; $i <= $tenureMonths; $i++) 
+        //     {
+
+        //         $emiDate = $startDate->copy()->addMonths($i);
+        //         $dueDate = $emiDate->copy()->addDay();
+
+        //         $interest = round($remaining_principal * $monthlyRate, 2);
+        //         $principal = round($emi - $interest, 2);
+
+        //         if ($principal < 0) {
+        //             $principal = 0;
+        //         }
+
+        //         $schedule[] = [
+        //             'no'        => $i,
+        //             'emi_date'  => $emiDate->format('d/m/Y'),
+        //             'due_date'  => $dueDate->format('d/m/Y'),
+        //             'principal' => $principal,
+        //             'interest'  => $interest,
+        //             'charges'   => 0,
+        //             'emi'       => $principal + $interest,
+        //             'balance'   => max($remaining_principal - $principal, 0),
+        //         ];
+
+        //         $remaining_principal -= $principal;
+        //         $totalInterestAll += $interest;
+        //     }
+
+        //     // ⭐ FINALLY — TOTALS HERE ONLY (bahar, loop ke baad)
+        //     $total_principal = $loan;
+        //     $total_interest  = $totalInterestAll;
+        //     $total_emi_paid  = $loan + $totalInterestAll;
+        // }
+
         elseif ($interestType === 'reducing') 
         {
-            $monthlyRate = ($annualRate / 12) / 100;
-            $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
 
-            $remaining_principal = $loan;
             $totalInterestAll = 0;
 
-            for ($i = 1; $i <= $tenureMonths; $i++) {
+            // ✔ Interest rate per period
+            switch (strtolower($payout)) {
+                case 'daily':
+                    $ratePerPeriod = ($annualRate / 365) / 100;
+                    $addFn = fn($d, $i) => $d->copy()->addDays($i);
+                    break;
+                case 'weekly':
+                    $ratePerPeriod = ($annualRate / 52) / 100;
+                    $addFn = fn($d, $i) => $d->copy()->addWeeks($i);
+                    break;
+                case 'bi_weekly':
+                    $ratePerPeriod = ($annualRate / 26) / 100;
+                    $addFn = fn($d, $i) => $d->copy()->addDays($i * 14);
+                    break;
+                case '4_weekly':
+                    $ratePerPeriod = ($annualRate / 13) / 100;
+                    $addFn = fn($d, $i) => $d->copy()->addDays($i * 28);
+                    break;
+                default: // monthly
+                    $ratePerPeriod = ($annualRate / 12) / 100;
+                    $addFn = fn($d, $i) => $d->copy()->addMonths($i);
+                    break;
+            }
 
-                $emiDate = $startDate->copy()->addMonths($i);
+            // Initialize principal balances
+            $remaining_principal = $loan; // ✅ always define this
+            $remaining_principal_first = 0;
+            $remaining_principal_second = 0;
+
+            // Ratio settings
+            $use_ratio = isset($_POST['divide_emi_ratio']) && $_POST['divide_emi_ratio'] == 1;
+            $ratio_first_count = 5; // first 5 EMIs
+            $ratio_first_principal_pct = $use_ratio ? floatval($_POST['amt_ratio_1']) / 100 : 1;
+            $ratio_second_principal_pct = $use_ratio ? 1 - $ratio_first_principal_pct : 1;
+
+            if ($use_ratio) {
+                $principal_first_part = round($loan * $ratio_first_principal_pct, 2);
+                $principal_second_part = $loan - $principal_first_part;
+
+                $remaining_principal_first = $principal_first_part;
+                $remaining_principal_second = $principal_second_part;
+            }
+
+            for ($i = 1; $i <= $installments; $i++) {
+
+                $emiDate = $addFn($startDate, $i);
                 $dueDate = $emiDate->copy()->addDay();
 
-                $interest = round($remaining_principal * $monthlyRate, 2);
-                $principal = round($emi - $interest, 2);
+                if ($use_ratio) {
+                    if ($i <= $ratio_first_count) {
+                        $emi = round(
+                            ($principal_first_part * $ratePerPeriod) /
+                            (1 - pow(1 + $ratePerPeriod, -$ratio_first_count)),
+                            2
+                        );
+                        $interest = round($remaining_principal_first * $ratePerPeriod, 2);
+                        $principal = round($emi - $interest, 2);
 
-                if ($principal < 0) {
-                    $principal = 0;
+                        $remaining_principal_first -= $principal;
+                        $remaining_principal = $remaining_principal_first + $remaining_principal_second;
+
+                    } else {
+                        $emi_second_count = $installments - $ratio_first_count;
+                        $emi = round(
+                            ($principal_second_part * $ratePerPeriod) /
+                            (1 - pow(1 + $ratePerPeriod, -$emi_second_count)),
+                            2
+                        );
+                        $interest = round($remaining_principal_second * $ratePerPeriod, 2);
+                        $principal = round($emi - $interest, 2);
+
+                        $remaining_principal_second -= $principal;
+                        $remaining_principal = $remaining_principal_first + $remaining_principal_second;
+                    }
+
+                } else {
+                    $emi = round(
+                        ($loan * $ratePerPeriod) /
+                        (1 - pow(1 + $ratePerPeriod, -$installments)),
+                        2
+                    );
+                    $interest  = round($remaining_principal * $ratePerPeriod, 2);
+                    $principal = round($emi - $interest, 2);
+
+                    $remaining_principal -= $principal;
                 }
+
+                if ($principal < 0) $principal = 0;
+                $totalInterestAll += $interest;
 
                 $schedule[] = [
                     'no'        => $i,
@@ -799,18 +916,15 @@ class LoanAgainstController extends Controller
                     'interest'  => $interest,
                     'charges'   => 0,
                     'emi'       => $principal + $interest,
-                    'balance'   => max($remaining_principal - $principal, 0),
+                    'balance'   => max(0, round($remaining_principal, 2)),
                 ];
-
-                $remaining_principal -= $principal;
-                $totalInterestAll += $interest;
             }
 
-            // ⭐ FINALLY — TOTALS HERE ONLY (bahar, loop ke baad)
             $total_principal = $loan;
             $total_interest  = $totalInterestAll;
             $total_emi_paid  = $loan + $totalInterestAll;
         }
+
 
         // ADD THIS LINE - FIX TOTAL INTEREST FOR REDUCING EMI
         if ($interestType === 'reducing') {
@@ -1227,6 +1341,65 @@ class LoanAgainstController extends Controller
         } else {
             Log::warning('application_date field is empty');
         }
+        // Convert cheque_date (d-m-Y → Y-m-d)
+if ($request->filled('cheque_date')) {
+    try {
+        $originalChequeDate = $request->cheque_date;
+
+        $convertedChequeDate = Carbon::createFromFormat('d-m-Y', $originalChequeDate)
+            ->format('Y-m-d');
+
+        $request->merge([
+            'cheque_date' => $convertedChequeDate,
+        ]);
+
+        Log::info('Converted cheque_date successfully', [
+            'original'  => $originalChequeDate,
+            'converted' => $convertedChequeDate,
+            'user_id'   => Auth::id(),
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Invalid cheque_date format', [
+            'value'   => $request->cheque_date,
+            'user_id' => Auth::id(),
+            'error'   => $e->getMessage(),
+        ]);
+    }
+} else {
+    Log::warning('cheque_date field is empty', [
+        'user_id' => Auth::id(),
+    ]);
+}
+// Convert transfer_date (d-m-Y → Y-m-d)
+if ($request->filled('transfer_date')) {
+    try {
+        $originalTransferDate = $request->transfer_date;
+
+        $convertedTransferDate = Carbon::createFromFormat('d-m-Y', $originalTransferDate)
+            ->format('Y-m-d');
+
+        $request->merge([
+            'transfer_date' => $convertedTransferDate,
+        ]);
+
+        Log::info('Converted transfer_date successfully', [
+            'original'  => $originalTransferDate,
+            'converted' => $convertedTransferDate,
+            'user_id'   => Auth::id(),
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Invalid transfer_date format', [
+            'value'   => $request->transfer_date,
+            'user_id' => Auth::id(),
+            'error'   => $e->getMessage(),
+        ]);
+    }
+} else {
+    Log::warning('transfer_date field is empty', [
+        'user_id' => Auth::id(),
+    ]);
+}
+
 
         // Step 2: Validation (with detailed logging)
         try {
@@ -1503,6 +1676,34 @@ class LoanAgainstController extends Controller
 
     public function appupdate(Request $request, $id)
     {
+        // --- Normalize application_date ---
+if ($request->filled('application_date')) {
+    try {
+        $original = $request->application_date;
+
+        $converted = Carbon::createFromFormat('d-m-Y', $original)
+            ->format('Y-m-d');
+
+        $request->merge([
+            'application_date' => $converted,
+        ]);
+
+        Log::info('Converted application_date (UPDATE)', [
+            'application_id' => $id,
+            'original' => $original,
+            'converted' => $converted,
+            'user_id' => auth()->id(),
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Invalid application_date format (UPDATE)', [
+            'application_id' => $id,
+            'value' => $request->application_date,
+            'error' => $e->getMessage(),
+        ]);
+
+        return back()->with('error', 'Invalid application date format.');
+    }
+}
         Log::info('--- Loan Application Update Started ---', [
             'user_id' => auth()->id(),
             'application_id' => $id,

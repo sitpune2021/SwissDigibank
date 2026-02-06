@@ -1,0 +1,160 @@
+@extends('layout.main')
+@section('content')
+    <div class="main-inner">
+      
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
+                <h1 class=" flex text-xl block font-semibold">FIXED LOAN SCHEME</h1>
+                <a href="{{route('fixed_loan.schemes.create')}}" class=" block flex btn-primary uppercase ">Add
+                </a>
+            </div>  
+ 
+        @if(session('success'))
+            <div class="">
+                <div class="w-44 mb-5 flex justify-end">
+                    <x-alert />
+                </div>
+                {{-- {{ session('success') }} --}}
+            </div>
+        @endif
+              
+        <div class="col-span-12 box lg:col-span-12">
+            <div class="pb-4 overflow-x-auto lg:pb-6">
+
+                <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+                    <thead>
+                        <tr class="bg-secondary/5 dark:bg-bg3">
+                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                <div class="flex items-center uppercase gap-1">
+                                    SCHEME CODE
+                                </div>
+                            </th>
+                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                <div class="flex items-center uppercase gap-1">
+                                    SCHEME NAME
+                                </div>
+                            </th>
+                           
+                            <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
+                                <div class="flex items-center uppercase gap-1">
+                                    LOAN AMOUNT
+                                </div>
+                            </th>
+
+                            <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
+                                <div class="flex items-center uppercase gap-1">
+                                    No of EMI
+                                </div>
+                            </th>
+
+                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
+                                <div class="flex items-center uppercase gap-1">
+                                    EMI AMOUNT
+                                </div>
+                            </th>
+
+                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                <div class="flex items-center uppercase gap-1">
+                                    EMI PAYOUT
+                                </div>
+                            </th>
+                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                <div class="flex items-center uppercase gap-1">
+                                    A. INTEREST RATE (%)
+                                </div>
+                            </th>
+
+                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                <div class="flex items-center uppercase gap-1">
+                                    ACTIVE
+                                </div>
+                            </th>
+                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                <div class="flex items-center uppercase gap-1">
+                                    ACTIONS
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($schemes as $scheme)
+                            <tr class="border-b dark:border-bg3">
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex items-center gap-1 text-secondary uppercase">
+                                        <a href="{{ route('fixed_loan.schemes.view', $scheme->id) }}" class="single-option text-green-600 hover:text-green-800 transition">
+                                            {{ $scheme->scheme_code }}
+                                        </a>
+                                    </div>
+                                </td>
+
+                                <td class="text-start !py-5 px-6 capitalize">
+                                    <div class="flex items-center gap-1">
+                                        {{ $scheme->scheme_name }}
+                                    </div>
+                                </td>
+
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex items-center gap-1">
+                                        {{ number_format($scheme->max_loan_amount, 2) }}
+                                    </div>
+                                </td>
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex items-center gap-1">
+                                        {{ number_format($scheme->no_of_emi) }}
+                                    </div>
+                                </td>
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex items-center gap-1">
+                                        {{ number_format($scheme->emi_amount) }}
+                                    </div>
+                                </td>
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex items-center gap-1 capitalize">
+                                        {{ str_replace('_',' ', $scheme->gold_loan_setting) }}
+                                    </div>
+                                </td>
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex items-center gap-1">
+                                        {{ $scheme->annual_interest_rate }} %
+                                    </div>
+                                </td>
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex items-center gap-1">
+                                        @if($scheme->is_active)
+                                            <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
+                                                Yes
+                                            </span>
+                                        @else
+                                            <span class="block w-28 rounded-[30px] border border-n30 bg-red-200 py-2 text-center text-xs text-red-600">
+                                                No
+                                            </span>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex justify-center">
+                                        <div class="relative">
+                                            <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+                                            <ul class="horiz-option popover-content">
+                                                <li><a href="{{ route('fixed_loan.schemes.view',$scheme->id) }}" class="single-option uppercase">View</a></li>
+                                                <li><a href="{{ route('fixed_loan.schemes.edit',$scheme->id) }}" class="single-option uppercase">Edit</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="text-center py-5">No Schemes Found</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
+                <div class="mt-6">
+                    <x-pagination :paginator="$schemes" />
+                </div>
+            </div>
+        </div>
+
+
+@endsection

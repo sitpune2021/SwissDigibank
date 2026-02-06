@@ -35,6 +35,17 @@ return [
         ],
     ],
     [
+        'title' => 'COLL.CENTER/GROUPS',
+        'icon' => 'las la-university',
+        'position' => '3',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'COLLECTION CENTERS', 'route' => 'collection-centers.index'],
+            ['title' => 'GROUPS', 'route' => 'groups.index'],
+
+        ],
+    ],
+    [
         'title' => 'CUSTOMER',
         'icon' => 'las la-piggy-bank',
         'position' => '4',
@@ -68,6 +79,7 @@ return [
             ['title' => 'CALCULATOR', 'route' => 'calculator.index'],
             ['title' => 'FD ACCOUNTS', 'route' => 'fd-mis-schemes.fd_index'],
             ['title' => 'MIS ACCOUNTS', 'route' => 'misaccount.index'],
+             ['title' => 'SWEEP IN ACCOUNTS', 'route' => 'sweep-in-accounts']
         ]
     ],
     [
@@ -189,6 +201,18 @@ return [
         ],
     ],
     [
+        'title' => 'FIXED LOAN',
+        'icon' => 'las la-university',
+        'position' => '9',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SCHEMES', 'route' => 'fixed_loan.schemes.index'],
+            ['title' => 'APPLICATIONS', 'route' => 'fixed_loan.applications.index'],
+            ['title' => 'DISBURSEMENTS', 'route' => 'fixed_loan.disbursements.index'],
+            ['title' => 'ACCOUNTS', 'route' => 'fixed_loan.account.index'],
+        ],
+    ],
+    [
         'title' => 'LOCKERS',
         'icon' => 'las la-lock',
         'position' => '9',
@@ -239,6 +263,56 @@ return [
         ],
     ],
     [
+        'title' => 'NOTICE BOARD',
+        'icon' => 'las la-book',
+        'position' => '5',
+        'active' => '1',
+        'route' => 'notice-boards.index',
+    ],
+    [
+        'title' => 'PRINT DOCUMENTS',
+        'icon' => 'las la-clipboard',
+        'position' => '6',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'FD/MIS BOND', 'route' => 'print-documents.fd-mis-bond.index'],
+            ['title' => 'RD/DD BOND', 'route' => 'print.rd-dd-bond.index'],
+            ['title' => 'LETTER HEAD', 'route' => 'print.letter-head'],
+            // ['title' => 'FORM I AND J', 'route' => 'index-from-i'],
+            // ['title' => 'FORM E', 'route' => 'index-from-e'],
+ 
+
+        ],
+    ],
+    [
+        'title' => 'SOFTWARE SETTINGS',
+        'icon' => 'las la-wrench',
+        'position' => '6',
+        'active' => '1',
+        'submenu' => [
+            ['title' => 'SMS LIST', 'route' => 'software-settings.sms-list'],
+            ['title' => 'SMS HISTORY', 'route' => 'software-settings.sms-history'],
+            ['title' => 'MAIL HISTORY', 'route' => 'software-settings.mail-history'],
+            ['title' => 'COMMENT HISTORY', 'route' => 'software-settings.comment-history'],
+            ['title' => 'INTERNET BANKING SETTINGS', 'route' => 'software-settings.internet-banking.internet-banking'],
+            ['title' => 'ACCOUNT SERIES SETTINGS', 'route' => 'software-settings.account-series-settings'],
+            ['title' => 'LOW BALANCE ALERTS', 'route' => 'software-settings.software-alerts.software-alerts'],
+
+            ['title' => 'MASTER SETTINGS', 'route' => 'master-settings.index'],
+
+            ['title' => 'FORM FIELD SETTINGS', 'route' => 'software-settings.form-field-setting'],
+            // ['title' => 'APP SUPPORT PAGE', 'route' => 'software-settings.form-field-setting'],
+            ['title' => 'GOLD RATE CALENDAR', 'route' => 'software-settings.gold-rate-calender'],
+            ['title' => 'EVENT/HOLIDAY  CALENDAR', 'route' => 'software-settings.event-calender.event-calender'],
+            ['title' => 'DELETED ENTRY LOGS', 'route' => 'software-settings.deleted-logs.deleted-entry-log'],
+            ['title' => 'LOGIN HISTORY', 'route' => 'software-settings.login-activity'],
+            ['title' => 'USER ACTIVITIY TRACKING', 'route' => 'software-settings.user-activity-tracking'],
+            ['title' => 'MAIL SETTINGS', 'route' => 'software-settings.mail-setting'],
+            ['title' => 'SOFTWARE AGREEMENT', 'route' => 'software-settings.software-service-agreement'],
+
+        ],
+    ],
+    [
         'title' => 'HR MANAGEMENT',
         'icon' => 'las la-user',
         'position' => '6',
@@ -250,6 +324,7 @@ return [
 
         ],
     ],
+
     [
         'title' => 'PASSBOOK',
         'icon' => 'las la-book',

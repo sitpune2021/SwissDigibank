@@ -42,8 +42,8 @@
     }
 
     input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
     }
 
@@ -53,8 +53,8 @@
     }
 
     input[type="radio"] {
-        width: 24px;
-        height: 24px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
     }
 
@@ -73,14 +73,10 @@
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-center gap-3 ">
-                <h1 class="text-2xl font-semibold dark:text-white">RD - {{$rdAccount->id}}</h1>
+                <h1 class="text-lg font-semibold dark:text-white">RD - {{$rdAccount->id}}</h1>
                 <p class="text-sm text-gray-500 dark:text-gray-400">Withdraw Money (Installments)</p>
             </div>
-            <p class="text-gray-500 dark:text-gray-400">
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Recurring Deposits </a> >
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm"> RD{{$rdAccount->id}}</a> >
-                <a href="#" class="text-gray-500 dark:text-gray-400 text-sm">Withdraw Money</a>
-            </p>
+            
         </div>
     </div>
 
@@ -104,7 +100,7 @@
 
                     <!-- Member Signature -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Member's Sign</label>
+                        <label class="block  font-semibold mb-2 text-gray-700 dark:text-gray-300">Member's Sign</label>
                         <div class=" text-gray-600 dark:text-gray-400 text-sm">
                             No Signature Present <br> (Upload in Member Documents)
                         </div>
@@ -112,7 +108,7 @@
 
                     <!-- Member Photo -->
                     <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Member's Photo</label>
+                        <label class="block font-semibold mb-2 text-gray-700 dark:text-gray-300">Member's Photo</label>
                         <div class=" text-gray-600 dark:text-gray-400 text-sm">
                             No Photo Present <br> (Upload in Member Documents)
                         </div>
@@ -120,7 +116,7 @@
 
                     <!-- Collected By -->
                     <div class="mt-3">
-                        <label class="block text-sm font-medium  dark:bg-bg3">Collected By</label>
+                        <label class="block font-semibold mb-2 dark:bg-bg3">Collected By</label>
                         <select
                             class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm">
                             <option value="">Select Advisor / Staff</option>
@@ -130,7 +126,7 @@
 
                     <!-- Amount -->
                     <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label class="block font-semibold mb-2 text-gray-700 dark:text-gray-300">
                             Amount to Withdraw <span class="text-red-500">*</span>
                         </label>
                         <input type="number" id="amount" name="amount" min="0" placeholder="Enter Amount to Withdraw"
@@ -146,7 +142,7 @@
 
                     <!-- Remarks -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:bg-bg3  mt-3">Remarks (if
+                        <label class="block font-semibold mb-2 text-gray-700 dark:bg-bg3  mt-3">Remarks (if
                             any)</label>
                         <textarea placeholder="Enter Remarks"
                             class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm"></textarea>
@@ -154,7 +150,7 @@
 
                     <!-- Transaction Date -->
                     <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label class="block font-semibold mb-2 text-gray-700 dark:text-gray-300">
                             Transaction Date <span class="text-red-500">*</span>
                         </label>
                         <input type="text" id="t_date" name="t_date"
@@ -167,7 +163,7 @@
 
                     <!-- Receipt -->
                     <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">T. Receipt</label>
+                        <label class="block font-semibold mb-2 text-gray-700 dark:text-gray-300">T. Receipt</label>
                         <input type="file" disabled
                             class="w-full rounded-10 border bg-secondary/5 border-gray-300 dark:bg-bg3 px-3 py-3 text-sm">
 
@@ -176,7 +172,7 @@
 
                     <!-- Pay Mode -->
                     <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label class="block font-semibold mb-2 text-gray-700 dark:text-gray-300">
                             Pay Mode <span class="text-red-500">*</span>
                         </label>
                         <div class="mt-2 flex flex-wrap gap-4 text-sm text-gray-700 dark:text-gray-300">
@@ -293,11 +289,11 @@
 
 
                     <!-- Buttons -->
-                    <div class="flex justify-center gap-4 pt-4">
-                        <button type="submit" class="btn-primary  rounded-10">
+                    <div class="flex justify-center mt-5 gap-4 pt-4">
+                        <button type="submit" class="btn-primary  ">
                             WITHDRAW
                         </button>
-                        <a href="#" class="btn-outline rounded-10">
+                        <a href="#" class="btn-outline ">
                             CANCEL
                         </a>
                     </div>
@@ -308,14 +304,14 @@
             <div class="w-full box">
                 <div
                     class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 border-b border-green-200 dark:bg-bg3">
-                    <h3 class="text-lg font-bold text-gray-800 dark:text-white dark:bg-bg3">RD Info</h3>
+                    <h3 class="text-lg uppercase font-bold text-gray-800 dark:text-white dark:bg-bg3">RD Info</h3>
 
                 </div>
                 <div class="p-4">
                     <table class="w-full text-sm">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3">Member</td>
+                                <td class="font-semibold uppercase pr-4 py-3">Member</td>
                                 <td>
                                     {{ $rdAccount->member->id ?? 'N/A' }} -
                                 {{ $rdAccount->member->member_info_first_name ?? '' }}
@@ -323,31 +319,31 @@
                                 </td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3">RD No.</td>
+                                <td class="font-semibold uppercase pr-4 py-3">RD No.</td>
                                 <td>{{ $rdAccount->id ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3">Scheme</td>
+                                <td class="font-semibold uppercase pr-4 py-3">Scheme</td>
                                 <td>{{ $rdAccount->scheme->scheme_name ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3">Tenure</td>
+                                <td class="font-semibold uppercase pr-4 py-3">Tenure</td>
                                 <td>{{ $rdAccount->scheme->tenure_of_rd_dd_value ?? 'N/A' }} {{ $rdAccount->scheme->tenure_of_rd_dd_type ?? '' }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3">Frequency</td>
+                                <td class="font-semibold uppercase pr-4 py-3">Frequency</td>
                                 <td>{{ ucfirst($rdAccount->scheme->rd_dd_frequency ?? 'N/A') }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3">Principal Amt.</td>
+                                <td class="font-semibold uppercase pr-4 py-3">Principal Amt.</td>
                                 <td>{{ number_format($rdAccount->rd_amount, 2) }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3">Amount Received</td>
+                                <td class="font-semibold uppercase pr-4 py-3">Amount Received</td>
                                 <td>{{ number_format($receivedAmount, 2) }}</td>
                             </tr>
                             <tr class="border-b">
-                                <td class="font-semibold pr-4 py-3">Balance Available</td>
+                                <td class="font-semibold uppercase pr-4 py-3">Balance Available</td>
                                 <td>
                                     {{ number_format(
                                     ($rdAccount->rdTransactions->whereNotNull('paid_on')->where('transaction_type', 'credit')->sum('amount')) -

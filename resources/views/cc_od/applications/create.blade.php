@@ -266,7 +266,7 @@
                             </label>
                             <input type="number" id="tenure_value" name="tenure_value"
                                 value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 ">
                                 @error('tenure_value')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror

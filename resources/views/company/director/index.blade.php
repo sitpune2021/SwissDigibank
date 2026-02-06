@@ -32,7 +32,7 @@
                             NAME
                         </div>
                     </th>
-                    <th class="text-start !py-5 min-w-[100px] cursor-pointer">
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
                             DIN
                         </div>
@@ -48,7 +48,7 @@
                             RESIGNATION DATE
                         </div>
                     </th>
-                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                    <th class="text-start !py-5 px-3 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
                             AUTHORIZED<br>SIGNATORY
                         </div>
@@ -59,13 +59,13 @@
             </thead>
             <tbody>
                 @forelse ($directors as $index => $director)
-                <tr>
+                <tr class="border-b">
                     <td class="px-6 py-4">{{ $director->designation ?? 'N/A' }}</td>
                     <!-- {{-- <td class="px-6 py-4">{{ $director->member?->member_info_first_name ?? 'N/A' }}</td> --}} -->
                     <td class="py-3 px-6">
                         @if ($director->member)
                         <a href="{{ $director?->member?->id ? route('member.show', $director->member->id) : '#' }}"
-                            class="text-primary hover:underline">
+                            class="text-primary px-3 hover:underline">
                             {{ $director->member?->member_info_first_name ??''}}
                         </a>
                         @else
@@ -73,15 +73,28 @@
                         @endif
                     </td>
                     <td class="px-6 py-4">
-                        <a href="{{ $director?->id ? route('director.show', base64_encode($director->id)) : '#' }}" class="text-primary hover:underline">
+                        <a href="{{ $director?->id ? route('director.show', base64_encode($director->id)) : '#' }}" class="text-primary  hover:underline">
                             {{ $director?->director_name ?? '' }}
                         </a>
                     </td>
-                    <td class="px-6 py-4">{{ $director?->din_no??'' }}</td>
-                    <td class="px-6 py-4">{{ $director->appointment_date?->format('d-m-Y') ?? 'N/A' }}</td>
-                    <td class="px-6 py-4">{{ $director->resignation_date?->format('d-m-Y') ?? 'N/A' }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-1">
+                             {{ $director?->din_no??'' }}
+                        </span>
+                       
+                    </td>
+                    <td class="px-6 py-4">
+                    <span class="px-2">
+                        {{ $director->appointment_date?->format('d-m-Y') ?? 'N/A' }}
+                    </span>
+                    </td>
+                    <td class="px-6 py-4">
+                       <span class="px-2">
+                         {{ $director->resignation_date?->format('d-m-Y') ?? 'N/A' }}
+                       </span>
+                    </td>
                     <!-- <td class="px-6 py-4">{{ $director->authorized_signatory ? 'Yes' : 'No' }}</td> -->
-                    <td class="py-2">
+                    <td class="py-2 px-6">
                         @if ($director->authorized_signatory == 'Yes')
                         <span
                             class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">

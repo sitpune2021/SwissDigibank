@@ -3,7 +3,7 @@
 
 <div class="main-inner">
     <div class="mb-6 flex flex-wrap items-center uppercase justify-between gap-4 lg:mb-8">
-        <h4 class="h3">MIS ACCOUNTS</h4>
+        <h4 class="text-lg uppercase">MIS ACCOUNTS</h4>
         <a class="btn-primary flex items-center gap-2 uppercase" href="{{route('misaccount.create')}}">
             Add
         </a>
@@ -100,7 +100,7 @@
                         <td class="text-start !py-5 px-6 min-w-[100px]">-</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">
                             <a href="{{ $mis?->id ? route('misaccount.show', $mis->id) : '#' }}" class="text-primary underline hover:text-primary/80">
-                                {{ $mis->id }}
+                                {{ $mis->mis_account_no }}
                             </a>
                         </td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">

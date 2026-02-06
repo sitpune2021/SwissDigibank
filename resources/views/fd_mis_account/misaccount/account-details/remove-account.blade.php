@@ -5,7 +5,7 @@
 
     <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
         <div class="flex items-start flex-col gap-2">
-            <h3 class="uppercase font-semibold">MIS Account - {{$misaccount->id}} - Remove</h3>
+            <h3 class="uppercase text-lg font-semibold">MIS Account - {{$misaccount->id}} - Remove</h3>
             <!-- <p class="text-gray-500">
                 <a href="#" class="text-gray-500 text-sm">MIS Accounts</a> >
                 <a href="#" class="text-gray-500 text-sm">{{$misaccount->id}} </a>>

@@ -96,29 +96,35 @@
 <body>
     <div class="container">
 
-    <div style="width:100%; font-family: dejavusans; border-bottom: 2px solid #000 ; padding: 5px;">
+     <div class="header" style="padding : 10px 0px ; border-bottom:  1px solid black; ">
+            <!-- Logo (optional) -->
+            <div style="width:100%; font-family: dejavusans; ">
 
             <!-- Logo -->
-            <div style="float:left; width:10%; text-align:left;">
-                <img src="{{ public_path('assets/images/SBC_Logo.jpg') }}" alt="Company Logo"
-                    style="width:130px; height:130px;">
+            <div style="float:left; width:50%; padding: 0px 5px; text-align:left;">
+                <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
+                    style="width:auto; height:50px;">
             </div>
 
             <!-- Title Section -->
-            <div style="float:left; width:90%; text-align:center;">
+            <div style="float:left; width:50%; text-align:center;">
                 <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; ">
-                    SBC Global
+                    {{-- SBC Global --}}
                 </div>
 
                 <div style="height:10px; margin-top: 40px;">&nbsp;</div>
 
-                <h4 style="   margin:0;  font-size:18px; font-weight:bold;">
-                     Discharge Form for End of Term / Pre-Maturity</h4>
+
             </div>
 
             <!-- Clear Float -->
             <div style="clear:both; "></div>
+            <h4 style="   margin:0; text-align: center;  font-size:18px; font-weight:bold;">
+               Issue of Discharge Form for End of Term/ Pre-Maturity
 
+            </h4>
+        </div>
+            <div style="clear:both; "></div>
         </div>
         <!-- <div class="title">
             <table style="width:100%; border-collapse:collapse; border-bottom: 1px solid #000;">
@@ -161,10 +167,10 @@
             </table>
         </div>
 
-        <div class="section">
+        <div class="section" style="font-size: 14px;">
             <p>Entered By:</p>
             <p>Agreement No: <strong>{{ $agreement_no }}</strong> &nbsp;&nbsp;&nbsp; Holder Name:
-                <strong>{{ $holder_name }}</strong> &nbsp;&nbsp;&nbsp; Exp. Date: <strong>{{ $expiry_date }}</strong>
+                <strong>{{ $holder_name }}</strong> <br> Exp. Date: <strong>{{ $expiry_date }}</strong>
             </p>
             <p> The joint venture/ assignee of the above mentioned case down payment certificate do hereby acknowledge
                 receipt from the of sum specified below in full and final satisfaction and discharge/loan of all my
@@ -172,7 +178,7 @@
                 demands under above certificate as per particulars given below :-</p>
         </div>
 
-        <table style="width:100%; border-collapse:collapse; border-spacing:0; font-size:12px; line-height:0.5;">
+        <table style="width:100%; border-collapse:collapse; border-spacing:0; font-size:12px; line-height:1;">
             <tr>
                 <td>TOTAL RECEIVED AMOUNT</td>
                 <td>
@@ -245,21 +251,21 @@
             style="margin-top: 12px; width:100%; border-collapse:collapse; border-spacing:0; font-size:12px; line-height:0.8; padding-bottom:8px ;">
             <tr>
                 <td style="width: 60%">
-                    <p style="text-align: left;">The said Welfare case down payment is hereby delivered up to the
+                    <p style="text-align: left; font-size: 14px;">The said Welfare case down payment is hereby delivered up to the
                         company for cancellation.</p>
                 </td>
                 <td style="width: 40% ; text-align: center; font-weight: bold; vertical-align:middle;">FULL SIGNATURE
                 </td>
             </tr>
             <tr>
-                <td>Dated as this day of: {{ $date }}</td>
+                <td style=" font-size: 14px;">Dated as this day of: {{ $date }}</td>
             </tr>
             <tr>
-                <td> <strong>Customer Signature</strong></td>
+                <td style=" font-size: 14px;"> <strong>Customer Signature</strong></td>
             </tr>
             <tr>
                 <td style="width: 60%; line-height: 1;">
-                    <p style="text-align: left; "> Witness:<br>
+                    <p style="text-align: left; font-size: 14px;"> Witness:<br>
                         1._________<br>
                         2._________<br>
                         3._________<br><br></p>
@@ -275,7 +281,7 @@
             </tr>
         </table>
 
-        <div class="" style="border-top: 1px solid #000; margin-bottom: 25px;">
+        <div class="" style="border-top: 1px solid #000; line-height: 1; margin-bottom: 25px;">
             <div class="" style="text-align: center; font-size: 14px;">INSTRUCTION</div>
             <p style="font-size: 14px;">1. Signature in vernacular must have their English translation written beneath. Illiterate persons must
                 affix their
@@ -287,7 +293,9 @@
             <p style="font-size: 12px; text-align: center; font-weight: bold;">{{ $branch_address }}</p>
         </div>
 
-        <div class=""  >SBC GLOBAL TOWAR , KESHAV NAAR CHOWK NEAR JANORKAR MARRAIGE HALL RING ROAD AKOLA Maharashtra - 444001</div>
+        <div class=""  >
+            {{-- SBC GLOBAL TOWAR , KESHAV NAAR CHOWK NEAR JANORKAR MARRAIGE HALL RING ROAD AKOLA Maharashtra - 444001 --}}
+        </div>
 
     </div>
 </body>

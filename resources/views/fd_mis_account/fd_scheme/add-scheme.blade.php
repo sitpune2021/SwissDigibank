@@ -2,8 +2,8 @@
 @section('content')
     <style>
         input[type="checkbox"] {
-            width: 28px;
-            height: 28px;
+            width: 24px !important;
+            height: 24px !important;
             accent-color: green;
             /* For modern browsers */
         }
@@ -21,8 +21,8 @@
         }
 
         input[type="radio"] {
-            width: 24px;
-            height: 24px;
+            width: 24px !important;
+            height: 24px !important;
             accent-color: green;
             /* Modern browser support */
         }
@@ -41,7 +41,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-col  gap-2">
-                <h1 class="text-xl font-semibold">
+                <h1 class="text-lg font-semibold">
                     {{ isset($fdScheme) ? 'EDIT FD SCHEME' : 'ADD FD SCHEME' }}
                 </h1>
                 <!-- <p class="text-gray-500">
@@ -66,7 +66,7 @@
                     </label>
 
                     <input type="text" id="scheme_name" name="scheme_name"
-                        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Scheme Name " value="{{ old('scheme_name', $fdScheme->scheme_name ?? '') }}">
                     @error('scheme_name')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
@@ -79,7 +79,7 @@
                     </label>
 
                     <input type="text" id="scheme_code" name="scheme_code"
-                        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Scheme Code" value="{{ old('scheme_code', $fdScheme->scheme_code ?? '') }}">
 
                     @error('scheme_code')
@@ -93,7 +93,7 @@
                     </label>
 
                     <input type="number" id="min_amount" name="min_amount"
-                        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Minimum FD Amount" value="{{ old('min_amount', $fdScheme->min_amount ?? '') }}">
 
                     <x-number-to-word for="min_amount" />
@@ -107,7 +107,7 @@
                         FD/ MIS Lock In Period
                         <span class="text-red-500">*</span>
                     </label>
-                    <select name="lock_in_period" class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    <select name="lock_in_period" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         @foreach ([0, 1, 3, 6, 9, 12, 15, 18, 21, 24, 25, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60] as $month)
                             <option value="{{ $month }}"
                                 {{ old('lock_in_period', $fdScheme->lock_in_period ?? '') == $month ? 'selected' : '' }}>
@@ -128,7 +128,7 @@
                     </label>
                     <div class="flex items-center gap-1 ">
                         <select name="interest_lock_in" id="interest_lock_in"
-                            class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
 
                             @foreach ([0, 3, 6, 9, 12, 15, 16, 18, 21, 24, 25, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60] as $month)
                                 <option value="{{ $month }}"
@@ -143,7 +143,7 @@
                     </div>
                 </div>
 
-                <div class="col-span-2 md:col-span-1 pt-3">
+                <div class="col-span-2 md:col-span-1 mt-8 pt-3">
                     <p class="text-blue-500">
                         10.0 % TDS will be deducted, if the Interest exceeds ₹ 40000 per annually.</p>
                 </div>
@@ -154,7 +154,7 @@
                     <div class="flex gap-2">
                         {{-- Bonus Type --}}
                         <select name="bonus_type" id="bonus_type"
-                            class="text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            class="text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Select Type</option>
                             <option value="percentage"
                                 {{ old('bonus_type', $fdScheme->bonus_type ?? '') == 'percentage' ? 'selected' : '' }}>(%)
@@ -167,7 +167,7 @@
                         {{-- Bonus Rate --}}
                         <input type="number" id="bonus_rate" name="bonus_rate"
                             value="{{ old('bonus_rate', $fdScheme->bonus_rate ?? '') }}"
-                            class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" step="0.01">
                     </div>
 
@@ -183,7 +183,7 @@
                     </label>
                     <div class="flex gap-2">
                         <select name="cancellation_type" id="cancellation_type"
-                            class="text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            class="text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="percent"
                                 {{ old('cancellation_type', $fdScheme->cancellation_type ?? '') == 'percent' ? 'selected' : '' }}>
                                 (%)</option>
@@ -194,7 +194,7 @@
 
                         <input type="number" name="cancellation_charge" step="0.01"
                             value="{{ old('cancellation_charge', $fdScheme->cancellation_charge ?? '') }}"
-                            class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0">
                     </div>
                 </div>
@@ -204,7 +204,7 @@
                         Penal Charges (%)
                     </label>
                     <select name="penal_charge" id="penal_charge"
-                        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option value="">0.0</option>
                         <option value="0.5">0.5%</option>
                         <option value="1">1%</option>
@@ -227,7 +227,7 @@
                     </label>
                     <input type="number" id="stationary_fee" name="stationary_fee"
                         value="{{ old('stationary_fee', $fdScheme->stationary_fee ?? '0.0') }}"
-                        class="w-full text-sm bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="0.0">
                     <x-number-to-word for="stationary_fee" />
                 </div>
@@ -272,8 +272,8 @@
                 <div class="col-span-2 mt-8">
                     <div class="tableWidth mt-8 px-4">
                         <div class="overflow-x-auto">
-                            <table class="w-full border border-gray-300">
-                                <thead class="bg-green-500 text-white">
+                            <table class="w-full ">
+                                <thead class="bg-secondary/5 px-3">
                                     <tr>
                                         <th colspan="2" class="text-center py-3">DAYS</th>
                                         <th rowspan="2" class="text-center">ANNUAL INTEREST <br> RATE (%)</th>
@@ -365,7 +365,7 @@
                         RESET
                     </button>
                     <a href="{{ route('fd-mis-schemes.index') }}" class="btn-outline uppercase justify-center">
-                        CANCEL
+                        BACK
                     </a>
 
 

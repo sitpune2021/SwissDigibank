@@ -17,10 +17,10 @@ TRANSACTIONS')
 @section('content')
 
 <div class="main-inner">
-    <div class="grid grid-cols-2 md:grid-cols-12 gap-6 p-6 min-h-screen">
+    <div class="grid grid-cols-2 md:grid-cols-12 gap-6  min-h-screen">
         <div class="col-span-1 md:col-span-2 box dark:bg-bg3 rounded-10 p-6">
             <div>
-                <h3 class="text-xl font-semibold mb-4">CHARGES - CLEAR DUES</h3>
+                <h3 class="text-lg font-semibold mb-4">CHARGES - CLEAR DUES</h3>
                 <hr class="mb-6 border-gray-300">
             </div>
 
@@ -189,13 +189,13 @@ TRANSACTIONS')
                         <div id="Cash" class="hidden"></div>
 
                         <!-- Online Transfer Fields -->
-                        <div id="Online" class="hidden grid grid-cols-2 gap-4 xl:mt-8 2xl:gap-6 mt-4">
+                        <div id="Online" class="hidden  gap-4 xl:mt-8 2xl:gap-6 mt-4">
                             <!-- Transfer Date -->
                             <x-datepicker-disabled label="Transfer Date" name="transfer_date"
                                 value="{{ old('transfer_date') }}" inputId="transfer_date" />
 
                             <!-- UTR / Transaction No -->
-                            <div class="col-span-2 md:col-span-1 mt-4">
+                            <div class="col-span-1 md:col-span-1 mt-4">
                                 <label class="font-medium block mb-2 uppercase">UTR / Transaction No <span
                                         class="text-red-500">*</span></label>
                                 <input type="text" name="utr_no" placeholder="Enter UTR / Transaction No"
@@ -206,7 +206,7 @@ TRANSACTIONS')
                             </div>
 
                             <!-- Transfer Mode -->
-                            <div class="col-span-2 md:col-span-1 mt-4">
+                            <div class="col-span-1 md:col-span-1 mt-4">
                                 <label class="font-medium block mb-1 uppercase">Transfer Mode <span
                                         class="text-red-500">*</span></label>
                                 <div class="flex flex-wrap gap-4 mt-2">
@@ -286,12 +286,12 @@ TRANSACTIONS')
                 </div>
 
                 <!-- Submit Buttons -->
-                <div class="flex justify-center gap-3 space-x-4 pt-6 mt-4">
+                <div class="flex justify-center gap-3 space-x-4 pt-6 mt-5">
                     <button type="submit" class="btn-primary">
                         CLEAR DUE
                     </button>
 
-                    <a href="{{ url()->previous() }}" class="btn-outline inline-flex items-center justify-center">
+                    <a href="{{ url()->previous() }}" class="btn-outline uppercase inline-flex items-center justify-center">
                         Back
                     </a>
                 </div>

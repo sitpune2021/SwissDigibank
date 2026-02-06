@@ -28,7 +28,8 @@
         <tr class="text-center border-b">
             <td class="p-2 text-start"><a href="{{ route('mortgage.applications.view', $application->id) }}" 
                 class="text-green-600 hover:underline">
-                    {{ $application->id }}
+                    {{-- {{ $application->id }} --}}
+                    {{ str_pad($application->id, 10, '0', STR_PAD_LEFT) }}
                 </a></td>
             <td class="p-2 text-start">
                 @if($application->status == 0)

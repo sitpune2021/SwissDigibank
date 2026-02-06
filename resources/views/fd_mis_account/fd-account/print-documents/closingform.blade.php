@@ -99,25 +99,26 @@
     <div style="width:100%; font-family: dejavusans; border-bottom: 2px solid #000 ; padding: 5px;">
 
             <!-- Logo -->
-            <div style="float:left; width:10%; text-align:left;">
-                <img src="{{ public_path('assets/images/SBC_Logo.jpg') }}" alt="Company Logo"
-                    style="width:130px; height:130px;">
+            <div  style="float:left; width:20%; text-align:left;">
+                <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
+                    style="width:auto; height:50px;">
             </div>
 
             <!-- Title Section -->
-            <div style="float:left; width:90%; text-align:center;">
+            <div style="float:left; width:80%; text-align:center;">
                 <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; ">
-                    SBC Global
+                    {{-- SBC Global --}}
                 </div>
 
                 <div style="height:10px; margin-top: 40px;">&nbsp;</div>
 
-                <h4 style="   margin:0;  font-size:18px; font-weight:bold;">
-                     Discharge Form for End of Term / Pre-Maturity</h4>
+                
             </div>
 
             <!-- Clear Float -->
             <div style="clear:both; "></div>
+            <h4 style=" text-align: center;  margin:0;  font-size:18px; font-weight:bold;">
+                     Discharge Form for End of Term / Pre-Maturity</h4>
 
         </div>
         <!-- <div class="title">

@@ -48,7 +48,7 @@
 <div class="main-inner">
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-        <h3 class=" flex text-xl block  uppercase font-semibold">
+        <h3 class=" flex text-lg   uppercase font-semibold">
             Report - Promoters/ Members
         </h3>
 
@@ -57,7 +57,6 @@
         <div class="flex justify-between" id="toggleBtn">
             <p class="font-semibold uppercase text-lg">
                 Search Box
-
             </p>
             <button class="text-2xl cursor-pointer">
                 <i id="toggleIcon" class="las la-plus"></i>
@@ -115,7 +114,7 @@
             </div>
             <div class="mt-5 flex justify-center gap-4 text-center">
                 <button class="btn-primary  px-1 flex justify-center py-2 text-sm uppercase">
-                    Search
+                  <i class="las la-search"></i>  Search
                 </button>
                 <button class="btn-warning  px-1 flex justify-center py-2 text-sm uppercase">
                     Clear Form
@@ -127,9 +126,9 @@
     <div class="col-span-12 box lg:col-span-12">
         <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
 
-            <a href="{{ route('promoter.members.download') }}" class="btn-error rounded-10 px-1 flex justify-center py-2 text-sm uppercase">
-                <i class="las la-download"></i>
-              Download Csv
+            <a href="{{ route('promoter.members.download') }}" class="btn-error rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
+                <i class="las la-download "></i>
+              Download CSV
             </a>
         </div>
 
@@ -177,7 +176,11 @@
                         <!-- Member No -->
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 uppercase">
-                                {{ $member->member_no ?? '' }}
+                                 <a href="{{ $member?->id ? route('member.show', $member->id) : '#' }}"
+                                    class="text-primary hover:underline">
+                                    {{ $member->member_no ?? 'N/A' }}
+                                </a>
+                             
                             </div>
                         </td>
 
@@ -221,7 +224,9 @@
                 </tbody>
             </table>
         </div>
-        <x-pagination :paginator="$members" />
+       <div class="mt-5">
+         <x-pagination :paginator="$members" />
+       </div>
     </div>
 
     <script>

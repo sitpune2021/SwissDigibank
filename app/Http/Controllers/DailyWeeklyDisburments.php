@@ -54,7 +54,7 @@ class DailyWeeklyDisburments extends Controller
 
             // Validate input
             $validated = $request->validate([
-                'loan_application_id' => 'required|exists:cc_od_loan_applications,id',
+                'loan_application_id' => 'required|exists:daily_weekly_applications,id',
                 'disbursal_date' => 'required|date_format:d-m-Y',
                 'loan_amount' => 'required|numeric|min:1',
                 'final_amount' => 'required|numeric|min:1',

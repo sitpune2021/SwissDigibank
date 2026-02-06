@@ -1,13 +1,15 @@
 <?php
- 
+
 namespace App\Services;
 
 use App\Models\Account;
+use App\Models\DdsAccount;
 use App\Models\FdAccount;
 use App\Models\Promotor;
 use App\Models\Branch;
 use App\Models\Member;
 use App\Models\Misaccount;
+use App\Models\RdAccount;
 use App\Models\Shareholders;
 use App\Models\LoanApplication;
 use App\Models\MortgageLoanApplication;
@@ -19,7 +21,9 @@ use App\Models\PersonalLoanApplication;
 use App\Models\VehicalApplication;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
-  
+use App\Models\logo_letterhead_img_uploads;
+use App\Models\Notice; 
+use Illuminate\Support\Facades\Auth;
 class DashboardService
 {
 
@@ -36,7 +40,6 @@ class DashboardService
             'daily_weekly_loan_emi_status',
             'loan_against_emi_status',
         ];
-
         $totalDueAmount = 0;
 
         // Loop through every EMI table
@@ -50,35 +53,58 @@ class DashboardService
 
         $targetAmount = 100000; // ← अपना target amount डालो
 
-$percent = $targetAmount > 0 
-    ? round(($totalDueAmount / $targetAmount) * 100)
-    : 0;
+        $percent = $targetAmount > 0
+            ? round(($totalDueAmount / $targetAmount) * 100)
+            : 0;
+
+                   // 🔹 Fetch latest 5 notices
+        // $notices = Notice::latest()->take(5)->get();
+        $notices = Notice::whereDate('end_date', '>=', now()->toDateString())
+    ->orderBy('created_at', 'desc')
+    ->take(5)
+    ->get();
+// ✅ Fetch current Super Admin images
+        $adminId = Auth::id();
+        $logo = logo_letterhead_img_uploads::where('type', 'logo')
+            ->where('uploaded_by', $adminId)
+            ->first();
+        $letterhead = logo_letterhead_img_uploads::where('type', 'letterhead')
+            ->where('uploaded_by', $adminId)
+            ->first();
 
         return [
-            'branchesCount'        => Branch::count(),
-            'accountsCount'        => Account::count(),
-            'membersCount'         => Member::count(),
-            'shareholdersCount'    => Shareholders::count(),
-            'promotorCount'        => Promotor::count(),
-            'savingAccounts'       => Account::where('account_type', 'SAVING')->count(),
-            'currentAccounts'      => Account::where('account_type', 'CURRENT')->count(),
-            'fdCount'              => FdAccount::count(),
-            'misCount'             => Misaccount::count(),
+            'branchesCount' => Branch::count(),
+            'accountsCount' => Account::count(),
+            'membersCount' => Member::count(),
+            'shareholdersCount' => Shareholders::count(),
+            'promotorCount' => Promotor::count(),
+            'savingAccounts' => Account::where('account_type', 'SAVING')->count(),
+            'currentAccounts' => Account::where('account_type', 'CURRENT')->count(),
+            'fdCount' => FdAccount::count(),
+            'misCount' => Misaccount::count(),
+            'ddsCount' => DdsAccount::count(),
+             'mdsRdCount' => RdAccount::count(),
 
             // Loan counts
-            'goldloan'             => LoanApplication::where('status', '2')->count(),
-            'mortgageloan'         => MortgageLoanApplication::where('status', '2')->count(),
-            'loanagainst'          => LoanAgainstApplication::where('status', '2')->count(),
-            'businessloan'         => BusinessLoanApplication::where('status', '2')->count(),
-            'ccodloan'             => CcOdLoanApplication::where('status', '2')->count(),
-            'dailyweeklyloan'      => DailyWeeklyApplication::where('status', '2')->count(),
-            'personalloan'         => PersonalLoanApplication::where('status', '2')->count(),
-            'vehicalloan'          => VehicalApplication::where('status', '2')->count(),
+            'goldloan' => LoanApplication::where('status', '2')->count(),
+            'mortgageloan' => MortgageLoanApplication::where('status', '2')->count(),
+            'loanagainst' => LoanAgainstApplication::where('status', '2')->count(),
+            'businessloan' => BusinessLoanApplication::where('status', '2')->count(),
+            'ccodloan' => CcOdLoanApplication::where('status', '2')->count(),
+            'dailyweeklyloan' => DailyWeeklyApplication::where('status', '2')->count(),
+            'personalloan' => PersonalLoanApplication::where('status', '2')->count(),
+            'vehicalloan' => VehicalApplication::where('status', '2')->count(),
 
             // 🔥 NEW → Total EMI Amount Due
-            'totalEmiDueAmount'    => $totalDueAmount,
+            'totalEmiDueAmount' => $totalDueAmount,
 
-            'duePercent'           => $percent,
+            'duePercent' => $percent,
+            
+            // 🔹 Add notices
+            'notices' => $notices,
+             // ✅ Images of current Super Admin
+            'logo' => $logo,
+            'letterhead' => $letterhead,
         ];
     }
 

@@ -3,7 +3,7 @@
 @section('content')
 <div class="main-inner">
     <!-- Header -->
-    <h2 class="text-xl font-semibold mb-4 uppercase">
+    <h2 class="text-lg font-semibold mb-4 uppercase">
         {{ $scheme->scheme_name ??''}}
     </h2>
     <!-- <p class="text-sm text-gray-500 mb-6">
@@ -15,7 +15,7 @@
             <!-- Left Section -->
             <div class="p-6 bg-white dark:bg-bg3 rounded-lg shadow-md">
                 <div class="text-end ">
-                    <a href="{{ route('rdschemes.edit', $scheme->id) }}" class=" p-2 btn-outline">
+                    <a href="{{ route('rdschemes.edit', $scheme->id) }}" class=" p-2 btn-primary">
                         <i class="las la-pen"></i>
                     </a>
                 </div>
@@ -112,8 +112,8 @@
                         <tr>
                             <td class="font-medium px-4 py-2 border-b uppercase">Active</td>
                             <td class="px-4 py-2 border-b">
-                                <span class="px-3 py-1 text-xs font-semibold text-white rounded-full capitalize 
-                                 {{ $scheme->active === 'yes' ? 'bg-green-500' : 'bg-red-500' }}">
+                                <span class="px-3 py-1 text-xs font-semibold  rounded-full capitalize 
+                                 {{ $scheme->active === 'yes' ? 'block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16' : 'block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16' }}">
                                     {{ $scheme->active }}
                                 </span>
                             </td>
@@ -121,19 +121,23 @@
                         <tr>
                             <td class="font-medium px-4 py-2 border-b uppercase">Created at</td>
                             <td class="text-gray-700 px-4 py-2 border-b">
-                                {{ $scheme->created_at }}
+                                {{ \Carbon\Carbon::parse($scheme->created_at)->format('d-m-Y') }}
+
+
+                                {{-- {{ $scheme->created_at }} --}}
                             </td>
                         </tr>
                         <tr>
                             <td class="font-medium px-4 py-2 border-b uppercase">Updated at</td>
                             <td class="text-gray-700 px-4 py-2 border-b">
-                                {{ $scheme->updated_at }}
+                               {{ \Carbon\Carbon::parse( $scheme->updated_at )->format('d-m-Y') }}
+
                             </td>
                         </tr>
                         <tr>
                             <td class="font-medium px-4 py-2 border-b uppercase">Admin Type Scheme</td>
                             <td class="px-4 py-2 border-b">
-                                <span class="px-3 py-1 text-xs font-semibold text-white  rounded-full  {{ $scheme->app_type_admin === '1' ? 'bg-primary' : 'bg-red-500' }}">
+                                <span class="px-3 py-1 text-xs font-semibold  rounded-full  {{ $scheme->app_type_admin === '1' ? 'block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16' : 'block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16' }}">
                                     {{ $scheme->app_type_admin  === '1' ? 'Yes' : 'No' }}
                                 </span>
                             </td>
@@ -142,7 +146,7 @@
                             <td class="font-medium px-4 py-2 border-b uppercase">Agent Type Scheme</td>
                             <td class="px-4 py-2 border-b">
                                 <span
-                                    class="px-3 py-1 text-xs font-semibold text-white  rounded-full {{ $scheme->app_type_associate === '1' ? 'bg-primary' : 'bg-red-500' }}">
+                                    class="px-3 py-1 text-xs font-semibold rounded-full {{ $scheme->app_type_associate === '1' ? 'block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16' : 'block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16' }}">
                                     {{ $scheme->app_type_associate  === '1' ? 'Yes' : 'No' }}
                             </td>
                         </tr>
@@ -150,7 +154,7 @@
                             <td class="font-medium px-4 py-2 border-b uppercase">Member Type Scheme</td>
                             <td class="px-4 py-2 border-b">
                                 <span
-                                    class="px-3 py-1 text-xs font-semibold text-white bg-green-500 rounded-full {{ $scheme->app_type_member === '1' ? 'bg-primary' : 'bg-red-500' }}">
+                                    class="px-3 py-1 text-xs font-semibold  rounded-full {{ $scheme->app_type_member === '1' ? 'block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16' : 'block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16' }}">
                                     {{ $scheme->app_type_member  === '1' ? 'Yes' : 'No' }}
                             </td>
                         </tr>
@@ -186,7 +190,7 @@
                                             <option value="rd(Tenure-2M)" {{ old('commission_chart', $scheme->commission_chart) == 'rd(Tenure-2M)' ? 'selected' : '' }}>rd (Tenure-2M)</option>
                                             <option value="fd(Tenure-1M)" {{ old('commission_chart', $scheme->commission_chart) == 'fd(Tenure-1M)' ? 'selected' : '' }}>fd (Tenure-1M)</option>
                                         </select>
-                                        <button class="btn-primary uppercase" type="submit">Update</button>
+                                        <button class="btn-primary rounded-10  text-sm uppercase" type="submit">Update</button>
                                     </div>
                                 </td>
                             </tr>
@@ -200,15 +204,16 @@
 
     <div class="mt-6">
         <!-- Header -->
-        <div id="toggleAuditTrail"
-            class="bg-secondary/5 text-black font-semibold px-4 py-2 rounded-10 flex justify-between items-center cursor-pointer">
-            <span>RD ACCOUNT SETTING AUDIT TRAIL</span>
+        <div class=" box ">
+            <div id="toggleAuditTrail"
+            class="bg-secondary/5 text-black font-semibold px-4 py-2 rounded-10 flex justify-between items-center text-lg cursor-pointer">
+            RD ACCOUNT SETTING AUDIT TRAIL
             <button id="auditToggleBtn" class="text-white text-xl font-bold">-</button>
         </div>
 
         <!-- Collapsible Table -->
         <div id="auditTrailSection"
-            class="bg-white dark:bg-bg3 border border-gray-200 rounded-b-md shadow overflow-hidden transition-all duration-500 max-h-screen opacity-100">
+            class=" dark:bg-bg3  border-gray-200 rounded-b-md shadow overflow-hidden transition-all duration-500 max-h-screen opacity-100">
             <table class="w-full text-start border-collapse">
                 <thead class="bg-gray-100">
                     <tr>
@@ -221,6 +226,7 @@
                 <tbody>
                 </tbody>
             </table>
+        </div>
         </div>
     </div>
 </div>

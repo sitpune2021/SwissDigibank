@@ -38,7 +38,7 @@ class DailyWeeklyScheme extends Model
 
     public function applications()
     {
-        return $this->hasMany(CcOdLoanApplication::class, 'scheme_id');
+        return $this->hasMany(DailyWeeklyApplication::class, 'scheme_id');
     }
 
 

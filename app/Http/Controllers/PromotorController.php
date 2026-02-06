@@ -42,7 +42,7 @@ class PromotorController extends Controller
                 });
             }
 
-            $promotors = $query->orderBy('created_at', 'desc')->paginate(10);
+            $promotors = $query->orderBy('created_at', 'desc')->paginate(25);
 
             foreach ($promotors as $promotor) {
                 if ($promotor->date_of_birth) {
@@ -63,13 +63,35 @@ class PromotorController extends Controller
         try {
             $dynamicOptions = [
                 'branches' => Branch::pluck('branch_name', 'id'),
+                'members' => Member::all()->pluck('full_name', 'id'),
                 'marital_statuses' => MaritalStatus::pluck('status', 'id'),
+
                 'religions' => Religion::pluck('name', 'id'),
             ];
+            $maritalStatuses = MaritalStatus::pluck('id', 'status'); // ['Married' => 2]
             $route = route('promotor.store');
             $method = 'POST';
             $promoter = null;
-            return view('company.promoters.add-promoter', compact('route', 'dynamicOptions', 'method', 'promoter'));
+
+            $membersData = Member::select(
+                'id',
+                'member_info_title',
+                'member_info_gender',
+                'member_info_first_name',
+                'member_info_middle_name',
+                'member_info_last_name',
+                'member_info_dob',
+                'member_info_occupation',
+                'member_info_father_name',
+                'member_info_mother_name',
+                'member_info_spouse_name',
+                'member_info_mobile_no',
+                'member_info_email',
+                'member_info_marital_status',
+                'member_info_religion'
+            )->get()->keyBy('id');
+
+            return view('company.promoters.add-promoter', compact('route', 'dynamicOptions', 'method', 'promoter', 'membersData', 'maritalStatuses'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
@@ -81,14 +103,16 @@ class PromotorController extends Controller
         try {
             $validated = $request->validate([
                 'enrollment_date' => 'required|date|before_or_equal:today',
+                 'member_id' => 'required|exists:members,id',
                 'title' => 'required|string|max:10',
                 'gender' => 'required|string|in:Male,Female,Other',
                 'first_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'middle_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'last_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'branch_id' => 'required|exists:branches,id',
+               
                 'date_of_birth' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
-                'occupation' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+                'occupation' => 'nullable|string|max:255',
                 'father_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'marital_statuses_id' => 'nullable|exists:marital_statuses,id',
@@ -98,9 +122,9 @@ class PromotorController extends Controller
                 'mobile' => 'required|digits:10|unique:promotors,mobile',
                 'sms' => 'boolean',
 
-                'aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:promotor_k_y_c_s,aadhaar_no',
+                'aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:promotor_k_y_c_s,aadhaar_no',
                 'voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/|unique:promotor_k_y_c_s,voter_id_no',
-                'pan_no' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/|unique:promotor_k_y_c_s,pan_no',
+                'pan_no' => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/|unique:promotor_k_y_c_s,pan_no',
                 'ration_card_no' => 'nullable|string|max:20|unique:promotor_k_y_c_s,ration_card_no',
                 'meter_no' => 'nullable|string|max:20|unique:promotor_k_y_c_s,meter_no',
                 'ci_no' => 'nullable|string|max:20',
@@ -120,7 +144,8 @@ class PromotorController extends Controller
 
                 // Store promotor
                 $promotor = Promotor::create([
-                    'enrollment_date' =>  $validated['enrollment_date'],
+                    'enrollment_date' => $validated['enrollment_date'],
+                    'member_id' => $validated['member_id'], // ✅ ADD THIS
                     'title' => $validated['title'],
                     'gender' => $validated['gender'],
                     'first_name' => $validated['first_name'],
@@ -242,16 +267,40 @@ class PromotorController extends Controller
     public function edit($id)
     {
         try {
-            $decryptedId =  base64_decode($id);
-            $promoter = Promotor::with('minor')->findOrFail($decryptedId);
+            $decryptedId = base64_decode($id);
+            // $promoter = Promotor::with('minor')->findOrFail($decryptedId);
+            $promoter = Promotor::with(['minor', 'nominees', 'kyc'])->findOrFail($decryptedId);
+
             $route = route('promotor.update', $promoter->id);
             $dynamicOptions = [
                 'branches' => Branch::pluck('branch_name', 'id'),
                 'marital_statuses' => MaritalStatus::pluck('status', 'id'),
                 'religions' => Religion::pluck('name', 'id'),
+                'members' => Member::all()->pluck('full_name', 'id'),
             ];
+
+              // 🔥 THIS IS WHAT YOU MISSED
+        $membersData = Member::select(
+                'id',
+                'member_info_first_name',
+                'member_info_middle_name',
+                'member_info_last_name',
+                'member_info_occupation',
+                'member_info_father_name',
+                'member_info_mother_name',
+                'member_info_spouse_name',
+                'member_info_mobile_no',
+                'member_info_email',
+                'member_info_dob',
+                'member_info_marital_status',
+                'member_info_religion',
+                'member_info_title',
+                'member_info_gender'
+            )
+            ->get()
+            ->keyBy('id');
             $method = 'PUT';
-            return view('company.promoters.add-promoter', compact('promoter', 'dynamicOptions', 'route', 'method'));
+            return view('company.promoters.add-promoter', compact('promoter', 'dynamicOptions', 'route', 'method','membersData'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
@@ -264,6 +313,7 @@ class PromotorController extends Controller
             $promotor = Promotor::findOrFail($id);
             $validated = $request->validate([
                 'enrollment_date' => 'required|date|before_or_equal:today',
+                'member_id' => 'required|exists:members,id',
                 'title' => 'required|string|max:10',
                 'gender' => 'required|string|in:Male,Female,Other',
                 'first_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
@@ -271,7 +321,7 @@ class PromotorController extends Controller
                 'last_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'branch_id' => 'required|exists:branches,id',
                 'date_of_birth' => 'required|before:today',
-                'occupation' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
+                'occupation' => 'nullable|string|max:255',
                 'father_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'marital_statuses_id' => 'nullable|exists:marital_statuses,id',
@@ -288,7 +338,7 @@ class PromotorController extends Controller
                 // 'ration_card_no' => 'nullable|string|max:20',
                 // 'meter_no' => 'nullable|string|max:20',
                 'aadhaar_no' => [
-                    'required',
+                    'nullable',
                     'digits:12',
                     'regex:/^[2-9]{1}[0-9]{11}$/',
                     Rule::unique('promotor_k_y_c_s', 'aadhaar_no')->ignore(optional($promotor->kyc)->id),
@@ -299,7 +349,7 @@ class PromotorController extends Controller
                     Rule::unique('promotor_k_y_c_s', 'voter_id_no')->ignore(optional($promotor->kyc)->id),
                 ],
                 'pan_no' => [
-                    'required',
+                    'nullable',
                     'regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
                     Rule::unique('promotor_k_y_c_s', 'pan_no')->ignore(optional($promotor->kyc)->id),
                 ],
@@ -335,6 +385,7 @@ class PromotorController extends Controller
                 // Update promotor
                 $promotor->update([
                     'enrollment_date' => $validated['enrollment_date'],
+                     'member_id' => $validated['member_id'], 
                     'title' => $validated['title'],
                     'gender' => $validated['gender'],
                     'first_name' => $validated['first_name'],
@@ -499,7 +550,7 @@ class PromotorController extends Controller
     public function addressedit($id)
     {
         try {
-            $decryptedId =  base64_decode($id);
+            $decryptedId = base64_decode($id);
             $promoter = Promotor::findOrFail($decryptedId);
             $route = route('promotor.update', $promoter->id);
             $dynamicOptions = [
@@ -760,4 +811,41 @@ class PromotorController extends Controller
         $promotor = Promotor::findOrFail($id);
         return view('company.promoters.view-transactions', compact('id'));
     }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'kyc_status' => 'required|in:pending,in_progress,completed,rejected',
+        ]);
+
+        // Find KYC by promoter_id
+        $kyc = PromotorKyc::where('promotor_id', $id)->firstOrFail();
+
+        $oldStatus = $kyc->kyc_status;
+        $newStatus = $request->kyc_status;
+
+        Log::info('KYC status update requested', [
+            'kyc_id' => $kyc->id,
+            'promoter_id' => $id,
+            'old_status' => $oldStatus,
+            'new_status' => $newStatus,
+            'updated_by' => auth()->id(),
+        ]);
+
+        $kyc->update([
+            'kyc_status' => $newStatus
+        ]);
+
+        Log::notice('KYC status updated successfully', [
+            'kyc_id' => $kyc->id,
+            'final_status' => $newStatus,
+            'updated_by' => auth()->id(),
+        ]);
+
+        return back()->with('success', 'KYC status updated successfully.');
+    }
+
+
+
+
 }

@@ -50,7 +50,7 @@
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h3 class=" flex text-xl block  uppercase  font-bold">
+            <h3 class=" flex text-lg   uppercase  font-bold">
             Member Lockers
             </h3>
             
@@ -113,17 +113,17 @@
                                     <tr class="border-b dark:border-bg3">
 
                                         {{-- Locker No --}}
-                                        <td class="px-6 py-5 uppercase text-sm">
+                                        <td class="px-6 py-3 uppercase ">
                                             {{ $locker->locker_no }}
                                         </td>
 
                                         {{-- Locker Name --}}
-                                        <td class="px-6 py-5 text-sm capitalize">
+                                        <td class="px-6 py-3  capitalize">
                                             {{ $locker->locker_name }}
                                         </td>
 
                                         {{-- Member Name --}}
-                                        <td class="text-start !py-5 px-6">
+                                        <td class="text-start !py-3 px-6">
                                             <a href="{{ url('members/member/' . $locker->member_no) }}" 
                                             class="text-green-600 hover:underline">
                                                 {{ $locker->member_no }} - {{ $locker->member_name }}
@@ -131,24 +131,24 @@
                                         </td>
 
                                         {{-- Account No --}}
-                                        <td class="px-6 py-5 text-sm">
+                                        <td class="px-6 py-3 ">
                                             <a href="#" class="text-primary">
                                                 {{ $locker->account_no }}
                                             </a>
                                         </td>
 
                                         {{-- Assigned Date --}}
-                                        <td class="px-6 py-5 text-sm">
+                                        <td class="px-6 py-3 ">
                                             {{ $locker->assign_on ? \Carbon\Carbon::parse($locker->assign_on)->format('d-m-Y') : '—' }}
                                         </td>
 
                                         {{-- Release Date --}}
-                                        <td class="px-6 py-5 text-sm">
+                                        <td class="px-6 py-3 ">
                                             {{ $locker->release_on ? \Carbon\Carbon::parse($locker->release_on)->format('d-m-Y') : '—' }}
                                         </td>
 
                                         {{-- Assigned --}}
-                                        <td class="px-6 py-5 text-sm">
+                                        <td class="px-6 py-3 ">
                                             @if ($locker->is_assigned == 'Yes')
                                                 <span class="block w-20 rounded-[30px] bg-primary/20 text-primary py-2 text-center">
                                                     Yes
@@ -167,7 +167,7 @@
 
                                                 <ul class="horiz-option popover-content">
                                                     <li>
-                                                        <a href="{{ route('locker.member-locker.view', ['locker_id' => $locker->id, 'index' => $key]) }}">
+                                                        <a href="{{ route('locker.member-locker.view', ['locker_id' => $locker->id, 'index' => $key]) }}" class="single-option uppercase">
                                                             View
                                                         </a>
                                                     </li>

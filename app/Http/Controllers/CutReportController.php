@@ -2043,7 +2043,7 @@ class CutReportController extends Controller
         // Branch List for dropdown
         $branches = Branch::orderBy('branch_name')->get();
 
-        return view('cut-reports.report.loan_report.vehical-loan', compact('goldLoan', 'branches'));
+        return view('cut-reports.report.loan_report.vehicle-loan', compact('goldLoan', 'branches'));
     }
 
     // CSV Downloan vehical

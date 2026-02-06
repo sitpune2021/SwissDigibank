@@ -21,7 +21,7 @@
         }
     </style> -->
     <style>
-          input[type="checkbox"] {
+         input[type="checkbox"] {
         width: 28px;
         height: 28px;
         accent-color: green;
@@ -44,20 +44,20 @@
 
     <div class="min-h-screen p-4 font-sans text-sm" x-data>
 
-        <div class="flex flex-wrap  justify-center gap-3 mb-3 text-center">
+        <div class="flex flex-wrap  justify-start gap-3 mb-3 text-center">
             <a href="{{ route('account.transaction', base64_encode($account->id)) }}"
-                class="btn-primary uppercase px-2 py-2 rounded-10 ">
+                class="btn-primary text-sm uppercase px-2 py-2 rounded-10 ">
                 View Transactions
             </a>
-            <a class="btn-primary uppercase px-2 py-2 rounded-10"
+            <a class="btn-primary  text-sm  uppercase px-2 py-2 rounded-10"
                 href="{{route('deposit.create', base64_encode($account->id))}}">Deposit Money</a>
-            <a class="btn-error uppercase px-2 py-2 rounded-10"
+            <a class="btn-error  text-sm  uppercase px-2 py-2 rounded-10"
                 href="{{route('withdraw.create', base64_encode($account->id))}}">Withdraw Money</a>
             <!-- <a class="px-4 py-2 text-base text-white bg-green-600 rounded hover:bg-green-700" href="{{route('saving.passbook', base64_encode($account->id))}}">Print Documents</a> -->
 
             <div class="relative inline-block text-left">
                 <button id="dropdownPrintMenuBtn" type="button"
-                    class="inline-flex justify-center w-full btn-primary uppercase px-2 py-2 rounded-10">
+                    class="inline-flex justify-center w-full  text-sm  btn-primary uppercase px-2 py-2 rounded-10">
                     Print Documents
                     <svg class="w-5 h-5 ml-2 -mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -70,37 +70,37 @@
                     <div class="py-1">
                         <!-- Passbook -->
                         <a href="{{ route('saving.passbook', base64_encode($account->id)) }}"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            class="block px-4  py-2 text-sm font-semibold uppercase hover:bg-gray-100">
                             Passbook
                         </a>
                         <!-- Account Opening Form -->
-                        <a href="{{ route('saving.accounts.open.form', base64_encode($account->id)) }}" id="openModalBtn"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <a href="{{ route('saving.account.openform.preview', base64_encode($account->id)) }}" id="openModalBtn"
+                            class="block px-4 py-2 text-sm font-semibold uppercase hover:bg-gray-100">
                             Account Opening Form
                         </a>
                     </div>
                 </div>
             </div>
             <div class="relative inline-block text-left">
-                <button id="dropdownButton" class="btn-warning uppercase px-2 py-2 rounded-10">
+                <button id="dropdownButton" class="btn-warning  text-sm  uppercase px-2 py-2 rounded-10">
                     Debit Other Charges
                     <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
-                <div id="dropdownMenu"
+                <div id="dropdownMenus"
                     class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                     <a href="{{route('accounts.other.debit-charges', base64_encode($account->id))}}"
-                        class="block px-4 py-2 text-gray-700 hover:bg-yellow-100 rounded-t-lg">Other Charge List</a>
-                    <a href="" class="block px-4 py-2 text-gray-700 hover:bg-yellow-100">Debit Other Charges</a>
+                        class="block px-4 py-2 font-semibold uppercase hover:bg-gray-100 rounded-t-lg">Other Charge List</a>
+                    <a href="" class="block px-4 py-2 font-semibold uppercase hover:bg-gray-100">Debit Other Charges</a>
 
                     <a href="{{route('accounts.clear.due', base64_encode($account->id))}}"
-                        class="block px-4 py-2 text-gray-700 hover:bg-yellow-100 rounded-b-lg">Clear Due</a>
+                        class="block px-4 py-2 font-semibold uppercase hover:bg-gray-100 rounded-b-lg">Clear Due</a>
                 </div>
             </div>
             <div class="relative inline-block text-left">
                 <!-- Button -->
-                <button id="accountDropdownButton" class="btn-secondary uppercase px-2 py-2 rounded-10">
+                <button id="accountDropdownButton" class="btn-secondary  text-sm  uppercase px-2 py-2 rounded-10">
                     Account Details
                     <svg class="w-4 h-4 ml-1 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg"
                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -114,24 +114,29 @@
                     <ul class="py-2 text-gray-700">
                         <li>
                             <a href="{{route('accounts.credit.interest', base64_encode($account->id))}}"
-                                class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Credit Interest</a>
+                                class="block px-4 py-2 hover:bg-teal-50 font-semibold uppercase hover:text-gray-700">Credit Interest</a>
                         </li>
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Change Account Type</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-teal-50
+                            font-semibold uppercase  hover:text-gray-700">Change Account Type</a>
                         </li>
                         <li>
                             <a href="{{route('saving.accounts.nominee', ['type' => 'saving-account', 'id' => base64_encode($account->id)])}}"
-                                class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Add Nominee</a>
+                                class="block px-4 py-2 hover:bg-teal-50 
+                                font-semibold uppercase hover:text-gray-700">Add Nominee</a>
                         </li>
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Upgrade Account</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-teal-50 
+                            font-semibold uppercase hover:text-gray-700">Upgrade Account</a>
                         </li>
                         <li>
                             <a href="{{route('saving.accounts.close.account', base64_encode($account->id))}}"
-                                class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Close Account</a>
+                                class="block px-4 py-2 hover:bg-teal-50 
+                                font-semibold uppercase hover:text-gray-700">Close Account</a>
                         </li>
                         <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-teal-50 hover:text-teal-700">Remove Account</a>
+                            <a href="#" class="block px-4 py-2 hover:bg-teal-50 
+                            font-semibold uppercase hover:text-gray-700">Remove Account</a>
                         </li>
                     </ul>
                 </div>
@@ -139,7 +144,7 @@
             <!-- <button class="px-4 py-2 text-base text-white bg-yellow-500 rounded hover:bg-yellow-600">Debit Other Charges</button> -->
             <!-- <button class="px-4 py-2 text-base text-white bg-teal-500 rounded hover:bg-teal-600">Account Details</button> -->
 
-            <button class="btn-secondary uppercase px-2 py-2 rounded-10">Show Audit Trail</button>
+            <button class="btn-secondary uppercase  text-sm  px-2 py-2 rounded-10">Show Audit Trail</button>
         </div>
 
         <div class="container px-2 mx-auto">
@@ -242,7 +247,7 @@
                         <div class=" flex items-center bg-secondary/5 text-black justify-between px-4 py-3 rounded-10 cursor-pointer">
                             <span class="font-semibold text-lg text-black uppercase">Allocated Passbook</span>
                             <button class="btn-primary uppercase px-2 py-2 rounded-10"> 
-                             <i class="las la-plus"></i>   PASSBOOK
+                             <i class="las la-plus text-lg"></i>   PASSBOOK
                             </button>
                         </div>
                     </div>
@@ -271,11 +276,16 @@
                         <div class="flex items-center bg-secondary/5 text-black justify-between px-4 py-3 rounded-10 cursor-pointer"
                             @click="open=!open">
                             <span class="font-semibold text-lg text-black uppercase">COMMENTS</span>
-                            <span x-text="open ? '−' : '+'"></span>
+                           
+
+                           <div class="flex gap-3 items-center">
+                             <button class="px-2 py-2 ml-2 text-sm rounded-10 btn-primary">ADD COMMENT</button>
+                             <span  x-text="open ? '−' : '+'"></span>
+                           </div>
                         </div>
                         <div x-show="open" class="px-3 py-2 flex items-center justify-between text-center ">
                            <p> No Comment Found</p>
-                            <button class="px-2 py-2 ml-2 text-sm rounded-10 btn-primary">ADD COMMENT</button>
+                            
                         </div>
                     </div>
 
@@ -284,13 +294,17 @@
                         <div class="flex items-center bg-secondary/5 text-black justify-between px-4 py-3 rounded-10 cursor-pointer"
                             @click="open=!open">
                             <span class="font-semibold text-lg text-black uppercase">Transaction Info</span>
-                            <span x-text="open ? '−' : '+'"></span>
-                        </div>
-                         <div class="p-2 text-center">
+                           
+                             <div class="flex gap-3 items-center">
                                 <a href="{{ route('account.transaction', base64_encode($account->id)) }}"
                                     class="px-2 py-2 btn-primary rounded-10 text-sm">
                                     VIEW ALL
-                                </a>
+                             </a>
+                            <span x-text="open ? '−' : '+'"></span>
+                             </div>
+                        </div>
+                         <div class="p-2 text-center">
+                               
                             </div>
                         <div x-show="open" class="overflow-x-auto">
                            
@@ -308,8 +322,9 @@
                                     
                                         @foreach($account->transaction as $txn)
                                            <tr class="border-b">
-                                                <td class="p-2">{{ $txn->transaction_date }}</td>
-                                                <td class="p-2">{{ $txn->transaction_type }}</td>
+                                                <td class="p-2">{{ \Carbon\Carbon::parse($txn->transaction_date)->format('d-m-Y') }}</td>
+                                                <td class="p-2">
+                                                    {{ $txn->transaction_type }}</td>
                                                 <td class="p-2">{{ $txn->payment_mode }}</td>
                                                 <td class="p-2">{{ $txn->approve_status }}</td>
                                                 <td class="p-2">{{ number_format($txn->amount, 2) }}</td>
@@ -592,7 +607,7 @@
         },
         {
             button: document.getElementById("dropdownButton"),
-            menu: document.getElementById("dropdownMenu")
+            menu: document.getElementById("dropdownMenus")
         },
         {
             button: document.getElementById("accountDropdownButton"),

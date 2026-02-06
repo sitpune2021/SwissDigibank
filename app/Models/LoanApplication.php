@@ -126,4 +126,11 @@ class LoanApplication extends Model
     {
         return $this->hasMany(\App\Models\GoldLoanTransaction::class, 'loan_id', 'id');
     }
+
+    // LoanApplication.php
+    public function disbursement()
+    {
+        return $this->hasOne(GoldLoanDisbursement::class, 'loan_application_id');
+    }
+
 }

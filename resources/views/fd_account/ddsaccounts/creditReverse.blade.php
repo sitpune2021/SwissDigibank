@@ -102,8 +102,8 @@
     }
 
     input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
         /* For modern browsers */
     }
@@ -115,8 +115,8 @@
     }
 
     input[type="radio"] {
-        width: 24px;
-        height: 24px;
+        width: 24px !important;
+        height: 24px !important;
         accent-color: green;
         /* Modern browser support */
     }
@@ -135,7 +135,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-row gap-2">
-                <h3 class="text-xl uppercase font-semibold">
+                <h3 class="text-lg uppercase font-semibold">
                     DD - DDA03629
                 </h3>
                 <p class="text-sm text-gray-500 uppercase">Credit Interest</p>
@@ -147,7 +147,7 @@
         <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between  gap-5">
 
             <div class=" w-full box overflow-hidden ">
-                <p class="text-xl border-b font-semibold">
+                <p class="text-lg border-b font-semibold">
                     CREDIT / REVERSE INTEREST
                 </p>
                 <form action="{{ route('ddsaccounts.storeCreditInterest', $ddaccount->id) }}" method="POST">

@@ -1528,9 +1528,23 @@ class GoldLoanController extends Controller
         ]);
 
         $application = LoanApplication::findOrFail($id);
-        $request->merge([
-            'application_date' => date('Y-m-d', strtotime(str_replace('/', '-', $request->application_date)))
-        ]);
+        
+        // $request->merge([
+        //     'application_date' => date('Y-m-d', strtotime(str_replace('/', '-', $request->application_date)))
+        // ]);
+
+        if (!empty($request->application_date)) {
+    $request->merge([
+        'application_date' => date('Y-m-d', strtotime(str_replace('/', '-', $request->application_date)))
+    ]);
+}
+
+if (!empty($request->cheque_date)) {
+    $request->merge([
+        'cheque_date' => date('Y-m-d', strtotime(str_replace('/', '-', $request->cheque_date)))
+    ]);
+}
+
         $application->update($request->all());
 
         /* -----------------------------------------------
@@ -1719,7 +1733,8 @@ class GoldLoanController extends Controller
             'fee_mode' => 'required|in:cash,cheque,online'
         ]);
 
-        $data = $request->all();
+        //$data = $request->all();
+        $data = $request->except(['cheque_date', 'transfer_date']);
         $data['application_id'] = $id;
 
         if ($request->fee_mode == 'cheque') {
@@ -1728,6 +1743,9 @@ class GoldLoanController extends Controller
                 'cheque_no' => 'required',
                 'cheque_date' => 'required|date',
             ]);
+            // Convert d-m-Y → Y-m-d
+            $data['cheque_date'] = Carbon::createFromFormat('d-m-Y', $request->cheque_date)
+                                        ->format('Y-m-d');
         }
 
         if ($request->fee_mode == 'online') {
@@ -1737,6 +1755,9 @@ class GoldLoanController extends Controller
                 'transfer_mode' => 'required|in:imps,vpa,neft_rtgs',
                 'credited' => 'required|in:yes,no',
             ]);
+            // Convert d-m-Y → Y-m-d
+            $data['transfer_date'] = Carbon::createFromFormat('d-m-Y', $request->transfer_date)
+                                        ->format('Y-m-d');
         }
 
         GoldloanProcessingFee::create($data);

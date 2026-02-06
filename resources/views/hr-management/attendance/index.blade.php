@@ -55,455 +55,310 @@
 </style>
 
 @section('content')
-    <div class="main-inner">
+<div class="main-inner">
 
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h3 class=" flex text-xl block uppercase font-semibold">
-                Attendance Records - (11-11-2025)
-            </h3>
-        </div>
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
+        <h3 class=" flex text-lg  uppercase font-semibold">
+            Attendance Records -{{ $selectedDate }}
+        </h3>
+    </div>
+    <div class="box flex items-center justify-center gap-5">
+        <label for="" class="font-semibold">
+            Attendance Date
+        </label>
+        <input type="text" id="attendanceDate" name="date"
+            class="datepicker-field w-64 text-sm bg-secondary/5 border rounded-10 px-3 py-2"
+            value="{{ $selectedDate }}">
 
-        <div class="col-span-12 box lg:col-span-12">
-            <div class=" flex  justify-center  items-center flex-col md:flex-row lg:flex-row   gap-4 mb-6">
-                <label for="" class="md:text-lg font-medium uppercase">
-                    Attendance Date
-                </label>
-                <div>
-                    <input type="text" name="" id="date"
-                        class="datepicker-field w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                        placeholder="DD/MM/YYYY">
+    </div>
+    <div class="pb-4 overflow-x-auto box mt-4 lg:pb-6">
+        <table class="w-full whitespace-nowrap select-all-table" id="">
+            <thead>
+                <tr class="bg-secondary/5 dark:bg-bg3">
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer ">
+                        <div class="flex items-center gap-1 uppercase">
+                            EMPLOYEE NAME
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1 uppercase">
+                            DESIGNATION
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1 uppercase">
+                            IN TIME
+                        </div>
+                    </th>
 
-                </div>
 
+                    <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
+                        <div class="flex items-center gap-1 uppercase">
+                            OUT TIME
+                        </div>
+                    </th>
+
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1 uppercase">
+                            WORKING TIME
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1 uppercase">
+                            STATUS
+                        </div>
+                    </th>
+
+
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1 uppercase">
+                            CALENDAR
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1 uppercase">
+                            CREATED BY
+                        </div>
+                    </th>
+                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <div class="flex items-center gap-1 uppercase">
+                            ACTIONS
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($employees as $employee)
+                @php
+                $attendance = $attendances[$employee->id] ?? null;
+
+                $inHour = $attendance?->in_time ? \Carbon\Carbon::parse($attendance->in_time)->format('H') : '';
+                $inMinute = $attendance?->in_time ? \Carbon\Carbon::parse($attendance->in_time)->format('i') : '';
+
+                $outHour = $attendance?->out_time ? \Carbon\Carbon::parse($attendance->out_time)->format('H') : '';
+                $outMinute = $attendance?->out_time ? \Carbon\Carbon::parse($attendance->out_time)->format('i') : '';
+
+                $status = $attendance?->status ?? '';
+                @endphp
+
+                <tr class="border-b">
+                    <form action="{{ route('attendance.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="employee_id" value="{{ $employee->id }}">
+                        <input type="hidden" name="attendance_date" value="{{ $selectedDate }}">
+
+                        <td class="px-6">{{ $employee->name }}</td>
+                        <td class="px-6">{{ $employee->designation }}</td>
+
+                        {{-- In Time --}}
+                        @php
+                        if ($attendance && $attendance->in_time) {
+                        // Existing attendance → use stored time
+                        $inHour = \Carbon\Carbon::parse($attendance->in_time)->format('H');
+                        $inMinute = \Carbon\Carbon::parse($attendance->in_time)->format('i');
+                        } else {
+                        // No attendance → use current time
+                        $inHour = now()->format('H');
+                        $inMinute = now()->format('i');
+                        }
+                        @endphp
+                        <td class="px-4">
+                            <select name="in_hour"
+                                class=" text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @for ($h = 8; $h <= 20; $h++) <option value="{{ str_pad($h,2,'0',STR_PAD_LEFT) }}"
+                                    @if($inHour==str_pad($h,2,'0',STR_PAD_LEFT)) selected @endif>
+                                    {{ str_pad($h,2,'0',STR_PAD_LEFT) }}
+                                    </option>
+                                    @endfor
+                            </select> :
+                            <select name="in_minute"
+                                class=" text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @for ($m = 0; $m <= 59; $m++) <option value="{{ str_pad($m,2,'0',STR_PAD_LEFT) }}"
+                                    @if($inMinute==str_pad($m,2,'0',STR_PAD_LEFT)) selected @endif>
+                                    {{ str_pad($m,2,'0',STR_PAD_LEFT) }}
+                                    </option>
+                                    @endfor
+                            </select>
+                        </td>
+
+                        {{-- Out Time --}}
+                        @php
+                        if ($attendance && $attendance->out_time) {
+                        // Existing attendance → stored out time
+                        $outHour = \Carbon\Carbon::parse($attendance->out_time)->format('H');
+                        $outMinute = \Carbon\Carbon::parse($attendance->out_time)->format('i');
+                        } else {
+                        // No attendance → current time
+                        $outHour = now()->format('H');
+                        $outMinute = now()->format('i');
+                        }
+                        @endphp
+                        <td class="px-4">
+                            <select name="out_hour"
+                                class=" text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @for ($h = 8; $h <= 20; $h++) <option value="{{ str_pad($h,2,'0',STR_PAD_LEFT) }}"
+                                    @if($outHour==str_pad($h,2,'0',STR_PAD_LEFT)) selected @endif>
+                                    {{ str_pad($h,2,'0',STR_PAD_LEFT) }}
+                                    </option>
+                                    @endfor
+                            </select> :
+                            <select name="out_minute"
+                                class=" text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @for ($m = 0; $m <= 59; $m++) <option value="{{ str_pad($m,2,'0',STR_PAD_LEFT) }}"
+                                    @if($outMinute==str_pad($m,2,'0',STR_PAD_LEFT)) selected @endif>
+                                    {{ str_pad($m,2,'0',STR_PAD_LEFT) }}
+                                    </option>
+                                    @endfor
+                            </select>
+                        </td>
+
+                        {{-- WORKING TIME --}}
+                        @php
+                        $attendance = $attendances[$employee->id] ?? null;
+
+                        $workingMinutes = $attendance?->working_minutes ?? 0;
+
+                        $hours = floor($workingMinutes / 60);
+                        $minutes = $workingMinutes % 60;
+
+                        $workingTimeFormatted = $workingMinutes
+                        ? sprintf('%02d H :%02d M', $hours, $minutes)
+                        : '';
+                        @endphp
+                        <td class="px-4">
+                            {{ $workingTimeFormatted ?: '-' }}
+                        </td>
+
+
+
+                        {{-- Status --}}
+                        <td class="px-4">
+                            <select name="status"
+                                class=" text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                <option value="">Select Status</option>
+                                @foreach(['Absent','Full Day','Half Day','Leave','Holiday'] as $s)
+                                <option value="{{ $s }}" @if($status==$s) selected @endif>{{ $s }}</option>
+                                @endforeach
+                            </select>
+
+                        </td>
+                        {{-- CALENDAR --}}
+                        <td class="px-6">
+                            <a  href="{{ route('hr-management.attendance.calender',  base64_encode($employee->id)) }}"class="btn-primary p-1">
+                                <i class="las la-calendar"></i>
+                            </a>
+                        </td>
+                        {{-- CREATED BY --}}
+                        <td class="px-4">
+                            @php
+                            $attendance = $attendances[$employee->id] ?? null;
+                            @endphp
+                            {{ $attendance?->creator?->fname ?? '-' }} {{ $attendance?->creator?->lname }}
+                        </td>
+                        {{--Action--}}
+                        <td class="px-4 py-3"> <button type="submit"
+                                class="btn-primary uppercase rounded-10 px-4 py-2 text-sm">Save</button></td>
+                        <td>
+
+                        </td>
+                    </form>
+                </tr>
+                @endforeach
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    @if ($errors->has('status'))
+    <div class="fixed inset-0 flex items-center justify-center bg-opacity-40 z-50">
+        <div class="bg-white rounded-xl shadow-lg w-64 max-w-sm p-6 relative">
+
+            <!-- ❌ Remove / Close button -->
+            <div class="text-end ">
+                <button onclick="this.closest('.fixed').remove()"
+                    class="absolute top-2  text-error  rounded-10 right-2 text-2xl font-bold">
+                    &times;
+                </button>
             </div>
-            <div class="pb-4 overflow-x-auto lg:pb-6">
-                <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
-                    <thead>
-                        <tr class="bg-secondary/5 dark:bg-bg3">
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer ">
-                                <div class="flex items-center gap-1 uppercase">
-                                    EMPLOYEE NAME
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 uppercase">
-                                    DESIGNATION
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 uppercase">
-                                    IN TIME
-                                </div>
-                            </th>
 
+            <h2 class="text-lg uppercase font-semibold text-red-600 mb-2">
+                {{ $errors->first('status') }}
+            </h2>
 
-                            <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                                <div class="flex items-center gap-1 uppercase">
-                                    OUT TIME
-                                </div>
-                            </th>
+            <p class="text-gray-700 mb-4">
+                {{-- {{ $errors->first('status') }} --}}
+            </p>
 
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 uppercase">
-                                    WORKING TIME
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 uppercase">
-                                    STATUS
-                                </div>
-                            </th>
-
-
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 uppercase">
-                                    CALENDAR
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 uppercase">
-                                    CREATED BY
-                                </div>
-                            </th>
-                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 uppercase">
-                                    ACTIONS
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        <tr class="border-b dark:border-bg3">
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1  uppercase">
-                                    ROMITA MUKHERJEE
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 uppercase">
-                                    BRANCH MANAGER
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center uppercase gap-1">
-                                    <a href="javascript:void(0)" data-modal="attendanceModal1"
-                                        class="btn-primary p-2 rounded-10">
-                                        <i class="las la-pencil-alt"></i>
-                                    </a>
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center uppercase gap-1">
-
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 lowercase">
-                                    0 h 0 min
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 ">
-                                    <div class="px-6  flex  flex-row gap-3">
-                                        <select name="" id=""
-                                            class="w-64 text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                            <option value="">Select Status</option>
-                                            <option value="">Absent</option>
-                                            <option value="">Full Day</option>
-                                            <option value="">Half Day</option>
-                                            <option value="">Leave</option>
-                                            <option value="">Holiday</option>
-                                        </select>
-                                        <a href="" class="btn-primary rounded-10 py-2 px-1 uppercase">
-                                            Update
-                                        </a>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    <a href="" id="" class="btn-primary rounded-10 p-2 justify-center">
-                                        <i class="las la-calendar-alt "></i>
-                                    </a>
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-
-                                </div>
-                            </td>
-
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex justify-center">
-                                    <div class="relative">
-                                        <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                                        <ul class="horiz-option popover-content">
-                                            <li>
-                                                <a href="javascript:void(0)" data-modal="attendanceModal2" class="single-option uppercase">Edit Time</a>
-                                            </li>
-
-                                        </ul>
-                                   {{-- @include('partials._vertical-options', [
-                                        /* 'id' =>base64_encode($director->id),
-                                        'viewRoute' => 'director.show',
-                                        'editRoute' => 'director.edit'*/
-                                        ]) --}}
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-            {{-- IN TIME --}}
-            <div id="attendanceModal1" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop"
-                style="margin-top:100px;">
-
-                <div class="bg-white rounded-2xl shadow-2xl mt-6 max-w-sm mx-auto " style="width: 350px;">
-
-                    <!-- Modal Header -->
-                    <div class="flex justify-between items-center border-b px-4 py-3">
-                        <h2 class="text-lg font-semibold text-center w-full">
-                            ATTENDANCE RECORD
-                            <p>(11-11-2025)</p>
-                        </h2>
-                        <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
-                            <i class="las la-times text-xl"></i>
-                        </button>
-                    </div>
-
-                    <!-- Modal Body -->
-                    <div class="p-4 text-center">
-                        <form class="space-y-4">
-                            <table class="w-full border border-gray-200 rounded-lg">
-                                <tbody>
-                                    <tr>
-                                        <th colspan="2" class="text-center p-2 bg-gray-100">
-                                            USER NAME: <span class="font-semibold">ROMITA MUKHERJEE</span>
-                                        </th>
-                                    </tr>
-
-                                    <tr>
-                                        <th class="text-center text-primary p-2">IN TIME</th>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center p-2">
-                                            <div class="flex justify-center gap-2">
-                                                <select class="border rounded-lg px-2 py-1">
-                                                    <option value="08">08</option>
-                                                    <option value="09">09</option>
-                                                    <option value="10">10</option>
-                                                    <option value="11" selected="selected">11</option>
-                                                    <option value="12">12</option>
-                                                    <option value="13">13</option>
-                                                    <option value="14">14</option>
-                                                    <option value="15">15</option>
-                                                    <option value="16">16</option>
-                                                    <option value="17">17</option>
-                                                    <option value="18">18</option>
-                                                    <option value="19">19</option>
-                                                    <option value="20">20</option>
-                                                </select>
-                                                :
-                                                <select class="border rounded-lg px-2 py-1">
-                                                    <option value="00">00</option>
-                                                    <option value="01">01</option>
-                                                    <option value="02">02</option>
-                                                    <option value="03">03</option>
-                                                    <option value="04">04</option>
-                                                    <option value="05">05</option>
-                                                    <option value="06">06</option>
-                                                    <option value="07">07</option>
-                                                    <option value="08">08</option>
-                                                    <option value="09">09</option>
-                                                    <option value="10">10</option>
-                                                    <option value="11">11</option>
-                                                    <option value="12">12</option>
-                                                    <option value="13">13</option>
-                                                    <option value="14">14</option>
-                                                    <option value="15">15</option>
-                                                    <option value="16">16</option>
-                                                    <option value="17">17</option>
-                                                    <option value="18">18</option>
-                                                    <option value="19">19</option>
-                                                    <option value="20">20</option>
-                                                    <option value="21" selected="selected">21</option>
-                                                    <option value="22">22</option>
-                                                    <option value="23">23</option>
-                                                    <option value="24">24</option>
-                                                    <option value="25">25</option>
-                                                    <option value="26">26</option>
-                                                    <option value="27">27</option>
-                                                    <option value="28">28</option>
-                                                    <option value="29">29</option>
-                                                    <option value="30">30</option>
-                                                    <option value="31">31</option>
-                                                    <option value="32">32</option>
-                                                    <option value="33">33</option>
-                                                    <option value="34">34</option>
-                                                    <option value="35">35</option>
-                                                    <option value="36">36</option>
-                                                    <option value="37">37</option>
-                                                    <option value="38">38</option>
-                                                    <option value="39">39</option>
-                                                    <option value="40">40</option>
-                                                    <option value="41">41</option>
-                                                    <option value="42">42</option>
-                                                    <option value="43">43</option>
-                                                    <option value="44">44</option>
-                                                    <option value="45">45</option>
-                                                    <option value="46">46</option>
-                                                    <option value="47">47</option>
-                                                    <option value="48">48</option>
-                                                    <option value="49">49</option>
-                                                    <option value="50">50</option>
-                                                    <option value="51">51</option>
-                                                    <option value="52">52</option>
-                                                    <option value="53">53</option>
-                                                    <option value="54">54</option>
-                                                    <option value="55">55</option>
-                                                    <option value="56">56</option>
-                                                    <option value="57">57</option>
-                                                    <option value="58">58</option>
-                                                    <option value="59">59</option>
-                                                </select>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <button type="submit" class="w-full btn-primary justify-center">
-                                SUBMIT
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-             <div id="attendanceModal2" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop"
-                style="margin-top:100px;">
-
-                <div class="bg-white rounded-2xl shadow-2xl mt-6 max-w-sm mx-auto " style="width: 350px;">
-
-                    <!-- Modal Header -->
-                    <div class="flex justify-between items-center border-b px-4 py-3">
-                        <h2 class="text-lg font-semibold text-center w-full">
-                            ATTENDANCE RECORD
-                            <p>(11-11-2025)</p>
-                        </h2>
-                        <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
-                            <i class="las la-times text-xl"></i>
-                        </button>
-                    </div>
-
-                    <!-- Modal Body -->
-                    <div class="p-4 text-center">
-                        <form class="space-y-4">
-                            <table class="w-full border border-gray-200 rounded-lg">
-                                <tbody>
-                                    <tr>
-                                        <th colspan="2" class="text-center p-2 bg-gray-100">
-                                            USER NAME: <span class="font-semibold">ROMITA MUKHERJEE</span>
-                                        </th>
-                                    </tr>
-
-                                    <tr>
-                                        <th class="text-center text-primary p-2">IN TIME</th>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center p-2">
-                                            <div class="flex justify-center gap-2">
-                                                <select class="border rounded-lg px-2 py-1">
-                                                    <option value="08">08</option>
-                                                    <option value="09">09</option>
-                                                    <option value="10">10</option>
-                                                    <option value="11" selected="selected">11</option>
-                                                    <option value="12">12</option>
-                                                    <option value="13">13</option>
-                                                    <option value="14">14</option>
-                                                    <option value="15">15</option>
-                                                    <option value="16">16</option>
-                                                    <option value="17">17</option>
-                                                    <option value="18">18</option>
-                                                    <option value="19">19</option>
-                                                    <option value="20">20</option>
-                                                </select>
-                                                :
-                                                <select class="border rounded-lg px-2 py-1">
-                                                    <option value="00">00</option>
-                                                    <option value="01">01</option>
-                                                    <option value="02">02</option>
-                                                    <option value="03">03</option>
-                                                    <option value="04">04</option>
-                                                    <option value="05">05</option>
-                                                    <option value="06">06</option>
-                                                    <option value="07">07</option>
-                                                    <option value="08">08</option>
-                                                    <option value="09">09</option>
-                                                    <option value="10">10</option>
-                                                    <option value="11">11</option>
-                                                    <option value="12">12</option>
-                                                    <option value="13">13</option>
-                                                    <option value="14">14</option>
-                                                    <option value="15">15</option>
-                                                    <option value="16">16</option>
-                                                    <option value="17">17</option>
-                                                    <option value="18">18</option>
-                                                    <option value="19">19</option>
-                                                    <option value="20">20</option>
-                                                    <option value="21" selected="selected">21</option>
-                                                    <option value="22">22</option>
-                                                    <option value="23">23</option>
-                                                    <option value="24">24</option>
-                                                    <option value="25">25</option>
-                                                    <option value="26">26</option>
-                                                    <option value="27">27</option>
-                                                    <option value="28">28</option>
-                                                    <option value="29">29</option>
-                                                    <option value="30">30</option>
-                                                    <option value="31">31</option>
-                                                    <option value="32">32</option>
-                                                    <option value="33">33</option>
-                                                    <option value="34">34</option>
-                                                    <option value="35">35</option>
-                                                    <option value="36">36</option>
-                                                    <option value="37">37</option>
-                                                    <option value="38">38</option>
-                                                    <option value="39">39</option>
-                                                    <option value="40">40</option>
-                                                    <option value="41">41</option>
-                                                    <option value="42">42</option>
-                                                    <option value="43">43</option>
-                                                    <option value="44">44</option>
-                                                    <option value="45">45</option>
-                                                    <option value="46">46</option>
-                                                    <option value="47">47</option>
-                                                    <option value="48">48</option>
-                                                    <option value="49">49</option>
-                                                    <option value="50">50</option>
-                                                    <option value="51">51</option>
-                                                    <option value="52">52</option>
-                                                    <option value="53">53</option>
-                                                    <option value="54">54</option>
-                                                    <option value="55">55</option>
-                                                    <option value="56">56</option>
-                                                    <option value="57">57</option>
-                                                    <option value="58">58</option>
-                                                    <option value="59">59</option>
-                                                </select>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <button type="submit" class="w-full btn-primary justify-center">
-                                SUBMIT
-                            </button>
-                        </form>
-                    </div>
-                </div>
+            <div class="text-right">
+                <button onclick="this.closest('.fixed').remove()"
+                    class="px-6 py-1 uppercase btn-primary rounded-lg transition">
+                    OK
+                </button>
             </div>
 
         </div>
     </div>
+    @endif
 
 
-    {{-- IN TIME --}}
-    <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    // Open modal
-    document.querySelectorAll("[data-modal]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const modalId = btn.getAttribute("data-modal");
-        const modal = document.getElementById(modalId);
-        if (modal) modal.classList.remove("hidden");
-      });
+
+</div>
+</div>
+<!-- Datepicker CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker.min.css">
+
+<!-- Datepicker JS -->
+<script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.datepicker-field').forEach(function(dateInput) {
+        const picker = new Datepicker(dateInput, {
+            autohide: true,
+            format: 'dd-mm-yyyy',
+            maxDate: new Date(),
+        });
+ 
+        if (!dateInput.value) {
+            const today = new Date();
+            const formattedDate = today.toLocaleDateString('en-GB').split('/').join('-');
+            dateInput.value = formattedDate;
+        }
+ 
+        const calendarIcon = dateInput.parentElement.querySelector('.la-calendar');
+        if (calendarIcon) {
+            calendarIcon.addEventListener('click', () => picker.show());
+        }
     });
-
-    // Close modal on close button
-    document.querySelectorAll(".closeModalBtn").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        const modal = e.target.closest(".fixed");
-        if (modal) modal.classList.add("hidden");
-      });
-    });
-
-    // Close modal when clicking outside
-    document.querySelectorAll(".fixed.inset-0").forEach(modal => {
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) modal.classList.add("hidden");
-      });
-    });
-  });
+});
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker.min.css">
 
-    <!-- JS for Modal + Calendar -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const dateInput = document.getElementById('attendanceDate');
+
+    const picker = new Datepicker(dateInput, {
+        autohide: true,
+        format: 'dd-mm-yyyy',
+        maxDate: new Date(),
+    });
+
+    // Reload page when date changes
+    dateInput.addEventListener('changeDate', function (e) {
+        const selectedDate = e.target.value;
+        if(selectedDate) {
+            // Reload page with GET parameter
+            const url = new URL(window.location.href);
+            url.searchParams.set('date', selectedDate);
+            window.location.href = url.toString();
+        }
+    });
+});
+</script>
 
 
 @endsection

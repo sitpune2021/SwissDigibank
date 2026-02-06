@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="main-inner">
-    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <h4 class="h2">USER</h4>
-        <a class="btn-primary" href="{{route('users.create')}}">
+    <div class="mb-6 flex flex-wrap px-6 items-center justify-between gap-4 lg:mb-8">
+        <h2 class=" uppercase text-lg">USER</h2>
+        <a class="btn-primary text-sm" href="{{route('users.create')}}">
             ADD
         </a>
     </div>
@@ -12,7 +12,8 @@
     <!-- Latest Transactions -->
     <div class="box col-span-12 lg:col-span-6">
         <x-searchbox />
-        <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+        <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6"
+            style="flex-direction: row-reverse;">
             <x-alert />
         </div>
         <div class="overflow-x-auto pb-4 lg:pb-6">
@@ -25,9 +26,9 @@
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer" data-sortable="false">
-                           <div class="flex items-center gap-1">
-                             EMAIL
-                           </div>
+                            <div class="flex items-center gap-1">
+                                EMAIL
+                            </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
@@ -49,11 +50,11 @@
                 </thead>
                 <tbody>
                     @forelse ($users as $index => $user)
-                    <tr>
+                    <tr class="border-b">
                         <td class="px-6 py-4=">{{ $user->fname . ' ' . $user->lname ?? 'N/A' }}</td>
                         <td class="px-6 py-4  ">{{ $user->email }}</td>
                         <td class="px-6 py-4">{{ $user->mobile ?? 'N/A' }}</td>
-                     {{-- <td class="px-6 py-4">{{ $user->user_active ?? 'N/A' }}</td>  --}}
+                        {{-- <td class="px-6 py-4">{{ $user->user_active ?? 'N/A' }}</td> --}}
                         <td class="px-6 py-4 ">
                             @if ($user->user_active == 1)
                             <span
@@ -90,7 +91,11 @@
 
             </table>
         </div>
+        <div class="mt-3">
+            <x-pagination :paginator="$users" />
+        </div>
+
     </div>
-    <x-pagination :paginator="$users" />
+
 </div>
 @endsection

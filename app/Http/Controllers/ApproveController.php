@@ -20,6 +20,7 @@ use App\Models\CcOdLoanApplication;
 use App\Models\DailyWeeklyApplication;
 use App\Models\DdsAccount;
 use App\Models\VehicalApplication;
+use App\Models\FixedLoanApplication;
 use App\Models\MembershipChargeTransaction;
 // use Illuminate\Http\Request;
 use App\Models\PersonalLoanApplication;
@@ -926,13 +927,23 @@ class ApproveController extends Controller
                 return $item;
             });
 
-        // Personal Loan Applications
+        // Vehical Loan Applications
         $vehical = VehicalApplication::with(['branch', 'member'])
             ->whereNotIn('status', [1, 2, 3])
             ->latest()
             ->get()
             ->map(function ($item) {
                 $item->model_type = 'vehical';
+                return $item;
+            });
+
+        // Fixed Loan Applications
+        $fixed = FixedLoanApplication::with(['branch', 'member'])
+            ->whereNotIn('status', [1, 2, 3])
+            ->latest()
+            ->get()
+            ->map(function ($item) {
+                $item->model_type = 'fixed';
                 return $item;
             });
 
@@ -945,6 +956,7 @@ class ApproveController extends Controller
             ->concat($daily_weekly)
             ->concat($personal)
             ->concat($vehical)
+            ->concat($fixed)
             ->sortByDesc(function ($item) {
                 return $item->updated_at ?? $item->created_at;
             });
@@ -960,6 +972,7 @@ class ApproveController extends Controller
             'daily_weekly' => 'Daily Weekly',
             'personal' => 'Personal Loan',
             'vehical' => 'Vehical Loan',
+            'fixed' => 'Fixed Loan',
         ];
 
         $routeMap = [
@@ -971,6 +984,7 @@ class ApproveController extends Controller
             'daily_weekly' => 'daily_weekly.applications.view',
             'personal' => 'personal.applications.view',
             'vehical' => 'vehical.applications.view',
+            'fixed' => 'fixed_loan.schemes.view',
         ];
 
 
@@ -1022,6 +1036,10 @@ class ApproveController extends Controller
                 $application = VehicalApplication::find($id);
                 break;
 
+            case 'fixed':
+                $application = FixedLoanApplication::find($id);
+                break;
+
             default:
                 $application = null;
         }
@@ -1043,6 +1061,7 @@ class ApproveController extends Controller
                 'daily_weekly'  => 'daily_weekly.disbursements.index',
                 'personal'      => 'personal.disbursements.index',
                 'vehical'       => 'vehical.disbursements.index',
+                'fixed'       => 'fixed.disbursements.index',
             ];
 
             $redirectRoute = $redirectMap[$modelType] ?? null;
@@ -1057,7 +1076,6 @@ class ApproveController extends Controller
 
         return redirect()->back()->with('error', 'Application not found!');
     }
-
 
 
     public function approvals_history()
@@ -1125,6 +1143,15 @@ class ApproveController extends Controller
                 $item->model_type = 'vehical';
             });
 
+            // Fixed Loan Applications (approved)
+            $fixed = FixedLoanApplication::with(['branch', 'member'])
+                ->where('status', 1)
+                ->latest()
+                ->get()
+                ->each(function ($item) {
+                    $item->model_type = 'fixed';
+                });
+
              $routeMap = [
             'loan' => 'gold-loan.applications.view',
             'mortgage' => 'mortgage.applications.view',
@@ -1134,6 +1161,7 @@ class ApproveController extends Controller
             'daily_weekly' => 'daily_weekly.applications.view',
             'personal' => 'personal.applications.view',
             'vehical' => 'vehical.applications.view',
+            'fixed' => 'fixed_loan.applications.view',
         ];
 
         // Account types array
@@ -1146,6 +1174,7 @@ class ApproveController extends Controller
             'daily_weekly' => 'Daily Weekly',
             'personal' => 'Personal Loan',
             'vehical' => 'Vehical Loan',
+            'fixed' => 'Fixed Loan',
         ];
 
 
@@ -1157,8 +1186,11 @@ class ApproveController extends Controller
             ->concat($daily_weekly)
             ->concat($personal)
             ->concat($vehical)
+            ->concat($fixed)
             ->sortByDesc('created_at');
 
         return view('approvals.approvals_history', compact('applications','routeMap','types'));
     }
+
+
 }

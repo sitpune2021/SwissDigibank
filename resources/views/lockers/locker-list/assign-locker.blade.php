@@ -73,7 +73,7 @@
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h3 class=" flex text-xl block  uppercase  font-bold">
+            <h3 class=" flex text-lg block  uppercase  font-bold">
                 Assign Locker
             </h3>
         </div>
@@ -87,7 +87,7 @@
                     {{-- Member --}}
                     <div class="mb-4">
                         <label class="block mb-1 uppercase">CUSTOMER <span class="text-red-500">*</span></label>
-                        <select name="member_id" id="memberSelect" class="w-full rounded px-3 py-2 border">
+                        <select name="member_id" id="memberSelect" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                             <option value="">Select Customer</option>
                                 @foreach($members as $m)
                                     <option value="{{ $m->id }}"
@@ -139,9 +139,9 @@
                         @enderror
                     </div>
 
-                    <div class="flex gap-3">
-                        <button type="submit" class="btn-primary">Assign</button>
-                        <a href="{{ route('lockers.locker-list.index') }}" class="btn-outline">Back</a>
+                    <div class="flex gap-3 justify-center mt-5">
+                        <button type="submit" class="btn-primary uppercase">Assign</button>
+                        <a href="{{ route('lockers.locker-list.index') }}" class="btn-outline uppercase">Back</a>
                     </div>
             
                 </form>

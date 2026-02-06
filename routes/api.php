@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\MufinController;
+use App\Http\Controllers\ApiKeyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\MemberController;
@@ -65,3 +67,21 @@ Route::middleware('auth:sanctum')->prefix('gold')->group(function () {
     Route::get('gold-loan/personal-options', [GoldLoanController::class, 'getPersonalDetailsOptions']);
     // Route::post('gold-loan/enquiry', [GoldLoanController::class, 'submitEnquiry']);
 });
+// Route::get('loan-types/{id}/schemes', [LoanTypeController::class, 'loanSchemes']);
+
+// MUFIN PAY CallBack Url 
+
+// Route::get('payment/callback', [MufinController::class, 'callBack']);
+// Route::middleware(['api.key','whitelist.ip'])->post(
+//     'payment/callback',
+//     [MufinController::class, 'callback']
+// );
+
+
+Route::middleware(['api.key','whitelist.ip'])->match(
+    ['get', 'post'],
+    'payment/callback',
+    [MufinController::class, 'callback']
+);
+
+Route::post('/admin/api-keys', [ApiKeyController::class, 'store']);

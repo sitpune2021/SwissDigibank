@@ -23,42 +23,42 @@
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center uppercase gap-1">
                                 BANK NAME
                             </div>
                         </th>
 
-                        <th class="text-start text-center !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 text-center">
+                        <th class="text-start  !py-5 px-6 min-w-[100px] cursor-pointer">
+                            <div class="flex items-center uppercase gap-1 text-center">
                                 FD No.
                             </div>
                         </th>
 
-                        <th class="text-start text-center !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <th class="text-start  uppercase !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 text-center">
                                 AMOUNT
                             </div>
                         </th>
 
-                        <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
+                        <th class="text-start !py-5 uppercase px-6 min-w-[130px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 OPEN DATE
                             </div>
                         </th>
 
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <th class="text-start !py-5 uppercase px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 MATURITY DATE
                             </div>
                         </th>
 
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <th class="text-start !py-5 uppercase px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 INTEREST RATE (%)
                             </div>
                         </th>
 
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                        <th class="text-start uppercase !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 FROM DEPOSIT MONEY
                             </div>
@@ -66,7 +66,7 @@
 
                     
 
-                        <th class="text-center !py-5" data-sortable="false">
+                        <th class="text-center uppercase !py-5" data-sortable="false">
                             ACTION
                         </th>
                     </tr>
@@ -82,7 +82,7 @@
                             </td>
 
                             {{-- FD NO --}}
-                            <td class="py-3 px-6 text-center">
+                            <td class="py-3 px-6 ">
                                 {{ $item->fd_no }}
                             </td>
 
@@ -93,24 +93,26 @@
 
                             {{-- OPEN DATE --}}
                             <td class="py-3 px-6">
-                                {{ \Carbon\Carbon::parse($item->open_date)->format('d-m-Y') }}
+                               <span class="px-1"> {{ \Carbon\Carbon::parse($item->open_date)->format('d-m-Y') }}</span>
                             </td>
 
                             {{-- MATURITY DATE --}}
                             <td class="py-3 px-6">
-                                {{ \Carbon\Carbon::parse($item->maturity_date)->format('d-m-Y') }}
+                               <span class="px-1"> {{ \Carbon\Carbon::parse($item->maturity_date)->format('d-m-Y') }}</span>
                             </td>
 
                             {{-- INTEREST RATE --}}
                             <td class="py-3 px-6">
-                                {{ $item->annual_interest_rate }} 
+                                <span class="px-1">
+                                    {{ $item->annual_interest_rate }}
+                                 </span>
                             </td>
 
                             {{-- FROM DEPOSIT MONEY --}}
                             <td class="py-3 px-6">
                                 @if ($item->fd_from_deposit_money)
                                     <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3">
+                                        class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3">
                                         Yes
                                     </span>
                                 @else

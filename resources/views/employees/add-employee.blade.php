@@ -4,8 +4,8 @@
 @section('content')
     <style>
         input[type="radio"] {
-            width: 24px;
-            height: 24px;
+            width: 24px !important;
+            height: 24px !important;
             accent-color: green;
 
         }
@@ -19,7 +19,7 @@
 
     <div class="main-inner">
 
-        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-3">
 
             <!-- <h3 class="h2">NEW EMPLOYEE</h3> -->
 
@@ -68,8 +68,8 @@
                                 class="w-full text-sm bg-gray-100 border border-n30 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         @else
                             <select name="member" id="memberDropdown"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                @if ($isView) disabled @endif>
+                                class="w-full text-sm mt-2 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                   @if ($isView) disabled @endif>
                                 <option value="">Select Customer</option>
                                 <!-- Dynamic options here -->
                             </select>
@@ -83,7 +83,7 @@
 
                 <div class="col-span-2 md:col-span-1">
 
-                    <label for="branch" class="md:text-lg font-medium block mb-4 uppercase">Branch<span
+                    <label for="branch" class="md:text-lg font-medium block mb-2 uppercase">Branch<span
                             class="text-red-500">*</span></label>
                     <input type="hidden" id="selectedBranchId" value="{{ isset($employee) ? $employee->branch_id : '' }}">
                     @if (isset($isView) && $isView)
@@ -126,8 +126,10 @@
         <span class="text-red-500 text-xs">{{ $message }}</span>
     @enderror -->
 
-                    <x-datepicker-disabled label="JOINING DATE" name="joining_date" value="{{ old('joining_date') }}"
+                   <div class="mt-3">
+                     <x-datepicker-disabled label="JOINING DATE" name="joining_date" value="{{ old('joining_date') }}"
                         inputId="joining_date" />
+                   </div>
 
 
                 </div>
@@ -552,9 +554,7 @@
                         @enderror
                     @endif
                 </div>
-        </div>
-
-        <div class="col-span-2 flex gap-4 md:gap-6 mt-2 uppercase">
+                <div class="col-span-2  flex gap-4 md:gap-6 mt-2 uppercase">
 
             @if (empty($isView))
                 <button class="btn-primary uppercase" type="submit">
@@ -573,10 +573,13 @@
                 onclick="window.location.href='{{ route('employee.index') }}'">
                 Back
             </button>
-
+        </div>
         </div>
 
-        </form>
+        
+        </div>
+
+    </form>
 
     </div>
 

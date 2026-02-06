@@ -50,7 +50,7 @@
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h3 class=" flex text-xl block  uppercase font-semibold">
+            <h3 class=" flex text-lg block  uppercase font-semibold">
                 Report - Gold Loan Accounts
             </h3>
         </div>
@@ -122,7 +122,10 @@
                     </div>
 
                     <div class="mt-5 flex justify-center gap-4">
-                        <button class="btn-primary px-1 py-2 text-sm uppercase">Search</button>
+                        <button class="btn-primary px-1 py-2 text-sm uppercase">
+                           <i class="las la-search"></i>
+                            Search
+                        </button>
                         <a href="{{ url()->current() }}" class="btn-warning px-1 py-2 text-sm uppercase">Clear</a>
                     </div>
 
@@ -135,7 +138,7 @@
 
             <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
                 <a href="{{ route('accounts.export.csv') }}" 
-                    class="btn-error rounded-10 px-1 flex justify-center py-2 text-sm uppercase">
+                    class="btn-error rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
                         <i class="las la-download"></i>
                         Download CSV
                 </a>
@@ -215,7 +218,11 @@
 
                                 <!-- ACCOUNT NO -->
                                 <td class="px-6 py-5">
-                                    {{ $loan->id ?? 'N/A' }}
+                                   <a href="{{ route('gold-loan.account.show', $loan->id) }}"
+                                    class="text-primary">
+                                      
+                                        {{ str_pad($loan->id, 10, '0', STR_PAD_LEFT) }}
+                                   </a>
                                 </td>
 
                                 <!-- APPLICATION NO -->

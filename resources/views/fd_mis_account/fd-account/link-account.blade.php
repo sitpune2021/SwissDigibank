@@ -130,7 +130,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-center flex-row gap-2">
-                <h3 class="text-xl uppercase font-semibold">
+                <h3 class="text-lg uppercase font-semibold">
                     FD Account -{{ $fdAccount->id }} - Link Saving Account (Auto credit FD interest to saving account)
                 </h3>
             </div>

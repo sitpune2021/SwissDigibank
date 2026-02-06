@@ -98,40 +98,42 @@
                                     </td>
                                 </tr>
                             </tbody>
-
                         </table>
                     </div>
 
-                    <label for="" class="md:text-lg font-medium block mt-3 mb-4">
-                            Pay Mode :</label>
+                        <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
+                            Pay Mode
+                        </label>
                             <!-- Radio Buttons -->
-                            <div class="mt-3">
+                            <div class="mt-3 flex gap-3 ">
                                 <!-- Pay Mode -->
-                                <label class="mr-4">
-                                    <input type="radio" name="fee_mode" value="cash"
-                                        {{ old('fee_mode', $application->fee_mode ?? 'cash') == 'cash' ? 'checked' : '' }}> Cash
+                                <label class="mr-4 flex items-center flex-row gap-3">
+                                    <input type="radio" name="fee_mode" value="cash" {{ old('fee_mode',
+                                        $application->fee_mode ?? '') == 'cash' ? 'checked' : '' }}>
+                                            Cash
                                 </label>
-                                <label class="mr-4">
-                                    <input type="radio" name="fee_mode" value="cheque"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> Cheque
+                                <label class="mr-4 flex items-center flex-row gap-3">
+                                    <input type="radio" name="fee_mode" value="cheque" {{ old('fee_mode',
+                                        $application->fee_mode ?? '') == 'cheque' ? 'checked' : '' }}> 
+                                        Cheque
                                 </label>
-                                <label>
-                                    <input type="radio" name="fee_mode" value="online"
-                                        {{ old('fee_mode', $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}> Online Tr.
+                                <label class="mr-4 flex items-center flex-row gap-3">
+                                    <input type="radio" name="fee_mode" value="online" {{ old('fee_mode',
+                                        $application->fee_mode ?? '') == 'online' ? 'checked' : '' }}  > Online Tr.
                                 </label>
                             </div>
 
                             <!-- Bank + Cheque Fields -->
                             <div id="bankDropdownWrapper" class="mt-3 hidden">
                                 <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
-                               <select id="bank_id" name="bank_id"
+                                <select id="bank_id" name="bank_id"
                                     class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                     <option value="">-- Select Bank --</option>
                                     @foreach($banks as $id => $name)
-                                        <option value="{{ $id }}"
-                                            {{ old('bank_id', $application->bank_id ?? '') == $id ? 'selected' : '' }}>
-                                            {{ $name }}
-                                        </option>
+                                    <option value="{{ $id }}" {{ old('bank_id', $application->bank_id ?? '') == $id ?
+                                        'selected' : '' }}>
+                                        {{ $name }}
+                                    </option>
                                     @endforeach
                                 </select>
 
@@ -140,72 +142,84 @@
                                     <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
                                     <input type="text" name="cheque_no"
                                         class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
-                                        placeholder="Enter Cheque No" value="{{ old('cheque_no', $application->cheque_no ?? '') }}">
+                                        placeholder="Enter Cheque No" value="  {{ old('cheque_no', $application->cheque_no ?? '') }}">
                                 </div>
 
                                 <!-- Cheque Date -->
                                 <div class="mt-3">
                                     <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                    <input type="date" id="cheque_date" name="cheque_date" value="{{ old('cheque_date', $application->cheque_date ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <input 
+                                    type="text" 
+                                    id="cheque_date" 
+                                    name="cheque_date" 
+                                    value="{{ old('cheque_date', isset($application->cheque_date) ? \Carbon\Carbon::parse($application->cheque_date)->format('d-m-Y') : '') }}"
+                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
                             </div>
 
                             <!-- Online Transaction Fields -->
                             <div id="onlineFields" class="space-y-4 hidden">
                                 <div class="mt-3">
-                                    <label class="block text-sm font-medium text-gray-700">
+                                    <label class="block text-sm font-medium text-gray-700 uppercase">
                                         Transfer Date <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="date" id="transfer_date" name="transfer_date" value="{{ old('transfer_date', $application->transfer_date ?? '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <input 
+                                    type="text" 
+                                    id="transfer_date" 
+                                    name="transfer_date"                                   
+                                    value="{{ old('transfer_date', isset($application->transfer_date) ? \Carbon\Carbon::parse($application->transfer_date)->format('d-m-Y') : '') }}"
+                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">
+                                    <label class="block text-sm font-medium text-gray-700 uppercase">
                                         UTR / Transaction No. <span class="text-red-500">*</span>
                                     </label>
-                                    <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No." value="{{ old('utr_no', $application->utr_no ?? '') }}"
+                                    <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No."
+                                        value="{{ old('utr_no', $application->utr_no ?? '') }}"
                                         class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">
+                                    <label class="block text-sm font-medium text-gray-700 uppercase">
                                         Transfer Mode <span class="text-red-500">*</span>
                                     </label>
                                     <div class="flex gap-4 mt-2">
                                         <label class="flex items-center gap-2">
-                                            <input type="radio" name="transfer_mode" value="imps"
-                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ? 'checked' : '' }}>
+                                            <input type="radio" name="transfer_mode" 
+                                            value="imps"{{ old('transfer_mode', $application->transfer_mode ?? '') == 'imps' ?
+                                            'checked' : '' }}>
                                             <span>IMPS</span>
                                         </label>
                                         <label class="flex items-center gap-2">
-                                            <input type="radio" name="transfer_mode" value="vpa"
-                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ? 'checked' : '' }}>
-
+                                            <input type="radio" name="transfer_mode" 
+                                            value="vpa"{{ old('transfer_mode', $application->transfer_mode ?? '') == 'vpa' ?
+                                            'checked' : '' }}>
                                             <span>VPA</span>
                                         </label>
                                         <label class="flex items-center gap-2">
-                                            <input type="radio" name="transfer_mode" value="neft_rtgs"
-                                                {{ old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ? 'checked' : '' }}>
+                                            <input type="radio" name="transfer_mode" 
+                                            value="neft_rtgs"{{ old('transfer_mode', $application->transfer_mode ?? '') == 'neft_rtgs' ?
+                                            'checked' : '' }}>
                                             <span>NEFT/RTGS</span>
                                         </label>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">
+                                    <label class="block text-sm font-medium text-gray-700 uppercase">
                                         Credited in Company Account <span class="text-red-500">*</span>
                                     </label>
-                                    <div class="flex gap-4 mt-2">
+                                    <div class="flex gap-4">
                                         <label class="flex items-center gap-2">
-                                            <input type="radio" name="credited" value="yes"
-                                                {{ old('credited', $application->credited ?? '') == 'yes' ? 'checked' : '' }}>
+                                            <input type="radio" name="credited" value="1"
+                                                {{ old('credited') == 1 ? 'checked' : '' }} checked>
                                             <span>Yes</span>
                                         </label>
+
                                         <label class="flex items-center gap-2">
-                                            <input type="radio" name="credited" value="no"
-                                                {{ old('credited', $application->credited ?? '') == 'no' ? 'checked' : '' }}>
+                                            <input type="radio" name="credited" value="0"
+                                                {{ old('credited') == 0 ? 'checked' : '' }}>
                                             <span>No</span>
                                         </label>
                                     </div>
@@ -341,31 +355,48 @@
     }
 </script>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const radios = document.querySelectorAll('input[name="fee_mode"]');
-    const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
-    const onlineFields = document.getElementById("onlineFields");
+<!-- pay Mode -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
 
-    radios.forEach(radio => {
-        radio.addEventListener("change", () => {
-            bankDropdownWrapper.classList.add("hidden");
-            onlineFields.classList.add("hidden");
+        const radios = document.querySelectorAll('input[name="fee_mode"]');
+        const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
+        const onlineFields = document.getElementById("onlineFields");
 
-            if (radio.value === "cheque" && radio.checked) {
-                bankDropdownWrapper.classList.remove("hidden");
-            }
-            if (radio.value === "online" && radio.checked) {
-                onlineFields.classList.remove("hidden");
-            }
+        radios.forEach(radio => {
+            radio.addEventListener("change", () => {
+                bankDropdownWrapper.classList.add("hidden");
+                onlineFields.classList.add("hidden");
+
+                if (radio.value === "cheque" && radio.checked) {
+                    bankDropdownWrapper.classList.remove("hidden");
+                }
+                if (radio.value === "online" && radio.checked) {
+                    onlineFields.classList.remove("hidden");
+                }
+            });
         });
-    });
 
-    // Default dates
-    let today = new Date().toISOString().split('T')[0];
-    document.getElementById("cheque_date").value = today;
-    document.getElementById("transfer_date").value = today;
-});
-</script>
+            // ---- FIX: Set default date as d-m-Y ----
+            function getDMY() {
+                const d = new Date();
+                let day = String(d.getDate()).padStart(2, '0');
+                let month = String(d.getMonth() + 1).padStart(2, '0');
+                let year = d.getFullYear();
+                return `${day}-${month}-${year}`;
+            }
+
+            const chequeDateInput = document.getElementById("cheque_date");
+            if (chequeDateInput && !chequeDateInput.value) {
+                chequeDateInput.value = getDMY();
+            }
+
+            const transferDateInput = document.getElementById("transfer_date");
+            if (transferDateInput && !transferDateInput.value) {
+                transferDateInput.value = getDMY();
+            }
+
+        });
+    </script>
 
 @endsection

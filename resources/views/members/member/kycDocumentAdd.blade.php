@@ -319,11 +319,11 @@
             {{-- Form Buttons --}}
             <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                 @if (isset($method))
-                    <button class="btn-primary" type="submit">
+                    <button class="btn-primary uppercase" type="submit">
                         {{ $method === 'PUT' ? 'Update' : 'Upload' }} 
                     </button>
                 @endif
-                <a href="{{ route('member.index') }}" class="btn-outline inline-flex items-center justify-center">
+                <a href="{{ route('member.index') }}" class="btn-outline inline-flex uppercase items-center justify-center">
                     Back
                 </a>
             </div>
