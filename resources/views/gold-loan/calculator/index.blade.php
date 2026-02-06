@@ -755,6 +755,93 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+<!-- emi ratio validateForm -->
+<!-- <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const payoutSelect = document.getElementById("payout");
+    const tenureInput  = document.getElementById("tenure_months");
+
+    const chkDivide = document.getElementById("divide_emi_ratio");
+    const ratioBox  = document.getElementById("reduce_ratio_box");
+    const ratioFlds = document.getElementById("ratioFields");
+
+    const emi1 = document.getElementById("emi_ratio_1");
+    const emi2 = document.getElementById("emi_ratio_2");
+
+    const emiTotalText = document.getElementById("emi_total_text");
+    const errorBox = document.getElementById("emiRatioError");
+
+    function handleQuarterlyRatioRule() {
+
+        const payout = payoutSelect.value;
+
+        // 🔥 ONLY QUARTERLY
+        if (payout === 'quarterly') {
+
+            // show ratio option
+            ratioBox.style.display = 'flex';
+
+            // force total EMI = 4
+            emiTotalText.innerText = `(Total EMI : 4)`;
+
+            // hard limits
+            emi1.max = 4;
+            emi1.min = 1;
+
+            // auto-adjust
+            emi1.addEventListener("input", function () {
+                let v = parseInt(emi1.value) || 0;
+
+                if (v > 4) v = 4;
+                if (v < 1) v = 1;
+
+                emi1.value = v;
+                emi2.value = 4 - v;
+            });
+
+        } 
+        else {
+            // ❌ not quarterly → reset
+            emiTotalText.innerText = '';
+            emi1.removeAttribute('max');
+            emi1.value = '';
+            emi2.value = '';
+            chkDivide.checked = false;
+            ratioFlds.style.display = 'none';
+        }
+    }
+
+    // payout change
+    payoutSelect.addEventListener("change", handleQuarterlyRatioRule);
+
+    // checkbox toggle
+    chkDivide.addEventListener("change", function () {
+        ratioFlds.style.display = chkDivide.checked ? 'block' : 'none';
+    });
+
+    // 🔴 FINAL SUBMIT VALIDATION
+    document.getElementById("loanForm").addEventListener("submit", function (e) {
+
+        errorBox.classList.add("hidden");
+
+        if (chkDivide.checked && payoutSelect.value === 'quarterly') {
+
+            const r1 = parseInt(emi1.value) || 0;
+            const r2 = parseInt(emi2.value) || 0;
+
+            if ((r1 + r2) !== 4) {
+                e.preventDefault();
+                errorBox.classList.remove("hidden");
+                errorBox.innerText =
+                    "Quarterly payout me EMI ratio ka total sirf 4 hona chahiye";
+            }
+        }
+    });
+
+});
+</script> -->
+
 <script>
   // this script for get scheme details 
   document.getElementById('scheme_id').addEventListener('change', function () {
