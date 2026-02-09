@@ -1061,7 +1061,7 @@ class ApproveController extends Controller
                 'daily_weekly'  => 'daily_weekly.disbursements.index',
                 'personal'      => 'personal.disbursements.index',
                 'vehical'       => 'vehical.disbursements.index',
-                'fixed'       => 'fixed.disbursements.index',
+                'fixed'       => 'fixed_loan.disbursements.index',
             ];
 
             $redirectRoute = $redirectMap[$modelType] ?? null;

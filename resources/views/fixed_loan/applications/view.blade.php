@@ -387,6 +387,49 @@
             </div>
 
 
+             <!--PD Cheque Details-->
+            <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
+
+                <div class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black  uppercase">
+                        PD Cheque Details(static)
+                    </h3>
+                    <div class=" flex gap-3">
+    
+                        <!-- Modal Background (hidden by default) -->
+                        <div id="creditScoreModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <!-- Modal Container -->
+                            <div class="bg-white rounded-lg shadow-xl min-w-full max-w-5xl mx-4">
+
+                                <!-- Modal Header -->
+                                <div class="flex items-center justify-between px-4 py-3 bg-blue-600 rounded-t-lg">
+                                    <h2 class="text-white text-lg font-semibold">Credit Score</h2>
+                                    <button class="text-white hover:text-gray-200" onclick="closeModal()">
+                                        ✕
+                                    </button>
+                                </div>
+
+                                <!-- Modal Body -->
+                                <div class="p-6">
+                                    <x-credit-score-details />
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'cibilInfo')">
+                            <span class="toggle-icon text-lg font-bold">−</span>
+                        </button>
+                    </div>
+                </div>
+
+
+                <!-- Body -->
+                <div class="overflow-x-auto mt-4 px-4">
+                  <p>No Cheque Details Found</p>
+                </div>
+
+                      
+
+            </div>
 
 
             <div class="overflow-x-auto  md:block box mt-4 shadow-md rounded-lg">
@@ -438,7 +481,7 @@
                 <!-- Header -->
                 <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  uppercase">
-                        Documents
+                        Documents(static)
                     </h3>
                     <div class="">
                         <a href="{{route('gold-loan.applications.upload_documents')}}" class="btn-primary p-1 pointer">
@@ -455,6 +498,34 @@
                     <div class="overflow-x-auto">
                         <p class="capitalize">No documents found</p>
                     </div>
+                </div>
+            </div>
+
+
+             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+                <!-- Header -->
+                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black  uppercase">
+                        COMMENTS (static)
+                    </h3>
+                    <div class="">
+                       
+
+                        <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'Documents')">
+                            <span class="toggle-icon text-lg font-bold">−</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Body -->
+                <div class="p-4" id="Documents">
+                    <div class="overflow-x-auto">
+                        <p class="capitalize">No Comments found</p>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button class="uppercase btn-primary rounded-10">
+                        Add Comment
+                    </button>
                 </div>
             </div>
 
@@ -495,6 +566,70 @@
 
             </div>
 
+            <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+
+                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black  uppercase">
+                      Bank Account Details (static)
+                    </h3>
+                    <div class="">
+                        <button type="button" class="p-1 rounded transition"
+                            onclick="toggleSection(this, 'goldLoanAppInfo')">
+                            <span class="toggle-icon text-lg font-bold">−</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Body -->
+                <div class="overflow-x-auto mt-5 " id="goldLoanAppInfo">
+                   <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2 w-1/2 md:w-1/3 uppercase">
+                                    Bank Name
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left uppercase">
+
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2 uppercase">IFSC Code</td>
+                                <td class="px-4 py-2 text-right md:text-left"></td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                  Account Type
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                   
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                   Account No.
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                 
+                                </td>
+                            </tr>
+
+                             <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                  Is Account Verified
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                  
+                                </td>
+                            </tr>
+
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <!--CC Limit Application Info-->
             <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
