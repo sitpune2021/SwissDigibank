@@ -134,12 +134,14 @@
             <tr>
                 <td class="label">Name & Address of the Bank</td>
                 <td class="colon">:</td>
-                <td class="value"></td>
+                <td class="value">{{ $bank_name  }}<br>
+                        {{$bank_adr}}
+                    </td>
             </tr>
             <tr>
                 <td class="label">File Processing Charges</td>
                 <td class="colon">:</td>
-                <td class="value">₹
+                <td class="value">₹ {{ number_format($processing_charges, 2) }}
                      {{-- {{ number_format($processing_charges, 2) }} --}}
                 </td>
             </tr>
