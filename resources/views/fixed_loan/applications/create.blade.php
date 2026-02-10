@@ -55,453 +55,522 @@
             @method('PUT')
             @endif
 
-            <div class="flex flex-col lg:flex-row mb-3 gap-4 ">
-                <div class="w-full col-span-12 px-3 py-1 rounded-10 lg:col-span-12">
-                    <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
+            <div class="flex flex-col lg:flex-row justify-between gap-6">
+                <div class="flex flex-col lg:flex-row mb-3 gap-4 bg-primary/5 rounded-10">
+                    <div class="w-full col-span-12 px-3 py-1 rounded-10 lg:col-span-12">
+                        <div class="grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
 
-                        <div class="col-span-2 md:col-span-1">
-                            {{-- Application Date --}}
-                            <label class="md:text-lg font-medium block mb-4">
-                                Application Date <span class="text-red-500">*</span>
-                            </label>
+                            <div class="col-span-2 md:col-span-1">
+                                {{-- Application Date --}}
+                                <label class="md:text-lg font-medium block mb-4">
+                                    Application Date <span class="text-red-500">*</span>
+                                </label>
 
-                            <input type="text" name="application_date"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                value="{{ \Carbon\Carbon::parse(old('application_date', $application->application_date ?? date('Y-m-d')))->format('d-m-Y') }}">
-                        </div>
+                                <input type="text" name="application_date"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                    value="{{ \Carbon\Carbon::parse(old('application_date', $application->application_date ?? date('Y-m-d')))->format('d-m-Y') }}">
+                            </div>
 
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="md:text-lg font-medium block mb-4">
-                                Application No <span class="text-red-500">*</span>
-                            </label>
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="md:text-lg font-medium block mb-4">
+                                    Application No <span class="text-red-500">*</span>
+                                </label>
 
-                            <input type="text" name="application_no"
-                                value="{{ old('application_no', $application->application_no ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter Application No">
-                                
-                            @error('application_no')
+                                <input type="text" name="application_no"
+                                    value="{{ old('application_no', $application->application_no ?? '') }}"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Application No">
+
+                                @error('application_no')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>          
+                                @enderror
+                            </div>
 
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="member_id" class="md:text-lg font-medium block mb-4">
-                                CUSTOMER <span class="text-red-500">*</span>
-                            </label>
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="member_id" class="md:text-lg font-medium block mb-4">
+                                    CUSTOMER <span class="text-red-500">*</span>
+                                </label>
 
-                            <select name="member_id" id="member_id"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Member No or Name</option>
-                                @foreach($members as $member)
-                                <option value="{{ $member->id }}" data-branch="{{ $member->general_branch }}" {{
-                                    old('member_id', $application->member_id ?? '') == $member->id ? 'selected' : '' }}
-                                    data-name="{{ $member->member_info_first_name }}"
-                                    data-mobile="{{ $member->member_info_mobile_no }}">
-                                    {{ $member->member_info_first_name }}
-                                </option>
-                                @endforeach
-                            </select>
-                            @error('member_id')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="md:text-lg font-medium block mb-4">
-                                1st Co-Applicant Relationship
-                            </label>
-
-                            <select name="relation_co_applicant_1"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                
-                                <option value="">Select Co Applicant Relationship 1</option>
-                                <option value="father" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
-                                <option value="mother" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
-                                <option value="son" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
-                                <option value="daughter" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
-                                <option value="spouse" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
-                                <option value="brother" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
-                                <option value="sister" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
-                                <option value="other" {{ old('relation_co_applicant_1', $application->relation_co_applicant_1 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                1st Co-Applicant Member</label>
-                            <select name="co_applicant_1_id" id="co_applicant_1_id"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Member No or Name</option>
-                                @foreach($members as $member)
-                                <option value="{{ $member->id }}" {{ old('member_id', $application->co_applicant_1_id ??
-                                    '') == $member->id ? 'selected' : '' }}>
-                                    {{ $member->member_info_first_name }}
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="md:text-lg font-medium block mb-4">
-                                2nd Co-Applicant Relationship
-                            </label>
-
-                            <select name="relation_co_applicant_2"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                
-                                <option value="">Select 2nd Co-Applicant Relationship</option>
-                                <option value="father" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
-                                <option value="mother" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
-                                <option value="son" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
-                                <option value="daughter" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
-                                <option value="spouse" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
-                                <option value="brother" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
-                                <option value="sister" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
-                                <option value="other" {{ old('relation_co_applicant_2', $application->relation_co_applicant_2 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                2nd Co-Applicant Member</label>
-                            <select name="co_applicant_2_id" id="co_applicant_2_id"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Member No or Name</option>
-                                @foreach($members as $member)
-                                <option value="{{ $member->id }}" {{ old('member_id', $application->co_applicant_2_id ??
-                                    '') == $member->id ? 'selected' : '' }}>
-                                    {{ $member->member_info_first_name }}
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Branch
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <select name="branch_id" id="branch_id"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Branch No or Name</option>
-                                @foreach($branch as $member)
-                                <option value="{{ $member->id }}" {{ old('member_id', $application->branch_id ?? '') ==
-                                    $member->id ? 'selected' : '' }}>
-                                    {{ $member->branch_name }}
-                                </option>
-                                @endforeach
-                            </select>
-                            @error('branch_id')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Advisor/ Staff</label>
-                            <select
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                                placeholder="Enter Scheme Code">
-                                <option value="">select Advisor/ Staff </option>
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="md:text-lg font-medium block mb-4">
-                                1st Guarantor Relationship
-                            </label>
-
-                            <select name="relation_guarantor_1"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                
-                                <option value="">Select 1st Guarantor Relationship</option>
-                                <option value="father" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
-                                <option value="mother" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
-                                <option value="son" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
-                                <option value="daughter" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
-                                <option value="spouse" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
-                                <option value="brother" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
-                                <option value="sister" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
-                                <option value="other" {{ old('relation_guarantor_1', $application->relation_guarantor_1 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Guarantor 1 </label>
-                            <select name="guarantor_1_id" id="guarantor_1_id"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Search Member No or Name</option>
-                                @foreach($members as $member)
-                                <option value="{{ $member->id }}" {{ old('member_id', $application->guarantor_1_id ??
-                                    '') == $member->id ? 'selected' : '' }}>
-                                    {{ $member->member_info_first_name }}
-                                </option>
-
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="md:text-lg font-medium block mb-4">
-                                2nd Guarantor Relationship
-                            </label>
-
-                            <select name="relation_guarantor_2"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-
-                                <option value="">Select 2nd Guarantor Relationship</option>
-                                <option value="father" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
-                                <option value="mother" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
-                                <option value="son" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
-                                <option value="daughter" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
-                                <option value="spouse" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
-                                <option value="brother" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
-                                <option value="sister" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
-                                <option value="other" {{ old('relation_guarantor_2', $application->relation_guarantor_2 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <div class="col-sm-7">
-                                <label for="" class="md:text-lg font-medium block mb-4">
-                                    Guarantor 2</label>
-                                <select name="guarantor_2_id" id="guarantor_2_id"
+                                <select name="member_id" id="member_id"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                     <option value="">Search Member No or Name</option>
                                     @foreach($members as $member)
-                                    <option value="{{ $member->id }}" {{ old('member_id', $application->guarantor_2_id
-                                        ?? '') == $member->id ? 'selected' : '' }}>
+                                    <option value="{{ $member->id }}" data-branch="{{ $member->general_branch }}" {{
+                                        old('member_id', $application->member_id ?? '') == $member->id ? 'selected' : ''
+                                        }}
+                                        data-name="{{ $member->member_info_first_name }}"
+                                        data-mobile="{{ $member->member_info_mobile_no }}">
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @error('member_id')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="md:text-lg font-medium block mb-4">
+                                    1st Co-Applicant Relationship
+                                </label>
+
+                                <select name="relation_co_applicant_1"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+
+                                    <option value="">Select Co Applicant Relationship 1</option>
+                                    <option value="father" {{ old('relation_co_applicant_1', $application->
+                                        relation_co_applicant_1 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
+                                    <option value="mother" {{ old('relation_co_applicant_1', $application->
+                                        relation_co_applicant_1 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
+                                    <option value="son" {{ old('relation_co_applicant_1', $application->
+                                        relation_co_applicant_1 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
+                                    <option value="daughter" {{ old('relation_co_applicant_1', $application->
+                                        relation_co_applicant_1 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter
+                                    </option>
+                                    <option value="spouse" {{ old('relation_co_applicant_1', $application->
+                                        relation_co_applicant_1 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
+                                    <option value="brother" {{ old('relation_co_applicant_1', $application->
+                                        relation_co_applicant_1 ?? '') == 'brother' ? 'selected' : '' }}>Brother
+                                    </option>
+                                    <option value="sister" {{ old('relation_co_applicant_1', $application->
+                                        relation_co_applicant_1 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
+                                    <option value="other" {{ old('relation_co_applicant_1', $application->
+                                        relation_co_applicant_1 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                                </select>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    1st Co-Applicant Member</label>
+                                <select name="co_applicant_1_id" id="co_applicant_1_id"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Search Member No or Name</option>
+                                    @foreach($members as $member)
+                                    <option value="{{ $member->id }}" {{ old('member_id', $application->
+                                        co_applicant_1_id ??
+                                        '') == $member->id ? 'selected' : '' }}>
                                         {{ $member->member_info_first_name }}
                                     </option>
                                     @endforeach
                                 </select>
                             </div>
-                        </div>
 
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="md:text-lg font-medium block mb-4">
-                                3rd Guarantor Relationship
-                            </label>
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="md:text-lg font-medium block mb-4">
+                                    2nd Co-Applicant Relationship
+                                </label>
 
-                            <select name="relation_guarantor_3"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                <select name="relation_co_applicant_2"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
 
-                            <option value="">Select 3rd Guarantor Relationship</option>
-                            <option value="father" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
-                            <option value="mother" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
-                            <option value="son" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
-                            <option value="daughter" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
-                            <option value="spouse" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
-                            <option value="brother" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
-                            <option value="sister" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
-                            <option value="other" {{ old('relation_guarantor_3', $application->relation_guarantor_3 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
-                            </select>
-                        </div>
+                                    <option value="">Select 2nd Co-Applicant Relationship</option>
+                                    <option value="father" {{ old('relation_co_applicant_2', $application->
+                                        relation_co_applicant_2 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
+                                    <option value="mother" {{ old('relation_co_applicant_2', $application->
+                                        relation_co_applicant_2 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
+                                    <option value="son" {{ old('relation_co_applicant_2', $application->
+                                        relation_co_applicant_2 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
+                                    <option value="daughter" {{ old('relation_co_applicant_2', $application->
+                                        relation_co_applicant_2 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter
+                                    </option>
+                                    <option value="spouse" {{ old('relation_co_applicant_2', $application->
+                                        relation_co_applicant_2 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
+                                    <option value="brother" {{ old('relation_co_applicant_2', $application->
+                                        relation_co_applicant_2 ?? '') == 'brother' ? 'selected' : '' }}>Brother
+                                    </option>
+                                    <option value="sister" {{ old('relation_co_applicant_2', $application->
+                                        relation_co_applicant_2 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
+                                    <option value="other" {{ old('relation_co_applicant_2', $application->
+                                        relation_co_applicant_2 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                                </select>
+                            </div>
 
-                        <div class="col-span-2 md:col-span-1">
-                            <div class="col-sm-7">
+                            <div class="col-span-2 md:col-span-1">
                                 <label for="" class="md:text-lg font-medium block mb-4">
-                                    Guarantor 3 </label>
-                                <select name="guarantor_3_id" id="guarantor_3_id"
+                                    2nd Co-Applicant Member</label>
+                                <select name="co_applicant_2_id" id="co_applicant_2_id"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                                     <option value="">Search Member No or Name</option>
                                     @foreach($members as $member)
-                                    <option value="{{ $member->id }}" {{ old('member_id', $application->guarantor_3_id
-                                        ?? '') == $member->id ? 'selected' : '' }}>
+                                    <option value="{{ $member->id }}" {{ old('member_id', $application->
+                                        co_applicant_2_id ??
+                                        '') == $member->id ? 'selected' : '' }}>
                                         {{ $member->member_info_first_name }}
                                     </option>
                                     @endforeach
                                 </select>
                             </div>
-                        </div>
 
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="md:text-lg font-medium block mb-4">
-                                4th Guarantor Relationship
-                            </label>
-
-                            <select name="relation_guarantor_4"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                <option value="">Select 4th Guarantor Relationship</option>
-                                <option value="father" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
-                                <option value="mother" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
-                                <option value="son" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
-                                <option value="daughter" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
-                                <option value="spouse" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
-                                <option value="brother" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
-                                <option value="sister" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
-                                <option value="other" {{ old('relation_guarantor_4', $application->relation_guarantor_4 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <div class="col-sm-7">
+                            <div class="col-span-2 md:col-span-1">
                                 <label for="" class="md:text-lg font-medium block mb-4">
-                                    Guarantor 4 </label>
-                                <select name="guarantor_4_id" id="guarantor_4_id"
+                                    Branch
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <select name="branch_id" id="branch_id"
                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option value="">Search Member No or Name</option>
-                                    @foreach($members as $member)
-                                    <option value="{{ $member->id }}" {{ old('member_id', $application->guarantor_4_id
-                                        ?? '') == $member->id ? 'selected' : '' }}>
-                                        {{ $member->member_info_first_name }}
+                                    <option value="">Search Branch No or Name</option>
+                                    @foreach($branch as $member)
+                                    <option value="{{ $member->id }}" {{ old('member_id', $application->branch_id ?? '')
+                                        ==
+                                        $member->id ? 'selected' : '' }}>
+                                        {{ $member->branch_name }}
                                     </option>
                                     @endforeach
                                 </select>
+                                @error('branch_id')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Advisor/ Staff</label>
+                                <select
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                    placeholder="Enter Scheme Code">
+                                    <option value="">select Advisor/ Staff </option>
+                                </select>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="md:text-lg font-medium block mb-4">
+                                    1st Guarantor Relationship
+                                </label>
+
+                                <select name="relation_guarantor_1"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+
+                                    <option value="">Select 1st Guarantor Relationship</option>
+                                    <option value="father" {{ old('relation_guarantor_1', $application->
+                                        relation_guarantor_1 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
+                                    <option value="mother" {{ old('relation_guarantor_1', $application->
+                                        relation_guarantor_1 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
+                                    <option value="son" {{ old('relation_guarantor_1', $application->
+                                        relation_guarantor_1 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
+                                    <option value="daughter" {{ old('relation_guarantor_1', $application->
+                                        relation_guarantor_1 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
+                                    <option value="spouse" {{ old('relation_guarantor_1', $application->
+                                        relation_guarantor_1 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
+                                    <option value="brother" {{ old('relation_guarantor_1', $application->
+                                        relation_guarantor_1 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
+                                    <option value="sister" {{ old('relation_guarantor_1', $application->
+                                        relation_guarantor_1 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
+                                    <option value="other" {{ old('relation_guarantor_1', $application->
+                                        relation_guarantor_1 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                                </select>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Guarantor 1 </label>
+                                <select name="guarantor_1_id" id="guarantor_1_id"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Search Member No or Name</option>
+                                    @foreach($members as $member)
+                                    <option value="{{ $member->id }}" {{ old('member_id', $application->guarantor_1_id
+                                        ??
+                                        '') == $member->id ? 'selected' : '' }}>
+                                        {{ $member->member_info_first_name }}
+                                    </option>
+
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="md:text-lg font-medium block mb-4">
+                                    2nd Guarantor Relationship
+                                </label>
+
+                                <select name="relation_guarantor_2"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+
+                                    <option value="">Select 2nd Guarantor Relationship</option>
+                                    <option value="father" {{ old('relation_guarantor_2', $application->
+                                        relation_guarantor_2 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
+                                    <option value="mother" {{ old('relation_guarantor_2', $application->
+                                        relation_guarantor_2 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
+                                    <option value="son" {{ old('relation_guarantor_2', $application->
+                                        relation_guarantor_2 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
+                                    <option value="daughter" {{ old('relation_guarantor_2', $application->
+                                        relation_guarantor_2 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
+                                    <option value="spouse" {{ old('relation_guarantor_2', $application->
+                                        relation_guarantor_2 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
+                                    <option value="brother" {{ old('relation_guarantor_2', $application->
+                                        relation_guarantor_2 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
+                                    <option value="sister" {{ old('relation_guarantor_2', $application->
+                                        relation_guarantor_2 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
+                                    <option value="other" {{ old('relation_guarantor_2', $application->
+                                        relation_guarantor_2 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                                </select>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <div class="col-sm-7">
+                                    <label for="" class="md:text-lg font-medium block mb-4">
+                                        Guarantor 2</label>
+                                    <select name="guarantor_2_id" id="guarantor_2_id"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                        <option value="">Search Member No or Name</option>
+                                        @foreach($members as $member)
+                                        <option value="{{ $member->id }}" {{ old('member_id', $application->
+                                            guarantor_2_id
+                                            ?? '') == $member->id ? 'selected' : '' }}>
+                                            {{ $member->member_info_first_name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="md:text-lg font-medium block mb-4">
+                                    3rd Guarantor Relationship
+                                </label>
+
+                                <select name="relation_guarantor_3"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+
+                                    <option value="">Select 3rd Guarantor Relationship</option>
+                                    <option value="father" {{ old('relation_guarantor_3', $application->
+                                        relation_guarantor_3 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
+                                    <option value="mother" {{ old('relation_guarantor_3', $application->
+                                        relation_guarantor_3 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
+                                    <option value="son" {{ old('relation_guarantor_3', $application->
+                                        relation_guarantor_3 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
+                                    <option value="daughter" {{ old('relation_guarantor_3', $application->
+                                        relation_guarantor_3 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
+                                    <option value="spouse" {{ old('relation_guarantor_3', $application->
+                                        relation_guarantor_3 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
+                                    <option value="brother" {{ old('relation_guarantor_3', $application->
+                                        relation_guarantor_3 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
+                                    <option value="sister" {{ old('relation_guarantor_3', $application->
+                                        relation_guarantor_3 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
+                                    <option value="other" {{ old('relation_guarantor_3', $application->
+                                        relation_guarantor_3 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                                </select>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <div class="col-sm-7">
+                                    <label for="" class="md:text-lg font-medium block mb-4">
+                                        Guarantor 3 </label>
+                                    <select name="guarantor_3_id" id="guarantor_3_id"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                        <option value="">Search Member No or Name</option>
+                                        @foreach($members as $member)
+                                        <option value="{{ $member->id }}" {{ old('member_id', $application->
+                                            guarantor_3_id
+                                            ?? '') == $member->id ? 'selected' : '' }}>
+                                            {{ $member->member_info_first_name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label class="md:text-lg font-medium block mb-4">
+                                    4th Guarantor Relationship
+                                </label>
+
+                                <select name="relation_guarantor_4"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    <option value="">Select 4th Guarantor Relationship</option>
+                                    <option value="father" {{ old('relation_guarantor_4', $application->
+                                        relation_guarantor_4 ?? '') == 'father' ? 'selected' : '' }}>Father</option>
+                                    <option value="mother" {{ old('relation_guarantor_4', $application->
+                                        relation_guarantor_4 ?? '') == 'mother' ? 'selected' : '' }}>Mother</option>
+                                    <option value="son" {{ old('relation_guarantor_4', $application->
+                                        relation_guarantor_4 ?? '') == 'son' ? 'selected' : '' }}>Son</option>
+                                    <option value="daughter" {{ old('relation_guarantor_4', $application->
+                                        relation_guarantor_4 ?? '') == 'daughter' ? 'selected' : '' }}>Daughter</option>
+                                    <option value="spouse" {{ old('relation_guarantor_4', $application->
+                                        relation_guarantor_4 ?? '') == 'spouse' ? 'selected' : '' }}>Spouse</option>
+                                    <option value="brother" {{ old('relation_guarantor_4', $application->
+                                        relation_guarantor_4 ?? '') == 'brother' ? 'selected' : '' }}>Brother</option>
+                                    <option value="sister" {{ old('relation_guarantor_4', $application->
+                                        relation_guarantor_4 ?? '') == 'sister' ? 'selected' : '' }}>Sister</option>
+                                    <option value="other" {{ old('relation_guarantor_4', $application->
+                                        relation_guarantor_4 ?? '') == 'other' ? 'selected' : '' }}>Other</option>
+                                </select>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <div class="col-sm-7">
+                                    <label for="" class="md:text-lg font-medium block mb-4">
+                                        Guarantor 4 </label>
+                                    <select name="guarantor_4_id" id="guarantor_4_id"
+                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                        <option value="">Search Member No or Name</option>
+                                        @foreach($members as $member)
+                                        <option value="{{ $member->id }}" {{ old('member_id', $application->
+                                            guarantor_4_id
+                                            ?? '') == $member->id ? 'selected' : '' }}>
+                                            {{ $member->member_info_first_name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    No of EMIs <span id="tenureLabel" class="text-black uppercase"></span>
+                                    <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="tenure_value" name="tenure_value"
+                                    value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @error('tenure_value')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Loan Amount <span id="" class="text-black uppercase"></span>
+                                    <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="loan_amount" name="loan_amount"
+                                    value="{{ old('loan_amount', $application->loan_amount ?? '') }}"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @error('loan_amount')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="emi_collection" class="md:text-lg font-medium block mb-4">
+                                    EMI Collection <span class="text-red-500">*</span>
+                                </label>
+
+                                <select id="emi_collection" name="emi_collection"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3">
+
+                                    @php
+                                    $selectedValue = old('emi_collection', $application->emi_collection ?? '');
+                                    @endphp
+                                    <option value="">Select EMI Collection</option>
+                                    <option value="daily" {{ $selectedValue=='daily' ? 'selected' : '' }}>DAILY</option>
+                                    <option value="weekly" {{ $selectedValue=='weekly' ? 'selected' : '' }}>WEEKLY
+                                    </option>
+                                    <option value="bi_weekly" {{ $selectedValue=='bi_weekly' ? 'selected' : '' }}>BI
+                                        WEEKLY
+                                    </option>
+                                    <option value="4_weekly" {{ $selectedValue=='4_weekly' ? 'selected' : '' }}>4 WEEKLY
+                                    </option>
+                                    <option value="Monthaly" {{ $selectedValue=='Monthaly' ? 'selected' : '' }}>MONTHALY
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-6">
+                                    EMI Amount <span id="" class="text-black uppercase"></span>
+                                    <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="emi_amount" name="emi_amount"
+                                    value="{{ old('emi_amount', $application->emi_amount ?? '') }}"
+                                    class="w-full text-sm mt-5 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @error('emi_amount')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Processing Fee (INC GST 18 %) <span id="" class="text-black uppercase"></span>
+                                    <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="processing_fee" name="processing_fee"
+                                    value="{{ old('processing_fee', $application->processing_fee ?? '') }}"
+                                    class="w-full text-sm bg-secondary/5 mt-7 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @error('processing_fee')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Stamp Duty (INC GST 18 %)<span id="" class="text-black uppercase"></span>
+                                    <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="stamp_duty" name="stamp_duty"
+                                    value="{{ old('stamp_duty', $application->stamp_duty ?? '') }}"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @error('stamp_duty')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Fitness Fee (INC GST 18 %) <span id="" class="text-black uppercase"></span>
+                                    <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="fitness_fee" name="fitness_fee"
+                                    value="{{ old('fitness_fee', $application->fitness_fee ?? '') }}"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @error('fitness_fee')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-6">
+                                    Insurance Fee <span id="" class="text-black uppercase"></span>
+                                    <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="insurance_fee" name="insurance_fee"
+                                    value="{{ old('insurance_fee', $application->insurance_fee ?? '') }}"
+                                    class="w-full text-sm mt-5 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                @error('insurance_fee')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Credit Period ( EMI Grace Period ) ( Days )
+                                    <span class="text-error">*</span>
+                                </label>
+                                <input type="number" id="credit_period" name="credit_period"
+                                    value="{{ old('credit_period', $application->credit_period ?? 0) }}"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="0">
+                                @error('credit_period')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="col-span-2 md:col-span-1 mb-3">
+                                <label for="" class="md:text-lg font-medium block mb-4">
+                                    Purpose of Loan
+                                    <span class="text-error">*</span>
+                                </label>
+                                <input type="text" id="purpose_of_loan" name="purpose_of_loan"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Purpose of CC Limit"
+                                    value="{{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}">
+                                @error('purpose_of_loan')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                         </div>
 
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                No of EMIs <span id="tenureLabel" class="text-black uppercase"></span>
-                                <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="tenure_value" name="tenure_value"
-                                value="{{ old('tenure_value', $application->tenure_value ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            @error('tenure_value')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
 
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Loan Amount <span id="" class="text-black uppercase"></span>
-                                <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="loan_amount" name="loan_amount"
-                                value="{{ old('loan_amount', $application->loan_amount ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            @error('loan_amount')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="emi_collection" class="md:text-lg font-medium block mb-4">
-                                EMI Collection <span class="text-red-500">*</span>
-                            </label>
-
-                            <select id="emi_collection" name="emi_collection"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-3 md:py-3">
-
-                                @php
-                                $selectedValue = old('emi_collection', $application->emi_collection ?? '');
-                                @endphp
-                                <option value="">Select EMI Collection</option>
-                                <option value="daily" {{ $selectedValue=='daily' ? 'selected' : '' }}>DAILY</option>
-                                <option value="weekly" {{ $selectedValue=='weekly' ? 'selected' : '' }}>WEEKLY</option>
-                                <option value="bi_weekly" {{ $selectedValue=='bi_weekly' ? 'selected' : '' }}>BI WEEKLY
-                                </option>
-                                <option value="4_weekly" {{ $selectedValue=='4_weekly' ? 'selected' : '' }}>4 WEEKLY
-                                </option>
-                                <option value="Monthaly" {{ $selectedValue=='Monthaly' ? 'selected' : '' }}>MONTHALY
-                                </option>
-                            </select>
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-6">
-                                EMI Amount <span id="" class="text-black uppercase"></span>
-                                <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="emi_amount" name="emi_amount"
-                                value="{{ old('emi_amount', $application->emi_amount ?? '') }}"
-                                class="w-full text-sm mt-5 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            @error('emi_amount')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Processing Fee (INC GST 18 %) <span id="" class="text-black uppercase"></span>
-                                <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="processing_fee" name="processing_fee"
-                                value="{{ old('processing_fee', $application->processing_fee ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 mt-7 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            @error('processing_fee')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Stamp Duty (INC GST 18 %)<span id="" class="text-black uppercase"></span>
-                                <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="stamp_duty" name="stamp_duty"
-                                value="{{ old('stamp_duty', $application->stamp_duty ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            @error('stamp_duty')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Fitness Fee (INC GST 18 %) <span id="" class="text-black uppercase"></span>
-                                <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="fitness_fee" name="fitness_fee"
-                                value="{{ old('fitness_fee', $application->fitness_fee ?? '') }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            @error('fitness_fee')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-6">
-                                Insurance Fee <span id="" class="text-black uppercase"></span>
-                                <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="insurance_fee" name="insurance_fee"
-                                value="{{ old('insurance_fee', $application->insurance_fee ?? '') }}"
-                                class="w-full text-sm mt-5 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            @error('insurance_fee')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Credit Period ( EMI Grace Period ) ( Days )
-                                <span class="text-error">*</span>
-                            </label>
-                            <input type="number" id="credit_period" name="credit_period"
-                                value="{{ old('credit_period', $application->credit_period ?? 0) }}"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="0">
-                            @error('credit_period')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="col-span-2 md:col-span-1 mb-3">
-                            <label for="" class="md:text-lg font-medium block mb-4">
-                                Purpose of Loan
-                                <span class="text-error">*</span>
-                            </label>
-                            <input type="text" id="purpose_of_loan" name="purpose_of_loan"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="Enter Purpose of CC Limit"
-                                value="{{ old('purpose_of_loan', $application->purpose_of_loan ?? '') }}">
-                            @error('purpose_of_loan')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
 
                     </div>
-
+                </div>
+                <div class="">
                     <!-- scheme info -->
-                    <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
+                    <div class=" " >
                         {{-- Member Info Box --}}
-                        <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
-                            <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
+                        <div id="memberBox" class=" hidden" > {{-- hidden by default --}}
+                            <div
+                                class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
                                 <h3 class="text-base capitalize font-semibold md:text-lg">CUSTOMER INFO</h3>
                                 <button type="button" class="p-1 rounded transition"
                                     onclick="toggleSection(this, 'memberInfoBody')">
@@ -527,10 +596,39 @@
                         </div>
 
                     </div>
-
+                    <div id="" class="mt-4" > {{-- hidden by default --}}
+                        <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
+                            <h3 class="text-base font-semibold md:text-lg uppercase">Fixed Loan Charges Info</h3>
+                            <button type="button" class="p-1 rounded transition"
+                                onclick="toggleSection(this, '')">
+                                <span class="toggle-icon text-lg font-bold">−</span>
+                            </button>
+                        </div>
+                        <div id="" class="px-4 py-3">
+                            <div class="overflow-x-auto ">
+                                <table class="w-full text-sm text-left whitespace-nowrap overflow-x-auto">
+                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                                        <tr class="border-b">
+                                            <td class="font-semibold py-2 pr-4 uppercase">Processing Charges</td>
+                                            <td class="py-2 capitalize" id=""> 0.01111111 % (static)
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold py-2 pr-4 uppercase">Stamp Duty Charges</td>
+                                            <td class="py-2" id="">0.0 % (static)</td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="font-semibold py-2 pr-4 uppercase">Insurance Charges</td>
+                                            <td class="py-2" id="">0.0 % (static)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
+            </div>
             <!-- Calculation Result Box -->
             <!-- Hidden fields for backend -->
             <input type="hidden" id="inputChargesPerEmi" name="charge_per_emi">
@@ -618,7 +716,7 @@
 
 <!-- Calculation and auto populate when select scheme -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
 
     let isCalculated = false;
     const calcBtn = document.getElementById("calculateBtn");
