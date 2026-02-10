@@ -96,7 +96,7 @@ use App\Http\Controllers\EmployeeAkash;
 use App\Http\Controllers\GoldLoanPrintDocument;
 use App\Http\Controllers\FixedLoanController;
 use App\Http\Controllers\AgriculturController;
-
+use App\Http\Controllers\MortgageLoanPrintDocumentController;
 
 // Clear cache 
 // Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -1012,9 +1012,14 @@ Route::group(['prefix' => 'mortgage'], function () {
         ->name('applications.submitForApproval');
 
     //print documents view page  
-    //      Route::get('/loan/{loan}/loan-agreement', 
-    //     [MortgageLoanPrintDocumentsController::class, 'loanAgreement']
-    // )->name('loan.mortgageloanAgreement');
+    Route::get('/payout-chart-view/{loan}', [MortgageLoanPrintDocumentController::class, 'payout_chart_mortgage_appli_view'])->name('mortgage_loan.payout_chart_loan_application_view');
+    Route::get('/payout-chart/{loan}', [MortgageLoanPrintDocumentController::class, 'payout_chart_mortgage_appli'])->name('mortgage_loan.payout_chart_loan_application.pdf');
+
+    Route::get('/sanction-letter-view/{loan}', [MortgageLoanPrintDocumentController::class, 'sanction_letter_view'])->name('mortgage_loan.sanction_letter-view');
+    Route::get('/sanction-letter/{loan}', [MortgageLoanPrintDocumentController::class, 'sanction_letter'])->name('mortgage_loan.sanction_letter.pdf');
+
+    Route::get('/{loan}/loan-agreement-view', [MortgageLoanPrintDocumentController::class, 'loanAgreementView'])->name('mortgage_loan.loanAgreement-view');
+    Route::get( '/{loan}/loan-agreement',[MortgageLoanPrintDocumentController::class, 'loanAgreement'])->name('mortgage_loan.loanAgreement.pdf');
 });
 
 

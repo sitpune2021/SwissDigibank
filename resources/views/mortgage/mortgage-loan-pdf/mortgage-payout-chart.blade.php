@@ -103,7 +103,7 @@
     </div>
 
         <div class="">
-            <p style="font-size: 14px;">Printed On : {{ $printed_on ?? '' }}</p>
+            <p style="font-size: 14px;">Printed On : {{ $printed_on }}</p>
         </div>
         <div class="">
             <table style="font-size: 12px !important ; padding: 5px; ">

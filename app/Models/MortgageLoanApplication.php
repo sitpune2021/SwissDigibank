@@ -96,5 +96,9 @@ public function creditScores()
         return $this->hasMany(MortgageLoanTransaction::class, 'loan_id', 'id');
     }
 
+    public function disbursement()
+    {
+        return $this->hasOne(MortgageLoanDisbursement::class, 'loan_application_id');
+    }
 
 }
