@@ -2405,6 +2405,63 @@ Route::group(['prefix' => 'cut-report'], function () {
 ////////////////////////////////////    END Cut Report     /////////////////////////////////////////////
 
 
+////////////////////////////////////    Account Section Start     /////////////////////////////////////////////
+
+
+// ledger-group Tab 
+Route::prefix('ledger-group')->group(function () {
+
+    Route::get('/', [LedgerGroupController::class, 'index'])->name('ledger-group.index');
+
+    Route::get('/create', [LedgerGroupController::class, 'create'])->name('ledger-group.create');
+
+    Route::post('/store', [LedgerGroupController::class, 'store'])->name('ledger-group.store');
+
+    Route::get('/{id}/ledgers', [LedgerGroupController::class, 'groupLedgers'])
+        ->name('ledger-group.ledgers');
+    
+});
+
+
+// Only ledger Tab
+Route::group(['prefix' => 'ledger'], function () {
+    Route::get('ledger/index', [LedgergroupController::class, 'led_index'])
+        ->name('ledger.index');
+
+    Route::get('ledger/add-ledger', [LedgergroupController::class, 'add_leg'])
+        ->name('ledger.add-ledger');
+
+    Route::get('ledger-groups-by-type/{type}', [LedgergroupController::class, 'groupsByType'])
+    ->name('ledger.groups.by.type');
+
+
+    Route::post('/store', [LedgergroupController::class, 'led_store'])
+        ->name('ledger.store');
+
+    Route::get('ledger/update-bulkrisk', [LedgergroupController::class, 'update_bulkrisk'])
+        ->name('ledger.update-bulkrisk');
+
+    Route::get('ledger/view/{id}', [LedgergroupController::class, 'ledgerView'])
+    ->name('ledger.view');
+
+    Route::get('ledger/edit-ledger', [LedgergroupController::class, 'edit_ledgers'])
+        ->name('ledger.edit-ledger');
+
+    Route::get('ledger/journal-entry', [LedgergroupController::class, 'journal_entry_ledger'])
+        ->name('ledger.journal-entry');
+});
+
+// Only Profit & Loss Tab
+Route::group(['prefix' => 'profit-loss'], function () {
+
+    Route::get('profit_loss', [LedgergroupController::class, 'profit_loss'])
+        ->name('profit-loss.profit_loss');
+
+});
+
+////////////////////////////////////    Account Section End     /////////////////////////////////////////////
+
+
 Route::group(['prefix' => 'hr-managment'], function () {
     Route::resource('employee', HRController::class);
 
@@ -2480,62 +2537,7 @@ Route::get('salary-disbursement/pay-salary', [EmployeeAkash::class, 'pay_salarie
 Route::get('salary-disbursement/monthly-salary', [EmployeeAkash::class, 'monthly_salaries'])
     ->name('hr-management.salary-disbursement.monthly-salary');
 
-//////
 
-// ledger 
-Route::prefix('ledger-group')->group(function () {
-
-    Route::get('/', [LedgerGroupController::class, 'index'])->name('ledger-group.index');
-
-    Route::get('/create', [LedgerGroupController::class, 'create'])->name('ledger-group.create');
-
-    Route::post('/store', [LedgerGroupController::class, 'store'])->name('ledger-group.store');
-
-});
-
-// ledger 
-Route::group(['prefix' => 'ledger-group'], function () {
-    // Route::get('ledger-group/index', [LedgergroupController::class, 'index'])
-    //     ->name('ledger-group.index');
-
-    // Route::get('ledger-group/add-ledger-group', [LedgergroupController::class, 'add_ledger_group'])
-    //     ->name('ledger-group.add-ledger-group');
-
-    Route::get('ledger-group/view', [LedgergroupController::class, 'view'])
-        ->name('ledger-group.view');
-
-    Route::get('ledger-group/asset-ledger', [LedgergroupController::class, 'asset_ledger'])
-        ->name('ledger-group.asset-ledger');
-
-
-
-    Route::get('ledger-group/edit-ledger', [LedgergroupController::class, 'edit_ledger'])
-        ->name('ledger-group.edit-ledger');
-
-    Route::get('ledger-group/journal-entry', [LedgergroupController::class, 'journal_entry'])
-        ->name('ledger-group.journal-entry');
-});
-
-// ledger
-Route::group(['prefix' => 'ledger'], function () {
-    Route::get('ledger/index', [LedgergroupController::class, 'led_index'])
-        ->name('ledger.index');
-
-    Route::get('ledger/add-ledger', [LedgergroupController::class, 'add_leg'])
-        ->name('ledger.add-ledger');
-
-    Route::get('ledger/update-bulkrisk', [LedgergroupController::class, 'update_bulkrisk'])
-        ->name('ledger.update-bulkrisk');
-
-    Route::get('ledger/view', [LedgergroupController::class, 'revenue_ledger'])
-        ->name('ledger.view');
-
-    Route::get('ledger/edit-ledger', [LedgergroupController::class, 'edit_ledgers'])
-        ->name('ledger.edit-ledger');
-
-    Route::get('ledger/journal-entry', [LedgergroupController::class, 'journal_entry_ledger'])
-        ->name('ledger.journal-entry');
-});
 
 // vendors
 Route::group(['prefix' => 'vendor'], function () {

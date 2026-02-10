@@ -51,17 +51,8 @@
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h3 class=" flex text-xl block  uppercase  font-bold">
-               LEDGER ACCOUNTS 
+               Profit & Loss
             </h3>
-            <div class="flex flex-col md:flex-row  lg:flex-row gap-3">
-                <a href="{{ route('ledger.add-ledger') }}" class=" block flex btn-primary justify-center uppercase ">
-                add LEDGER
-                </a>
-                <a href="" class=" block flex btn-warning  justify-center uppercase " >
-                  <i class="las la-upload"></i>
-                    update bulk risk %
-                </a>
-            </div>
         </div>
 
         <div>
@@ -88,11 +79,6 @@
         <div class="col-span-12 box lg:col-span-12">
             <div class="border-b border-gray-200 mb-4">
                 <ul id="tabs" class="flex flex-wrap -mb-px text-sm font-medium text-center">
-                    <li class="me-2">
-                        <button data-tab="tab1" class="tab-link inline-block p-4 border-b-2 border-transparent text-lg">
-                            ALL
-                        </button>
-                    </li>
                     <li class="me-2">
                         <button data-tab="tab2" class="tab-link inline-block p-4 border-b-2 border-transparent text-lg">
                             ASSETS
@@ -123,95 +109,6 @@
 
             <!-- Tabs Content -->
             <div class="tab-content p-4">
-                <!-- Tab 1 -->
-                <div id="tab1" class="tab-pane block">
-                    <div class="w-full overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-
-                        <table class="min-w-full text-sm text-left">
-
-                            {{-- HEADER --}}
-                            <thead class="bg-gray-100 sticky top-0 z-10">
-                                <tr class="text-xs uppercase tracking-wider text-gray-700">
-
-                                    <th class="px-5 py-3 whitespace-nowrap">Code</th>
-                                    <th class="px-5 py-3 whitespace-nowrap">Name</th>
-                                    <th class="px-5 py-3 whitespace-nowrap">System Name</th>
-                                    <th class="px-5 py-3 whitespace-nowrap">Group</th>
-                                    <th class="px-5 py-3 whitespace-nowrap">Type</th>
-                                    <th class="px-5 py-3 whitespace-nowrap">System A/C</th>
-                                    <th class="px-5 py-3 whitespace-nowrap text-right">Balance</th>
-                                    <th class="px-5 py-3 text-center whitespace-nowrap">Actions</th>
-
-                                </tr>
-                            </thead>
-
-                            {{-- BODY --}}
-                            <tbody class="divide-y divide-gray-200 bg-white">
-
-                                @forelse($ledgers as $ledger)
-                                    <tr class="hover:bg-gray-50 transition">
-
-                                        <td class="px-5 py-3 font-medium text-gray-900">
-                                            {{ $ledger->code }}
-                                        </td>
-
-                                        <td class="px-5 py-3 font-semibold text-indigo-600 hover:underline">
-                                            <a class="text-primary" href="{{ route('ledger.view', $ledger->id) }}">
-                                                {{ $ledger->display_name }}
-                                            </a>
-                                        </td>
-
-                                        <td class="px-5 py-3">
-                                            {{ $ledger->system_name }}
-                                        </td>
-
-                                        <td class="px-5 py-3">
-                                            {{ $ledger->group->display_name ?? '-' }}
-                                        </td>
-
-                                        {{-- Type Badge --}}
-                                        <td class="px-5 py-3">
-                                            <span class="px-2 py-1 text-xs rounded-full bg-indigo-100 text-indigo-700">
-                                                {{ $ledger->type }}
-                                            </span>
-                                        </td>
-
-                                        {{-- Yes/No Badge --}}
-                                        <td class="px-5 py-3">
-                                            @if($ledger->is_bank_acc)
-                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">Yes</span>
-                                            @else
-                                                <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700">No</span>
-                                            @endif
-                                        </td>
-
-                                        {{-- Balance --}}
-                                        <td class="px-5 py-3 text-right font-semibold">
-                                            ₹ {{ number_format($ledger->balance ?? 0, 2) }}
-                                        </td>
-
-                                        {{-- Action Button --}}
-                                        <td class="px-5 py-3 text-center">
-                                            <a href=""
-                                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 btn-primary">
-                                                Edit
-                                            </a>
-                                        </td>
-
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8" class="text-center py-6 text-gray-400">
-                                            No records found
-                                        </td>
-                                    </tr>
-                                @endforelse
-
-                            </tbody>
-                        </table>
-
-                    </div>
-                </div>
 
                 <!-- Tab 2 -->
                 <div id="tab2" class="tab-pane hidden">
@@ -244,10 +141,8 @@
                                             {{ $ledger->code }}
                                         </td>
 
-                                        <td class="px-5 py-3 font-semibold text-indigo-600 hover:underline">
-                                            <a class="text-primary" href="{{ route('ledger.view', $ledger->id) }}">
-                                                {{ $ledger->display_name }}
-                                            </a>
+                                        <td class="px-4 py-3">
+                                            {{ $ledger->display_name }}
                                         </td>
 
                                         <td class="px-4 py-3 text-gray-500">
@@ -276,7 +171,7 @@
 
                                         {{-- Balance --}}
                                         <td class="px-4 py-3 font-semibold">
-                                            ₹ {{ number_format($ledger->balance ?? 0, 2) }}
+                                            ₹ {{ number_format($ledger->opening_balance,2) }}
                                         </td>
 
                                         {{-- Action --}}
@@ -293,7 +188,6 @@
                                 @endforeach
 
                                 </tbody>
-
                             </table>
 
                         </div>
@@ -332,10 +226,8 @@
                                             {{ $ledger->code }}
                                         </td>
 
-                                       <td class="px-5 py-3 font-semibold text-indigo-600 hover:underline">
-                                            <a class="text-primary" href="{{ route('ledger.view', $ledger->id) }}">
-                                                {{ $ledger->display_name }}
-                                            </a>
+                                        <td class="px-4 py-3">
+                                            {{ $ledger->display_name }}
                                         </td>
 
                                         <td class="px-4 py-3 text-gray-500">
@@ -364,7 +256,7 @@
 
                                         {{-- Balance --}}
                                         <td class="px-4 py-3 font-semibold">
-                                            ₹ {{ number_format($ledger->balance ?? 0, 2) }}
+                                            ₹ {{ number_format($ledger->opening_balance,2) }}
                                         </td>
 
                                         {{-- Action --}}
@@ -420,10 +312,8 @@
                                         {{ $ledger->code }}
                                     </td>
 
-                                    <td class="px-5 py-3 font-semibold text-indigo-600 hover:underline">
-                                        <a class="text-primary" href="{{ route('ledger.view', $ledger->id) }}">
-                                            {{ $ledger->display_name }}
-                                        </a>
+                                    <td class="px-4 py-3">
+                                        {{ $ledger->display_name }}
                                     </td>
 
                                     <td class="px-4 py-3 text-gray-500">
@@ -452,7 +342,7 @@
 
                                     {{-- Balance --}}
                                     <td class="px-4 py-3 font-semibold">
-                                        ₹ {{ number_format($ledger->balance ?? 0, 2) }}
+                                        ₹ {{ number_format($ledger->opening_balance,2) }}
                                     </td>
 
                                     {{-- Action --}}
@@ -506,10 +396,8 @@
                                         {{ $ledger->code }}
                                     </td>
 
-                                    <td class="px-5 py-3 font-semibold text-indigo-600 hover:underline">
-                                        <a class="text-primary" href="{{ route('ledger.view', $ledger->id) }}">
-                                            {{ $ledger->display_name }}
-                                        </a>
+                                    <td class="px-4 py-3">
+                                        {{ $ledger->display_name }}
                                     </td>
 
                                     <td class="px-4 py-3 text-gray-500">
@@ -538,7 +426,7 @@
 
                                     {{-- Balance --}}
                                     <td class="px-4 py-3 font-semibold">
-                                        ₹ {{ number_format($ledger->balance ?? 0, 2) }}
+                                        ₹ {{ number_format($ledger->opening_balance,2) }}
                                     </td>
 
                                     {{-- Action --}}
@@ -592,10 +480,8 @@
                                         {{ $ledger->code }}
                                     </td>
 
-                                   <td class="px-5 py-3 font-semibold text-indigo-600 hover:underline">
-                                        <a class="text-primary" href="{{ route('ledger.view', $ledger->id) }}">
-                                            {{ $ledger->display_name }}
-                                        </a>
+                                    <td class="px-4 py-3">
+                                        {{ $ledger->display_name }}
                                     </td>
 
                                     <td class="px-4 py-3 text-gray-500">
@@ -624,7 +510,7 @@
 
                                     {{-- Balance --}}
                                     <td class="px-4 py-3 font-semibold">
-                                        ₹ {{ number_format($ledger->balance ?? 0, 2) }}
+                                        ₹ {{ number_format($ledger->opening_balance,2) }}
                                     </td>
 
                                     {{-- Action --}}

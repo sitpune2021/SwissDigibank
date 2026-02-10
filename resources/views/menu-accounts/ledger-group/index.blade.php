@@ -47,6 +47,7 @@
 </style>
 
 @section('content')
+
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
@@ -56,8 +57,8 @@
             <a href="{{ route('ledger-group.create') }}" class=" block flex btn-primary uppercase ">
                 add group
             </a>
-
         </div>
+
         <div>
             <form>
                 <div class="flex justify-center box gap-3">
@@ -118,560 +119,536 @@
             <div class="tab-content p-4">
                 <!-- Tab 1 -->
                 <div id="tab1" class="tab-pane block">
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse whitespace-nowrap text-sm">
-                            <thead>
-                                <tr class="bg-secondary/5 dark:bg-bg3">
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            NAME
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            System NAME
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            type
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                                        <div class="flex  text-lg  uppercase items-center gap-1">
-                                            SYSTEM GROUP
-                                        </div>
-                                    </th>
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            ACCOUNTS
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            BALANCE
-                                        </div>
-                                    </th>
+                    <div class="w-full overflow-x-auto rounded-2xl shadow bg-white dark:bg-bg3">
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            ACTIONS
-                                        </div>
-                                    </th>
+                        <table class="min-w-full text-sm text-left">
+
+                            {{-- HEADER --}}
+                            <thead class="bg-gray-100 dark:bg-bg2 sticky top-0 z-10">
+                                <tr class="text-xs uppercase tracking-wider text-gray-600 dark:text-gray-300">
+
+                                    <th class="px-6 py-4">Name</th>
+                                    <th class="px-6 py-4">System Name</th>
+                                    <th class="px-6 py-4">Type</th>
+                                    <th class="px-6 py-4 text-center">System Group</th>
+                                    <th class="px-6 py-4 text-right">Accounts</th>
+                                    <th class="px-6 py-4 text-right">Balance</th>
+                                    <th class="px-6 py-4 text-center">Actions</th>
 
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach($all as $row)
-                                <tr>
-                                    <td>{{ $row->display_name }}</td>
-                                    <td>{{ $row->system_name }}</td>
-                                    <td>{{ $row->type }}</td>
 
-                                    <td>
+                            {{-- BODY --}}
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+                                @foreach($all as $row)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-bg2 transition">
+
+                                    {{-- NAME --}}
+                                    <td class="px-6 py-4 font-medium text-indigo-600 hover:underline text-primary">
+                                        <a href="{{ route('ledger-group.ledgers', $row->id) }}">
+                                            {{ $row->display_name }}
+                                        </a>
+                                    </td>
+
+                                    {{-- SYSTEM NAME --}}
+                                    <td class="px-6 py-4 text-gray-500">
+                                        {{ $row->system_name }}
+                                    </td>
+
+                                    {{-- TYPE --}}
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
+                                            {{ $row->type }}
+                                        </span>
+                                    </td>
+
+                                    {{-- SYSTEM GROUP --}}
+                                    <td class="px-6 py-4 text-center">
                                         @if($row->is_system_group)
-                                            <span class="text-green-600">Yes</span>
+                                            <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700">
+                                                Yes
+                                            </span>
                                         @else
-                                            <span class="text-red-600">No</span>
+                                            <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-700">
+                                                No
+                                            </span>
                                         @endif
                                     </td>
 
-                                    <td>{{ $goldLoanAccounts }}</td>
-
-                                    <td>{{ number_format($goldLoanBalance, 2) }}</td>
-
-                                    <td>
-                                        <a href="#">Edit</a>
+                                    {{-- ACCOUNTS --}}
+                                    <td class="px-6 py-4 text-right font-semibold">
+                                        {{ $row->accounts }}
                                     </td>
+
+                                    {{-- BALANCE --}}
+                                    <td class="px-6 py-4 text-right font-semibold text-green-600">
+                                        ₹ {{ number_format($row->balance, 2) }}
+                                    </td>
+
+                                    {{-- ACTION --}}
+                                    <td class="px-6 py-4 text-center">
+                                        <a href="#"
+                                        class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow btn-primary">
+                                            Edit
+                                        </a>
+                                    </td>
+
                                 </tr>
                                 @endforeach
+
                             </tbody>
+
                         </table>
+
                     </div>
+
                 </div>
 
                 <!-- Tab 2 -->
                 <div id="tab2" class="tab-pane hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse whitespace-nowrap text-sm">
-                            <thead>
-                                <tr class="bg-secondary/5 dark:bg-bg3">
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            NAME
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            System NAME
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            type
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                                        <div class="flex  text-lg  uppercase items-center gap-1">
-                                            SYSTEM GROUP
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            ACCOUNTS
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            BALANCE
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            ACTIONS
-                                        </div>
-                                    </th>
+
+                    <div class="w-full overflow-x-auto rounded-2xl shadow bg-white dark:bg-bg3">
+
+                        <table class="min-w-full text-sm text-left">
+
+                            {{-- HEADER --}}
+                            <thead class="bg-gray-100 dark:bg-bg2 sticky top-0 z-10">
+                                <tr class="text-xs uppercase tracking-wider text-gray-600 dark:text-gray-300">
+
+                                    <th class="px-6 py-4">Name</th>
+                                    <th class="px-6 py-4">System Name</th>
+                                    <th class="px-6 py-4">Type</th>
+                                    <th class="px-6 py-4 text-center">System Group</th>
+                                    <th class="px-6 py-4 text-right">Accounts</th>
+                                    <th class="px-6 py-4 text-right">Balance</th>
+                                    <th class="px-6 py-4 text-center">Actions</th>
 
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach($assets as $row)
-                                <tr>
-                                    <td>{{ $row->display_name }}</td>
-                                    <td>{{ $row->system_name }}</td>
-                                    <td>{{ $row->type }}</td>
 
-                                    <td>
+                            {{-- BODY --}}
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+                                @foreach($assets as $row)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-bg2 transition">
+
+                                    {{-- NAME --}}
+                                    <td class="px-6 py-4 font-medium text-indigo-600 hover:underline text-primary">
+                                        <a href="{{ route('ledger-group.ledgers', $row->id) }}">
+                                            {{ $row->display_name }}
+                                        </a>
+                                    </td>
+
+                                    {{-- SYSTEM NAME --}}
+                                    <td class="px-6 py-4 text-gray-500">
+                                        {{ $row->system_name }}
+                                    </td>
+
+                                    {{-- TYPE --}}
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
+                                            {{ $row->type }}
+                                        </span>
+                                    </td>
+
+                                    {{-- SYSTEM GROUP --}}
+                                    <td class="px-6 py-4 text-center">
                                         @if($row->is_system_group)
-                                            <span class="text-green-600">Yes</span>
+                                            <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700">
+                                                Yes
+                                            </span>
                                         @else
-                                            <span class="text-red-600">No</span>
+                                            <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-700">
+                                                No
+                                            </span>
                                         @endif
                                     </td>
 
-                                    <td>{{ $goldLoanAccounts }}</td>
-
-                                    <td>{{ number_format($goldLoanBalance, 2) }}</td>
-
-                                    <td>
-                                        <a href="#">Edit</a>
+                                    {{-- ACCOUNTS --}}
+                                    <td class="px-6 py-4 text-right font-semibold">
+                                        {{ $row->accounts }}
                                     </td>
+
+                                    {{-- BALANCE --}}
+                                    <td class="px-6 py-4 text-right font-semibold text-green-600">
+                                        ₹ {{ number_format($row->balance, 2) }}
+                                    </td>
+
+                                    {{-- ACTION --}}
+                                     <td class="px-6 py-4 text-center">
+                                        <a href="#"
+                                        class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow btn-primary">
+                                            Edit
+                                        </a>
+                                    </td>
+
                                 </tr>
                                 @endforeach
-                                </tbody>
+
+                            </tbody>
+
                         </table>
+
                     </div>
+
                 </div>
 
                 <!-- Tab 3 -->
                 <div id="tab3" class="tab-pane hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse whitespace-nowrap text-sm">
-                            <thead>
-                                <tr class="bg-secondary/5 dark:bg-bg3">
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            NAME
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            System NAME
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            type
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                                        <div class="flex  text-lg  uppercase items-center gap-1">
-                                            SYSTEM GROUP
-                                        </div>
-                                    </th>
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            ACCOUNTS
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            BALANCE
-                                        </div>
-                                    </th>
+                    <div class="w-full overflow-x-auto rounded-2xl shadow bg-white dark:bg-bg3">
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            ACTIONS
-                                        </div>
-                                    </th>
+                        <table class="min-w-full text-sm text-left">
+
+                            {{-- HEADER --}}
+                            <thead class="bg-gray-100 dark:bg-bg2 sticky top-0 z-10">
+                                <tr class="text-xs uppercase tracking-wider text-gray-600 dark:text-gray-300">
+
+                                    <th class="px-6 py-4">Name</th>
+                                    <th class="px-6 py-4">System Name</th>
+                                    <th class="px-6 py-4">Type</th>
+                                    <th class="px-6 py-4 text-center">System Group</th>
+                                    <th class="px-6 py-4 text-right">Accounts</th>
+                                    <th class="px-6 py-4 text-right">Balance</th>
+                                    <th class="px-6 py-4 text-center">Actions</th>
 
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach($liabilities as $row)
-                                <tr>
-                                    <td>{{ $row->display_name }}</td>
-                                    <td>{{ $row->system_name }}</td>
-                                    <td>{{ $row->type }}</td>
 
-                                    <td>
+                            {{-- BODY --}}
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+                                @foreach($liabilities as $row)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-bg2 transition">
+
+                                    {{-- NAME --}}
+                                    <td class="px-6 py-4 font-medium text-indigo-600 hover:underline text-primary">
+                                        <a href="{{ route('ledger-group.ledgers', $row->id) }}">
+                                            {{ $row->display_name }}
+                                        </a>
+                                    </td>
+
+                                    {{-- SYSTEM NAME --}}
+                                    <td class="px-6 py-4 text-gray-500">
+                                        {{ $row->system_name }}
+                                    </td>
+
+                                    {{-- TYPE --}}
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
+                                            {{ $row->type }}
+                                        </span>
+                                    </td>
+
+                                    {{-- SYSTEM GROUP --}}
+                                    <td class="px-6 py-4 text-center">
                                         @if($row->is_system_group)
-                                            <span class="text-green-600">Yes</span>
+                                            <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700">
+                                                Yes
+                                            </span>
                                         @else
-                                            <span class="text-red-600">No</span>
+                                            <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-700">
+                                                No
+                                            </span>
                                         @endif
                                     </td>
 
-                                    <td>0</td> {{-- accounts blank --}}
-                                    <td>0.00</td> {{-- balance blank --}}
-
-                                    <td>
-                                        <a href="#">Edit</a>
+                                    {{-- ACCOUNTS --}}
+                                    <td class="px-6 py-4 text-right font-semibold">
+                                        {{ $row->accounts }}
                                     </td>
+
+                                    {{-- BALANCE --}}
+                                    <td class="px-6 py-4 text-right font-semibold text-green-600">
+                                        ₹ {{ number_format($row->balance, 2) }}
+                                    </td>
+
+                                    {{-- ACTION --}}
+                                    <td class="px-6 py-4 text-center">
+                                        <a href="#"
+                                        class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow btn-primary">
+                                            Edit
+                                        </a>
+                                    </td>
+
                                 </tr>
                                 @endforeach
+
                             </tbody>
+
                         </table>
+
                     </div>
+
                 </div>
 
                 <!-- Tab 4 -->
                 <div id="tab4" class="tab-pane hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse whitespace-nowrap text-sm">
-                            <thead>
-                                <tr class="bg-secondary/5 dark:bg-bg3">
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            NAME
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            System NAME
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            type
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                                        <div class="flex  text-lg  uppercase items-center gap-1">
-                                            SYSTEM GROUP
-                                        </div>
-                                    </th>
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            ACCOUNTS
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            BALANCE
-                                        </div>
-                                    </th>
+                    <div class="w-full overflow-x-auto rounded-2xl shadow bg-white dark:bg-bg3">
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            ACTIONS
-                                        </div>
-                                    </th>
+                        <table class="min-w-full text-sm text-left">
+
+                            {{-- HEADER --}}
+                            <thead class="bg-gray-100 dark:bg-bg2 sticky top-0 z-10">
+                                <tr class="text-xs uppercase tracking-wider text-gray-600 dark:text-gray-300">
+
+                                    <th class="px-6 py-4">Name</th>
+                                    <th class="px-6 py-4">System Name</th>
+                                    <th class="px-6 py-4">Type</th>
+                                    <th class="px-6 py-4 text-center">System Group</th>
+                                    <th class="px-6 py-4 text-right">Accounts</th>
+                                    <th class="px-6 py-4 text-right">Balance</th>
+                                    <th class="px-6 py-4 text-center">Actions</th>
 
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="border-b dark:border-bg3">
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 uppercase">
-                                            <a href="" class="text-primary">
-                                                SHAREHOLDER'S FUND
-                                            </a>
-                                        </div>
+
+                            {{-- BODY --}}
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+                                @foreach($equity as $row)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-bg2 transition">
+
+                                    {{-- NAME --}}
+                                    <td class="px-6 py-4 font-medium text-indigo-600 hover:underline text-primary">
+                                        <a href="{{ route('ledger-group.ledgers', $row->id) }}">
+                                            {{ $row->display_name }}
+                                        </a>
                                     </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 Capitalize">
-                                            SHAREHOLDER FUND
-                                        </div>
+
+                                    {{-- SYSTEM NAME --}}
+                                    <td class="px-6 py-4 text-gray-500">
+                                        {{ $row->system_name }}
                                     </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            Equity
-                                        </div>
+
+                                    {{-- TYPE --}}
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
+                                            {{ $row->type }}
+                                        </span>
                                     </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+
+                                    {{-- SYSTEM GROUP --}}
+                                    <td class="px-6 py-4 text-center">
+                                        @if($row->is_system_group)
+                                            <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700">
                                                 Yes
                                             </span>
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        @else
+                                            <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-700">
                                                 No
                                             </span>
-                                        </div>
+                                        @endif
                                     </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            1
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            0.00
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <div class="relative">
-                                                <i
-                                                    class="las la-ellipsis-v horiz-option-btn  cursor-pointer popover-button"></i>
-                                                <ul class="horiz-option popover-content">
-                                                    <li><a href="" class="single-option uppercase">View</a></li>
-                                                    <li><a href="" class="single-option uppercase">Edit</a></li>
-                                                </ul>
 
-                                                {{-- @include('partials._vertical-options', [
-                                                /* 'id' =>base64_encode($director->id),
-                                                'viewRoute' => 'director.show',
-                                                'editRoute' => 'director.edit'*/
-                                                ]) --}}
-                                            </div>
-                                        </div>
+                                    {{-- ACCOUNTS --}}
+                                    <td class="px-6 py-4 text-right font-semibold">
+                                        {{ $row->accounts }}
+                                    </td>
+
+                                    {{-- BALANCE --}}
+                                    <td class="px-6 py-4 text-right font-semibold text-green-600">
+                                        ₹ {{ number_format($row->balance, 2) }}
+                                    </td>
+
+                                    {{-- ACTION --}}
+                                    <td class="px-6 py-4 text-center">
+                                        <a href="#"
+                                        class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow btn-primary">
+                                            Edit
+                                        </a>
                                     </td>
 
                                 </tr>
+                                @endforeach
+
                             </tbody>
+
                         </table>
+
                     </div>
+
                 </div>
 
                 <!-- Tab 5 -->
                 <div id="tab5" class="tab-pane hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse whitespace-nowrap text-sm">
-                            <thead>
-                                <tr class="bg-secondary/5 dark:bg-bg3">
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            NAME
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            System NAME
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            type
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                                        <div class="flex  text-lg  uppercase items-center gap-1">
-                                            SYSTEM GROUP
-                                        </div>
-                                    </th>
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            ACCOUNTS
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            BALANCE
-                                        </div>
-                                    </th>
+                    <div class="w-full overflow-x-auto rounded-2xl shadow bg-white dark:bg-bg3">
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            ACTIONS
-                                        </div>
-                                    </th>
+                        <table class="min-w-full text-sm text-left">
+
+                            {{-- HEADER --}}
+                            <thead class="bg-gray-100 dark:bg-bg2 sticky top-0 z-10">
+                                <tr class="text-xs uppercase tracking-wider text-gray-600 dark:text-gray-300">
+
+                                    <th class="px-6 py-4">Name</th>
+                                    <th class="px-6 py-4">System Name</th>
+                                    <th class="px-6 py-4">Type</th>
+                                    <th class="px-6 py-4 text-center">System Group</th>
+                                    <th class="px-6 py-4 text-right">Accounts</th>
+                                    <th class="px-6 py-4 text-right">Balance</th>
+                                    <th class="px-6 py-4 text-center">Actions</th>
 
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="border-b dark:border-bg3">
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 uppercase">
-                                            <a href="" class="text-primary">
-                                                FINANCE COST
-                                            </a>
-                                        </div>
+
+                            {{-- BODY --}}
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+                                @foreach($expenses as $row)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-bg2 transition">
+
+                                    {{-- NAME --}}
+                                    <td class="px-6 py-4 font-medium text-indigo-600 hover:underline text-primary">
+                                        <a href="{{ route('ledger-group.ledgers', $row->id) }}">
+                                            {{ $row->display_name }}
+                                        </a>
                                     </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 Capitalize">
-                                            FINANCE COST
-                                        </div>
+
+                                    {{-- SYSTEM NAME --}}
+                                    <td class="px-6 py-4 text-gray-500">
+                                        {{ $row->system_name }}
                                     </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            Expense
-                                        </div>
+
+                                    {{-- TYPE --}}
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
+                                            {{ $row->type }}
+                                        </span>
                                     </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+
+                                    {{-- SYSTEM GROUP --}}
+                                    <td class="px-6 py-4 text-center">
+                                        @if($row->is_system_group)
+                                            <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700">
                                                 Yes
                                             </span>
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        @else
+                                            <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-700">
                                                 No
                                             </span>
-                                        </div>
+                                        @endif
                                     </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            1
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            0.00
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <div class="relative">
-                                                <i
-                                                    class="las la-ellipsis-v horiz-option-btn  cursor-pointer popover-button"></i>
-                                                <ul class="horiz-option popover-content">
-                                                    <li><a href="" class="single-option uppercase">View</a></li>
-                                                    <li><a href="" class="single-option uppercase">Edit</a></li>
-                                                </ul>
 
-                                                {{-- @include('partials._vertical-options', [
-                                                /* 'id' =>base64_encode($director->id),
-                                                'viewRoute' => 'director.show',
-                                                'editRoute' => 'director.edit'*/
-                                                ]) --}}
-                                            </div>
-                                        </div>
+                                    {{-- ACCOUNTS --}}
+                                    <td class="px-6 py-4 text-right font-semibold">
+                                        {{ $row->accounts }}
+                                    </td>
+
+                                    {{-- BALANCE --}}
+                                    <td class="px-6 py-4 text-right font-semibold text-green-600">
+                                        ₹ {{ number_format($row->balance, 2) }}
+                                    </td>
+
+                                    {{-- ACTION --}}
+                                    <td class="px-6 py-4 text-center">
+                                        <a href="#"
+                                        class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow btn-primary">
+                                            Edit
+                                        </a>
                                     </td>
 
                                 </tr>
+                                @endforeach
+
                             </tbody>
+
                         </table>
+                        
                     </div>
+
                 </div>
 
                 <!-- Tab 6 -->
                 <div id="tab6" class="tab-pane hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse whitespace-nowrap text-sm">
-                            <thead>
-                                <tr class="bg-secondary/5 dark:bg-bg3">
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            NAME
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            System NAME
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            type
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                                        <div class="flex  text-lg  uppercase items-center gap-1">
-                                            SYSTEM GROUP
-                                        </div>
-                                    </th>
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            ACCOUNTS
-                                        </div>
-                                    </th>
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            BALANCE
-                                        </div>
-                                    </th>
+                     <div class="w-full overflow-x-auto rounded-2xl shadow bg-white dark:bg-bg3">
 
-                                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex text-lg uppercase items-center gap-1">
-                                            ACTIONS
-                                        </div>
-                                    </th>
+                        <table class="min-w-full text-sm text-left">
+
+                            {{-- HEADER --}}
+                            <thead class="bg-gray-100 dark:bg-bg2 sticky top-0 z-10">
+                                <tr class="text-xs uppercase tracking-wider text-gray-600 dark:text-gray-300">
+
+                                    <th class="px-6 py-4">Name</th>
+                                    <th class="px-6 py-4">System Name</th>
+                                    <th class="px-6 py-4">Type</th>
+                                    <th class="px-6 py-4 text-center">System Group</th>
+                                    <th class="px-6 py-4 text-right">Accounts</th>
+                                    <th class="px-6 py-4 text-right">Balance</th>
+                                    <th class="px-6 py-4 text-center">Actions</th>
 
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="border-b dark:border-bg3">
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 uppercase">
-                                            <a href="" class="text-primary">
-                                                REVENUE FROM OPERATIONS
-                                            </a>
-                                        </div>
+
+                            {{-- BODY --}}
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+                                @foreach($revenue as $row)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-bg2 transition">
+
+                                    {{-- NAME --}}
+                                    <td class="px-6 py-4 font-medium text-indigo-600 hover:underline text-primary">
+                                        <a href="{{ route('ledger-group.ledgers', $row->id) }}">
+                                            {{ $row->display_name }}
+                                        </a>
                                     </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 Capitalize">
-                                            REVENUE FROM OPERATIONS
-                                        </div>
+
+                                    {{-- SYSTEM NAME --}}
+                                    <td class="px-6 py-4 text-gray-500">
+                                        {{ $row->system_name }}
                                     </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            Revenue
-                                        </div>
+
+                                    {{-- TYPE --}}
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700">
+                                            {{ $row->type }}
+                                        </span>
                                     </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+
+                                    {{-- SYSTEM GROUP --}}
+                                    <td class="px-6 py-4 text-center">
+                                        @if($row->is_system_group)
+                                            <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700">
                                                 Yes
                                             </span>
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        @else
+                                            <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-700">
                                                 No
                                             </span>
-                                        </div>
+                                        @endif
                                     </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            1
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            0.00
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <div class="relative">
-                                                <i
-                                                    class="las la-ellipsis-v horiz-option-btn  cursor-pointer popover-button"></i>
-                                                <ul class="horiz-option popover-content">
-                                                    <li><a href="" class="single-option uppercase">View</a></li>
-                                                    <li><a href="" class="single-option uppercase">Edit</a></li>
-                                                </ul>
 
-                                                {{-- @include('partials._vertical-options', [
-                                                /* 'id' =>base64_encode($director->id),
-                                                'viewRoute' => 'director.show',
-                                                'editRoute' => 'director.edit'*/
-                                                ]) --}}
-                                            </div>
-                                        </div>
+                                   {{-- ACCOUNTS --}}
+                                    <td class="px-6 py-4 text-right font-semibold">
+                                        {{ $row->accounts }}
+                                    </td>
+
+                                    {{-- BALANCE --}}
+                                    <td class="px-6 py-4 text-right font-semibold text-green-600">
+                                        ₹ {{ number_format($row->balance, 2) }}
+                                    </td>
+
+                                    {{-- ACTION --}}
+                                    <td class="px-6 py-4 text-center">
+                                        <a href="#"
+                                        class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow btn-primary">
+                                            Edit
+                                        </a>
                                     </td>
 
                                 </tr>
+                                @endforeach
+
                             </tbody>
+
                         </table>
+                        
                     </div>
+
                 </div>
             </div>
         </div>
@@ -708,7 +685,6 @@
                 });
             });
         </script>
-
 
 
 @endsection
