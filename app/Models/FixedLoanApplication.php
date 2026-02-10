@@ -13,6 +13,7 @@ class FixedLoanApplication extends Model
 
         // 🔹 Basic Application Info
         'application_date',
+          'status',
         'application_no',
         'member_id',
         'branch_id',

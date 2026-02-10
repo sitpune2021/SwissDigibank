@@ -74,20 +74,21 @@
             <div class=" w-full overflow-x-auto   overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <div class="min-w-full p-4">
-                        <form>
+
+                        <form action="{{ route('ledger-group.store') }}" method="POST">
+                        @csrf
                             <div>
                                 <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
                                     Group Type 
                                     <span class="text-error">*</span>
                                 </label>
-                                <select id="" name=""
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                     <option >Select Group Type</option>
-                                    <option >Asset</option>
-                                    <option >Liability</option>
-                                    <option >Equity</option>
-                                    <option >Expense</option>
-                                    <option >Revenue</option>
+                                <select name="type" required>
+                                    <option value="">Select Group Type</option>
+                                    <option value="Asset">Asset</option>
+                                    <option value="Liability">Liability</option>
+                                    <option value="Equity">Equity</option>
+                                    <option value="Expense">Expense</option>
+                                    <option value="Revenue">Revenue</option>
                                 </select>
                             </div>
                             <div class="mt-5">
@@ -95,61 +96,57 @@
                                  Display Name
                                      <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="" name=""
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 "
-                                    placeholder="Enter Group Display Name">
+                                <input type="text" name="display_name" placeholder="Display Name" required>
+
                                     <p class="text-primary mt-2 text-sm">
                                         (e.g. Current Assets)
                                     </p>
                             </div>
 
-                           <div class="mt-5">
+                            <div class="mt-5">
                                 <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
                                System Name
                                      <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="" name=""
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 "
-                                    placeholder="Enter Group System Name">
+                                <input type="text" name="system_name" placeholder="System Name" required>
+
                                     <p class="text-primary mt-2 text-sm">
                                       (e.g. Current Assets)
                                     </p>
                             </div>
 
-                              <div class="mt-5">
+                            <div class="mt-5">
                                 <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
                                  Weight-age/ Position 
                                      <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="" name=""
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 "
-                                    placeholder="Enter Group Weight-age/ Position ">
+                                <input type="number" name="weightage" placeholder="Weightage" required>
+
                                     <p class="text-primary mt-2 text-sm">
                                        (e.g. Highest - 1. used to sort the groups in while listing)
                                     </p>
                             </div>
-
-                            
+      
                             <!-- Buttons -->
                             <div class="flex flex-wrap gap-3 justify-center pt-4">
                                 <button type="submit" class="btn-primary uppercase">
                                     Add GROUP
                                 </button>
-                                <a href="" class="btn-outline uppercase ">
+                                <a href="{{ route('ledger-group.index') }}" class="btn-outline uppercase ">
                                     BACK
                                 </a>
                             </div>
                         </form>
+
                     </div>
                 </div>
-
             </div>
 
             <!-- Right: Settings -->
             <div class=" w-full overflow-x-auto "></div>
+
         </div>
     </div>
-
 
 
 @endsection

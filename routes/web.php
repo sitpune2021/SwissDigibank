@@ -2482,15 +2482,24 @@ Route::get('salary-disbursement/monthly-salary', [EmployeeAkash::class, 'monthly
 
 //////
 
+// ledger 
+Route::prefix('ledger-group')->group(function () {
 
+    Route::get('/', [LedgerGroupController::class, 'index'])->name('ledger-group.index');
+
+    Route::get('/create', [LedgerGroupController::class, 'create'])->name('ledger-group.create');
+
+    Route::post('/store', [LedgerGroupController::class, 'store'])->name('ledger-group.store');
+
+});
 
 // ledger 
 Route::group(['prefix' => 'ledger-group'], function () {
-    Route::get('ledger-group/index', [LedgergroupController::class, 'index'])
-        ->name('ledger-group.index');
+    // Route::get('ledger-group/index', [LedgergroupController::class, 'index'])
+    //     ->name('ledger-group.index');
 
-    Route::get('ledger-group/add-ledger-group', [LedgergroupController::class, 'add_ledger_group'])
-        ->name('ledger-group.add-ledger-group');
+    // Route::get('ledger-group/add-ledger-group', [LedgergroupController::class, 'add_ledger_group'])
+    //     ->name('ledger-group.add-ledger-group');
 
     Route::get('ledger-group/view', [LedgergroupController::class, 'view'])
         ->name('ledger-group.view');

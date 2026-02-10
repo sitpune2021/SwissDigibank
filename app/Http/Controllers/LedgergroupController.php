@@ -4,17 +4,89 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\LedgerGroup;
+use App\Models\LoanApplication;
+use App\Models\GoldLoanDisbursement;
 
 class LedgergroupController extends Controller
 {
+    
+
+    /*
+        |--------------------------------------------------------------------------
+        | INDEX
+        |--------------------------------------------------------------------------
+    */
+
     public function index()
     {
-        return view('menu-accounts.ledger-group.index');
+        $all = LedgerGroup::orderBy('weightage')->get();
+
+        $assets      = LedgerGroup::where('type','Asset')->orderBy('weightage')->get();
+        $liabilities = LedgerGroup::where('type','Liability')->orderBy('weightage')->get();
+        $equity      = LedgerGroup::where('type','Equity')->orderBy('weightage')->get();
+        $expenses    = LedgerGroup::where('type','Expense')->orderBy('weightage')->get();
+        $revenue     = LedgerGroup::where('type','Revenue')->orderBy('weightage')->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | GOLD LOAN DATA
+        |--------------------------------------------------------------------------
+        */
+
+        // accounts (approved loans)
+        $goldLoanAccounts = LoanApplication::where('status', 2)->count();
+
+
+        // balance (total disbursed amount)
+        $goldLoanBalance = GoldLoanDisbursement::sum('final_amount');
+
+        return view('menu-accounts.ledger-group.index', compact(
+            'all','assets','liabilities','equity','expenses','revenue',
+            'goldLoanAccounts','goldLoanBalance'
+        ));
     }
-    public function add_ledger_group()
+
+   /*
+    |--------------------------------------------------------------------------
+    | CREATE FORM
+    |--------------------------------------------------------------------------
+    */
+
+    public function create()
     {
         return view('menu-accounts.ledger-group.add-ledger-group');
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STORE
+    |--------------------------------------------------------------------------
+    */
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'display_name' => 'required',
+            'system_name'  => 'required|unique:ledger_groups,system_name',
+            'type'         => 'required',
+            'weightage'    => 'required|numeric'
+        ]);
+
+        LedgerGroup::create([
+            'display_name'   => strtoupper($request->display_name),
+            'system_name'    => strtoupper($request->system_name),
+            'type'           => $request->type,
+            'is_system_group'=> $request->is_system_group ?? 0,
+            'weightage'      => $request->weightage,
+        ]);
+
+        return redirect()->route('ledger-group.index')
+            ->with('success','Ledger Group Created Successfully');
+    }
+
+
     public function view()
     {
         return view('menu-accounts.ledger-group.view');
