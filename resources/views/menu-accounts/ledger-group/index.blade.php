@@ -53,9 +53,8 @@
             <h3 class=" flex text-xl block  uppercase  font-bold">
                 LEDGER GROUPS
             </h3>
-            <a href="" class=" block flex btn-primary uppercase ">
+            <a href="{{ route('ledger-group.create') }}" class=" block flex btn-primary uppercase ">
                 add group
-
             </a>
 
         </div>
@@ -66,7 +65,6 @@
                         <select id="" name=""
                             class="w-64 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
                             <option selected>ALL</option>
-
                         </select>
                     </div>
 
@@ -76,7 +74,6 @@
                         </button>
                     </div>
                 </div>
-
             </form>
         </div>
 
@@ -166,67 +163,29 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($all as $row)
+                                <tr>
+                                    <td>{{ $row->display_name }}</td>
+                                    <td>{{ $row->system_name }}</td>
+                                    <td>{{ $row->type }}</td>
 
-                                <tr class="border-b dark:border-bg3">
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 uppercase">
-                                            <a href="" class="text-primary">
-                                                THEKA BILL
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 Capitalize">
-                                            THEKA BILL
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            Expense
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                Yes
-                                            </span>
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                No
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            1
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            0.00
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <div class="relative">
-                                                <i
-                                                    class="las la-ellipsis-v horiz-option-btn  cursor-pointer popover-button"></i>
-                                                <ul class="horiz-option popover-content">
-                                                    <li><a href="" class="single-option uppercase">View</a></li>
-                                                    <li><a href="" class="single-option uppercase">Edit</a></li>
-                                                </ul>
-
-                                                {{-- @include('partials._vertical-options', [
-                                                /* 'id' =>base64_encode($director->id),
-                                                'viewRoute' => 'director.show',
-                                                'editRoute' => 'director.edit'*/
-                                                ]) --}}
-                                            </div>
-                                        </div>
+                                    <td>
+                                        @if($row->is_system_group)
+                                            <span class="text-green-600">Yes</span>
+                                        @else
+                                            <span class="text-red-600">No</span>
+                                        @endif
                                     </td>
 
+                                    <td>{{ $goldLoanAccounts }}</td>
+
+                                    <td>{{ number_format($goldLoanBalance, 2) }}</td>
+
+                                    <td>
+                                        <a href="#">Edit</a>
+                                    </td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -258,7 +217,6 @@
                                             SYSTEM GROUP
                                         </div>
                                     </th>
-
                                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex text-lg uppercase items-center gap-1">
                                             ACCOUNTS
@@ -269,7 +227,6 @@
                                             BALANCE
                                         </div>
                                     </th>
-
                                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                         <div class="flex text-lg uppercase items-center gap-1">
                                             ACTIONS
@@ -279,68 +236,30 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach($assets as $row)
+                                <tr>
+                                    <td>{{ $row->display_name }}</td>
+                                    <td>{{ $row->system_name }}</td>
+                                    <td>{{ $row->type }}</td>
 
-                                <tr class="border-b dark:border-bg3">
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 uppercase">
-                                            <a href="" class="text-primary">
-                                                CASH & CASH EQUIVALENT
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 Capitalize">
-                                            CASH AND CASH EQUIVALENT
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            Asset
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                Yes
-                                            </span>
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                No
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            1
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            0.00
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <div class="relative">
-                                                <i
-                                                    class="las la-ellipsis-v horiz-option-btn  cursor-pointer popover-button"></i>
-                                                <ul class="horiz-option popover-content">
-                                                    <li><a href="" class="single-option uppercase">View</a></li>
-                                                    <li><a href="" class="single-option uppercase">Edit</a></li>
-                                                </ul>
-
-                                                {{-- @include('partials._vertical-options', [
-                                                /* 'id' =>base64_encode($director->id),
-                                                'viewRoute' => 'director.show',
-                                                'editRoute' => 'director.edit'*/
-                                                ]) --}}
-                                            </div>
-                                        </div>
+                                    <td>
+                                        @if($row->is_system_group)
+                                            <span class="text-green-600">Yes</span>
+                                        @else
+                                            <span class="text-red-600">No</span>
+                                        @endif
                                     </td>
 
+                                    <td>{{ $goldLoanAccounts }}</td>
+
+                                    <td>{{ number_format($goldLoanBalance, 2) }}</td>
+
+                                    <td>
+                                        <a href="#">Edit</a>
+                                    </td>
                                 </tr>
-                            </tbody>
+                                @endforeach
+                                </tbody>
                         </table>
                     </div>
                 </div>
@@ -392,66 +311,28 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="border-b dark:border-bg3">
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 uppercase">
-                                            <a href="" class="text-primary">
-                                                CURRENT LIABILITY
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1 Capitalize">
-                                            CURRENT LIABILITY
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            Liability
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                Yes
-                                            </span>
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                No
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            1
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            0.00
-                                        </div>
-                                    </td>
-                                    <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                        <div class="flex items-center gap-1">
-                                            <div class="relative">
-                                                <i
-                                                    class="las la-ellipsis-v horiz-option-btn  cursor-pointer popover-button"></i>
-                                                <ul class="horiz-option popover-content">
-                                                    <li><a href="" class="single-option uppercase">View</a></li>
-                                                    <li><a href="" class="single-option uppercase">Edit</a></li>
-                                                </ul>
+                                @foreach($liabilities as $row)
+                                <tr>
+                                    <td>{{ $row->display_name }}</td>
+                                    <td>{{ $row->system_name }}</td>
+                                    <td>{{ $row->type }}</td>
 
-                                                {{-- @include('partials._vertical-options', [
-                                                /* 'id' =>base64_encode($director->id),
-                                                'viewRoute' => 'director.show',
-                                                'editRoute' => 'director.edit'*/
-                                                ]) --}}
-                                            </div>
-                                        </div>
+                                    <td>
+                                        @if($row->is_system_group)
+                                            <span class="text-green-600">Yes</span>
+                                        @else
+                                            <span class="text-red-600">No</span>
+                                        @endif
                                     </td>
 
+                                    <td>0</td> {{-- accounts blank --}}
+                                    <td>0.00</td> {{-- balance blank --}}
+
+                                    <td>
+                                        <a href="#">Edit</a>
+                                    </td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

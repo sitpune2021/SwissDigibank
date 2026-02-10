@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Models\LoanApplication;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -111,8 +112,8 @@ class GoldLoanPrintDocument extends Controller
 
             'name_borrower' => trim(
                 ($member->member_info_title ?? '') . ' ' .
-                ($member->member_info_first_name ?? '') . ' ' .
-                ($member->member_info_last_name ?? '')
+                    ($member->member_info_first_name ?? '') . ' ' .
+                    ($member->member_info_last_name ?? '')
             ),
             'mob_borrower' => $member->member_info_mobile_no ?? '',
             'adr_borrower' => $member->member_info_address ?? '',
@@ -223,8 +224,8 @@ class GoldLoanPrintDocument extends Controller
 
             'name_borrower' => trim(
                 ($member->member_info_title ?? '') . ' ' .
-                ($member->member_info_first_name ?? '') . ' ' .
-                ($member->member_info_last_name ?? '')
+                    ($member->member_info_first_name ?? '') . ' ' .
+                    ($member->member_info_last_name ?? '')
             ),
             'mob_borrower' => $member->member_info_mobile_no ?? '',
             'adr_borrower' => $member->member_info_address ?? '',
@@ -240,7 +241,17 @@ class GoldLoanPrintDocument extends Controller
     }
     public function disburse_letter_view(LoanApplication $loan)
     {
-        $loan->load(['member', 'scheme']); // eager load member
+        $loan->load(['member', 'scheme', 'branch']); // eager load member
+        $bank = Company::first();
+        // Build full bank address
+        $bankAddress = collect([
+            $bank->address_line1 ?? '',
+            $bank->address_line2 ?? '',
+            $bank->city ?? '',
+            optional($bank->state)->name ?? '', // if state is FK
+            $bank->pincode ?? '',
+            $bank->country ?? '',
+        ])->filter()->implode(', ');
 
         $data = [
             'printed_on' => now()->format('d-m-Y'),
@@ -253,23 +264,33 @@ class GoldLoanPrintDocument extends Controller
             'member_mobile' => $loan->member->mobile ?? '',
             'member_state' => $loan->member->state ?? '',
             // KEEP OTHER VALUES STATIC FOR NOW
-            'bank_name' => '',
-            'bank_adr_branch' => '',
-            'bank_adr' => '',
+            'bank_name' => $bank->company_name ?? '',
+            'bank_adr_branch' => $loan->branch->branch_name ?? '',
+            'bank_adr' => $bankAddress,
             'loan_no' => $loan->id,
             'loan_amount' => $loan->approved_loan_amount ?? 0,
             'bank_details' => '',
-            'processing_charges' => 0,
+            'processing_charges' => $loan->processing_fee_total ?? 0,
             'stamp_duty' => $loan->scheme->stamp_duty_charge ?? 0,
             'insurance_fee' => $loan->scheme->insurance_fee ?? 0,
             'final_amount' => $loan->approved_loan_amount ?? 0,
         ];
         return view('gold-loan.gold-loan-pdf.disburse-letter-view', $data);
     }
-
     public function disburse_letter(LoanApplication $loan)
     {
         $loan->load(['member', 'scheme']); // eager load member
+        $bank = Company::where('company_name',)->first();
+        $companyAddress = collect([
+            $bank->address_line1 ?? '',
+            $bank->address_line2 ?? '',                 // may be null
+            $bank->city,
+            optional($bank->stateRelation)->name, // state name
+            $bank->pincode,
+            $bank->country,
+        ])
+            ->filter()            // removes null / empty
+            ->implode(', ');
 
         $data = [
             'printed_on' => now()->format('d-m-Y'),
@@ -282,13 +303,13 @@ class GoldLoanPrintDocument extends Controller
             'member_mobile' => $loan->member->mobile ?? '',
             'member_state' => $loan->member->state ?? '',
             // KEEP OTHER VALUES STATIC FOR NOW
-            'bank_name' => '',
-            'bank_adr_branch' => '',
-            'bank_adr' => '',
+            'bank_name' => $bank->company_name ?? '',
+            // 'bank_adr_branch' => '',
+            'bank_adr' => $companyAddress,
             'loan_no' => $loan->id,
             'loan_amount' => $loan->approved_loan_amount ?? 0,
             'bank_details' => '',
-            'processing_charges' => 0,
+            'processing_charges' => $loan->processing_fee_total ?? 0,
             'stamp_duty' => $loan->scheme->stamp_duty_charge ?? 0,
             'insurance_fee' => $loan->scheme->insurance_fee ?? 0,
             'final_amount' => $loan->approved_loan_amount ?? 0,
@@ -302,14 +323,25 @@ class GoldLoanPrintDocument extends Controller
 
     public function letter_udertaking_gold_view(LoanApplication $loan)
     {
+         $loan->load(['member', 'scheme', 'branch']);
         $loanAmount = $loan->approved_loan_amount ?? 0;
+        $bank = Company::first();
+        // Build full bank address
+        $bankAddress = collect([
+            $bank->address_line1 ?? '',
+            $bank->address_line2 ?? '',
+            $bank->city ?? '',
+            optional($bank->state)->name ?? '', // if state is FK
+            $bank->pincode ?? '',
+            $bank->country ?? '',
+        ])->filter()->implode(', ');
 
         $data = [
             'printed_on' => date('d-m-Y'),
             'date' => date('d-m-Y'),
-            'bank_name' => '',
-            'bank_adr_branch' => '',
-            'bank_adr' => '',
+            'bank_name' => $bank->company_name ?? '',
+            'bank_adr_branch' => $loan->branch->branch_name ?? '',
+            'bank_adr' => $bankAddress,
             'loan_no' => $loan->id,
             'loan_amount' => $loanAmount,
             'loan_amount_words' => $this->amountInWords($loanAmount),
@@ -318,8 +350,8 @@ class GoldLoanPrintDocument extends Controller
             'processing_charges' => 0,
             'stamp_duty' => $loan->scheme->stamp_duty_charge ?? 0,
             'insurance_fee' => $loan->scheme->insurance_fee ?? 0,
-            'final_amount' => 200000,
-            'installments' => 4449.00,
+            'final_amount' => 'static',
+            'installments' => 'static',
             'state' => ''
 
         ];
@@ -328,14 +360,25 @@ class GoldLoanPrintDocument extends Controller
     }
     public function letter_udertaking_gold(LoanApplication $loan)
     {
+        $loan->load(['member', 'scheme', 'branch']);
         $loanAmount = $loan->approved_loan_amount ?? 0;
+        $bank = Company::first();
+        // Build full bank address
+        $bankAddress = collect([
+            $bank->address_line1 ?? '',
+            $bank->address_line2 ?? '',
+            $bank->city ?? '',
+            optional($bank->state)->name ?? '', // if state is FK
+            $bank->pincode ?? '',
+            $bank->country ?? '',
+        ])->filter()->implode(', ');
 
         $data = [
             'printed_on' => date('d-m-Y'),
             'date' => date('d-m-Y'),
-            'bank_name' => '',
-            'bank_adr_branch' => '',
-            'bank_adr' => '',
+            'bank_name' => $bank->company_name ?? '',
+            'bank_adr_branch' => $loan->branch->branch_name ?? '',
+            'bank_adr' => $bankAddress,
             'loan_no' => $loan->id,
             'loan_amount' => $loanAmount,
             'loan_amount_words' => $this->amountInWords($loanAmount),
@@ -440,104 +483,335 @@ class GoldLoanPrintDocument extends Controller
     {
         $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
-        $disbursement = $loan->disbursement;
-         $statusText = match ($loan->status) {
+
+        $statusText = match ($loan->status) {
             0 => 'DRAFT',
             1 => 'APPROVED',
             2 => 'DISBURSED',
             3 => 'CANCELLED',
+            default => 'UNKNOWN',
         };
+
+        /* ---------------- BASIC INPUTS ---------------- */
+        $loanAmount   = $loan->approved_loan_amount ?? $loan->loan_amount;
+        $annualRate   = $scheme->annual_interest_rate ?? 12;
+        $interestType = $scheme->gold_loan_setting; // reducing_emi | flat_emi | flat_advanced_interest | no_emi
+
+        $tenureValue = (int) $loan->tenure_value;
+        $tenureType  = strtoupper($loan->tenure_type);
+
+        /* ---------------- TENURE CONVERSION ---------------- */
+        $tenureMonths = match ($tenureType) {
+            'MONTHS' => $tenureValue,
+            'WEEKS'  => round($tenureValue / 4, 2),
+            'DAYS'   => round($tenureValue / 30, 2),
+            default  => $tenureValue,
+        };
+
+        $emiCount = $tenureValue; // ✔ used as-is in view
+
+        $monthlyRate = $annualRate / 12 / 100;
+
+        /* ---------------- EMI DATE ---------------- */
+        $emiDate = match ($tenureType) {
+            'MONTHS' => Carbon::parse($loan->application_date)->addMonth(),
+            'WEEKS'  => Carbon::parse($loan->application_date)->addWeek(),
+            'DAYS'   => Carbon::parse($loan->application_date)->addDay(),
+        };
+
+        /* ---------------- DEFAULT VALUES ---------------- */
+        $emi = 0;
+        $interest = 0;
+        $principal = 0;
+        $balance = $loanAmount;
+
+        $totalPrincipal = 0;
+        $totalInterest  = 0;
+        $totalCharges   = 0;
+
+        /* ---------------- INTEREST TYPE LOGIC ---------------- */
+        switch ($interestType) {
+
+            /* ========= REDUCING EMI (MONTHLY ONLY) ========= */
+            case 'reducing_emi':
+
+                if ($tenureType !== 'MONTHS') {
+                    throw new \Exception('Reducing EMI allowed only for MONTHS tenure');
+                }
+
+                $emi = ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths))
+                    / (pow(1 + $monthlyRate, $tenureMonths) - 1);
+                $emi = round($emi, 2);
+
+                $interest  = round($balance * $monthlyRate, 2);
+                $principal = round($emi - $interest, 2);
+                $balance   = round($balance - $principal, 2);
+
+                // totals
+                $totalInterest  = round(($emi * $tenureMonths) - $loanAmount, 2);
+                $totalPrincipal = $loanAmount;
+                break;
+
+            /* ========= FLAT EMI ========= */
+            case 'flat_emi':
+
+                $totalInterest = round(
+                    $loanAmount * ($annualRate / 100) * ($tenureMonths / 12),
+                    2
+                );
+
+                $emi = round(($loanAmount + $totalInterest) / $tenureMonths, 2);
+
+                $principal = round($loanAmount / $tenureMonths, 2);
+                $interest  = round($totalInterest / $tenureMonths, 2);
+                $balance   = round($loanAmount - $principal, 2);
+
+                $totalPrincipal = $loanAmount;
+                break;
+
+            /* ========= FLAT ADVANCED INTEREST ========= */
+            case 'flat_advanced_interest':
+
+                $totalInterest = round(
+                    $loanAmount * ($annualRate / 100) * ($tenureMonths / 12),
+                    2
+                );
+
+                // interest deducted upfront
+                $emi = round($loanAmount / $tenureMonths, 2);
+                $principal = $emi;
+                $interest  = 0;
+                $balance   = round($loanAmount - $principal, 2);
+
+                $totalPrincipal = $loanAmount;
+                break;
+
+            /* ========= NO EMI ========= */
+            case 'no_emi':
+
+                $interest = match ($tenureType) {
+                    'MONTHS' => round($loanAmount * ($annualRate / 100) / 12, 2),
+                    'WEEKS'  => round($loanAmount * ($annualRate / 100) / 52, 2),
+                    'DAYS'   => round($loanAmount * ($annualRate / 100) / 365, 2),
+                };
+
+                $emi = $interest; // interest-only cycle
+                $principal = 0;
+                $balance = $loanAmount;
+
+                $totalInterest = round($interest * $emiCount, 2);
+                $totalPrincipal = $loanAmount;
+                break;
+        }
+
+        /* ---------------- PAYOUT SUMMARY DATA ---------------- */
         $data = [
-            'printed_on' => date('d-m-Y'),
+            'printed_on' => now()->format('d-m-Y'),
             'disburse_date' => $statusText,
             'loan_no' => $loan->id,
-            'bank_name' => '',
-            'bank_adr_branch' => '',
-            'bank_adr' => '',
-            'loan_amount' => $loan?->approved_loan_amount,
-            'interest_type' => $scheme->gold_loan_setting,
-            'processing_fee' => '(static)',
-            'tenure' => $loan?->tenure_value . ' ' . $loan?->tenure_type,
-            'stamp_duty_fee' => $scheme->stamp_duty_charge,
-            'interest_rate' => $scheme->annual_interest_rate,
-            'insurance_charge' => $scheme->insurance_fee,
-            'emi_count' => '(static)',
-            'emi_payout' => $loan->emi_collection,
-            'loan_in_ratio' => '(static)',
-            'apr_rate' => '(static)'
 
+            'loan_amount' => number_format($loanAmount, 2),
+            'interest_type' => $interestType,
+            'processing_fee' => number_format($loan->processing_fee_total ?? 0, 2),
+            'tenure' => $loan->tenure_value . ' ' . $loan->tenure_type,
+            'stamp_duty_fee' => number_format($scheme->stamp_duty_charge ?? 0, 2),
+            'interest_rate' => $annualRate,
+            'insurance_charge' => number_format($scheme->insurance_fee ?? 0, 2),
+            'emi_count' => $emiCount,
+            'emi_payout' => ucfirst($loan->emi_collection),
+            'loan_in_ratio' => $loan->loan_in_ratio ?? '',
+            'apr_rate' => $annualRate . '%',
         ];
 
+        /* ---------------- PAYOUT CHART ---------------- */
         $payoutCharts = [
-            'emi_date' => '12-12-2025(static)',
-            'emi_principle' => '2,449.00(static)',
-            'emi_interest' => '2,000.00(static)',
-            'per_emi_charges' => '0.00(static)',
-            'emi_amount' => '4,449.00(static)',
-            'balance_principle' => '197,551.00(static)',
-            'total_emi_principle' => '200,000.00(static)',
-            'total_emi_interest' => '66,940.00(static)',
-            'total_per_emi_charges' => '0.00(static)',
-            'total_emi_amount' => '266,940.00(static)',
+            'emi_date' => $emiDate->format('d-m-Y'),
+            'emi_principle' => number_format($principal, 2),
+            'emi_interest' => number_format($interest, 2),
+            'per_emi_charges' => number_format(0, 2),
+            'emi_amount' => number_format($emi, 2),
+            'balance_principle' => number_format(max($balance, 0), 2),
 
+            'total_emi_principle' => number_format($totalPrincipal, 2),
+            'total_emi_interest' => number_format($totalInterest, 2),
+            'total_per_emi_charges' => number_format($totalCharges, 2),
+            'total_emi_amount' => number_format($totalPrincipal + $totalInterest, 2),
         ];
 
-
-        return view('gold-loan.gold-loan-pdf.gold-appli-payout-chart-view', $data, $payoutCharts);
+        return view(
+            'gold-loan.gold-loan-pdf.gold-appli-payout-chart-view',
+            array_merge($data, $payoutCharts, [
+                'loan_no' => $loan->id
+            ])
+        );
     }
+
     public function payout_chart_gold_appli(LoanApplication $loan)
     {
         $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
-        $disbursement = $loan->disbursement;
-         $statusText = match ($loan->status) {
+
+        $statusText = match ($loan->status) {
             0 => 'DRAFT',
             1 => 'APPROVED',
             2 => 'DISBURSED',
             3 => 'CANCELLED',
+            default => 'UNKNOWN',
         };
+
+        /* ---------------- BASIC INPUTS ---------------- */
+        $loanAmount   = $loan->approved_loan_amount ?? $loan->loan_amount;
+        $annualRate   = $scheme->annual_interest_rate ?? 12;
+        $interestType = $scheme->gold_loan_setting; // reducing_emi | flat_emi | flat_advanced_interest | no_emi
+
+        $tenureValue = (int) $loan->tenure_value;
+        $tenureType  = strtoupper($loan->tenure_type);
+
+        /* ---------------- TENURE CONVERSION ---------------- */
+        $tenureMonths = match ($tenureType) {
+            'MONTHS' => $tenureValue,
+            'WEEKS'  => round($tenureValue / 4, 2),
+            'DAYS'   => round($tenureValue / 30, 2),
+            default  => $tenureValue,
+        };
+
+        $emiCount = $tenureValue; // ✔ used as-is in view
+
+        $monthlyRate = $annualRate / 12 / 100;
+
+        /* ---------------- EMI DATE ---------------- */
+        $emiDate = match ($tenureType) {
+            'MONTHS' => Carbon::parse($loan->application_date)->addMonth(),
+            'WEEKS'  => Carbon::parse($loan->application_date)->addWeek(),
+            'DAYS'   => Carbon::parse($loan->application_date)->addDay(),
+        };
+
+        /* ---------------- DEFAULT VALUES ---------------- */
+        $emi = 0;
+        $interest = 0;
+        $principal = 0;
+        $balance = $loanAmount;
+
+        $totalPrincipal = 0;
+        $totalInterest  = 0;
+        $totalCharges   = 0;
+
+        /* ---------------- INTEREST TYPE LOGIC ---------------- */
+        switch ($interestType) {
+
+            /* ========= REDUCING EMI (MONTHLY ONLY) ========= */
+            case 'reducing_emi':
+
+                if ($tenureType !== 'MONTHS') {
+                    throw new \Exception('Reducing EMI allowed only for MONTHS tenure');
+                }
+
+                $emi = ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths))
+                    / (pow(1 + $monthlyRate, $tenureMonths) - 1);
+                $emi = round($emi, 2);
+
+                $interest  = round($balance * $monthlyRate, 2);
+                $principal = round($emi - $interest, 2);
+                $balance   = round($balance - $principal, 2);
+
+                // totals
+                $totalInterest  = round(($emi * $tenureMonths) - $loanAmount, 2);
+                $totalPrincipal = $loanAmount;
+                break;
+
+            /* ========= FLAT EMI ========= */
+            case 'flat_emi':
+
+                $totalInterest = round(
+                    $loanAmount * ($annualRate / 100) * ($tenureMonths / 12),
+                    2
+                );
+
+                $emi = round(($loanAmount + $totalInterest) / $tenureMonths, 2);
+
+                $principal = round($loanAmount / $tenureMonths, 2);
+                $interest  = round($totalInterest / $tenureMonths, 2);
+                $balance   = round($loanAmount - $principal, 2);
+
+                $totalPrincipal = $loanAmount;
+                break;
+
+            /* ========= FLAT ADVANCED INTEREST ========= */
+            case 'flat_advanced_interest':
+
+                $totalInterest = round(
+                    $loanAmount * ($annualRate / 100) * ($tenureMonths / 12),
+                    2
+                );
+
+                // interest deducted upfront
+                $emi = round($loanAmount / $tenureMonths, 2);
+                $principal = $emi;
+                $interest  = 0;
+                $balance   = round($loanAmount - $principal, 2);
+
+                $totalPrincipal = $loanAmount;
+                break;
+
+            /* ========= NO EMI ========= */
+            case 'no_emi':
+
+                $interest = match ($tenureType) {
+                    'MONTHS' => round($loanAmount * ($annualRate / 100) / 12, 2),
+                    'WEEKS'  => round($loanAmount * ($annualRate / 100) / 52, 2),
+                    'DAYS'   => round($loanAmount * ($annualRate / 100) / 365, 2),
+                };
+
+                $emi = $interest; // interest-only cycle
+                $principal = 0;
+                $balance = $loanAmount;
+
+                $totalInterest = round($interest * $emiCount, 2);
+                $totalPrincipal = $loanAmount;
+                break;
+        }
+
+        /* ---------------- PAYOUT SUMMARY DATA ---------------- */
         $data = [
-            'printed_on' => date('d-m-Y'),
+            'printed_on' => now()->format('d-m-Y'),
             'disburse_date' => $statusText,
-            'bank_name' => '',
-            'bank_adr_branch' => '',
-            'bank_adr' => '',
-            'loan_amount' => $loan?->approved_loan_amount,
-            'interest_type' => $scheme->gold_loan_setting,
-            'processing_fee' => '(static)',
-            'tenure' => $loan?->tenure_value . ' ' . $loan?->tenure_type,
-            'stamp_duty_fee' => $scheme->stamp_duty_charge,
-            'interest_rate' => $scheme->annual_interest_rate,
-            'insurance_charge' => $scheme->insurance_fee,
-            'emi_count' => '(static)',
-            'emi_payout' => $loan->emi_collection,
-            'loan_in_ratio' => '(static)',
-            'apr_rate' => '(static)'
+            'loan_no' => $loan->id,
 
+            'loan_amount' => number_format($loanAmount, 2),
+            'interest_type' => $interestType,
+            'processing_fee' => number_format($scheme->processing_fee ?? 0, 2),
+            'tenure' => $loan->tenure_value . ' ' . $loan->tenure_type,
+            'stamp_duty_fee' => number_format($scheme->stamp_duty_charge ?? 0, 2),
+            'interest_rate' => $annualRate,
+            'insurance_charge' => number_format($scheme->insurance_fee ?? 0, 2),
+            'emi_count' => $emiCount,
+            'emi_payout' => ucfirst($loan->emi_collection),
+            'loan_in_ratio' => $loan->loan_in_ratio ?? '',
+            'apr_rate' => $annualRate . '%',
         ];
 
+        /* ---------------- PAYOUT CHART ---------------- */
         $payoutCharts = [
-            'emi_date' => '12-12-2025(static)',
-            'emi_principle' => '2,449.00(static)',
-            'emi_interest' => '2,000.00(static)',
-            'per_emi_charges' => '0.00(static)',
-            'emi_amount' => '4,449.00(static)',
-            'balance_principle' => '197,551.00(static)',
-            'total_emi_principle' => '200,000.00(static)',
-            'total_emi_interest' => '66,940.00(static)',
-            'total_per_emi_charges' => '0.00(static)',
-            'total_emi_amount' => '266,940.00(static)',
+            'emi_date' => $emiDate->format('d-m-Y'),
+            'emi_principle' => number_format($principal, 2),
+            'emi_interest' => number_format($interest, 2),
+            'per_emi_charges' => number_format(0, 2),
+            'emi_amount' => number_format($emi, 2),
+            'balance_principle' => number_format(max($balance, 0), 2),
 
+            'total_emi_principle' => number_format($totalPrincipal, 2),
+            'total_emi_interest' => number_format($totalInterest, 2),
+            'total_per_emi_charges' => number_format($totalCharges, 2),
+            'total_emi_amount' => number_format($totalPrincipal + $totalInterest, 2),
         ];
 
-        $pdf = Pdf::loadView('gold-loan.gold-loan-pdf.gold-appli-payout-chart', $data, $payoutCharts)
-            ->setPaper('A4', 'portrait');
+        $pdf = Pdf::loadView(
+            'gold-loan.gold-loan-pdf.gold-appli-payout-chart',
+            array_merge($data, $payoutCharts, ['loan_no' => $loan->id])
+        )->setPaper('A4', 'portrait');
 
         return $pdf->download('payout_chart_gold_loan_application.pdf');
     }
-
-
-
 
     public function promisary_note_view(LoanApplication $loan)
     {
@@ -602,66 +876,132 @@ class GoldLoanPrintDocument extends Controller
         return $pdf->download('promissory-note.pdf');
     }
 
-     public function sanction_letter_view(LoanApplication $loan)
+    public function sanction_letter_view(LoanApplication $loan)
     {
-        $loan->load(relations: ['member', 'scheme', 'disbursement', 'branch', 'ornaments']);
+        $loan->load(['member', 'scheme', 'disbursement', 'branch', 'ornaments']);
 
         $statusText = match ($loan->status) {
             0 => 'DRAFT',
             1 => 'APPROVED',
             2 => 'DISBURSED',
             3 => 'CANCELLED',
+            default => 'UNKNOWN',
         };
+
         $scheme = $loan->scheme;
 
+        /* ---------------- BASIC INPUTS ---------------- */
+        $loanAmount   = $loan->approved_loan_amount ?? $loan->loan_amount;
+        $annualRate   = $scheme->annual_interest_rate ?? 12;
+        $interestType = $scheme->gold_loan_setting;
+
+        $tenureValue = (int) $loan->tenure_value;
+        $tenureType  = strtoupper($loan->tenure_type);
+
+        /* ---------------- TENURE CONVERSION ---------------- */
+        $tenureMonths = match ($tenureType) {
+            'MONTHS' => $tenureValue,
+            'WEEKS'  => round($tenureValue / 4, 2),
+            'DAYS'   => round($tenureValue / 30, 2),
+            default  => $tenureValue,
+        };
+
+        $emiCount = $tenureValue;
+
+        $monthlyRate = $annualRate / 12 / 100;
+
+        /* ---------------- DEFAULT VALUES ---------------- */
+        $emiAmount = 0;
+
+        /* ---------------- EMI / PAYOUT LOGIC ---------------- */
+        switch ($interestType) {
+
+            /* ========= REDUCING EMI (MONTHLY ONLY) ========= */
+            case 'reducing_emi':
+
+                if ($tenureType !== 'MONTHS') {
+                    throw new \Exception('Reducing EMI allowed only for MONTHS tenure');
+                }
+
+                $emiAmount = ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths))
+                    / (pow(1 + $monthlyRate, $tenureMonths) - 1);
+
+                $emiAmount = round($emiAmount, 2);
+                break;
+
+            /* ========= FLAT EMI ========= */
+            case 'flat_emi':
+
+                $totalInterest = $loanAmount * ($annualRate / 100) * ($tenureMonths / 12);
+                $emiAmount = round(($loanAmount + $totalInterest) / $tenureMonths, 2);
+                break;
+
+            /* ========= FLAT ADVANCED INTEREST ========= */
+            case 'flat_advanced_interest':
+
+                // EMI is principal-only
+                $emiAmount = round($loanAmount / $tenureMonths, 2);
+                break;
+
+            /* ========= NO EMI ========= */
+            case 'no_emi':
+
+                // Interest-only collection
+                $emiAmount = match ($tenureType) {
+                    'MONTHS' => round($loanAmount * ($annualRate / 100) / 12, 2),
+                    'WEEKS'  => round($loanAmount * ($annualRate / 100) / 52, 2),
+                    'DAYS'   => round($loanAmount * ($annualRate / 100) / 365, 2),
+                };
+                break;
+        }
+
+        /* ---------------- SANCTION LETTER DATA ---------------- */
         $data = [
             'bank_name' => '',
             'printed_on' => date('d-m-Y'),
             'branch' => $loan->branch->branch_name ?? '',
-            'member_name' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
+
+            'member_name' => ($loan->member->member_info_title ?? '') . '. ' .
+                ($loan->member->member_info_first_name ?? '') . ' ' .
+                ($loan->member->member_info_last_name ?? ''),
+
             'bank_details' => '',
             'member_no' => str_pad($loan->member_id, 6, '0', STR_PAD_LEFT),
             'father_husband' => '',
-            'contact_no' => $loan->member->member_info_mobile_no,
+            'contact_no' => $loan->member->member_info_mobile_no ?? '',
             'address' => '',
+
             'application_no' => str_pad($loan->id, 10, '0', STR_PAD_LEFT),
             'application_date' => $loan->application_date
                 ? Carbon::parse($loan->application_date)->format('d-m-Y')
                 : '',
-            'application_status' => $statusText,
-             'loan_id'=>$loan->id,
-            'loan_no' => str_pad($loan->id, 10, '0', STR_PAD_LEFT),
-            'nature_of_loan' => 'Gold Loan',
-            'loan_scheme' => $scheme->scheme_name,
-            'loan_amount' => $loan?->approved_loan_amount,
-            'tenure_of_loan' => $loan?->tenure_value . ' ' . $loan?->tenure_type,
-            'interest_type' => $scheme->gold_loan_setting,
-            'annual_interset_rate' => $scheme->annual_interest_rate,
-            'emi_payout' => $loan->emi_collection,
-            'emi_amt' => '',
-            'no_of_emis' => '',
-            'credit_grace_period' => $loan->credit_period,
-            'processing_fee' => '(static)',
-            'stamp_duty' => $scheme->stamp_duty_charge,
-            'insurance_fee' => $scheme->insurance_fee,
-            'emi_amount' => '4,449.00',
 
-            // Security Deposits
-           'ornaments' => $loan->ornaments,
-            // 'sec_name' => 'Coin',
-            // 'qty' => '5',
-            // 'val_gm' => '4,000.00',
-            // 'gross_weight_gm' => '50.0',
-            // 'net_weight_gm' => '50.0',
-            // 'tunch' => '100.0',
-            // 'fine_weight_gm' => '50',
-            // 'total_val' => '2000000',
-            // 'image' => '',
-            // 'status' => 'Mortgage'
+            'application_status' => $statusText,
+            'loan_id' => $loan->id,
+            'loan_no' => str_pad($loan->id, 10, '0', STR_PAD_LEFT),
+
+            'nature_of_loan' => 'Gold Loan',
+            'loan_scheme' => $scheme->scheme_name ?? '',
+            'loan_amount' => number_format($loanAmount, 2),
+
+            'tenure_of_loan' => $loan->tenure_value . ' ' . $loan->tenure_type,
+            'interest_type' => $interestType,
+            'annual_interset_rate' => $annualRate,
+
+            'emi_payout' => ucfirst($loan->emi_collection),
+            'emi_amt' => number_format($emiAmount, 2),
+            'no_of_emis' => $emiCount,
+
+            'credit_grace_period' => $loan->credit_period,
+            'processing_fee' => number_format($loan->processing_fee_total ?? 0, 2),
+            'stamp_duty' => number_format($scheme->stamp_duty_charge ?? 0, 2),
+            'insurance_fee' => number_format($scheme->insurance_fee ?? 0, 2),
+
+            // Security
+            'ornaments' => $loan->ornaments,
         ];
 
-      
-        return view('gold-loan.gold-loan-pdf.gold-appli-sanction-letter-view', $data) ;
+        return view('gold-loan.gold-loan-pdf.gold-appli-sanction-letter-view', $data);
     }
     public function sanction_letter(LoanApplication $loan)
     {
@@ -690,7 +1030,7 @@ class GoldLoanPrintDocument extends Controller
                 ? Carbon::parse($loan->application_date)->format('d-m-Y')
                 : '',
             'application_status' => $statusText,
-             'loan_id'=>$loan->id,
+            'loan_id' => $loan->id,
             'loan_no' => str_pad($loan->id, 10, '0', STR_PAD_LEFT),
             'nature_of_loan' => 'Gold Loan',
             'loan_scheme' => $scheme->scheme_name,
@@ -708,7 +1048,7 @@ class GoldLoanPrintDocument extends Controller
             'emi_amount' => '4,449.00',
 
             // Security Deposits
-           'ornaments' => $loan->ornaments,
+            'ornaments' => $loan->ornaments,
             // 'sec_name' => 'Coin',
             // 'qty' => '5',
             // 'val_gm' => '4,000.00',
@@ -728,5 +1068,4 @@ class GoldLoanPrintDocument extends Controller
         // OR download
         // return $pdf->download('Gold_Loan_Sanction_Letter.pdf');
     }
-
 }

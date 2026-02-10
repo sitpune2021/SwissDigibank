@@ -249,7 +249,7 @@
                         Other conditions
                     </td>
                     <td  class="value" style="font-size: 14px !important;">:
-                        MONTHLY installments (EMI) from the date of disbursal. Borrower
+                         {{$emi_payout}} installments (EMI) from the date of disbursal. Borrower
                         will execute the documents as per norms of the company all other
                         charges and penalties as mentioned in the application document
                     </td>
