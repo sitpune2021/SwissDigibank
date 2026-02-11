@@ -133,6 +133,9 @@ Route::middleware('auth.user')->group(function () {
     Route::group(['prefix' => 'company'], function () {
         Route::resource('company', CompanyController::class);
         Route::resource('branch', BranchController::class);
+       Route::post('/branch/toggle-status', [BranchController::class, 'toggleStatus'])
+    ->name('branch.toggle.status');
+
         Route::get('/ajax/branches/search', [BranchController::class, 'search'])->name('ajax.branches.search');
         Route::resource('promotor', PromotorController::class);
         Route::get('/promotor/{id}/address', [PromotorController::class, 'addressedit'])->name('promotor.address');
@@ -2658,6 +2661,9 @@ Route::resource('collection-centers', CollectionCenterController::class);
 Route::resource('groups', GroupController::class);
 
 Route::get('/branches-by-center/{centerId}', [GroupController::class, 'getBranches']);
+
+
+
 // Route::get('/commnets/view', [GroupCommentController::class, 'view'])->name('commnet.view');
 
 Route::get('groups/{group}/comments', [GroupCommentController::class, 'index'])

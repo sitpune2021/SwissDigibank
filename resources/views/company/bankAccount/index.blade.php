@@ -40,13 +40,13 @@
                         </th>
 
                         <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                            <div class="flex uppercase items-center gap-1">
+                            <div class="flex uppercase items-start gap-1">
                                 OPEN DATE
                             </div>
                         </th>
 
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex uppercase items-center gap-1">
+                            <div class="flex uppercase px-5 items-center gap-1">
                                 ACTIVE
                             </div>
                         </th>
@@ -65,20 +65,24 @@
                                 {{ $item->bank->name ?? 'N/A' }}
                             </td>
 
-                            <td class="py-3 px-6 text-center">
-                                {{ $item->bank->name ?? '' }}
+                            <td class="py-3 px-6 text-start">
+                               <span class="px-2">
+                                 {{ $item->bank->name ?? '' }}
+                               </span>
                             </td>
 
-                            <td class="py-3 px-6 text-center">
+                            <td class="py-3 px-6 text-start">
                                 {{ $item->account_no }}
                             </td>
 
 
-                            <td class="py-3 px-6">
-                                {{ \Carbon\Carbon::parse($item->account_open_date)->format('d-m-Y') }}
+                            <td class="py-3  text-start">
+                               <span class="px-6">
+                                 {{ \Carbon\Carbon::parse($item->account_open_date)->format('d-m-Y') }}
+                               </span>
                             </td>
 
-                            <td class="py-3 px-6">
+                            <td class="py-3 px-6 text-center">
                                 @if ($item->account_active)
                                     <span
                                         class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3">

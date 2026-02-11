@@ -51,8 +51,10 @@ class BranchController extends Controller
             $perPage = $request->input('perPage', 25);
 
             $query = Branch::with(['State'])
-                ->where('active', 'Yes')
-                ->orderBy('created_at', 'desc');
+        ->orderBy('created_at', 'desc');
+            // $query = Branch::with(['State'])
+            //     ->where('active', 'Yes')
+            //     ->orderBy('created_at', 'desc');
 
             if ($request->has('search')) {
                 $search = $request->input('search');
@@ -334,4 +336,20 @@ class BranchController extends Controller
             ];
         }));
     }
+
+
+ 
+
+public function toggleStatus(Request $request)
+{
+    $branch = Branch::findOrFail($request->id);
+
+    $branch->active = $branch->active === 'Yes' ? 'No' : 'Yes';
+    $branch->save();
+
+    return response()->json(['success' => true]);
+}
+
+
+
 }

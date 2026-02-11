@@ -113,6 +113,8 @@
                                  {{ old('center_head') == 'member_' . $member->id || (isset($center) && $center->center_head_member_id == $member->id) ? 'selected' : '' }}>
 
                              {{ $member->member_info_first_name }}
+                              {{ $member->member_info_middle_name }}
+                                  {{ $member->member_info_last_name }}
 
                             </option>
                                 @endforeach
@@ -143,7 +145,9 @@
                                 @foreach($members as $member)
                                     <option value="member_{{ $member->id }}"
                                 {{ old('center_cashier') == 'member_' . $member->id || (isset($center) && $center->center_cashier_member_id == $member->id) ? 'selected' : '' }}>
-                                        {{ $member->member_info_first_name }}
+                                       {{ $member->member_info_first_name }}
+                              {{ $member->member_info_middle_name }}
+                                  {{ $member->member_info_last_name }}
                                     </option>
                                 @endforeach
                             </optgroup>
