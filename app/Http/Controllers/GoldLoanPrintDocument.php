@@ -510,136 +510,45 @@ class GoldLoanPrintDocument extends Controller
 
     public function payout_chart_gold_appli_view(LoanApplication $loan)
     {
-        
-        $loan->load(['member', 'scheme', 'disbursement']);
+ $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
-
-        $statusText = match ($loan->status) {
-            0 => 'DRAFT',
-            1 => 'APPROVED',
-            2 => 'DISBURSED',
-            3 => 'CANCELLED',
-            default => 'UNKNOWN',
-        };
 
         /* ---------------- BASIC INPUTS ---------------- */
         $loanAmount   = $loan->approved_loan_amount ?? $loan->loan_amount;
         $annualRate   = $scheme->annual_interest_rate ?? 12;
-        $interestType = $scheme->gold_loan_setting; // reducing_emi | flat_emi | flat_advanced_interest | no_emi
+        $interestType = $scheme->gold_loan_setting;
 
         $tenureValue = (int) $loan->tenure_value;
         $tenureType  = strtoupper($loan->tenure_type);
+        $emiCollection = strtolower($loan->emi_collection);
 
-        /* ---------------- TENURE CONVERSION ---------------- */
-        $tenureMonths = match ($tenureType) {
-            'MONTHS' => $tenureValue,
-            'WEEKS'  => round($tenureValue / 4, 2),
-            'DAYS'   => round($tenureValue / 30, 2),
-            default  => $tenureValue,
+        /* ---------------- TIME IN YEARS ---------------- */
+        $timeInYears = match ($tenureType) {
+            'WEEKS'  => $tenureValue / 52,
+            'DAYS'   => $tenureValue / 365,
+            'MONTHS' => $tenureValue / 12,
+            default  => $tenureValue / 12,
         };
 
-        $emiCount = $tenureValue; // ✔ used as-is in view
-
-        $monthlyRate = $annualRate / 12 / 100;
-
-        /* ---------------- EMI DATE ---------------- */
-        $emiDate = match ($tenureType) {
-            'MONTHS' => Carbon::parse($loan->application_date)->addMonth(),
-            'WEEKS'  => Carbon::parse($loan->application_date)->addWeek(),
-            'DAYS'   => Carbon::parse($loan->application_date)->addDay(),
+        /* ---------------- EMI COUNT BASED ON COLLECTION ---------------- */
+        $emiCount = match ($emiCollection) {
+            'daily'      => $tenureType === 'DAYS'   ? $tenureValue : ceil($tenureValue * 30),
+            'weekly'     => $tenureType === 'WEEKS'  ? $tenureValue : ceil($tenureValue * 4),
+            'bi_weekly'  => ceil(($tenureType === 'WEEKS' ? $tenureValue : $tenureValue * 4) / 2),
+            '4_weekly'   => ceil(($tenureType === 'WEEKS' ? $tenureValue : $tenureValue * 4) / 4),
+            'monthly'    => $tenureType === 'MONTHS' ? $tenureValue : ceil($tenureValue / 4),
+            'quarterly'  => ceil($tenureValue / 3),
+            'half_yearly' => ceil($tenureValue / 6),
+            'yearly'     => ceil($tenureValue / 12),
+            default      => $tenureValue,
         };
-
-        /* ---------------- DEFAULT VALUES ---------------- */
-        $emi = 0;
-        $interest = 0;
-        $principal = 0;
-        $balance = $loanAmount;
-
-        $totalPrincipal = 0;
-        $totalInterest  = 0;
-        $totalCharges   = 0;
-
-        /* ---------------- INTEREST TYPE LOGIC ---------------- */
-        switch ($interestType) {
-
-            /* ========= REDUCING EMI (MONTHLY ONLY) ========= */
-            case 'reducing_emi':
-
-                if ($tenureType !== 'MONTHS') {
-                    throw new \Exception('Reducing EMI allowed only for MONTHS tenure');
-                }
-
-                $emi = ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths))
-                    / (pow(1 + $monthlyRate, $tenureMonths) - 1);
-                $emi = round($emi, 2);
-
-                $interest  = round($balance * $monthlyRate, 2);
-                $principal = round($emi - $interest, 2);
-                $balance   = round($balance - $principal, 2);
-
-                // totals
-                $totalInterest  = round(($emi * $tenureMonths) - $loanAmount, 2);
-                $totalPrincipal = $loanAmount;
-                break;
-
-            /* ========= FLAT EMI ========= */
-            case 'flat_emi':
-
-                $totalInterest = round(
-                    $loanAmount * ($annualRate / 100) * ($tenureMonths / 12),
-                    2
-                );
-
-                $emi = round(($loanAmount + $totalInterest) / $tenureMonths, 2);
-
-                $principal = round($loanAmount / $tenureMonths, 2);
-                $interest  = round($totalInterest / $tenureMonths, 2);
-                $balance   = round($loanAmount - $principal, 2);
-
-                $totalPrincipal = $loanAmount;
-                break;
-
-            /* ========= FLAT ADVANCED INTEREST ========= */
-            case 'flat_advanced_interest':
-
-                $totalInterest = round(
-                    $loanAmount * ($annualRate / 100) * ($tenureMonths / 12),
-                    2
-                );
-
-                // interest deducted upfront
-                $emi = round($loanAmount / $tenureMonths, 2);
-                $principal = $emi;
-                $interest  = 0;
-                $balance   = round($loanAmount - $principal, 2);
-
-                $totalPrincipal = $loanAmount;
-                break;
-
-            /* ========= NO EMI ========= */
-            case 'no_emi':
-
-                $interest = match ($tenureType) {
-                    'MONTHS' => round($loanAmount * ($annualRate / 100) / 12, 2),
-                    'WEEKS'  => round($loanAmount * ($annualRate / 100) / 52, 2),
-                    'DAYS'   => round($loanAmount * ($annualRate / 100) / 365, 2),
-                };
-
-                $emi = $interest; // interest-only cycle
-                $principal = 0;
-                $balance = $loanAmount;
-
-                $totalInterest = round($interest * $emiCount, 2);
-                $totalPrincipal = $loanAmount;
-                break;
-        }
 
         /* ---------------- PAYOUT SUMMARY DATA ---------------- */
         $data = [
             'printed_on' => now()->format('d-m-Y'),
             'disburse_date' => optional($loan->disbursement?->disbursal_date)
-                    ? \Carbon\Carbon::parse($loan->disbursement->disbursal_date)->format('d-m-Y')
-                    : '',
+                ? \Carbon\Carbon::parse($loan->disbursement->disbursal_date)->format('d-m-Y')
+                : '',
             'loan_no' => $loan->id,
 
             'loan_amount' => number_format($loanAmount, 2),
@@ -655,38 +564,131 @@ class GoldLoanPrintDocument extends Controller
             'apr_rate' => $annualRate . '%',
         ];
 
-        /* ---------------- EMI SCHEDULE ---------------- */
+        /* ---------------- FLAT INTEREST CALCULATION (CORRECT) ---------------- */
+        $totalInterest = 0;
+        $emi = 0;
+
+        if ($interestType === 'flat_emi' || $interestType === 'flat_advanced_interest') {
+
+            $totalInterest = round($loanAmount * ($annualRate / 100) * $timeInYears, 2);
+
+            $emi = round(
+                ($interestType === 'flat_emi'
+                    ? ($loanAmount + $totalInterest)
+                    : $loanAmount
+                ) / $emiCount,
+                2
+            );
+        }
+
+        /* ---------------- REDUCING EMI ---------------- */
+        if ($interestType === 'reducing_emi') {
+
+            if ($tenureType !== 'MONTHS') {
+                throw new \Exception('Reducing EMI allowed only for MONTHS tenure');
+            }
+
+            $monthlyRate = $annualRate / 12 / 100;
+
+            $emi = ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureValue))
+                / (pow(1 + $monthlyRate, $tenureValue) - 1);
+
+            $emi = round($emi, 2);
+        }
+
+        /* ---------------- EMI DATE START ---------------- */
+        $emiDateCursor = match ($tenureType) {
+            'MONTHS' => Carbon::parse($loan->application_date)->addMonth(),
+            'WEEKS'  => Carbon::parse($loan->application_date)->addWeek(),
+            'DAYS'   => Carbon::parse($loan->application_date)->addDay(),
+        };
+
+        /* ---------------- SCHEDULE ---------------- */
+        $balance = $loanAmount;
+        $totalPrincipal = 0;
         $payoutSchedule = [];
 
-        $balance = $loanAmount;
-        $emiDateCursor = clone $emiDate;
+        $totalCharges = 0;
+
+        $chargeRate = $scheme->charge_percent ?? 0;   // your DB column
+        $chargeType = $scheme->charge_per_emi ?? 0;   // 0 = ON PRINCIPAL, 1 = ON EMI
 
         for ($i = 1; $i <= $emiCount; $i++) {
 
-            $interest  = round($balance * $monthlyRate, 2);
-            $principal = round($emi - $interest, 2);
+            if ($interestType === 'reducing_emi') {
+                $interest = round($balance * ($annualRate / 12 / 100), 2);
+                $principal = round($emi - $interest, 2);
+            } elseif ($interestType === 'flat_emi') {
+                $principal = round($loanAmount / $emiCount, 2);
+                $interest  = round($totalInterest / $emiCount, 2);
+            } elseif ($interestType === 'flat_advanced_interest') {
+                $principal = round($loanAmount / $emiCount, 2);
+                $interest  = 0;
+            } elseif ($interestType === 'no_emi') {
+                $interest = round($loanAmount * ($annualRate / 100) * $timeInYears / $emiCount, 2);
+                $principal = 0;
+            }
 
-            // last EMI adjustment
             if ($i === $emiCount) {
                 $principal = $balance;
-                $emi = round($principal + $interest, 2);
             }
 
             $balance = round($balance - $principal, 2);
+
+            $totalPrincipal += $principal;
+
+            $charge = 0;
+
+            if ($chargeRate > 0) {
+
+                if ($chargeType == 0) {
+                    // ON PRINCIPAL
+                    $charge = round($balance * ($chargeRate / 100), 2);
+                } else {
+                    // ON EMI
+                    $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
+                }
+            }
+
+            $totalCharges += $charge;
 
             $payoutSchedule[] = [
                 'emi_no' => $i,
                 'emi_date' => $emiDateCursor->format('d-M-y'),
                 'emi_principle' => number_format($principal, 2),
                 'emi_interest' => number_format($interest, 2),
-                'per_emi_charges' => number_format(0, 2),
-                'emi_amount' => number_format($emi, 2),
+                'per_emi_charges' => number_format($charge, 2),
+                'emi_amount' => number_format($principal + $interest + $charge, 2),
                 'balance_principle' => number_format(max($balance, 0), 2),
             ];
 
-            // move date forward
-            $emiDateCursor->addMonth();
+            /* ----- DATE INCREMENT ----- */
+            match ($emiCollection) {
+                'daily'      => $emiDateCursor->addDay(),
+                'weekly'     => $emiDateCursor->addWeek(),
+                'bi_weekly'  => $emiDateCursor->addWeeks(2),
+                '4_weekly'   => $emiDateCursor->addWeeks(4),
+                'monthly'    => $emiDateCursor->addMonth(),
+                'quarterly'  => $emiDateCursor->addMonths(3),
+                'half_yearly' => $emiDateCursor->addMonths(6),
+                'yearly'     => $emiDateCursor->addYear(),
+                default      => $emiDateCursor->addMonth(),
+            };
         }
+        $charge = 0;
+
+        if ($chargeRate > 0) {
+
+            if ($chargeType == 0) {
+                // ON PRINCIPAL
+                $charge = round($balance * ($chargeRate / 100), 2);
+            } else {
+                // ON EMI
+                $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
+            }
+        }
+
+        $totalCharges += $charge;
 
         return view(
             'gold-loan.gold-loan-pdf.gold-appli-payout-chart-view',
@@ -694,145 +696,55 @@ class GoldLoanPrintDocument extends Controller
                 ...$data,
                 'loan_no' => $loan->id,
                 'payoutSchedule'   => $payoutSchedule,
-                'total_emi_principle'      => number_format($totalPrincipal, 2),
-                'total_emi_interest'       => number_format($totalInterest, 2),
-                'total_per_emi_charges'    => number_format($totalCharges, 2),
-                'total_emi_amount'         => number_format($totalPrincipal + $totalInterest, 2),
+                'total_emi_principle' => number_format($principal, 2),
+                'total_emi_interest' => number_format($interest, 2),
+                'total_per_emi_charges' => number_format($charge, 2),
+                'total_emi_amount' => number_format($principal + $interest + $charge, 2),
             ]
         );
     }
 
     public function payout_chart_gold_appli(LoanApplication $loan)
     {
-        $loan->load(['member', 'scheme', 'disbursement']);
+ $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
-
-        $statusText = match ($loan->status) {
-            0 => 'DRAFT',
-            1 => 'APPROVED',
-            2 => 'DISBURSED',
-            3 => 'CANCELLED',
-            default => 'UNKNOWN',
-        };
 
         /* ---------------- BASIC INPUTS ---------------- */
         $loanAmount   = $loan->approved_loan_amount ?? $loan->loan_amount;
         $annualRate   = $scheme->annual_interest_rate ?? 12;
-        $interestType = $scheme->gold_loan_setting; // reducing_emi | flat_emi | flat_advanced_interest | no_emi
+        $interestType = $scheme->gold_loan_setting;
 
         $tenureValue = (int) $loan->tenure_value;
         $tenureType  = strtoupper($loan->tenure_type);
+        $emiCollection = strtolower($loan->emi_collection);
 
-        /* ---------------- TENURE CONVERSION ---------------- */
-        $tenureMonths = match ($tenureType) {
-            'MONTHS' => $tenureValue,
-            'WEEKS'  => round($tenureValue / 4, 2),
-            'DAYS'   => round($tenureValue / 30, 2),
-            default  => $tenureValue,
+        /* ---------------- TIME IN YEARS ---------------- */
+        $timeInYears = match ($tenureType) {
+            'WEEKS'  => $tenureValue / 52,
+            'DAYS'   => $tenureValue / 365,
+            'MONTHS' => $tenureValue / 12,
+            default  => $tenureValue / 12,
         };
 
-        $emiCount = $tenureValue; // ✔ used as-is in view
-
-        $monthlyRate = $annualRate / 12 / 100;
-
-        /* ---------------- EMI DATE ---------------- */
-        $emiDate = match ($tenureType) {
-            'MONTHS' => Carbon::parse($loan->application_date)->addMonth(),
-            'WEEKS'  => Carbon::parse($loan->application_date)->addWeek(),
-            'DAYS'   => Carbon::parse($loan->application_date)->addDay(),
+        /* ---------------- EMI COUNT BASED ON COLLECTION ---------------- */
+        $emiCount = match ($emiCollection) {
+            'daily'      => $tenureType === 'DAYS'   ? $tenureValue : ceil($tenureValue * 30),
+            'weekly'     => $tenureType === 'WEEKS'  ? $tenureValue : ceil($tenureValue * 4),
+            'bi_weekly'  => ceil(($tenureType === 'WEEKS' ? $tenureValue : $tenureValue * 4) / 2),
+            '4_weekly'   => ceil(($tenureType === 'WEEKS' ? $tenureValue : $tenureValue * 4) / 4),
+            'monthly'    => $tenureType === 'MONTHS' ? $tenureValue : ceil($tenureValue / 4),
+            'quarterly'  => ceil($tenureValue / 3),
+            'half_yearly' => ceil($tenureValue / 6),
+            'yearly'     => ceil($tenureValue / 12),
+            default      => $tenureValue,
         };
-
-        /* ---------------- DEFAULT VALUES ---------------- */
-        $emi = 0;
-        $interest = 0;
-        $principal = 0;
-        $balance = $loanAmount;
-
-        $totalPrincipal = 0;
-        $totalInterest  = 0;
-        $totalCharges   = 0;
-
-        /* ---------------- INTEREST TYPE LOGIC ---------------- */
-        switch ($interestType) {
-
-            /* ========= REDUCING EMI (MONTHLY ONLY) ========= */
-            case 'reducing_emi':
-
-                if ($tenureType !== 'MONTHS') {
-                    throw new \Exception('Reducing EMI allowed only for MONTHS tenure');
-                }
-
-                $emi = ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths))
-                    / (pow(1 + $monthlyRate, $tenureMonths) - 1);
-                $emi = round($emi, 2);
-
-                $interest  = round($balance * $monthlyRate, 2);
-                $principal = round($emi - $interest, 2);
-                $balance   = round($balance - $principal, 2);
-
-                // totals
-                $totalInterest  = round(($emi * $tenureMonths) - $loanAmount, 2);
-                $totalPrincipal = $loanAmount;
-                break;
-
-            /* ========= FLAT EMI ========= */
-            case 'flat_emi':
-
-                $totalInterest = round(
-                    $loanAmount * ($annualRate / 100) * ($tenureMonths / 12),
-                    2
-                );
-
-                $emi = round(($loanAmount + $totalInterest) / $tenureMonths, 2);
-
-                $principal = round($loanAmount / $tenureMonths, 2);
-                $interest  = round($totalInterest / $tenureMonths, 2);
-                $balance   = round($loanAmount - $principal, 2);
-
-                $totalPrincipal = $loanAmount;
-                break;
-
-            /* ========= FLAT ADVANCED INTEREST ========= */
-            case 'flat_advanced_interest':
-
-                $totalInterest = round(
-                    $loanAmount * ($annualRate / 100) * ($tenureMonths / 12),
-                    2
-                );
-
-                // interest deducted upfront
-                $emi = round($loanAmount / $tenureMonths, 2);
-                $principal = $emi;
-                $interest  = 0;
-                $balance   = round($loanAmount - $principal, 2);
-
-                $totalPrincipal = $loanAmount;
-                break;
-
-            /* ========= NO EMI ========= */
-            case 'no_emi':
-
-                $interest = match ($tenureType) {
-                    'MONTHS' => round($loanAmount * ($annualRate / 100) / 12, 2),
-                    'WEEKS'  => round($loanAmount * ($annualRate / 100) / 52, 2),
-                    'DAYS'   => round($loanAmount * ($annualRate / 100) / 365, 2),
-                };
-
-                $emi = $interest; // interest-only cycle
-                $principal = 0;
-                $balance = $loanAmount;
-
-                $totalInterest = round($interest * $emiCount, 2);
-                $totalPrincipal = $loanAmount;
-                break;
-        }
 
         /* ---------------- PAYOUT SUMMARY DATA ---------------- */
         $data = [
             'printed_on' => now()->format('d-m-Y'),
             'disburse_date' => optional($loan->disbursement?->disbursal_date)
-                    ? \Carbon\Carbon::parse($loan->disbursement->disbursal_date)->format('d-m-Y')
-                    : '',
+                ? \Carbon\Carbon::parse($loan->disbursement->disbursal_date)->format('d-m-Y')
+                : '',
             'loan_no' => $loan->id,
 
             'loan_amount' => number_format($loanAmount, 2),
@@ -848,38 +760,131 @@ class GoldLoanPrintDocument extends Controller
             'apr_rate' => $annualRate . '%',
         ];
 
-        /* ---------------- EMI SCHEDULE ---------------- */
+        /* ---------------- FLAT INTEREST CALCULATION (CORRECT) ---------------- */
+        $totalInterest = 0;
+        $emi = 0;
+
+        if ($interestType === 'flat_emi' || $interestType === 'flat_advanced_interest') {
+
+            $totalInterest = round($loanAmount * ($annualRate / 100) * $timeInYears, 2);
+
+            $emi = round(
+                ($interestType === 'flat_emi'
+                    ? ($loanAmount + $totalInterest)
+                    : $loanAmount
+                ) / $emiCount,
+                2
+            );
+        }
+
+        /* ---------------- REDUCING EMI ---------------- */
+        if ($interestType === 'reducing_emi') {
+
+            if ($tenureType !== 'MONTHS') {
+                throw new \Exception('Reducing EMI allowed only for MONTHS tenure');
+            }
+
+            $monthlyRate = $annualRate / 12 / 100;
+
+            $emi = ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureValue))
+                / (pow(1 + $monthlyRate, $tenureValue) - 1);
+
+            $emi = round($emi, 2);
+        }
+
+        /* ---------------- EMI DATE START ---------------- */
+        $emiDateCursor = match ($tenureType) {
+            'MONTHS' => Carbon::parse($loan->application_date)->addMonth(),
+            'WEEKS'  => Carbon::parse($loan->application_date)->addWeek(),
+            'DAYS'   => Carbon::parse($loan->application_date)->addDay(),
+        };
+
+        /* ---------------- SCHEDULE ---------------- */
+        $balance = $loanAmount;
+        $totalPrincipal = 0;
         $payoutSchedule = [];
 
-        $balance = $loanAmount;
-        $emiDateCursor = clone $emiDate;
+        $totalCharges = 0;
+
+        $chargeRate = $scheme->charge_percent ?? 0;   // your DB column
+        $chargeType = $scheme->charge_per_emi ?? 0;   // 0 = ON PRINCIPAL, 1 = ON EMI
 
         for ($i = 1; $i <= $emiCount; $i++) {
 
-            $interest  = round($balance * $monthlyRate, 2);
-            $principal = round($emi - $interest, 2);
+            if ($interestType === 'reducing_emi') {
+                $interest = round($balance * ($annualRate / 12 / 100), 2);
+                $principal = round($emi - $interest, 2);
+            } elseif ($interestType === 'flat_emi') {
+                $principal = round($loanAmount / $emiCount, 2);
+                $interest  = round($totalInterest / $emiCount, 2);
+            } elseif ($interestType === 'flat_advanced_interest') {
+                $principal = round($loanAmount / $emiCount, 2);
+                $interest  = 0;
+            } elseif ($interestType === 'no_emi') {
+                $interest = round($loanAmount * ($annualRate / 100) * $timeInYears / $emiCount, 2);
+                $principal = 0;
+            }
 
-            // last EMI adjustment
             if ($i === $emiCount) {
                 $principal = $balance;
-                $emi = round($principal + $interest, 2);
             }
 
             $balance = round($balance - $principal, 2);
+
+            $totalPrincipal += $principal;
+
+            $charge = 0;
+
+            if ($chargeRate > 0) {
+
+                if ($chargeType == 0) {
+                    // ON PRINCIPAL
+                    $charge = round($balance * ($chargeRate / 100), 2);
+                } else {
+                    // ON EMI
+                    $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
+                }
+            }
+
+            $totalCharges += $charge;
 
             $payoutSchedule[] = [
                 'emi_no' => $i,
                 'emi_date' => $emiDateCursor->format('d-M-y'),
                 'emi_principle' => number_format($principal, 2),
                 'emi_interest' => number_format($interest, 2),
-                'per_emi_charges' => number_format(0, 2),
-                'emi_amount' => number_format($emi, 2),
+                'per_emi_charges' => number_format($charge, 2),
+                'emi_amount' => number_format($principal + $interest + $charge, 2),
                 'balance_principle' => number_format(max($balance, 0), 2),
             ];
 
-            // move date forward
-            $emiDateCursor->addMonth();
+            /* ----- DATE INCREMENT ----- */
+            match ($emiCollection) {
+                'daily'      => $emiDateCursor->addDay(),
+                'weekly'     => $emiDateCursor->addWeek(),
+                'bi_weekly'  => $emiDateCursor->addWeeks(2),
+                '4_weekly'   => $emiDateCursor->addWeeks(4),
+                'monthly'    => $emiDateCursor->addMonth(),
+                'quarterly'  => $emiDateCursor->addMonths(3),
+                'half_yearly' => $emiDateCursor->addMonths(6),
+                'yearly'     => $emiDateCursor->addYear(),
+                default      => $emiDateCursor->addMonth(),
+            };
         }
+        $charge = 0;
+
+        if ($chargeRate > 0) {
+
+            if ($chargeType == 0) {
+                // ON PRINCIPAL
+                $charge = round($balance * ($chargeRate / 100), 2);
+            } else {
+                // ON EMI
+                $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
+            }
+        }
+
+        $totalCharges += $charge;
 
         $pdf = Pdf::loadView(
             'gold-loan.gold-loan-pdf.gold-appli-payout-chart',
@@ -887,10 +892,10 @@ class GoldLoanPrintDocument extends Controller
                 ...$data,
                 'loan_no' => $loan->id,
                 'payoutSchedule'   => $payoutSchedule,
-                'total_emi_principle'      => number_format($totalPrincipal, 2),
-                'total_emi_interest'       => number_format($totalInterest, 2),
-                'total_per_emi_charges'    => number_format($totalCharges, 2),
-                'total_emi_amount'         => number_format($totalPrincipal + $totalInterest, 2),
+                'total_emi_principle' => number_format($principal, 2),
+                'total_emi_interest' => number_format($interest, 2),
+                'total_per_emi_charges' => number_format($charge, 2),
+                'total_emi_amount' => number_format($principal + $interest + $charge, 2),
             ]
         )->setPaper('A4', 'portrait');
 

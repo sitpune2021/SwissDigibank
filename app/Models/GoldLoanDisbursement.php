@@ -27,7 +27,8 @@ class GoldLoanDisbursement extends Model
         'insurance_fee',
         'advance_interest',
         'final_amount',
-
+        'stamp_duty_total',
+        'insurance_total',
         // disbursement modes
         'disburse_mode1',
         'payment_mode1',
@@ -48,5 +49,13 @@ class GoldLoanDisbursement extends Model
         'utr_no2',
         'transfer_mode2',
         'saving_acc2',
+        'processing_fee_mode',
+        'p_bank_id',
+        'p_cheque_no',
+        'p_cheque_date',
+        'p_transfer_date',
+        'p_utr_no',
+        'p_transfer_mode',
+        'processing_credited_account',
     ];
 }

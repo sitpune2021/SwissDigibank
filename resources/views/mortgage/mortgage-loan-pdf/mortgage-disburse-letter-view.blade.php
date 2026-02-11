@@ -82,13 +82,12 @@
         </div>
     </div>
     <div class="text-center flex justify-center gap-5 mt-4">
-        <a href="{{ route('loan.disburse_letter.pdf', $loan_no) }} " class="px-4 py-2 btn-primary uppercase"
+        <a href="{{ route('mortgage_loan.disburse_letter.pdf', $loan_no) }} " class="px-4 py-2 btn-primary uppercase"
             style="font-family: sans-serif !important; " target="_blank">
             <i class="las la-download"></i> Download
         </a>
-        <a href="
- {{ route('gold-loan.applications.view', $loan_no) }}
-  " class="px-4 py-2 btn-outline uppercase" style="font-family: sans-serif !important; " target="_self">
+        <a href="{{ route('mortgage.applications.view', $loan_no) }}"
+            class="px-4 py-2 btn-outline uppercase" style="font-family: sans-serif !important; " target="_self">
             BACK
         </a>
     </div>
@@ -128,7 +127,7 @@
             <div class="subject" style="font-size: 14px;">
                 This is with regard to the sanction of
                 {{ str_pad( $loan_no, 10, '0', STR_PAD_LEFT) }}
-                ( Gold Loan - {{ str_pad( $loan_no, 10, '0', STR_PAD_LEFT) }} ) of
+                ( Mortgage/ Property Loan - {{ str_pad( $loan_no, 10, '0', STR_PAD_LEFT) }} ) of
                 ₹ {{ number_format($loan_amount, 2) }}
                 by your Company, I
                 request you to disburse the loan proceeds by way of

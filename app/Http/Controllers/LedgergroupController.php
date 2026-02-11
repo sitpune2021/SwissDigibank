@@ -11,17 +11,11 @@ use App\Models\Ledger;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-
+use Carbon\Carbon;
 
 class LedgergroupController extends Controller
 {
     
-
-    /*
-        |--------------------------------------------------------------------------
-        | INDEX
-        |--------------------------------------------------------------------------
-    */
 
     public function index()
     {
@@ -63,17 +57,23 @@ class LedgergroupController extends Controller
 
     private function calculateGroupBalance($code)
     {
-        switch ($code) {
+        $map = [
+            'LOAN'  => 'goldLoanBalance',
+            'LOANS' => 'goldLoanBalance',
+            'MORTGAGE_PROPERTY'  => 'mortgageBalance',
+            'LOAN_AGAINST'       => 'loanagainstBalance',
+            'BUSINESS_LOAN'      => 'businessloanBalance',
+            'CC_OD_LOAN'         => 'ccodloanBalance',
+            'DAILY_WEEKLY_LOAN'  => 'dailyweeklyloanBalance',
+            'PERSONAL_LOAN'      => 'personalloanBalance',
+            'VEHICAL_LOAN'       => 'vehicalloanBalance',
+        ];
 
-            case 'LOANS':
-                return $this->goldLoanBalance();
-
-            case 'MORTGAGE_PROPERTY':
-                return $this->mortgageBalance();
-
-            default:
-                return [0, 0];
+        if(isset($map[$code])) {
+            return $this->{$map[$code]}();
         }
+
+        return [0,0];
     }
 
     private function goldLoanBalance()
@@ -136,23 +136,190 @@ class LedgergroupController extends Controller
         return [$loans->count(), $closing];
     }
 
+    private function loanagainstBalance()
+    {
+        $loans = DB::table('loan_against_applications')
+            ->where('status', 2)
+            ->get();
 
-   /*
-    |--------------------------------------------------------------------------
-    | CREATE FORM
-    |--------------------------------------------------------------------------
-    */
+        $closing = 0;
+
+        foreach ($loans as $loan) {
+
+            $loanAmount = $loan->loan_amount;
+
+            $collected = DB::table('loan_against_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $charges = DB::table('loan_against_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            $remain = DB::table('loan_against_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            $closing += max(0, $loanAmount - ($collected + $charges + $remain));
+        }
+
+        return [$loans->count(), $closing];
+    }
+
+    private function businessloanBalance()
+    {
+        $loans = DB::table('bussiness_loan_applications')
+            ->where('status', 2)
+            ->get();
+
+        $closing = 0;
+
+        foreach ($loans as $loan) {
+
+            $loanAmount = $loan->loan_amount;
+
+            $collected = DB::table('business_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $charges = DB::table('business_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            $remain = DB::table('business_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            $closing += max(0, $loanAmount - ($collected + $charges + $remain));
+        }
+
+        return [$loans->count(), $closing];
+    }
+
+    private function ccodloanBalance()
+    {
+        $loans = DB::table('cc_od_loan_applications')
+            ->where('status', 2)
+            ->get();
+
+        $closing = 0;
+
+        foreach ($loans as $loan) {
+
+            $loanAmount = $loan->loan_amount;
+
+            $collected = DB::table('cc_od_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $charges = DB::table('cc_od_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            $remain = DB::table('cc_od_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            $closing += max(0, $loanAmount - ($collected + $charges + $remain));
+        }
+
+        return [$loans->count(), $closing];
+    }
+
+    private function dailyweeklyloanBalance()
+    {
+        $loans = DB::table('daily_weekly_applications')
+            ->where('status', 2)
+            ->get();
+
+        $closing = 0;
+
+        foreach ($loans as $loan) {
+
+            $loanAmount = $loan->loan_amount;
+
+            $collected = DB::table('daily_weekly_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $charges = DB::table('daily_weekly_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            $remain = DB::table('daily_weekly_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            $closing += max(0, $loanAmount - ($collected + $charges + $remain));
+        }
+
+        return [$loans->count(), $closing];
+    }
+
+    private function personalloanBalance()
+    {
+        $loans = DB::table('personal_loan_applications')
+            ->where('status', 2)
+            ->get();
+
+        $closing = 0;
+
+        foreach ($loans as $loan) {
+
+            $loanAmount = $loan->loan_amount;
+
+            $collected = DB::table('personal_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $charges = DB::table('personal_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            $remain = DB::table('personal_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            $closing += max(0, $loanAmount - ($collected + $charges + $remain));
+        }
+
+        return [$loans->count(), $closing];
+    }
+
+    private function vehicalloanBalance()
+    {
+        $loans = DB::table('vehical_applications')
+            ->where('status', 2)
+            ->get();
+
+        $closing = 0;
+
+        foreach ($loans as $loan) {
+
+            $loanAmount = $loan->loan_amount;
+
+            $collected = DB::table('vehical_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $charges = DB::table('vehical_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            $remain = DB::table('vehical_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            $closing += max(0, $loanAmount - ($collected + $charges + $remain));
+        }
+
+        return [$loans->count(), $closing];
+    }
 
     public function create()
     {
         return view('menu-accounts.ledger-group.add-ledger-group');
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | STORE
-    |--------------------------------------------------------------------------
-    */
 
     public function store(Request $request)
     {
@@ -191,90 +358,30 @@ class LedgergroupController extends Controller
 
         /*
         |----------------------------------------
-        | Fetch ledgers under this group
+        | Fetch ledgers
         |----------------------------------------
         */
         $ledgers = Ledger::where('group_id', $id)
             ->with('group')
             ->get();
 
-
         $totalBalance = 0;
 
-
-        /*
-        |----------------------------------------
-        | SAME BALANCE LOGIC (Gold/Mortgage)
-        |----------------------------------------
-        */
         foreach ($ledgers as $ledger) {
 
-            $ledger->balance = $ledger->opening_balance;
+            /*
+            |----------------------------------------
+            | 🔥 ALWAYS USE CODE (NOT NAME)
+            |----------------------------------------
+            */
+            [$accounts, $balance] = $this->calculateLedgersBalance($ledger->code);
 
-
-            if ($ledger->system_name == 'Gold Loan') {
-
-                $loans = DB::table('loan_applications')->where('status', 2)->get();
-
-                $closing = 0;
-
-                foreach ($loans as $loan) {
-
-                    $loanAmount = $loan->loan_amount;
-
-                    $collected = DB::table('gold_loan_transactions')
-                        ->where('loan_id', $loan->id)
-                        ->sum('amount_collected');
-
-                    $charges = DB::table('gold_loan_other_charges')
-                        ->where('loan_id', $loan->id)
-                        ->sum('amount');
-
-                    $remain = DB::table('gold_loan_fore_closures')
-                        ->where('loan_id', $loan->id)
-                        ->value('remaining_amount') ?? 0;
-
-                    $closing += max(0, $loanAmount - ($collected + $charges + $remain));
-                }
-
-                $ledger->balance = $closing;
-            }
-
-            elseif ($ledger->system_name == 'Mortgage Loan') {
-
-                $loans = DB::table('mortgage_loan_applications')->where('status', 2)->get();
-
-                $closing = 0;
-
-                foreach ($loans as $loan) {
-
-                    $loanAmount = $loan->loan_amount;
-
-                    $collected = DB::table('mortgage_loan_transactions')
-                        ->where('loan_id', $loan->id)
-                        ->sum('amount_collected');
-
-                    $charges = DB::table('mortgage_loan_other_charges')
-                        ->where('loan_id', $loan->id)
-                        ->sum('amount');
-
-                    $remain = DB::table('mortgage_loan_fore_closures')
-                        ->where('loan_id', $loan->id)
-                        ->value('remaining_amount') ?? 0;
-
-                    $closing += max(0, $loanAmount - ($collected + $charges + $remain));
-                }
-
-                $ledger->balance = $closing;
-            }
-
+            $ledger->balance = $balance ?: $ledger->opening_balance;
 
             $totalBalance += $ledger->balance;
         }
 
-
         $accountsCount = $ledgers->count();
-
 
         return view('menu-accounts.ledger-group.asset-ledger', compact(
             'group',
@@ -284,14 +391,81 @@ class LedgergroupController extends Controller
         ));
     }
 
+    private function calculateLedgersBalance($code)
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | AUTO NORMALIZE
+        |--------------------------------------------------------------------------
+        */
+        $code = strtoupper(Str::slug($code, '_'));
+
+        /*
+        |--------------------------------------------------------------------------
+        | SMART MATCHING (user kuch bhi likhe)
+        |--------------------------------------------------------------------------
+        */
+
+        if (Str::contains($code, ['GOLD', 'LOAN'])) {
+            return $this->goldLoanBalance();
+        }
+
+        if (Str::contains($code, ['MORTGAGE'])) {
+            return $this->mortgageBalance();
+        }
+
+        if (Str::contains($code, ['AGAINST'])) {
+            return $this->loanagainstBalance();
+        }
+
+        if (Str::contains($code, ['BUSINESS'])) {
+            return $this->businessloanBalance();
+        }
+
+        if (Str::contains($code, ['CC', 'OD'])) {
+            return $this->ccodloanBalance();
+        }
+
+        if (Str::contains($code, ['DAILY', 'WEEKLY'])) {
+            return $this->dailyweeklyloanBalance();
+        }
+
+        if (Str::contains($code, ['PERSONAL'])) {
+            return $this->personalloanBalance();
+        }
+
+        if (Str::contains($code, ['VEHICLE', 'CAR'])) {
+            return $this->vehicalloanBalance();
+        }
+
+        return [0, 0];
+    }
+
     public function edit_ledger()
     {
         return view('menu-accounts.ledger-group.edit-ledger');
     }
+
     public function journal_entry()
     {
         return view('menu-accounts.ledger-group.journal-entry');
     }
+
+    public function destroy($id)
+    {
+        $group = LedgerGroup::findOrFail($id);
+
+        // 1️⃣ Delete all ledgers inside this group
+        Ledger::where('group_id', $id)->delete();
+
+        // 2️⃣ Delete group
+        $group->delete();
+
+        return redirect()
+            ->route('ledger-group.index')
+            ->with('success', 'Ledger Group & related Ledgers deleted successfully');
+    }
+
 
 
 ////////////////////////////////    Only Lead Tab      ////////////////////////////////////////////
@@ -300,94 +474,36 @@ class LedgergroupController extends Controller
     public function led_index()
     {
         $ledgers = Ledger::with('group')->latest()->get();
-        $groups  = LedgerGroup::orderBy('display_name')->get();
-
-
-        /*
-        |------------------------------------------------
-        | Dynamic closing balance for each ledger
-        |------------------------------------------------
-        */
 
         foreach ($ledgers as $ledger) {
 
-            $ledger->balance = $ledger->opening_balance; // default
+            // ⭐ use GROUP code, not ledger code
+            [$accounts, $balance] = $this->calculateLedgerBalance($ledger->group->code ?? '');
 
-
-            /*
-            |----------------------------------------
-            | GOLD LOAN LEDGER
-            |----------------------------------------
-            */
-            if ($ledger->system_name == 'Gold Loan') {
-
-                $loans = DB::table('loan_applications')
-                    ->where('status', 2)
-                    ->get();
-
-                $closing = 0;
-
-                foreach ($loans as $loan) {
-
-                    $loanAmount = $loan->loan_amount;
-
-                    $collected = DB::table('gold_loan_transactions')
-                        ->where('loan_id', $loan->id)
-                        ->sum('amount_collected');
-
-                    $charges = DB::table('gold_loan_other_charges')
-                        ->where('loan_id', $loan->id)
-                        ->sum('amount');
-
-                    $remain = DB::table('gold_loan_fore_closures')
-                        ->where('loan_id', $loan->id)
-                        ->value('remaining_amount') ?? 0;
-
-                    $closing += max(0, $loanAmount - ($collected + $charges + $remain));
-                }
-
-                $ledger->balance = $closing;
-            }
-
-
-            /*
-            |----------------------------------------
-            | MORTGAGE LOAN LEDGER
-            |----------------------------------------
-            */
-            elseif ($ledger->system_name == 'Mortgage Loan') {
-
-                $loans = DB::table('mortgage_loan_applications')
-                    ->where('status', 2)
-                    ->get();
-
-                $closing = 0;
-
-                foreach ($loans as $loan) {
-
-                    $loanAmount = $loan->loan_amount;
-
-                    $collected = DB::table('mortgage_loan_transactions')
-                        ->where('loan_id', $loan->id)
-                        ->sum('amount_collected');
-
-                    $charges = DB::table('mortgage_loan_other_charges')
-                        ->where('loan_id', $loan->id)
-                        ->sum('amount');
-
-                    $remain = DB::table('mortgage_loan_fore_closures')
-                        ->where('loan_id', $loan->id)
-                        ->value('remaining_amount') ?? 0;
-
-                    $closing += max(0, $loanAmount - ($collected + $charges + $remain));
-                }
-
-                $ledger->balance = $closing;
-            }
+            $ledger->balance = $balance ?: $ledger->opening_balance;
         }
 
+        return view('menu-accounts.ledger.index', compact('ledgers'));
+    }
 
-        return view('menu-accounts.ledger.index', compact('ledgers','groups'));
+    private function calculateLedgerBalance($groupCode)
+    {
+        $map = [
+            'LOANS'     => 'goldLoanBalance',
+            'MORTGAGE'  => 'mortgageBalance',
+            'LOAN_AGAINST'       => 'loanagainstBalance',
+            'PERSONAL'  => 'personalLoanBalance',
+            'BUSINESS'  => 'businessLoanBalance',
+            'CC_OD_LOAN'         => 'ccodloanBalance',
+            'DAILY_WEEKLY_LOAN'  => 'dailyweeklyloanBalance',
+            'VEHICAL_LOAN'       => 'vehicalloanBalance',
+        ];
+
+        if (isset($map[$groupCode])) {
+            return $this->{$map[$groupCode]}();
+        }
+
+        return [0, 0];
     }
 
     public function add_leg()
@@ -408,12 +524,7 @@ class LedgergroupController extends Controller
 
         return response()->json($groups);
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | STORE
-    |--------------------------------------------------------------------------
-    */
+   
     public function led_store(Request $request)
     {
         $request->validate([
@@ -421,53 +532,110 @@ class LedgergroupController extends Controller
             'group_id' => 'required',
             'display_name' => 'required',
             'system_name' => 'required',
-            'code' => 'required|unique:ledgers,code'
         ]);
+
+        // ⭐ AUTO SAFE CODE
+        $code = strtoupper(Str::slug($request->system_name, '_'));
 
         Ledger::create([
             'type' => $request->type,
             'group_id' => $request->group_id,
             'display_name' => $request->display_name,
             'system_name' => $request->system_name,
-            'code' => strtoupper($request->code),
-            'is_bank_acc' => $request->is_bank_acc ?? false,
-            'show_in_day' => $request->show_in_day ?? false,
+            'code' => $code, // 🔥 auto generated
+            'is_bank_acc' => $request->is_bank_acc ?? 0,
+            'show_in_day' => $request->show_in_day ?? 0,
             'opening_balance' => 0
         ]);
 
-        return redirect()
-            ->route('ledger.index')
+        return redirect()->route('ledger.index')
             ->with('success', 'Ledger Added Successfully');
+    }
+
+    private function loanModuleMap()
+    {
+        return [
+
+            'GOLD' => [
+                'loan'    => 'loan_applications',
+                'txn'     => 'gold_loan_transactions',
+                'charges' => 'gold_loan_other_charges',
+                'closure' => 'gold_loan_fore_closures',
+            ],
+
+            'MORTGAGE' => [
+                'loan'    => 'mortgage_loan_applications',
+                'txn'     => 'mortgage_loan_transactions',
+                'charges' => 'mortgage_loan_other_charges',
+                'closure' => 'mortgage_loan_fore_closures',
+            ],
+
+            'LOAN_AGAINST' => [
+                'loan'    => 'loan_against_applications',
+                'txn'     => 'loan_against_transactions',
+                'charges' => 'loan_against_other_charges',
+                'closure' => 'loan_against_fore_closures',
+            ],
+
+            'PERSONAL' => [
+                'loan'    => 'personal_loan_applications',
+                'txn'     => 'personal_loan_transactions',
+                'charges' => 'personal_loan_other_charges',
+                'closure' => 'personal_loan_fore_closures',
+            ],
+
+            'BUSINESS' => [
+                'loan'    => 'business_loan_applications',
+                'txn'     => 'business_loan_transactions',
+                'charges' => 'business_loan_other_charges',
+                'closure' => 'business_loan_fore_closures',
+            ],
+
+            'CC_OD_LOAN' => [
+                'loan'    => 'ccod_loan_applications',
+                'txn'     => 'ccod_loan_transactions',
+                'charges' => 'ccod_loan_other_charges',
+                'closure' => 'ccod_loan_fore_closures',
+            ],
+
+            'DAILY_WEEKLY_LOAN' => [
+                'loan'    => 'daily_weekly_loan_applications',
+                'txn'     => 'daily_weekly_loan_transactions',
+                'charges' => 'daily_weekly_loan_other_charges',
+                'closure' => 'daily_weekly_loan_fore_closures',
+            ],
+
+            'VEHICAL_LOAN' => [
+                'loan'    => 'vehicle_loan_applications',
+                'txn'     => 'vehicle_loan_transactions',
+                'charges' => 'vehicle_loan_other_charges',
+                'closure' => 'vehicle_loan_fore_closures',
+            ],
+        ];
     }
 
     public function ledgerView($id)
     {
         $ledger = Ledger::with('group')->findOrFail($id);
 
+        $code = strtoupper($ledger->code);
+
+        $map = $this->loanModuleMap();
+
         /*
         |---------------------------------------
-        | Decide tables dynamically
+        | Validate Mapping
         |---------------------------------------
         */
 
-        if ($ledger->system_name == 'Gold Loan') {
-
-            $loanTable        = 'loan_applications';
-            $txnTable         = 'gold_loan_transactions';
-            $chargesTable     = 'gold_loan_other_charges';
-            $closureTable     = 'gold_loan_fore_closures';
-
-        } elseif ($ledger->system_name == 'Mortgage Loan') {
-
-            $loanTable        = 'mortgage_loan_applications';
-            $txnTable         = 'mortgage_loan_transactions';
-            $chargesTable     = 'mortgage_loan_other_charges';
-            $closureTable     = 'mortgage_loan_fore_closures';
-
-        } else {
+        if (!isset($map[$code])) {
             abort(404, 'Ledger type not supported');
         }
 
+        $loanTable    = $map[$code]['loan'];
+        $txnTable     = $map[$code]['txn'];
+        $chargesTable = $map[$code]['charges'];
+        $closureTable = $map[$code]['closure'];
 
         /*
         |---------------------------------------
@@ -479,14 +647,12 @@ class LedgergroupController extends Controller
             ->where('status', 2)
             ->get();
 
-
         $totalTransactions = $loans->count();
 
         $totalDebit  = 0;
         $totalCredit = 0;
         $closingBalance = 0;
         $lastTransactionDate = null;
-
 
         foreach ($loans as $loan) {
 
@@ -504,19 +670,19 @@ class LedgergroupController extends Controller
                 ->where('loan_id', $loan->id)
                 ->value('remaining_amount') ?? 0;
 
-
             /*
             | Debit / Credit
             */
+
             $totalDebit += $loanAmount;
 
             $credit = $collectedAmount + $otherCharges + $remainingAmount;
+
             $totalCredit += $credit;
 
             $currentDebt = max(0, $loanAmount - $credit);
 
             $closingBalance += $currentDebt;
-
 
             /*
             | Last Transaction Date
@@ -566,15 +732,87 @@ class LedgergroupController extends Controller
     }
 
 
+
 ////////////////////////////////    Only Profit & Loss Tab      ////////////////////////////////////////////
      
 
     public function profit_loss()
     {
-        $ledgers = Ledger::with('group')->latest()->get();
-        $groups  = LedgerGroup::orderBy('display_name')->get();
+        $today = Carbon::today();
+        $previous = Carbon::today()->subYear();
 
-        return view('menu-accounts.profit-loss.profit_loss', compact('ledgers','groups'));
+        /*
+        |--------------------------------------------------------------------------
+        | 1. All Ledgers for tabs (Assets, Liabilities etc)
+        |--------------------------------------------------------------------------
+        */
+        $ledgers = Ledger::with('group')->get();
+
+        foreach ($ledgers as $ledger) {
+            [$acc, $bal] = $this->calculateLedgerBalance($ledger->code);
+            $ledger->balance = $bal ?: $ledger->opening_balance;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2. Profit & Loss Data
+        |--------------------------------------------------------------------------
+        */
+        $revenues = [];
+        $expenses = [];
+
+        $totalRevenueCurrent = 0;
+        $totalRevenuePrevious = 0;
+
+        $totalExpenseCurrent = 0;
+        $totalExpensePrevious = 0;
+
+        foreach ($ledgers as $ledger) {
+
+            [$a1, $current]  = $this->calculateLedgerBalance($ledger->code, $today);
+            [$a2, $previousBal] = $this->calculateLedgerBalance($ledger->code, $previous);
+
+            if ($ledger->type == 'Revenue') {
+
+                $revenues[] = [
+                    'name' => $ledger->display_name,
+                    'current' => $current,
+                    'previous' => $previousBal,
+                ];
+
+                $totalRevenueCurrent += $current;
+                $totalRevenuePrevious += $previousBal;
+            }
+
+            if ($ledger->type == 'Expense') {
+
+                $expenses[] = [
+                    'name' => $ledger->display_name,
+                    'current' => $current,
+                    'previous' => $previousBal,
+                ];
+
+                $totalExpenseCurrent += $current;
+                $totalExpensePrevious += $previousBal;
+            }
+        }
+
+        $netCurrent  = $totalRevenueCurrent - $totalExpenseCurrent;
+        $netPrevious = $totalRevenuePrevious - $totalExpensePrevious;
+
+        return view('menu-accounts.profit-loss.profit_loss', compact(
+            'ledgers',
+            'revenues',
+            'expenses',
+            'today',
+            'previous',
+            'totalRevenueCurrent',
+            'totalRevenuePrevious',
+            'totalExpenseCurrent',
+            'totalExpensePrevious',
+            'netCurrent',
+            'netPrevious'
+        ));
     }
 
 
