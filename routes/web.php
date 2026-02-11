@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BankAccountController;
+use App\Http\Controllers\BusinessLoanPrintDocumentController;
 use App\Http\Controllers\CollectionCenterController;
 use App\Http\Controllers\EmployeeAttendenceController;
 use App\Http\Controllers\GroupCommentController;
@@ -1210,170 +1211,190 @@ Route::group(['prefix' => 'loanagainst'], function () {
 /////////////////////////////////////   END DEPOSIT LOAN  REPORT   ////////////////////////////////////////////////////////
 
 
-/////////////////////////////////////   Bussiness LOAN   ////////////////////////////////////////////////////////
+/////////////////////////////////////   Business LOAN   ////////////////////////////////////////////////////////
 
 
-Route::group(['prefix' => 'bussiness'], function () {
+Route::group(['prefix' => 'business'], function () {
 
-    // bussiness Loan Scheme
+     // bussiness Loan Scheme
     Route::get('scheme/index', [BusinessLoan::class, 'index'])
         ->name('bussiness.schemes.index');
-
+ 
     // create form
     Route::get('scheme/create', [BusinessLoan::class, 'create'])
         ->name('bussiness.schemes.create');
     // store form data
     Route::post('scheme/store', [BusinessLoan::class, 'store'])
         ->name('bussiness.schemes.store');
-
+ 
     // view list
     Route::get('scheme/{id}', [BusinessLoan::class, 'show'])
         ->name('bussiness.schemes.show');
-
+ 
     // edit form
     Route::get('scheme/{id}/edit', [BusinessLoan::class, 'edit'])
         ->name('bussiness.schemes.edit');
     Route::put('scheme/{id}', [BusinessLoan::class, 'update'])
         ->name('bussiness.schemes.update');
-
+ 
     Route::get('scheme/view/{id}', [BusinessLoan::class, 'view'])
         ->name('bussiness.schemes.view');
-
+ 
     // bussiness Loan Calculation
     Route::get('calculator/index', [BusinessLoan::class, 'calculator'])
         ->name('bussiness.calculator.index');
     // get scheme data
     Route::get('bussiness/scheme/{id}', [BusinessLoan::class, 'getSchemeDetails'])
         ->name('bussiness.scheme.details');
-
-
+ 
+ 
     // Calculation page  
     Route::get('calculator/calculation', [BusinessLoan::class, 'calculation'])->name('bussiness.calculator.calculation');
     Route::post('bussiness/calculate', [BusinessLoan::class, 'calculateResult'])->name('bussiness.calculator.calculate');
-
-
+ 
+ 
     // bussiness Application page
     Route::get('applications/index', [BusinessLoan::class, 'appindex'])
         ->name('bussiness.applications.index');
-
+ 
     Route::get('applications/create', [BusinessLoan::class, 'appcreate'])
         ->name('bussiness.applications.create');
-
+ 
     Route::post('/businessloan/store', [BusinessLoan::class, 'storeLoanApplication'])->name('businessloan.store');
-
+ 
     Route::get('/members/{id}/info', [BusinessLoan::class, 'getMemberInfo'])
         ->name('members.info');
-
+ 
     Route::get('bussiness/applications/view/{id}', [BusinessLoan::class, 'appview'])
         ->name('bussiness.applications.view');
-
+ 
     // Edit form
     Route::get('/bussiness/applications/{id}/edit', [BusinessLoan::class, 'appedit'])
         ->name('bussiness.applications.edit');
-
+ 
     // Update
     Route::put('/bussiness/applications/{id}', [BusinessLoan::class, 'appupdate'])
         ->name('bussiness.applications.update');
-
+ 
     Route::get('applications/show-emi-chart', [BusinessLoan::class, 'showEmiChart'])
         ->name('bussiness.applications.view-buttons.show-emi-chart');
-
-
+ 
+ 
     // Disbursement bussiness Loan
     Route::get('disbursements/index', [BusinessLoanDisburments::class, 'index'])
         ->name('bussiness.disbursements.index');
     Route::post('/bussiness/disbursements/cancel/{id}', [BusinessLoanDisburments::class, 'cancelLoan'])->name('businessdisbursements.cancel');
-
+ 
     // disburse-loan page  
     Route::get('disbursements/disburse-loan/{id}', [BusinessLoanDisburments::class, 'show'])
         ->name('bussiness.disbursements.disburse-loan');
     Route::post('/bussiness/disbursements/store', [BusinessLoanDisburments::class, 'store'])->name('businessdisbursements.store');
-
-
+ 
+ 
     // account section start
-
+ 
     Route::get('account/index', [BusinessLoanAccount::class, 'index'])->name('bussiness.account.index');
     Route::get('account/show/{id}', [BusinessLoanAccount::class, 'show'])
         ->name('bussiness.account.show');
     // emi chart for process button
     Route::post('/emi/save-status', [BusinessLoanAccount::class, 'saveEmiStatus'])
         ->name('business.emi.saveEmiStatus');
-
+ 
     // pay emi tab
     Route::get('bussiness-account/payemi/{id}', [BusinessLoanAccount::class, 'mortgagePayEmi'])
         ->name('bussiness.account.pay-emi');
     Route::post('bussiness-account/payemi/{id}/pay', [BusinessLoanAccount::class, 'mortgagepayEmiLoan'])->name('bussiness.payEmiLoan');
-
+ 
     // View Transction tab
     Route::get('bussiness-account/transaction/{id}', [BusinessLoanAccount::class, 'mortgageTransaction'])
         ->name('bussiness.account.transaction');
-
+ 
     // loan extension tab
     Route::get('account/extension/{id}', [BusinessLoanAccount::class, 'loanextension'])
         ->name('bussiness.account.extension');
     // POST - FINAL SAVE loan extension
     Route::post('/loan-extension/store/{id}', [BusinessLoanAccount::class, 'storeLoanExtension'])->name('bussiness.extension.store');
-
+ 
     // only pay tab
     Route::get('bussiness-account/pay/{id}', [BusinessLoanAccount::class, 'mortgagePay'])
         ->name('bussiness.account.pay');
     Route::post('/update-emi-status', [BusinessLoanAccount::class, 'updateEmiStatus'])->name('emi.updateStatus');
     Route::post('/bussiness/pay-emi', [BusinessLoanAccount::class, 'payEmi'])->name('bussiness.payEmi');
-
+ 
     // foure close account
     Route::get('account/fourcloser/{id}', [BusinessLoanAccount::class, 'fourcloser'])
         ->name('bussiness.account.fourcloser');
     Route::post('account/fourcloser/store/{id}', [BusinessLoanAccount::class, 'storeForeCloser'])
         ->name('bussiness.account.forecloser.store');
-
+ 
     // link saving account
     Route::get('account/linksaving/{id}', [BusinessLoanAccount::class, 'linksaving'])
         ->name('bussiness.account.linksaving');
     Route::post('account/linksaving/{id}', [BusinessLoanAccount::class, 'storeSavingAccount'])
         ->name('bussiness.account.storeSavingAccount');
-
+ 
     // Remove account (POST to avoid CSRF problems with GET)
     Route::post('/bussiness/{id}/remove', [BusinessLoanAccount::class, 'removeAccount'])
         ->name('bussiness.remove');
-
+ 
     // show audit trial tab
     Route::get('account/audit', [BusinessLoanAccount::class, 'audit'])
         ->name('bussiness.account.audit-trail');
-
+ 
     // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
     Route::get('/bussiness/{id}/debit-charges-list', [BusinessLoanAccount::class, 'showDebitChargesList'])
         ->name('bussiness.debitChargesList.form');
-
+ 
     // debit other charge page    
     Route::get('/bussiness/{id}/debit-other-charges', [BusinessLoanAccount::class, 'DebitOtherCharges'])
         ->name('bussiness.debitOtherCharges.form');
     // Store Debit Other Charges page
     Route::post('/bussiness/{id}/debit-other-charges', [BusinessLoanAccount::class, 'storeDebitOtherCharges'])
         ->name('bussiness.debitOtherCharges.store');
-
-    //clear due 
+ 
+    //clear due
     Route::get('/bussiness/{id}/clear-due', [BusinessLoanAccount::class, 'mortgageLoanClearDues'])
         ->name('bussiness.clear-due.form');
     Route::post('/bussiness/{loan_id}/other-charge', [BusinessLoanAccount::class, 'clearDue'])->name('bussiness.clear-due');
-
+ 
     // account section end
-
-
-
-    // Show emi chart 
+ 
+ 
+ 
+    // Show emi chart
     Route::get('{id}/emi-chart', [BusinessLoan::class, 'emiChart'])->name('bussiness.applications.view-buttons.show-emi-chart');
-
+ 
     Route::get('col-process-fee/{id}', [BusinessLoan::class, 'bussiness_process_fee'])
         ->name('bussiness.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [BusinessLoan::class, 'bussinessstoreProcessFee'])
         ->name('bussiness.col_process_fee.store');
-
+ 
     Route::post('applications/{id}/submit-for-approval', [BusinessLoan::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
+        
+     //print documents view page  
+    Route::get('/payout-chart-view/{loan}', [BusinessLoanPrintDocumentController::class, 'payout_chart_business_appli_view'])->name('business_loan.payout_chart_business_loan_application_view');
+    Route::get('/payout-chart/{loan}', [BusinessLoanPrintDocumentController::class, 'payout_chart_business_appli'])->name('business_loan.payout_chart_loan_application.pdf');
+
+    Route::get('/sanction-letter-view/{loan}', [BusinessLoanPrintDocumentController::class, 'sanction_letter_view'])->name('business_loan.sanction_letter-view');
+    Route::get('/sanction-letter/{loan}', [BusinessLoanPrintDocumentController::class, 'sanction_letter'])->name('business_loan.sanction_letter.pdf');
+
+    Route::get('/{loan}/loan-agreement-view', [BusinessLoanPrintDocumentController::class, 'loanAgreementView'])->name('business_loan.loanAgreement-view');
+    Route::get( '/{loan}/loan-agreement',[BusinessLoanPrintDocumentController::class, 'loanAgreement'])->name('business_loan.loanAgreement.pdf');
+
+    Route::get('/disburse-letter-view/{loan}', [BusinessLoanPrintDocumentController::class, 'disburse_letter_view'])->name('business_loan.disburse_letter.view');
+    Route::get('/disburse-letter/{loan}', [BusinessLoanPrintDocumentController::class, 'disburse_letter'])->name('business_loan.disburse_letter.pdf');
+
+    Route::get('/promissory-note-view/{loan}', [BusinessLoanPrintDocumentController::class, 'promissory_note_view'])->name('business_loan.promissory.view');
+    Route::get('/promissory-note/{loan}', [BusinessLoanPrintDocumentController::class, 'promissory_note'])->name('business_loan.promissory.pdf');
+
+    Route::get('/undertaking-letter-view/{loan}', [BusinessLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('business_loan.undertaking_letter.view');
+    Route::get('/undertaking-letter/{loan}', [BusinessLoanPrintDocumentController::class, 'undertaking_letter'])->name('business_loan.undertaking_letter.pdf');
+
 });
 
 
-/////////////////////////////////////   END Bussiness LOAN   ////////////////////////////////////////////////////////
+/////////////////////////////////////   END Business LOAN   ////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////   CC / OD LOAN   ////////////////////////////////////////////////////////
@@ -2836,7 +2857,7 @@ Route::get('master-settings/edit', [MasterSettingController::class, 'edit'])->na
 
 Route::get('master-settings/edit-attendence', [MasterSettingController::class, 'edit_attendence'])->name('master-settings.edit-attendence');
 Route::get('master-settings/bank-list', [MasterSettingController::class, 'bank_list'])->name('master-settings.bank-list');
-Route::get('master-settings/edit-bussiness-type', [MasterSettingController::class, 'edit_bussiness_type'])->name('master-settings.edit-bussiness-type');
+Route::get('master-settings/edit-business-type', [MasterSettingController::class, 'edit_business_type'])->name('master-settings.edit-business-type');
 
 Route::get('master-settings/edit-npa-provisioning-settings', [MasterSettingController::class, 'npa_provisioning_settings'])->name('master-settings.npa-provisioning-settings');
 
@@ -2859,7 +2880,7 @@ Route::get('master-settings/edit-rd-settings', [MasterSettingController::class, 
 
 Route::get('master-settings/edit-dd-settings', [MasterSettingController::class, 'edit_dd_settings'])->name('master-settings.edit-dd-settings');
 
-Route::get('master-settings/edit-bussiness-loan', [MasterSettingController::class, 'edit_bussiness_loan'])->name('master-settings.edit-bussiness-loan');
+Route::get('master-settings/edit-business-loan', [MasterSettingController::class, 'edit_business_loan'])->name('master-settings.edit-business-loan');
 Route::get('master-settings/edit-property-loan', [MasterSettingController::class, 'edit_property_loan'])->name('master-settings.edit-property-loan');
 
 Route::get('master-settings/edit-vehicle-settings', [MasterSettingController::class, 'edit_vehicle_settings'])->name('master-settings.edit-vehicle-settings');
