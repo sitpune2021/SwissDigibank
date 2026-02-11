@@ -2410,10 +2410,11 @@ Route::group(['prefix' => 'cut-report'], function () {
 ////////////////////////////////////    END Cut Report     /////////////////////////////////////////////
 
 
-////////////////////////////////////    Account Section Start     /////////////////////////////////////////////
+////////////////////////////////////    Account Section tab Start     /////////////////////////////////////////////
 
 
 // ledger-group Tab 
+
 Route::prefix('ledger-group')->group(function () {
 
     Route::get('/', [LedgerGroupController::class, 'index'])->name('ledger-group.index');
@@ -2424,12 +2425,15 @@ Route::prefix('ledger-group')->group(function () {
 
     Route::get('/{id}/ledgers', [LedgerGroupController::class, 'groupLedgers'])
         ->name('ledger-group.ledgers');
+
+    Route::delete('/{id}', [LedgerGroupController::class, 'destroy'])
+    ->name('ledger-group.destroy');
     
 });
 
-
 // Only ledger Tab
 Route::group(['prefix' => 'ledger'], function () {
+
     Route::get('ledger/index', [LedgergroupController::class, 'led_index'])
         ->name('ledger.index');
 
@@ -2454,6 +2458,7 @@ Route::group(['prefix' => 'ledger'], function () {
 
     Route::get('ledger/journal-entry', [LedgergroupController::class, 'journal_entry_ledger'])
         ->name('ledger.journal-entry');
+
 });
 
 // Only Profit & Loss Tab
@@ -2464,7 +2469,7 @@ Route::group(['prefix' => 'profit-loss'], function () {
 
 });
 
-////////////////////////////////////    Account Section End     /////////////////////////////////////////////
+////////////////////////////////////    Account Section tab End     /////////////////////////////////////////////
 
 
 Route::group(['prefix' => 'hr-managment'], function () {
@@ -2512,6 +2517,7 @@ Route::group(['prefix' => 'hr-managment'], function () {
 
 
 });
+
 //Employee attendance 
 Route::get('attendance/attendance-index', [EmployeeAttendenceController::class, 'index'])
     ->name('hr-management.attendance.index');

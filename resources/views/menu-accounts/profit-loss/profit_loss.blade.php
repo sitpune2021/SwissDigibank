@@ -77,21 +77,12 @@
 
 
         <div class="col-span-12 box lg:col-span-12">
+
             <div class="border-b border-gray-200 mb-4">
-                <ul id="tabs" class="flex flex-wrap -mb-px text-sm font-medium text-center">
-                    <li class="me-2">
-                        <button data-tab="tab2" class="tab-link inline-block p-4 border-b-2 border-transparent text-lg">
-                            ASSETS
-                        </button>
-                    </li>
-                    <li class="me-2">
-                        <button data-tab="tab3" class="tab-link inline-block p-4 border-b-2 border-transparent text-lg">
-                            LIABILITIES
-                        </button>
-                    </li>
+                <ul id="tabs" class="flex flex-wrap -mb-px text-sm font-medium text-center">                 
                     <li class="me-2">
                         <button data-tab="tab4" class="tab-link inline-block p-4 border-b-2 border-transparent text-lg">
-                            EQUITY
+                            PROFIT & LOSS ACCOUNTS
                         </button>
                     </li>
                     <li class="me-2">
@@ -110,269 +101,70 @@
             <!-- Tabs Content -->
             <div class="tab-content p-4">
 
-                <!-- Tab 2 -->
-                <div id="tab2" class="tab-pane hidden">
-                        {{-- Table --}}
-                        <div class="overflow-x-auto rounded-xl border">
-
-                            <table class="min-w-full text-sm text-left">
-
-                                {{-- Head --}}
-                                <thead class="bg-gray-100 text-gray-700 uppercase text-xs sticky top-0">
-                                    <tr>
-                                        <th class="px-4 py-3">Code</th>
-                                        <th class="px-4 py-3">Name</th>
-                                        <th class="px-4 py-3">System Name</th>
-                                        <th class="px-4 py-3">Group</th>
-                                        <th class="px-4 py-3">Type</th>
-                                        <th class="px-4 py-3">Bank A/C</th>
-                                        <th class="px-4 py-3">Balance</th>
-                                        <th class="px-4 py-3 text-center">Action</th>
-                                    </tr>
-                                </thead>
-
-                                {{-- Body --}}
-                                <tbody class="divide-y">
-
-                                @foreach($ledgers->where('type','Asset') as $ledger)
-                                    <tr class="hover:bg-gray-50 transition">
-
-                                        <td class="px-4 py-3 font-semibold text-indigo-600">
-                                            {{ $ledger->code }}
-                                        </td>
-
-                                        <td class="px-4 py-3">
-                                            {{ $ledger->display_name }}
-                                        </td>
-
-                                        <td class="px-4 py-3 text-gray-500">
-                                            {{ $ledger->system_name }}
-                                        </td>
-
-                                        <td class="px-4 py-3">
-                                            {{ $ledger->group->display_name ?? '-' }}
-                                        </td>
-
-                                        {{-- Type Badge --}}
-                                        <td class="px-4 py-3">
-                                            <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
-                                                {{ $ledger->type }}
-                                            </span>
-                                        </td>
-
-                                        {{-- Bank Yes/No Badge --}}
-                                        <td class="px-4 py-3">
-                                            @if($ledger->is_bank_acc)
-                                                <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Yes</span>
-                                            @else
-                                                <span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">No</span>
-                                            @endif
-                                        </td>
-
-                                        {{-- Balance --}}
-                                        <td class="px-4 py-3 font-semibold">
-                                            ₹ {{ number_format($ledger->opening_balance,2) }}
-                                        </td>
-
-                                        {{-- Action --}}
-                                        <td class="px-4 py-3 text-center">
-
-                                            <a href=""
-                                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs hover:bg-indigo-700 transition btn-primary">
-                                                Edit
-                                            </a>
-
-                                        </td>
-
-                                    </tr>
-                                @endforeach
-
-                                </tbody>
-                            </table>
-
-                        </div>
-                </div>
-
-                <!-- Tab 3 -->
-                <div id="tab3" class="tab-pane hidden">
-                    <div class="bg-white rounded-2xl shadow-lg p-4">
-
-                        {{-- Table --}}
-                        <div class="overflow-x-auto rounded-xl border">
-
-                            <table class="min-w-full text-sm text-left">
-
-                                {{-- Head --}}
-                                <thead class="bg-gray-100 text-gray-700 uppercase text-xs sticky top-0">
-                                    <tr>
-                                        <th class="px-4 py-3">Code</th>
-                                        <th class="px-4 py-3">Name</th>
-                                        <th class="px-4 py-3">System Name</th>
-                                        <th class="px-4 py-3">Group</th>
-                                        <th class="px-4 py-3">Type</th>
-                                        <th class="px-4 py-3">Bank A/C</th>
-                                        <th class="px-4 py-3">Balance</th>
-                                        <th class="px-4 py-3 text-center">Action</th>
-                                    </tr>
-                                </thead>
-
-                                {{-- Body --}}
-                                <tbody class="divide-y">
-
-                                @foreach($ledgers->where('type','lability') as $ledger)
-                                    <tr class="hover:bg-gray-50 transition">
-
-                                        <td class="px-4 py-3 font-semibold text-indigo-600">
-                                            {{ $ledger->code }}
-                                        </td>
-
-                                        <td class="px-4 py-3">
-                                            {{ $ledger->display_name }}
-                                        </td>
-
-                                        <td class="px-4 py-3 text-gray-500">
-                                            {{ $ledger->system_name }}
-                                        </td>
-
-                                        <td class="px-4 py-3">
-                                            {{ $ledger->group->display_name ?? '-' }}
-                                        </td>
-
-                                        {{-- Type Badge --}}
-                                        <td class="px-4 py-3">
-                                            <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
-                                                {{ $ledger->type }}
-                                            </span>
-                                        </td>
-
-                                        {{-- Bank Yes/No Badge --}}
-                                        <td class="px-4 py-3">
-                                            @if($ledger->is_bank_acc)
-                                                <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Yes</span>
-                                            @else
-                                                <span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">No</span>
-                                            @endif
-                                        </td>
-
-                                        {{-- Balance --}}
-                                        <td class="px-4 py-3 font-semibold">
-                                            ₹ {{ number_format($ledger->opening_balance,2) }}
-                                        </td>
-
-                                        {{-- Action --}}
-                                        <td class="px-4 py-3 text-center">
-
-                                            <a href=""
-                                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs hover:bg-indigo-700 transition btn-primary">
-                                                Edit
-                                            </a>
-
-                                        </td>
-
-                                    </tr>
-                                @endforeach
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- Tab 4 -->
+                <!-- Tab 4 : Profit & Loss Only -->
                 <div id="tab4" class="tab-pane hidden">
-                    {{-- Table --}}
-                    <div class="overflow-x-auto rounded-xl border">
 
-                        <table class="min-w-full text-sm text-left">
+                <div class="overflow-x-auto rounded-xl border bg-white">
 
-                            {{-- Head --}}
-                            <thead class="bg-gray-100 text-gray-700 uppercase text-xs sticky top-0">
-                                <tr>
-                                    <th class="px-4 py-3">Code</th>
-                                    <th class="px-4 py-3">Name</th>
-                                    <th class="px-4 py-3">System Name</th>
-                                    <th class="px-4 py-3">Group</th>
-                                    <th class="px-4 py-3">Type</th>
-                                    <th class="px-4 py-3">Bank A/C</th>
-                                    <th class="px-4 py-3">Balance</th>
-                                    <th class="px-4 py-3 text-center">Action</th>
-                                </tr>
-                            </thead>
+                <table class="min-w-full text-sm">
 
-                            {{-- Body --}}
-                            <tbody class="divide-y">
+                <thead class="bg-gray-100 font-bold">
+                <tr>
+                <th class="px-4 py-3 text-left">PARTICULARS</th>
+                <th class="px-4 py-3 text-right">CURRENT</th>
+                <th class="px-4 py-3 text-right">PREVIOUS</th>
+                </tr>
+                </thead>
 
-                            @foreach($ledgers->where('type','Equity') as $ledger)
-                                <tr class="hover:bg-gray-50 transition">
+                <tbody>
 
-                                    <td class="px-4 py-3 font-semibold text-indigo-600">
-                                        {{ $ledger->code }}
-                                    </td>
+                {{-- Revenue --}}
+                <tr>
+                <td class="px-4 py-3 font-semibold">Total Revenue</td>
+                <td class="px-4 py-3 text-right text-green-600 font-bold">
+                ₹ {{ number_format($totalRevenueCurrent,2) }}
+                </td>
+                <td class="px-4 py-3 text-right text-green-600 font-bold">
+                ₹ {{ number_format($totalRevenuePrevious,2) }}
+                </td>
+                </tr>
 
-                                    <td class="px-4 py-3">
-                                        {{ $ledger->display_name }}
-                                    </td>
+                {{-- Expense --}}
+                <tr>
+                <td class="px-4 py-3 font-semibold">Total Expense</td>
+                <td class="px-4 py-3 text-right text-red-600 font-bold">
+                ₹ {{ number_format($totalExpenseCurrent,2) }}
+                </td>
+                <td class="px-4 py-3 text-right text-red-600 font-bold">
+                ₹ {{ number_format($totalExpensePrevious,2) }}
+                </td>
+                </tr>
 
-                                    <td class="px-4 py-3 text-gray-500">
-                                        {{ $ledger->system_name }}
-                                    </td>
+                {{-- Net Profit / Loss --}}
+                <tr class="bg-blue-100 text-lg font-bold">
+                <td class="px-4 py-4">Net Profit / Loss</td>
+                <td class="px-4 py-4 text-right">
+                ₹ {{ number_format($netCurrent,2) }}
+                </td>
+                <td class="px-4 py-4 text-right">
+                ₹ {{ number_format($netPrevious,2) }}
+                </td>
+                </tr>
 
-                                    <td class="px-4 py-3">
-                                        {{ $ledger->group->display_name ?? '-' }}
-                                    </td>
+                </tbody>
+                </table>
 
-                                    {{-- Type Badge --}}
-                                    <td class="px-4 py-3">
-                                        <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
-                                            {{ $ledger->type }}
-                                        </span>
-                                    </td>
-
-                                    {{-- Bank Yes/No Badge --}}
-                                    <td class="px-4 py-3">
-                                        @if($ledger->is_bank_acc)
-                                            <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Yes</span>
-                                        @else
-                                            <span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">No</span>
-                                        @endif
-                                    </td>
-
-                                    {{-- Balance --}}
-                                    <td class="px-4 py-3 font-semibold">
-                                        ₹ {{ number_format($ledger->opening_balance,2) }}
-                                    </td>
-
-                                    {{-- Action --}}
-                                    <td class="px-4 py-3 text-center">
-
-                                        <a href=""
-                                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs hover:bg-indigo-700 transition btn-primary">
-                                            Edit
-                                        </a>
-
-                                    </td>
-
-                                </tr>
-                            @endforeach
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
                 </div>
-
-                <!-- Tab 5 -->
+                </div>
+                
+                <!-- Tab 5 : EXPENSES -->
                 <div id="tab5" class="tab-pane hidden">
-                    {{-- Table --}}
-                    <div class="overflow-x-auto rounded-xl border">
+
+                    <div class="overflow-x-auto rounded-xl border bg-white">
 
                         <table class="min-w-full text-sm text-left">
 
-                            {{-- Head --}}
+                            {{-- ================= HEAD ================= --}}
                             <thead class="bg-gray-100 text-gray-700 uppercase text-xs sticky top-0">
                                 <tr>
                                     <th class="px-4 py-3">Code</th>
@@ -381,152 +173,170 @@
                                     <th class="px-4 py-3">Group</th>
                                     <th class="px-4 py-3">Type</th>
                                     <th class="px-4 py-3">Bank A/C</th>
-                                    <th class="px-4 py-3">Balance</th>
+                                    <th class="px-4 py-3 text-right">Balance</th>
                                     <th class="px-4 py-3 text-center">Action</th>
                                 </tr>
                             </thead>
 
-                            {{-- Body --}}
+                            {{-- ================= BODY ================= --}}
                             <tbody class="divide-y">
 
-                            @foreach($ledgers->where('type','Expense') as $ledger)
-                                <tr class="hover:bg-gray-50 transition">
+                                @php $totalExpense = 0; @endphp
 
-                                    <td class="px-4 py-3 font-semibold text-indigo-600">
-                                        {{ $ledger->code }}
-                                    </td>
+                                @forelse($ledgers->where('type','Expense') as $ledger)
 
-                                    <td class="px-4 py-3">
-                                        {{ $ledger->display_name }}
-                                    </td>
+                                    @php $totalExpense += $ledger->balance; @endphp
 
-                                    <td class="px-4 py-3 text-gray-500">
-                                        {{ $ledger->system_name }}
-                                    </td>
+                                    <tr class="hover:bg-gray-50 transition">
 
-                                    <td class="px-4 py-3">
-                                        {{ $ledger->group->display_name ?? '-' }}
-                                    </td>
+                                        <td class="px-4 py-3 font-semibold text-indigo-600">
+                                            {{ $ledger->code }}
+                                        </td>
 
-                                    {{-- Type Badge --}}
-                                    <td class="px-4 py-3">
-                                        <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
-                                            {{ $ledger->type }}
-                                        </span>
-                                    </td>
+                                        <td class="px-4 py-3 font-medium">
+                                            {{ $ledger->display_name }}
+                                        </td>
 
-                                    {{-- Bank Yes/No Badge --}}
-                                    <td class="px-4 py-3">
-                                        @if($ledger->is_bank_acc)
-                                            <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Yes</span>
-                                        @else
-                                            <span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">No</span>
-                                        @endif
-                                    </td>
+                                        <td class="px-4 py-3 text-gray-500">
+                                            {{ $ledger->system_name }}
+                                        </td>
 
-                                    {{-- Balance --}}
-                                    <td class="px-4 py-3 font-semibold">
-                                        ₹ {{ number_format($ledger->opening_balance,2) }}
-                                    </td>
+                                        <td class="px-4 py-3">
+                                            {{ $ledger->group->display_name ?? '-' }}
+                                        </td>
 
-                                    {{-- Action --}}
-                                    <td class="px-4 py-3 text-center">
+                                        {{-- Type Badge --}}
+                                        <td class="px-4 py-3">
+                                            <span class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700">
+                                                {{ $ledger->type }}
+                                            </span>
+                                        </td>
 
-                                        <a href=""
-                                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs hover:bg-indigo-700 transition btn-primary">
-                                            Edit
-                                        </a>
+                                        {{-- Bank --}}
+                                        <td class="px-4 py-3">
+                                            @if($ledger->is_bank_acc)
+                                                <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Yes</span>
+                                            @else
+                                                <span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">No</span>
+                                            @endif
+                                        </td>
 
-                                    </td>
+                                        {{-- Balance --}}
+                                        <td class="px-4 py-3 font-semibold text-right">
+                                            ₹ {{ number_format($ledger->balance,2) }}
+                                        </td>
 
-                                </tr>
-                            @endforeach
+                                        {{-- Action --}}
+                                        <td class="px-4 py-3 text-center">
+                                            <a href="{{ route('ledger.edit',$ledger->id) }}"
+                                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs hover:bg-indigo-700 transition">
+                                                Edit
+                                            </a>
+                                        </td>
+
+                                    </tr>
+
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center py-6 text-gray-400">
+                                            No Expense Ledgers Found
+                                        </td>
+                                    </tr>
+                                @endforelse
 
                             </tbody>
+
+                            {{-- ================= FOOTER TOTAL ================= --}}
+                            <tfoot class="bg-red-50 font-bold">
+                                <tr>
+                                    <td colspan="6" class="px-4 py-3 text-right">
+                                        TOTAL EXPENSE
+                                    </td>
+                                    <td class="px-4 py-3 text-right text-red-700">
+                                        ₹ {{ number_format($totalExpense,2) }}
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
 
                         </table>
 
                     </div>
                 </div>
 
-                <!-- Tab 6 -->
+                <!-- Tab 6 : REVENUE ONLY -->
                 <div id="tab6" class="tab-pane hidden">
-                     {{-- Table --}}
-                    <div class="overflow-x-auto rounded-xl border">
 
-                        <table class="min-w-full text-sm text-left">
+                    <div class="overflow-x-auto rounded-xl border bg-white">
 
-                            {{-- Head --}}
-                            <thead class="bg-gray-100 text-gray-700 uppercase text-xs sticky top-0">
+                        <table class="min-w-full text-sm">
+
+                            {{-- ================= HEAD ================= --}}
+                            <thead class="bg-gray-100 font-bold uppercase text-xs">
                                 <tr>
-                                    <th class="px-4 py-3">Code</th>
-                                    <th class="px-4 py-3">Name</th>
-                                    <th class="px-4 py-3">System Name</th>
-                                    <th class="px-4 py-3">Group</th>
-                                    <th class="px-4 py-3">Type</th>
-                                    <th class="px-4 py-3">Bank A/C</th>
-                                    <th class="px-4 py-3">Balance</th>
-                                    <th class="px-4 py-3 text-center">Action</th>
+                                    <th class="px-4 py-3 text-left">PARTICULARS</th>
+                                    <th class="px-4 py-3 text-right">CURRENT</th>
+                                    <th class="px-4 py-3 text-right">PREVIOUS</th>
                                 </tr>
                             </thead>
 
-                            {{-- Body --}}
-                            <tbody class="divide-y">
+                            {{-- ================= BODY ================= --}}
+                            <tbody>
 
-                            @foreach($ledgers->where('type','Revenue') as $ledger)
-                                <tr class="hover:bg-gray-50 transition">
+                                @php
+                                    $totalRevenueCurrent = 0;
+                                    $totalRevenuePrevious = 0;
+                                @endphp
 
-                                    <td class="px-4 py-3 font-semibold text-indigo-600">
-                                        {{ $ledger->code }}
-                                    </td>
+                                @forelse($revenues as $row)
 
-                                    <td class="px-4 py-3">
-                                        {{ $ledger->display_name }}
-                                    </td>
+                                    @php
+                                        $totalRevenueCurrent += $row['current'];
+                                        $totalRevenuePrevious += $row['previous'];
+                                    @endphp
 
-                                    <td class="px-4 py-3 text-gray-500">
-                                        {{ $ledger->system_name }}
-                                    </td>
+                                    <tr class="border-b hover:bg-gray-50">
 
-                                    <td class="px-4 py-3">
-                                        {{ $ledger->group->display_name ?? '-' }}
-                                    </td>
+                                        <td class="px-4 py-2 font-medium">
+                                            {{ $row['name'] }}
+                                        </td>
 
-                                    {{-- Type Badge --}}
-                                    <td class="px-4 py-3">
-                                        <span class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
-                                            {{ $ledger->type }}
-                                        </span>
-                                    </td>
+                                        <td class="px-4 py-2 text-right">
+                                            ₹ {{ number_format($row['current'],2) }}
+                                        </td>
 
-                                    {{-- Bank Yes/No Badge --}}
-                                    <td class="px-4 py-3">
-                                        @if($ledger->is_bank_acc)
-                                            <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Yes</span>
-                                        @else
-                                            <span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">No</span>
-                                        @endif
-                                    </td>
+                                        <td class="px-4 py-2 text-right">
+                                            ₹ {{ number_format($row['previous'],2) }}
+                                        </td>
 
-                                    {{-- Balance --}}
-                                    <td class="px-4 py-3 font-semibold">
-                                        ₹ {{ number_format($ledger->opening_balance,2) }}
-                                    </td>
+                                    </tr>
 
-                                    {{-- Action --}}
-                                    <td class="px-4 py-3 text-center">
-
-                                        <a href=""
-                                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs hover:bg-indigo-700 transition btn-primary">
-                                            Edit
-                                        </a>
-
-                                    </td>
-
-                                </tr>
-                            @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center py-6 text-gray-400">
+                                            No Revenue Data Found
+                                        </td>
+                                    </tr>
+                                @endforelse
 
                             </tbody>
+
+                            {{-- ================= TOTAL ================= --}}
+                            <tfoot class="bg-green-100 font-bold text-lg">
+                                <tr>
+                                    <td class="px-4 py-3">
+                                        TOTAL REVENUE
+                                    </td>
+
+                                    <td class="px-4 py-3 text-right text-green-700">
+                                        ₹ {{ number_format($totalRevenueCurrent,2) }}
+                                    </td>
+
+                                    <td class="px-4 py-3 text-right text-green-700">
+                                        ₹ {{ number_format($totalRevenuePrevious,2) }}
+                                    </td>
+                                </tr>
+                            </tfoot>
 
                         </table>
 
@@ -534,6 +344,7 @@
                 </div>
 
             </div>
+
         </div>
 
 

@@ -11,17 +11,11 @@ use App\Models\Ledger;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-
+use Carbon\Carbon;
 
 class LedgergroupController extends Controller
 {
     
-
-    /*
-        |--------------------------------------------------------------------------
-        | INDEX
-        |--------------------------------------------------------------------------
-    */
 
     public function index()
     {
@@ -81,7 +75,6 @@ class LedgergroupController extends Controller
 
         return [0,0];
     }
-
 
     private function goldLoanBalance()
     {
@@ -323,23 +316,10 @@ class LedgergroupController extends Controller
         return [$loans->count(), $closing];
     }
 
-
-   /*
-    |--------------------------------------------------------------------------
-    | CREATE FORM
-    |--------------------------------------------------------------------------
-    */
-
     public function create()
     {
         return view('menu-accounts.ledger-group.add-ledger-group');
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | STORE
-    |--------------------------------------------------------------------------
-    */
 
     public function store(Request $request)
     {
@@ -471,6 +451,22 @@ class LedgergroupController extends Controller
         return view('menu-accounts.ledger-group.journal-entry');
     }
 
+    public function destroy($id)
+    {
+        $group = LedgerGroup::findOrFail($id);
+
+        // 1️⃣ Delete all ledgers inside this group
+        Ledger::where('group_id', $id)->delete();
+
+        // 2️⃣ Delete group
+        $group->delete();
+
+        return redirect()
+            ->route('ledger-group.index')
+            ->with('success', 'Ledger Group & related Ledgers deleted successfully');
+    }
+
+
 
 ////////////////////////////////    Only Lead Tab      ////////////////////////////////////////////
    
@@ -528,12 +524,6 @@ class LedgergroupController extends Controller
 
         return response()->json($groups);
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | STORE
-    |--------------------------------------------------------------------------
-    */
    
     public function led_store(Request $request)
     {
@@ -742,15 +732,87 @@ class LedgergroupController extends Controller
     }
 
 
+
 ////////////////////////////////    Only Profit & Loss Tab      ////////////////////////////////////////////
      
 
     public function profit_loss()
     {
-        $ledgers = Ledger::with('group')->latest()->get();
-        $groups  = LedgerGroup::orderBy('display_name')->get();
+        $today = Carbon::today();
+        $previous = Carbon::today()->subYear();
 
-        return view('menu-accounts.profit-loss.profit_loss', compact('ledgers','groups'));
+        /*
+        |--------------------------------------------------------------------------
+        | 1. All Ledgers for tabs (Assets, Liabilities etc)
+        |--------------------------------------------------------------------------
+        */
+        $ledgers = Ledger::with('group')->get();
+
+        foreach ($ledgers as $ledger) {
+            [$acc, $bal] = $this->calculateLedgerBalance($ledger->code);
+            $ledger->balance = $bal ?: $ledger->opening_balance;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2. Profit & Loss Data
+        |--------------------------------------------------------------------------
+        */
+        $revenues = [];
+        $expenses = [];
+
+        $totalRevenueCurrent = 0;
+        $totalRevenuePrevious = 0;
+
+        $totalExpenseCurrent = 0;
+        $totalExpensePrevious = 0;
+
+        foreach ($ledgers as $ledger) {
+
+            [$a1, $current]  = $this->calculateLedgerBalance($ledger->code, $today);
+            [$a2, $previousBal] = $this->calculateLedgerBalance($ledger->code, $previous);
+
+            if ($ledger->type == 'Revenue') {
+
+                $revenues[] = [
+                    'name' => $ledger->display_name,
+                    'current' => $current,
+                    'previous' => $previousBal,
+                ];
+
+                $totalRevenueCurrent += $current;
+                $totalRevenuePrevious += $previousBal;
+            }
+
+            if ($ledger->type == 'Expense') {
+
+                $expenses[] = [
+                    'name' => $ledger->display_name,
+                    'current' => $current,
+                    'previous' => $previousBal,
+                ];
+
+                $totalExpenseCurrent += $current;
+                $totalExpensePrevious += $previousBal;
+            }
+        }
+
+        $netCurrent  = $totalRevenueCurrent - $totalExpenseCurrent;
+        $netPrevious = $totalRevenuePrevious - $totalExpensePrevious;
+
+        return view('menu-accounts.profit-loss.profit_loss', compact(
+            'ledgers',
+            'revenues',
+            'expenses',
+            'today',
+            'previous',
+            'totalRevenueCurrent',
+            'totalRevenuePrevious',
+            'totalExpenseCurrent',
+            'totalExpensePrevious',
+            'netCurrent',
+            'netPrevious'
+        ));
     }
 
 
