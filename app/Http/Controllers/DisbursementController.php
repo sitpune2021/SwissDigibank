@@ -41,7 +41,6 @@ class DisbursementController extends Controller
         $loan->save();
 
         return redirect()->back()->with('success', 'Loan has been cancelled successfully.');
-
     }
 
     public function store(Request $request)
@@ -90,7 +89,11 @@ class DisbursementController extends Controller
                 'igst' => $request->igst ?? 0,
                 'processing_fee_total' => $request->processing_fee_total ?? 0,
                 'stamp_duty_fee' => $request->stamp_duty_fee ?? 0,
+                'stamp_duty_total' => $request->stamp_duty_total ?? 0,   // ✅ ADDED
+
                 'insurance_fee' => $request->insurance_fee ?? 0,
+                'insurance_total' => $request->insurance_total ?? 0,     // ✅ ADDED
+
                 'advance_interest' => $request->advance_interest ?? 0,
                 'final_amount' => $request->final_amount,
 
@@ -172,7 +175,6 @@ class DisbursementController extends Controller
         $processingFee = $scheme->processing_fee_total ?? 0;
         $stampDutyFee = $scheme->stamp_duty_charge ?? 0;
         $insuranceFee = $scheme->insurance_fee ?? 0;
-
         // Common GST percent
         $gstPercent = 18;
 

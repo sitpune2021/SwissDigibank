@@ -27,7 +27,8 @@ class GoldLoanDisbursement extends Model
         'insurance_fee',
         'advance_interest',
         'final_amount',
-
+        'stamp_duty_total',
+        'insurance_total',
         // disbursement modes
         'disburse_mode1',
         'payment_mode1',
