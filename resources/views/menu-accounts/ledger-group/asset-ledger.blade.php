@@ -104,7 +104,6 @@
                         <th class="px-4 py-3">Type</th>
                         <th class="px-4 py-3 text-center">System A/C</th>
                         <th class="px-4 py-3 text-right">Balance</th>
-                        <th class="px-4 py-3 text-center">Action</th>
                     </tr>
                 </thead>
 
@@ -145,13 +144,6 @@
 
                         <td class="px-4 py-3 text-right font-semibold text-green-600">
                             ₹ {{ number_format($ledger->balance,2) }}
-                        </td>
-
-                        <td class="px-4 py-3 text-center">
-                            <a href="{{ route('ledger.view', $ledger->id) }}"
-                               class="px-3 py-1.5 text-xs bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                                View
-                            </a>
                         </td>
 
                     </tr>

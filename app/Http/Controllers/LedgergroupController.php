@@ -378,90 +378,30 @@ class LedgergroupController extends Controller
 
         /*
         |----------------------------------------
-        | Fetch ledgers under this group
+        | Fetch ledgers
         |----------------------------------------
         */
         $ledgers = Ledger::where('group_id', $id)
             ->with('group')
             ->get();
 
-
         $totalBalance = 0;
 
-
-        /*
-        |----------------------------------------
-        | SAME BALANCE LOGIC (Gold/Mortgage)
-        |----------------------------------------
-        */
         foreach ($ledgers as $ledger) {
 
-            $ledger->balance = $ledger->opening_balance;
+            /*
+            |----------------------------------------
+            | 🔥 ALWAYS USE CODE (NOT NAME)
+            |----------------------------------------
+            */
+            [$accounts, $balance] = $this->calculateLedgersBalance($ledger->code);
 
-
-            if ($ledger->system_name == 'Gold Loan') {
-
-                $loans = DB::table('loan_applications')->where('status', 2)->get();
-
-                $closing = 0;
-
-                foreach ($loans as $loan) {
-
-                    $loanAmount = $loan->loan_amount;
-
-                    $collected = DB::table('gold_loan_transactions')
-                        ->where('loan_id', $loan->id)
-                        ->sum('amount_collected');
-
-                    $charges = DB::table('gold_loan_other_charges')
-                        ->where('loan_id', $loan->id)
-                        ->sum('amount');
-
-                    $remain = DB::table('gold_loan_fore_closures')
-                        ->where('loan_id', $loan->id)
-                        ->value('remaining_amount') ?? 0;
-
-                    $closing += max(0, $loanAmount - ($collected + $charges + $remain));
-                }
-
-                $ledger->balance = $closing;
-            }
-
-            elseif ($ledger->system_name == 'Mortgage Loan') {
-
-                $loans = DB::table('mortgage_loan_applications')->where('status', 2)->get();
-
-                $closing = 0;
-
-                foreach ($loans as $loan) {
-
-                    $loanAmount = $loan->loan_amount;
-
-                    $collected = DB::table('mortgage_loan_transactions')
-                        ->where('loan_id', $loan->id)
-                        ->sum('amount_collected');
-
-                    $charges = DB::table('mortgage_loan_other_charges')
-                        ->where('loan_id', $loan->id)
-                        ->sum('amount');
-
-                    $remain = DB::table('mortgage_loan_fore_closures')
-                        ->where('loan_id', $loan->id)
-                        ->value('remaining_amount') ?? 0;
-
-                    $closing += max(0, $loanAmount - ($collected + $charges + $remain));
-                }
-
-                $ledger->balance = $closing;
-            }
-
+            $ledger->balance = $balance ?: $ledger->opening_balance;
 
             $totalBalance += $ledger->balance;
         }
 
-
         $accountsCount = $ledgers->count();
-
 
         return view('menu-accounts.ledger-group.asset-ledger', compact(
             'group',
@@ -469,6 +409,56 @@ class LedgergroupController extends Controller
             'accountsCount',
             'totalBalance'
         ));
+    }
+
+    private function calculateLedgersBalance($code)
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | AUTO NORMALIZE
+        |--------------------------------------------------------------------------
+        */
+        $code = strtoupper(Str::slug($code, '_'));
+
+        /*
+        |--------------------------------------------------------------------------
+        | SMART MATCHING (user kuch bhi likhe)
+        |--------------------------------------------------------------------------
+        */
+
+        if (Str::contains($code, ['GOLD', 'LOAN'])) {
+            return $this->goldLoanBalance();
+        }
+
+        if (Str::contains($code, ['MORTGAGE'])) {
+            return $this->mortgageBalance();
+        }
+
+        if (Str::contains($code, ['AGAINST'])) {
+            return $this->loanagainstBalance();
+        }
+
+        if (Str::contains($code, ['BUSINESS'])) {
+            return $this->businessloanBalance();
+        }
+
+        if (Str::contains($code, ['CC', 'OD'])) {
+            return $this->ccodloanBalance();
+        }
+
+        if (Str::contains($code, ['DAILY', 'WEEKLY'])) {
+            return $this->dailyweeklyloanBalance();
+        }
+
+        if (Str::contains($code, ['PERSONAL'])) {
+            return $this->personalloanBalance();
+        }
+
+        if (Str::contains($code, ['VEHICLE', 'CAR'])) {
+            return $this->vehicalloanBalance();
+        }
+
+        return [0, 0];
     }
 
     public function edit_ledger()
