@@ -72,7 +72,7 @@
             <div class="" style="padding: 5px; margin-top: 15px;">
         <p style="font-size: 12px;line-height: 1.5;font-size: 14px; ">On demand I/ We {{$name}} of hereby promise to pay to
                    {{$bank_name}} residing at {{$bank_adr_branch}} {{$bank_adr}} the sum of
-                    Rupees {{$amount_words}} only with interest at the rate of {{$interest_rate}}% annually for the value received in
+                    Rupees {{$amount_words}}  with interest at the rate of {{$interest_rate}}% annually for the value received in
                     this day.
                 </p>
             </div>
@@ -150,7 +150,7 @@
             <div class="" style="padding: 5px;">
                 <p style="font-size: 14px;line-height: 1.5; ">
                     I/ We {{$name}} Son/ Daughter/ Wife of Received
-                    from {{$bank_name}} the sum of {{$amount_words}} only towards the
+                    from {{$bank_name}} the sum of {{$amount_words}}  towards the
                     Promissory Note executed by me/ us on this day
                 </p>
             </div>

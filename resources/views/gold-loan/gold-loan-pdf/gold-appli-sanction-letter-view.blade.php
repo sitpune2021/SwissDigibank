@@ -200,7 +200,7 @@
                 </tr>
                 <tr>
                     <td  class="label" style="font-size: 14px !important;">Loan Amount</td>
-                    <td  class="value" style="font-size: 14px !important;">: ₹{{$loan_amount}}</td>
+                    <td  class="value" style="font-size: 14px !important;">: ₹ {{$loan_amount}}</td>
                 </tr>
                 <tr>
                     <td  class="label" style="font-size: 14px !important;">Tenure of Loan</td>
@@ -232,7 +232,7 @@
                 </tr>
                 <tr>
                     <td  class="label" style="font-size: 14px !important;">Processing Fee</td>
-                    <td  class="value" style="font-size: 14px !important;">: ₹{{$processing_fee}}</td>
+                    <td  class="value" style="font-size: 14px !important;">: ₹ {{$processing_fee}}</td>
                 </tr>
                 <tr>
                     <td  class="label" style="font-size: 14px !important;">Stamp Duty</td>

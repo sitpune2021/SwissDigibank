@@ -88,7 +88,7 @@
                         </li>
                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                             <i class="las la-rupee-sign"></i>
-                            <a href="">Profit and Loss (P&L)</a>
+                            <a href="{{ route('profit-loss.profit_loss') }}">Profit and Loss (P&L)</a>
                         </li>
                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                             <i class="las la-random"></i>

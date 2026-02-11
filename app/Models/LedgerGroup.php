@@ -9,6 +9,7 @@ class LedgerGroup extends Model
     protected $fillable = [
         'display_name',
         'system_name',
+        'code',
         'type',
         'is_system_group',
         'weightage'
