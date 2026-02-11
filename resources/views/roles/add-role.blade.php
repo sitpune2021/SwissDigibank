@@ -100,17 +100,17 @@ $menuItems = Menu::where('active', 1)->with('submenus')->orderBy('position')->ge
                 </div>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-                <div class="col-span-2 md:col-span-6 md:grid-cols-2 lg:grid-cols-3">
-                    <div class="main-inner">
+                <div class="col-span-2 md:col-span-6 md:grid-cols-2 lg:grid-cols-3  ">
+                    <div class="main-inner ">
                         <button id="menuToggleBtn" type="button"
                             class="md:hidden flex items-center gap-2 min-w-max py-2 px-3 relative z-[3] rounded-lg bg-primary text-n0 chatbtn">
                             <i class="las la-bars"></i> <span>Menu</span>
                         </button>
-                        <div class="flex  flex-col relative gap-4 xxl:gap-6 max-md:mt-3 tabs">
+                        <div class="flex  flex-col relative gap-4 xxl:gap-6 max-md:mt-3 tabs ">
                             <div id="chat-sidebar"
                                 class="max-md:box md:bg-transparent duration-500 max-md:w-[280px] max-md:max-h-[600px]
                                  max-md:overflow-y-auto max-md:rounded-xl max-md:absolute ltr:max-md:left-0 rtl:max-md:right-0 z-[3] max-md:bg-n0 max-md:dark:bg-bg4
-                               max-md:top-0 md:col-span-5 xl:col-span-4 max-md:min-w-[300px] chathide">
+                               max-md:top-0 md:col-span-5 xl:col-span-4 max-md:min-w-[300px] chathide overflow-x-auto">
                                 <div class="md:box sticky top-20">
                                     @php
                                         $allMenus = array_merge(

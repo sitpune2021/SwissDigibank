@@ -111,4 +111,14 @@ class Account extends Model
 
         return '--';
     }
+
+    public function jointMemberOne()
+{
+    return $this->belongsTo(Member::class, 'joint_member1');
+}
+
+public function jointMemberTwo()
+{
+    return $this->belongsTo(Member::class, 'joint_member2');
+}
 }

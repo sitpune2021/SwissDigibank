@@ -188,11 +188,28 @@
                                     </td>
 
                                     {{-- ACTION --}}
-                                    <td class="px-6 py-4 text-center">
-                                        <a href="#"
-                                        class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow btn-primary">
+                                    <td class="px-6 py-4 text-center flex gap-2 justify-center">
+
+                                        {{-- Edit --}}
+                                        <a href=""
+                                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm btn-primary">
                                             Edit
                                         </a>
+
+                                        {{-- Delete --}}
+                                        <form action="{{ route('ledger-group.destroy',$row->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure to delete this group and all ledgers?')">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm btn-warning">
+                                                Delete
+                                            </button>
+
+                                        </form>
+
                                     </td>
 
                                 </tr>
@@ -277,11 +294,28 @@
                                     </td>
 
                                     {{-- ACTION --}}
-                                     <td class="px-6 py-4 text-center">
-                                        <a href="#"
-                                        class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow btn-primary">
+                                    <td class="px-6 py-4 text-center flex gap-2 justify-center">
+
+                                        {{-- Edit --}}
+                                        <a href=""
+                                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm btn-primary">
                                             Edit
                                         </a>
+
+                                        {{-- Delete --}}
+                                        <form action="{{ route('ledger-group.destroy',$row->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure to delete this group and all ledgers?')">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm btn-warning">
+                                                Delete
+                                            </button>
+
+                                        </form>
+
                                     </td>
 
                                 </tr>
@@ -365,12 +399,29 @@
                                         ₹ {{ number_format($row->balance, 2) }}
                                     </td>
 
-                                    {{-- ACTION --}}
-                                    <td class="px-6 py-4 text-center">
-                                        <a href="#"
-                                        class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow btn-primary">
+                                     {{-- ACTION --}}
+                                    <td class="px-6 py-4 text-center flex gap-2 justify-center">
+
+                                        {{-- Edit --}}
+                                        <a href=""
+                                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm btn-primary">
                                             Edit
                                         </a>
+
+                                        {{-- Delete --}}
+                                        <form action="{{ route('ledger-group.destroy',$row->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure to delete this group and all ledgers?')">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm btn-warning">
+                                                Delete
+                                            </button>
+
+                                        </form>
+
                                     </td>
 
                                 </tr>
@@ -454,12 +505,29 @@
                                         ₹ {{ number_format($row->balance, 2) }}
                                     </td>
 
-                                    {{-- ACTION --}}
-                                    <td class="px-6 py-4 text-center">
-                                        <a href="#"
-                                        class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow btn-primary">
+                                     {{-- ACTION --}}
+                                    <td class="px-6 py-4 text-center flex gap-2 justify-center">
+
+                                        {{-- Edit --}}
+                                        <a href=""
+                                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm btn-primary">
                                             Edit
                                         </a>
+
+                                        {{-- Delete --}}
+                                        <form action="{{ route('ledger-group.destroy',$row->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure to delete this group and all ledgers?')">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm btn-warning">
+                                                Delete
+                                            </button>
+
+                                        </form>
+
                                     </td>
 
                                 </tr>
@@ -543,12 +611,29 @@
                                         ₹ {{ number_format($row->balance, 2) }}
                                     </td>
 
-                                    {{-- ACTION --}}
-                                    <td class="px-6 py-4 text-center">
-                                        <a href="#"
-                                        class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow btn-primary">
+                                     {{-- ACTION --}}
+                                    <td class="px-6 py-4 text-center flex gap-2 justify-center">
+
+                                        {{-- Edit --}}
+                                        <a href=""
+                                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm btn-primary">
                                             Edit
                                         </a>
+
+                                        {{-- Delete --}}
+                                        <form action="{{ route('ledger-group.destroy',$row->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure to delete this group and all ledgers?')">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm btn-warning">
+                                                Delete
+                                            </button>
+
+                                        </form>
+
                                     </td>
 
                                 </tr>
@@ -633,11 +718,28 @@
                                     </td>
 
                                     {{-- ACTION --}}
-                                    <td class="px-6 py-4 text-center">
-                                        <a href="#"
-                                        class="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow btn-primary">
+                                    <td class="px-6 py-4 text-center flex gap-2 justify-center">
+
+                                        {{-- Edit --}}
+                                        <a href=""
+                                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm btn-primary">
                                             Edit
                                         </a>
+
+                                        {{-- Delete --}}
+                                        <form action="{{ route('ledger-group.destroy',$row->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure to delete this group and all ledgers?')">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm btn-warning">
+                                                Delete
+                                            </button>
+
+                                        </form>
+
                                     </td>
 
                                 </tr>

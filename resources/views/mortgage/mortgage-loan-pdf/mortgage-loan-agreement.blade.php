@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Gold Loan Agreement</title>
+    <title>Mortgage/ Property Loan Agreement</title>
     <link rel="stylesheet" href="{{ public_path('css/pdf-agreement.css') }}">
 
     <style>

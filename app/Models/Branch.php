@@ -30,6 +30,7 @@ class Branch extends Model
         'gst_no',
         'disable_recharge',
         'disable_neft',
+        'active'
     ];
 
     protected $casts = [

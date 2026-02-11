@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Gold Loan Disbursement Letter</title>
+    <title>Mortgage/ Property Loan Disbursement Letter</title>
 
     <style>
         @page {
@@ -116,7 +116,7 @@
         <div class="subject" style="font-size: 14px;">
            This is with regard to the sanction of 
          {{ str_pad( $loan_no, 10, '0', STR_PAD_LEFT) }}   
-            ( Gold Loan - {{ str_pad( $loan_no, 10, '0', STR_PAD_LEFT) }} ) of
+            ( Mortgage/ Property Loan - {{ str_pad( $loan_no, 10, '0', STR_PAD_LEFT) }} ) of
             ₹ {{ number_format($loan_amount, 2) }}
             by your Company, I
             request you to disburse the loan proceeds by way of

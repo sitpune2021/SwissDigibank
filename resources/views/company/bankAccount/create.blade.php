@@ -69,11 +69,11 @@
                 @endif
                 {{-- Bank --}}
                 <div class="col-span-2 md:col-span-1">
-                    <label class="md:text-lg font-medium block mb-4 uppercase">
+                    <label class="md:text-lg font-medium block mb-2 mt-2 uppercase">
                         Bank Name <span class="text-red-500">*</span>
                     </label>
                     <select name="bank_id" {{ $isView ? 'disabled' : '' }}
-                        class="w-full text-sm bg-secondary/5 border border-n30 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                        class="w-full text-sm bg-secondary/5 border border-n30 rounded-10 px-3 md:px-6 py-2 md:py-3 mt-3">
                         <option value="">-- Select Bank --</option>
                         @foreach ($banks as $bank)
                             <option value="{{ $bank->id }}"

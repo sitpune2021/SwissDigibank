@@ -99,27 +99,27 @@
             <h1 class="text-lg uppercase font-semibold">Business Loan Application</h1>
         </div>
     </div>
-            @if(session('success'))
-            <div class="">
-                <div class="w-44 mb-5 flex justify-end">
-                    <x-alert />
-                </div>
-                {{-- {{ session('success') }} --}}
-            </div>
-        @endif
+    @if(session('success'))
+    <div class="">
+        <div class="w-44 mb-5 flex justify-end">
+            <x-alert />
+        </div>
+        {{-- {{ session('success') }} --}}
+    </div>
+    @endif
 
     <div class="flex flex-wrap gap-3">
 
         <a href="{{ route('bussiness.applications.view-buttons.show-emi-chart', $application->id) }}" target="_blank" class="btn-primary  uppercase text-sm  px-2 py-2 rounded-10 ">
             Show EMI Chart
-        </a>  
-        @if($application->status != 2) 
+        </a>
+        @if($application->status != 2)
         <a href="{{ route('bussiness.applications.view-buttons.col_process_fee', $application->id) }}"
             class="btn-warning uppercase text-sm  px-2 py-2 rounded-10">
             Collect Processing Fee
-            </a>
+        </a>
         @endif
-        @if($application->status != 3 && $application->status != 2 && ($application->status != 1)) 
+        @if($application->status != 3 && $application->status != 2 && ($application->status != 1))
         <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST" style="display:inline;">
             @csrf
             <button type="submit" class="btn-primary uppercase text-sm  px-2 py-2 rounded-10"
@@ -145,7 +145,7 @@
         </a>
         @endif
 
-    @if($application->status != 0 && $application->status != 3)
+        @if($application->status != 0 && $application->status != 3)
         <div class="relative inline-block text-left">
             <!-- Button -->
             <button type="button" class="btn-secondary px-2 py-2 uppercase text-sm  rounded-10 flex items-center gap-2"
@@ -162,22 +162,22 @@
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> APPLICATION FORM
                     </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('business_loan.payout_chart_business_loan_application_view', $application->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> EMI SCHEDULE CHART
                     </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> SANCTION LETTER
                     </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> LOAN AGREEMENT
                     </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href=""  class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> DISBURSE LETTER
                     </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href=""  class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> PROMISSORY NOTE
                     </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href=""  class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> LETTER OF UNDERTAKING
                     </a>
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -189,15 +189,13 @@
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> JURISDICTION ACK LETTER
                     </a>
-
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> INDEMNIFICATION LETTER
                     </a>
-
                 </div>
             </div>
         </div>
-    @endif
+        @endif
 
     </div>
 
@@ -208,7 +206,7 @@
         <div class=" w-full  overflow-hidden">
             <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                 <div class="text-end p-3">
-                   <a href="{{ route('bussiness.applications.edit', $application->id) }}" class="p-2 btn-primary">
+                    <a href="{{ route('bussiness.applications.edit', $application->id) }}" class="p-2 btn-primary">
                         <i class="las la-pencil-alt"></i>
                     </a>
 
@@ -222,9 +220,9 @@
                         <tr class="border-b">
                             <td class="font-semibold uppercase px-4 py-2 w-1/3">Member</td>
                             <td class="px-4 py-2">
-                                <a href="{{ url('members/member/'. $application->member->id) }}" 
-                                class="text-primary capitalize hover:underline">
-                                {{ $application->member->member_no }} - {{ $application->member->member_info_first_name }}
+                                <a href="{{ url('members/member/'. $application->member->id) }}"
+                                    class="text-primary capitalize hover:underline">
+                                    {{ $application->member->member_no }} - {{ $application->member->member_info_first_name }}
                                 </a>
                             </td>
                         </tr>
@@ -247,7 +245,7 @@
                             <td class="font-semibold uppercase px-4 py-2">Application No.</td>
                             <td class="px-4 py-2">
                                 {{-- {{ $application->id }} --}}
-                                 {{ str_pad($application->id, 10, '0', STR_PAD_LEFT) }}
+                                {{ str_pad($application->id, 10, '0', STR_PAD_LEFT) }}
                             </td>
                         </tr>
                         <tr class="border-b">
@@ -260,7 +258,7 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold uppercase px-4 py-2">Gold Loan Scheme</td>
-                           <td class="text-start !py-5 px-6">
+                            <td class="text-start !py-5 px-6">
                                 {{ $application->scheme->scheme_name ?? 'N/A' }}
                             </td>
                         </tr>
@@ -268,26 +266,26 @@
                             <td class="font-semibold uppercase px-4 py-2">Amount Approved</td>
                             <td class="px-4 py-2">₹ {{ $application->approved_loan_amount }}</td>
                         </tr>
-                       <tr>
+                        <tr>
                             <td class="font-semibold uppercase px-4 py-2">Status</td>
                             <td class="px-4 py-2">
                                 @php
-                                    $statusText = 'UNKNOWN';
-                                    $statusClass = '';
+                                $statusText = 'UNKNOWN';
+                                $statusClass = '';
 
-                                    if ($application->status == 0) {
-                                        $statusText = 'DRAFT';
-                                        $statusClass = '';
-                                    } elseif ($application->status == 1) {
-                                        $statusText = 'APPROVED';
-                                        $statusClass = '';
-                                    } elseif ($application->status == 2) {
-                                        $statusText = 'DISBURSED';
-                                        $statusClass = '';
-                                    } elseif ($application->status == 3) {
-                                        $statusText = 'CANCELED';
-                                        $statusClass = '';
-                                    }
+                                if ($application->status == 0) {
+                                $statusText = 'DRAFT';
+                                $statusClass = '';
+                                } elseif ($application->status == 1) {
+                                $statusText = 'APPROVED';
+                                $statusClass = '';
+                                } elseif ($application->status == 2) {
+                                $statusText = 'DISBURSED';
+                                $statusClass = '';
+                                } elseif ($application->status == 3) {
+                                $statusText = 'CANCELED';
+                                $statusClass = '';
+                                }
                                 @endphp
 
                                 <span class="block w-32  py-2  {{ $statusClass }}">
@@ -306,7 +304,7 @@
                 <div class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10 ">
                     <h3 class="text-lg font-semibold text-black  uppercase">Cibil Info</h3>
                     <div class=" flex gap-3">
-                       
+
                         <!-- Modal Background (hidden by default) -->
                         <div id="creditScoreModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                             <!-- Modal Container -->
@@ -345,36 +343,36 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                        @if($application->creditScores && $application->creditScores->isNotEmpty())
+                            @if($application->creditScores && $application->creditScores->isNotEmpty())
                             @foreach($application->creditScores as $score)
-                                @if($score)
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-2">{{ $score->cibil_type ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2">{{ $score->cibil_score ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2">
-                                            {{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : 'N/A' }}
-                                        </td>
-                                        <td class="px-4 py-2">
-                                            @if(!empty($score->report_file_path))
-                                                <!-- <a href="javascript:void(0);" 
+                            @if($score)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-2">{{ $score->cibil_type ?? 'N/A' }}</td>
+                                <td class="px-4 py-2">{{ $score->cibil_score ?? 'N/A' }}</td>
+                                <td class="px-4 py-2">
+                                    {{ $score->report_date ? \Carbon\Carbon::parse($score->report_date)->format('d-m-Y') : 'N/A' }}
+                                </td>
+                                <td class="px-4 py-2">
+                                    @if(!empty($score->report_file_path))
+                                    <!-- <a href="javascript:void(0);" 
                                                 onclick="showImage('{{ asset($score->report_file_path) }}')" 
                                                 class="text-blue-600 hover:underline">View Report</a> -->
-                                                <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>            
-                                            
-                                            @else
-                                                <span class="text-gray-500">No File Available</span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endif
-                            @endforeach
+                                    <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>
+
                                     @else
-                                        <tr>
-                                            <td colspan="4" class="text-center py-3 text-gray-500">No CIBIL Data Found</td>
-                                        </tr>
+                                    <span class="text-gray-500">No File Available</span>
                                     @endif
-                                </tbody>
-                            </table>
+                                </td>
+                            </tr>
+                            @endif
+                            @endforeach
+                            @else
+                            <tr>
+                                <td colspan="4" class="text-center py-3 text-gray-500">No CIBIL Data Found</td>
+                            </tr>
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -394,27 +392,27 @@
                     <tbody>
                         <tr class="border-t border-b">
                             <td class="px-2 py-2 text-gray-800 capitalize">
-                                 @php
-                                    $statusText = 'UNKNOWN';
-                                    $statusClass = 'bg-gray-200 text-gray-600 border-gray-300';
+                                @php
+                                $statusText = 'UNKNOWN';
+                                $statusClass = 'bg-gray-200 text-gray-600 border-gray-300';
 
-                                    if ($application->status == 0) {
-                                        $statusText = 'DRAFT';
-                                        $statusClass = 'bg-gray-300 text-gray-700 border-gray-400';
-                                    } elseif ($application->status == 1) {
-                                        $statusText = 'APPROVED';
-                                        $statusClass = 'bg-blue-200 text-blue-600 border-blue-300';
-                                    } elseif ($application->status == 2) {
-                                        $statusText = 'DISBURSEMENT';
-                                        $statusClass = 'bg-green-200 text-green-600 border-green-300';
-                                    } elseif ($application->status == 3) {
-                                        $statusText = 'CANCELED';
-                                        $statusClass = 'bg-red-200 text-red-600 border-red-300';
-                                    }
+                                if ($application->status == 0) {
+                                $statusText = 'DRAFT';
+                                $statusClass = 'bg-gray-300 text-gray-700 border-gray-400';
+                                } elseif ($application->status == 1) {
+                                $statusText = 'APPROVED';
+                                $statusClass = 'bg-blue-200 text-blue-600 border-blue-300';
+                                } elseif ($application->status == 2) {
+                                $statusText = 'DISBURSEMENT';
+                                $statusClass = 'bg-green-200 text-green-600 border-green-300';
+                                } elseif ($application->status == 3) {
+                                $statusText = 'CANCELED';
+                                $statusClass = 'bg-red-200 text-red-600 border-red-300';
+                                }
                                 @endphp
 
-                                 {{ $statusText }}
-                              
+                                {{ $statusText }}
+
                             </td>
                             <td class="px-2 py-2 text-gray-800 capitalize">-</td>
                             <td class="px-2 py-2 text-gray-800">-</td>
@@ -466,7 +464,7 @@
                     <div
                         class="flex justify-center items-center mt-3 px-4 py-6 text-2xl sm:text-3xl font-semibold text-red-500">
                         <label class="cursor-pointer">
-                             {{ $score->cibil_score ?? 'N/A' }}
+                            {{ $score->cibil_score ?? 'N/A' }}
                         </label>
                     </div>
                 </div>
@@ -589,48 +587,48 @@
                             </tr>
 
                             @if(!empty($application->scheme->sms_charge))
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2 uppercase">SMS Charges</td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $application->scheme->sms_charge ?? 0 }} ₹ 
-                                    </td>
-                                </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2 uppercase">SMS Charges</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->sms_charge ?? 0 }} ₹
+                                </td>
+                            </tr>
                             @endif
 
                             @if(!empty($application->scheme->fuel_charge))
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2 uppercase">Fuel Charges</td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $application->scheme->fuel_charge ?? 0 }} ₹ 
-                                    </td>
-                                </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2 uppercase">Fuel Charges</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->fuel_charge ?? 0 }} ₹
+                                </td>
+                            </tr>
                             @endif
 
                             @if(!empty($application->scheme->stationary_charge))
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2 uppercase">Stationary Charges</td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $application->scheme->stationary_charge ?? 0 }} ₹ 
-                                    </td>
-                                </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2 uppercase">Stationary Charges</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->stationary_charge ?? 0 }} ₹
+                                </td>
+                            </tr>
                             @endif
 
                             @if(!empty($application->scheme->maintenance_charge))
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2 uppercase">Maintenance Charges</td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $application->scheme->maintenance_charge ?? 0 }} ₹ 
-                                    </td>
-                                </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2 uppercase">Maintenance Charges</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->maintenance_charge ?? 0 }} ₹
+                                </td>
+                            </tr>
                             @endif
-                    
+
                             @if(!empty($application->scheme->collection))
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2 uppercase">Collection Charges</td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $application->scheme->collection ?? 0 }} ₹ 
-                                    </td>
-                                </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2 uppercase">Collection Charges</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $application->scheme->collection ?? 0 }} ₹
+                                </td>
+                            </tr>
                             @endif
 
                         </tbody>
