@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Payout Chart</title>
+    <title>Mortgage/ Property Chart</title>
     <style>
         body {
 

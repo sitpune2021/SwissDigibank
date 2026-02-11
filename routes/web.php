@@ -1020,6 +1020,16 @@ Route::group(['prefix' => 'mortgage'], function () {
 
     Route::get('/{loan}/loan-agreement-view', [MortgageLoanPrintDocumentController::class, 'loanAgreementView'])->name('mortgage_loan.loanAgreement-view');
     Route::get( '/{loan}/loan-agreement',[MortgageLoanPrintDocumentController::class, 'loanAgreement'])->name('mortgage_loan.loanAgreement.pdf');
+
+    Route::get('/disburse-letter-view/{loan}', [MortgageLoanPrintDocumentController::class, 'disburse_letter_view'])->name('mortgage_loan.disburse_letter.view');
+    Route::get('/disburse-letter/{loan}', [MortgageLoanPrintDocumentController::class, 'disburse_letter'])->name('mortgage_loan.disburse_letter.pdf');
+
+    Route::get('/promissory-note-view/{loan}', [MortgageLoanPrintDocumentController::class, 'promissory_note_view'])->name('mortgage_loan.promissory.view');
+    Route::get('/promissory-note/{loan}', [MortgageLoanPrintDocumentController::class, 'promissory_note'])->name('mortgage_loan.promissory.pdf');
+
+     Route::get('/undertaking-letter-view/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('mortgage_loan.undertaking_letter.view');
+    Route::get('/undertaking-letter/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter'])->name('mortgage_loan.undertaking_letter.pdf');
+
 });
 
 

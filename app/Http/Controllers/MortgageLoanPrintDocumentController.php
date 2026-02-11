@@ -1016,7 +1016,7 @@ class MortgageLoanPrintDocumentController extends Controller
             'final_amount' => $disb->final_amount_to_disburse ?? 0,
         ];
 
-        return view('gold-loan.gold-loan-pdf.disburse-letter-view', $data);
+        return view('mortgage.mortgage-loan-pdf.mortgage-disburse-letter-view', $data);
     }
     public function disburse_letter(MortgageLoanApplication $loan)
     {
@@ -1071,12 +1071,84 @@ class MortgageLoanPrintDocumentController extends Controller
             'final_amount' => $disb->final_amount_to_disburse ?? 0,
         ];
 
-        $pdf = Pdf::loadView('gold-loan.gold-loan-pdf.disburse-letter', $data)
+        $pdf = Pdf::loadView('mortgage.mortgage-loan-pdf.mortage-disburse-letter', $data)
             ->setPaper('A4', 'portrait');
 
-        return $pdf->download('Gold_Loan_Disbursement_Letter.pdf');
+        return $pdf->download('Mortgage_Loan_Disbursement_Letter.pdf');
     }
-    public function letter_udertaking_gold_view(MortgageLoanApplication $loan)
+
+     public function promissory_note_view(MortgageLoanApplication $loan)
+    {
+        $loan->load(['member', 'scheme', 'disbursement']);
+        $scheme = $loan->scheme;
+
+        $bank = Company::first();
+        // Build full bank address
+        $bankAddress = collect([
+            $bank->address_line1 ?? '',
+            $bank->address_line2 ?? '',
+            $bank->city ?? '',
+            optional($bank->state)->name ?? '',
+            $bank->pincode ?? '',
+            $bank->country ?? '',
+        ])->filter()->implode(', ');
+
+        $loanAmount = $loan->approved_loan_amount ?? 0;
+        $data = [
+            'loan_no' => $loan->id,
+            'name' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
+            'date' => date('d-m-Y'),
+            'bank_name'       => $bank->company_name ?? '',
+            'bank_adr_branch' => $loan->branch->branch_name ?? '',
+            'bank_adr'        => $bankAddress,
+            'amount' => number_format($loanAmount, 2),
+            'amount_words' => $this->amountInWords($loanAmount),
+            'interest_rate' => $scheme->annual_interest_rate,
+            'account_holder' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
+            'state' => 'Maharashtra',
+        ];
+
+        return view('mortgage.mortgage-loan-pdf.mortgage-promissory-note-view', $data);
+    }
+    public function promissory_note(MortgageLoanApplication $loan)
+    {
+        $loan->load(['member', 'scheme', 'disbursement']);
+        $scheme = $loan->scheme;
+
+        $bank = Company::first();
+        // Build full bank address
+        $bankAddress = collect([
+            $bank->address_line1 ?? '',
+            $bank->address_line2 ?? '',
+            $bank->city ?? '',
+            optional($bank->state)->name ?? '',
+            $bank->pincode ?? '',
+            $bank->country ?? '',
+        ])->filter()->implode(', ');
+
+        $loanAmount = $loan->approved_loan_amount ?? 0;
+        $data = [
+            'loan_no' => $loan->id,
+            'name' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
+            'date' => date('d-m-Y'),
+            'bank_name'       => $bank->company_name ?? '',
+            'bank_adr_branch' => $loan->branch->branch_name ?? '',
+            'bank_adr'        => $bankAddress,
+            'amount' => number_format($loanAmount, 2),
+            'amount_words' => $this->amountInWords($loanAmount),
+            'interest_rate' => $scheme->annual_interest_rate,
+            'account_holder' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
+            'state' => 'Maharashtra',
+        ];
+
+
+        $pdf = Pdf::loadView('mortgage.mortgage-loan-pdf.mortgage-promissory-note', $data)
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->download('mortgage-promissory-note.pdf');
+    }
+
+        public function undertaking_letter_view(MortgageLoanApplication $loan)
     {
         $loan->load(['member', 'scheme', 'branch']);
         $loanAmount = $loan->approved_loan_amount ?? 0;
@@ -1111,9 +1183,9 @@ class MortgageLoanPrintDocumentController extends Controller
 
         ];
 
-        return view('gold-loan.gold-loan-pdf.letter-udertaking-gold-view', $data);
+        return view('mortgage.mortgage-loan-pdf.mortgage-undertaking-letter-view', $data);
     }
-    public function letter_udertaking_gold(MortgageLoanApplication $loan)
+    public function undertaking_letter(MortgageLoanApplication $loan)
     {
         $loan->load(['member', 'scheme', 'branch']);
         $loanAmount = $loan->approved_loan_amount ?? 0;
@@ -1148,82 +1220,9 @@ class MortgageLoanPrintDocumentController extends Controller
 
         ];
 
-        $pdf = Pdf::loadView('gold-loan.gold-loan-pdf.letter-udertaking-gold', $data)
+        $pdf = Pdf::loadView('mortgage.mortgage-loan-pdf.mortgage-undertaking-letter', $data)
             ->setPaper('A4', 'portrait');
 
-        return $pdf->download('letter_udertaking_gold.pdf');
-    }
-
-     public function promisary_note_view(MortgageLoanApplication $loan)
-    {
-        $loan->load(['member', 'scheme', 'disbursement']);
-        $scheme = $loan->scheme;
-
-        $bank = Company::first();
-        // Build full bank address
-        $bankAddress = collect([
-            $bank->address_line1 ?? '',
-            $bank->address_line2 ?? '',
-            $bank->city ?? '',
-            optional($bank->state)->name ?? '',
-            $bank->pincode ?? '',
-            $bank->country ?? '',
-        ])->filter()->implode(', ');
-
-        $loanAmount = $loan->approved_loan_amount ?? 0;
-        $data = [
-            'loan_no' => $loan->id,
-            'name' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
-            'date' => date('d-m-Y'),
-            'bank_name'       => $bank->company_name ?? '',
-            'bank_adr_branch' => $loan->branch->branch_name ?? '',
-            'bank_adr'        => $bankAddress,
-            'amount' => number_format($loanAmount, 2),
-            'amount_words' => $this->amountInWords($loanAmount),
-            'interest_rate' => $scheme->annual_interest_rate,
-            'account_holder' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
-            'state' => 'Maharashtra',
-        ];
-
-
-
-        return view('gold-loan.gold-loan-pdf.gold-appli-promisary-note-view', $data);
-    }
-    public function promisary_note(MortgageLoanApplication $loan)
-    {
-        $loan->load(['member', 'scheme', 'disbursement']);
-        $scheme = $loan->scheme;
-
-        $bank = Company::first();
-        // Build full bank address
-        $bankAddress = collect([
-            $bank->address_line1 ?? '',
-            $bank->address_line2 ?? '',
-            $bank->city ?? '',
-            optional($bank->state)->name ?? '',
-            $bank->pincode ?? '',
-            $bank->country ?? '',
-        ])->filter()->implode(', ');
-
-        $loanAmount = $loan->approved_loan_amount ?? 0;
-        $data = [
-            'loan_no' => $loan->id,
-            'name' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
-            'date' => date('d-m-Y'),
-            'bank_name'       => $bank->company_name ?? '',
-            'bank_adr_branch' => $loan->branch->branch_name ?? '',
-            'bank_adr'        => $bankAddress,
-            'amount' => number_format($loanAmount, 2),
-            'amount_words' => $this->amountInWords($loanAmount),
-            'interest_rate' => $scheme->annual_interest_rate,
-            'account_holder' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
-            'state' => 'Maharashtra',
-        ];
-
-
-        $pdf = Pdf::loadView('gold-loan.gold-loan-pdf.gold-appli-promisary-note', $data)
-            ->setPaper('A4', 'portrait');
-
-        return $pdf->download('promissory-note.pdf');
+        return $pdf->download('mortgage-undertaking-letter.pdf');
     }
 }
