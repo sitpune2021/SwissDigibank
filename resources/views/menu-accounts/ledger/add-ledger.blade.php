@@ -69,127 +69,177 @@
             </h3>
         </div>
 
-        <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
-            <!-- Left: Details -->
-            <div class=" w-full overflow-x-auto   overflow-hidden">
-                <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
-                    <div class="min-w-full p-4">
-                        <form>
-                            <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
-                                    Ledger Type
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <select id="" name=""
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option value="">Select Ledger Type</option>
-                                    <option value="">Asset</option>
-                                    <option value="">Liability</option>
-                                    <option value="">Equity</option>
-                                    <option value="">Expense</option>
-                                    <option value="">Revenue</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
-                                    Ledger Group 
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <select id="" name=""
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option>Select Group</option>
-                                   
-                                </select>
-                            </div>
+        <div class="flex flex-col lg:flex-row justify-between mt-7 gap-5">
 
-                            <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
-                                    Display Name
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" id="" name="" placeholder="Enter Ledger Display Name"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize" />
-                                <p class="text-xs text-primary mt-1">
-                                    (e.g. Accumulated Depreciation - Vehicles)
-                                </p>
-                            </div>
+            <div class="w-full">
+                <div class="box rounded-lg bg-white dark:bg-bg3 shadow-md p-6">
 
-                            <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
-                                    System Name
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" id="" name="" value=""  placeholder="Enter Ledger Name"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize" />
-                                <p class="text-xs text-primary mt-1">
-                                    (e.g. Accumulated Depreciation - Vehicles)
-                                </p>
-                            </div>
+                    <div class="max-w-5xl mx-auto bg-white dark:bg-bg2 shadow-xl rounded-2xl p-8">
 
-                            <!-- Code -->
-                            <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
-                                    Code
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" id="" name=""  placeholder="Enter Code" style="text-transform: uppercase"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize" />
-                                <p class="text-xs text-primary mt-1">
-                                    (e.g. 501, XYZ)
-                                </p>
-                            </div>
-                            <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
-                                    Is Bank Account
-                                </label>
-                                <div class="flex gap-6">
-                                    <label class="flex items-center gap-2">
-                                        <input type="radio" name="is_bank_acc" value="true"  class="" />
-                                        <span>Yes</span>
+                        {{-- FORM START --}}
+                        <form action="{{ route('ledger.store') }}" method="POST" class="space-y-8">
+                            @csrf
+
+                            {{-- GRID --}}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                                {{-- Ledger Type --}}
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2 uppercase">
+                                        Ledger Type <span class="text-red-500">*</span>
                                     </label>
-                                    <label class="flex items-center gap-2">
-                                        <input type="radio" name="is_bank_acc" value="false" checked  class="" />
-                                        <span>No</span>
-                                    </label>
+
+                                    <select name="type" required
+                                        class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500">
+                                        <option value="">Select Type</option>
+                                        <option value="Asset">Asset</option>
+                                        <option value="Liability">Liability</option>
+                                        <option value="Equity">Equity</option>
+                                        <option value="Expense">Expense</option>
+                                        <option value="Revenue">Revenue</option>
+                                    </select>
                                 </div>
-                            </div>
 
 
-                            <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">Show In Day
-                                    Book</label>
-                                <div class="flex gap-6">
-                                    <label class="flex items-center gap-2">
-                                        <input type="radio" name="show_in_day"  class="" />
-                                        <span>Yes</span>
+                                {{-- Ledger Group --}}
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2 uppercase">
+                                        Ledger Group <span class="text-red-500">*</span>
                                     </label>
-                                    <label class="flex items-center gap-2">
-                                        <input type="radio" name="show_in_day" checked class="text-blue-600 focus:ring-blue-500" />
-                                        <span>No</span>
-                                    </label>
+
+                                    <select name="group_id" id="group_id" required
+                                        class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500">
+
+                                        <option value="">Select Group</option>
+
+                                    </select>
+
                                 </div>
-                            </div>
 
-                            <!-- Buttons -->
-                            <div class="flex flex-wrap gap-3 justify-center pt-4">
-                                <button type="submit" class="btn-primary uppercase">
-                                    ADD ACCOUNT
+
+                                {{-- Display Name --}}
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2 uppercase">
+                                        Display Name <span class="text-red-500">*</span>
+                                    </label>
+
+                                    <input type="text" name="display_name" required
+                                        placeholder="Enter Ledger Display Name"
+                                        class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500">
+                                </div>
+
+
+                                {{-- System Name --}}
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2 uppercase">
+                                        System Name <span class="text-red-500">*</span>
+                                    </label>
+
+                                    <input type="text" name="system_name" required
+                                        placeholder="Enter System Name"
+                                        class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500">
+                                </div>
+
+
+                                {{-- Code --}}
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2 uppercase">
+                                        Code <span class="text-red-500">*</span>
+                                    </label>
+
+                                    <input type="text" name="code" required
+                                        style="text-transform: uppercase"
+                                        placeholder="Ex: 501"
+                                        class="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500">
+                                </div>
+
+
+                                {{-- Empty space for alignment --}}
+                                <div></div>
+
+
+                                {{-- ===== RADIO SECTION ===== --}}
+                                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                                    {{-- Is Bank Account --}}
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-3 uppercase">
+                                            Is Bank Account
+                                        </label>
+
+                                        <div class="flex gap-8">
+
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="is_bank_acc" value="1"
+                                                    class="h-4 w-4 text-indigo-600">
+                                                <span>Yes</span>
+                                            </label>
+
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="is_bank_acc" value="0" checked
+                                                    class="h-4 w-4 text-indigo-600">
+                                                <span>No</span>
+                                            </label>
+
+                                        </div>
+                                    </div>
+
+
+                                    {{-- Show In Day Book --}}
+                                    <div>
+                                        <label class="block text-sm font-semibold mb-3 uppercase">
+                                            Show In Day Book
+                                        </label>
+
+                                        <div class="flex gap-8">
+
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="show_in_day" value="1"
+                                                    class="h-4 w-4 text-indigo-600">
+                                                <span>Yes</span>
+                                            </label>
+
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="show_in_day" value="0" checked
+                                                    class="h-4 w-4 text-indigo-600">
+                                                <span>No</span>
+                                            </label>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            {{-- GRID END --}}
+
+
+
+                            {{-- BUTTONS --}}
+                            <div class="flex justify-center gap-4 pt-6 border-t">
+
+                                <button type="submit"
+                                    class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow font-semibold uppercase btn-primary">
+                                    Add Account
                                 </button>
-                                <a href="" class="btn-outline uppercase ">
-                                    BAck
+
+                                <a href="{{ route('ledger.index') }}"
+                                    class="px-6 py-3 border rounded-lg hover:bg-gray-100 font-semibold uppercase">
+                                    Back
                                 </a>
+
                             </div>
+
                         </form>
+                        {{-- FORM END --}}
+
                     </div>
                 </div>
-
             </div>
 
-            <!-- Right: Settings -->
-            <div class=" w-full overflow-x-auto "></div>
         </div>
-    </div>
 
+    </div>
 
 
     <!-- Datepicker CSS -->
@@ -197,6 +247,7 @@
 
     <!-- Datepicker JS -->
     <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
+    
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const datepickers = document.querySelectorAll('.datepicker-field');
@@ -233,4 +284,39 @@
             });
         });
     </script>
+
+
+<script>
+document.querySelector('select[name="type"]').addEventListener('change', function () {
+
+    let type = this.value;
+    let groupSelect = document.getElementById('group_id');
+
+    groupSelect.innerHTML = '<option value="">Loading...</option>';
+
+    if (!type) {
+        groupSelect.innerHTML = '<option value="">Select Group</option>';
+        return;
+    }
+
+    fetch("{{ route('ledger.groups.by.type', '') }}/" + type)
+        .then(res => res.json())
+        .then(data => {
+
+            groupSelect.innerHTML = '<option value="">Select Group</option>';
+
+            data.forEach(group => {
+                groupSelect.innerHTML += `<option value="${group.id}">${group.display_name}</option>`;
+            });
+
+        })
+        .catch(err => {
+            console.error(err);
+            groupSelect.innerHTML = '<option value="">Error loading groups</option>';
+        });
+});
+</script>
+
+
+
 @endsection

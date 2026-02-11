@@ -158,13 +158,13 @@
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> APPLICATION FORM
                     </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('mortgage_loan.payout_chart_loan_application_view', $application->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> EMI SCHEDULE CHART
                     </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('mortgage_loan.sanction_letter-view', $application->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> SANCTION LETTER
                     </a>
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('mortgage_loan.loanAgreement-view', $application->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> LOAN AGREEMENT
                     </a>
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">

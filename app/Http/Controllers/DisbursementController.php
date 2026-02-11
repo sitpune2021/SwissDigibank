@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DisbursementController extends Controller
 {
-    
+
     public function index()
     {
         $disbursements = LoanApplication::with(['member', 'branch', 'scheme'])
@@ -58,8 +58,8 @@ class DisbursementController extends Controller
                 'loan_application_id' => 'required|exists:loan_applications,id',
                 'disbursal_date' => 'required|date_format:d-m-Y',
                 'emi_date' => 'required|date_format:d-m-Y',
-                'loan_amount' => 'required|numeric|min:1',
-                'final_amount' => 'required|numeric|min:1',
+                'loan_amount' => 'required|numeric|min:0.01',
+                'final_amount' => 'required|numeric|min:0.01',
             ]);
 
             // Check if this loan application already has a disbursement
@@ -168,7 +168,8 @@ class DisbursementController extends Controller
 
         // Base scheme values
         $scheme = optional($disbursement->scheme);
-        $processingFee = $scheme->processing_fee ?? 0;
+        // $processingFee = $scheme->processing_fee ?? 0;
+        $processingFee = $scheme->processing_fee_total ?? 0;
         $stampDutyFee = $scheme->stamp_duty_charge ?? 0;
         $insuranceFee = $scheme->insurance_fee ?? 0;
 
@@ -235,7 +236,7 @@ class DisbursementController extends Controller
         if ($monthlyRate > 0) {
             $emi = round(
                 ($approvedLoan * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths)) /
-                (pow(1 + $monthlyRate, $tenureMonths) - 1),
+                    (pow(1 + $monthlyRate, $tenureMonths) - 1),
                 2
             );
         } else {
@@ -255,23 +256,31 @@ class DisbursementController extends Controller
             compact(
                 'disbursement',
                 'banks',
-                'processingFee', 'processingGst', 'processingTotal',
-                'stampDutyFee', 'stampGst', 'stampTotal',
-                'insuranceFee', 'insuranceGst', 'insuranceTotal',
+                'processingFee',
+                'processingGst',
+                'processingTotal',
+                'stampDutyFee',
+                'stampGst',
+                'stampTotal',
+                'insuranceFee',
+                'insuranceGst',
+                'insuranceTotal',
                 'gstPercent',
-                'sgst', 'cgst', 'igst',
-                'maxLoanAmount', 'annualInterestRate', 'advanceInterest',
+                'sgst',
+                'cgst',
+                'igst',
+                'maxLoanAmount',
+                'annualInterestRate',
+                'advanceInterest',
                 'finalAmountToDisburse',
                 'loanAmount',
                 'totalDeductions',
-                'totalInterest',      
-                'totalRecover',       
+                'totalInterest',
+                'totalRecover',
                 'emi',
-                'savingAccounts' ,
-                'isAdvanceInterest'                
+                'savingAccounts',
+                'isAdvanceInterest'
             )
         );
     }
-
-   
 }
