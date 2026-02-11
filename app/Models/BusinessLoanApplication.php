@@ -113,6 +113,11 @@ public function scheme()
         return $this->hasMany(BusinessLoanTransaction::class, 'loan_id', 'id');
     }
 
+    public function disbursement()
+    {
+        return $this->hasOne(BusinessLoanDisbursment::class,'loan_application_id'); 
+    }
+
 
 
 }
