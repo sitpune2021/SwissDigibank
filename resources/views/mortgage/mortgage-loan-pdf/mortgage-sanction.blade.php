@@ -89,33 +89,33 @@
 <body>
     <div class="page">
         <!-- Header -->
-         <div style="width:100%; font-family: dejavusans; ">
+        <div style="width:100%; font-family: dejavusans; ">
 
-        <!-- Logo -->
-        <div style="float:left; width:50%; padding: 0px 5px; text-align:left;">
-            <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
-                style="width:auto; height:50px;">
-        </div>
-
-        <!-- Title Section -->
-        <div style="float:left; width:50%; text-align:center;">
-            <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; ">
-                {{-- SBC Global --}}
+            <!-- Logo -->
+            <div style="float:left; width:50%; padding: 0px 5px; text-align:left;">
+                <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
+                    style="width:auto; height:50px;">
             </div>
 
-            <div style="height:10px; margin-top: 40px;">&nbsp;</div>
+            <!-- Title Section -->
+            <div style="float:left; width:50%; text-align:center;">
+                <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; ">
+                    {{-- SBC Global --}}
+                </div>
+
+                <div style="height:10px; margin-top: 40px;">&nbsp;</div>
 
 
+            </div>
+
+            <!-- Clear Float -->
+            <div style="clear:both; "></div>
+            <div class="" style="text-align: center; margin-top: 10px; font-size: 16px; font-weight: 600;">
+                SANCTION LETTER
+            </div>
+
+            <hr>
         </div>
-
-        <!-- Clear Float -->
-        <div style="clear:both; "></div>
-        <div class="" style="text-align: center; margin-top: 10px; font-size: 16px; font-weight: 600;">
-          SANCTION LETTER
-        </div>
-      
-        <hr>
-    </div>
 
         <!-- HEADER -->
         <table class="header">
@@ -211,7 +211,7 @@
                     <td class="label">No. of EMIs</td>
                     <td class="value">: {{$no_of_emis}}</td>
                 </tr>
-                 <tr>
+                <tr>
                     <td class="label">Credit Period (Grace Period)</td>
                     <td class="value">: {{$credit_grace_period}}</td>
                 </tr>
@@ -234,7 +234,7 @@
                         Other conditions
                     </td>
                     <td class="value">:
-                         {{$emi_payout}} installments (EMI) from the date of disbursal. Borrower
+                        {{$emi_payout}} installments (EMI) from the date of disbursal. Borrower
                         will execute the documents as per norms of the company all other
                         charges and penalties as mentioned in the application document
                     </td>
@@ -248,36 +248,15 @@
 
             <table class="security-table">
                 <tr>
-                    <th>ITEM TYPE</th>
-                    <th>NAME</th>
-                    <th>QTY</th>
-                    <th>VAL/gm (₹)</th>
-                    <th>GROSS WT (gm)</th>
-                    <th>NET WEIGHT (gm)</th>
-                    <th>TUNCH (%)</th>
-                    <th>FINE WEIGHT (gm)</th>
-                    <th>TOTAL VAL. (₹)</th>
-                    <th>IMAGE</th>
-                    <th>STATUS</th>
+                    <th style="font-size: 14px !important;">PROPERTY TYPE</th>
+                    <th style="font-size: 14px !important;">EXPECTED VALUE</th>
+                    <th style="font-size: 14px !important;">REGISTERED</th>
                 </tr>
-                  @foreach($ornaments as $ornament)
+                @foreach($properties as $prop)
                 <tr>
-                    <td>{{$ornament->item_type}}</td>
-                    <td>{{$ornament->item_name}}</td>
-                    <td>{{$ornament->no_of_items}}</td>
-                    <td>{{$ornament->value_per_gram}}</td>
-                    <td>{{$ornament->gross_weight}}</td>
-                    <td>{{$ornament->net_weight}}</td>
-                    <td>{{$ornament->tunch}}</td>
-                    <td>{{$ornament->fine_weight}}</td>
-                    <td>{{$ornament->total_value}}</td>
-                    <td>
-                        {{-- {{$ornament->image}} --}}
-                    </td>
-                    <td>
-                    {{ $ornament->status == 1 ? 'Mortgage' : 'Release' }}
-                    </td>
-                    
+                    <td style="font-size: 14px !important;">{{ $prop->property_type }}</td>
+                    <td style="font-size: 14px !important;">{{ number_format($prop->expected_value, 2) }}</td>
+                    <td style="font-size: 14px !important;">{{ $prop->registered ? 'YES' : 'NO' }}</td>
                 </tr>
                 @endforeach
             </table>
@@ -304,19 +283,19 @@
             <div class="" style="margin-top:20px; ">AUTHORIZED SIGNATORY</div>
         </div>
 
-        <div class=""  style="margin-top:20px; ">
+        <div class="" style="margin-top:20px; ">
             I/ We agree to the above terms and conditions agree to furnish in this connection any details required by "{{$bank_name}}".
         </div>
-       <div class="" style="width: 100%; margin-top: 10px; font-weight: 700;">
-        <div class=""  style="width: 50%; float: left">
-           Thanking you,<br>
-            Yours Truly,
+        <div class="" style="width: 100%; margin-top: 10px; font-weight: 700;">
+            <div class="" style="width: 50%; float: left">
+                Thanking you,<br>
+                Yours Truly,
+            </div>
+            <div class="" style="float: right; font-weight: 700;">
+                {{$member_name}}<br>
+                Name and Signature
+            </div>
         </div>
-        <div class="" style="float: right; font-weight: 700;">
-           {{$member_name}}<br>
-Name and Signature
-        </div>
-       </div>
     </div>
 </body>
 
