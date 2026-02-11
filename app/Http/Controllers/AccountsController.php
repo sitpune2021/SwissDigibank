@@ -360,6 +360,8 @@ class AccountsController extends Controller
           'nominee',
            'scheme',
             // 'address.state'
+            'jointMemberOne',
+    'jointMemberTwo'
             ])
             ->find($accountId);
 

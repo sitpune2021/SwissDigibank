@@ -521,6 +521,22 @@
           : '-'}
              </td>
             </tr>
+             <tr>
+              <td style="font-weight: bold; padding: 1px 4px; font-size:14px; vertical-align: top; text-transform:uppercase;">Joint A/c Customer 1</td>
+              <td style="text-align: center; padding: 1px 4px; font-size:14px; vertical-align: top;">:</td>
+              <td style="padding: 1px 4px; font-size:14px; vertical-align: top;text-transform:uppercase;">
+               ${accountData.joint_member_one?.member_info_first_name
+                 ?? ''} ${accountData.joint_member_one?.member_info_last_name ?? ''}
+             </td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; padding: 1px 4px; font-size:14px; vertical-align: top; text-transform:uppercase;">Joint A/c Customer 2</td>
+              <td style="text-align: center; padding: 1px 4px; font-size:14px; vertical-align: top;">:</td>
+              <td style="padding: 1px 4px; font-size:14px; vertical-align: top;text-transform:uppercase;">
+               ${accountData.joint_member_two?.member_info_first_name
+                 ?? ''} ${accountData.joint_member_two?.member_info_last_name ?? ''}
+             </td>
+            </tr>
     </table>
     </div>
     <div  style="width: 100%;">
