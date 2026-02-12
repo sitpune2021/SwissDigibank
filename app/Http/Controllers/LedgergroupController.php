@@ -28,7 +28,7 @@ class LedgergroupController extends Controller
         */
         foreach ($all as $group) {
 
-            [$accounts, $balance] = $this->calculateGroupBalance($group->code);
+            [$accounts, $balance] = $this->calculateGroupBalance($group->id);
 
             $group->accounts = $accounts;
             $group->balance  = $balance;
@@ -78,29 +78,26 @@ class LedgergroupController extends Controller
     // }
 
     
-    private function calculateGroupBalance($code)
+    private function calculateGroupBalance($groupId)
     {
-        $code = strtoupper($code); // safety
+        $ledgers = Ledger::where('group_id', $groupId)->get();
 
-        /*
-        |-----------------------------------
-        | Loan related (ANY name containing LOAN)
-        |-----------------------------------
-        */
-        if(Str::contains($code, 'LOAN')) {
-            return $this->goldLoanBalance();
+        if ($ledgers->isEmpty()) {
+            return [0,0]; // no ledger → no balance
         }
 
-        /*
-        |-----------------------------------
-        | Mortgage related
-        |-----------------------------------
-        */
-        if(Str::contains($code, 'MORTGAGE')) {
-            return $this->mortgageBalance();
+        $totalAccounts = 0;
+        $totalBalance  = 0;
+
+        foreach ($ledgers as $ledger) {
+
+            [$accounts, $balance] = $this->calculateLedgerBalance($ledger->code);
+
+            $totalAccounts += $accounts;
+            $totalBalance  += $balance;
         }
 
-        return [0,0];
+        return [$totalAccounts, $totalBalance];
     }
 
     private function goldLoanBalance()
@@ -420,36 +417,27 @@ class LedgergroupController extends Controller
 
     private function calculateLedgersBalance($code)
     {
-        /*
-        |--------------------------------------------------------------------------
-        | AUTO NORMALIZE
-        |--------------------------------------------------------------------------
-        */
         $code = strtoupper(Str::slug($code, '_'));
 
-        /*
-        |--------------------------------------------------------------------------
-        | SMART MATCHING (user kuch bhi likhe)
-        |--------------------------------------------------------------------------
-        */
+        // 🔥 Specific matches first
 
-        if (Str::contains($code, ['GOLD', 'LOAN'])) {
+        if (Str::contains($code, 'GOLD')) {
             return $this->goldLoanBalance();
         }
 
-        if (Str::contains($code, ['MORTGAGE'])) {
+        if (Str::contains($code, ['MORTGAGE', 'PROPERTY'])) {
             return $this->mortgageBalance();
         }
 
-        if (Str::contains($code, ['AGAINST'])) {
+        if (Str::contains($code, ['AGAINST', 'DEPOSITE'])) {
             return $this->loanagainstBalance();
         }
 
-        if (Str::contains($code, ['BUSINESS'])) {
+        if (Str::contains($code, 'BUSINESS')) {
             return $this->businessloanBalance();
         }
 
-        if (Str::contains($code, ['CC', 'OD'])) {
+        if (Str::contains($code, ['CC_OD', 'CCOD'])) {
             return $this->ccodloanBalance();
         }
 
@@ -457,7 +445,7 @@ class LedgergroupController extends Controller
             return $this->dailyweeklyloanBalance();
         }
 
-        if (Str::contains($code, ['PERSONAL'])) {
+        if (Str::contains($code, 'PERSONAL')) {
             return $this->personalloanBalance();
         }
 
@@ -505,7 +493,9 @@ class LedgergroupController extends Controller
         foreach ($ledgers as $ledger) {
 
             // ⭐ use GROUP code, not ledger code
-            [$accounts, $balance] = $this->calculateLedgerBalance($ledger->group->code ?? '');
+            //[$accounts, $balance] = $this->calculateLedgerBalance($ledger->group->code ?? '');
+            [$accounts, $balance] = $this->calculateLedgerBalance($ledger->code);
+
 
             $ledger->balance = $balance ?: $ledger->opening_balance;
         }
@@ -535,83 +525,39 @@ class LedgergroupController extends Controller
     // }
 
     
-    private function calculateLedgerBalance($groupCode)
+    private function calculateLedgerBalance($ledgerCode)
     {
-        $groupCode = strtoupper($groupCode);
+        $ledgerCode = strtoupper($ledgerCode);
 
-        /*
-        |-----------------------------------
-        | GOLD LOAN
-        |-----------------------------------
-        */
-        if (Str::contains($groupCode, 'GOLD')) {
+        if (Str::contains($ledgerCode, 'GOLD')) {
             return $this->goldLoanBalance();
         }
 
-        /*
-        |-----------------------------------
-        | MORTGAGE
-        |-----------------------------------
-        */
-        if (Str::contains($groupCode, 'MORTGAGE')) {
+        if (Str::contains($ledgerCode, 'MORTGAGE')) {
             return $this->mortgageBalance();
         }
 
-        /*
-        |-----------------------------------
-        | PERSONAL LOAN
-        |-----------------------------------
-        */
-        if (Str::contains($groupCode, 'PERSONAL')) {
-            return $this->personalLoanBalance();
+        if (Str::contains($ledgerCode, 'PERSONAL')) {
+            return $this->personalloanBalance();
         }
 
-        /*
-        |-----------------------------------
-        | BUSINESS LOAN
-        |-----------------------------------
-        */
-        if (Str::contains($groupCode, 'BUSINESS')) {
-            return $this->businessLoanBalance();
+        if (Str::contains($ledgerCode, 'BUSINESS')) {
+            return $this->businessloanBalance();
         }
 
-        /*
-        |-----------------------------------
-        | CC / OD
-        |-----------------------------------
-        */
-        if (Str::contains($groupCode, 'CC_OD')) {
+        if (Str::contains($ledgerCode, 'CC_OD')) {
             return $this->ccodloanBalance();
         }
 
-        /*
-        |-----------------------------------
-        | DAILY WEEKLY
-        |-----------------------------------
-        */
-        if (Str::contains($groupCode, 'DAILY') || Str::contains($groupCode, 'WEEKLY')) {
+        if (Str::contains($ledgerCode, 'DAILY') || Str::contains($ledgerCode, 'WEEKLY')) {
             return $this->dailyweeklyloanBalance();
         }
 
-        /*
-        |-----------------------------------
-        | VEHICLE
-        |-----------------------------------
-        */
-        if (Str::contains($groupCode, 'VEHICLE') || Str::contains($groupCode, 'VEHICAL')) {
+        if (Str::contains($ledgerCode, 'VEHICLE') || Str::contains($ledgerCode, 'VEHICAL')) {
             return $this->vehicalloanBalance();
         }
 
-        /*
-        |-----------------------------------
-        | GENERIC LOAN (fallback)
-        |-----------------------------------
-        */
-        if (Str::contains($groupCode, 'LOAN')) {
-            return $this->goldLoanBalance();
-        }
-
-        return [0, 0];
+        return [0,0];
     }
 
     public function add_leg()
@@ -622,6 +568,7 @@ class LedgergroupController extends Controller
         return view('menu-accounts.ledger.add-ledger', compact('groups'));
     }
 
+    // // leder create page drop down dynamically function
     public function groupsByType($type)
     {
         Log::info('Type Selected: '.$type);
@@ -633,6 +580,7 @@ class LedgergroupController extends Controller
         return response()->json($groups);
     }
    
+    // leder store
     public function led_store(Request $request)
     {
         $request->validate([
@@ -642,15 +590,23 @@ class LedgergroupController extends Controller
             'system_name' => 'required',
         ]);
 
-        // ⭐ AUTO SAFE CODE
-        $code = strtoupper(Str::slug($request->system_name, '_'));
+        // 🔥 AUTO UNIQUE CODE
+        $baseCode = strtoupper(Str::slug($request->system_name, '_'));
+        $code = $baseCode;
+
+        $count = 1;
+
+        while (Ledger::where('code', $code)->exists()) {
+            $code = $baseCode . '_' . $count;
+            $count++;
+        }
 
         Ledger::create([
             'type' => $request->type,
             'group_id' => $request->group_id,
             'display_name' => $request->display_name,
             'system_name' => $request->system_name,
-            'code' => $code, // 🔥 auto generated
+            'code' => $code,
             'is_bank_acc' => $request->is_bank_acc ?? 0,
             'show_in_day' => $request->show_in_day ?? 0,
             'opening_balance' => 0
@@ -660,6 +616,7 @@ class LedgergroupController extends Controller
             ->with('success', 'Ledger Added Successfully');
     }
 
+    // leder view page map
     private function loanModuleMap()
     {
         return [
@@ -672,6 +629,13 @@ class LedgergroupController extends Controller
             ],
 
             'MORTGAGE' => [
+                'loan'    => 'mortgage_loan_applications',
+                'txn'     => 'mortgage_loan_transactions',
+                'charges' => 'mortgage_loan_other_charges',
+                'closure' => 'mortgage_loan_fore_closures',
+            ],
+
+            'PROPERTY' => [
                 'loan'    => 'mortgage_loan_applications',
                 'txn'     => 'mortgage_loan_transactions',
                 'charges' => 'mortgage_loan_other_charges',
@@ -722,28 +686,38 @@ class LedgergroupController extends Controller
         ];
     }
 
+    // leder view page
     public function ledgerView($id)
     {
         $ledger = Ledger::with('group')->findOrFail($id);
 
-        $code = strtoupper($ledger->code);
+       
+        
+        
+        
 
-        $map = $this->loanModuleMap();
+$code = strtoupper(Str::slug($ledger->code, '_'));
 
-        /*
-        |---------------------------------------
-        | Validate Mapping
-        |---------------------------------------
-        */
+$map = $this->loanModuleMap();
 
-        if (!isset($map[$code])) {
-            abort(404, 'Ledger type not supported');
-        }
+$matchedKey = null;
 
-        $loanTable    = $map[$code]['loan'];
-        $txnTable     = $map[$code]['txn'];
-        $chargesTable = $map[$code]['charges'];
-        $closureTable = $map[$code]['closure'];
+foreach ($map as $key => $tables) {
+    if (Str::contains($code, $key)) {
+        $matchedKey = $key;
+        break;
+    }
+}
+
+if (!$matchedKey) {
+    abort(404, 'Ledger type not supported');
+}
+
+$loanTable    = $map[$matchedKey]['loan'];
+$txnTable     = $map[$matchedKey]['txn'];
+$chargesTable = $map[$matchedKey]['charges'];
+$closureTable = $map[$matchedKey]['closure'];
+
 
         /*
         |---------------------------------------

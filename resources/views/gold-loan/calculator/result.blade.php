@@ -173,10 +173,11 @@
             @else
                 <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_principal, 2) }}</td>
                 <td class="p-2 text-right border border-gray-300">₹ {{ number_format($total_interest, 2) }}</td>
-                {{-- ⭐ NEW CHARGES TOTAL --}}
+                {{-- NEW CHARGES TOTAL --}}
                 <td class="p-2 text-right border border-gray-300">
-                    -
+                    ₹ {{ number_format($total_charges, 2) }}
                 </td>
+
                 <td class="p-2 text-right border border-gray-300">{{ $total_emi_paid > 0 ? '₹ '.number_format($total_emi_paid,2) : '' }}</td>
                 <td class="p-2 text-center border border-gray-300">-</td>
             @endif
