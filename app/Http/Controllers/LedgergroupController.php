@@ -55,22 +55,49 @@ class LedgergroupController extends Controller
         ));
     }
 
+    // OLD CODE
+    // private function calculateGroupBalance($code)
+    // {
+    //     $map = [
+    //         'LOAN'  => 'goldLoanBalance',
+    //         'LOANS' => 'goldLoanBalance',
+    //         'MORTGAGE_PROPERTY'  => 'mortgageBalance',
+    //         'LOAN_AGAINST'       => 'loanagainstBalance',
+    //         'BUSINESS_LOAN'      => 'businessloanBalance',
+    //         'CC_OD_LOAN'         => 'ccodloanBalance',
+    //         'DAILY_WEEKLY_LOAN'  => 'dailyweeklyloanBalance',
+    //         'PERSONAL_LOAN'      => 'personalloanBalance',
+    //         'VEHICAL_LOAN'       => 'vehicalloanBalance',
+    //     ];
+
+    //     if(isset($map[$code])) {
+    //         return $this->{$map[$code]}();
+    //     }
+
+    //     return [0,0];
+    // }
+
+    
     private function calculateGroupBalance($code)
     {
-        $map = [
-            'LOAN'  => 'goldLoanBalance',
-            'LOANS' => 'goldLoanBalance',
-            'MORTGAGE_PROPERTY'  => 'mortgageBalance',
-            'LOAN_AGAINST'       => 'loanagainstBalance',
-            'BUSINESS_LOAN'      => 'businessloanBalance',
-            'CC_OD_LOAN'         => 'ccodloanBalance',
-            'DAILY_WEEKLY_LOAN'  => 'dailyweeklyloanBalance',
-            'PERSONAL_LOAN'      => 'personalloanBalance',
-            'VEHICAL_LOAN'       => 'vehicalloanBalance',
-        ];
+        $code = strtoupper($code); // safety
 
-        if(isset($map[$code])) {
-            return $this->{$map[$code]}();
+        /*
+        |-----------------------------------
+        | Loan related (ANY name containing LOAN)
+        |-----------------------------------
+        */
+        if(Str::contains($code, 'LOAN')) {
+            return $this->goldLoanBalance();
+        }
+
+        /*
+        |-----------------------------------
+        | Mortgage related
+        |-----------------------------------
+        */
+        if(Str::contains($code, 'MORTGAGE')) {
+            return $this->mortgageBalance();
         }
 
         return [0,0];
@@ -486,21 +513,102 @@ class LedgergroupController extends Controller
         return view('menu-accounts.ledger.index', compact('ledgers'));
     }
 
+    // private function calculateLedgerBalance($groupCode)
+    // {
+    //     $map = [
+    //         'LOANS'     => 'goldLoanBalance',
+    //         'GOLD'     => 'goldLoanBalance',
+    //         'MORTGAGE'  => 'mortgageBalance',
+    //         'LOAN_AGAINST'       => 'loanagainstBalance',
+    //         'PERSONAL'  => 'personalLoanBalance',
+    //         'BUSINESS'  => 'businessLoanBalance',
+    //         'CC_OD_LOAN'         => 'ccodloanBalance',
+    //         'DAILY_WEEKLY_LOAN'  => 'dailyweeklyloanBalance',
+    //         'VEHICAL_LOAN'       => 'vehicalloanBalance',
+    //     ];
+
+    //     if (isset($map[$groupCode])) {
+    //         return $this->{$map[$groupCode]}();
+    //     }
+
+    //     return [0, 0];
+    // }
+
+    
     private function calculateLedgerBalance($groupCode)
     {
-        $map = [
-            'LOANS'     => 'goldLoanBalance',
-            'MORTGAGE'  => 'mortgageBalance',
-            'LOAN_AGAINST'       => 'loanagainstBalance',
-            'PERSONAL'  => 'personalLoanBalance',
-            'BUSINESS'  => 'businessLoanBalance',
-            'CC_OD_LOAN'         => 'ccodloanBalance',
-            'DAILY_WEEKLY_LOAN'  => 'dailyweeklyloanBalance',
-            'VEHICAL_LOAN'       => 'vehicalloanBalance',
-        ];
+        $groupCode = strtoupper($groupCode);
 
-        if (isset($map[$groupCode])) {
-            return $this->{$map[$groupCode]}();
+        /*
+        |-----------------------------------
+        | GOLD LOAN
+        |-----------------------------------
+        */
+        if (Str::contains($groupCode, 'GOLD')) {
+            return $this->goldLoanBalance();
+        }
+
+        /*
+        |-----------------------------------
+        | MORTGAGE
+        |-----------------------------------
+        */
+        if (Str::contains($groupCode, 'MORTGAGE')) {
+            return $this->mortgageBalance();
+        }
+
+        /*
+        |-----------------------------------
+        | PERSONAL LOAN
+        |-----------------------------------
+        */
+        if (Str::contains($groupCode, 'PERSONAL')) {
+            return $this->personalLoanBalance();
+        }
+
+        /*
+        |-----------------------------------
+        | BUSINESS LOAN
+        |-----------------------------------
+        */
+        if (Str::contains($groupCode, 'BUSINESS')) {
+            return $this->businessLoanBalance();
+        }
+
+        /*
+        |-----------------------------------
+        | CC / OD
+        |-----------------------------------
+        */
+        if (Str::contains($groupCode, 'CC_OD')) {
+            return $this->ccodloanBalance();
+        }
+
+        /*
+        |-----------------------------------
+        | DAILY WEEKLY
+        |-----------------------------------
+        */
+        if (Str::contains($groupCode, 'DAILY') || Str::contains($groupCode, 'WEEKLY')) {
+            return $this->dailyweeklyloanBalance();
+        }
+
+        /*
+        |-----------------------------------
+        | VEHICLE
+        |-----------------------------------
+        */
+        if (Str::contains($groupCode, 'VEHICLE') || Str::contains($groupCode, 'VEHICAL')) {
+            return $this->vehicalloanBalance();
+        }
+
+        /*
+        |-----------------------------------
+        | GENERIC LOAN (fallback)
+        |-----------------------------------
+        */
+        if (Str::contains($groupCode, 'LOAN')) {
+            return $this->goldLoanBalance();
         }
 
         return [0, 0];
