@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
 
 class GoldLoanAccountController extends Controller
 {
-    
+
 
     public function index(Request $request)
     {
@@ -27,8 +27,7 @@ class GoldLoanAccountController extends Controller
             ->orderBy('id', 'desc')
             ->paginate(10);
 
-        foreach ($goldLoan as $loan) 
-        {
+        foreach ($goldLoan as $loan) {
 
             // Loan total amount
             $loanAmount = $loan->loan_amount;
@@ -68,23 +67,22 @@ class GoldLoanAccountController extends Controller
 
     public function show(Request $request, $id)
     {
-
         $savedStatuses = DB::table('gold_loan_emi_status')
-        ->where('loan_id', $id)
-        ->pluck('status', 'emi_no')
-        ->toArray();
+            ->where('loan_id', $id)
+            ->pluck('status', 'emi_no')
+            ->toArray();
 
         $savedPaidDates = DB::table('gold_loan_emi_status')
-        ->where('loan_id', $id)
-        ->pluck('paid_date', 'emi_no')
-        ->toArray();
+            ->where('loan_id', $id)
+            ->pluck('paid_date', 'emi_no')
+            ->toArray();
 
         // Total Deposit
         $totalDeposit = DB::table('gold_loan_transactions')
             ->where('loan_id', $id)
             ->sum('amount_collected');
 
-        
+
         // // Total from Other Charges (only paid)
         $otherChargesDeposit = DB::table('gold_loan_other_charges')
             ->where('loan_id', $id)
@@ -120,6 +118,7 @@ class GoldLoanAccountController extends Controller
         // 1️⃣ Total EMI Paid Amount
         $transactionDeposit = DB::table('gold_loan_transactions')
             ->where('loan_id', $id)
+            ->where('status', 'paid')   // ⭐ only approved
             ->sum('amount_collected');
 
         // 2️⃣ Other Charges Paid Only
@@ -153,7 +152,7 @@ class GoldLoanAccountController extends Controller
 
         $goldLoan = LoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1', 'goldLoanTransactions'])->find($id);
 
-        
+
         if (!$goldLoan) {
             return redirect()->back()->with('error', 'Loan not found.');
         }
@@ -318,19 +317,21 @@ class GoldLoanAccountController extends Controller
                 break;
         }
 
-       
+
         // Apply payments & auto status logic
         // ⭐ Apply payments on EMI schedule (front-end calculation only)
-        $totalPaid = GoldLoanTransaction::where('loan_id', $id)->sum('amount_collected');
+        // $totalPaid = GoldLoanTransaction::where('loan_id', $id)->sum('amount_collected');
+        $totalPaid = GoldLoanTransaction::where('loan_id', $id)
+            ->where('status', 'paid')   // ⭐ ONLY APPROVED EMI
+            ->sum('amount_collected');
 
-        foreach ($emiSchedule as &$emi) 
-        {
+
+        foreach ($emiSchedule as &$emi) {
 
             $emiAmount = floatval(str_replace(',', '', $emi['emi_amount']));
 
             // Already paid nothing?
-            if ($totalPaid <= 0) 
-            {
+            if ($totalPaid <= 0) {
                 $emi['remaining_amount'] = number_format($emiAmount, 2);
 
                 // ⭐ ALWAYS load saved statuses from DB
@@ -357,7 +358,6 @@ class GoldLoanAccountController extends Controller
                 $emi['status'] = "PARTIAL";
                 $totalPaid = 0;
             }
-
         }
 
         $eirSchedule = [];
@@ -370,7 +370,7 @@ class GoldLoanAccountController extends Controller
 
             // effective EMI formula
             $eirEmi = $principal * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) /
-                    (pow(1 + $monthlyRate, $emiCount) - 1);
+                (pow(1 + $monthlyRate, $emiCount) - 1);
 
             for ($i = 0; $i < $emiCount; $i++) {
 
@@ -395,184 +395,186 @@ class GoldLoanAccountController extends Controller
         }
 
         // Close date code
-            // Fetch Principal Loan Amount
-            $loanAmount = $principal;
+        // Fetch Principal Loan Amount
+        $loanAmount = $principal;
 
-            // Step 1: Collect all deposits with their date
-            $depositTimeline = [];
+        // Step 1: Collect all deposits with their date
+        $depositTimeline = [];
 
-            // EMI Transactions
-            $transactions = DB::table('gold_loan_transactions')
-                ->where('loan_id', $id)
-                ->select('amount_collected as amount', 'created_at')
-                ->get();
+        // EMI Transactions
+        $transactions = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->select('amount_collected as amount', 'created_at')
+            ->get();
 
-            // Other Charges (Only Paid)
-            $otherCharges = DB::table('gold_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->select('amount', 'created_at')
-                ->get();
+        // Other Charges (Only Paid)
+        $otherCharges = DB::table('gold_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->select('amount', 'created_at')
+            ->get();
 
-            // Foreclosure Deposit
-            $foreclosurePayments = DB::table('gold_loan_fore_closures')
-                ->where('loan_id', $id)
-                ->select('net_amount_k as amount', 'created_at')
-                ->get();
+        // Foreclosure Deposit
+        $foreclosurePayments = DB::table('gold_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->select('net_amount_k as amount', 'created_at')
+            ->get();
 
-            // Merge All
-            foreach ($transactions as $t) {
-                $depositTimeline[] = ['amount' => $t->amount, 'date' => $t->created_at];
+        // Merge All
+        foreach ($transactions as $t) {
+            $depositTimeline[] = ['amount' => $t->amount, 'date' => $t->created_at];
+        }
+        foreach ($otherCharges as $oc) {
+            $depositTimeline[] = ['amount' => $oc->amount, 'date' => $oc->created_at];
+        }
+        foreach ($foreclosurePayments as $f) {
+            $depositTimeline[] = ['amount' => $f->amount, 'date' => $f->created_at];
+        }
+
+        // Sort by Date
+        usort($depositTimeline, fn($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
+
+
+        // STEP 2: Find close date (when cumulative >= loan amount)
+        $cumulative = 0;
+        $closeDate = null;
+
+        foreach ($depositTimeline as $entry) {
+            $cumulative += $entry['amount'];
+
+            if ($cumulative >= $loanAmount) {
+                $closeDate = Carbon::parse($entry['date'])->format('d-m-Y');
+                break;
             }
-            foreach ($otherCharges as $oc) {
-                $depositTimeline[] = ['amount' => $oc->amount, 'date' => $oc->created_at];
-            }
-            foreach ($foreclosurePayments as $f) {
-                $depositTimeline[] = ['amount' => $f->amount, 'date' => $f->created_at];
-            }
-
-            // Sort by Date
-            usort($depositTimeline, fn($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
-
-
-            // STEP 2: Find close date (when cumulative >= loan amount)
-            $cumulative = 0;
-            $closeDate = null;
-
-            foreach ($depositTimeline as $entry) {
-                $cumulative += $entry['amount'];
-
-                if ($cumulative >= $loanAmount) {
-                    $closeDate = Carbon::parse($entry['date'])->format('d-m-Y');
-                    break;
-                }
-            }
+        }
         // end close date code
 
         // current statment chart code
 
-            // ⭐ CURRENT STATEMENT TABLE DATA ⭐
-            $currentStatement = collect([]);
+        // ⭐ CURRENT STATEMENT TABLE DATA ⭐
+        $currentStatement = collect([]);
 
-            // 1️⃣ Transactions (EMI)
-            $transactions = DB::table('gold_loan_transactions')
-                ->where('loan_id', $id)
-                ->select(
-                    'created_at as date',
-                    DB::raw("'EMI Payment' as type"),
-                    DB::raw("'' AS payment_mode"),              // ← no payment_mode column — return empty
-                    'amount_collected as amount',
-                    DB::raw("'PAID' as status")
-                )
-                ->get();
+        // 1️⃣ Transactions (EMI)
+        $transactions = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')  // ⭐ only approved EMI
 
-            // 2️⃣ Other Charges
-            $otherCharges = DB::table('gold_loan_other_charges')
-                ->where('loan_id', $id)
-                ->select(
-                    'created_at as date',
-                    DB::raw("'Other Charge' as type"),
-                    DB::raw("'' AS payment_mode"),              // ← empty
-                    'amount',
-                    'status'
-                )
-                ->get();
+            ->select(
+                'created_at as date',
+                DB::raw("'EMI Payment' as type"),
+                DB::raw("'' AS payment_mode"),              // ← no payment_mode column — return empty
+                'amount_collected as amount',
+                DB::raw("'PAID' as status")
+            )
+            ->get();
 
-            // 3️⃣ Foreclosure Payments
-            $closures = DB::table('gold_loan_fore_closures')
-                ->where('loan_id', $id)
-                ->select(
-                    'created_at as date',
-                    DB::raw("'Foreclosure Payment' as type"),
-                    DB::raw("'' AS payment_mode"),              // ← empty
-                    'net_amount_k as amount',
-                    DB::raw("'PAID' as status")
-                )
-                ->get();
+        // 2️⃣ Other Charges
+        $otherCharges = DB::table('gold_loan_other_charges')
+            ->where('loan_id', $id)
+            ->select(
+                'created_at as date',
+                DB::raw("'Other Charge' as type"),
+                DB::raw("'' AS payment_mode"),              // ← empty
+                'amount',
+                'status'
+            )
+            ->get();
 
-            $currentStatement = $currentStatement
-                ->merge($transactions)
-                ->merge($otherCharges)
-                ->merge($closures);
+        // 3️⃣ Foreclosure Payments
+        $closures = DB::table('gold_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->select(
+                'created_at as date',
+                DB::raw("'Foreclosure Payment' as type"),
+                DB::raw("'' AS payment_mode"),              // ← empty
+                'net_amount_k as amount',
+                DB::raw("'PAID' as status")
+            )
+            ->get();
 
-            // Sort latest first
-            $currentStatement = $currentStatement->sortByDesc('date')->values();
+        $currentStatement = $currentStatement
+            ->merge($transactions)
+            ->merge($otherCharges)
+            ->merge($closures);
+
+        // Sort latest first
+        $currentStatement = $currentStatement->sortByDesc('date')->values();
 
         // end current statement code
 
         // ornaments show on chart
 
-            // ⭐ Fetch Ornaments Based on Loan ID
-            $ornaments = DB::table('loan_ornaments')
-                ->where('application_id', $id)
-                ->select(
-                    'item_type',
-                    'item_name',
-                    'no_of_items',
-                    'value_per_gram',
-                    'gross_weight',
-                    'net_weight',
-                    'tunch',
-                    'fine_weight',
-                    'total_value',
-                    'status'
-                    
-                )
-                ->get();
+        // ⭐ Fetch Ornaments Based on Loan ID
+        $ornaments = DB::table('loan_ornaments')
+            ->where('application_id', $id)
+            ->select(
+                'item_type',
+                'item_name',
+                'no_of_items',
+                'value_per_gram',
+                'gross_weight',
+                'net_weight',
+                'tunch',
+                'fine_weight',
+                'total_value',
+                'status'
+
+            )
+            ->get();
 
         // end ornaments show on chart
 
         // DYNAMIC SUMMARY CHART VALUES 
 
-            // PAID = Total deposit from calculation above
-            $paidNetPrincipal = min($totalDeposit, $principal); 
+        // PAID = Total deposit from calculation above
+        $paidNetPrincipal = min($totalDeposit, $principal);
 
-            // SINCE interest_paid column exists nahi hai → default zero rakho
-            $paidInterest = 0;
+        // SINCE interest_paid column exists nahi hai → default zero rakho
+        $paidInterest = 0;
 
-            // PRINCIPAL DUE
-            $emiPrincipalDue = max($principal - $paidNetPrincipal, 0);
+        // PRINCIPAL DUE
+        $emiPrincipalDue = max($principal - $paidNetPrincipal, 0);
 
-            // TOTAL INTEREST PLANNED (from schedule)
-            $totalInterestPlanned = array_sum(array_map(fn($emi) => floatval(str_replace(',', '', $emi['interest'])), $emiSchedule));
+        // TOTAL INTEREST PLANNED (from schedule)
+        $totalInterestPlanned = array_sum(array_map(fn($emi) => floatval(str_replace(',', '', $emi['interest'])), $emiSchedule));
 
-            // INTEREST DUE = full interest (because no interest deposited yet)
-            $interestDue = $totalInterestPlanned;
+        // INTEREST DUE = full interest (because no interest deposited yet)
+        $interestDue = $totalInterestPlanned;
 
-            // OTHER CHARGES PAID
-            $otherChargesPaid = $otherChargesDeposit;
+        // OTHER CHARGES PAID
+        $otherChargesPaid = $otherChargesDeposit;
 
-            // OTHER CHARGES DUE
-            $otherChargesTotal = DB::table('gold_loan_other_charges')
-                ->where('loan_id', $id)
-                ->sum('amount');
-            $otherChargesDue = max($otherChargesTotal - $otherChargesPaid, 0);
+        // OTHER CHARGES DUE
+        $otherChargesTotal = DB::table('gold_loan_other_charges')
+            ->where('loan_id', $id)
+            ->sum('amount');
+        $otherChargesDue = max($otherChargesTotal - $otherChargesPaid, 0);
 
 
-            // BUILD DATA FOR TABLE (PAID ROW)
-            $paidSummary = [
-                'net_p' => number_format($paidNetPrincipal, 2),
-                'emi_p' => number_format($paidNetPrincipal, 2),
-                'emi_int' => "0.00", // because interest_paid not stored yet
-                'emi_charges' => "0.00",
-                'overdue_int' => "0.00",
-                'other_charges' => number_format($otherChargesPaid, 2),
-                'advance' => "0.00",
-                'discount' => "0.00",
-            ];
+        // BUILD DATA FOR TABLE (PAID ROW)
+        $paidSummary = [
+            'net_p' => number_format($paidNetPrincipal, 2),
+            'emi_p' => number_format($paidNetPrincipal, 2),
+            'emi_int' => "0.00", // because interest_paid not stored yet
+            'emi_charges' => "0.00",
+            'overdue_int' => "0.00",
+            'other_charges' => number_format($otherChargesPaid, 2),
+            'advance' => "0.00",
+            'discount' => "0.00",
+        ];
 
-            // BUILD DATA FOR TABLE (DUE ROW)
-            $dueSummary = [
-                'net_p' => number_format($emiPrincipalDue, 2),
-                'emi_p' => number_format($emiPrincipalDue, 2),
-                'emi_int' => number_format($interestDue, 2),
-                'emi_charges' => "0.00",
-                'overdue_int' => "0.00",
-                'other_charges' => number_format($otherChargesDue, 2),
-                'advance' => "-",
-                'discount' => "-",
-            ];
-        
+        // BUILD DATA FOR TABLE (DUE ROW)
+        $dueSummary = [
+            'net_p' => number_format($emiPrincipalDue, 2),
+            'emi_p' => number_format($emiPrincipalDue, 2),
+            'emi_int' => number_format($interestDue, 2),
+            'emi_charges' => "0.00",
+            'overdue_int' => "0.00",
+            'other_charges' => number_format($otherChargesDue, 2),
+            'advance' => "-",
+            'discount' => "-",
+        ];
+
         // end DYNAMIC SUMMARY CHART VALUES 
 
 
@@ -588,10 +590,10 @@ class GoldLoanAccountController extends Controller
             'closeDate',
             'currentStatement',
             'ornaments',
-            'paidSummary', 'dueSummary'
+            'paidSummary',
+            'dueSummary'
 
         ));
-        
     }
 
     public function saveEmiStatus(Request $request)
@@ -693,10 +695,9 @@ class GoldLoanAccountController extends Controller
                 if ($row->type === 'transaction') {
                     $runningBalance -= $row->amount_collected;
                 }
-               if ($row->type === 'other_charge' || $row->type === 'foreclosure') {
+                if ($row->type === 'other_charge' || $row->type === 'foreclosure') {
                     $runningBalance -= $row->amount;
                 }
-
             }
 
             $row->balance = $runningBalance;
@@ -748,7 +749,6 @@ class GoldLoanAccountController extends Controller
             ]);
 
             return redirect()->back()->with('success', 'Account removed, related transactions & charges deleted and status set to 0.');
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -759,14 +759,14 @@ class GoldLoanAccountController extends Controller
             ]);
 
             return redirect()
-            ->route('gold-loan.account.index')
-            ->with('error', 'Something went wrong while removing the account: '.$e->getMessage());
+                ->route('gold-loan.account.index')
+                ->with('error', 'Something went wrong while removing the account: ' . $e->getMessage());
         }
     }
 
     public function audit(Request $request)
     {
-        
+
         return view('gold-loan.account.view-buttons.audit-trail.audit-trail');
     }
 
@@ -778,43 +778,43 @@ class GoldLoanAccountController extends Controller
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
         // Total Deposit
-            $totalDeposit = DB::table('gold_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
-            
-            // // Total from Other Charges (only paid)
-            $otherChargesDeposit = DB::table('gold_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        $totalDeposit = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // // FINAL DEPOSIT = Transactions + Other Charges
-            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+        // // Total from Other Charges (only paid)
+        $otherChargesDeposit = DB::table('gold_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // Latest total_payable (from last transaction)
-            $totalPayable = DB::table('gold_loan_transactions')
-                ->where('loan_id', $id)
-                ->orderByDesc('id')
-                ->value('total_payable') ?? $goldLoan->loan_amount;
+        // // FINAL DEPOSIT = Transactions + Other Charges
+        $totalDeposit = $totalDeposit + $otherChargesDeposit;
 
-            // 1. Total Transaction Deposit
-            $transactionDeposit = DB::table('gold_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
+        // Latest total_payable (from last transaction)
+        $totalPayable = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->orderByDesc('id')
+            ->value('total_payable') ?? $goldLoan->loan_amount;
 
-            // 2. Total Paid Other Charges
-            $otherChargesDeposit = DB::table('gold_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        // 1. Total Transaction Deposit
+        $transactionDeposit = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // 3. FINAL Total Deposit
-            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+        // 2. Total Paid Other Charges
+        $otherChargesDeposit = DB::table('gold_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // 4. FINAL Correct Current Debt
-            $currentDebt = max($totalPayable - $totalDeposit, 0);
+        // 3. FINAL Total Deposit
+        $totalDeposit = $transactionDeposit + $otherChargesDeposit;
 
-        return view('gold-loan.account.view-buttons.fore-close.fore-close', compact('goldLoan','currentDebt','banks'));
+        // 4. FINAL Correct Current Debt
+        $currentDebt = max($totalPayable - $totalDeposit, 0);
+
+        return view('gold-loan.account.view-buttons.fore-close.fore-close', compact('goldLoan', 'currentDebt', 'banks'));
     }
 
     public function storeForeCloser(Request $request, $loanId)
@@ -834,13 +834,13 @@ class GoldLoanAccountController extends Controller
                 'notice_charges'     => 'required|numeric',
                 'service_charges'    => 'required|numeric',
                 'other_charges'      => 'required|numeric',
-                'foreclosure_charges'=> 'required|numeric',
+                'foreclosure_charges' => 'required|numeric',
                 'total_amount_h'     => 'required|numeric',
                 'rounding_off_i'     => 'required|numeric',
                 'closure_discount_j' => 'required|numeric',
                 'net_amount_k'       => 'required|numeric',
                 'transaction_date'   => 'required',
-                 // optional payment fields validation:
+                // optional payment fields validation:
                 'payment_mode'           => 'nullable|in:cash,cheque,online',
                 'bank_id'            => 'nullable|exists:banks,id',
                 'cheque_no'          => 'nullable|string|max:100',
@@ -872,7 +872,7 @@ class GoldLoanAccountController extends Controller
                 'transaction_date'      => Carbon::createFromFormat('d-m-Y', $request->transaction_date),
                 'remarks'               => $request->remarks,
 
-                 // NEW payment fields mapping from your form names
+                // NEW payment fields mapping from your form names
                 'payment_mode'          => $request->input('payment_mode') ?? null,   // cash/cheque/online
                 'bank_id'               => $request->input('bank_id') ?? null,
                 'cheque_no'             => $request->input('cheque_no') ?? null,
@@ -903,7 +903,6 @@ class GoldLoanAccountController extends Controller
             return redirect()
                 ->route('gold-loan.account.show', $loanId)
                 ->with('success', 'Fore Closure Stored Successfully!');
-
         } catch (\Exception $e) {
 
             Log::error('ForeClosure Store Error', [
@@ -924,44 +923,43 @@ class GoldLoanAccountController extends Controller
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
         // Total Deposit
-            $totalDeposit = DB::table('gold_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
-            
-            // // Total from Other Charges (only paid)
-            $otherChargesDeposit = DB::table('gold_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        $totalDeposit = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // // FINAL DEPOSIT = Transactions + Other Charges
-            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+        // // Total from Other Charges (only paid)
+        $otherChargesDeposit = DB::table('gold_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // Latest total_payable (from last transaction)
-            $totalPayable = DB::table('gold_loan_transactions')
-                ->where('loan_id', $id)
-                ->orderByDesc('id')
-                ->value('total_payable') ?? $goldLoan->loan_amount;
+        // // FINAL DEPOSIT = Transactions + Other Charges
+        $totalDeposit = $totalDeposit + $otherChargesDeposit;
 
-            // 1. Total Transaction Deposit
-            $transactionDeposit = DB::table('gold_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
+        // Latest total_payable (from last transaction)
+        $totalPayable = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->orderByDesc('id')
+            ->value('total_payable') ?? $goldLoan->loan_amount;
 
-            // 2. Total Paid Other Charges
-            $otherChargesDeposit = DB::table('gold_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        // 1. Total Transaction Deposit
+        $transactionDeposit = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // 3. FINAL Total Deposit
-            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+        // 2. Total Paid Other Charges
+        $otherChargesDeposit = DB::table('gold_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // 4. FINAL Correct Current Debt
-            $currentDebt = max($totalPayable - $totalDeposit, 0);
+        // 3. FINAL Total Deposit
+        $totalDeposit = $transactionDeposit + $otherChargesDeposit;
 
-        return view('gold-loan.account.loan-extension', compact('goldLoan','currentDebt','banks'));
+        // 4. FINAL Correct Current Debt
+        $currentDebt = max($totalPayable - $totalDeposit, 0);
 
+        return view('gold-loan.account.loan-extension', compact('goldLoan', 'currentDebt', 'banks'));
     }
 
     public function storeLoanExtension(Request $request, $id)
@@ -971,8 +969,7 @@ class GoldLoanAccountController extends Controller
             'input' => $request->all()
         ]);
 
-        try 
-        {
+        try {
 
             $validated = $request->validate([
                 'remaining_amount' => 'required|numeric',
@@ -1002,10 +999,7 @@ class GoldLoanAccountController extends Controller
             ]);
 
             return redirect()->route('gold-loan.account.show')->with('success', 'Loan Extension Successfully Added!');
-
-        } 
-        catch (\Throwable $e) 
-        {
+        } catch (\Throwable $e) {
 
             Log::error('Loan Extension Save Failed', [
                 'loan_id' => $id,
@@ -1032,43 +1026,43 @@ class GoldLoanAccountController extends Controller
 
 
         // Total Deposit
-            $totalDeposit = DB::table('gold_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
-            
-            // // Total from Other Charges (only paid)
-            $otherChargesDeposit = DB::table('gold_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        $totalDeposit = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // // FINAL DEPOSIT = Transactions + Other Charges
-            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+        // // Total from Other Charges (only paid)
+        $otherChargesDeposit = DB::table('gold_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // Latest total_payable (from last transaction)
-            $totalPayable = DB::table('gold_loan_transactions')
-                ->where('loan_id', $id)
-                ->orderByDesc('id')
-                ->value('total_payable') ?? $goldLoan->loan_amount;
+        // // FINAL DEPOSIT = Transactions + Other Charges
+        $totalDeposit = $totalDeposit + $otherChargesDeposit;
 
-            // 1. Total Transaction Deposit
-            $transactionDeposit = DB::table('gold_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
+        // Latest total_payable (from last transaction)
+        $totalPayable = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->orderByDesc('id')
+            ->value('total_payable') ?? $goldLoan->loan_amount;
 
-            // 2. Total Paid Other Charges
-            $otherChargesDeposit = DB::table('gold_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        // 1. Total Transaction Deposit
+        $transactionDeposit = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // 3. FINAL Total Deposit
-            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+        // 2. Total Paid Other Charges
+        $otherChargesDeposit = DB::table('gold_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // 4. FINAL Correct Current Debt
-            $currentDebt = max($totalPayable - $totalDeposit, 0);
+        // 3. FINAL Total Deposit
+        $totalDeposit = $transactionDeposit + $otherChargesDeposit;
 
-        return view('gold-loan.account.view-buttons.link-saving-acc.link-saving-acc', compact('goldLoan','currentDebt', 'banks', 'savingAccounts'));
+        // 4. FINAL Correct Current Debt
+        $currentDebt = max($totalPayable - $totalDeposit, 0);
+
+        return view('gold-loan.account.view-buttons.link-saving-acc.link-saving-acc', compact('goldLoan', 'currentDebt', 'banks', 'savingAccounts'));
     }
 
     public function storeSavingAccount(Request $request, $loanId)
@@ -1088,7 +1082,7 @@ class GoldLoanAccountController extends Controller
             ]);
 
         return redirect()->route('gold-loan.account.show', $loanId)
-        ->with('success', 'Saving Account Linked Successfully!');
+            ->with('success', 'Saving Account Linked Successfully!');
     }
 
     public function goldLoanPayEmi($id)
@@ -1172,6 +1166,23 @@ class GoldLoanAccountController extends Controller
                 'status' => $firstPendingEmi->status,
             ]);
         }
+        $nextEmi = DB::table('gold_loan_emi_status')
+            ->where('loan_id', $goldLoan->id)
+            ->where('status', 'DUE')
+            ->orderBy('emi_no', 'asc')
+            ->first();
+
+        // $nextEmi = DB::table('gold_loan_emi_status')
+        //     ->where('loan_id', $goldLoan->id)
+        //     ->whereIn('status', ['PARTIAL', 'DUE'])
+        //     ->orderByRaw("FIELD(status, 'PARTIAL', 'DUE')")
+        //     ->orderBy('emi_no', 'asc')
+        //     ->first();
+
+        // If found use that EMI amount
+        if ($nextEmi) {
+            $emiAmount = $nextEmi->remaining_amount;
+        }
 
         return view('gold-loan.account.view-buttons.pay-emi.pay_emi', compact(
             'goldLoan',
@@ -1189,6 +1200,134 @@ class GoldLoanAccountController extends Controller
             'banks'
         ));
     }
+
+
+    // public function payEmiLoan(Request $request, $id)
+    // {
+    //     Log::info("🟩 Gold Loan EMI Payment Request Received", [
+    //         'loan_id' => $id,
+    //         'payload' => $request->all()
+    //     ]);
+
+    //     try {
+
+    //         // STEP 1: Clean Amount
+    //         $cleanAmount = str_replace(',', '', $request->amount_collected);
+    //         $request->merge(['amount_collected' => $cleanAmount]);
+
+    //         // STEP 2: Validation
+    //         $request->validate([
+    //             'transaction_date' => 'required|date',
+    //             'amount_collected' => 'required|numeric|min:1',
+    //             'remarks' => 'nullable|string|max:255',
+    //             'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+    //         ]);
+
+    //         $loan = LoanApplication::with('scheme')->findOrFail($id);
+
+    //         // =====================================================
+    //         // ✅ GET CURRENT EMI (DUE or PARTIAL)
+    //         // =====================================================
+    //         $currentEmi = DB::table('gold_loan_emi_status')
+    //             ->where('loan_id', $loan->id)
+    //             ->whereIn('status', ['DUE', 'PARTIAL'])
+    //             ->orderBy('emi_no', 'asc')
+    //             ->first();
+
+    //         if (!$currentEmi) {
+    //             return back()->with('error', 'No pending EMI found.');
+    //         }
+
+    //         $remainingDue = $currentEmi->remaining_amount;
+    //         $amountCollected = (float) $cleanAmount;
+
+    //         // =====================================================
+    //         // ✅ VALIDATION
+    //         // =====================================================
+    //         if ($amountCollected > $remainingDue) {
+    //             return back()->withErrors([
+    //                 'amount_collected' =>
+    //                 'Amount Collected cannot be greater than Net Amount to Collect (₹ '
+    //                     . number_format($remainingDue, 2) . ')'
+    //             ])->withInput();
+    //         }
+
+    //         $newRemainingDue = max($remainingDue - $amountCollected, 0);
+
+    //         // Upload receipt
+    //         $receiptPath = null;
+    //         if ($request->hasFile('receipt')) {
+    //             $receiptPath = $request->file('receipt')
+    //                 ->store('goldloan_receipts', 'public');
+    //         }
+
+    //         $nextEmiNo = GoldLoanTransaction::where('loan_id', $loan->id)->count() + 1;
+
+    //         // =====================================================
+    //         // ✅ SAVE TRANSACTION (UNCHANGED)
+    //         // =====================================================
+    //         $transaction = new GoldLoanTransaction();
+    //         $transaction->loan_id = $loan->id;
+    //         $transaction->transaction_date = date('Y-m-d', strtotime($request->transaction_date));
+    //         $transaction->amount_collected = $amountCollected;
+
+    //         // 🔥 IMPORTANT FIX
+    //         $transaction->current_debt = $loan->current_debt - $amountCollected;
+
+    //         $transaction->total_payable = $remainingDue;
+    //         $transaction->other_charges = 0;
+    //         $transaction->status = 'pending';
+    //         $transaction->remarks = $request->remarks ?? null;
+    //         $transaction->flag = 'emi_payment';
+    //         $transaction->created_by = Auth::id() ?? null;
+    //         $transaction->emi_no = $nextEmiNo;
+    //         $transaction->fee_mode = $request->fee_mode;
+
+    //         if ($receiptPath) {
+    //             $transaction->receipt = $receiptPath;
+    //         }
+
+    //         $transaction->save();
+
+    //         // =====================================================
+    //         // ✅ UPDATE EMI STATUS TABLE
+    //         // =====================================================
+    //         DB::table('gold_loan_emi_status')
+    //             ->where('loan_id', $loan->id)
+    //             ->where('emi_no', $currentEmi->emi_no)
+    //             ->update([
+    //                 'remaining_amount' => $newRemainingDue,
+    //                 'status' => $newRemainingDue == 0 ? 'PAID' : 'PARTIAL',
+    //                 'paid_date' => $newRemainingDue == 0 ? now()->format('d-m-Y') : null,
+    //                 'updated_at' => now(),
+    //             ]);
+
+    //         // =====================================================
+    //         // ✅ UPDATE LOAN CURRENT DEBT
+    //         // =====================================================
+    //         $loan->current_debt = max($loan->current_debt - $amountCollected, 0);
+    //         $loan->save();
+
+    //         if ($loan->current_debt <= 0) {
+    //             $loan->status = 'closed';
+    //             $loan->save();
+    //         }
+
+    //         return redirect()->route('gold-loan.account.show', $loan->id)
+    //             ->with('success', 'EMI Payment recorded successfully!');
+    //     } catch (\Exception $e) {
+
+    //         Log::error("❌ ERROR in EMI Payment", [
+    //             'loan_id' => $id,
+    //             'message' => $e->getMessage(),
+    //             'line' => $e->getLine(),
+    //         ]);
+
+    //         return back()->with('error', "ERROR: " . $e->getMessage());
+    //     }
+    // }
+
+
 
     public function payEmiLoan(Request $request, $id)
     {
@@ -1221,8 +1360,12 @@ class GoldLoanAccountController extends Controller
 
             $loan = LoanApplication::with('scheme')->findOrFail($id);
 
-            // Total paid
+            // Total paid    shru
+            // $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)
+            //     ->sum('amount_collected');
+
             $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)
+                ->where('status', 'paid')   // 🔥 only approved EMI count hoil
                 ->sum('amount_collected');
 
             // Remaining amount
@@ -1268,7 +1411,7 @@ class GoldLoanAccountController extends Controller
             $transaction->current_debt = $newRemainingDue;
             $transaction->total_payable = $remainingDue;
             $transaction->other_charges = 0;
-            $transaction->status = 'paid';
+            $transaction->status = 'pending';
             $transaction->remarks = $request->remarks ?? null;
             $transaction->flag = 'emi_payment';
             $transaction->created_by = Auth::id() ?? null;
@@ -1277,14 +1420,13 @@ class GoldLoanAccountController extends Controller
             $transaction->emi_no = $nextEmiNo;
 
             // =============================================
-                // 🔥 MODE-WISE FIELDS STORE
+            // 🔥 MODE-WISE FIELDS STORE
             // =============================================
 
             $transaction->fee_mode = $request->fee_mode;
 
             // CASH - kuch save nahi hoga
-            if ($request->fee_mode == 'cash') 
-            {
+            if ($request->fee_mode == 'cash') {
 
                 $transaction->bank_id = null;
                 $transaction->cheque_no = null;
@@ -1366,7 +1508,6 @@ class GoldLoanAccountController extends Controller
 
             return redirect()->route('gold-loan.account.show', $loan->id)
                 ->with('success', 'EMI Payment recorded successfully!');
-
         } catch (\Exception $e) {
 
             // ❌ LOG 6: Error
@@ -1414,7 +1555,7 @@ class GoldLoanAccountController extends Controller
             'emi' => $emi
         ]);
     }
-  
+
     public function goldLoanPay($id)
     {
         $goldLoan = LoanApplication::with([
@@ -1570,14 +1711,14 @@ class GoldLoanAccountController extends Controller
                 'bank_id'          => $request->bank_id ?? null,
                 'cheque_no'        => $request->cheque_no ?? null,
                 //'cheque_date'      => $request->cheque_date ?? null,
-                'cheque_date' => $request->cheque_date 
-                ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d') 
-                : null,
+                'cheque_date' => $request->cheque_date
+                    ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d')
+                    : null,
 
                 //'transfer_date'    => $request->transfer_date ?? null,
                 'transfer_date' => $request->transfer_date
-                ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
-                : null,
+                    ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
+                    : null,
 
                 'utr_no'           => $request->utr_no ?? null,
                 'transfer_mode'    => $request->transfer_mode ?? null,
@@ -1694,8 +1835,8 @@ class GoldLoanAccountController extends Controller
             ->sum('amount');
         $banks = Bank::pluck('name', 'id');
         $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
-        
-        return view('gold-loan.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue', 'banks','savingAccounts'));
+
+        return view('gold-loan.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue', 'banks', 'savingAccounts'));
     }
 
     public function clearDue(Request $request, $id)

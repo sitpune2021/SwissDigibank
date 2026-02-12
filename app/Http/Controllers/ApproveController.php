@@ -28,6 +28,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Mail;
 use App\Models\GoldLoanForeClosure;
+use App\Models\GoldLoanTransaction;
 
 class ApproveController extends Controller
 {
@@ -35,10 +36,23 @@ class ApproveController extends Controller
     public function index(Request $request)
     {
         try {
-            $perPage = $request->input('perPage', 10);
-            Log::info('🟢 Starting Pending Transaction Fetch', ['perPage' => $perPage]);
 
-            Log::info('Fetching transaction data...');
+            $perPage = $request->input('perPage', 10);
+
+            Log::info('================ PENDING APPROVAL FETCH START ================');
+            Log::info('Step 1: Request Received', [
+                'perPage' => $perPage,
+                'requested_at' => now()
+            ]);
+
+            /*
+        |--------------------------------------------------------------------------
+        | 1️⃣ TRANSACTION QUERY
+        |--------------------------------------------------------------------------
+        */
+
+            Log::info('Step 2: Building Saving Transaction Query');
+
             $transactionQuery = DB::table('transactions')
                 ->select(
                     'transactions.id',
@@ -63,9 +77,16 @@ class ApproveController extends Controller
                 ->where('transactions.approve_status', '!=', 'approved')
                 ->whereNull('transactions.deleted_at');
 
-            Log::info('Transaction query built successfully.');
+            Log::info('Saving Transaction Query Built Successfully');
 
-            Log::info('Fetching membership charges data...');
+            /*
+        |--------------------------------------------------------------------------
+        | 2️⃣ MEMBERSHIP QUERY
+        |--------------------------------------------------------------------------
+        */
+
+            Log::info('Step 3: Building Membership Charges Query');
+
             $membershipQuery = DB::table('membership_charges_transaction')
                 ->select(
                     'membership_charges_transaction.id',
@@ -92,9 +113,15 @@ class ApproveController extends Controller
                 ->where('membership_charges_transaction.approve_status', '!=', 1)
                 ->whereNull('membership_charges_transaction.deleted_at');
 
-            Log::info('Membership charges query built successfully.');
+            Log::info('Membership Query Built Successfully');
 
-            Log::info('Fetching foreclosure pending records...');
+            /*
+        |--------------------------------------------------------------------------
+        | 3️⃣ FORECLOSURE QUERY
+        |--------------------------------------------------------------------------
+        */
+
+            Log::info('Step 4: Building Foreclosure Pending Query');
 
             $foreclosureQuery = DB::table('gold_loan_fore_closures')
                 ->select(
@@ -105,7 +132,6 @@ class ApproveController extends Controller
                     DB::raw("NULL AS bank_name"),
                     'gold_loan_fore_closures.status AS approve_status',
                     'gold_loan_fore_closures.created_at',
-
                     'branches.branch_name',
                     'loan_applications.id AS account_no',
                     DB::raw("'Gold Loan' AS account_type"),
@@ -118,43 +144,96 @@ class ApproveController extends Controller
                 )
                 ->join('loan_applications', 'loan_applications.id', '=', 'gold_loan_fore_closures.loan_id')
                 ->join('branches', 'branches.id', '=', 'loan_applications.branch_id')
-                ->where('gold_loan_fore_closures.status', '=', 0); // 👈 status 0 means pending only
+                ->where('gold_loan_fore_closures.status', '=', 0);
 
-            Log::info('Foreclosure query built successfully.');
+            Log::info('Foreclosure Query Built Successfully');
 
+            /*
+        |--------------------------------------------------------------------------
+        | 4️⃣ GOLD LOAN EMI QUERY
+        |--------------------------------------------------------------------------
+        */
 
-            Log::info('Combining transaction and membership queries...');
-            //$unionQuery = $transactionQuery->unionAll($membershipQuery);
+            Log::info('Step 5: Building Gold Loan EMI Pending Query');
+
+            $goldLoanEmiQuery = DB::table('gold_loan_transactions')
+                ->select(
+                    'gold_loan_transactions.id',
+                    DB::raw("'gold_loan_transactions' AS source_table"),
+                    'gold_loan_transactions.fee_mode AS payment_mode',
+                    'gold_loan_transactions.amount_collected AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'gold_loan_transactions.status AS approve_status',
+                    'gold_loan_transactions.created_at',
+                    'branches.branch_name',
+                    'loan_applications.id AS account_no',
+                    DB::raw("'Gold Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'loan_applications.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'EMI Payment' AS transaction_type")
+                )
+                ->join('loan_applications', 'loan_applications.id', '=', 'gold_loan_transactions.loan_id')
+                ->join('branches', 'branches.id', '=', 'loan_applications.branch_id')
+                ->where('gold_loan_transactions.status', '=', 'pending');
+
+            Log::info('Gold Loan EMI Query Built Successfully');
+
+            /*
+        |--------------------------------------------------------------------------
+        | 5️⃣ UNION ALL
+        |--------------------------------------------------------------------------
+        */
+
+            Log::info('Step 6: Combining All Queries Using UNION');
+
             $unionQuery = $transactionQuery
                 ->unionAll($membershipQuery)
-                ->unionAll($foreclosureQuery);
+                ->unionAll($foreclosureQuery)
+                ->unionAll($goldLoanEmiQuery);
 
+            Log::info('Union Created Successfully');
 
-            Log::info('Creating final combined query...');
+            /*
+        |--------------------------------------------------------------------------
+        | 6️⃣ FINAL QUERY
+        |--------------------------------------------------------------------------
+        */
+
+            Log::info('Step 7: Creating Final Combined Query');
+
             $finalQuery = DB::query()
                 ->fromSub($unionQuery, 'combined')
                 ->orderByDesc('created_at');
 
-            Log::info('Paginating results...');
+            Log::info('Step 8: Paginating Results');
+
             $results = $finalQuery->paginate($perPage);
 
-            Log::info('✅ Pending transactions fetched successfully.', [
-                'total' => $results->total(),
-                'perPage' => $results->perPage(),
-                'currentPage' => $results->currentPage()
+            Log::info('================ FETCH COMPLETED SUCCESSFULLY ================', [
+                'total_records' => $results->total(),
+                'per_page' => $results->perPage(),
+                'current_page' => $results->currentPage()
             ]);
 
             return view('approvals.pending_transactions', [
                 'pending_transactions' => $results
             ]);
         } catch (\Exception $e) {
-            Log::error('❌ Error fetching pending transactions', [
+
+            Log::error('❌ PENDING TRANSACTION FETCH FAILED', [
                 'error_message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
             ]);
+
             dd('Error fetching pending transactions: ' . $e->getMessage());
         }
     }
+
 
     public function update(Request $request, $id)
     {
@@ -254,6 +333,43 @@ class ApproveController extends Controller
                 } else {
                     return redirect()->back()->with('error', 'Failed to update Membership Share Amount.');
                 }
+            } elseif ($sourceTable === 'gold_loan_transactions') {
+
+                $emi = GoldLoanTransaction::findOrFail($id);
+
+                // 🔥 Status Mapping
+                if ($status === 'approved') {
+                    $emi->status = 'paid';
+                    $emi->paid_date = now();
+                } elseif ($status === 'disapproved') {
+                    $emi->status = 'rejected';
+                } else {
+                    $emi->status = 'pending';
+                }
+
+                $emi->remarks = $remarks;
+                $emi->save();
+
+                // 🔥 Loan recalculation only if approved
+                if ($emi->status === 'paid') {
+
+                    $loan = LoanApplication::find($emi->loan_id);
+
+                    if ($loan) {
+                        $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)
+                            ->where('status', 'paid')
+                            ->sum('amount_collected');
+
+                        $remaining = max($loan->loan_amount - $totalPaid, 0);
+
+                        if ($remaining <= 0) {
+                            $loan->status = 'closed';
+                            $loan->save();
+                        }
+                    }
+                }
+
+                return redirect()->back()->with('success', 'Gold Loan EMI updated successfully.');
             } else {
                 return redirect()->back()->with('error', 'Invalid source table specified.');
             }
@@ -833,26 +949,82 @@ class ApproveController extends Controller
         }
     }
 
-
     public function approveTransaction($encodedId, Request $request)
     {
         try {
+
             $id = base64_decode($encodedId);
-            $transaction = Transaction::findOrFail($id);
 
-            if ($transaction->approve_status !== 'pending' || $transaction->reverse_status != 0) {
-                return redirect()->back()->with('error', 'Invalid transaction status.');
+            /*
+        |--------------------------------------------------------------------------
+        | 1️⃣ FIRST CHECK – TRY NORMAL TRANSACTION (OLD LOGIC)
+        |--------------------------------------------------------------------------
+        */
+            $transaction = Transaction::find($id);
+
+            if ($transaction) {
+
+                if ($transaction->approve_status !== 'pending' || $transaction->reverse_status != 0) {
+                    return redirect()->back()->with('error', 'Invalid transaction status.');
+                }
+
+                // 🔥 OLD LOGIC (UNCHANGED)
+                $transaction->transaction_type = 'debit';
+                $transaction->approve_status = $request->input('transaction_status');
+                $transaction->reverse_status = 1;
+                $transaction->save();
+
+                return redirect()->route('reverse-transaction.reverse_transaction')
+                    ->with('success', 'Transaction approved successfully.');
             }
-            $transaction->transaction_type = 'debit';
-            $transaction->approve_status = $request->input('transaction_status');
-            $transaction->reverse_status = 1;
-            $transaction->save();
 
-            return redirect()->route('reverse-transaction.reverse_transaction')->with('success', 'Transaction approved successfully.');
+            /*
+        |--------------------------------------------------------------------------
+        | 2️⃣ IF NOT FOUND IN TRANSACTION → CHECK EMI TABLE
+        |--------------------------------------------------------------------------
+        */
+            $emi = GoldLoanTransaction::find($id);
+
+            if ($emi) {
+
+                if ($emi->status != 'pending') {
+                    return redirect()->back()->with('error', 'Invalid EMI status.');
+                }
+
+                $emi->status = 'paid';
+                $emi->paid_date = now();
+                $emi->save();
+
+                // 🔥 Recalculate Loan
+                $loan = LoanApplication::find($emi->loan_id);
+
+                if ($loan) {
+                    $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)
+                        ->where('status', 'paid')
+                        ->sum('amount_collected');
+
+                    $remaining = max($loan->loan_amount - $totalPaid, 0);
+
+                    if ($remaining <= 0) {
+                        $loan->status = 'closed';
+                        $loan->save();
+                    }
+                }
+
+                return redirect()->back()->with('success', 'EMI approved successfully.');
+            }
+
+            /*
+        |--------------------------------------------------------------------------
+        | 3️⃣ IF NOTHING FOUND
+        |--------------------------------------------------------------------------
+        */
+            return redirect()->back()->with('error', 'Invalid source table specified.');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
     }
+
 
 
     public function loans()
@@ -1143,16 +1315,16 @@ class ApproveController extends Controller
                 $item->model_type = 'vehical';
             });
 
-            // Fixed Loan Applications (approved)
-            $fixed = FixedLoanApplication::with(['branch', 'member'])
-                ->where('status', 1)
-                ->latest()
-                ->get()
-                ->each(function ($item) {
-                    $item->model_type = 'fixed';
-                });
+        // Fixed Loan Applications (approved)
+        $fixed = FixedLoanApplication::with(['branch', 'member'])
+            ->where('status', 1)
+            ->latest()
+            ->get()
+            ->each(function ($item) {
+                $item->model_type = 'fixed';
+            });
 
-             $routeMap = [
+        $routeMap = [
             'loan' => 'gold-loan.applications.view',
             'mortgage' => 'mortgage.applications.view',
             'loan_against' => 'loanagainst.applications.view',
@@ -1189,8 +1361,6 @@ class ApproveController extends Controller
             ->concat($fixed)
             ->sortByDesc('created_at');
 
-        return view('approvals.approvals_history', compact('applications','routeMap','types'));
+        return view('approvals.approvals_history', compact('applications', 'routeMap', 'types'));
     }
-
-
 }
