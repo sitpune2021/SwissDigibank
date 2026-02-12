@@ -147,8 +147,9 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/promotor/{id}/nominee/edit', [PromotorController::class, 'editNominee'])
             ->name('nominee.edit');
 
-        Route::post('/promotor-kyc/{id}/status', [PromotorController::class, 'updateStatus'])
-            ->name('promotor-kyc.updateStatus');
+            //kyc status
+        // Route::post('/promotor-kyc/{id}/status', [PromotorController::class, 'updateStatus'])
+        //     ->name('promotor-kyc.updateStatus');
 
         // Save updated nominee
         Route::put('/promotor/{id}/nominee', [PromotorController::class, 'updateNominee'])
@@ -2866,6 +2867,8 @@ Route::post('/pdf-images', [LogoImgUploadController::class, 'store'])->name('pdf
 Route::get('master-settings/index', [MasterSettingController::class, 'index'])->name('master-settings.index');
 
 Route::get('master-settings/edit', [MasterSettingController::class, 'edit'])->name('master-settings.edit');
+Route::put('/master-settings',[MasterSettingController::class,'update'])->name('master-settings.update');
+// Route::post('/master-settings',[MasterSettingController::class,'update'])->name('master-settings.update');
 
 Route::get('master-settings/edit-attendence', [MasterSettingController::class, 'edit_attendence'])->name('master-settings.edit-attendence');
 Route::get('master-settings/bank-list', [MasterSettingController::class, 'bank_list'])->name('master-settings.bank-list');

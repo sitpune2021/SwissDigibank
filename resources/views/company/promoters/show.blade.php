@@ -46,7 +46,13 @@
 <div class="grid grid-cols-12 gap-4 xxl:gap-6">
     <div class="col-span-12 lg:col-span-6 overflow-x-hidden">
         <div class="col-span-12 box overflow-x-hidden">
-            <table class="w-full whitespace-nowrap text-sm">
+            <div class="text-end">
+               <a href="{{ route('promotor.edit', base64_encode($promoter->id)) }}" class="btn-primary p-2">
+                 <i class="las la-pencil-alt"></i>
+               </a>
+            </div>
+           <div class="mt-2">
+             <table class="w-full whitespace-nowrap text-sm">
                 <tbody>
 
                     <tr class=" border-b dark:even:bg-bg3">
@@ -241,6 +247,7 @@
                     </tr>
                 </tbody>
             </table>
+           </div>
         </div>
 
         {{-- Member KYC Info --}}
@@ -612,8 +619,8 @@
         <div class="px-4 space-y-6">
             <div class="flex gap-4 lg:flex-row flex-col overflow-x-auto ">
                 <!-- Total Deposits -->
-                <div class="flex items-center box overflow-hidden  bg-white rounded shadow">
-                    <div class="flex items-center justify-center w-20 h-20 bg-primary  rounded-10">
+                <div class="flex items-center box overflow-x-auto  bg-white rounded shadow">
+                    <div class="flex items-center justify-center w-20 h-20 bg-primary px-6 rounded-10">
                         <i class="text-3xl text-white fa fa-money"></i>
                     </div>
                     <div class="pl-6">
@@ -623,7 +630,7 @@
                 </div>
 
                 <!-- Loan Outstanding -->
-                <div class="flex items-center box overflow-hidden bg-white rounded shadow">
+                <div class="flex items-center box overflow-x-auto bg-white rounded shadow">
                     <div class="flex items-center justify-center w-20 h-20 bg-secondary rounded-10 px-6">
                         <i class="text-3xl text-white fa fa-money"></i>
                     </div>
@@ -638,7 +645,7 @@
             <div class="mt-4 overflow-hidden box border rounded shadow">
 
                 <div class="flex items-center justify-between px-4 py-2 border-b">
-                    <span class="font-semibold text-gray-700 uppercase">Current KYC Status</span>
+                    <span class="font-semibold text-gray-700 uppercase">Current KYC Status (static)</span>
                     <span class="px-2 py-2 text-xs font-bold rounded
     @if($promoter->kyc?->kyc_status === 'pending') bg-warning text-white
     @elseif($promoter->kyc?->kyc_status === 'in_progress') bg-primary text-white
@@ -652,7 +659,11 @@
 
                 </div>
                 <div class=" flex items-center justify-between p-4">
-                    <form action="{{ route('promotor-kyc.updateStatus', $promoter->id) }}" method="POST">
+                    <form 
+                   {{--  action="
+                    {{ route('promotor-kyc.updateStatus', $promoter->id) }} 
+                     " method="POST"--}}
+                     >
                         @csrf
 
                         <label class="font-semibold text-gray-700 uppercase">KYC Status</label>
@@ -881,7 +892,7 @@
                     </div>
 
                     <div class=" toggle-content p-4 text-sm bg-white">
-                        <div class="py-2">
+                        <div class="py-2 overflow-x-auto ">
                             <table class="w-full overflow-x-auto whitespace-nowrap text-sm text-left">
                                 <thead>
                                     <tr class="border-b bg-secondary/5">
@@ -923,11 +934,13 @@
             <div class="toggle-box mt-4 box rounded shadow">
                 <div class="toggle-header flex items-center justify-between px-4 py-3  rounded-10 bg-secondary/5">
                     <span class="font-semibold text-lg uppercase">
-                        Address & Contact Info
+                        Address & Contact Info (static)
                     </span>
                     <div class="flex items-center gap-4">
                         <a class="btn-primary p-1"
-                            href="{{ isset($promoter) ? route('promotor.address', ['id' => $promoter->id, 'type' => 'promoter']) : '#' }}">
+                            href="
+                            {{-- {{ isset($promoter) ? route('promotor.address', ['id' => $promoter->id, 'type' => 'promoter']) : '#' }} --}}
+                             ">
                             <i class="cursor-pointer las la-pencil-alt"></i>
                         </a>
                         <i class="toggle-icon las la-minus"></i>
@@ -1194,7 +1207,7 @@
                     </div>
 
                     <div class="toggle-content p-4 text-sm bg-white">
-                        <div class="">
+                        <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left overflow-x-auto whitespace-nowrap">
                                 <thead>
                                     <tr class="bg-secondary/5 first:">

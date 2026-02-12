@@ -84,13 +84,15 @@
                 @foreach ($promotors as $promotor)
                 <tr class="border-b dark:even:bg-bg3">
                     <td class="py-5 px-6">
-                        <a href="{{ $promotor?->id ? route('promotor.show', base64_encode($promotor->id)) : '#' }}"
+                       <span class="px-2">
+                         <a href="{{ $promotor?->id ? route('promotor.show', base64_encode($promotor->id)) : '#' }}"
                             class="text-primary hover:underline">
                             {{ $promotor->folio_no ?? '' }}
                         </a>
+                       </span>
                     </td>
                     <td class="py-5 px-6">
-                        <div>
+                        <div class="px-1">
                             <p class="font-medium mb-1">{{ trim(implode(' ', array_filter([
                                 $promotor->first_name,
                                 $promotor->middle_name,
@@ -99,8 +101,12 @@
                             </p>
                         </div>
                     </td>
-                    <td class="text-start !py-5 min-w-[130px] cursor-pointer">{{ $promotor->gender ?? '' }}</td>
-                    <td class="py-2">
+                    <td class="text-start !py-5 min-w-[130px] cursor-pointer">
+                        <span class="px-2">
+                            {{ $promotor->gender ?? '' }}
+                        </span>
+                    </td>
+                    <td class="py-2 px-3">
                         @if (($promotor->is_senior ?? '') === 'Yes')
                         <span
                             class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
@@ -117,12 +123,12 @@
                     <td class="py-2">
                         @if (optional($promotor->kyc)->kyc_status == 'completed')
                         <span
-                            class="block w-64 rounded-[30px] border border-n30 bg-primary/10 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                            class="text-primary uppercase">
                             {{ optional($promotor->kyc)->kyc_status ?? 'N/A' }}
                         </span>
                         @else
                         <span style=""
-                            class="block  w-64 rounded-[30px] border border-n30 bg-warning/10 py-2  text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">
+                            class="text-warning uppercase">
                             {{ optional($promotor->kyc)->kyc_status ?? 'N/A' }}
                         </span>
                         @endif
