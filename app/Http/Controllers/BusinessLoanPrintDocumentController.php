@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BusinessLoanApplication;
+use App\Models\Company;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -87,6 +88,7 @@ class BusinessLoanPrintDocumentController extends Controller
             ($num % 10 ? ' ' . ($ones[$num % 10] ?? '') : '');
     }
 
+    // need to check the calculation for the charge per emi
     public function payout_chart_business_appli_view(BusinessLoanApplication $loan)
     {
         $loan->load(['member', 'scheme', 'disbursement']);
@@ -189,8 +191,15 @@ class BusinessLoanPrintDocumentController extends Controller
 
         $totalCharges = 0;
 
-        $chargeRate = $scheme->charge_percent ?? 0;   // your DB column
-        $chargeType = $scheme->charge_per_emi ?? 0;   // 0 = ON PRINCIPAL, 1 = ON EMI
+        $chargeType = $scheme->charge_per_emi ?? 0; // 1 = ON EMI, 0 = ON PRINCIPAL
+
+        $chargeRate =
+            ($scheme->sms_charge ?? 0) +
+            ($scheme->fuel_charge ?? 0) +
+            ($scheme->stationary_charge ?? 0) +
+            ($scheme->maintenance_charge ?? 0) +
+            ($scheme->collection ?? 0);
+
 
         for ($i = 1; $i <= $emiCount; $i++) {
 
@@ -226,10 +235,11 @@ class BusinessLoanPrintDocumentController extends Controller
                 } else {
                     // ON EMI
                     $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
-                }
+                }   
             }
 
             $totalCharges += $charge;
+
 
             $payoutSchedule[] = [
                 'emi_no' => $i,
@@ -254,21 +264,6 @@ class BusinessLoanPrintDocumentController extends Controller
                 default      => $emiDateCursor->addMonth(),
             };
         }
-        $charge = 0;
-
-        if ($chargeRate > 0) {
-
-            if ($chargeType == 0) {
-                // ON PRINCIPAL
-                $charge = round($balance * ($chargeRate / 100), 2);
-            } else {
-                // ON EMI
-                $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
-            }
-        }
-
-        $totalCharges += $charge;
-
         return view(
             'bussiness.business-loan-pdf.business-payout-chart-view',
             [
@@ -282,7 +277,7 @@ class BusinessLoanPrintDocumentController extends Controller
             ]
         );
     }
-
+// need to check the calculation for the charge per emi
     public function payout_chart_business_appli(BusinessLoanApplication $loan)
     {
         $loan->load(['member', 'scheme', 'disbursement']);
@@ -467,7 +462,7 @@ class BusinessLoanPrintDocumentController extends Controller
 
 
         $pdf = Pdf::loadView(
-            'bussiness.bussiness-loan-pdf.bussiness-payout-chart',
+            'bussiness.business-loan-pdf.business-payout-chart',
             [
                 ...$data,
                 'loan_no' => $loan->id,
@@ -481,4 +476,758 @@ class BusinessLoanPrintDocumentController extends Controller
 
         return $pdf->download('payout_chart_loan_application.pdf');
     }
+
+     public function sanction_letter_view(BusinessLoanApplication $loan)
+    {
+        $loan->load(['member', 'scheme', 'disbursement', 'branch']);
+
+        $statusText = match ($loan->status) {
+            0 => 'DRAFT',
+            1 => 'APPROVED',
+            2 => 'DISBURSED',
+            3 => 'CANCELLED',
+            default => 'UNKNOWN',
+        };
+
+        $scheme = $loan->scheme;
+
+        /* ---------------- BASIC INPUTS ---------------- */
+        $loanAmount   = $loan->approved_loan_amount ?? $loan->loan_amount;
+        $annualRate   = $scheme->annual_interest_rate ?? 12;
+        $interestType = $scheme->gold_loan_setting;
+
+        $tenureValue = (int) $loan->tenure_value;
+        $tenureType  = strtoupper($loan->tenure_type);
+
+        /* ---------------- TENURE CONVERSION ---------------- */
+        $tenureMonths = match ($tenureType) {
+            'MONTHS' => $tenureValue,
+            'WEEKS'  => round($tenureValue / 4, 2),
+            'DAYS'   => round($tenureValue / 30, 2),
+            default  => $tenureValue,
+        };
+
+        $emiCount = $tenureValue;
+
+        $monthlyRate = $annualRate / 12 / 100;
+
+        /* ---------------- DEFAULT VALUES ---------------- */
+        $emiAmount = 0;
+
+        /* ---------------- EMI / PAYOUT LOGIC ---------------- */
+        switch ($interestType) {
+
+            /* ========= REDUCING EMI (MONTHLY ONLY) ========= */
+            case 'reducing_emi':
+
+                if ($tenureType !== 'MONTHS') {
+                    throw new \Exception('Reducing EMI allowed only for MONTHS tenure');
+                }
+
+                $emiAmount = ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths))
+                    / (pow(1 + $monthlyRate, $tenureMonths) - 1);
+
+                $emiAmount = round($emiAmount, 2);
+                break;
+
+            /* ========= FLAT EMI ========= */
+            case 'flat_emi':
+
+                $totalInterest = $loanAmount * ($annualRate / 100) * ($tenureMonths / 12);
+                $emiAmount = round(($loanAmount + $totalInterest) / $tenureMonths, 2);
+                break;
+
+            /* ========= FLAT ADVANCED INTEREST ========= */
+            case 'flat_advanced_interest':
+
+                // EMI is principal-only
+                $emiAmount = round($loanAmount / $tenureMonths, 2);
+                break;
+
+            /* ========= NO EMI ========= */
+            case 'no_emi':
+
+                // Interest-only collection
+                $emiAmount = match ($tenureType) {
+                    'MONTHS' => round($loanAmount * ($annualRate / 100) / 12, 2),
+                    'WEEKS'  => round($loanAmount * ($annualRate / 100) / 52, 2),
+                    'DAYS'   => round($loanAmount * ($annualRate / 100) / 365, 2),
+                };
+                break;
+        }
+
+        /* ---------------- SANCTION LETTER DATA ---------------- */
+        $data = [
+            'bank_name' => '',
+            'printed_on' => date('d-m-Y'),
+            'branch' => $loan->branch->branch_name ?? '',
+
+            'member_name' => ($loan->member->member_info_title ?? '') . '. ' .
+                ($loan->member->member_info_first_name ?? '') . ' ' .
+                ($loan->member->member_info_last_name ?? ''),
+
+            'bank_details' => '',
+            'member_no' => str_pad($loan->member_id, 6, '0', STR_PAD_LEFT),
+            'father_husband' => '',
+            'contact_no' => $loan->member->member_info_mobile_no ?? '',
+            'address' => '',
+
+            'application_no' => str_pad($loan->id, 10, '0', STR_PAD_LEFT),
+            'application_date' => $loan->application_date
+                ? Carbon::parse($loan->application_date)->format('d-m-Y')
+                : '',
+
+            'application_status' => $statusText,
+            'loan_id' => $loan->id,
+            'loan_no' => str_pad($loan->id, 10, '0', STR_PAD_LEFT),
+
+            'nature_of_loan' => 'Business Loan',
+            'loan_scheme' => $scheme->scheme_name ?? '',
+            'loan_amount' => number_format($loanAmount, 2),
+
+            'tenure_of_loan' => $loan->tenure_value . ' ' . $loan->tenure_type,
+            'interest_type' => $interestType,
+            'annual_interset_rate' => $annualRate,
+
+            'emi_payout' => ucfirst($loan->emi_collection),
+            'emi_amt' => number_format($emiAmount, 2),
+            'no_of_emis' => $emiCount,
+
+            'credit_grace_period' => $loan->credit_period,
+            'processing_fee' => number_format($scheme->processing_fee ?? 0, 2),
+            'stamp_duty' => number_format($scheme->stamp_duty_charge ?? 0, 2),
+            'insurance_fee' => number_format($scheme->insurance_fee ?? 0, 2),
+
+            // Security
+            // 'ornaments' => $loan->ornaments,
+        ];
+
+        return view('bussiness.business-loan-pdf.business-sanction-letter-view', $data);
+    }
+    public function sanction_letter(BusinessLoanApplication $loan)
+    {
+
+        $loan->load(['member', 'scheme', 'disbursement', 'branch']);
+
+        $statusText = match ($loan->status) {
+            0 => 'DRAFT',
+            1 => 'APPROVED',
+            2 => 'DISBURSED',
+            3 => 'CANCELLED',
+            default => 'UNKNOWN',
+        };
+
+        $scheme = $loan->scheme;
+
+        /* ---------------- BASIC INPUTS ---------------- */
+        $loanAmount   = $loan->approved_loan_amount ?? $loan->loan_amount;
+        $annualRate   = $scheme->annual_interest_rate ?? 12;
+        $interestType = $scheme->gold_loan_setting;
+
+        $tenureValue = (int) $loan->tenure_value;
+        $tenureType  = strtoupper($loan->tenure_type);
+
+        /* ---------------- TENURE CONVERSION ---------------- */
+        $tenureMonths = match ($tenureType) {
+            'MONTHS' => $tenureValue,
+            'WEEKS'  => round($tenureValue / 4, 2),
+            'DAYS'   => round($tenureValue / 30, 2),
+            default  => $tenureValue,
+        };
+
+        $emiCount = $tenureValue;
+
+        $monthlyRate = $annualRate / 12 / 100;
+
+        /* ---------------- DEFAULT VALUES ---------------- */
+        $emiAmount = 0;
+
+        /* ---------------- EMI / PAYOUT LOGIC ---------------- */
+        switch ($interestType) {
+
+            /* ========= REDUCING EMI (MONTHLY ONLY) ========= */
+            case 'reducing_emi':
+
+                if ($tenureType !== 'MONTHS') {
+                    throw new \Exception('Reducing EMI allowed only for MONTHS tenure');
+                }
+
+                $emiAmount = ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths))
+                    / (pow(1 + $monthlyRate, $tenureMonths) - 1);
+
+                $emiAmount = round($emiAmount, 2);
+                break;
+
+            /* ========= FLAT EMI ========= */
+            case 'flat_emi':
+
+                $totalInterest = $loanAmount * ($annualRate / 100) * ($tenureMonths / 12);
+                $emiAmount = round(($loanAmount + $totalInterest) / $tenureMonths, 2);
+                break;
+
+            /* ========= FLAT ADVANCED INTEREST ========= */
+            case 'flat_advanced_interest':
+
+                // EMI is principal-only
+                $emiAmount = round($loanAmount / $tenureMonths, 2);
+                break;
+
+            /* ========= NO EMI ========= */
+            case 'no_emi':
+
+                // Interest-only collection
+                $emiAmount = match ($tenureType) {
+                    'MONTHS' => round($loanAmount * ($annualRate / 100) / 12, 2),
+                    'WEEKS'  => round($loanAmount * ($annualRate / 100) / 52, 2),
+                    'DAYS'   => round($loanAmount * ($annualRate / 100) / 365, 2),
+                };
+                break;
+        }
+
+        /* ---------------- SANCTION LETTER DATA ---------------- */
+        $data = [
+            'bank_name' => '',
+            'printed_on' => date('d-m-Y'),
+            'branch' => $loan->branch->branch_name ?? '',
+
+            'member_name' => ($loan->member->member_info_title ?? '') . '. ' .
+                ($loan->member->member_info_first_name ?? '') . ' ' .
+                ($loan->member->member_info_last_name ?? ''),
+
+            'bank_details' => '',
+            'member_no' => str_pad($loan->member_id, 6, '0', STR_PAD_LEFT),
+            'father_husband' => '',
+            'contact_no' => $loan->member->member_info_mobile_no ?? '',
+            'address' => '',
+
+            'application_no' => str_pad($loan->id, 10, '0', STR_PAD_LEFT),
+            'application_date' => $loan->application_date
+                ? Carbon::parse($loan->application_date)->format('d-m-Y')
+                : '',
+
+            'application_status' => $statusText,
+            'loan_id' => $loan->id,
+            'loan_no' => str_pad($loan->id, 10, '0', STR_PAD_LEFT),
+
+            'nature_of_loan' => 'Business Loan',
+            'loan_scheme' => $scheme->scheme_name ?? '',
+            'loan_amount' => number_format($loanAmount, 2),
+
+            'tenure_of_loan' => $loan->tenure_value . ' ' . $loan->tenure_type,
+            'interest_type' => $interestType,
+            'annual_interset_rate' => $annualRate,
+
+            'emi_payout' => ucfirst($loan->emi_collection),
+            'emi_amt' => number_format($emiAmount, 2),
+            'no_of_emis' => $emiCount,
+
+            'credit_grace_period' => $loan->credit_period,
+            'processing_fee' => number_format($scheme->processing_fee ?? 0, 2),
+            'stamp_duty' => number_format($scheme->stamp_duty_charge ?? 0, 2),
+            'insurance_fee' => number_format($scheme->insurance_fee ?? 0, 2),
+
+            // Security
+            'ornaments' => $loan->ornaments,
+        ];
+
+        $pdf = PDF::loadView('bussiness.business-loan-pdf.business-sanction-letter', $data)
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->download('Bussiness_Loan_Sanction_Letter.pdf');
+    }
+
+    
+    public function loanAgreementView(BusinessLoanApplication $loan)
+    {
+        $member = $loan->member;
+
+        /* ---------------- EMI BASIC INPUTS ---------------- */
+        $loanAmount = $loan->loan_amount;              // 200000
+        $annualRate = optional($loan->scheme)->interest_rate ?? 12; // %
+        $tenureMonths = $loan->tenure_value;              // 60
+        $emiDate = \Carbon\Carbon::parse($loan->application_date)->addMonth();
+
+        $monthlyRate = $annualRate / 12 / 100;
+
+        // EMI Formula
+        $emi = ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths))
+            / (pow(1 + $monthlyRate, $tenureMonths) - 1);
+
+        $emi = round($emi, 2);
+
+        /* ---------------- EMI SCHEDULE ---------------- */
+        $balance = $loanAmount;
+        $emiSchedule = [];
+
+        for ($i = 1; $i <= $tenureMonths; $i++) {
+
+            $interest = round($balance * $monthlyRate, 2);
+            $principal = round($emi - $interest, 2);
+            $balance = round($balance - $principal, 2);
+
+            $emiSchedule[] = [
+                'emi_no' => $i,
+                'emi_date' => $emiDate->format('d-M-y'),
+                'principal' => number_format($principal, 2),
+                'interest' => number_format($interest, 2),
+                'charges' => number_format(0, 2),
+                'emi_amount' => number_format($emi, 2),
+                'balance' => number_format(max($balance, 0), 2),
+            ];
+
+            $emiDate->addMonth();
+        }
+
+        $scheme = $loan->scheme;
+
+        $processingFee = $scheme->processing_fee ?? 0;
+        $stampDutyFee = $scheme->stamp_duty_charge ?? 0;
+        $insuranceFee = $scheme->insurance_fee ?? 0;
+        $interestRate = $scheme->annual_interest_rate ?? $annualRate;
+
+        $sms_charge = $scheme->sms_charge ?? 0;
+        $fuel_charge = $scheme->fuel_charge ?? 0;
+        $stationary_charge = $scheme->stationary_charge ?? 0;
+        $maintenance_charge = $scheme->maintenance_charge ?? 0;
+        $collection = $scheme->collection ?? 0;
+
+        $disbursement = $loan->disbursement;
+
+        $processingFeeTotal = $disbursement->processing_fee_total ?? 0;
+        $stampDutyTotal = $disbursement->stamp_duty_total ?? 0;
+        $insuranceTotal = $disbursement->insurance_total ?? 0;
+        $finalDisburseAmount = $disbursement->final_amount_to_disburse ?? 0;
+
+        $properties = $loan->properties;
+
+
+        /* ---------------- AGREEMENT DATA ---------------- */
+        $schedule_one = [
+            'member_id' => $loan->member_id,
+            'loan_no' => $loan->id,
+            'loan_acc_no' => 'GL' . str_pad($loan->id, 5, '0', STR_PAD_LEFT),
+            'loan_application_no' => 'GLA' . str_pad($loan->id, 5, '0', STR_PAD_LEFT),
+            'aggre_date' => optional($loan->application_date)->format('d-m-Y'),
+            'loan_amt' => number_format($loanAmount, 2),
+            'Annualized_ro_int' => $annualRate,
+            'tenure' => $tenureMonths,
+            'emi_amount' => number_format($emi, 2),
+            'loan_agree_no' => '',
+            'business_nature' => '',
+            'loan_purpose' => $loan->purpose_of_loan,
+            'emi_freq' => ucfirst($loan->emi_collection),
+
+            // FEES FROM SCHEME
+            'processing_fee' => number_format($processingFee, 2),
+            'stamp_duty_fee' => number_format($stampDutyFee, 2),
+            'insurance_fee' => number_format($insuranceFee, 2),
+            'interest_rate' => $interestRate . '%',
+            'sms_charge' => number_format($sms_charge, 2),
+            'fuel_charge' => number_format($fuel_charge, 2),
+            'stationary_charge' => number_format($stationary_charge, 2),
+            'maintenance_charge' => number_format($maintenance_charge, 2),
+            'collection' => number_format($collection, 2),
+
+            // DISBURSEMENT TOTALS
+            'processing_fee_total' => number_format($processingFeeTotal, 2),
+            'stamp_duty_total' => number_format($stampDutyTotal, 2),
+            'insurance_total' => number_format($insuranceTotal, 2),
+            'final_disburse_amount' => number_format($finalDisburseAmount, 2),
+
+
+            'name_borrower' => trim(
+                ($member->member_info_title ?? '') . ' ' .
+                    ($member->member_info_first_name ?? '') . ' ' .
+                    ($member->member_info_last_name ?? '')
+            ),
+            'mob_borrower' => $member->member_info_mobile_no ?? '',
+            'adr_borrower' => $member->member_info_address ?? '',
+            'adr_lender' => optional($loan->bank)->bank_name,
+
+        ];
+
+        return view(
+            'bussiness.business-loan-pdf.business-loan-agreement-view',
+            compact('schedule_one', 'emiSchedule', 'properties')
+        );
+    }
+    public function loanAgreement(BusinessLoanApplication $loan)
+    {
+        $member = $loan->member;
+
+        /* ---------------- EMI BASIC INPUTS ---------------- */
+        $loanAmount = $loan->loan_amount;              // 200000
+        $annualRate = optional($loan->scheme)->interest_rate ?? 12; // %
+        $tenureMonths = $loan->tenure_value;              // 60
+        $emiDate = \Carbon\Carbon::parse($loan->application_date)->addMonth();
+
+        $monthlyRate = $annualRate / 12 / 100;
+
+        // EMI Formula
+        $emi = ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths))
+            / (pow(1 + $monthlyRate, $tenureMonths) - 1);
+
+        $emi = round($emi, 2);
+
+        /* ---------------- EMI SCHEDULE ---------------- */
+        $balance = $loanAmount;
+        $emiSchedule = [];
+
+        for ($i = 1; $i <= $tenureMonths; $i++) {
+
+            $interest = round($balance * $monthlyRate, 2);
+            $principal = round($emi - $interest, 2);
+            $balance = round($balance - $principal, 2);
+
+            $emiSchedule[] = [
+                'emi_no' => $i,
+                'emi_date' => $emiDate->format('d-M-y'),
+                'principal' => number_format($principal, 2),
+                'interest' => number_format($interest, 2),
+                'charges' => number_format(0, 2),
+                'emi_amount' => number_format($emi, 2),
+                'balance' => number_format(max($balance, 0), 2),
+            ];
+
+            $emiDate->addMonth();
+        }
+
+        $scheme = $loan->scheme;
+
+        $processingFee = $scheme->processing_fee ?? 0;
+        $stampDutyFee = $scheme->stamp_duty_charge ?? 0;
+        $insuranceFee = $scheme->insurance_fee ?? 0;
+        $interestRate = $scheme->annual_interest_rate ?? $annualRate;
+
+        $sms_charge = $scheme->sms_charge ?? 0;
+        $fuel_charge = $scheme->fuel_charge ?? 0;
+        $stationary_charge = $scheme->stationary_charge ?? 0;
+        $maintenance_charge = $scheme->maintenance_charge ?? 0;
+        $collection = $scheme->collection ?? 0;
+
+        $disbursement = $loan->disbursement;
+
+        $processingFeeTotal = $disbursement->processing_fee_total ?? 0;
+        $stampDutyTotal = $disbursement->stamp_duty_total ?? 0;
+        $insuranceTotal = $disbursement->insurance_total ?? 0;
+        $finalDisburseAmount = $disbursement->final_amount_to_disburse ?? 0;
+
+        $properties = $loan->properties;
+
+
+        /* ---------------- AGREEMENT DATA ---------------- */
+        $schedule_one = [
+            'member_id' => $loan->member_id,
+            'loan_acc_no' => 'GL' . str_pad($loan->id, 5, '0', STR_PAD_LEFT),
+            'loan_application_no' => 'GLA' . str_pad($loan->id, 5, '0', STR_PAD_LEFT),
+            'aggre_date' => optional($loan->application_date)->format('d-m-Y'),
+            'loan_amt' => number_format($loanAmount, 2),
+            'Annualized_ro_int' => $annualRate,
+            'tenure' => $tenureMonths,
+            'emi_amount' => number_format($emi, 2),
+            'loan_agree_no' => '',
+            'business_nature' => '',
+            'loan_purpose' => $loan->purpose_of_loan,
+            'emi_freq' => ucfirst($loan->emi_collection),
+
+            // FEES FROM SCHEME
+            'processing_fee' => number_format($processingFee, 2),
+            'stamp_duty_fee' => number_format($stampDutyFee, 2),
+            'insurance_fee' => number_format($insuranceFee, 2),
+            'interest_rate' => $interestRate . '%',
+            'sms_charge' => number_format($sms_charge, 2),
+            'fuel_charge' => number_format($fuel_charge, 2),
+            'stationary_charge' => number_format($stationary_charge, 2),
+            'maintenance_charge' => number_format($maintenance_charge, 2),
+            'collection' => number_format($collection, 2),
+
+            // DISBURSEMENT TOTALS
+            'processing_fee_total' => number_format($processingFeeTotal, 2),
+            'stamp_duty_total' => number_format($stampDutyTotal, 2),
+            'insurance_total' => number_format($insuranceTotal, 2),
+            'final_disburse_amount' => number_format($finalDisburseAmount, 2),
+
+
+            'name_borrower' => trim(
+                ($member->member_info_title ?? '') . ' ' .
+                    ($member->member_info_first_name ?? '') . ' ' .
+                    ($member->member_info_last_name ?? '')
+            ),
+            'mob_borrower' => $member->member_info_mobile_no ?? '',
+            'adr_borrower' => $member->member_info_address ?? '',
+            'adr_lender' => optional($loan->bank)->bank_name,
+        ];
+
+        $pdf = Pdf::loadView(
+            'bussiness.business-loan-pdf.business-loan-agreement',
+            compact('schedule_one', 'emiSchedule', 'properties')
+        )->setPaper('A4');
+
+        return $pdf->download('buisness-loan-agreement_' . $loan->id . '.pdf');
+    }
+
+     public function disburse_letter_view(BusinessLoanApplication $loan)
+    {
+        $loan->load([
+            'member',
+            'scheme',
+            'branch',
+            'disbursement',
+        ]);
+
+        $disb = $loan->disbursement; // shorthand
+
+        $bank = Company::first();
+
+        // Build full bank address
+        $bankAddress = collect([
+            $bank->address_line1 ?? '',
+            $bank->address_line2 ?? '',
+            $bank->city ?? '',
+            optional($bank->state)->name ?? '',
+            $bank->pincode ?? '',
+            $bank->country ?? '',
+        ])->filter()->implode(', ');
+
+        $data = [
+            'printed_on' => now()->format('d-m-Y'),
+            'date'       => optional($disb->disbursal_date)->format('d-m-Y'),
+            'account_holder' =>
+            trim(
+                ($loan->member->member_info_title ?? '') . '. ' .
+                    ($loan->member->member_info_first_name ?? '') . ' ' .
+                    ($loan->member->member_info_last_name ?? '')
+            ),
+
+            'member_id'      => $loan->member->member_no ?? '',
+            'member_address' => $loan->member->address ?? '',
+            'member_mobile'  => $loan->member->mobile ?? '',
+            'member_state'   => $loan->member->state ?? '',
+
+            'bank_name'       => $bank->company_name ?? '',
+            'bank_adr_branch' => $loan->branch->branch_name ?? '',
+            'bank_adr'        => $bankAddress,
+
+            'loan_no'     => $loan->id,
+            'loan_amount' => $disb->loan_amount ?? 0,
+
+            'processing_charges' => $disb->processing_fee_total ?? 0,
+            'stamp_duty'         => $disb->stamp_duty_total ?? 0,
+            'insurance_fee'      => $disb->insurance_total ?? 0,
+            'advance_interest'   => $disb->advance_interest ?? 0,
+
+            'final_amount' => $disb->final_amount_to_disburse ?? 0,
+        ];
+
+        return view('bussiness.business-loan-pdf.business-disburse-letter-view', $data);
+    }
+    public function disburse_letter(BusinessLoanApplication $loan)
+    {
+        $loan->load([
+            'member',
+            'scheme',
+            'branch',
+            'disbursement',
+        ]);
+
+        $disb = $loan->disbursement; // shorthand
+
+        $bank = Company::first();
+
+        // Build full bank address
+        $bankAddress = collect([
+            $bank->address_line1 ?? '',
+            $bank->address_line2 ?? '',
+            $bank->city ?? '',
+            optional($bank->state)->name ?? '',
+            $bank->pincode ?? '',
+            $bank->country ?? '',
+        ])->filter()->implode(', ');
+
+        $data = [
+            'printed_on' => now()->format('d-m-Y'),
+            'date'       => optional($disb->disbursal_date)->format('d-m-Y'),
+            'account_holder' =>
+            trim(
+                ($loan->member->member_info_title ?? '') . '. ' .
+                    ($loan->member->member_info_first_name ?? '') . ' ' .
+                    ($loan->member->member_info_last_name ?? '')
+            ),
+
+            'member_id'      => $loan->member->member_no ?? '',
+            'member_address' => $loan->member->address ?? '',
+            'member_mobile'  => $loan->member->mobile ?? '',
+            'member_state'   => $loan->member->state ?? '',
+
+            'bank_name'       => $bank->company_name ?? '',
+            'bank_adr_branch' => $loan->branch->branch_name ?? '',
+            'bank_adr'        => $bankAddress,
+
+            'loan_no'     => $loan->id,
+            'loan_amount' => $disb->loan_amount ?? 0,
+
+            'processing_charges' => $disb->processing_fee_total ?? 0,
+            'stamp_duty'         => $disb->stamp_duty_total ?? 0,
+            'insurance_fee'      => $disb->insurance_total ?? 0,
+            'advance_interest'   => $disb->advance_interest ?? 0,
+
+            'final_amount' => $disb->final_amount_to_disburse ?? 0,
+        ];
+
+        $pdf = Pdf::loadView('bussiness.business-loan-pdf.business-disburse-letter', $data)
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->download('Business_Loan_Disbursement_Letter.pdf');
+    }
+
+    public function promissory_note_view(BusinessLoanApplication $loan)
+    {
+        $loan->load(['member', 'scheme', 'disbursement']);
+        $scheme = $loan->scheme;
+
+        $bank = Company::first();
+        // Build full bank address
+        $bankAddress = collect([
+            $bank->address_line1 ?? '',
+            $bank->address_line2 ?? '',
+            $bank->city ?? '',
+            optional($bank->state)->name ?? '',
+            $bank->pincode ?? '',
+            $bank->country ?? '',
+        ])->filter()->implode(', ');
+
+        $loanAmount = $loan->approved_loan_amount ?? 0;
+        $data = [
+            'loan_no' => $loan->id,
+            'name' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
+            'date' => date('d-m-Y'),
+            'bank_name'       => $bank->company_name ?? '',
+            'bank_adr_branch' => $loan->branch->branch_name ?? '',
+            'bank_adr'        => $bankAddress,
+            'amount' => number_format($loanAmount, 2),
+            'amount_words' => $this->amountInWords($loanAmount),
+            'interest_rate' => $scheme->annual_interest_rate,
+            'account_holder' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
+            'state' => 'Maharashtra',
+        ];
+
+        return view('bussiness.business-loan-pdf.business-promisary-note-view', $data);
+    }
+    public function promissory_note(BusinessLoanApplication $loan)
+    {
+        $loan->load(['member', 'scheme', 'disbursement']);
+        $scheme = $loan->scheme;
+
+        $bank = Company::first();
+        // Build full bank address
+        $bankAddress = collect([
+            $bank->address_line1 ?? '',
+            $bank->address_line2 ?? '',
+            $bank->city ?? '',
+            optional($bank->state)->name ?? '',
+            $bank->pincode ?? '',
+            $bank->country ?? '',
+        ])->filter()->implode(', ');
+
+        $loanAmount = $loan->approved_loan_amount ?? 0;
+        $data = [
+            'loan_no' => $loan->id,
+            'name' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
+            'date' => date('d-m-Y'),
+            'bank_name'       => $bank->company_name ?? '',
+            'bank_adr_branch' => $loan->branch->branch_name ?? '',
+            'bank_adr'        => $bankAddress,
+            'amount' => number_format($loanAmount, 2),
+            'amount_words' => $this->amountInWords($loanAmount),
+            'interest_rate' => $scheme->annual_interest_rate,
+            'account_holder' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
+            'state' => 'Maharashtra',
+        ];
+
+
+        $pdf = Pdf::loadView('bussiness.business-loan-pdf.business-promisary-note', $data)
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->download('promissory-note.pdf');
+    }
+
+     public function undertaking_letter_view(BusinessLoanApplication $loan)
+    {
+        $loan->load(['member', 'scheme', 'branch']);
+        $loanAmount = $loan->approved_loan_amount ?? 0;
+        $bank = Company::first();
+        // Build full bank address
+        $bankAddress = collect([
+            $bank->address_line1 ?? '',
+            $bank->address_line2 ?? '',
+            $bank->city ?? '',
+            optional($bank->state)->name ?? '', // if state is FK
+            $bank->pincode ?? '',
+            $bank->country ?? '',
+        ])->filter()->implode(', ');
+
+        $data = [
+            'printed_on' => date('d-m-Y'),
+            'date' => date('d-m-Y'),
+            'bank_name' => $bank->company_name ?? '',
+            'bank_adr_branch' => $loan->branch->branch_name ?? '',
+            'bank_adr' => $bankAddress,
+            'loan_no' => $loan->id,
+            'loan_amount' => $loanAmount,
+            'loan_amount_words' => $this->amountInWords($loanAmount),
+            'account_holder' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
+            'bank_details' => '',
+            'processing_charges' => 0,
+            'stamp_duty' => $loan->scheme->stamp_duty_charge ?? 0,
+            'insurance_fee' => $loan->scheme->insurance_fee ?? 0,
+            'final_amount' => 'static',
+            'installments' => 'static',
+            'state' => ''
+
+        ];
+
+        return view('bussiness.business-loan-pdf.business-undertaking-letter-view', $data);
+    }
+    public function undertaking_letter(BusinessLoanApplication $loan)
+    {
+        $loan->load(['member', 'scheme', 'branch']);
+        $loanAmount = $loan->approved_loan_amount ?? 0;
+        $bank = Company::first();
+        // Build full bank address
+        $bankAddress = collect([
+            $bank->address_line1 ?? '',
+            $bank->address_line2 ?? '',
+            $bank->city ?? '',
+            optional($bank->state)->name ?? '', // if state is FK
+            $bank->pincode ?? '',
+            $bank->country ?? '',
+        ])->filter()->implode(', ');
+
+        $data = [
+            'printed_on' => date('d-m-Y'),
+            'date' => date('d-m-Y'),
+            'bank_name' => $bank->company_name ?? '',
+            'bank_adr_branch' => $loan->branch->branch_name ?? '',
+            'bank_adr' => $bankAddress,
+            'loan_no' => $loan->id,
+            'loan_amount' => $loanAmount,
+            'loan_amount_words' => $this->amountInWords($loanAmount),
+            'account_holder' => $loan->member->member_info_title . '.' . $loan->member->member_info_first_name . ' ' . $loan->member->member_info_last_name ?? '',
+            'bank_details' => '',
+            'processing_charges' => 0,
+            'stamp_duty' => $loan->scheme->stamp_duty_charge ?? 0,
+            'insurance_fee' => $loan->scheme->insurance_fee ?? 0,
+            'final_amount' => 200000,
+            'installments' => 4449.00,
+            'state' => ''
+
+        ];
+
+        $pdf = Pdf::loadView('bussiness.business-loan-pdf.business-undertaking-letter', $data)
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->download('business-undertaking-letter.pdf');
+    }
+
+
 }

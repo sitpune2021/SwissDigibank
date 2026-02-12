@@ -97,11 +97,11 @@
         </div>
     </div>
       <div class="text-center flex justify-center gap-5 mt-4">
-        <a href="{{ route('loan.letter_udertaking_gold.pdf',  $loan_no) }} " class="px-4 py-2 btn-primary uppercase"
+        <a href="{{ route('business_loan.undertaking_letter.pdf',  $loan_no) }} " class="px-4 py-2 btn-primary uppercase"
             style="font-family: sans-serif !important; " target="_blank">
             <i class="las la-download"></i> Download
         </a>
-        <a href=" {{ route('gold-loan.applications.view', $loan_no) }}" class="px-4 py-2 btn-outline uppercase" style="font-family: sans-serif !important; " target="_self">
+        <a href=" {{ route('bussiness.applications.view', $loan_no) }}" class="px-4 py-2 btn-outline uppercase" style="font-family: sans-serif !important; " target="_self">
             BACK
         </a>
     </div>
