@@ -67,7 +67,6 @@ class GoldLoanAccountController extends Controller
 
     public function show(Request $request, $id)
     {
-
         $savedStatuses = DB::table('gold_loan_emi_status')
             ->where('loan_id', $id)
             ->pluck('status', 'emi_no')
@@ -119,6 +118,7 @@ class GoldLoanAccountController extends Controller
         // 1️⃣ Total EMI Paid Amount
         $transactionDeposit = DB::table('gold_loan_transactions')
             ->where('loan_id', $id)
+            ->where('status', 'paid')   // ⭐ only approved
             ->sum('amount_collected');
 
         // 2️⃣ Other Charges Paid Only
@@ -320,7 +320,11 @@ class GoldLoanAccountController extends Controller
 
         // Apply payments & auto status logic
         // ⭐ Apply payments on EMI schedule (front-end calculation only)
-        $totalPaid = GoldLoanTransaction::where('loan_id', $id)->sum('amount_collected');
+        // $totalPaid = GoldLoanTransaction::where('loan_id', $id)->sum('amount_collected');
+        $totalPaid = GoldLoanTransaction::where('loan_id', $id)
+            ->where('status', 'paid')   // ⭐ ONLY APPROVED EMI
+            ->sum('amount_collected');
+
 
         foreach ($emiSchedule as &$emi) {
 
@@ -453,6 +457,8 @@ class GoldLoanAccountController extends Controller
         // 1️⃣ Transactions (EMI)
         $transactions = DB::table('gold_loan_transactions')
             ->where('loan_id', $id)
+            ->where('status', 'paid')  // ⭐ only approved EMI
+
             ->select(
                 'created_at as date',
                 DB::raw("'EMI Payment' as type"),
@@ -1160,7 +1166,6 @@ class GoldLoanAccountController extends Controller
                 'status' => $firstPendingEmi->status,
             ]);
         }
-        // 👉 FETCH NEXT DUE EMI
         $nextEmi = DB::table('gold_loan_emi_status')
             ->where('loan_id', $goldLoan->id)
             ->where('status', 'DUE')
@@ -1189,9 +1194,9 @@ class GoldLoanAccountController extends Controller
         ));
     }
 
+
     public function payEmiLoan(Request $request, $id)
     {
-        // 📌 LOG 1: Raw Request
         Log::info("🟩 Gold Loan EMI Payment Request Received", [
             'loan_id' => $id,
             'payload' => $request->all()
@@ -1199,16 +1204,11 @@ class GoldLoanAccountController extends Controller
 
         try {
 
-            // 🔥 STEP 1: REMOVE COMMAS & CLEAN AMOUNT
+            // STEP 1: Clean Amount
             $cleanAmount = str_replace(',', '', $request->amount_collected);
             $request->merge(['amount_collected' => $cleanAmount]);
 
-            Log::info("🔵 Cleaned Amount Value", [
-                'loan_id' => $id,
-                'clean_amount' => $cleanAmount
-            ]);
-
-            // 🔥 STEP 2: VALIDATION
+            // STEP 2: Validation
             $request->validate([
                 'transaction_date' => 'required|date',
                 'amount_collected' => 'required|numeric|min:1',
@@ -1216,167 +1216,304 @@ class GoldLoanAccountController extends Controller
                 'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             ]);
 
-            Log::info("🟦 Validation Passed", ['loan_id' => $id]);
-
             $loan = LoanApplication::with('scheme')->findOrFail($id);
 
-            // Total paid
-            $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)
-                ->sum('amount_collected');
+            // =====================================================
+            // ✅ GET CURRENT EMI (DUE or PARTIAL)
+            // =====================================================
+            $currentEmi = DB::table('gold_loan_emi_status')
+                ->where('loan_id', $loan->id)
+                ->whereIn('status', ['DUE', 'PARTIAL'])
+                ->orderBy('emi_no', 'asc')
+                ->first();
 
-            // Remaining amount
-            $remainingDue = max($loan->loan_amount - $totalPaid, 0);
+            if (!$currentEmi) {
+                return back()->with('error', 'No pending EMI found.');
+            }
 
+            $remainingDue = $currentEmi->remaining_amount;
             $amountCollected = (float) $cleanAmount;
-            $newRemainingDue = max($remainingDue - $amountCollected, 0);
 
-            // 📌 LOG 3: Calculation
-            Log::info("🧮 EMI Calculation", [
-                'loan_id' => $id,
-                'loan_amount' => $loan->loan_amount,
-                'total_paid' => $totalPaid,
-                'remaining_due' => $remainingDue,
-                'amount_collected' => $amountCollected,
-                'new_remaining_due' => $newRemainingDue
-            ]);
+            // =====================================================
+            // ✅ VALIDATION
+            // =====================================================
+            if ($amountCollected > $remainingDue) {
+                return back()->withErrors([
+                    'amount_collected' =>
+                    'Amount Collected cannot be greater than Net Amount to Collect (₹ '
+                        . number_format($remainingDue, 2) . ')'
+                ])->withInput();
+            }
+
+            $newRemainingDue = max($remainingDue - $amountCollected, 0);
 
             // Upload receipt
             $receiptPath = null;
             if ($request->hasFile('receipt')) {
-                $receiptPath = $request->file('receipt')->store('goldloan_receipts', 'public');
-
-                Log::info("📁 Receipt Uploaded", [
-                    'loan_id' => $id,
-                    'path' => $receiptPath
-                ]);
+                $receiptPath = $request->file('receipt')
+                    ->store('goldloan_receipts', 'public');
             }
 
-            // 🔥 GET NEXT EMI NUMBER (COUNT + 1)
             $nextEmiNo = GoldLoanTransaction::where('loan_id', $loan->id)->count() + 1;
 
-            Log::info("➡️ Next EMI No Calculated", [
-                'loan_id' => $loan->id,
-                'next_emi_no' => $nextEmiNo
-            ]);
-
-            // Save transaction
+            // =====================================================
+            // ✅ SAVE TRANSACTION (UNCHANGED)
+            // =====================================================
             $transaction = new GoldLoanTransaction();
             $transaction->loan_id = $loan->id;
             $transaction->transaction_date = date('Y-m-d', strtotime($request->transaction_date));
             $transaction->amount_collected = $amountCollected;
-            $transaction->current_debt = $newRemainingDue;
+
+            // 🔥 IMPORTANT FIX
+            $transaction->current_debt = $loan->current_debt - $amountCollected;
+
             $transaction->total_payable = $remainingDue;
             $transaction->other_charges = 0;
-            $transaction->status = 'paid';
+            $transaction->status = 'pending';
             $transaction->remarks = $request->remarks ?? null;
             $transaction->flag = 'emi_payment';
             $transaction->created_by = Auth::id() ?? null;
-
-            // 🟩 NEW LINE — SAVE EMI NO
             $transaction->emi_no = $nextEmiNo;
-
-            // =============================================
-            // 🔥 MODE-WISE FIELDS STORE
-            // =============================================
-
             $transaction->fee_mode = $request->fee_mode;
-
-            // CASH - kuch save nahi hoga
-            if ($request->fee_mode == 'cash') {
-
-                $transaction->bank_id = null;
-                $transaction->cheque_no = null;
-                $transaction->cheque_date = null;
-
-                $transaction->utr_no = null;
-                $transaction->transfer_mode = null;
-                $transaction->transfer_date = null;
-
-                $transaction->saving = null;
-            }
-
-            // CHEQUE
-            elseif ($request->fee_mode == 'cheque') {
-
-                $transaction->bank_id = $request->bank_id;
-                $transaction->cheque_no = $request->cheque_no;
-                $transaction->cheque_date = date('Y-m-d', strtotime($request->cheque_date));
-
-                $transaction->utr_no = null;
-                $transaction->transfer_mode = null;
-                $transaction->transfer_date = null;
-
-                $transaction->saving = null;
-            }
-
-            // ONLINE
-            elseif ($request->fee_mode == 'online') {
-
-                $transaction->utr_no = $request->utr_no;
-                $transaction->transfer_mode = $request->transfer_mode;
-                $transaction->transfer_date = date('Y-m-d', strtotime($request->transfer_date));
-
-                $transaction->bank_id = null;
-                $transaction->cheque_no = null;
-                $transaction->cheque_date = null;
-
-                $transaction->saving = null;
-            }
-
-            // SAVING ACCOUNT
-            elseif ($request->fee_mode == 'saving') {
-
-                $transaction->saving = $request->saving;
-
-                $transaction->bank_id = null;
-                $transaction->cheque_no = null;
-                $transaction->cheque_date = null;
-
-                $transaction->utr_no = null;
-                $transaction->transfer_mode = null;
-                $transaction->transfer_date = null;
-            }
 
             if ($receiptPath) {
                 $transaction->receipt = $receiptPath;
             }
 
-            // 📌 LOG 4: Before Save
-            Log::info("📝 Transaction Record Before Save", $transaction->toArray());
-
             $transaction->save();
 
-            // 📌 LOG 5: Saved
-            Log::info("🟩 Transaction Saved Successfully", [
-                'loan_id' => $loan->id,
-                'transaction_id' => $transaction->id
-            ]);
+            // =====================================================
+            // ✅ UPDATE EMI STATUS TABLE
+            // =====================================================
+            DB::table('gold_loan_emi_status')
+                ->where('loan_id', $loan->id)
+                ->where('emi_no', $currentEmi->emi_no)
+                ->update([
+                    'remaining_amount' => $newRemainingDue,
+                    'status' => $newRemainingDue == 0 ? 'PAID' : 'PARTIAL',
+                    'paid_date' => $newRemainingDue == 0 ? now()->format('d-m-Y') : null,
+                    'updated_at' => now(),
+                ]);
 
-            // Auto close loan
-            if ($newRemainingDue <= 0) {
+            // =====================================================
+            // ✅ UPDATE LOAN CURRENT DEBT
+            // =====================================================
+            $loan->current_debt = max($loan->current_debt - $amountCollected, 0);
+            $loan->save();
+
+            if ($loan->current_debt <= 0) {
                 $loan->status = 'closed';
                 $loan->save();
-
-                Log::info("🟢 Loan Closed Automatically", [
-                    'loan_id' => $loan->id
-                ]);
             }
 
             return redirect()->route('gold-loan.account.show', $loan->id)
                 ->with('success', 'EMI Payment recorded successfully!');
         } catch (\Exception $e) {
 
-            // ❌ LOG 6: Error
             Log::error("❌ ERROR in EMI Payment", [
                 'loan_id' => $id,
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
-                'file' => $e->getFile()
             ]);
 
             return back()->with('error', "ERROR: " . $e->getMessage());
         }
     }
+
+
+
+    // public function payEmiLoan(Request $request, $id)
+    // {
+    //     // 📌 LOG 1: Raw Request
+    //     Log::info("🟩 Gold Loan EMI Payment Request Received", [
+    //         'loan_id' => $id,
+    //         'payload' => $request->all()
+    //     ]);
+
+    //     try {
+
+    //         // 🔥 STEP 1: REMOVE COMMAS & CLEAN AMOUNT
+    //         $cleanAmount = str_replace(',', '', $request->amount_collected);
+    //         $request->merge(['amount_collected' => $cleanAmount]);
+
+    //         Log::info("🔵 Cleaned Amount Value", [
+    //             'loan_id' => $id,
+    //             'clean_amount' => $cleanAmount
+    //         ]);
+
+    //         // 🔥 STEP 2: VALIDATION
+    //         $request->validate([
+    //             'transaction_date' => 'required|date',
+    //             'amount_collected' => 'required|numeric|min:1',
+    //             'remarks' => 'nullable|string|max:255',
+    //             'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+    //         ]);
+
+    //         Log::info("🟦 Validation Passed", ['loan_id' => $id]);
+
+    //         $loan = LoanApplication::with('scheme')->findOrFail($id);
+
+    //         // Total paid    shru
+    //         // $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)
+    //         //     ->sum('amount_collected');
+
+    //         $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)
+    //             ->where('status', 'paid')   // 🔥 only approved EMI count hoil
+    //             ->sum('amount_collected');
+
+    //         // Remaining amount
+    //         $remainingDue = max($loan->loan_amount - $totalPaid, 0);
+
+    //         $amountCollected = (float) $cleanAmount;
+    //         $newRemainingDue = max($remainingDue - $amountCollected, 0);
+
+    //         // 📌 LOG 3: Calculation
+    //         Log::info("🧮 EMI Calculation", [
+    //             'loan_id' => $id,
+    //             'loan_amount' => $loan->loan_amount,
+    //             'total_paid' => $totalPaid,
+    //             'remaining_due' => $remainingDue,
+    //             'amount_collected' => $amountCollected,
+    //             'new_remaining_due' => $newRemainingDue
+    //         ]);
+
+    //         // Upload receipt
+    //         $receiptPath = null;
+    //         if ($request->hasFile('receipt')) {
+    //             $receiptPath = $request->file('receipt')->store('goldloan_receipts', 'public');
+
+    //             Log::info("📁 Receipt Uploaded", [
+    //                 'loan_id' => $id,
+    //                 'path' => $receiptPath
+    //             ]);
+    //         }
+
+    //         // 🔥 GET NEXT EMI NUMBER (COUNT + 1)
+    //         $nextEmiNo = GoldLoanTransaction::where('loan_id', $loan->id)->count() + 1;
+
+    //         Log::info("➡️ Next EMI No Calculated", [
+    //             'loan_id' => $loan->id,
+    //             'next_emi_no' => $nextEmiNo
+    //         ]);
+
+    //         // Save transaction
+    //         $transaction = new GoldLoanTransaction();
+    //         $transaction->loan_id = $loan->id;
+    //         $transaction->transaction_date = date('Y-m-d', strtotime($request->transaction_date));
+    //         $transaction->amount_collected = $amountCollected;
+    //         $transaction->current_debt = $newRemainingDue;
+    //         $transaction->total_payable = $remainingDue;
+    //         $transaction->other_charges = 0;
+    //         $transaction->status = 'pending';
+    //         $transaction->remarks = $request->remarks ?? null;
+    //         $transaction->flag = 'emi_payment';
+    //         $transaction->created_by = Auth::id() ?? null;
+
+    //         // 🟩 NEW LINE — SAVE EMI NO
+    //         $transaction->emi_no = $nextEmiNo;
+
+    //         // =============================================
+    //         // 🔥 MODE-WISE FIELDS STORE
+    //         // =============================================
+
+    //         $transaction->fee_mode = $request->fee_mode;
+
+    //         // CASH - kuch save nahi hoga
+    //         if ($request->fee_mode == 'cash') {
+
+    //             $transaction->bank_id = null;
+    //             $transaction->cheque_no = null;
+    //             $transaction->cheque_date = null;
+
+    //             $transaction->utr_no = null;
+    //             $transaction->transfer_mode = null;
+    //             $transaction->transfer_date = null;
+
+    //             $transaction->saving = null;
+    //         }
+
+    //         // CHEQUE
+    //         elseif ($request->fee_mode == 'cheque') {
+
+    //             $transaction->bank_id = $request->bank_id;
+    //             $transaction->cheque_no = $request->cheque_no;
+    //             $transaction->cheque_date = date('Y-m-d', strtotime($request->cheque_date));
+
+    //             $transaction->utr_no = null;
+    //             $transaction->transfer_mode = null;
+    //             $transaction->transfer_date = null;
+
+    //             $transaction->saving = null;
+    //         }
+
+    //         // ONLINE
+    //         elseif ($request->fee_mode == 'online') {
+
+    //             $transaction->utr_no = $request->utr_no;
+    //             $transaction->transfer_mode = $request->transfer_mode;
+    //             $transaction->transfer_date = date('Y-m-d', strtotime($request->transfer_date));
+
+    //             $transaction->bank_id = null;
+    //             $transaction->cheque_no = null;
+    //             $transaction->cheque_date = null;
+
+    //             $transaction->saving = null;
+    //         }
+
+    //         // SAVING ACCOUNT
+    //         elseif ($request->fee_mode == 'saving') {
+
+    //             $transaction->saving = $request->saving;
+
+    //             $transaction->bank_id = null;
+    //             $transaction->cheque_no = null;
+    //             $transaction->cheque_date = null;
+
+    //             $transaction->utr_no = null;
+    //             $transaction->transfer_mode = null;
+    //             $transaction->transfer_date = null;
+    //         }
+
+    //         if ($receiptPath) {
+    //             $transaction->receipt = $receiptPath;
+    //         }
+
+    //         // 📌 LOG 4: Before Save
+    //         Log::info("📝 Transaction Record Before Save", $transaction->toArray());
+
+    //         $transaction->save();
+
+    //         // 📌 LOG 5: Saved
+    //         Log::info("🟩 Transaction Saved Successfully", [
+    //             'loan_id' => $loan->id,
+    //             'transaction_id' => $transaction->id
+    //         ]);
+
+    //         // Auto close loan
+    //         if ($newRemainingDue <= 0) {
+    //             $loan->status = 'closed';
+    //             $loan->save();
+
+    //             Log::info("🟢 Loan Closed Automatically", [
+    //                 'loan_id' => $loan->id
+    //             ]);
+    //         }
+
+    //         return redirect()->route('gold-loan.account.show', $loan->id)
+    //             ->with('success', 'EMI Payment recorded successfully!');
+    //     } catch (\Exception $e) {
+
+    //         // ❌ LOG 6: Error
+    //         Log::error("❌ ERROR in EMI Payment", [
+    //             'loan_id' => $id,
+    //             'message' => $e->getMessage(),
+    //             'line' => $e->getLine(),
+    //             'file' => $e->getFile()
+    //         ]);
+
+    //         return back()->with('error', "ERROR: " . $e->getMessage());
+    //     }
+    // }
 
     public function updateEmiStatus(Request $request)
     {

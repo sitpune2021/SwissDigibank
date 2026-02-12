@@ -42,10 +42,10 @@
                         <!-- <p>Pay Due EMIs</p> -->
                 </div>
                 <!-- <p class="text-gray-500">
-                            <a href="#" class="text-gray-500">Gold Loans</a> >
-                            <a href="#" class="text-gray-500">00063</a> >
-                            <a href="#" class="text-gray-500">Pay Due EMIs</a>
-                        </p> -->
+                                            <a href="#" class="text-gray-500">Gold Loans</a> >
+                                            <a href="#" class="text-gray-500">00063</a> >
+                                            <a href="#" class="text-gray-500">Pay Due EMIs</a>
+                                        </p> -->
             </div>
         </div>
         <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
@@ -193,10 +193,11 @@
                             <label class="md:text-lg font-medium block mb-4">Amount Collected<span
                                     class="text-error">*</span></label>
                             <div class="relative flex items-center">
-                                <input type="text" name="amount_collected" value="{{ number_format($emiAmount, 2) }}"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="Enter Amount">
-
+                                <input type="text" name="amount_collected"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" placeholder="Enter Amount">
+                                {{-- <input type="text" name="amount_collected" value="{{ number_format($emiAmount, 2) }}" --}}
+                                    {{-- class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Amount"> --}}
                             </div>
                         </div>
 
@@ -354,7 +355,7 @@
                     </div>
 
                     <!-- Content (Initially Hidden) -->
-                    <div class="overflow-x-auto p-4 hidden">
+                    <div class="overflow-x-auto p-4 ">
                         <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                             <tbody>
                                 <tr class="border-b border-gray-200">
@@ -427,7 +428,7 @@
                     </div>
 
                     <!-- Content (Initially Hidden) -->
-                    <div class="overflow-x-auto p-4 hidden">
+                    <div class="overflow-x-auto p-4 ">
                         <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                             <tbody>
                                 <tr class="border-b border-gray-200">
@@ -460,7 +461,7 @@
         </div>
     </div>
 
-
+    {{-- paymode  --}}
     <script>
         document.querySelectorAll('input[name="fee_mode"]').forEach((elem) => {
             elem.addEventListener("change", function(event) {
@@ -483,8 +484,61 @@
         });
     </script>
 
-
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const A = document.getElementById("remaining_due");
+            const B = document.getElementById("overdueInterest");
+            const C = document.getElementById("otherCharges");
+            const D = document.getElementById("totalAmount");
+            const amount = document.getElementById("amount");
+
+            const F = document.getElementById("t_Amount");
+            const G = document.getElementById("rounding");
+            const H = document.getElementById("netAmount");
+
+            function calculateTotal() {
+
+                let a = parseFloat(A.value) || 0;
+                let b = parseFloat(B.value) || 0;
+                let c = parseFloat(C.value) || 0;
+                let d = parseFloat(D.value) || 0;
+                amount.value = d;
+
+                // F = A + B + C + D
+                let total = a + b + c + d;
+
+                // Proper rounding
+                let roundedTotal = Math.round(total);
+                let roundingValue = (roundedTotal - total).toFixed(2);
+
+                F.value = total.toFixed(2); // Exact total
+                G.value = roundingValue; // Rounding difference
+                H.value = roundedTotal.toFixed(2); // Final payable (Rounded)
+
+                console.log("📊 EMI Calculation", {
+                    A: a,
+                    B: b,
+                    C: c,
+                    D: d,
+                    F_total: total,
+                    Rounded_Total: roundedTotal,
+                    Rounding_Value: roundingValue,
+                    Net_Amount: roundedTotal
+                });
+            }
+
+            // Run on page load
+            calculateTotal();
+
+            // Recalculate when D changes
+            D.addEventListener("input", calculateTotal);
+
+        });
+    </script>
+
+
+    {{-- <script>
         const totalAmount = document.getElementById("totalAmount");
         const amount = document.getElementById("amount");
         const netAmount = document.getElementById("netAmount");
@@ -504,7 +558,7 @@
             section.classList.toggle('hidden');
             icon.textContent = section.classList.contains('hidden') ? '+' : '−';
         }
-    </script>
+    </script> --}}
 
 
     <!-- Datepicker CSS -->
