@@ -118,7 +118,7 @@ class PromotorController extends Controller
                 'marital_statuses_id' => 'nullable|exists:marital_statuses,id',
                 'religions_id' => 'nullable|exists:religions,id',
                 'husband_wife_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'email' => 'nullable|email|unique:promotors,email',
+                'email' => 'required|email|unique:promotors,email',
                 'mobile' => 'required|digits:10|unique:promotors,mobile',
                 'sms' => 'boolean',
 
@@ -174,16 +174,17 @@ class PromotorController extends Controller
 
                 // Store KYC
                 // Create PromotorKYC only if at least one field is present
-                if (
-                    !empty($validated['aadhaar_no']) ||
-                    !empty($validated['voter_id_no']) ||
-                    !empty($validated['pan_no']) ||
-                    !empty($validated['ration_card_no']) ||
-                    !empty($validated['meter_no']) ||
-                    !empty($validated['ci_no']) ||
-                    !empty($validated['ci_relation']) ||
-                    !empty($validated['dl_no'])
-                ) {
+                // this condition is commented  now beacuse  kyc field want null (requirement) 
+                // if (
+                //     !empty($validated['aadhaar_no']) ||
+                //     !empty($validated['voter_id_no']) ||
+                //     !empty($validated['pan_no']) ||
+                //     !empty($validated['ration_card_no']) ||
+                //     !empty($validated['meter_no']) ||
+                //     !empty($validated['ci_no']) ||
+                //     !empty($validated['ci_relation']) ||
+                //     !empty($validated['dl_no'])
+                // ) {   }  
 
                     PromotorKYC::create([
                         'promotor_id' => $promotor->id,
@@ -197,7 +198,7 @@ class PromotorController extends Controller
                         'dl_no' => $validated['dl_no'] ?? null,
                         'kyc_status' => $validated['kyc_status'] ?? 'pending',
                     ]);
-                }
+              
 
                 // Create PromotorNomine only if at least one field is present
                 if (
@@ -327,7 +328,7 @@ class PromotorController extends Controller
                 'marital_statuses_id' => 'nullable|exists:marital_statuses,id',
                 'religions_id' => 'nullable|exists:religions,id',
                 'husband_wife_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'email' => "nullable|email|unique:promotors,email,{$id}",
+                'email' => "required|email|unique:promotors,email,{$id}",
                 'mobile' => "required|digits:10|unique:promotors,mobile,{$id}",
                 'sms' => 'boolean',
 
@@ -812,40 +813,45 @@ class PromotorController extends Controller
         return view('company.promoters.view-transactions', compact('id'));
     }
 
-    public function updateStatus(Request $request, $id)
-    {
-        $request->validate([
-            'kyc_status' => 'required|in:pending,in_progress,completed,rejected',
-        ]);
-
-        // Find KYC by promoter_id
-        $kyc = PromotorKyc::where('promotor_id', $id)->firstOrFail();
-
-        $oldStatus = $kyc->kyc_status;
-        $newStatus = $request->kyc_status;
-
-        Log::info('KYC status update requested', [
-            'kyc_id' => $kyc->id,
-            'promoter_id' => $id,
-            'old_status' => $oldStatus,
-            'new_status' => $newStatus,
-            'updated_by' => auth()->id(),
-        ]);
-
-        $kyc->update([
-            'kyc_status' => $newStatus
-        ]);
-
-        Log::notice('KYC status updated successfully', [
-            'kyc_id' => $kyc->id,
-            'final_status' => $newStatus,
-            'updated_by' => auth()->id(),
-        ]);
-
-        return back()->with('success', 'KYC status updated successfully.');
-    }
 
 
+    //need to complete it when roles and permissions done full kyc status updation
+//     public function updateStatus(Request $request, $id)
+// {
+    
+//     //need to complete it when roles and permissions done full kyc status updation
+//     $request->validate([
+//         'kyc_status' => 'required|in:pending,in_progress,completed,rejected',
+//     ]);
 
+//     $kyc = PromotorKyc::firstOrCreate(
+//         ['promotor_id' => $id],
+//         ['kyc_status' => 'pending']
+//     );
+
+//     $oldStatus = $kyc->kyc_status;
+//     $newStatus = $request->kyc_status;
+
+//     Log::info('KYC status update requested', [
+//         'kyc_id' => $kyc->id,
+//         'promoter_id' => $id,
+//         'old_status' => $oldStatus,
+//         'new_status' => $newStatus,
+//         'updated_by' => auth()->id(),
+//     ]);
+
+//     $kyc->update([
+//         'kyc_status' => $newStatus
+//     ]);
+
+//     Log::notice('KYC status updated successfully', [
+//         'kyc_id' => $kyc->id,
+//         'final_status' => $newStatus,
+//         'updated_by' => auth()->id(),
+//     ]);
+
+//     return back()->with('success', 'KYC status updated successfully.');
+// }
+  
 
 }

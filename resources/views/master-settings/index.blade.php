@@ -234,14 +234,14 @@
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member App Play Store URL</td>
                                     <td class="px-4 py-2">
-
+                                      {{ $setting->member_playstore_url }}
                                     </td>
                                 </tr>
 
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Member App IOs Store URL</td>
                                     <td class="px-4 py-2">
-
+{{ $setting->member_ios_url }}
                                     </td>
                                 </tr>
 
@@ -266,7 +266,7 @@
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Tax Deduction Limit (TDS)</td>
                                     <td class="px-4 py-2">
-                                        40,000.00 (static)
+                                      {{$setting->tax_deduction_limit}}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -275,28 +275,31 @@
                                         <br> Citizen (TDS)
                                     </td>
                                     <td class="px-4 py-2">
-                                        50,000.00(static)
+                                       {{$setting->tax_deduction_limit_senior}}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Enable Fee Collection</td>
                                     <td class="px-4 py-2">
-                                        <div class="flex items-center gap-1">
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                Yes
-                                            </span>
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                No
-                                            </span>
-                                        </div>
+                                      <div class="flex items-center gap-1">
+    @if($setting->membership_fee_enabled == 1)
+        <span
+            class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+            Yes
+        </span>
+    @else
+        <span
+            class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
+            No
+        </span>
+    @endif
+</div>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Membership Fee</td>
                                     <td class="px-4 py-2">
-                                        10.00 (static)
+                                       {{$setting->membership_fee}}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -304,22 +307,25 @@
                                         <br> Registration Fee
                                     </td>
                                     <td class="px-4 py-2">
-                                        <div class="flex items-center gap-1">
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                Yes
-                                            </span>
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                No
-                                            </span>
-                                        </div>
+                                         <div class="flex items-center gap-1">
+    @if($setting->associate_fee_enabled == 1)
+        <span
+            class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+            Yes
+        </span>
+    @else
+        <span
+            class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
+            No
+        </span>
+    @endif
+</div>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Associate Registration Fee</td>
                                     <td class="px-4 py-2">
-                                        0.00 (static)
+                                       {{$setting->associate_fee}}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -337,7 +343,7 @@
                                                 class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
                                                 No
                                             </span>
-                                        </div>
+                                        </div> (static)
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -356,6 +362,7 @@
                                                 class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
                                                 No
                                             </span>
+                                            (static)
                                         </div>
                                     </td>
                                 </tr>
@@ -375,6 +382,7 @@
                                                 class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
                                                 No
                                             </span>
+                                            (static)
                                         </div>
                                     </td>
                                 </tr>
@@ -385,7 +393,7 @@
                                         <br> Every Share Allocation/ Transfer
                                     </td>
                                     <td class="px-4 py-2">
-
+(static)
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -508,7 +516,9 @@
                     <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
                         onclick="this.nextElementSibling.classList.toggle('')">
                         <h3 class="text-lg font-semibold uppercase">BUSINESS TYPE</h3>
-                        <a href="{{ route('master-settings.edit-bussiness-type') }}" class=" btn-primary p-2 ">
+                        <a href="
+                        {{-- {{ route('master-settings.edit-bussiness-type') }} --}}
+                         " class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -1725,7 +1735,9 @@
                         <h3 class="text-lg font-semibold text-black">
                             BUSINESS LOAN SETTINGS
                         </h3>
-                        <a href="{{route('master-settings.edit-bussiness-loan')}}" class=" btn-primary p-2 ">
+                        <a href="
+                        {{-- {{route('master-settings.edit-bussiness-loan')}} --}}
+                        " class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>

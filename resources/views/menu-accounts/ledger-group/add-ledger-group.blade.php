@@ -64,7 +64,7 @@
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-start gap-3 mb-6 px-4 lg:mb-8">
-            <h3 class="flex text-xl block  uppercase font-semibold">
+            <h3 class="flex text-lg block  uppercase font-semibold">
                 ADD LEDGER GROUP
             </h3>
         </div>
@@ -82,7 +82,7 @@
                                     Group Type 
                                     <span class="text-error">*</span>
                                 </label>
-                                <select name="type" required>
+                                <select name="type" class="w-full border rounded-10 px-3 py-2  text-sm bg-secondary/5  dark:bg-bg3" >
                                     <option value="">Select Group Type</option>
                                     <option value="Asset">Asset</option>
                                     <option value="Liability">Liability</option>
@@ -96,7 +96,7 @@
                                  Display Name
                                      <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="display_name" placeholder="Display Name" required>
+                                <input type="text" name="display_name" placeholder="Display Name" class="w-full border rounded-10 px-3 py-2  text-sm bg-secondary/5  dark:bg-bg3">
 
                                     <p class="text-primary mt-2 text-sm">
                                         (e.g. Current Assets)
@@ -108,7 +108,7 @@
                                System Name
                                      <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="system_name" placeholder="System Name" required>
+                                <input type="text" name="system_name" placeholder="System Name" class="w-full border rounded-10 px-3 py-2  text-sm bg-secondary/5  dark:bg-bg3">
 
                                     <p class="text-primary mt-2 text-sm">
                                       (e.g. Current Assets)
@@ -120,7 +120,7 @@
                                  Weight-age/ Position 
                                      <span class="text-red-500">*</span>
                                 </label>
-                                <input type="number" name="weightage" placeholder="Weightage" required>
+                                <input type="number" name="weightage" placeholder="Weightage" class="w-full border rounded-10 px-3 py-2  text-sm bg-secondary/5  dark:bg-bg3">
 
                                     <p class="text-primary mt-2 text-sm">
                                        (e.g. Highest - 1. used to sort the groups in while listing)
@@ -128,7 +128,7 @@
                             </div>
       
                             <!-- Buttons -->
-                            <div class="flex flex-wrap gap-3 justify-center pt-4">
+                            <div class="flex flex-wrap gap-3 mt-5 justify-center pt-4">
                                 <button type="submit" class="btn-primary uppercase">
                                     Add GROUP
                                 </button>

@@ -45,7 +45,7 @@ return [
         ['label' => 'MARITAL STATUS', 'name' => 'marital_statuses_id', 'id' => 'marital_statuses_id', 'type' => 'select', 'required' => false, 'dynamic' => true, 'options_key' => 'marital_statuses'],
         ['label' => 'PROMOTER RELIGION', 'name' => 'religions_id', 'id' => 'religions_id', 'type' => 'select', 'required' => false, 'dynamic' => true, 'options_key' => 'religions'],
         ['label' => 'SPOUSE NAME', 'name' => 'husband_wife_name', 'id' => 'spouse', 'type' => 'text', 'required' => false],
-        ['label' => 'EMAIL', 'name' => 'email', 'id' => 'email', 'type' => 'email', 'required' => false],
+        ['label' => 'EMAIL', 'name' => 'email', 'id' => 'email', 'type' => 'email', 'required' => true],
         [
             'label' => 'MOBILE NO.',
             'name' => 'mobile',

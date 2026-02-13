@@ -165,19 +165,19 @@
                     <a href="{{ route('business_loan.payout_chart_business_loan_application_view', $application->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> EMI SCHEDULE CHART
                     </a>
-                    <a href="" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('business_loan.sanction_letter-view', $application->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> SANCTION LETTER
                     </a>
-                    <a href="" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('business_loan.loanAgreement-view', $application->id) }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> LOAN AGREEMENT
                     </a>
-                    <a href=""  class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('business_loan.disburse_letter.view', $application->id) }}"  class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> DISBURSE LETTER
                     </a>
-                    <a href=""  class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('business_loan.promissory.view', $application->id) }}"  class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> PROMISSORY NOTE
                     </a>
-                    <a href=""  class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="{{ route('business_loan.undertaking_letter.view', $application->id) }}"  class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> LETTER OF UNDERTAKING
                     </a>
                     <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">

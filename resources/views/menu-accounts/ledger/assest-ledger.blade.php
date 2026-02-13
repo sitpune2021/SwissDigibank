@@ -5,102 +5,112 @@
 <div class="p-4 space-y-6">
 
     {{-- Breadcrumb --}}
-    <div class="text-sm text-gray-500">
-        <a href="{{ route('ledger.index') }}" class="text-indigo-600 hover:underline">Asset Ledger</a>
+    <div class="uppercase text-lg font-semibold mb-3">
+        <a href="{{ route('ledger.index') }}" class="">Asset Ledger</a>
         - {{ $ledger->display_name }}
     </div>
 
     {{-- Ledger Table --}}
-    <div class="bg-white shadow rounded-2xl overflow-x-auto">
+    <div class="box mt-5">
 
-        <table class="min-w-full text-sm whitespace-nowrap">
+    <div class="w-full  overflow-x-auto rounded-10 shadow bg-white dark:bg-bg3">
 
-            <thead class="bg-gray-100 uppercase text-xs text-gray-600">
-                <tr>
-                    <th class="px-5 py-3 text-left">CODE</th>
-                    <th class="px-5 py-3 text-left">GROUP</th>
-                    <th class="px-5 py-3 text-left">NAME</th>
-                    <th class="px-5 py-3 text-left">SYSTEM NAME</th>
-                    <th class="px-5 py-3 text-left">TYPE</th>
-                    <th class="px-5 py-3 text-left">VENDOR</th>
-                    <th class="px-5 py-3 text-left">IS SYSTEM</th>
-                    <th class="px-5 py-3 text-left">SHOW IN DB</th>
-                    <th class="px-5 py-3 text-left">RISK (%)</th>
-                    <th class="px-5 py-3 text-left">TOTAL T.</th>
-                    <th class="px-5 py-3 text-left">LAST T.	</th>
-                    <th class="px-5 py-3 text-left">T. DEBITS</th>
-                    <th class="px-5 py-3 text-left">T. CREDITS</th>
-                    <th class="px-5 py-3 text-left">( T. DEBITS - T. CREDITS )</th>
-                    <th class="px-5 py-3 text-right">CLOSING BALANCE</th>
+                        <table class="w-full whitespace-nowrap text-sm text-left">
+
+                            {{-- HEADER --}}
+                            <thead class="bg-gray-100 dark:bg-bg2 sticky top-0 z-10">
+                                <tr class="text-sm bg-secondary/5 uppercase tracking-wider text-gray-600 dark:text-gray-300">
+
+                    <th class="px-5 py-3 text-start">CODE</th>
+                    <th class="px-5 py-3 text-start">GROUP</th>
+                    <th class="px-5 py-3 text-start">NAME</th>
+                    <th class="px-5 py-3 text-start">SYSTEM NAME</th>
+                    <th class="px-5 py-3 text-start">TYPE</th>
+                    <th class="px-5 py-3 text-start">VENDOR</th>
+                    <th class="px-5 py-3 text-start">IS SYSTEM</th>
+                    <th class="px-5 py-3 text-start">SHOW IN DB</th>
+                    <th class="px-5 py-3 text-start">RISK (%)</th>
+                    <th class="px-5 py-3 text-start">TOTAL T.</th>
+                    <th class="px-5 py-3 text-start">LAST T.	</th>
+                    <th class="px-5 py-3 text-start">T. DEBITS</th>
+                    <th class="px-5 py-3 text-start">T. CREDITS</th>
+                    <th class="px-5 py-3 text-start">( T. DEBITS - T. CREDITS )</th>
+                    <th class="px-5 py-3 text-start">CLOSING BALANCE</th>
                 </tr>
             </thead>
 
             <tbody>
 
-                <tr class="border-t hover:bg-gray-50">
+                <tr class="border-b hover:bg-gray-50">
 
-                    <td class="px-5 py-3 font-semibold">
+                    <td class="px-5 py-3 text-sm">
                         {{ $ledger->code }}
                     </td>
 
-                    <td class="px-5 py-3">
-                        {{ $ledger->group->display_name ?? '-' }}
+                    <td class="px-5 py-3 ">
+                        <span class="px-1 text-sm">
+                            {{ $ledger->group->display_name ?? '-' }}
+                        </span>
                     </td>
 
-                    <td class="px-5 py-3 font-medium text-indigo-600">
+                    <td class="px-5 py-3 text-sm">
                         {{ $ledger->display_name }}
                     </td>
 
-                    <td class="px-5 py-3">
+                    <td class="px-5 py-3 text-sm">
                         {{ $ledger->system_name }}
                     </td>
 
-                    <td class="px-5 py-3">
+                    <td class="px-5 py-3 text-sm">
                         {{ $ledger->type }}
                     </td>
 
-                    <td class="px-5 py-3">
+                    <td class="px-5 py-3 text-sm">
                         -
                     </td>
 
-                    <td class="px-5 py-3">
+                    <td class="px-5 py-3 text-sm">
                         -
                     </td>
 
-                    <td class="px-5 py-3">
+                    <td class="px-5 py-3 text-sm">
                         -
                     </td>
 
-                    <td class="px-5 py-3">
+                    <td class="px-5 py-3 text-sm">
                         %
                     </td>
 
                     {{-- TOTAL T --}}
-                    <td class="px-5 py-3 text-center font-bold text-blue-600">
-                        {{ $totalTransactions }}
+                    <td class="px-5 py-3 text-sm ">
+                        <span class="px-2">
+                            {{ $totalTransactions }}
+                        </span>
                     </td>
 
-                    <td class="px-5 py-3 text-center font-medium text-gray-700">
+                    <td class="px-5 py-3 text-sm">
                         {{ $lastTransactionDate ? \Carbon\Carbon::parse($lastTransactionDate)->format('d/m/Y H:i:s') : '-' }}
                     </td>
 
                     {{-- T DEBITS --}}
-                    <td class="px-5 py-3 text-right font-semibold text-green-600">
-                        ₹ {{ number_format($totalDebit, 2) }}
+                    <td class="px-5 py-3 text-sm text-primary">
+                       <span class="">
+                         ₹ {{ number_format($totalDebit, 2) }}
+                       </span>
                     </td>
 
                     {{-- T CREDITS --}}
-                    <td class="px-5 py-3 text-right font-semibold text-red-600">
+                    <td class="px-5 py-3 text-sm text-error">
                         ₹ {{ number_format($totalCredit, 2) }}
                     </td>
 
                     {{-- DIFF --}}
-                    <td class="px-5 py-3 text-right font-bold text-purple-600">
+                    <td class="px-5 py-3 text-sm">
                         ₹ {{ number_format($difference, 2) }}
                     </td>
 
                     {{-- CLOSING BALANCE --}}
-                    <td class="px-5 py-3 text-right font-bold text-green-600">
+                    <td class="px-5 py-3 text-sm text-primary">
                         ₹ {{ number_format($closingBalance, 2) }}
                     </td>
 
@@ -110,6 +120,7 @@
 
         </table>
 
+    </div>
     </div>
 
 </div>
