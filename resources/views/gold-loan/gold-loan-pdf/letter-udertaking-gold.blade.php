@@ -130,7 +130,7 @@
         <div style="font-size: 14px;  margin-top: 12px;">
             Dear Sir,
         </div>
-        <div class="" style="margin: ">
+        <div class="">
             <span style="font-size:14px; font-weight: 800; font-size: larger; "> Ref: POST DATED CHEQUES IN CONNECTION
                 WITH REPAYMENT OF LOAN ACCOUNT
                {{ str_pad( $loan_no, 10, '0', STR_PAD_LEFT) }} (Gold Loan)

@@ -510,7 +510,7 @@ class GoldLoanPrintDocument extends Controller
 
     public function payout_chart_gold_appli_view(LoanApplication $loan)
     {
- $loan->load(['member', 'scheme', 'disbursement']);
+        $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
 
         /* ---------------- BASIC INPUTS ---------------- */
@@ -606,25 +606,40 @@ class GoldLoanPrintDocument extends Controller
         /* ---------------- SCHEDULE ---------------- */
         $balance = $loanAmount;
         $totalPrincipal = 0;
+        $totalInterest  = 0;
+        $totalCharges   = 0;
         $payoutSchedule = [];
 
-        $totalCharges = 0;
+        /* ----- Fixed Charges Per EMI ----- */
+        $smsCharge         = $scheme->sms_charge ?? 0;
+        $fuelCharge        = $scheme->fuel_charge ?? 0;
+        $stationaryCharge  = $scheme->stationary_charge ?? 0;
+        $maintenanceCharge = $scheme->maintenance_charge ?? 0;
+        $collectionCharge  = $scheme->collection ?? 0;
 
-        $chargeRate = $scheme->charge_percent ?? 0;   // your DB column
-        $chargeType = $scheme->charge_per_emi ?? 0;   // 0 = ON PRINCIPAL, 1 = ON EMI
+        $fixedChargePerEmi =
+            $smsCharge +
+            $fuelCharge +
+            $stationaryCharge +
+            $maintenanceCharge +
+            $collectionCharge;
 
         for ($i = 1; $i <= $emiCount; $i++) {
 
             if ($interestType === 'reducing_emi') {
+
                 $interest = round($balance * ($annualRate / 12 / 100), 2);
                 $principal = round($emi - $interest, 2);
             } elseif ($interestType === 'flat_emi') {
+
                 $principal = round($loanAmount / $emiCount, 2);
                 $interest  = round($totalInterest / $emiCount, 2);
             } elseif ($interestType === 'flat_advanced_interest') {
+
                 $principal = round($loanAmount / $emiCount, 2);
                 $interest  = 0;
             } elseif ($interestType === 'no_emi') {
+
                 $interest = round($loanAmount * ($annualRate / 100) * $timeInYears / $emiCount, 2);
                 $principal = 0;
             }
@@ -635,22 +650,11 @@ class GoldLoanPrintDocument extends Controller
 
             $balance = round($balance - $principal, 2);
 
+            $charge = $fixedChargePerEmi;
+
             $totalPrincipal += $principal;
-
-            $charge = 0;
-
-            if ($chargeRate > 0) {
-
-                if ($chargeType == 0) {
-                    // ON PRINCIPAL
-                    $charge = round($balance * ($chargeRate / 100), 2);
-                } else {
-                    // ON EMI
-                    $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
-                }
-            }
-
-            $totalCharges += $charge;
+            $totalInterest  += $interest;
+            $totalCharges   += $charge;
 
             $payoutSchedule[] = [
                 'emi_no' => $i,
@@ -662,33 +666,19 @@ class GoldLoanPrintDocument extends Controller
                 'balance_principle' => number_format(max($balance, 0), 2),
             ];
 
-            /* ----- DATE INCREMENT ----- */
+            /* ----- Date Increment ----- */
             match ($emiCollection) {
-                'daily'      => $emiDateCursor->addDay(),
-                'weekly'     => $emiDateCursor->addWeek(),
-                'bi_weekly'  => $emiDateCursor->addWeeks(2),
-                '4_weekly'   => $emiDateCursor->addWeeks(4),
-                'monthly'    => $emiDateCursor->addMonth(),
-                'quarterly'  => $emiDateCursor->addMonths(3),
+                'daily'       => $emiDateCursor->addDay(),
+                'weekly'      => $emiDateCursor->addWeek(),
+                'bi_weekly'   => $emiDateCursor->addWeeks(2),
+                '4_weekly'    => $emiDateCursor->addWeeks(4),
+                'monthly'     => $emiDateCursor->addMonth(),
+                'quarterly'   => $emiDateCursor->addMonths(3),
                 'half_yearly' => $emiDateCursor->addMonths(6),
-                'yearly'     => $emiDateCursor->addYear(),
-                default      => $emiDateCursor->addMonth(),
+                'yearly'      => $emiDateCursor->addYear(),
+                default       => $emiDateCursor->addMonth(),
             };
         }
-        $charge = 0;
-
-        if ($chargeRate > 0) {
-
-            if ($chargeType == 0) {
-                // ON PRINCIPAL
-                $charge = round($balance * ($chargeRate / 100), 2);
-            } else {
-                // ON EMI
-                $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
-            }
-        }
-
-        $totalCharges += $charge;
 
         return view(
             'gold-loan.gold-loan-pdf.gold-appli-payout-chart-view',
@@ -696,17 +686,17 @@ class GoldLoanPrintDocument extends Controller
                 ...$data,
                 'loan_no' => $loan->id,
                 'payoutSchedule'   => $payoutSchedule,
-                'total_emi_principle' => number_format($principal, 2),
-                'total_emi_interest' => number_format($interest, 2),
-                'total_per_emi_charges' => number_format($charge, 2),
-                'total_emi_amount' => number_format($principal + $interest + $charge, 2),
+                'total_emi_principle' => number_format($totalPrincipal, 2),
+                'total_emi_interest'  => number_format($totalInterest, 2),
+                'total_per_emi_charges' => number_format($totalCharges, 2),
+                'total_emi_amount' => number_format($totalPrincipal + $totalInterest + $totalCharges, 2),
             ]
         );
     }
 
     public function payout_chart_gold_appli(LoanApplication $loan)
     {
- $loan->load(['member', 'scheme', 'disbursement']);
+        $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
 
         /* ---------------- BASIC INPUTS ---------------- */
@@ -802,25 +792,40 @@ class GoldLoanPrintDocument extends Controller
         /* ---------------- SCHEDULE ---------------- */
         $balance = $loanAmount;
         $totalPrincipal = 0;
+        $totalInterest  = 0;
+        $totalCharges   = 0;
         $payoutSchedule = [];
 
-        $totalCharges = 0;
+        /* ----- Fixed Charges Per EMI ----- */
+        $smsCharge         = $scheme->sms_charge ?? 0;
+        $fuelCharge        = $scheme->fuel_charge ?? 0;
+        $stationaryCharge  = $scheme->stationary_charge ?? 0;
+        $maintenanceCharge = $scheme->maintenance_charge ?? 0;
+        $collectionCharge  = $scheme->collection ?? 0;
 
-        $chargeRate = $scheme->charge_percent ?? 0;   // your DB column
-        $chargeType = $scheme->charge_per_emi ?? 0;   // 0 = ON PRINCIPAL, 1 = ON EMI
+        $fixedChargePerEmi =
+            $smsCharge +
+            $fuelCharge +
+            $stationaryCharge +
+            $maintenanceCharge +
+            $collectionCharge;
 
         for ($i = 1; $i <= $emiCount; $i++) {
 
             if ($interestType === 'reducing_emi') {
+
                 $interest = round($balance * ($annualRate / 12 / 100), 2);
                 $principal = round($emi - $interest, 2);
             } elseif ($interestType === 'flat_emi') {
+
                 $principal = round($loanAmount / $emiCount, 2);
                 $interest  = round($totalInterest / $emiCount, 2);
             } elseif ($interestType === 'flat_advanced_interest') {
+
                 $principal = round($loanAmount / $emiCount, 2);
                 $interest  = 0;
             } elseif ($interestType === 'no_emi') {
+
                 $interest = round($loanAmount * ($annualRate / 100) * $timeInYears / $emiCount, 2);
                 $principal = 0;
             }
@@ -831,22 +836,11 @@ class GoldLoanPrintDocument extends Controller
 
             $balance = round($balance - $principal, 2);
 
+            $charge = $fixedChargePerEmi;
+
             $totalPrincipal += $principal;
-
-            $charge = 0;
-
-            if ($chargeRate > 0) {
-
-                if ($chargeType == 0) {
-                    // ON PRINCIPAL
-                    $charge = round($balance * ($chargeRate / 100), 2);
-                } else {
-                    // ON EMI
-                    $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
-                }
-            }
-
-            $totalCharges += $charge;
+            $totalInterest  += $interest;
+            $totalCharges   += $charge;
 
             $payoutSchedule[] = [
                 'emi_no' => $i,
@@ -858,50 +852,34 @@ class GoldLoanPrintDocument extends Controller
                 'balance_principle' => number_format(max($balance, 0), 2),
             ];
 
-            /* ----- DATE INCREMENT ----- */
+            /* ----- Date Increment ----- */
             match ($emiCollection) {
-                'daily'      => $emiDateCursor->addDay(),
-                'weekly'     => $emiDateCursor->addWeek(),
-                'bi_weekly'  => $emiDateCursor->addWeeks(2),
-                '4_weekly'   => $emiDateCursor->addWeeks(4),
-                'monthly'    => $emiDateCursor->addMonth(),
-                'quarterly'  => $emiDateCursor->addMonths(3),
+                'daily'       => $emiDateCursor->addDay(),
+                'weekly'      => $emiDateCursor->addWeek(),
+                'bi_weekly'   => $emiDateCursor->addWeeks(2),
+                '4_weekly'    => $emiDateCursor->addWeeks(4),
+                'monthly'     => $emiDateCursor->addMonth(),
+                'quarterly'   => $emiDateCursor->addMonths(3),
                 'half_yearly' => $emiDateCursor->addMonths(6),
-                'yearly'     => $emiDateCursor->addYear(),
-                default      => $emiDateCursor->addMonth(),
+                'yearly'      => $emiDateCursor->addYear(),
+                default       => $emiDateCursor->addMonth(),
             };
         }
-        $charge = 0;
-
-        if ($chargeRate > 0) {
-
-            if ($chargeType == 0) {
-                // ON PRINCIPAL
-                $charge = round($balance * ($chargeRate / 100), 2);
-            } else {
-                // ON EMI
-                $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
-            }
-        }
-
-        $totalCharges += $charge;
-
         $pdf = Pdf::loadView(
             'gold-loan.gold-loan-pdf.gold-appli-payout-chart',
             [
                 ...$data,
                 'loan_no' => $loan->id,
                 'payoutSchedule'   => $payoutSchedule,
-                'total_emi_principle' => number_format($principal, 2),
-                'total_emi_interest' => number_format($interest, 2),
-                'total_per_emi_charges' => number_format($charge, 2),
-                'total_emi_amount' => number_format($principal + $interest + $charge, 2),
+                'total_emi_principle' => number_format($totalPrincipal, 2),
+                'total_emi_interest'  => number_format($totalInterest, 2),
+                'total_per_emi_charges' => number_format($totalCharges, 2),
+                'total_emi_amount' => number_format($totalPrincipal + $totalInterest + $totalCharges, 2),
             ]
         )->setPaper('A4', 'portrait');
 
         return $pdf->download('payout_chart_gold_loan_application.pdf');
     }
-
     public function promisary_note_view(LoanApplication $loan)
     {
         $loan->load(['member', 'scheme', 'disbursement']);
@@ -939,7 +917,7 @@ class GoldLoanPrintDocument extends Controller
     }
     public function promisary_note(LoanApplication $loan)
     {
-               $loan->load(['member', 'scheme', 'disbursement']);
+        $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
 
         $bank = Company::first();

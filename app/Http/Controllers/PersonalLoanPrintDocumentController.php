@@ -3,15 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
-use App\Models\MortgageLoanApplication;
-use App\Models\MortgageMortgageLoanApplication;
+use App\Models\PersonalLoanApplication;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 
-class MortgageLoanPrintDocumentController extends Controller
+class PersonalLoanPrintDocumentController extends Controller
 {
-    /* ---------------- NUMBER TO WORDS ---------------- */
+      /* ---------------- NUMBER TO WORDS ---------------- */
 
     private function amountInWords($amount)
     {
@@ -89,7 +87,8 @@ class MortgageLoanPrintDocumentController extends Controller
             ($num % 10 ? ' ' . ($ones[$num % 10] ?? '') : '');
     }
 
-    public function payout_chart_mortgage_appli_view(MortgageLoanApplication $loan)
+    // need to check the calculation for the charge per emi
+    public function payout_chart_personal_appli_view(PersonalLoanApplication $loan)
     {
         $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
@@ -187,40 +186,32 @@ class MortgageLoanPrintDocumentController extends Controller
         /* ---------------- SCHEDULE ---------------- */
         $balance = $loanAmount;
         $totalPrincipal = 0;
-        $totalInterest  = 0;
-        $totalCharges   = 0;
         $payoutSchedule = [];
 
-        /* ----- Fixed Charges Per EMI ----- */
-        $smsCharge         = $scheme->sms_charge ?? 0;
-        $fuelCharge        = $scheme->fuel_charge ?? 0;
-        $stationaryCharge  = $scheme->stationary_charge ?? 0;
-        $maintenanceCharge = $scheme->maintenance_charge ?? 0;
-        $collectionCharge  = $scheme->collection ?? 0;
+        $totalCharges = 0;
 
-        $fixedChargePerEmi =
-            $smsCharge +
-            $fuelCharge +
-            $stationaryCharge +
-            $maintenanceCharge +
-            $collectionCharge;
+        $chargeType = $scheme->charge_per_emi ?? 0; // 1 = ON EMI, 0 = ON PRINCIPAL
+
+        $chargeRate =
+            ($scheme->sms_charge ?? 0) +
+            ($scheme->fuel_charge ?? 0) +
+            ($scheme->stationary_charge ?? 0) +
+            ($scheme->maintenance_charge ?? 0) +
+            ($scheme->collection ?? 0);
+
 
         for ($i = 1; $i <= $emiCount; $i++) {
 
             if ($interestType === 'reducing_emi') {
-
                 $interest = round($balance * ($annualRate / 12 / 100), 2);
                 $principal = round($emi - $interest, 2);
             } elseif ($interestType === 'flat_emi') {
-
                 $principal = round($loanAmount / $emiCount, 2);
                 $interest  = round($totalInterest / $emiCount, 2);
             } elseif ($interestType === 'flat_advanced_interest') {
-
                 $principal = round($loanAmount / $emiCount, 2);
                 $interest  = 0;
             } elseif ($interestType === 'no_emi') {
-
                 $interest = round($loanAmount * ($annualRate / 100) * $timeInYears / $emiCount, 2);
                 $principal = 0;
             }
@@ -231,11 +222,23 @@ class MortgageLoanPrintDocumentController extends Controller
 
             $balance = round($balance - $principal, 2);
 
-            $charge = $fixedChargePerEmi;
-
             $totalPrincipal += $principal;
-            $totalInterest  += $interest;
-            $totalCharges   += $charge;
+
+            $charge = 0;
+
+            if ($chargeRate > 0) {
+
+                if ($chargeType == 0) {
+                    // ON PRINCIPAL
+                    $charge = round($balance * ($chargeRate / 100), 2);
+                } else {
+                    // ON EMI
+                    $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
+                }   
+            }
+
+            $totalCharges += $charge;
+
 
             $payoutSchedule[] = [
                 'emi_no' => $i,
@@ -247,35 +250,34 @@ class MortgageLoanPrintDocumentController extends Controller
                 'balance_principle' => number_format(max($balance, 0), 2),
             ];
 
-            /* ----- Date Increment ----- */
+            /* ----- DATE INCREMENT ----- */
             match ($emiCollection) {
-                'daily'       => $emiDateCursor->addDay(),
-                'weekly'      => $emiDateCursor->addWeek(),
-                'bi_weekly'   => $emiDateCursor->addWeeks(2),
-                '4_weekly'    => $emiDateCursor->addWeeks(4),
-                'monthly'     => $emiDateCursor->addMonth(),
-                'quarterly'   => $emiDateCursor->addMonths(3),
+                'daily'      => $emiDateCursor->addDay(),
+                'weekly'     => $emiDateCursor->addWeek(),
+                'bi_weekly'  => $emiDateCursor->addWeeks(2),
+                '4_weekly'   => $emiDateCursor->addWeeks(4),
+                'monthly'    => $emiDateCursor->addMonth(),
+                'quarterly'  => $emiDateCursor->addMonths(3),
                 'half_yearly' => $emiDateCursor->addMonths(6),
-                'yearly'      => $emiDateCursor->addYear(),
-                default       => $emiDateCursor->addMonth(),
+                'yearly'     => $emiDateCursor->addYear(),
+                default      => $emiDateCursor->addMonth(),
             };
         }
-
         return view(
-            'mortgage.mortgage-loan-pdf.mortgage-payout-chart-view',
+            'personal.personal-loan-pdf.personal-payout-chart-view',
             [
                 ...$data,
                 'loan_no' => $loan->id,
                 'payoutSchedule'   => $payoutSchedule,
-                'total_emi_principle' => number_format($totalPrincipal, 2),
-                'total_emi_interest'  => number_format($totalInterest, 2),
-                'total_per_emi_charges' => number_format($totalCharges, 2),
-                'total_emi_amount' => number_format($totalPrincipal + $totalInterest + $totalCharges, 2),
+                'total_emi_principle' => number_format($principal, 2),
+                'total_emi_interest' => number_format($interest, 2),
+                'total_per_emi_charges' => number_format($charge, 2),
+                'total_emi_amount' => number_format($principal + $interest + $charge, 2),
             ]
         );
     }
-
-    public function payout_chart_mortgage_appli(MortgageLoanApplication $loan)
+// need to check the calculation for the charge per emi
+    public function payout_chart_personal_appli(PersonalLoanApplication $loan)
     {
         $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
@@ -373,40 +375,25 @@ class MortgageLoanPrintDocumentController extends Controller
         /* ---------------- SCHEDULE ---------------- */
         $balance = $loanAmount;
         $totalPrincipal = 0;
-        $totalInterest  = 0;
-        $totalCharges   = 0;
         $payoutSchedule = [];
 
-        /* ----- Fixed Charges Per EMI ----- */
-        $smsCharge         = $scheme->sms_charge ?? 0;
-        $fuelCharge        = $scheme->fuel_charge ?? 0;
-        $stationaryCharge  = $scheme->stationary_charge ?? 0;
-        $maintenanceCharge = $scheme->maintenance_charge ?? 0;
-        $collectionCharge  = $scheme->collection ?? 0;
+        $totalCharges = 0;
 
-        $fixedChargePerEmi =
-            $smsCharge +
-            $fuelCharge +
-            $stationaryCharge +
-            $maintenanceCharge +
-            $collectionCharge;
+        $chargeRate = $scheme->charge_percent ?? 0;   // your DB column
+        $chargeType = $scheme->charge_per_emi ?? 0;   // 0 = ON PRINCIPAL, 1 = ON EMI
 
         for ($i = 1; $i <= $emiCount; $i++) {
 
             if ($interestType === 'reducing_emi') {
-
                 $interest = round($balance * ($annualRate / 12 / 100), 2);
                 $principal = round($emi - $interest, 2);
             } elseif ($interestType === 'flat_emi') {
-
                 $principal = round($loanAmount / $emiCount, 2);
                 $interest  = round($totalInterest / $emiCount, 2);
             } elseif ($interestType === 'flat_advanced_interest') {
-
                 $principal = round($loanAmount / $emiCount, 2);
                 $interest  = 0;
             } elseif ($interestType === 'no_emi') {
-
                 $interest = round($loanAmount * ($annualRate / 100) * $timeInYears / $emiCount, 2);
                 $principal = 0;
             }
@@ -417,11 +404,22 @@ class MortgageLoanPrintDocumentController extends Controller
 
             $balance = round($balance - $principal, 2);
 
-            $charge = $fixedChargePerEmi;
-
             $totalPrincipal += $principal;
-            $totalInterest  += $interest;
-            $totalCharges   += $charge;
+
+            $charge = 0;
+
+            if ($chargeRate > 0) {
+
+                if ($chargeType == 0) {
+                    // ON PRINCIPAL
+                    $charge = round($balance * ($chargeRate / 100), 2);
+                } else {
+                    // ON EMI
+                    $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
+                }
+            }
+
+            $totalCharges += $charge;
 
             $payoutSchedule[] = [
                 'emi_no' => $i,
@@ -433,38 +431,54 @@ class MortgageLoanPrintDocumentController extends Controller
                 'balance_principle' => number_format(max($balance, 0), 2),
             ];
 
-            /* ----- Date Increment ----- */
+            /* ----- DATE INCREMENT ----- */
             match ($emiCollection) {
-                'daily'       => $emiDateCursor->addDay(),
-                'weekly'      => $emiDateCursor->addWeek(),
-                'bi_weekly'   => $emiDateCursor->addWeeks(2),
-                '4_weekly'    => $emiDateCursor->addWeeks(4),
-                'monthly'     => $emiDateCursor->addMonth(),
-                'quarterly'   => $emiDateCursor->addMonths(3),
+                'daily'      => $emiDateCursor->addDay(),
+                'weekly'     => $emiDateCursor->addWeek(),
+                'bi_weekly'  => $emiDateCursor->addWeeks(2),
+                '4_weekly'   => $emiDateCursor->addWeeks(4),
+                'monthly'    => $emiDateCursor->addMonth(),
+                'quarterly'  => $emiDateCursor->addMonths(3),
                 'half_yearly' => $emiDateCursor->addMonths(6),
-                'yearly'      => $emiDateCursor->addYear(),
-                default       => $emiDateCursor->addMonth(),
+                'yearly'     => $emiDateCursor->addYear(),
+                default      => $emiDateCursor->addMonth(),
             };
         }
+        $charge = 0;
+
+        if ($chargeRate > 0) {
+
+            if ($chargeType == 0) {
+                // ON PRINCIPAL
+                $charge = round($balance * ($chargeRate / 100), 2);
+            } else {
+                // ON EMI
+                $charge = round(($principal + $interest) * ($chargeRate / 100), 2);
+            }
+        }
+
+        $totalCharges += $charge;
+
+
         $pdf = Pdf::loadView(
-            'mortgage.mortgage-loan-pdf.mortgage-payout-chart',
+            'personal.personal-loan-pdf.personal-payout-chart',
             [
                 ...$data,
                 'loan_no' => $loan->id,
                 'payoutSchedule'   => $payoutSchedule,
-                'total_emi_principle' => number_format($totalPrincipal, 2),
-                'total_emi_interest'  => number_format($totalInterest, 2),
-                'total_per_emi_charges' => number_format($totalCharges, 2),
-                'total_emi_amount' => number_format($totalPrincipal + $totalInterest + $totalCharges, 2),
+                'total_emi_principle' => number_format($principal, 2),
+                'total_emi_interest' => number_format($interest, 2),
+                'total_per_emi_charges' => number_format($charge, 2),
+                'total_emi_amount' => number_format($principal + $interest + $charge, 2),
             ]
         )->setPaper('A4', 'portrait');
 
         return $pdf->download('payout_chart_loan_application.pdf');
     }
 
-    public function sanction_letter_view(MortgageLoanApplication $loan)
+     public function sanction_letter_view(PersonalLoanApplication $loan)
     {
-        $loan->load(['member', 'scheme', 'disbursement', 'branch',  'properties']);
+        $loan->load(['member', 'scheme', 'disbursement', 'branch']);
 
         $statusText = match ($loan->status) {
             0 => 'DRAFT',
@@ -566,7 +580,7 @@ class MortgageLoanPrintDocumentController extends Controller
             'loan_id' => $loan->id,
             'loan_no' => str_pad($loan->id, 10, '0', STR_PAD_LEFT),
 
-            'nature_of_loan' => 'Mortgage/ Property Loan',
+            'nature_of_loan' => 'personal Loan',
             'loan_scheme' => $scheme->scheme_name ?? '',
             'loan_amount' => number_format($loanAmount, 2),
 
@@ -583,14 +597,16 @@ class MortgageLoanPrintDocumentController extends Controller
             'stamp_duty' => number_format($scheme->stamp_duty_charge ?? 0, 2),
             'insurance_fee' => number_format($scheme->insurance_fee ?? 0, 2),
 
-            'properties' => $loan->properties,
+            // Security
+            // 'ornaments' => $loan->ornaments,
         ];
 
-        return view('mortgage.mortgage-loan-pdf.mortgage-sanction-view', $data);
+        return view('personal.personal-loan-pdf.personal-sanction-letter-view', $data);
     }
-    public function sanction_letter(MortgageLoanApplication $loan)
+    public function sanction_letter(PersonalLoanApplication $loan)
     {
-        $loan->load(['member', 'scheme', 'disbursement', 'branch',  'properties']);
+
+        $loan->load(['member', 'scheme', 'disbursement', 'branch']);
 
         $statusText = match ($loan->status) {
             0 => 'DRAFT',
@@ -692,7 +708,7 @@ class MortgageLoanPrintDocumentController extends Controller
             'loan_id' => $loan->id,
             'loan_no' => str_pad($loan->id, 10, '0', STR_PAD_LEFT),
 
-            'nature_of_loan' => 'Mortgage/ Property Loan',
+            'nature_of_loan' => 'personal Loan',
             'loan_scheme' => $scheme->scheme_name ?? '',
             'loan_amount' => number_format($loanAmount, 2),
 
@@ -709,18 +725,18 @@ class MortgageLoanPrintDocumentController extends Controller
             'stamp_duty' => number_format($scheme->stamp_duty_charge ?? 0, 2),
             'insurance_fee' => number_format($scheme->insurance_fee ?? 0, 2),
 
-            'properties' => $loan->properties,
+            // Security
+            'ornaments' => $loan->ornaments,
         ];
 
-        $pdf = PDF::loadView('mortgage.mortgage-loan-pdf.mortgage-sanction', $data)
+        $pdf = PDF::loadView('personal.personal-loan-pdf.personal-sanction-letter', $data)
             ->setPaper('A4', 'portrait');
 
-        return $pdf->download('mortgage_loan.sanction_letter.pdf');
-        // OR download
-        // return $pdf->download('Gold_Loan_Sanction_Letter.pdf');
+        return $pdf->download('personal_Loan_Sanction_Letter.pdf');
     }
 
-    public function loanAgreementView(MortgageLoanApplication $loan)
+    
+    public function loanAgreementView(PersonalLoanApplication $loan)
     {
         $member = $loan->member;
 
@@ -796,7 +812,7 @@ class MortgageLoanPrintDocumentController extends Controller
             'tenure' => $tenureMonths,
             'emi_amount' => number_format($emi, 2),
             'loan_agree_no' => '',
-            'business_nature' => '',
+            'personal_nature' => '',
             'loan_purpose' => $loan->purpose_of_loan,
             'emi_freq' => ucfirst($loan->emi_collection),
 
@@ -830,11 +846,11 @@ class MortgageLoanPrintDocumentController extends Controller
         ];
 
         return view(
-            'mortgage.mortgage-loan-pdf.mortgage-loan-agreement-view',
+            'personal.personal-loan-pdf.personal-loan-agreement-view',
             compact('schedule_one', 'emiSchedule', 'properties')
         );
     }
-    public function loanAgreement(MortgageLoanApplication $loan)
+    public function loanAgreement(PersonalLoanApplication $loan)
     {
         $member = $loan->member;
 
@@ -909,7 +925,7 @@ class MortgageLoanPrintDocumentController extends Controller
             'tenure' => $tenureMonths,
             'emi_amount' => number_format($emi, 2),
             'loan_agree_no' => '',
-            'business_nature' => '',
+            'personal_nature' => '',
             'loan_purpose' => $loan->purpose_of_loan,
             'emi_freq' => ucfirst($loan->emi_collection),
 
@@ -942,13 +958,14 @@ class MortgageLoanPrintDocumentController extends Controller
         ];
 
         $pdf = Pdf::loadView(
-            'mortgage.mortgage-loan-pdf.mortgage-loan-agreement',
+            'personal.personal-loan-pdf.personal-loan-agreement',
             compact('schedule_one', 'emiSchedule', 'properties')
         )->setPaper('A4');
 
-        return $pdf->download('mortgage-loan-agreement_' . $loan->id . '.pdf');
+        return $pdf->download('buisness-loan-agreement_' . $loan->id . '.pdf');
     }
-    public function disburse_letter_view(MortgageLoanApplication $loan)
+
+     public function disburse_letter_view(PersonalLoanApplication $loan)
     {
         $loan->load([
             'member',
@@ -1001,9 +1018,9 @@ class MortgageLoanPrintDocumentController extends Controller
             'final_amount' => $disb->final_amount_to_disburse ?? 0,
         ];
 
-        return view('mortgage.mortgage-loan-pdf.mortgage-disburse-letter-view', $data);
+        return view('personal.personal-loan-pdf.personal-disburse-letter-view', $data);
     }
-    public function disburse_letter(MortgageLoanApplication $loan)
+    public function disburse_letter(PersonalLoanApplication $loan)
     {
         $loan->load([
             'member',
@@ -1056,13 +1073,13 @@ class MortgageLoanPrintDocumentController extends Controller
             'final_amount' => $disb->final_amount_to_disburse ?? 0,
         ];
 
-        $pdf = Pdf::loadView('mortgage.mortgage-loan-pdf.mortage-disburse-letter', $data)
+        $pdf = Pdf::loadView('personal.personal-loan-pdf.personal-disburse-letter', $data)
             ->setPaper('A4', 'portrait');
 
-        return $pdf->download('Mortgage_Loan_Disbursement_Letter.pdf');
+        return $pdf->download('personal_Loan_Disbursement_Letter.pdf');
     }
 
-    public function promissory_note_view(MortgageLoanApplication $loan)
+    public function promissory_note_view(PersonalLoanApplication $loan)
     {
         $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
@@ -1093,9 +1110,9 @@ class MortgageLoanPrintDocumentController extends Controller
             'state' => 'Maharashtra',
         ];
 
-        return view('mortgage.mortgage-loan-pdf.mortgage-promissory-note-view', $data);
+        return view('personal.personal-loan-pdf.personal-promisary-note-view', $data);
     }
-    public function promissory_note(MortgageLoanApplication $loan)
+    public function promissory_note(PersonalLoanApplication $loan)
     {
         $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
@@ -1126,14 +1143,13 @@ class MortgageLoanPrintDocumentController extends Controller
             'state' => 'Maharashtra',
         ];
 
-
-        $pdf = Pdf::loadView('mortgage.mortgage-loan-pdf.mortgage-promissory-note', $data)
+        $pdf = Pdf::loadView('personal.personal-loan-pdf.personal-promisary-note', $data)
             ->setPaper('A4', 'portrait');
 
-        return $pdf->download('mortgage-promissory-note.pdf');
+        return $pdf->download('promissory-note.pdf');
     }
 
-    public function undertaking_letter_view(MortgageLoanApplication $loan)
+     public function undertaking_letter_view(PersonalLoanApplication $loan)
     {
         $loan->load(['member', 'scheme', 'branch']);
         $loanAmount = $loan->approved_loan_amount ?? 0;
@@ -1168,9 +1184,9 @@ class MortgageLoanPrintDocumentController extends Controller
 
         ];
 
-        return view('mortgage.mortgage-loan-pdf.mortgage-undertaking-letter-view', $data);
+        return view('personal.personal-loan-pdf.personal-undertaking-letter-view', $data);
     }
-    public function undertaking_letter(MortgageLoanApplication $loan)
+    public function undertaking_letter(PersonalLoanApplication $loan)
     {
         $loan->load(['member', 'scheme', 'branch']);
         $loanAmount = $loan->approved_loan_amount ?? 0;
@@ -1205,9 +1221,10 @@ class MortgageLoanPrintDocumentController extends Controller
 
         ];
 
-        $pdf = Pdf::loadView('mortgage.mortgage-loan-pdf.mortgage-undertaking-letter', $data)
+        $pdf = Pdf::loadView('personal.personal-loan-pdf.personal-undertaking-letter', $data)
             ->setPaper('A4', 'portrait');
 
-        return $pdf->download('mortgage-undertaking-letter.pdf');
+        return $pdf->download('personal-undertaking-letter.pdf');
     }
+
 }

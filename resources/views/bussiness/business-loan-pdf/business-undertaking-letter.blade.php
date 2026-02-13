@@ -1,6 +1,11 @@
-@extends('layout.main')
-@section('content')
- <style>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Letter udertaking Business loan</title>
+
+    <style>
         @page {
             margin: 30px 40px;
             /* margin: 25mm; */
@@ -8,7 +13,7 @@
 
         body {
             font-family: DejaVu Sans, sans-serif;
-            font-size: 14px;
+            font-size: 12px;
             color: #000;
         }
 
@@ -87,26 +92,9 @@
             font-weight: bold;
         }
     </style>
+</head>
 
-<div class="main-inner">
-    <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-        <div class="flex items-start flex-col gap-2">
-            <h3 class="text-lg uppercase font-semibold">
-                LETTER OF UNDERTAKING
-            </h3>
-        </div>
-    </div>
-      <div class="text-center flex justify-center gap-5 mt-4">
-        <a href="{{ route('loan.letter_udertaking_gold.pdf',  $loan_no) }} " class="px-4 py-2 btn-primary uppercase"
-            style="font-family: sans-serif !important; " target="_blank">
-            <i class="las la-download"></i> Download
-        </a>
-        <a href=" {{ route('gold-loan.applications.view', $loan_no) }}" class="px-4 py-2 btn-outline uppercase" style="font-family: sans-serif !important; " target="_self">
-            BACK
-        </a>
-    </div>
-    <div class="box mt-5">
-         
+<body>
 
     <!-- Header -->
     <table class="header" style="border:none !important;">
@@ -135,7 +123,7 @@
         </div>
 
 
-        <div class="" style="font-size:14px; font-weight: 600; font-size: larger; ">
+        <div class="" style="font-size:14px; font-weight: 800; font-size: larger; ">
             SUBJECT : LETTER OF UNDERTAKING
         </div>
 
@@ -143,20 +131,19 @@
             Dear Sir,
         </div>
         <div class="" >
-            <span style="font-size:14px; font-weight: 600; font-size: larger; "> Ref: POST DATED CHEQUES IN CONNECTION
+            <span style="font-size:14px; font-weight: 800; font-size: larger; "> Ref: POST DATED CHEQUES IN CONNECTION
                 WITH REPAYMENT OF LOAN ACCOUNT
-               {{ str_pad( $loan_no, 10, '0', STR_PAD_LEFT) }} (Gold Loan)
+               {{ str_pad( $loan_no, 10, '0', STR_PAD_LEFT) }} (Business Loan)
             </span>
             ₹
-            <span style="font-size:16px; font-weight: 600; font-size: larger; "> {{ number_format($loan_amount, 2) }}
+            <span style="font-size:16px; font-weight: 800; font-size: larger; "> {{ number_format($loan_amount, 2) }}
                 /-</span>
         </div>
         <div class="subject" style="font-size: 14px; line-height: 1;">
             In consideration of your having agreed to grant continued to grant loan of
-            ₹
-            {{ number_format($loan_amount, 2) }}/- 
-            {{-- ({{ $loan_amount_words }}) --}}
-             in the name(s) of {{ $account_holder }} repayable
+            ₹{{ number_format($loan_amount, 2) }}/- 
+            {{-- ({{ $loan_amount_words }})  --}}
+            in the name(s) of {{ $account_holder }} repayable
             in MONTHLY installments of
             ₹ 
             {{-- {{ number_format($installments, 2)}} --}}
@@ -168,7 +155,7 @@
         </div>
 
         <!-- Details Table -->
-        <table class="" style="width: 100%; font-size: 14px; border:1px solid #000 ;">
+        <table class="" style="font-size: 14px; border:1px solid #000 ;">
             <tr>
                 <th>S.No</th>
                 <th>Bank Name</th>
@@ -257,8 +244,6 @@
 
     </div>
 
+</body>
 
-    </div>
-     
-
-    @endsection
+</html>
