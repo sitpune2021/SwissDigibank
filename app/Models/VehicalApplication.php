@@ -113,5 +113,9 @@ public function creditScores()
         return $this->hasMany(VehicalLoanTransaction::class, 'loan_id', 'id');
     }
 
+    public function disbursement()
+    {
+        return $this->hasOne(VehicalDisbursement::class,'loan_application_id'); 
+    }
 
 }

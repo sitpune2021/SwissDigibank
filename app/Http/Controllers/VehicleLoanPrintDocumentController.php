@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BusinessLoanApplication;
 use App\Models\Company;
+use App\Models\VehicalApplication;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
-class BusinessLoanPrintDocumentController extends Controller
+class VehicleLoanPrintDocumentController extends Controller
 {
     /* ---------------- NUMBER TO WORDS ---------------- */
 
@@ -89,188 +89,193 @@ class BusinessLoanPrintDocumentController extends Controller
     }
 
     // need to check the calculation for the charge per emi
-    public function payout_chart_business_appli_view(BusinessLoanApplication $loan)
-    {
-        $loan->load(['member', 'scheme', 'disbursement']);
-        $scheme = $loan->scheme;
+    public function payout_chart_vehicle_appli_view(VehicalApplication $loan)
+{
+    $loan->load(['member', 'scheme', 'disbursement']);
+    $scheme = $loan->scheme;
 
-        /* ---------------- BASIC INPUTS ---------------- */
-        $loanAmount   = $loan->approved_loan_amount ?? $loan->loan_amount;
-        $annualRate   = $scheme->annual_interest_rate ?? 12;
-        $interestType = $scheme->gold_loan_setting;
+    /* ---------------- BASIC INPUTS ---------------- */
+    $loanAmount   = $loan->approved_loan_amount ?? $loan->loan_amount;
+    $annualRate   = $scheme->annual_interest_rate ?? 12;
+    $interestType = $scheme->gold_loan_setting;
 
-        $tenureValue   = (int) $loan->tenure_value;
-        $tenureType    = strtoupper($loan->tenure_type);
-        $emiCollection = strtolower($loan->emi_collection);
+    $tenureValue   = (int) $loan->tenure_value;
+    $tenureType    = strtoupper($loan->tenure_type);
+    $emiCollection = strtolower($loan->emi_collection);
 
-        /* ---------------- TIME IN YEARS ---------------- */
-        $timeInYears = match ($tenureType) {
-            'WEEKS'  => $tenureValue / 52,
-            'DAYS'   => $tenureValue / 365,
-            'MONTHS' => $tenureValue / 12,
-            default  => $tenureValue / 12,
-        };
+    /* ---------------- TIME IN YEARS ---------------- */
+    $timeInYears = match ($tenureType) {
+        'WEEKS'  => $tenureValue / 52,
+        'DAYS'   => $tenureValue / 365,
+        'MONTHS' => $tenureValue / 12,
+        default  => $tenureValue / 12,
+    };
 
-        /* ---------------- EMI COUNT ---------------- */
-        $emiCount = match ($emiCollection) {
-            'daily'        => $tenureType === 'DAYS'   ? $tenureValue : ceil($tenureValue * 30),
-            'weekly'       => $tenureType === 'WEEKS'  ? $tenureValue : ceil($tenureValue * 4),
-            'bi_weekly'    => ceil(($tenureType === 'WEEKS' ? $tenureValue : $tenureValue * 4) / 2),
-            '4_weekly'     => ceil(($tenureType === 'WEEKS' ? $tenureValue : $tenureValue * 4) / 4),
-            'monthly'      => $tenureType === 'MONTHS' ? $tenureValue : ceil($tenureValue / 4),
-            'quarterly'    => ceil($tenureValue / 3),
-            'half_yearly'  => ceil($tenureValue / 6),
-            'yearly'       => ceil($tenureValue / 12),
-            default        => $tenureValue,
-        };
+    /* ---------------- EMI COUNT ---------------- */
+    $emiCount = match ($emiCollection) {
+        'daily'        => $tenureType === 'DAYS'   ? $tenureValue : ceil($tenureValue * 30),
+        'weekly'       => $tenureType === 'WEEKS'  ? $tenureValue : ceil($tenureValue * 4),
+        'bi_weekly'    => ceil(($tenureType === 'WEEKS' ? $tenureValue : $tenureValue * 4) / 2),
+        '4_weekly'     => ceil(($tenureType === 'WEEKS' ? $tenureValue : $tenureValue * 4) / 4),
+        'monthly'      => $tenureType === 'MONTHS' ? $tenureValue : ceil($tenureValue / 4),
+        'quarterly'    => ceil($tenureValue / 3),
+        'half_yearly'  => ceil($tenureValue / 6),
+        'yearly'       => ceil($tenureValue / 12),
+        default        => $tenureValue,
+    };
 
-        /* ---------------- SUMMARY DATA ---------------- */
-        $data = [
-            'printed_on' => now()->format('d-m-Y'),
-            'disburse_date' => optional($loan->disbursement?->disbursal_date)
-                ? \Carbon\Carbon::parse($loan->disbursement->disbursal_date)->format('d-m-Y')
-                : '',
-            'loan_no' => $loan->id,
-            'loan_amount' => number_format($loanAmount, 2),
-            'interest_type' => $interestType,
-            'processing_fee' => number_format($loan->processing_fee_total ?? 0, 2),
-            'tenure' => $loan->tenure_value . ' ' . $loan->tenure_type,
-            'stamp_duty_fee' => number_format($scheme->stamp_duty_charge ?? 0, 2),
-            'interest_rate' => $annualRate,
-            'insurance_charge' => number_format($scheme->insurance_fee ?? 0, 2),
-            'emi_count' => $emiCount,
-            'emi_payout' => ucfirst($loan->emi_collection),
-            'loan_in_ratio' => $loan->loan_in_ratio ?? '',
-            'apr_rate' => $annualRate . '%',
-        ];
+    /* ---------------- SUMMARY DATA ---------------- */
+    $data = [
+        'printed_on' => now()->format('d-m-Y'),
+        'disburse_date' => optional($loan->disbursement?->disbursal_date)
+            ? \Carbon\Carbon::parse($loan->disbursement->disbursal_date)->format('d-m-Y')
+            : '',
+        'loan_no' => $loan->id,
+        'loan_amount' => number_format($loanAmount, 2),
+        'interest_type' => $interestType,
+        'processing_fee' => number_format($loan->processing_fee_total ?? 0, 2),
+        'tenure' => $loan->tenure_value . ' ' . $loan->tenure_type,
+        'stamp_duty_fee' => number_format($scheme->stamp_duty_charge ?? 0, 2),
+        'interest_rate' => $annualRate,
+        'insurance_charge' => number_format($scheme->insurance_fee ?? 0, 2),
+        'emi_count' => $emiCount,
+        'emi_payout' => ucfirst($loan->emi_collection),
+        'loan_in_ratio' => $loan->loan_in_ratio ?? '',
+        'apr_rate' => $annualRate . '%',
+    ];
 
-        /* ---------------- EMI CALCULATION ---------------- */
-        $emi = 0;
-        $calculatedTotalInterest = 0;
+    /* ---------------- EMI CALCULATION ---------------- */
+    $emi = 0;
+    $calculatedTotalInterest = 0;
 
-        if ($interestType === 'flat_emi' || $interestType === 'flat_advanced_interest') {
+    if ($interestType === 'flat_emi' || $interestType === 'flat_advanced_interest
+') {
 
-            $calculatedTotalInterest = round(
-                $loanAmount * ($annualRate / 100) * $timeInYears,
-                2
-            );
+        $calculatedTotalInterest = round(
+            $loanAmount * ($annualRate / 100) * $timeInYears,
+            2
+        );
 
-            $emi = round(
-                ($interestType === 'flat_emi'
-                    ? ($loanAmount + $calculatedTotalInterest)
-                    : $loanAmount
-                ) / $emiCount,
-                2
-            );
-        }
-
-        if ($interestType === 'reducing_emi') {
-
-            if ($tenureType !== 'MONTHS') {
-                throw new \Exception('Reducing EMI allowed only for MONTHS tenure');
-            }
-
-            $monthlyRate = $annualRate / 12 / 100;
-
-            $emi = round(
-                ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureValue))
-                    / (pow(1 + $monthlyRate, $tenureValue) - 1),
-                2
-            );
-        }
-
-        /* ---------------- EMI DATE ---------------- */
-        $emiDateCursor = match ($tenureType) {
-            'MONTHS' => Carbon::parse($loan->application_date)->addMonth(),
-            'WEEKS'  => Carbon::parse($loan->application_date)->addWeek(),
-            'DAYS'   => Carbon::parse($loan->application_date)->addDay(),
-        };
-
-        /* ---------------- SCHEDULE ---------------- */
-        $balance        = $loanAmount;
-        $totalPrincipal = 0;
-        $totalInterest  = 0;
-        $totalCharges   = 0;
-        $payoutSchedule = [];
-
-        /* ----- Fixed Charges ----- */
-        $fixedChargePerEmi =
-            ($scheme->sms_charge ?? 0) +
-            ($scheme->fuel_charge ?? 0) +
-            ($scheme->stationary_charge ?? 0) +
-            ($scheme->maintenance_charge ?? 0) +
-            ($scheme->collection ?? 0);
-
-        for ($i = 1; $i <= $emiCount; $i++) {
-
-            if ($interestType === 'reducing_emi') {
-
-                $interest  = round($balance * ($annualRate / 12 / 100), 2);
-                $principal = round($emi - $interest, 2);
-            } elseif ($interestType === 'flat_emi') {
-
-                $principal = round($loanAmount / $emiCount, 2);
-                $interest  = round($calculatedTotalInterest / $emiCount, 2);
-            } elseif ($interestType === 'flat_advanced_interest') {
-
-                $principal = round($loanAmount / $emiCount, 2);
-                $interest  = 0;
-            } else { // no_emi
-
-                $interest  = round(($calculatedTotalInterest / $emiCount), 2);
-                $principal = 0;
-            }
-
-            if ($i === $emiCount) {
-                $principal = $balance;
-            }
-
-            $balance = round($balance - $principal, 2);
-
-            $charge = $fixedChargePerEmi;
-
-            $totalPrincipal += $principal;
-            $totalInterest  += $interest;
-            $totalCharges   += $charge;
-
-            $payoutSchedule[] = [
-                'emi_no' => $i,
-                'emi_date' => $emiDateCursor->format('d-M-y'),
-                'emi_principle' => number_format($principal, 2),
-                'emi_interest' => number_format($interest, 2),
-                'per_emi_charges' => number_format($charge, 2),
-                'emi_amount' => number_format($principal + $interest + $charge, 2),
-                'balance_principle' => number_format(max($balance, 0), 2),
-            ];
-
-            match ($emiCollection) {
-                'daily'       => $emiDateCursor->addDay(),
-                'weekly'      => $emiDateCursor->addWeek(),
-                'bi_weekly'   => $emiDateCursor->addWeeks(2),
-                '4_weekly'    => $emiDateCursor->addWeeks(4),
-                'monthly'     => $emiDateCursor->addMonth(),
-                'quarterly'   => $emiDateCursor->addMonths(3),
-                'half_yearly' => $emiDateCursor->addMonths(6),
-                'yearly'      => $emiDateCursor->addYear(),
-                default       => $emiDateCursor->addMonth(),
-            };
-        }
-
-        return view(
-            'bussiness.business-loan-pdf.business-payout-chart-view',
-            [
-                ...$data,
-                'loan_no' => $loan->id,
-                'payoutSchedule'   => $payoutSchedule,
-                'total_emi_principle' => number_format($totalPrincipal, 2),
-                'total_emi_interest'  => number_format($totalInterest, 2),
-                'total_per_emi_charges' => number_format($totalCharges, 2),
-                'total_emi_amount' => number_format($totalPrincipal + $totalInterest + $totalCharges, 2),
-            ]
+        $emi = round(
+            ($interestType === 'flat_emi'
+                ? ($loanAmount + $calculatedTotalInterest)
+                : $loanAmount
+            ) / $emiCount,
+            2
         );
     }
+
+    if ($interestType === 'reducing_emi') {
+
+        if ($tenureType !== 'MONTHS') {
+            throw new \Exception('Reducing EMI allowed only for MONTHS tenure');
+        }
+
+        $monthlyRate = $annualRate / 12 / 100;
+
+        $emi = round(
+            ($loanAmount * $monthlyRate * pow(1 + $monthlyRate, $tenureValue))
+            / (pow(1 + $monthlyRate, $tenureValue) - 1),
+            2
+        );
+    }
+
+    /* ---------------- EMI DATE ---------------- */
+    $emiDateCursor = match ($tenureType) {
+        'MONTHS' => Carbon::parse($loan->application_date)->addMonth(),
+        'WEEKS'  => Carbon::parse($loan->application_date)->addWeek(),
+        'DAYS'   => Carbon::parse($loan->application_date)->addDay(),
+    };
+
+    /* ---------------- SCHEDULE ---------------- */
+    $balance        = $loanAmount;
+    $totalPrincipal = 0;
+    $totalInterest  = 0;
+    $totalCharges   = 0;
+    $payoutSchedule = [];
+
+    /* ----- Fixed Charges ----- */
+    $fixedChargePerEmi =
+        ($scheme->sms_charge ?? 0) +
+        ($scheme->fuel_charge ?? 0) +
+        ($scheme->stationary_charge ?? 0) +
+        ($scheme->maintenance_charge ?? 0) +
+        ($scheme->collection ?? 0);
+
+    for ($i = 1; $i <= $emiCount; $i++) {
+
+        if ($interestType === 'reducing_emi') {
+
+            $interest  = round($balance * ($annualRate / 12 / 100), 2);
+            $principal = round($emi - $interest, 2);
+
+        } elseif ($interestType === 'flat_emi') {
+
+            $principal = round($loanAmount / $emiCount, 2);
+            $interest  = round($calculatedTotalInterest / $emiCount, 2);
+
+        } elseif ($interestType === 'flat_advanced_interest') {
+
+            $principal = round($loanAmount / $emiCount, 2);
+            $interest  = 0;
+
+        } else { // no_emi
+
+            $interest  = round(($calculatedTotalInterest / $emiCount), 2);
+            $principal = 0;
+        }
+
+        if ($i === $emiCount) {
+            $principal = $balance;
+        }
+
+        $balance = round($balance - $principal, 2);
+
+        $charge = $fixedChargePerEmi;
+
+        $totalPrincipal += $principal;
+        $totalInterest  += $interest;
+        $totalCharges   += $charge;
+
+        $payoutSchedule[] = [
+            'emi_no' => $i,
+            'emi_date' => $emiDateCursor->format('d-M-y'),
+            'emi_principle' => number_format($principal, 2),
+            'emi_interest' => number_format($interest, 2),
+            'per_emi_charges' => number_format($charge, 2),
+            'emi_amount' => number_format($principal + $interest + $charge, 2),
+            'balance_principle' => number_format(max($balance, 0), 2),
+        ];
+
+        match ($emiCollection) {
+            'daily'       => $emiDateCursor->addDay(),
+            'weekly'      => $emiDateCursor->addWeek(),
+            'bi_weekly'   => $emiDateCursor->addWeeks(2),
+            '4_weekly'    => $emiDateCursor->addWeeks(4),
+            'monthly'     => $emiDateCursor->addMonth(),
+            'quarterly'   => $emiDateCursor->addMonths(3),
+            'half_yearly' => $emiDateCursor->addMonths(6),
+            'yearly'      => $emiDateCursor->addYear(),
+            default       => $emiDateCursor->addMonth(),
+        };
+    }
+
+    /* ---------------- RETURN (UNCHANGED STRUCTURE) ---------------- */
+    return view(
+        'vehical.vehicle-loan-pdf.vehicle-payout-chart-view',
+        [
+            ...$data,
+            'loan_no' => $loan->id,
+            'payoutSchedule'   => $payoutSchedule,
+            'total_emi_principle' => number_format($totalPrincipal, 2),
+            'total_emi_interest'  => number_format($totalInterest, 2),
+            'total_per_emi_charges' => number_format($totalCharges, 2),
+            'total_emi_amount' => number_format($totalPrincipal + $totalInterest + $totalCharges, 2),
+        ]
+    );
+}
     // need to check the calculation for the charge per emi
-    public function payout_chart_business_appli(BusinessLoanApplication $loan)
+    public function payout_chart_vehicle_appli(VehicalApplication $loan)
     {
         $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
@@ -395,8 +400,11 @@ class BusinessLoanPrintDocumentController extends Controller
             } elseif ($interestType === 'flat_advanced_interest') {
 
                 $principal = round($loanAmount / $emiCount, 2);
-                $interest  = 0;
-            } else { // no_emi
+                $interest  = round(
+        $loanAmount * ($annualRate / 100) * $timeInYears / $emiCount,
+        2
+    );
+} else { // no_emi
 
                 $interest  = round(($calculatedTotalInterest / $emiCount), 2);
                 $principal = 0;
@@ -437,7 +445,7 @@ class BusinessLoanPrintDocumentController extends Controller
             };
         }
         $pdf = Pdf::loadView(
-            'bussiness.business-loan-pdf.business-payout-chart',
+            'vehical.vehicle-loan-pdf.vehicle-payout-chart',
             [
                 ...$data,
                 'loan_no' => $loan->id,
@@ -452,7 +460,7 @@ class BusinessLoanPrintDocumentController extends Controller
         return $pdf->download('payout_chart_loan_application.pdf');
     }
 
-    public function sanction_letter_view(BusinessLoanApplication $loan)
+    public function sanction_letter_view(VehicalApplication $loan)
     {
         $loan->load(['member', 'scheme', 'disbursement', 'branch']);
 
@@ -556,7 +564,7 @@ class BusinessLoanPrintDocumentController extends Controller
             'loan_id' => $loan->id,
             'loan_no' => str_pad($loan->id, 10, '0', STR_PAD_LEFT),
 
-            'nature_of_loan' => 'Business Loan',
+            'nature_of_loan' => 'vehicle Loan',
             'loan_scheme' => $scheme->scheme_name ?? '',
             'loan_amount' => number_format($loanAmount, 2),
 
@@ -577,9 +585,9 @@ class BusinessLoanPrintDocumentController extends Controller
             // 'ornaments' => $loan->ornaments,
         ];
 
-        return view('bussiness.business-loan-pdf.business-sanction-letter-view', $data);
+        return view('vehical.vehicle-loan-pdf.vehicle-sanction-letter-view', $data);
     }
-    public function sanction_letter(BusinessLoanApplication $loan)
+    public function sanction_letter(VehicalApplication $loan)
     {
 
         $loan->load(['member', 'scheme', 'disbursement', 'branch']);
@@ -684,7 +692,7 @@ class BusinessLoanPrintDocumentController extends Controller
             'loan_id' => $loan->id,
             'loan_no' => str_pad($loan->id, 10, '0', STR_PAD_LEFT),
 
-            'nature_of_loan' => 'Business Loan',
+            'nature_of_loan' => 'vehicle Loan',
             'loan_scheme' => $scheme->scheme_name ?? '',
             'loan_amount' => number_format($loanAmount, 2),
 
@@ -705,14 +713,14 @@ class BusinessLoanPrintDocumentController extends Controller
             'ornaments' => $loan->ornaments,
         ];
 
-        $pdf = PDF::loadView('bussiness.business-loan-pdf.business-sanction-letter', $data)
+        $pdf = PDF::loadView('vehical.vehicle-loan-pdf.vehicle-sanction-letter', $data)
             ->setPaper('A4', 'portrait');
 
-        return $pdf->download('Bussiness_Loan_Sanction_Letter.pdf');
+        return $pdf->download('vehical_Loan_Sanction_Letter.pdf');
     }
 
 
-    public function loanAgreementView(BusinessLoanApplication $loan)
+    public function loanAgreementView(VehicalApplication $loan)
     {
         $member = $loan->member;
 
@@ -788,7 +796,7 @@ class BusinessLoanPrintDocumentController extends Controller
             'tenure' => $tenureMonths,
             'emi_amount' => number_format($emi, 2),
             'loan_agree_no' => '',
-            'business_nature' => '',
+            'vehicle_nature' => '',
             'loan_purpose' => $loan->purpose_of_loan,
             'emi_freq' => ucfirst($loan->emi_collection),
 
@@ -822,11 +830,11 @@ class BusinessLoanPrintDocumentController extends Controller
         ];
 
         return view(
-            'bussiness.business-loan-pdf.business-loan-agreement-view',
+            'vehical.vehicle-loan-pdf.vehicle-loan-agreement-view',
             compact('schedule_one', 'emiSchedule', 'properties')
         );
     }
-    public function loanAgreement(BusinessLoanApplication $loan)
+    public function loanAgreement(VehicalApplication $loan)
     {
         $member = $loan->member;
 
@@ -901,7 +909,7 @@ class BusinessLoanPrintDocumentController extends Controller
             'tenure' => $tenureMonths,
             'emi_amount' => number_format($emi, 2),
             'loan_agree_no' => '',
-            'business_nature' => '',
+            'vehicle_nature' => '',
             'loan_purpose' => $loan->purpose_of_loan,
             'emi_freq' => ucfirst($loan->emi_collection),
 
@@ -934,14 +942,14 @@ class BusinessLoanPrintDocumentController extends Controller
         ];
 
         $pdf = Pdf::loadView(
-            'bussiness.business-loan-pdf.business-loan-agreement',
+            'vehical.vehicle-loan-pdf.vehicle-loan-agreement',
             compact('schedule_one', 'emiSchedule', 'properties')
         )->setPaper('A4');
 
         return $pdf->download('buisness-loan-agreement_' . $loan->id . '.pdf');
     }
 
-    public function disburse_letter_view(BusinessLoanApplication $loan)
+    public function disburse_letter_view(VehicalApplication $loan)
     {
         $loan->load([
             'member',
@@ -994,9 +1002,9 @@ class BusinessLoanPrintDocumentController extends Controller
             'final_amount' => $disb->final_amount_to_disburse ?? 0,
         ];
 
-        return view('bussiness.business-loan-pdf.business-disburse-letter-view', $data);
+        return view('vehical.vehicle-loan-pdf.vehicle-disburse-letter-view', $data);
     }
-    public function disburse_letter(BusinessLoanApplication $loan)
+    public function disburse_letter(VehicalApplication $loan)
     {
         $loan->load([
             'member',
@@ -1049,13 +1057,13 @@ class BusinessLoanPrintDocumentController extends Controller
             'final_amount' => $disb->final_amount_to_disburse ?? 0,
         ];
 
-        $pdf = Pdf::loadView('bussiness.business-loan-pdf.business-disburse-letter', $data)
+        $pdf = Pdf::loadView('vehical.vehicle-loan-pdf.vehicle-disburse-letter', $data)
             ->setPaper('A4', 'portrait');
 
-        return $pdf->download('Business_Loan_Disbursement_Letter.pdf');
+        return $pdf->download('vehicle_Loan_Disbursement_Letter.pdf');
     }
 
-    public function promissory_note_view(BusinessLoanApplication $loan)
+    public function promissory_note_view(VehicalApplication $loan)
     {
         $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
@@ -1086,9 +1094,9 @@ class BusinessLoanPrintDocumentController extends Controller
             'state' => 'Maharashtra',
         ];
 
-        return view('bussiness.business-loan-pdf.business-promisary-note-view', $data);
+        return view('vehical.vehicle-loan-pdf.vehicle-promisary-note-view', $data);
     }
-    public function promissory_note(BusinessLoanApplication $loan)
+    public function promissory_note(VehicalApplication $loan)
     {
         $loan->load(['member', 'scheme', 'disbursement']);
         $scheme = $loan->scheme;
@@ -1120,13 +1128,13 @@ class BusinessLoanPrintDocumentController extends Controller
         ];
 
 
-        $pdf = Pdf::loadView('bussiness.business-loan-pdf.business-promisary-note', $data)
+        $pdf = Pdf::loadView('vehical.vehicle-loan-pdf.vehicle-promisary-note', $data)
             ->setPaper('A4', 'portrait');
 
         return $pdf->download('promissory-note.pdf');
     }
 
-    public function undertaking_letter_view(BusinessLoanApplication $loan)
+    public function undertaking_letter_view(VehicalApplication $loan)
     {
         $loan->load(['member', 'scheme', 'branch']);
         $loanAmount = $loan->approved_loan_amount ?? 0;
@@ -1161,9 +1169,9 @@ class BusinessLoanPrintDocumentController extends Controller
 
         ];
 
-        return view('bussiness.business-loan-pdf.business-undertaking-letter-view', $data);
+        return view('vehical.vehicle-loan-pdf.vehicle-undertaking-letter-view', $data);
     }
-    public function undertaking_letter(BusinessLoanApplication $loan)
+    public function undertaking_letter(VehicalApplication $loan)
     {
         $loan->load(['member', 'scheme', 'branch']);
         $loanAmount = $loan->approved_loan_amount ?? 0;
@@ -1198,9 +1206,9 @@ class BusinessLoanPrintDocumentController extends Controller
 
         ];
 
-        $pdf = Pdf::loadView('bussiness.business-loan-pdf.business-undertaking-letter', $data)
+        $pdf = Pdf::loadView('vehical.vehicle-loan-pdf.vehicle-undertaking-letter', $data)
             ->setPaper('A4', 'portrait');
 
-        return $pdf->download('business-undertaking-letter.pdf');
+        return $pdf->download('vehicle-undertaking-letter.pdf');
     }
 }
