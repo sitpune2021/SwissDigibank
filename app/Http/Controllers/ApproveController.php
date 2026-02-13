@@ -335,41 +335,104 @@ class ApproveController extends Controller
                 }
             } elseif ($sourceTable === 'gold_loan_transactions') {
 
-                $emi = GoldLoanTransaction::findOrFail($id);
+                DB::beginTransaction();
 
-                // 🔥 Status Mapping
-                if ($status === 'approved') {
-                    $emi->status = 'paid';
-                    $emi->paid_date = now();
-                } elseif ($status === 'disapproved') {
-                    $emi->status = 'rejected';
-                } else {
-                    $emi->status = 'pending';
-                }
+                try {
 
-                $emi->remarks = $remarks;
-                $emi->save();
+                    $emi = DB::table('gold_loan_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
 
-                // 🔥 Loan recalculation only if approved
-                if ($emi->status === 'paid') {
-
-                    $loan = LoanApplication::find($emi->loan_id);
-
-                    if ($loan) {
-                        $totalPaid = GoldLoanTransaction::where('loan_id', $loan->id)
-                            ->where('status', 'paid')
-                            ->sum('amount_collected');
-
-                        $remaining = max($loan->loan_amount - $totalPaid, 0);
-
-                        if ($remaining <= 0) {
-                            $loan->status = 'closed';
-                            $loan->save();
-                        }
+                    if (!$emi) {
+                        DB::rollBack();
+                        return back()->with('error', 'Transaction not found');
                     }
-                }
 
-                return redirect()->back()->with('success', 'Gold Loan EMI updated successfully.');
+                    if ($status === 'approved') {
+
+                        // ✅ 1️⃣ Mark transaction as paid
+                        DB::table('gold_loan_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'paid',
+                                'paid_date' => now(),
+                                'updated_at' => now()
+                            ]);
+
+                        // ✅ 2️⃣ Get EMI status row
+                        $emiStatus = DB::table('gold_loan_emi_status')
+                            ->where('loan_id', $emi->loan_id)
+                            ->where('emi_no', $emi->emi_no)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if ($emiStatus) {
+
+                            $amountCollected = round($emi->amount_collected, 2);
+                            $currentRemaining = round($emiStatus->remaining_amount, 2);
+
+                            // 🔥 New Remaining Calculation
+                            $newRemaining = round($currentRemaining - $amountCollected, 2);
+
+                            if ($newRemaining <= 0) {
+
+                                // FULL PAID
+                                DB::table('gold_loan_emi_status')
+                                    ->where('id', $emiStatus->id)
+                                    ->update([
+                                        'status' => 'PAID',
+                                        'remaining_amount' => 0,
+                                        'paid_date' => now()->format('Y-m-d'),
+                                        'updated_at' => now()
+                                    ]);
+                            } else {
+
+                                // PARTIAL
+                                DB::table('gold_loan_emi_status')
+                                    ->where('id', $emiStatus->id)
+                                    ->update([
+                                        'status' => 'PARTIAL',
+                                        'remaining_amount' => $newRemaining,
+                                        'paid_date' => now()->format('Y-m-d'),
+                                        'updated_at' => now()
+                                    ]);
+                            }
+                        }
+
+                        // ✅ 3️⃣ Check Loan Close Condition
+                        $totalRemaining = DB::table('gold_loan_emi_status')
+                            ->where('loan_id', $emi->loan_id)
+                            ->whereIn('status', ['DUE', 'PARTIAL'])
+                            ->sum('remaining_amount');
+
+                        if ($totalRemaining <= 0) {
+
+                            DB::table('loan_applications')
+                                ->where('id', $emi->loan_id)
+                                ->update([
+                                    'status' => 2, // closed (integer)
+                                    'updated_at' => now()
+                                ]);
+                        }
+                    } elseif ($status === 'disapproved') {
+
+                        DB::table('gold_loan_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'rejected',
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    DB::commit();
+
+                    return redirect()->back()->with('success', 'Gold Loan EMI updated successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
             } else {
                 return redirect()->back()->with('error', 'Invalid source table specified.');
             }
