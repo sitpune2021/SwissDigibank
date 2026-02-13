@@ -97,11 +97,11 @@
         </div>
     </div>
     <div class="text-center  flex justify-center gap-5 mt-4">
-        <a href="{{ route('personal_loan.payout_chart_loan_application.pdf' ,$loan_no) }}" class="px-4 py-2 btn-primary uppercase"
+        <a href="{{ route('vehicle_loan.payout_chart_loan_application.pdf' ,$loan_no) }}" class="px-4 py-2 btn-primary uppercase"
             style="font-family: sans-serif !important; " target="_blank">
             <i class="las la-download"></i> Download
         </a>
-        <a href=" {{ route('personal.applications.view', $loan_no) }}" class="px-4 py-2 btn-outline uppercase" style="font-family: sans-serif !important; " target="_self">
+        <a href=" {{ route('vehical.applications.view', $loan_no) }}" class="px-4 py-2 btn-outline uppercase" style="font-family: sans-serif !important; " target="_self">
             BACK
         </a>
     </div>
@@ -235,7 +235,7 @@
                     BalancePrinciple
                 </th>
             </tr>
-             <tr>
+            <tr>
                 <td> </td>
                 <td> </td>
                 <td> </td>
@@ -246,6 +246,7 @@
             </tr>
             @foreach ($payoutSchedule as $row)
             <tr>
+
                 <td style="padding:5px; font-size:14px;">
                     {{ $row['emi_no'] }}
                 </td>

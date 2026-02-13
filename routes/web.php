@@ -99,6 +99,7 @@ use App\Http\Controllers\FixedLoanController;
 use App\Http\Controllers\AgriculturController;
 use App\Http\Controllers\MortgageLoanPrintDocumentController;
 use App\Http\Controllers\PersonalLoanPrintDocumentController;
+use App\Http\Controllers\VehicleLoanPrintDocumentController;
 
 // Clear cache 
 // Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -1985,6 +1986,27 @@ Route::group(['prefix' => 'vehical'], function () {
 
     Route::post('applications/{id}/submit-for-approval', [VehicalController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
+
+    
+    //print documents view page  
+    Route::get('/payout-chart-view/{loan}', [vehicleLoanPrintDocumentController::class, 'payout_chart_vehicle_appli_view'])->name('vehicle_loan.payout_chart_vehicle_loan_application_view');
+    Route::get('/payout-chart/{loan}', [vehicleLoanPrintDocumentController::class, 'payout_chart_vehicle_appli'])->name('vehicle_loan.payout_chart_loan_application.pdf');
+
+    Route::get('/sanction-letter-view/{loan}', [vehicleLoanPrintDocumentController::class, 'sanction_letter_view'])->name('vehicle_loan.sanction_letter-view');
+    Route::get('/sanction-letter/{loan}', [vehicleLoanPrintDocumentController::class, 'sanction_letter'])->name('vehicle_loan.sanction_letter.pdf');
+
+    Route::get('/{loan}/loan-agreement-view', [vehicleLoanPrintDocumentController::class, 'loanAgreementView'])->name('vehicle_loan.loanAgreement-view');
+    Route::get( '/{loan}/loan-agreement',[vehicleLoanPrintDocumentController::class, 'loanAgreement'])->name('vehicle_loan.loanAgreement.pdf');
+
+    Route::get('/disburse-letter-view/{loan}', [VehicleLoanPrintDocumentController::class, 'disburse_letter_view'])->name('vehicle_loan.disburse_letter.view');
+    Route::get('/disburse-letter/{loan}', [vehicleLoanPrintDocumentController::class, 'disburse_letter'])->name('vehicle_loan.disburse_letter.pdf');
+
+    Route::get('/promissory-note-view/{loan}', [vehicleLoanPrintDocumentController::class, 'promissory_note_view'])->name('vehicle_loan.promissory.view');
+    Route::get('/promissory-note/{loan}', [vehicleLoanPrintDocumentController::class, 'promissory_note'])->name('vehicle_loan.promissory.pdf');
+
+    Route::get('/undertaking-letter-view/{loan}', [vehicleLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('vehicle_loan.undertaking_letter.view');
+    Route::get('/undertaking-letter/{loan}', [vehicleLoanPrintDocumentController::class, 'undertaking_letter'])->name('vehicle_loan.undertaking_letter.pdf');
+
 });
 
 
