@@ -360,7 +360,30 @@ class ApproveController extends Controller
                                 'updated_at' => now()
                             ]);
 
-                        // ✅ 2️⃣ Get EMI status row
+                        // 🔥 FULL PAYMENT CASE (emi_no NULL)
+                        if (is_null($emi->emi_no) && $emi->flag === 'full_payment') {
+
+                            DB::table('gold_loan_emi_status')
+                                ->where('loan_id', $emi->loan_id)
+                                ->update([
+                                    'status' => 'PAID',
+                                    'remaining_amount' => 0,
+                                    'paid_date' => now()->format('Y-m-d'),
+                                    'updated_at' => now()
+                                ]);
+
+                            DB::table('loan_applications')
+                                ->where('id', $emi->loan_id)
+                                ->update([
+                                    'status' => 2,
+                                    'updated_at' => now()
+                                ]);
+
+                            DB::commit();
+                            return redirect()->back()->with('success', 'Loan fully closed successfully.');
+                        }
+
+                        // ✅ NORMAL EMI PAYMENT CASE
                         $emiStatus = DB::table('gold_loan_emi_status')
                             ->where('loan_id', $emi->loan_id)
                             ->where('emi_no', $emi->emi_no)
@@ -372,12 +395,10 @@ class ApproveController extends Controller
                             $amountCollected = round($emi->amount_collected, 2);
                             $currentRemaining = round($emiStatus->remaining_amount, 2);
 
-                            // 🔥 New Remaining Calculation
                             $newRemaining = round($currentRemaining - $amountCollected, 2);
 
                             if ($newRemaining <= 0) {
 
-                                // FULL PAID
                                 DB::table('gold_loan_emi_status')
                                     ->where('id', $emiStatus->id)
                                     ->update([
@@ -388,7 +409,6 @@ class ApproveController extends Controller
                                     ]);
                             } else {
 
-                                // PARTIAL
                                 DB::table('gold_loan_emi_status')
                                     ->where('id', $emiStatus->id)
                                     ->update([
@@ -400,10 +420,10 @@ class ApproveController extends Controller
                             }
                         }
 
-                        // ✅ 3️⃣ Check Loan Close Condition
+                        // ✅ CHECK LOAN CLOSE CONDITION
                         $totalRemaining = DB::table('gold_loan_emi_status')
                             ->where('loan_id', $emi->loan_id)
-                            ->whereIn('status', ['DUE', 'PARTIAL'])
+                            ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
                             ->sum('remaining_amount');
 
                         if ($totalRemaining <= 0) {
@@ -411,7 +431,7 @@ class ApproveController extends Controller
                             DB::table('loan_applications')
                                 ->where('id', $emi->loan_id)
                                 ->update([
-                                    'status' => 2, // closed (integer)
+                                    'status' => 2,
                                     'updated_at' => now()
                                 ]);
                         }

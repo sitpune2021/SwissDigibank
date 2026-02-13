@@ -330,35 +330,47 @@ class GoldLoanAccountController extends Controller
 
             $emiAmount = floatval(str_replace(',', '', $emi['emi_amount']));
 
-            // Already paid nothing?
+            // ⭐ If no payment remaining
             if ($totalPaid <= 0) {
+
                 $emi['remaining_amount'] = number_format($emiAmount, 2);
 
-                // ⭐ ALWAYS load saved statuses from DB
                 if (isset($savedStatuses[$emi['emi_no']])) {
-                    $emi['status'] = $savedStatuses[$emi['emi_no']];
+
                     $emi['paid_date'] = $savedPaidDates[$emi['emi_no']] ?? '';
+
+                    // 🔥 Force PAID if remaining is zero
+                    if (floatval(str_replace(',', '', $emi['remaining_amount'])) == 0) {
+                        $emi['status'] = 'PAID';
+                    } else {
+                        $emi['status'] = $savedStatuses[$emi['emi_no']];
+                    }
                 } else {
-                    // Default if no data saved
-                    $emi['status'] = "UNPAID";
+
+                    $emi['status'] = floatval(str_replace(',', '', $emi['remaining_amount'])) == 0
+                        ? 'PAID'
+                        : 'UNPAID';
                 }
 
                 continue;
             }
 
-            // Full payment
+            // ⭐ Full payment case
             if ($totalPaid >= $emiAmount) {
+
                 $emi['remaining_amount'] = "0.00";
                 $emi['status'] = "PAID";
                 $totalPaid -= $emiAmount;
             }
-            // Partial payment
+            // ⭐ Partial payment case
             else {
+
                 $emi['remaining_amount'] = number_format($emiAmount - $totalPaid, 2);
                 $emi['status'] = "PARTIAL";
                 $totalPaid = 0;
             }
-            // ✅ FORCE STATUS BASED ON REMAINING AMOUNT
+
+            // 🔥 Safety: If remaining 0 force PAID
             if (floatval(str_replace(',', '', $emi['remaining_amount'])) == 0) {
                 $emi['status'] = 'PAID';
             }
@@ -579,9 +591,29 @@ class GoldLoanAccountController extends Controller
             'discount' => "-",
         ];
 
-        // end DYNAMIC SUMMARY CHART VALUES 
+        // 🔥 Check if any EMI is due
+        $hasDueEmi = DB::table('gold_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
+            ->exists();
+
+        // 🔥 Total Remaining EMI Amount
+        $totalRemainingEmiAmount = DB::table('gold_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
+            ->sum('remaining_amount');
+
+        // 🔥 Decide Route + Text
+        if ($hasDueEmi) {
+            $payRoute = route('gold-loan.account.pay-emi', $goldLoan->id);
+            $payButtonText = 'Pay EMI';
+        } else {
+            $payRoute = route('gold-loan.account.pay', $goldLoan->id);
+            $payButtonText = 'Pay';
+        }
 
 
+        $payButtonText = $hasDueEmi ? 'Pay Emi' : 'Pay';
         return view('gold-loan.account.view', compact(
             'goldLoan',
             'principal',
@@ -595,7 +627,11 @@ class GoldLoanAccountController extends Controller
             'currentStatement',
             'ornaments',
             'paidSummary',
-            'dueSummary'
+            'dueSummary',
+            'hasDueEmi',
+            'totalRemainingEmiAmount',
+            'payRoute',
+            'payButtonText'
 
         ));
     }
@@ -1185,6 +1221,7 @@ class GoldLoanAccountController extends Controller
         $netAmount = round($totalAmount + $rounding, 2);
 
         $goldLoan->current_debt = $remainingAmount;
+        $emiAmount = $this->calculatePayAmount($id);
 
         return view('gold-loan.account.view-buttons.pay-emi.pay_emi', compact(
             'goldLoan',
@@ -1203,45 +1240,128 @@ class GoldLoanAccountController extends Controller
         ));
     }
 
+    private function calculatePayAmount($loanId)
+    {
+        // 1️⃣ Check if any EMI is DUE or PARTIAL
+        $totalRemainingEmiAmount = DB::table('gold_loan_emi_status')
+            ->where('loan_id', $loanId)
+            ->whereIn('status', ['DUE', 'PARTIAL', 'PAID'])
+            ->sum('remaining_amount');
+
+        // 2️⃣ If Due EMI exists → return total remaining EMI
+        if ($totalRemainingEmiAmount > 0) {
+            return round($totalRemainingEmiAmount, 2);
+        }
+
+        // 3️⃣ Otherwise → return full outstanding amount
+        $loan = LoanApplication::find($loanId);
+
+        $totalPaid = GoldLoanTransaction::where('loan_id', $loanId)
+            ->where('status', 'paid')
+            ->sum('amount_collected');
+
+        return round($loan->loan_amount - $totalPaid, 2);
+    }
+
     public function payEmiLoan(Request $request, $id)
     {
+        Log::info('🟢 payEmiLoan STARTED', [
+            'loan_id' => $id,
+            'request_data' => $request->all()
+        ]);
+
         DB::beginTransaction();
 
         try {
 
+            // Clean amount
             $cleanAmount = str_replace(',', '', $request->amount_collected);
             $request->merge(['amount_collected' => $cleanAmount]);
 
+            Log::info('🔹 Amount Cleaned', [
+                'amount_collected' => $cleanAmount
+            ]);
+
+            // Validation
             $request->validate([
                 'transaction_date' => 'required|date',
                 'amount_collected' => 'required|numeric|min:1',
                 'fee_mode' => 'required|in:cash,cheque,online,saving',
             ]);
 
+            Log::info('✅ Validation Passed');
+
+            // Fetch loan
             $loan = DB::table('loan_applications')
                 ->where('id', $id)
                 ->first();
 
             if (!$loan) {
+                Log::error('❌ Loan Not Found', ['loan_id' => $id]);
                 DB::rollBack();
                 return back()->with('error', 'Loan not found');
             }
 
-            // 🔥 Get First Due EMI (NO UPDATE HERE)
+            Log::info('🔹 Loan Found', ['loan_id' => $id]);
+
+            // Fetch first DUE / PARTIAL EMI
             $emiStatus = DB::table('gold_loan_emi_status')
                 ->where('loan_id', $id)
                 ->whereIn('status', ['DUE', 'PARTIAL'])
                 ->orderBy('emi_no')
                 ->first();
 
+            // if (!$emiStatus) {
+            //     Log::error('❌ No Due EMI Found', ['loan_id' => $id]);
+            //     DB::rollBack();
+            //     return back()->with('error', 'No Due EMI Found');
+            // }
             if (!$emiStatus) {
-                DB::rollBack();
-                return back()->with('error', 'No Due EMI Found');
+
+                Log::info('ℹ️ No Due EMI Found - Processing as Full Payment', [
+                    'loan_id' => $id
+                ]);
+
+                $amountCollected = (float) $cleanAmount;
+
+                DB::table('gold_loan_transactions')->insert([
+                    'loan_id' => $id,
+                    'emi_no' => null,
+                    'transaction_date' => now()->format('Y-m-d'),
+                    'amount_collected' => $amountCollected,
+                    'total_payable' => $amountCollected,
+                    'current_debt' => 0,
+                    'other_charges' => 0,
+                    'status' => 'pending',
+                    'flag' => 'full_payment',
+                    'created_by' => Auth::id(),
+                    'fee_mode' => $request->fee_mode,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+                DB::commit();
+
+                return redirect()
+                    ->route('gold-loan.account.show', $id)
+                    ->with('success', 'Full Payment Submitted For Approval');
             }
+
+            Log::info('🔹 EMI Found', [
+                'emi_no' => $emiStatus->emi_no,
+                'remaining_amount' => $emiStatus->remaining_amount,
+                'status' => $emiStatus->status
+            ]);
 
             $amountCollected = (float) $cleanAmount;
 
-            // ✅ ONLY INSERT TRANSACTION (PENDING)
+            Log::info('🔹 Preparing Transaction Insert', [
+                'loan_id' => $id,
+                'emi_no' => $emiStatus->emi_no,
+                'amount_collected' => $amountCollected
+            ]);
+
+            // Insert transaction
             DB::table('gold_loan_transactions')->insert([
                 'loan_id' => $id,
                 'emi_no' => $emiStatus->emi_no,
@@ -1265,7 +1385,13 @@ class GoldLoanAccountController extends Controller
                 'updated_at' => now()
             ]);
 
+            Log::info('✅ Transaction Inserted Successfully');
+
             DB::commit();
+
+            Log::info('🟢 payEmiLoan COMMITTED SUCCESSFULLY', [
+                'loan_id' => $id
+            ]);
 
             return redirect()
                 ->route('gold-loan.account.show', $id)
@@ -1273,9 +1399,18 @@ class GoldLoanAccountController extends Controller
         } catch (\Exception $e) {
 
             DB::rollBack();
+
+            Log::error('❌ payEmiLoan FAILED', [
+                'loan_id' => $id,
+                'error_message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+
             return back()->with('error', $e->getMessage());
         }
     }
+
 
     public function updateEmiStatus(Request $request)
     {
