@@ -55,29 +55,6 @@ class LedgergroupController extends Controller
         ));
     }
 
-    // OLD CODE
-    // private function calculateGroupBalance($code)
-    // {
-    //     $map = [
-    //         'LOAN'  => 'goldLoanBalance',
-    //         'LOANS' => 'goldLoanBalance',
-    //         'MORTGAGE_PROPERTY'  => 'mortgageBalance',
-    //         'LOAN_AGAINST'       => 'loanagainstBalance',
-    //         'BUSINESS_LOAN'      => 'businessloanBalance',
-    //         'CC_OD_LOAN'         => 'ccodloanBalance',
-    //         'DAILY_WEEKLY_LOAN'  => 'dailyweeklyloanBalance',
-    //         'PERSONAL_LOAN'      => 'personalloanBalance',
-    //         'VEHICAL_LOAN'       => 'vehicalloanBalance',
-    //     ];
-
-    //     if(isset($map[$code])) {
-    //         return $this->{$map[$code]}();
-    //     }
-
-    //     return [0,0];
-    // }
-
-    
     private function calculateGroupBalance($groupId)
     {
         $ledgers = Ledger::where('group_id', $groupId)->get();
@@ -419,7 +396,7 @@ class LedgergroupController extends Controller
     {
         $code = strtoupper(Str::slug($code, '_'));
 
-        // 🔥 Specific matches first
+        // Specific matches first
 
         if (Str::contains($code, 'GOLD')) {
             return $this->goldLoanBalance();
@@ -452,6 +429,21 @@ class LedgergroupController extends Controller
         if (Str::contains($code, ['VEHICLE', 'CAR'])) {
             return $this->vehicalloanBalance();
         }
+        if (Str::contains($code, 'SAVING')) {
+            return $this->savingAccountsBalance();
+        }
+         if (Str::contains($code, 'FD')) {
+            return $this->fdAccountsBalance();
+        }
+         if (Str::contains($code, 'RD')) {
+            return $this->rdAccountsBalance();
+        }
+         if (Str::contains($code, 'MIS')) {
+            return $this->misAccountsBalance();
+        }
+         if (Str::contains($code, 'DD')) {
+            return $this->ddAccountsBalance();
+        }
 
         return [0, 0];
     }
@@ -482,7 +474,6 @@ class LedgergroupController extends Controller
     }
 
 
-
 ////////////////////////////////    Only Lead Tab      ////////////////////////////////////////////
    
 
@@ -503,31 +494,137 @@ class LedgergroupController extends Controller
         return view('menu-accounts.ledger.index', compact('ledgers'));
     }
 
-    // private function calculateLedgerBalance($groupCode)
-    // {
-    //     $map = [
-    //         'LOANS'     => 'goldLoanBalance',
-    //         'GOLD'     => 'goldLoanBalance',
-    //         'MORTGAGE'  => 'mortgageBalance',
-    //         'LOAN_AGAINST'       => 'loanagainstBalance',
-    //         'PERSONAL'  => 'personalLoanBalance',
-    //         'BUSINESS'  => 'businessLoanBalance',
-    //         'CC_OD_LOAN'         => 'ccodloanBalance',
-    //         'DAILY_WEEKLY_LOAN'  => 'dailyweeklyloanBalance',
-    //         'VEHICAL_LOAN'       => 'vehicalloanBalance',
-    //     ];
+    private function fdAccountsBalance()
+    {
+        $fds = DB::table('fd_accounts')
+            ->where('status', 1)   // Approved
+            ->where('active', 1)   // Active
+            ->get();
 
-    //     if (isset($map[$groupCode])) {
-    //         return $this->{$map[$groupCode]}();
-    //     }
+        $totalAccounts = $fds->count();
 
-    //     return [0, 0];
-    // }
+        $totalBalance = $fds->sum(function ($fd) {
+            return $fd->maturity_amount ?? $fd->fd_amount;
+        });
 
-    
+        return [$totalAccounts, $totalBalance];
+    }
+
+    private function misAccountsBalance()
+    {
+        $fds = DB::table('misaccounts')
+            ->where('status', 1)   // Approved
+            ->get();
+
+        $totalAccounts = $fds->count();
+
+        $totalBalance = $fds->sum(function ($fd) {
+            return $fd->maturity_amount ?? $fd->mis_amount;
+        });
+
+        return [$totalAccounts, $totalBalance];
+    }
+
+    private function ddAccountsBalance()
+    {
+        $fds = DB::table('dds_accounts')
+            ->where('status', 1)   // Approved
+            ->get();
+
+        $totalAccounts = $fds->count();
+
+        $totalBalance = $fds->sum(function ($fd) {
+            return $fd->maturity_amount ?? $fd->dd_amount;
+        });
+
+        return [$totalAccounts, $totalBalance];
+    }
+
+    private function rdAccountsBalance()
+    {
+        $fds = DB::table('rd_accounts')
+            ->where('approve_status', 1)   // Approved
+            ->get();
+
+        $totalAccounts = $fds->count();
+
+        $totalBalance = $fds->sum(function ($fd) {
+            return $fd->maturity_amount ?? $fd->rd_amount;
+        });
+
+        return [$totalAccounts, $totalBalance];
+    }
+
+    private function savingAccountsBalance()
+    {
+        $accounts = DB::table('accounts')
+            ->where('account_type', 'SAVING')
+            ->where('approve_status', '1')   // string match
+            ->where('account_status', 1)
+            ->get();
+
+        $totalAccounts = $accounts->count();
+        $totalBalance = $accounts->sum('amount_deposit');
+
+        return [$totalAccounts, $totalBalance];
+    }
+
+    private function currentAccountsBalance()
+    {
+        $accounts = DB::table('accounts')
+            ->where('account_type', 'CURRENT')
+            ->where('approve_status', '1')   // string match
+            ->where('account_status', 1)
+            ->get();
+
+        $totalAccounts = $accounts->count();
+        $totalBalance = $accounts->sum('amount_deposit');
+
+        return [$totalAccounts, $totalBalance];
+    }
+
     private function calculateLedgerBalance($ledgerCode)
     {
+        
         $ledgerCode = strtoupper($ledgerCode);
+
+        // FD LIABILITY MODULES FIRST
+
+        if (Str::contains($ledgerCode, ['FD', 'FIXED'])) {
+            return $this->fdAccountsBalance();
+        }
+
+        // MIS MODULES
+
+        if (Str::contains($ledgerCode, ['MIS', 'FIXED'])) {
+            return $this->misAccountsBalance();
+        }
+
+        // DD Account MODULES
+
+        if (Str::contains($ledgerCode, ['DD', 'FIXED'])) {
+            return $this->ddAccountsBalance();
+        }
+
+        // RD Account MODULES
+
+        if (Str::contains($ledgerCode, ['RD', 'FIXED'])) {
+            return $this->rdAccountsBalance();
+        }
+
+        // SAVING Account MODULES
+
+        if (Str::contains($ledgerCode, 'SAVING')) {
+            return $this->savingAccountsBalance();
+        }
+
+        // Current Account MODULES
+
+        if (Str::contains($ledgerCode, 'CURRENT')) {
+            return $this->currentAccountsBalance();
+        }
+
+        // ASSET MODULES  -  All Loan Module
 
         if (Str::contains($ledgerCode, 'GOLD')) {
             return $this->goldLoanBalance();
@@ -549,11 +646,11 @@ class LedgergroupController extends Controller
             return $this->ccodloanBalance();
         }
 
-        if (Str::contains($ledgerCode, 'DAILY') || Str::contains($ledgerCode, 'WEEKLY')) {
+        if (Str::contains($ledgerCode, ['DAILY', 'WEEKLY'])) {
             return $this->dailyweeklyloanBalance();
         }
 
-        if (Str::contains($ledgerCode, 'VEHICLE') || Str::contains($ledgerCode, 'VEHICAL')) {
+        if (Str::contains($ledgerCode, ['VEHICLE', 'VEHICAL'])) {
             return $this->vehicalloanBalance();
         }
 
@@ -568,7 +665,7 @@ class LedgergroupController extends Controller
         return view('menu-accounts.ledger.add-ledger', compact('groups'));
     }
 
-    // // leder create page drop down dynamically function
+    // leder create page drop down dynamically function
     public function groupsByType($type)
     {
         Log::info('Type Selected: '.$type);
@@ -616,120 +713,202 @@ class LedgergroupController extends Controller
             ->with('success', 'Ledger Added Successfully');
     }
 
-    // leder view page map
     private function loanModuleMap()
     {
         return [
 
+            /*
+            |--------------------------------------------------------------------------
+            | LOAN MODULES (Asset Side)
+            |--------------------------------------------------------------------------
+            */
             'GOLD' => [
-                'loan'    => 'loan_applications',
-                'txn'     => 'gold_loan_transactions',
+                'type' => 'loan',
+                'loan' => 'loan_applications',
+                'txn'  => 'gold_loan_transactions',
                 'charges' => 'gold_loan_other_charges',
                 'closure' => 'gold_loan_fore_closures',
+                'loan_id' => 'loan_id',
+                'amount_column' => 'loan_amount',
+                'collection_column' => 'amount_collected',
             ],
-
             'MORTGAGE' => [
-                'loan'    => 'mortgage_loan_applications',
-                'txn'     => 'mortgage_loan_transactions',
+                'type' => 'loan',
+                'loan' => 'mortgage_loan_applications',
+                'txn'  => 'mortgage_loan_transactions',
                 'charges' => 'mortgage_loan_other_charges',
                 'closure' => 'mortgage_loan_fore_closures',
+                'loan_id' => 'loan_id',
+                'amount_column' => 'loan_amount',
+                'collection_column' => 'amount_collected',
             ],
-
             'PROPERTY' => [
-                'loan'    => 'mortgage_loan_applications',
-                'txn'     => 'mortgage_loan_transactions',
+                'type' => 'loan',
+                'loan' => 'mortgage_loan_applications',
+                'txn'  => 'mortgage_loan_transactions',
                 'charges' => 'mortgage_loan_other_charges',
                 'closure' => 'mortgage_loan_fore_closures',
+                'loan_id' => 'loan_id',
+                'amount_column' => 'loan_amount',
+                'collection_column' => 'amount_collected',
             ],
-
             'LOAN_AGAINST' => [
-                'loan'    => 'loan_against_applications',
-                'txn'     => 'loan_against_transactions',
+                'type' => 'loan',
+                'loan' => 'loan_against_applications',
+                'txn'  => 'loan_against_transactions',
                 'charges' => 'loan_against_other_charges',
                 'closure' => 'loan_against_fore_closures',
+                'loan_id' => 'loan_id',
+                'amount_column' => 'loan_amount',
+                'collection_column' => 'amount_collected',
             ],
-
             'PERSONAL' => [
-                'loan'    => 'personal_loan_applications',
-                'txn'     => 'personal_loan_transactions',
+                'type' => 'loan',
+                'loan' => 'personal_loan_applications',
+                'txn'  => 'personal_loan_transactions',
                 'charges' => 'personal_loan_other_charges',
                 'closure' => 'personal_loan_fore_closures',
+                'loan_id' => 'loan_id',
+                'amount_column' => 'loan_amount',
+                'collection_column' => 'amount_collected',
             ],
-
             'BUSINESS' => [
-                'loan'    => 'business_loan_applications',
-                'txn'     => 'business_loan_transactions',
+                'type' => 'loan',
+                'loan' => 'business_loan_applications',
+                'txn'  => 'business_loan_transactions',
                 'charges' => 'business_loan_other_charges',
                 'closure' => 'business_loan_fore_closures',
+                'loan_id' => 'loan_id',
+                'amount_column' => 'loan_amount',
+                'collection_column' => 'amount_collected',
             ],
-
             'CC_OD_LOAN' => [
-                'loan'    => 'ccod_loan_applications',
-                'txn'     => 'ccod_loan_transactions',
+                'type' => 'loan',
+                'loan' => 'ccod_loan_applications',
+                'txn'  => 'ccod_loan_transactions',
                 'charges' => 'ccod_loan_other_charges',
                 'closure' => 'ccod_loan_fore_closures',
+                'loan_id' => 'loan_id',
+                'amount_column' => 'loan_amount',
+                'collection_column' => 'amount_collected',
             ],
-
             'DAILY_WEEKLY_LOAN' => [
-                'loan'    => 'daily_weekly_loan_applications',
-                'txn'     => 'daily_weekly_loan_transactions',
+                'type' => 'loan',
+                'loan' => 'daily_weekly_loan_applications',
+                'txn'  => 'daily_weekly_loan_transactions',
                 'charges' => 'daily_weekly_loan_other_charges',
                 'closure' => 'daily_weekly_loan_fore_closures',
+                'loan_id' => 'loan_id',
+                'amount_column' => 'loan_amount',
+                'collection_column' => 'amount_collected',
             ],
-
             'VEHICAL_LOAN' => [
-                'loan'    => 'vehicle_loan_applications',
-                'txn'     => 'vehicle_loan_transactions',
+                'type' => 'loan',
+                'loan' => 'vehicle_loan_applications',
+                'txn'  => 'vehicle_loan_transactions',
                 'charges' => 'vehicle_loan_other_charges',
                 'closure' => 'vehicle_loan_fore_closures',
+                'loan_id' => 'loan_id',
+                'amount_column' => 'loan_amount',
+                'collection_column' => 'amount_collected',
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | DEPOSIT / LIABILITY MODULES
+            |--------------------------------------------------------------------------
+            */
+            'FD_ACCOUNTS' => [
+                'type' => 'deposit',
+                'loan' => 'fd_accounts',
+                'txn'  => 'fd_transactions',
+                'id_column' => 'fd_account_id',
+                'credit_value' => 1,
+                'debit_value'  => 0,
+                'status_column' => 'status',
+                'status_value'  => 1,
+            ],
+
+            'MIS_ACCOUNTS' => [
+                'type' => 'deposit',
+                'loan' => 'misaccounts',
+                'txn'  => 'mis_transactions',
+                'id_column' => 'misaccount_id',
+                'credit_value' => 1,
+                'debit_value'  => 0,
+                'status_column' => 'status',
+                'status_value'  => 1,
+            ],
+
+             'DD_ACCOUNTS' => [
+                'type' => 'deposit',
+                'loan' => 'dds_accounts',
+                'txn'  => 'dd_transactions',
+                'id_column' => 'dds_account_id',
+                'credit_value' => 1,
+                'debit_value'  => 0,
+                'status_column' => 'status',
+                'status_value'  => 1,
+            ],
+
+             'RD_ACCOUNTS' => [
+                'type' => 'deposit',
+                'loan' => 'rd_accounts',
+                'txn'  => 'rd_transactions',
+                'id_column' => 'rd_account_id',
+                'credit_value' => 1,
+                'debit_value'  => 0,
+                'status_column' => 'status',
+                'status_value'  => 1,
+            ],
+
+            'SAVING_ACCOUNTS' => [
+                'type' => 'bank',
+                'account_type' => 'SAVING',
+                'loan' => 'accounts',
+                'txn'  => 'transactions',
+                'id_column' => 'account_id',
+            ],
+
+            'CURRENT_ACCOUNT' => [
+                'type' => 'bank',
+                'account_type' => 'CURRENT',
+                'loan' => 'accounts',
+                'txn'  => 'transactions',
+                'id_column' => 'account_id',
+            ],
+
         ];
     }
 
-    // leder view page
     public function ledgerView($id)
     {
         $ledger = Ledger::with('group')->findOrFail($id);
 
-       
-        
-        
-        
+        //$code = strtoupper(Str::slug($ledger->code, '_'));
+        $code = strtoupper(trim($ledger->code));
+        $map  = $this->loanModuleMap();
 
-$code = strtoupper(Str::slug($ledger->code, '_'));
+        // $module = collect($map)->first(function ($config, $key) use ($code) {
+        //     return Str::contains($code, $key);
+        // });
+        $module = $map[$code] ?? null;
 
-$map = $this->loanModuleMap();
+        if (!$module) {
+            abort(404, 'Ledger type not supported');
+        }
 
-$matchedKey = null;
-
-foreach ($map as $key => $tables) {
-    if (Str::contains($code, $key)) {
-        $matchedKey = $key;
-        break;
-    }
-}
-
-if (!$matchedKey) {
-    abort(404, 'Ledger type not supported');
-}
-
-$loanTable    = $map[$matchedKey]['loan'];
-$txnTable     = $map[$matchedKey]['txn'];
-$chargesTable = $map[$matchedKey]['charges'];
-$closureTable = $map[$matchedKey]['closure'];
-
-
-        /*
-        |---------------------------------------
-        | Fetch loans
-        |---------------------------------------
-        */
-
-        $loans = DB::table($loanTable)
-            ->where('status', 2)
+        $loans = DB::table($module['loan'])
+            ->when(isset($module['status_column']), function ($q) use ($module) {
+                $q->where($module['status_column'], $module['status_value']);
+            })
+            ->when($module['type'] === 'bank', function ($q) use ($module) {
+                $q->where('account_type', $module['account_type'])
+                ->where('approve_status', '1')
+                ->where('account_status', 1)
+                ->whereNull('deleted_at');
+            })
             ->get();
-
-        $totalTransactions = $loans->count();
 
         $totalDebit  = 0;
         $totalCredit = 0;
@@ -738,57 +917,99 @@ $closureTable = $map[$matchedKey]['closure'];
 
         foreach ($loans as $loan) {
 
-            $loanAmount = $loan->loan_amount;
+            /*
+            |--------------------------------------------------------------------------
+            | SAVING ENGINE
+            |--------------------------------------------------------------------------
+            */
+            if ($module['type'] === 'bank') {
 
-            $collectedAmount = DB::table($txnTable)
-                ->where('loan_id', $loan->id)
-                ->sum('amount_collected');
+                $credit = DB::table($module['txn'])
+                    ->where($module['id_column'], $loan->id)
+                    ->where('transaction_type', 'credit')
+                    ->where('approve_status', 'approved')
+                    ->sum('amount');
 
-            $otherCharges = DB::table($chargesTable)
-                ->where('loan_id', $loan->id)
-                ->sum('amount');
+                $debit = DB::table($module['txn'])
+                    ->where($module['id_column'], $loan->id)
+                    ->where('transaction_type', 'debit')
+                    ->where('approve_status', 'approved')
+                    ->sum('amount');
 
-            $remainingAmount = DB::table($closureTable)
-                ->where('loan_id', $loan->id)
-                ->value('remaining_amount') ?? 0;
+                $totalCredit += $credit;
+                $totalDebit  += $debit;
+                $closingBalance += ($credit - $debit);
+            }
 
             /*
-            | Debit / Credit
+            |--------------------------------------------------------------------------
+            | DEPOSIT ENGINE (FD/MIS/RD/DD)
+            |--------------------------------------------------------------------------
             */
+            elseif ($module['type'] === 'deposit') {
 
-            $totalDebit += $loanAmount;
+                $credit = DB::table($module['txn'])
+                    ->where($module['id_column'], $loan->id)
+                    ->where('transaction_type', $module['credit_value'])
+                    ->sum('amount');
 
-            $credit = $collectedAmount + $otherCharges + $remainingAmount;
+                $debit = DB::table($module['txn'])
+                    ->where($module['id_column'], $loan->id)
+                    ->where('transaction_type', $module['debit_value'])
+                    ->sum('amount');
 
-            $totalCredit += $credit;
-
-            $currentDebt = max(0, $loanAmount - $credit);
-
-            $closingBalance += $currentDebt;
+                $totalCredit += $credit;
+                $totalDebit  += $debit;
+                $closingBalance += ($credit - $debit);
+            }
 
             /*
-            | Last Transaction Date
+            |--------------------------------------------------------------------------
+            | LOAN ENGINE (Gold, Mortgage, etc.)
+            |--------------------------------------------------------------------------
             */
+            else {
 
-            $dates = collect([
-                DB::table($txnTable)->where('loan_id', $loan->id)->max('created_at'),
-                DB::table($chargesTable)->where('loan_id', $loan->id)->max('created_at'),
-                DB::table($closureTable)->where('loan_id', $loan->id)->max('created_at'),
-            ])->filter();
+                $loanAmount = $loan->{$module['amount_column']};
 
-            $maxDate = $dates->max();
+                $collected = DB::table($module['txn'])
+                    ->where($module['loan_id'], $loan->id)
+                    ->sum($module['collection_column']);
 
-            if ($maxDate && (!$lastTransactionDate || $maxDate > $lastTransactionDate)) {
-                $lastTransactionDate = $maxDate;
+                $charges = DB::table($module['charges'])
+                    ->where($module['loan_id'], $loan->id)
+                    ->sum('amount');
+
+                $closure = DB::table($module['closure'])
+                    ->where($module['loan_id'], $loan->id)
+                    ->value('remaining_amount') ?? 0;
+
+                $credit = $collected + $charges + $closure;
+
+                $totalDebit  += $loanAmount;
+                $totalCredit += $credit;
+                $closingBalance += max(0, $loanAmount - $credit);
+            }
+
+            $lastDate = DB::table($module['txn'])
+                ->where($module['id_column'] ?? $module['loan_id'], $loan->id)
+                ->max('created_at');
+
+            if ($lastDate && (!$lastTransactionDate || $lastDate > $lastTransactionDate)) {
+                $lastTransactionDate = $lastDate;
             }
         }
 
-        $difference = $totalDebit - $totalCredit;
+        $totalTransactions = $loans->count();
+
+        $difference = in_array($module['type'], ['deposit','bank'])
+            ? $totalCredit - $totalDebit
+            : $totalDebit - $totalCredit;
 
         return view('menu-accounts.ledger.assest-ledger', compact(
             'ledger',
-            'totalTransactions',
             'totalDebit',
+            'totalTransactions',
             'totalCredit',
             'difference',
             'closingBalance',
@@ -812,7 +1033,6 @@ $closureTable = $map[$matchedKey]['closure'];
     {
         return view('menu-accounts.ledger.journal-entry');
     }
-
 
 
 ////////////////////////////////    Only Profit & Loss Tab      ////////////////////////////////////////////
