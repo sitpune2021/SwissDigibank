@@ -42,10 +42,10 @@
                         <!-- <p>Pay Due EMIs</p> -->
                 </div>
                 <!-- <p class="text-gray-500">
-                                            <a href="#" class="text-gray-500">Gold Loans</a> >
-                                            <a href="#" class="text-gray-500">00063</a> >
-                                            <a href="#" class="text-gray-500">Pay Due EMIs</a>
-                                        </p> -->
+                                                <a href="#" class="text-gray-500">Gold Loans</a> >
+                                                <a href="#" class="text-gray-500">00063</a> >
+                                                <a href="#" class="text-gray-500">Pay Due EMIs</a>
+                                            </p> -->
             </div>
         </div>
         <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
@@ -66,9 +66,11 @@
                                 <span class="text-error">*</span>
                             </label>
 
-                            <input type="number" id="remaining_due" name="remaining_due" value="{{ $emiAmount ?? 0 }}"
+                            <input type="number" id="remaining_due" name="remaining_due" step="0.01"
+                                value="{{ number_format($emiAmount ?? 0, 2, '.', '') }}"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                placeholder="0.0" readonly>
+                                placeholder="0.00" readonly>
+
                             <x-number-to-word for="remaining_due_amount" />
                         </div>
 
@@ -194,9 +196,10 @@
                                     class="text-error">*</span></label>
                             <div class="relative flex items-center">
                                 <input type="text" name="amount_collected"
-                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" placeholder="Enter Amount">
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Amount">
                                 {{-- <input type="text" name="amount_collected" value="{{ number_format($emiAmount, 2) }}" --}}
-                                    {{-- class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                {{-- class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                     placeholder="Enter Amount"> --}}
                             </div>
                         </div>
