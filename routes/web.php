@@ -98,6 +98,7 @@ use App\Http\Controllers\GoldLoanPrintDocument;
 use App\Http\Controllers\FixedLoanController;
 use App\Http\Controllers\AgriculturController;
 use App\Http\Controllers\MortgageLoanPrintDocumentController;
+use App\Http\Controllers\PersonalLoanPrintDocumentController;
 
 // Clear cache 
 // Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
@@ -147,8 +148,9 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/promotor/{id}/nominee/edit', [PromotorController::class, 'editNominee'])
             ->name('nominee.edit');
 
-        Route::post('/promotor-kyc/{id}/status', [PromotorController::class, 'updateStatus'])
-            ->name('promotor-kyc.updateStatus');
+            //kyc status
+        // Route::post('/promotor-kyc/{id}/status', [PromotorController::class, 'updateStatus'])
+        //     ->name('promotor-kyc.updateStatus');
 
         // Save updated nominee
         Route::put('/promotor/{id}/nominee', [PromotorController::class, 'updateNominee'])
@@ -1831,6 +1833,26 @@ Route::group(['prefix' => 'personal'], function () {
 
     Route::post('applications/{id}/submit-for-approval', [PersonalController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
+
+    //print documents view page  
+    Route::get('/payout-chart-view/{loan}', [PersonalLoanPrintDocumentController::class, 'payout_chart_personal_appli_view'])->name('personal_loan.payout_chart_personal_loan_application_view');
+    Route::get('/payout-chart/{loan}', [PersonalLoanPrintDocumentController::class, 'payout_chart_personal_appli'])->name('personal_loan.payout_chart_loan_application.pdf');
+
+    Route::get('/sanction-letter-view/{loan}', [PersonalLoanPrintDocumentController::class, 'sanction_letter_view'])->name('personal_loan.sanction_letter-view');
+    Route::get('/sanction-letter/{loan}', [PersonalLoanPrintDocumentController::class, 'sanction_letter'])->name('personal_loan.sanction_letter.pdf');
+
+    Route::get('/{loan}/loan-agreement-view', [PersonalLoanPrintDocumentController::class, 'loanAgreementView'])->name('personal_loan.loanAgreement-view');
+    Route::get( '/{loan}/loan-agreement',[PersonalLoanPrintDocumentController::class, 'loanAgreement'])->name('personal_loan.loanAgreement.pdf');
+
+    Route::get('/disburse-letter-view/{loan}', [PersonalLoanPrintDocumentController::class, 'disburse_letter_view'])->name('personal_loan.disburse_letter.view');
+    Route::get('/disburse-letter/{loan}', [PersonalLoanPrintDocumentController::class, 'disburse_letter'])->name('personal_loan.disburse_letter.pdf');
+
+    Route::get('/promissory-note-view/{loan}', [PersonalLoanPrintDocumentController::class, 'promissory_note_view'])->name('personal_loan.promissory.view');
+    Route::get('/promissory-note/{loan}', [PersonalLoanPrintDocumentController::class, 'promissory_note'])->name('personal_loan.promissory.pdf');
+
+    Route::get('/undertaking-letter-view/{loan}', [PersonalLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('personal_loan.undertaking_letter.view');
+    Route::get('/undertaking-letter/{loan}', [PersonalLoanPrintDocumentController::class, 'undertaking_letter'])->name('personal_loan.undertaking_letter.pdf');
+
 });
 
 
@@ -2866,6 +2888,8 @@ Route::post('/pdf-images', [LogoImgUploadController::class, 'store'])->name('pdf
 Route::get('master-settings/index', [MasterSettingController::class, 'index'])->name('master-settings.index');
 
 Route::get('master-settings/edit', [MasterSettingController::class, 'edit'])->name('master-settings.edit');
+Route::put('/master-settings',[MasterSettingController::class,'update'])->name('master-settings.update');
+// Route::post('/master-settings',[MasterSettingController::class,'update'])->name('master-settings.update');
 
 Route::get('master-settings/edit-attendence', [MasterSettingController::class, 'edit_attendence'])->name('master-settings.edit-attendence');
 Route::get('master-settings/bank-list', [MasterSettingController::class, 'bank_list'])->name('master-settings.bank-list');

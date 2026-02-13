@@ -197,7 +197,7 @@ class GoldLoanController extends Controller
         $interestAsEmi = $request->has('option_interest_emi') ? 'Yes' : '';
         $interestAsFirst = $request->has('option_interest_first') ? 'Yes' : '';
 
-        // 🔥 If one is selected, hide the other
+        // If one is selected, hide the other
         if ($interestAsEmi === 'Yes') {
             $interestAsFirst = '';
         }
@@ -317,7 +317,6 @@ class GoldLoanController extends Controller
                 default => 'flat_emi',
             };
 
-
             $processingFee   = (float) ($scheme->processing_fee ?? 0);
             $stampAmount     = round($loan * ($scheme->stamp_duty_charge ?? 0) / 100, 2);
             $insuranceAmount = round($loan * ($scheme->insurance_fee ?? 0) / 100, 2);
@@ -401,6 +400,22 @@ class GoldLoanController extends Controller
         $schedule = [];
         $startDate = now();
         $outstanding = $loan;
+
+        /* -------------------------------------------------------
+            CHARGES PER EMI (FROM SCHEME TABLE)
+        ---------------------------------------------------------*/
+
+        $chargesPerEmi = 0;
+
+        if (!$isManual && $scheme) {
+
+            $chargesPerEmi =
+                (float)($scheme->sms_charge ?? 0) +
+                (float)($scheme->fuel_charge ?? 0) +
+                (float)($scheme->stationary_charge ?? 0) +
+                (float)($scheme->maintenance_charge ?? 0) +
+                (float)($scheme->collection ?? 0);
+        }
 
 
         /* -------------------------------------------------------
@@ -672,7 +687,7 @@ class GoldLoanController extends Controller
             $schedule = [];
             $remaining = $loan;
 
-            $isRatio = ($ratioEnabled === 'Yes' && in_array($payout, ['daily', 'weekly', 'bi-weekly', '4-weekly', 'monthly', 'quarterly', 'half-yearly', 'yearly']));
+            $isRatio = ($ratioEnabled === 'Yes' && in_array($payout, ['daily', 'weekly', 'bi_weekly', '4_weekly', 'monthly', 'quarterly', 'half-yearly', 'yearly']));
             $ratioEmiCount   = (int) $ratioFirstEmi;        
             $ratioPercentage = (float) $ratioFirstPercentage; 
 
@@ -683,8 +698,8 @@ class GoldLoanController extends Controller
             $daysPerEmi = match ($payout) {
                 'daily'       => 1,
                 'weekly'      => 7,
-                'bi-weekly'   => 14,
-                '4-weekly'    => 28,
+                'bi_weekly'   => 14,
+                '4_weekly'    => 28,
                 'monthly'     => 30,
                 'quarterly'   => 91,
                 'half-yearly' => 182,
@@ -919,6 +934,25 @@ class GoldLoanController extends Controller
 
         ///////////////////////////////////////////////////////////////////////////////////////////////        
 
+        /* -------------------------------------------------------
+            APPLY CHARGES TO ALL EMI (EXCEPT NO EMI)
+        ---------------------------------------------------------*/
+
+        if (strtolower($interestType) !== 'no_emi') {
+
+            foreach ($schedule as $k => $row) {
+
+                $schedule[$k]['charges'] = $chargesPerEmi;
+
+                // EMI me charges add karo
+                if ($schedule[$k]['emi'] !== '' && $schedule[$k]['emi'] !== null) {
+                    $schedule[$k]['emi'] = round(
+                        (float)$schedule[$k]['emi'] + $chargesPerEmi,
+                    2);
+                }
+            }
+        }
+
         
         // perefect only month show
         /* ---------------------------------------------------------
@@ -1068,7 +1102,18 @@ class GoldLoanController extends Controller
         /* -------------------------------------------------------
              5. TOTAL PAYABLE
         ---------------------------------------------------------*/
-        $grandTotalPayable = $loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount;
+        //$grandTotalPayable = $loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount;
+
+        //$totalCharges = $chargesPerEmi * count($schedule);
+        $totalCharges = array_sum(array_column($schedule, 'charges'));
+
+        $grandTotalPayable = 
+            $loan 
+            + $totalInterest 
+            + $totalCharges
+            + $processingFee 
+            + $stampAmount 
+            + $insuranceAmount;
 
          /* --------------------------------------------
         FINAL FIX — Ensure correct value after mapping
@@ -1112,8 +1157,11 @@ class GoldLoanController extends Controller
    
             'total_interest' => round($totalInterest, 2),
             'total_principal' => $loan,
-            'total_emi_paid' => round(($interestType == 'flat_advanced' ? $loan : $loan + $totalInterest), 2),
+            //'total_emi_paid' => round(($interestType == 'flat_advanced' ? $loan : $loan + $totalInterest), 2),
+            'total_emi_paid' => round(array_sum(array_column($schedule, 'emi')), 2),
             'grand_total_payable' => round($grandTotalPayable, 2),
+            'total_charges' => round($totalCharges, 2),
+
         ]);
 
     }

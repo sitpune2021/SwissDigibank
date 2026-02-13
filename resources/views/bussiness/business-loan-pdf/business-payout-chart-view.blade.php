@@ -101,7 +101,7 @@
             style="font-family: sans-serif !important; " target="_blank">
             <i class="las la-download"></i> Download
         </a>
-        <a href=" {{ route('mortgage.applications.view', $loan_no) }}" class="px-4 py-2 btn-outline uppercase" style="font-family: sans-serif !important; " target="_self">
+        <a href=" {{ route('bussiness.applications.view', $loan_no) }}" class="px-4 py-2 btn-outline uppercase" style="font-family: sans-serif !important; " target="_self">
             BACK
         </a>
     </div>
@@ -234,6 +234,15 @@
                 <th style="color: #a11f1f; font-size: 14px; padding: 5px;">
                     BalancePrinciple
                 </th>
+            </tr>
+             <tr>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td style="padding:5px; font-weight: 600; font-size: 14px; text-align: left !important;">{{ $loan_amount }}</td>
             </tr>
             @foreach ($payoutSchedule as $row)
             <tr>

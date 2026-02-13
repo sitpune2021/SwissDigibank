@@ -235,8 +235,18 @@
                     BalancePrinciple
                 </th>
             </tr>
+            <tr>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td style="padding:5px; font-weight: 600; font-size: 14px; text-align: left !important;">{{ $loan_amount }}</td>
+            </tr>
             @foreach ($payoutSchedule as $row)
             <tr>
+
                 <td style="padding:5px; font-size:14px;">
                     {{ $row['emi_no'] }}
                 </td>
