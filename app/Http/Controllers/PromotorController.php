@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bank;
 use App\Models\Branch;
+use App\Models\MasterSettingEdit;
 use App\Models\Promotor;
 use App\Models\PromotorKYC;
+use App\Models\PromotorMembershipCharge;
 use App\Models\PromotorNomine;
 use Illuminate\Http\Request;
 use App\Models\MaritalStatus;
@@ -67,6 +70,7 @@ class PromotorController extends Controller
                 'marital_statuses' => MaritalStatus::pluck('status', 'id'),
 
                 'religions' => Religion::pluck('name', 'id'),
+
             ];
             $maritalStatuses = MaritalStatus::pluck('id', 'status'); // ['Married' => 2]
             $route = route('promotor.store');
@@ -91,7 +95,13 @@ class PromotorController extends Controller
                 'member_info_religion'
             )->get()->keyBy('id');
 
-            return view('company.promoters.add-promoter', compact('route', 'dynamicOptions', 'method', 'promoter', 'membersData', 'maritalStatuses'));
+            $banks = Bank::pluck('name', 'id');
+            $settings = MasterSettingEdit::select('membership_fee', 'membership_fee_enabled')->first();
+
+            $membershipAmt = ($settings && $settings->membership_fee_enabled == 1)
+                ? $settings->membership_fee
+                : null;
+            return view('company.promoters.add-promoter', compact('route', 'dynamicOptions', 'method', 'promoter', 'membersData', 'maritalStatuses', 'banks', 'membershipAmt'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
@@ -103,14 +113,14 @@ class PromotorController extends Controller
         try {
             $validated = $request->validate([
                 'enrollment_date' => 'required|date|before_or_equal:today',
-                 'member_id' => 'required|exists:members,id',
+                'member_id' => 'required|exists:members,id',
                 'title' => 'required|string|max:10',
                 'gender' => 'required|string|in:Male,Female,Other',
                 'first_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'middle_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
                 'last_name' => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'branch_id' => 'required|exists:branches,id',
-               
+
                 'date_of_birth' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
                 'occupation' => 'nullable|string|max:255',
                 'father_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
@@ -138,6 +148,26 @@ class PromotorController extends Controller
                 'nominee_voter_id_no' => 'nullable||regex:/^[A-Z]{3}[0-9]{7}$/',
                 'nominee_pan_no' => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
                 'nominee_address' => 'nullable|string|max:500',
+
+                // membership charges
+                'transaction_date' => 'nullable|date',
+                'amount' => 'nullable|numeric',
+                'gst_rate' => 'nullable|numeric',
+                'membership_fee' => 'nullable|numeric',
+                'net_fee' => 'nullable|numeric',
+                'remarks' => 'nullable|string|max:255',
+
+                'pay_mode' => 'required|in:cash,cheque,online',
+                'bank_id' => 'nullable|exists:banks,id',
+
+                'cheque_no' => 'nullable|string|max:50',
+                'cheque_date' => 'nullable|date',
+
+                'transfer_date' => 'nullable|date',
+                'utr_no' => 'nullable|string|max:100',
+                'transfer_mode' => 'nullable|string|max:50',
+                'credited' => 'nullable|in:yes,no',
+
             ]);
             try {
                 DB::beginTransaction();
@@ -186,19 +216,19 @@ class PromotorController extends Controller
                 //     !empty($validated['dl_no'])
                 // ) {   }  
 
-                    PromotorKYC::create([
-                        'promotor_id' => $promotor->id,
-                        'aadhaar_no' => $validated['aadhaar_no'],
-                        'voter_id_no' => $validated['voter_id_no'] ?? null,
-                        'pan_no' => $validated['pan_no'] ?? null,
-                        'ration_card_no' => $validated['ration_card_no'] ?? null,
-                        'meter_no' => $validated['meter_no'] ?? null,
-                        'ci_no' => $validated['ci_no'] ?? null,
-                        'ci_relation' => $validated['ci_relation'] ?? null,
-                        'dl_no' => $validated['dl_no'] ?? null,
-                        'kyc_status' => $validated['kyc_status'] ?? 'pending',
-                    ]);
-              
+                PromotorKYC::create([
+                    'promotor_id' => $promotor->id,
+                    'aadhaar_no' => $validated['aadhaar_no'],
+                    'voter_id_no' => $validated['voter_id_no'] ?? null,
+                    'pan_no' => $validated['pan_no'] ?? null,
+                    'ration_card_no' => $validated['ration_card_no'] ?? null,
+                    'meter_no' => $validated['meter_no'] ?? null,
+                    'ci_no' => $validated['ci_no'] ?? null,
+                    'ci_relation' => $validated['ci_relation'] ?? null,
+                    'dl_no' => $validated['dl_no'] ?? null,
+                    'kyc_status' => $validated['kyc_status'] ?? 'pending',
+                ]);
+
 
                 // Create PromotorNomine only if at least one field is present
                 if (
@@ -222,6 +252,59 @@ class PromotorController extends Controller
                         'address' => $validated['nominee_address'] ?? null,
                     ]);
                 }
+
+                Log::info('Creating membership charge', [
+                    'promotor_id' => $promotor->id,
+                    'transaction_date' => $request->transaction_date,
+                    'amount' => $request->membership_fee,
+                    'mode' => $request->pay_mode,
+                    'cheque_date' => $request->cheque_date,
+                    'transfer_date' => $request->transfer_date,
+                ]);
+
+                $chequeDate = null;
+                $transferDate = null;
+
+                if ($request->pay_mode === 'cheque' && $request->filled('cheque_date')) {
+                    $chequeDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d');
+                }
+
+                if ($request->pay_mode === 'online' && $request->filled('transfer_date')) {
+                    $transferDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d');
+                }
+                PromotorMembershipCharge::create([
+                    'promotor_id' => $promotor->id,
+                    'transaction_date' => \Carbon\Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d'),
+
+                    // 'transaction_date' => $request->transaction_date,
+                    'amount' => $request->amount,
+                    'gst_rate' => $request->gst_rate,
+                    'total_amount' => $request->membership_fee,
+                    'net_fee' => $request->net_fee,
+                    'remarks' => $request->remarks,
+                    'pay_mode' => $request->pay_mode,
+                    'bank_id' => $request->bank_id,
+                    'cheque_no' => $request->cheque_no,
+                    //                 'cheque_date' => $request->cheque_date
+                    // ? \Carbon\Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d')
+                    // : null,
+                    'cheque_date' => $chequeDate,
+
+                    // 'cheque_date' => $request->cheque_date,
+                    // 'transfer_date' => $request->transfer_date
+                    //     ? \Carbon\Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
+                    //     : null,
+                    'transfer_date' => $transferDate,
+                    // 'transfer_date' => $request->transfer_date,
+                    'utr_no' => $request->utr_no,
+                    'transfer_mode' => $request->transfer_mode,
+                    'credited' => $request->credited == 'yes' ? 1 : 0,
+                ]);
+                Log::info('Membership charge stored', [
+                    'promotor_id' => $promotor->id
+                ]);
+
+
 
                 DB::commit();
                 return redirect()->route('promotor.index')->with('success', 'Promotor created successfully');
@@ -280,8 +363,8 @@ class PromotorController extends Controller
                 'members' => Member::all()->pluck('full_name', 'id'),
             ];
 
-              // 🔥 THIS IS WHAT YOU MISSED
-        $membersData = Member::select(
+            // 🔥 THIS IS WHAT YOU MISSED
+            $membersData = Member::select(
                 'id',
                 'member_info_first_name',
                 'member_info_middle_name',
@@ -298,10 +381,19 @@ class PromotorController extends Controller
                 'member_info_title',
                 'member_info_gender'
             )
-            ->get()
-            ->keyBy('id');
+                ->get()
+                ->keyBy('id');
             $method = 'PUT';
-            return view('company.promoters.add-promoter', compact('promoter', 'dynamicOptions', 'route', 'method','membersData'));
+            $banks = Bank::pluck('name', 'id');
+            $settings = MasterSettingEdit::select('membership_fee', 'membership_fee_enabled')->first();
+
+
+            $membershipAmt = ($settings && $settings->membership_fee_enabled == 1)
+                ? $settings->membership_fee
+                : null;
+            $charge = PromotorMembershipCharge::where('promotor_id', $promoter->id)->first();
+
+            return view('company.promoters.add-promoter', compact('promoter', 'dynamicOptions', 'route', 'method', 'membersData', 'banks', 'membershipAmt', 'charge'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
@@ -378,6 +470,26 @@ class PromotorController extends Controller
                 'nominee_voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/',
                 'nominee_pan_no' => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',
                 'nominee_address' => 'nullable|string|max:500',
+
+
+                // membership charges
+                'transaction_date' => 'nullable|date',
+                'amount' => 'nullable|numeric',
+                'gst_rate' => 'nullable|numeric',
+                'membership_fee' => 'nullable|numeric',
+                'net_fee' => 'nullable|numeric',
+                'remarks' => 'nullable|string|max:255',
+
+                'pay_mode' => 'required|in:cash,cheque,online',
+                'bank_id' => 'nullable|exists:banks,id',
+
+                'cheque_no' => 'nullable|string|max:50',
+                'cheque_date' => 'nullable|date',
+
+                'transfer_date' => 'nullable|date',
+                'utr_no' => 'nullable|string|max:100',
+                'transfer_mode' => 'nullable|string|max:50',
+                'credited' => 'nullable|in:yes,no',
             ]);
 
             try {
@@ -386,7 +498,7 @@ class PromotorController extends Controller
                 // Update promotor
                 $promotor->update([
                     'enrollment_date' => $validated['enrollment_date'],
-                     'member_id' => $validated['member_id'], 
+                    'member_id' => $validated['member_id'],
                     'title' => $validated['title'],
                     'gender' => $validated['gender'],
                     'first_name' => $validated['first_name'],
@@ -444,6 +556,50 @@ class PromotorController extends Controller
                     // Create nominee
                     $promotor->nominees()->create($nomineeData);
                 }
+
+                Log::info('Creating membership charge', [
+                    'promotor_id' => $promotor->id,
+                    'transaction_date' => $request->transaction_date,
+                    'amount' => $request->membership_fee,
+                    'mode' => $request->pay_mode,
+                    'cheque_date' => $request->cheque_date,
+                    'transfer_date' => $request->transfer_date,
+                ]);
+                // Prepare dates
+                $chequeDate = null;
+                $transferDate = null;
+
+                if ($request->pay_mode === 'cheque' && $request->filled('cheque_date')) {
+                    $chequeDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d');
+                }
+
+                if ($request->pay_mode === 'online' && $request->filled('transfer_date')) {
+                    $transferDate = \Carbon\Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d');
+                }
+
+                // Find or create membership charge
+                $membershipCharge = PromotorMembershipCharge::firstOrNew([
+                    'promotor_id' => $promotor->id
+                ]);
+
+                // Update values
+                $membershipCharge->update([
+                    'transaction_date' => \Carbon\Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d'),
+                    'amount' => $request->amount,
+                    'gst_rate' => $request->gst_rate,
+                    'total_amount' => $request->membership_fee,
+                    'net_fee' => $request->net_fee,
+                    'remarks' => $request->remarks,
+                    'pay_mode' => $request->pay_mode,
+                    'bank_id' => $request->bank_id,
+                    'cheque_no' => $request->cheque_no,
+                    'cheque_date' => $chequeDate,
+                    'transfer_date' => $transferDate,
+                    'utr_no' => $request->utr_no,
+                    'transfer_mode' => $request->transfer_mode,
+                    'credited' => $request->credited === 'yes' ? 1 : 0,
+                ]);
+
 
                 DB::commit();
 
@@ -818,21 +974,21 @@ class PromotorController extends Controller
     //need to complete it when roles and permissions done full kyc status updation
 //     public function updateStatus(Request $request, $id)
 // {
-    
-//     //need to complete it when roles and permissions done full kyc status updation
+
+    //     //need to complete it when roles and permissions done full kyc status updation
 //     $request->validate([
 //         'kyc_status' => 'required|in:pending,in_progress,completed,rejected',
 //     ]);
 
-//     $kyc = PromotorKyc::firstOrCreate(
+    //     $kyc = PromotorKyc::firstOrCreate(
 //         ['promotor_id' => $id],
 //         ['kyc_status' => 'pending']
 //     );
 
-//     $oldStatus = $kyc->kyc_status;
+    //     $oldStatus = $kyc->kyc_status;
 //     $newStatus = $request->kyc_status;
 
-//     Log::info('KYC status update requested', [
+    //     Log::info('KYC status update requested', [
 //         'kyc_id' => $kyc->id,
 //         'promoter_id' => $id,
 //         'old_status' => $oldStatus,
@@ -840,18 +996,18 @@ class PromotorController extends Controller
 //         'updated_by' => auth()->id(),
 //     ]);
 
-//     $kyc->update([
+    //     $kyc->update([
 //         'kyc_status' => $newStatus
 //     ]);
 
-//     Log::notice('KYC status updated successfully', [
+    //     Log::notice('KYC status updated successfully', [
 //         'kyc_id' => $kyc->id,
 //         'final_status' => $newStatus,
 //         'updated_by' => auth()->id(),
 //     ]);
 
-//     return back()->with('success', 'KYC status updated successfully.');
+    //     return back()->with('success', 'KYC status updated successfully.');
 // }
-  
+
 
 }
