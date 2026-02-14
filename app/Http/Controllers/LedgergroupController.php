@@ -107,6 +107,147 @@ class LedgergroupController extends Controller
         return [$loans->count(), $closing];
     }
 
+    // Interest = P × R × T / 100 
+    private function calculateFlatInterest($principal, $rate, $months)
+    {
+        $years = $months / 12;
+
+        return ($principal * $rate * $years) / 100;
+    }
+
+    // EMI = P × r × (1+r)^n / ((1+r)^n - 1)
+    private function calculateReducingInterest($principal, $annualRate, $months)
+    {
+        $monthlyRate = $annualRate / 12 / 100;
+
+        $emi = $principal * $monthlyRate * pow(1 + $monthlyRate, $months)
+            / (pow(1 + $monthlyRate, $months) - 1);
+
+        $totalPayment = $emi * $months;
+
+        return $totalPayment - $principal;
+    }
+
+    private function calculateAdvanceInterest($principal, $rate, $months)
+    {
+        $interest = $this->calculateFlatInterest($principal, $rate, $months);
+
+        return $interest; // deducted upfront
+    }
+
+    private function calculateBulletInterest($principal, $rate, $months)
+    {
+        return $this->calculateFlatInterest($principal, $rate, $months);
+    }
+
+    private function calculateLoanInterest($loanTable, $schemeTable)
+    {
+        $loans = DB::table($loanTable)
+            ->where('status', 2)
+            ->get();
+
+        $totalInterest = 0;
+
+        foreach ($loans as $loan) {
+
+            $scheme = DB::table($schemeTable)
+                ->where('id', $loan->scheme_id)
+                ->first();
+
+            if (!$scheme) continue;
+
+            $principal = $loan->loan_amount;
+            $rate      = $scheme->annual_interest_rate;
+            $months    = $scheme->tenure;
+
+            switch ($scheme->interest_type ?? $scheme->gold_loan_setting ?? 'flat') {
+
+                case 'reducing_emi':
+                    $interest = $this->calculateReducingInterest($principal, $rate, $months);
+                    break;
+
+                case 'advance':
+                    $interest = $this->calculateAdvanceInterest($principal, $rate, $months);
+                    break;
+
+                case 'no_emi':
+                    $interest = $this->calculateBulletInterest($principal, $rate, $months);
+                    break;
+
+                default:
+                    $interest = $this->calculateFlatInterest($principal, $rate, $months);
+            }
+
+            $totalInterest += $interest;
+        }
+
+        return [$loans->count(), $totalInterest];
+    }
+
+    private function goldLoanInterestBalance()
+    {
+        return $this->calculateLoanInterest(
+            'loan_applications',
+            'gold_loan_schemes'
+        );
+    }
+
+    private function mortgageLoanInterestBalance()
+    {
+        return $this->calculateLoanInterest(
+            'mortgage_loan_applications',
+            'mortgage_schemes'
+        );
+    }
+
+    private function againstLoanInterestBalance()
+    {
+        return $this->calculateLoanInterest(
+            'loan_against_applications',
+            'loan_against_schemes'
+        );
+    }
+
+    private function bussinessLoanInterestBalance()
+    {
+        return $this->calculateLoanInterest(
+            'bussiness_loan_applications',
+            'business_loan_schemes'
+        );
+    }
+
+    private function ccodLoanInterestBalance()
+    {
+        return $this->calculateLoanInterest(
+            'cc_od_loan_applications',
+            'cc_od_loan_schemes'
+        );
+    }
+
+    private function dailyweeklyLoanInterestBalance()
+    {
+        return $this->calculateLoanInterest(
+            'daily_weekly_applications',
+            'daily_weekly_schemes'
+        );
+    }
+
+    private function personalInterestBalance()
+    {
+        return $this->calculateLoanInterest(
+            'personal_loan_applications',
+            'personal_schemes'
+        );
+    }
+
+    private function vehicalInterestBalance()
+    {
+        return $this->calculateLoanInterest(
+            'vehical_applications',
+            'vehical_schemes'
+        );
+    }
+
     private function mortgageBalance()
     {
         $loans = DB::table('mortgage_loan_applications')
@@ -372,7 +513,7 @@ class LedgergroupController extends Controller
 
             /*
             |----------------------------------------
-            | 🔥 ALWAYS USE CODE (NOT NAME)
+            | ALWAYS USE CODE (NOT NAME)
             |----------------------------------------
             */
             [$accounts, $balance] = $this->calculateLedgersBalance($ledger->code);
@@ -432,7 +573,23 @@ class LedgergroupController extends Controller
         if (Str::contains($code, 'SAVING')) {
             return $this->savingAccountsBalance();
         }
-         if (Str::contains($code, 'FD')) {
+        // INTEREST FIRST
+        if (Str::contains($code, 'FD_INTEREST')) {
+            return $this->fdInterestBalance();
+        }
+
+        if (Str::contains($code, 'RD_INTEREST')) {
+            return $this->rdInterestBalance();
+        }
+
+        if (Str::contains($code, 'MIS_INTEREST')) {
+            return $this->misInterestBalance();
+        }
+
+        if (Str::contains($code, 'DD_INTEREST')) {
+            return $this->ddInterestBalance();
+        }
+        if (Str::contains($code, 'FD')) {
             return $this->fdAccountsBalance();
         }
          if (Str::contains($code, 'RD')) {
@@ -441,10 +598,10 @@ class LedgergroupController extends Controller
          if (Str::contains($code, 'MIS')) {
             return $this->misAccountsBalance();
         }
-         if (Str::contains($code, 'DD')) {
+        if (Str::contains($code, 'DD')) {
             return $this->ddAccountsBalance();
         }
-
+       
         return [0, 0];
     }
 
@@ -504,10 +661,26 @@ class LedgergroupController extends Controller
         $totalAccounts = $fds->count();
 
         $totalBalance = $fds->sum(function ($fd) {
-            return $fd->maturity_amount ?? $fd->fd_amount;
+            return $fd->fd_amount;
         });
 
         return [$totalAccounts, $totalBalance];
+    }
+
+    private function fdInterestBalance()
+    {
+        $fds = DB::table('fd_accounts')
+            ->where('status', 1)
+            ->where('active', 1)
+            ->get();
+
+        $totalAccounts = $fds->count();
+
+        $totalInterest = $fds->sum(function ($fd) {
+            return ($fd->maturity_amount ?? 0) - ($fd->fd_amount ?? 0);
+        });
+
+        return [$totalAccounts, $totalInterest];
     }
 
     private function misAccountsBalance()
@@ -519,10 +692,25 @@ class LedgergroupController extends Controller
         $totalAccounts = $fds->count();
 
         $totalBalance = $fds->sum(function ($fd) {
-            return $fd->maturity_amount ?? $fd->mis_amount;
+            return $fd->mis_amount;
         });
 
         return [$totalAccounts, $totalBalance];
+    }
+
+    private function misInterestBalance()
+    {
+        $fds = DB::table('misaccounts')
+            ->where('status', 1)
+            ->get();
+
+        $totalAccounts = $fds->count();
+
+        $totalInterest = $fds->sum(function ($fd) {
+            return ($fd->maturity_amount ?? 0) - ($fd->mis_amount ?? 0);
+        });
+
+        return [$totalAccounts, $totalInterest];
     }
 
     private function ddAccountsBalance()
@@ -540,6 +728,21 @@ class LedgergroupController extends Controller
         return [$totalAccounts, $totalBalance];
     }
 
+    private function ddInterestBalance()
+    {
+        $fds = DB::table('dds_accounts')
+            ->where('status', 1)
+            ->get();
+
+        $totalAccounts = $fds->count();
+
+        $totalInterest = $fds->sum(function ($fd) {
+            return ($fd->maturity_amount ?? 0) - ($fd->dd_amount ?? 0);
+        });
+
+        return [$totalAccounts, $totalInterest];
+    }
+
     private function rdAccountsBalance()
     {
         $fds = DB::table('rd_accounts')
@@ -549,10 +752,25 @@ class LedgergroupController extends Controller
         $totalAccounts = $fds->count();
 
         $totalBalance = $fds->sum(function ($fd) {
-            return $fd->maturity_amount ?? $fd->rd_amount;
+            return $fd->rd_amount;
         });
 
         return [$totalAccounts, $totalBalance];
+    }
+
+    private function rdInterestBalance()
+    {
+        $fds = DB::table('rd_accounts')
+            ->where('approve_status', 'Approved')
+            ->get();
+
+        $totalAccounts = $fds->count();
+
+        $totalInterest = $fds->sum(function ($fd) {
+            return ($fd->maturity_amount ?? 0) - ($fd->rd_amount ?? 0);
+        });
+
+        return [$totalAccounts, $totalInterest];
     }
 
     private function savingAccountsBalance()
@@ -588,28 +806,44 @@ class LedgergroupController extends Controller
         
         $ledgerCode = strtoupper($ledgerCode);
 
-        // FD LIABILITY MODULES FIRST
+        // FD InterestLIABILITY MODULES FIRST
+        if ($ledgerCode === 'FD_INTEREST') {
+            return $this->fdInterestBalance();
+        }
 
-        if (Str::contains($ledgerCode, ['FD', 'FIXED'])) {
+        // FD Accounts
+        if ($ledgerCode === 'FD_ACCOUNTS') {
             return $this->fdAccountsBalance();
         }
 
         // MIS MODULES
-
-        if (Str::contains($ledgerCode, ['MIS', 'FIXED'])) {
+        if ($ledgerCode === 'MIS_ACCOUNTS') {
             return $this->misAccountsBalance();
         }
 
-        // DD Account MODULES
+        // MIS INTEREST
+        if ($ledgerCode === 'MIS_INTEREST') {
+            return $this->misInterestBalance();
+        }
 
-        if (Str::contains($ledgerCode, ['DD', 'FIXED'])) {
+        // DD MODULES
+        if ($ledgerCode === 'DD_ACCOUNTS') {
             return $this->ddAccountsBalance();
         }
 
-        // RD Account MODULES
+        // DD INTEREST
+        if ($ledgerCode === 'DD_INTEREST') {
+            return $this->ddInterestBalance();
+        }
 
-        if (Str::contains($ledgerCode, ['RD', 'FIXED'])) {
+        // RD MODULES
+        if ($ledgerCode === 'RD_ACCOUNTS') {
             return $this->rdAccountsBalance();
+        }
+
+        // RD INTEREST
+        if ($ledgerCode === 'RD_INTEREST') {
+            return $this->rdInterestBalance();
         }
 
         // SAVING Account MODULES
@@ -626,12 +860,50 @@ class LedgergroupController extends Controller
 
         // ASSET MODULES  -  All Loan Module
 
+        // GOLD LOAN INTEREST FIRST
+        if ($ledgerCode === 'GOLD_LOAN_INTEREST') {
+            return $this->goldLoanInterestBalance();
+        }
+
+        // Then general GOLD
         if (Str::contains($ledgerCode, 'GOLD')) {
             return $this->goldLoanBalance();
         }
 
+        if ($ledgerCode === 'MORTGAGE_LOAN_INTEREST') {
+            return $this->mortgageLoanInterestBalance();
+        }
+
+        if ($ledgerCode === 'PROPERTY_LOAN_INTEREST') {
+            return $this->mortgageLoanInterestBalance();
+        }
+
         if (Str::contains($ledgerCode, 'MORTGAGE')) {
             return $this->mortgageBalance();
+        }
+
+        if ($ledgerCode === 'LOAN_AGINST_INTEREST') {
+            return $this->againstLoanInterestBalance();
+        }
+
+        if (Str::contains($ledgerCode, 'AGINST')) {
+            return $this->loanagainstBalance();
+        }
+
+        if ($ledgerCode === 'PERSONAL_LOAN_INTEREST') {
+            return $this->personalInterestBalance();
+        }
+        if ($ledgerCode === 'VEHICAL_LOAN_INTEREST') {
+            return $this->vehicalInterestBalance();
+        }
+        if ($ledgerCode === 'DAILY_WEEKLY_LOAN_INTEREST') {
+            return $this->dailyweeklyLoanInterestBalance();
+        }
+        if ($ledgerCode === 'CC_OD_LOAN_INTEREST') {
+            return $this->ccodLoanInterestBalance();
+        }
+        if ($ledgerCode === 'BUSSINESS_LOAN_INTEREST') {
+            return $this->bussinessLoanInterestBalance();
         }
 
         if (Str::contains($ledgerCode, 'PERSONAL')) {
@@ -813,6 +1085,18 @@ class LedgergroupController extends Controller
                 'collection_column' => 'amount_collected',
             ],
 
+            'GOLD_LOAN_INTEREST' => [
+                'type' => 'loan_interest',
+                'loan' => 'loan_applications',
+                'scheme' => 'gold_loan_schemes',
+            ],
+            'MORTGAGE_LOAN_INTEREST' => [
+                'type' => 'loan_interest',
+                'loan' => 'mortgage_loan_applications',
+                'scheme' => 'mortgage_schemes',
+            ],
+
+
             /*
             |--------------------------------------------------------------------------
             | DEPOSIT / LIABILITY MODULES
@@ -828,7 +1112,6 @@ class LedgergroupController extends Controller
                 'status_column' => 'status',
                 'status_value'  => 1,
             ],
-
             'MIS_ACCOUNTS' => [
                 'type' => 'deposit',
                 'loan' => 'misaccounts',
@@ -839,8 +1122,7 @@ class LedgergroupController extends Controller
                 'status_column' => 'status',
                 'status_value'  => 1,
             ],
-
-             'DD_ACCOUNTS' => [
+            'DD_ACCOUNTS' => [
                 'type' => 'deposit',
                 'loan' => 'dds_accounts',
                 'txn'  => 'dd_transactions',
@@ -850,8 +1132,7 @@ class LedgergroupController extends Controller
                 'status_column' => 'status',
                 'status_value'  => 1,
             ],
-
-             'RD_ACCOUNTS' => [
+            'RD_ACCOUNTS' => [
                 'type' => 'deposit',
                 'loan' => 'rd_accounts',
                 'txn'  => 'rd_transactions',
@@ -861,7 +1142,6 @@ class LedgergroupController extends Controller
                 'status_column' => 'status',
                 'status_value'  => 1,
             ],
-
             'SAVING_ACCOUNTS' => [
                 'type' => 'bank',
                 'account_type' => 'SAVING',
@@ -869,7 +1149,6 @@ class LedgergroupController extends Controller
                 'txn'  => 'transactions',
                 'id_column' => 'account_id',
             ],
-
             'CURRENT_ACCOUNT' => [
                 'type' => 'bank',
                 'account_type' => 'CURRENT',
@@ -877,28 +1156,269 @@ class LedgergroupController extends Controller
                 'txn'  => 'transactions',
                 'id_column' => 'account_id',
             ],
+            'FD_INTEREST' => [
+                'type' => 'deposit_interest',
+                'loan' => 'fd_accounts',
+                'txn'  => 'fd_transactions',
+                'id_column' => 'fd_account_id',
+                'credit_value' => 1,
+                'debit_value'  => 0,
+                'status_column' => 'status',
+                'status_value'  => 1,
+                'amount_column' => 'fd_amount',
+            ],
+            'MIS_INTEREST' => [
+                'type' => 'deposit_interest',
+                'loan' => 'misaccounts',
+                'txn'  => 'mis_transactions',
+                'id_column' => 'misaccount_id',
+                'credit_value' => 1,
+                'debit_value'  => 0,
+                'status_column' => 'status',
+                'status_value'  => 1,
+                 'amount_column' => 'mis_amount',
+            ],
+            'DD_INTEREST' => [
+                'type' => 'deposit_interest',
+                'loan' => 'dds_accounts',
+                'txn'  => 'dd_transactions',
+                'id_column' => 'dds_account_id',
+                'credit_value' => 1,
+                'debit_value'  => 0,
+                'status_column' => 'status',
+                'status_value'  => 1,
+                'amount_column' => 'dd_amount',
+            ],
+            'RD_INTEREST' => [
+                'type' => 'deposit_interest',
+                'loan' => 'rd_accounts',
+                'txn'  => 'rd_transactions',
+                'id_column' => 'rd_account_id',
+                'credit_value' => 1,
+                'debit_value'  => 0,
+                'status_column' => 'approve_status',
+                'status_value'  => 1,
+                'amount_column' => 'rd_amount',
+            ],
 
         ];
     }
 
+    // public function ledgerView($id)
+    // {
+    //     $ledger = Ledger::with('group')->findOrFail($id);
+
+    //     //$code = strtoupper(Str::slug($ledger->code, '_'));
+    //     $code = strtoupper(trim($ledger->code));
+    //     $map  = $this->loanModuleMap();
+
+    //     // $module = collect($map)->first(function ($config, $key) use ($code) {
+    //     //     return Str::contains($code, $key);
+    //     // });
+    //     $module = $map[$code] ?? null;
+
+    //     if (!$module) {
+    //         abort(404, 'Ledger type not supported');
+    //     }
+
+    //     $loans = DB::table($module['loan'])
+    //         ->when(isset($module['status_column']), function ($q) use ($module) {
+    //             $q->where($module['status_column'], $module['status_value']);
+    //         })
+    //         ->when($module['type'] === 'bank', function ($q) use ($module) {
+    //             $q->where('account_type', $module['account_type'])
+    //             ->where('approve_status', '1')
+    //             ->where('account_status', 1)
+    //             ->whereNull('deleted_at');
+    //         })
+    //         ->get();
+
+    //     $totalDebit  = 0;
+    //     $totalCredit = 0;
+    //     $closingBalance = 0;
+    //     $lastTransactionDate = null;
+
+    //     foreach ($loans as $loan) 
+    //     {
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | SAVING ENGINE
+    //         |--------------------------------------------------------------------------
+    //         */
+    //         if ($module['type'] === 'bank') {
+
+    //             $credit = DB::table($module['txn'])
+    //                 ->where($module['id_column'], $loan->id)
+    //                 ->where('transaction_type', 'credit')
+    //                 ->where('approve_status', 'approved')
+    //                 ->sum('amount');
+
+    //             $debit = DB::table($module['txn'])
+    //                 ->where($module['id_column'], $loan->id)
+    //                 ->where('transaction_type', 'debit')
+    //                 ->where('approve_status', 'approved')
+    //                 ->sum('amount');
+
+    //             $totalCredit += $credit;
+    //             $totalDebit  += $debit;
+    //             $closingBalance += ($credit - $debit);
+    //         }
+
+    //         // INTEREST LEDGER SPECIAL LOGIC
+    //         if (Str::endsWith($code, '_INTEREST')) {
+
+    //             $principal = $loan->fd_amount ?? 
+    //                         $loan->rd_amount ?? 
+    //                         $loan->mis_amount ?? 
+    //                         $loan->dd_amount ?? 0;
+
+    //             $maturity  = $loan->maturity_amount ?? 0;
+
+    //             $interest = $maturity - $principal;
+
+    //             $totalCredit += $interest;
+    //             $closingBalance += $interest;
+
+    //             continue; // very important
+    //         }
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | DEPOSIT ENGINE (FD/MIS/RD/DD)
+    //         |--------------------------------------------------------------------------
+    //         */
+    //         elseif ($module['type'] === 'deposit') {
+
+    //             $credit = DB::table($module['txn'])
+    //                 ->where($module['id_column'], $loan->id)
+    //                 ->where('transaction_type', $module['credit_value'])
+    //                 ->sum('amount');
+
+    //             $debit = DB::table($module['txn'])
+    //                 ->where($module['id_column'], $loan->id)
+    //                 ->where('transaction_type', $module['debit_value'])
+    //                 ->sum('amount');
+
+    //             $totalCredit += $credit;
+    //             $totalDebit  += $debit;
+    //             $closingBalance += ($credit - $debit);
+    //         }
+
+    //         elseif ($module['type'] === 'deposit_interest') {
+
+    //             $principal = $loan->fd_amount ?? 0;
+    //             $maturity  = $loan->maturity_amount ?? 0;
+
+    //             $interest = $maturity - $principal;
+
+    //             $totalCredit += $interest;
+    //             $closingBalance += $interest;
+    //         }
+
+    //         elseif ($module['type'] === 'loan_interest') {
+
+    //             $scheme = DB::table($module['scheme'])
+    //                 ->where('id', $loan->scheme_id)
+    //                 ->first();
+
+    //             if (!$scheme) continue;
+
+    //             $principal = $loan->loan_amount;
+    //             $rate      = $scheme->annual_interest_rate;
+    //             $months    = $scheme->tenure;
+
+    //             switch ($scheme->gold_loan_setting ?? $scheme->interest_type ?? 'flat') {
+
+    //                 case 'reducing_emi':
+    //                     $interest = $this->calculateReducingInterest($principal, $rate, $months);
+    //                     break;
+
+    //                 case 'advance':
+    //                     $interest = $this->calculateAdvanceInterest($principal, $rate, $months);
+    //                     break;
+
+    //                 case 'no_emi':
+    //                     $interest = $this->calculateBulletInterest($principal, $rate, $months);
+    //                     break;
+
+    //                 default:
+    //                     $interest = $this->calculateFlatInterest($principal, $rate, $months);
+    //             }
+
+    //             $totalCredit += $interest;
+    //             $closingBalance += $interest;
+    //         }
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | LOAN ENGINE (Gold, Mortgage, etc.)
+    //         |--------------------------------------------------------------------------
+    //         */
+    //         else {
+
+    //             $loanAmount = $loan->{$module['amount_column']};
+
+    //             $collected = DB::table($module['txn'])
+    //                 ->where($module['loan_id'], $loan->id)
+    //                 ->sum($module['collection_column']);
+
+    //             $charges = DB::table($module['charges'])
+    //                 ->where($module['loan_id'], $loan->id)
+    //                 ->sum('amount');
+
+    //             $closure = DB::table($module['closure'])
+    //                 ->where($module['loan_id'], $loan->id)
+    //                 ->value('remaining_amount') ?? 0;
+
+    //             $credit = $collected + $charges + $closure;
+
+    //             $totalDebit  += $loanAmount;
+    //             $totalCredit += $credit;
+    //             $closingBalance += max(0, $loanAmount - $credit);
+    //         }
+
+    //         $lastDate = DB::table($module['txn'])
+    //             ->where($module['id_column'] ?? $module['loan_id'], $loan->id)
+    //             ->max('created_at');
+
+    //         if ($lastDate && (!$lastTransactionDate || $lastDate > $lastTransactionDate)) {
+    //             $lastTransactionDate = $lastDate;
+    //         }
+    //     }
+
+    //     $totalTransactions = $loans->count();
+
+    //     $difference = in_array($module['type'], ['deposit','bank','deposit_interest','loan_interest'])
+    //         ? $totalCredit - $totalDebit
+    //         : $totalDebit - $totalCredit;
+
+    //     return view('menu-accounts.ledger.assest-ledger', compact(
+    //         'ledger',
+    //         'totalDebit',
+    //         'totalTransactions',
+    //         'totalCredit',
+    //         'difference',
+    //         'closingBalance',
+    //         'lastTransactionDate'
+    //     ));
+    // }
+
+    
     public function ledgerView($id)
     {
         $ledger = Ledger::with('group')->findOrFail($id);
 
-        //$code = strtoupper(Str::slug($ledger->code, '_'));
         $code = strtoupper(trim($ledger->code));
         $map  = $this->loanModuleMap();
 
-        // $module = collect($map)->first(function ($config, $key) use ($code) {
-        //     return Str::contains($code, $key);
-        // });
         $module = $map[$code] ?? null;
 
         if (!$module) {
             abort(404, 'Ledger type not supported');
         }
 
-        $loans = DB::table($module['loan'])
+        $records = DB::table($module['loan'])
             ->when(isset($module['status_column']), function ($q) use ($module) {
                 $q->where($module['status_column'], $module['status_value']);
             })
@@ -915,23 +1435,23 @@ class LedgergroupController extends Controller
         $closingBalance = 0;
         $lastTransactionDate = null;
 
-        foreach ($loans as $loan) {
+        foreach ($records as $record) {
 
             /*
             |--------------------------------------------------------------------------
-            | SAVING ENGINE
+            | BANK ENGINE (Saving / Current)
             |--------------------------------------------------------------------------
             */
             if ($module['type'] === 'bank') {
 
                 $credit = DB::table($module['txn'])
-                    ->where($module['id_column'], $loan->id)
+                    ->where($module['id_column'], $record->id)
                     ->where('transaction_type', 'credit')
                     ->where('approve_status', 'approved')
                     ->sum('amount');
 
                 $debit = DB::table($module['txn'])
-                    ->where($module['id_column'], $loan->id)
+                    ->where($module['id_column'], $record->id)
                     ->where('transaction_type', 'debit')
                     ->where('approve_status', 'approved')
                     ->sum('amount');
@@ -943,18 +1463,18 @@ class LedgergroupController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | DEPOSIT ENGINE (FD/MIS/RD/DD)
+            | DEPOSIT ENGINE (FD / RD / MIS / DD)
             |--------------------------------------------------------------------------
             */
             elseif ($module['type'] === 'deposit') {
 
                 $credit = DB::table($module['txn'])
-                    ->where($module['id_column'], $loan->id)
+                    ->where($module['id_column'], $record->id)
                     ->where('transaction_type', $module['credit_value'])
                     ->sum('amount');
 
                 $debit = DB::table($module['txn'])
-                    ->where($module['id_column'], $loan->id)
+                    ->where($module['id_column'], $record->id)
                     ->where('transaction_type', $module['debit_value'])
                     ->sum('amount');
 
@@ -965,23 +1485,78 @@ class LedgergroupController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | LOAN ENGINE (Gold, Mortgage, etc.)
+            | DEPOSIT INTEREST (FD / RD / MIS / DD)
             |--------------------------------------------------------------------------
             */
-            else {
+            elseif ($module['type'] === 'deposit_interest') {
 
-                $loanAmount = $loan->{$module['amount_column']};
+                $principal = $record->{$module['amount_column']} ?? 0;
+                $maturity  = $record->maturity_amount ?? 0;
+
+                $interest = max(0, $maturity - $principal);
+
+                $totalCredit += $interest;
+                $closingBalance += $interest;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | LOAN INTEREST (Gold / Mortgage / Personal etc.)
+            |--------------------------------------------------------------------------
+            */
+            elseif ($module['type'] === 'loan_interest') {
+
+                $scheme = DB::table($module['scheme'])
+                    ->where('id', $record->scheme_id)
+                    ->first();
+
+                if (!$scheme) continue;
+
+                $principal = $record->loan_amount ?? 0;
+                $rate      = $scheme->annual_interest_rate ?? 0;
+                $months    = $scheme->tenure ?? 0;
+
+                switch ($scheme->interest_type ?? $scheme->gold_loan_setting ?? 'flat') {
+
+                    case 'reducing_emi':
+                        $interest = $this->calculateReducingInterest($principal, $rate, $months);
+                        break;
+
+                    case 'advance':
+                        $interest = $this->calculateAdvanceInterest($principal, $rate, $months);
+                        break;
+
+                    case 'no_emi':
+                        $interest = $this->calculateBulletInterest($principal, $rate, $months);
+                        break;
+
+                    default:
+                        $interest = $this->calculateFlatInterest($principal, $rate, $months);
+                }
+
+                $totalCredit += $interest;
+                $closingBalance += $interest;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | LOAN PRINCIPAL ENGINE
+            |--------------------------------------------------------------------------
+            */
+            elseif ($module['type'] === 'loan') {
+
+                $loanAmount = $record->{$module['amount_column']} ?? 0;
 
                 $collected = DB::table($module['txn'])
-                    ->where($module['loan_id'], $loan->id)
+                    ->where($module['loan_id'], $record->id)
                     ->sum($module['collection_column']);
 
                 $charges = DB::table($module['charges'])
-                    ->where($module['loan_id'], $loan->id)
+                    ->where($module['loan_id'], $record->id)
                     ->sum('amount');
 
                 $closure = DB::table($module['closure'])
-                    ->where($module['loan_id'], $loan->id)
+                    ->where($module['loan_id'], $record->id)
                     ->value('remaining_amount') ?? 0;
 
                 $credit = $collected + $charges + $closure;
@@ -991,18 +1566,26 @@ class LedgergroupController extends Controller
                 $closingBalance += max(0, $loanAmount - $credit);
             }
 
-            $lastDate = DB::table($module['txn'])
-                ->where($module['id_column'] ?? $module['loan_id'], $loan->id)
-                ->max('created_at');
+            /*
+            |--------------------------------------------------------------------------
+            | LAST TRANSACTION DATE (SAFE CHECK)
+            |--------------------------------------------------------------------------
+            */
+            if (isset($module['txn'])) {
 
-            if ($lastDate && (!$lastTransactionDate || $lastDate > $lastTransactionDate)) {
-                $lastTransactionDate = $lastDate;
+                $lastDate = DB::table($module['txn'])
+                    ->where($module['id_column'] ?? $module['loan_id'], $record->id)
+                    ->max('created_at');
+
+                if ($lastDate && (!$lastTransactionDate || $lastDate > $lastTransactionDate)) {
+                    $lastTransactionDate = $lastDate;
+                }
             }
         }
 
-        $totalTransactions = $loans->count();
+        $totalTransactions = $records->count();
 
-        $difference = in_array($module['type'], ['deposit','bank'])
+        $difference = in_array($module['type'], ['deposit','bank','deposit_interest','loan_interest'])
             ? $totalCredit - $totalDebit
             : $totalDebit - $totalCredit;
 

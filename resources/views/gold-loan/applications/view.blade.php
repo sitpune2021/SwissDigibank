@@ -194,6 +194,13 @@
             </button>
             <div id="printDropdown"
                 class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                 <div class="py-1 px-3">
+                    <a href="{{ route('loan.application-letter-view', $application->id) }}"
+                        class="flex items-center gap-2 px-4 uppercase   py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="las la-print text-secondary"></i>  
+                       APPLICATION FORM
+                    </a>
+                </div>
                 <div class="py-1 px-3">
                     <a href="{{ route('loan.payout_chart_loan_application_view', $application->id) }}"
                         class="flex items-center gap-2 px-4 uppercase   py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -231,6 +238,20 @@
                         class="flex items-center gap-2 px-4 uppercase   py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <i class="las la-print text-secondary"></i> 
                         PROMISSORY NOTE
+                    </a>
+                </div>
+                 <div class="py-1 px-3">
+                    <a href="{{ route('loan.letter-of-evidencing-view.pdf', $application->id) }}"
+                        class="flex items-center gap-2 px-4 uppercase   py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="las la-print text-secondary"></i> 
+                       LETTER OF EVIDENCING
+                    </a>
+                </div>
+                <div class="py-1 px-3">
+                    <a href="{{ route('loan.letter-of-jurisdiction-view.pdf', $application->id) }}"
+                        class="flex items-center gap-2 px-4 uppercase   py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="las la-print text-secondary"></i> 
+                      LETTER OF JURISDICTION 
                     </a>
                 </div>
                 

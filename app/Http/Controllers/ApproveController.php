@@ -245,20 +245,55 @@ class ApproveController extends Controller
             $paymentStatus = $request->input('payment_status');
 
             // NEW Foreclosure Condition
+            // NEW Foreclosure Condition
             if ($sourceTable === 'gold_loan_fore_closures') {
 
-                $updated = DB::table('gold_loan_fore_closures')
-                    ->where('id', $id)
-                    ->update([
-                        'status' => $status === 'approved' ? 1 : 0,
-                        'remarks' => $remarks,
-                        'updated_at' => now(),
-                    ]);
+                DB::beginTransaction();
 
-                if ($updated) {
+                try {
+
+                    $foreclosure = DB::table('gold_loan_fore_closures')
+                        ->where('id', $id)
+                        ->first();
+
+                    if (!$foreclosure) {
+                        return redirect()->back()->with('error', 'Foreclosure record not found.');
+                    }
+
+                    DB::table('gold_loan_fore_closures')
+                        ->where('id', $id)
+                        ->update([
+                            'status' => $status === 'approved' ? 1 : 0,
+                            'remarks' => $remarks,
+                            'updated_at' => now(),
+                        ]);
+
+                    // ⭐ EMI auto mark PAID when approved
+                    if ($status === 'approved') {
+
+                        DB::table('gold_loan_emi_status')
+                            ->where('loan_id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 'PAID',
+                                'remaining_amount' => 0,
+                                'paid_date' => now()->format('Y-m-d'),
+                                'updated_at' => now()
+                            ]);
+
+                        DB::table('loan_applications')
+                            ->where('id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 2,
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    DB::commit();
+
                     return redirect()->back()->with('success', 'Foreclosure transaction approved successfully.');
-                } else {
-                    return redirect()->back()->with('error', 'Failed to update foreclosure transaction.');
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    return redirect()->back()->with('error', $e->getMessage());
                 }
             }
 
@@ -460,8 +495,6 @@ class ApproveController extends Controller
             dd('Error updating status: ' . $e->getMessage());
         }
     }
-
-    // pending transaction ends
 
     // Approve account status
     public function updateAccountStatus(Request $request, $id)
@@ -907,8 +940,6 @@ class ApproveController extends Controller
         }
     }
 
-    // Approve account status ends
-
     // Approve Share Transfer 
     public function approveTransfer(Request $request)
     {
@@ -967,7 +998,6 @@ class ApproveController extends Controller
             abort(404);
         }
     }
-    // Approve share Transfer ends
 
     // Approve reverse transaction
     public function reverseTransactionView(Request $request, $id)
