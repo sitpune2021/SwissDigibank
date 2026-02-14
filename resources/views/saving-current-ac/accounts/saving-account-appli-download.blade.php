@@ -92,7 +92,7 @@
 
             <!-- Logo -->
 
-            <div style="float:left; width:30%; text-align:left;">
+            <div style="float:left; width:30%; text-align:left;  margin-top: 0 !important;">
                <img src="{{public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
                                 style=" width:auto; height:50px;">
                 {{-- @if($logo) --}}
@@ -119,7 +119,7 @@
  
             <!-- Clear Float -->
             <div style="clear:both; "></div>
- <h4 style="  text-align: center; font-size:18px; font-weight:bold;">
+           <h4 style=" text-align: center; font-size:18px; margin: 0 !important; font-weight:bold;">
                Account Opening Form For Saving
                 </h4>
         </div>

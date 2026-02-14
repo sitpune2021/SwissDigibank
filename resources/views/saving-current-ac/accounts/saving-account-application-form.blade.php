@@ -105,11 +105,17 @@
   td {
     padding: 4px;
   }
+  
 </style>
 
 <div class="main-inner">
   <h1 class="text-lg uppercase font-semibold">Saving Account - {{ $account->account_no }}</h1>
   <div class="text-center flex justify-center gap-5 mt-4">
+      <a href="{{ route('account.print', base64_encode($account->id)) }}"
+   class="px-4 py-2 btn-primary uppercase"
+   target="_blank">
+   <i class="las la-print"></i> Print
+</a>
     <a href="{{ route('saving.account.opening.pdf', base64_encode($account->id)) }}"
       class="px-4 py-2 btn-primary uppercase" target="_blank">
       <i class="las la-download"></i> Download
@@ -118,6 +124,8 @@
       target="_self">
       BACk
     </a>
+
+
   </div>
   <div class="box mt-5">
     <div class="form-container">
@@ -146,14 +154,14 @@
                     {{-- SBC Global --}}
                 </div>
 
-                <div style="height:10px; margin-top: 40px;">&nbsp;</div>
+                <div style="height:10px; ">&nbsp;</div>
 
               
             </div>
  
             <!-- Clear Float -->
             <div style="clear:both; "></div>
- <h4 style="   margin-top:30px;  text-align: center; font-size:18px; font-weight:bold;">
+ <h4 style="   text-align: center; font-size:18px; font-weight:bold;">
                Account Opening Form For Saving
                 </h4>
         </div>
