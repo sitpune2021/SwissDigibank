@@ -884,6 +884,33 @@ class AccountsController extends Controller
         return $pdf->download('saving-account-opening-form.pdf');
     }
 
+
+public function printForm($id)
+{
+    $account_id = base64_decode($id);
+
+    $account = Account::with([
+        'transaction',
+        'members.kyc',
+        'members.address.state',
+        'scheme',
+        'savingOtherCharges'
+    ])->findOrFail($account_id);
+
+    $pdf = Pdf::loadView(
+        'saving-current-ac.accounts.saving-account-appli-download',
+        compact('account')
+    )->setPaper('A4','portrait');
+
+    // trigger print dialog automatically
+    $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+
+    return $pdf->stream('saving-account.pdf');
+}
+
+
+    
+
 }
 
 

@@ -150,5 +150,10 @@ return [
             'default' => 0,
         ],
     ],
+    
+
+    'Membership Charges (if any)' => [
+       
+    ],
 
 ];

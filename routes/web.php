@@ -136,8 +136,8 @@ Route::middleware('auth.user')->group(function () {
     Route::group(['prefix' => 'company'], function () {
         Route::resource('company', CompanyController::class);
         Route::resource('branch', BranchController::class);
-       Route::post('/branch/toggle-status', [BranchController::class, 'toggleStatus'])
-    ->name('branch.toggle.status');
+        Route::post('/branch/toggle-status', [BranchController::class, 'toggleStatus'])
+            ->name('branch.toggle.status');
 
         Route::get('/ajax/branches/search', [BranchController::class, 'search'])->name('ajax.branches.search');
         Route::resource('promotor', PromotorController::class);
@@ -149,7 +149,7 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/promotor/{id}/nominee/edit', [PromotorController::class, 'editNominee'])
             ->name('nominee.edit');
 
-            //kyc status
+        //kyc status
         // Route::post('/promotor-kyc/{id}/status', [PromotorController::class, 'updateStatus'])
         //     ->name('promotor-kyc.updateStatus');
 
@@ -402,6 +402,8 @@ Route::group(['prefix' => 'saving-current-ac'], function () {
         [AccountsController::class, 'accountOpenFormDownload']
     )->name('saving.account.opening.pdf');
 
+    Route::get('/account/print/{id}', [AccountsController::class, 'printForm'])
+        ->name('account.print');
 });
 
 Route::group(['prefix' => 'fd-mis-schemes'], function () {
@@ -556,9 +558,9 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
 
     Route::get('/misaccount/{id}/print-bond', [MisaccountController::class, 'misBondForm'])->name('misaccount.printbond');
     Route::get('/mis-bond/{id}/print', [MisaccountController::class, 'misBondPrint'])
-    ->name('misBondPrint');
-Route::get('/mis-bond/{id}/print-view', [MisaccountController::class, 'misBondPrintView'])
-    ->name('misBondPrintView');
+        ->name('misBondPrint');
+    Route::get('/mis-bond/{id}/print-view', [MisaccountController::class, 'misBondPrintView'])
+        ->name('misBondPrintView');
     // Preview (Blade)
     Route::get(
         '/mis-opening-form/{id}/view',
@@ -900,6 +902,17 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::get('/gold-loan-app/sanction-letter-view/{loan}', [GoldLoanPrintDocument::class, 'sanction_letter_view'])->name('loan.sanction_letter-view');
     Route::get('/gold-loan-app/sanction-letter/{loan}', [GoldLoanPrintDocument::class, 'sanction_letter'])->name('loan.sanction_letter.pdf');
+    Route::get('/gold-loan-app/pplication-letter-view/{loan}', [GoldLoanPrintDocument::class, 'application_letter_view'])->name('loan.application-letter-view');
+    Route::get('/gold-loan-app/application-letter/{loan}', [GoldLoanPrintDocument::class, 'application_letter'])->name('loan.application_letter.pdf');
+    Route::get('/gold-loan-app/application-letter-print/{loan}', [GoldLoanPrintDocument::class, 'print_application_letter'])->name('loan.application_letter_print.pdf');
+
+     Route::get('/gold-loan-app/letter-of-evidencing-view/{loan}', [GoldLoanPrintDocument::class, 'letterOf_evidencing_view'])->name('loan.letter-of-evidencing-view.pdf');
+    Route::get('/gold-loan-app/letter-of-evidencing/{loan}', [GoldLoanPrintDocument::class, 'letterOf_evidencing'])->name('loan.letter-of-evidencing.pdf');
+    Route::get('/gold-loan-app/letter-of-evidencing-print/{loan}', [GoldLoanPrintDocument::class, 'print_letterOf_evidencing'])->name('loan.letter-of-evidencing-print.pdf');
+   
+    
+    Route::get('/gold-loan-app/letter-of-jurisdiction-view/{loan}', [GoldLoanPrintDocument::class, 'jurisdiction_ack_letter_view'])->name('loan.letter-of-jurisdiction-view.pdf');
+    Route::get('/gold-loan-app/letter-of-jurisdiction/{loan}', [GoldLoanPrintDocument::class, 'jurisdiction_ack_letter'])->name('loan.letter-of-jurisdiction.pdf');
 });
 
 
@@ -1026,7 +1039,7 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::get('/sanction-letter/{loan}', [MortgageLoanPrintDocumentController::class, 'sanction_letter'])->name('mortgage_loan.sanction_letter.pdf');
 
     Route::get('/{loan}/loan-agreement-view', [MortgageLoanPrintDocumentController::class, 'loanAgreementView'])->name('mortgage_loan.loanAgreement-view');
-    Route::get( '/{loan}/loan-agreement',[MortgageLoanPrintDocumentController::class, 'loanAgreement'])->name('mortgage_loan.loanAgreement.pdf');
+    Route::get('/{loan}/loan-agreement', [MortgageLoanPrintDocumentController::class, 'loanAgreement'])->name('mortgage_loan.loanAgreement.pdf');
 
     Route::get('/disburse-letter-view/{loan}', [MortgageLoanPrintDocumentController::class, 'disburse_letter_view'])->name('mortgage_loan.disburse_letter.view');
     Route::get('/disburse-letter/{loan}', [MortgageLoanPrintDocumentController::class, 'disburse_letter'])->name('mortgage_loan.disburse_letter.pdf');
@@ -1034,7 +1047,7 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::get('/promissory-note-view/{loan}', [MortgageLoanPrintDocumentController::class, 'promissory_note_view'])->name('mortgage_loan.promissory.view');
     Route::get('/promissory-note/{loan}', [MortgageLoanPrintDocumentController::class, 'promissory_note'])->name('mortgage_loan.promissory.pdf');
 
-     Route::get('/undertaking-letter-view/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('mortgage_loan.undertaking_letter.view');
+    Route::get('/undertaking-letter-view/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('mortgage_loan.undertaking_letter.view');
     Route::get('/undertaking-letter/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter'])->name('mortgage_loan.undertaking_letter.pdf');
 
 });
@@ -1222,163 +1235,163 @@ Route::group(['prefix' => 'loanagainst'], function () {
 
 Route::group(['prefix' => 'business'], function () {
 
-     // bussiness Loan Scheme
+    // bussiness Loan Scheme
     Route::get('scheme/index', [BusinessLoan::class, 'index'])
         ->name('bussiness.schemes.index');
- 
+
     // create form
     Route::get('scheme/create', [BusinessLoan::class, 'create'])
         ->name('bussiness.schemes.create');
     // store form data
     Route::post('scheme/store', [BusinessLoan::class, 'store'])
         ->name('bussiness.schemes.store');
- 
+
     // view list
     Route::get('scheme/{id}', [BusinessLoan::class, 'show'])
         ->name('bussiness.schemes.show');
- 
+
     // edit form
     Route::get('scheme/{id}/edit', [BusinessLoan::class, 'edit'])
         ->name('bussiness.schemes.edit');
     Route::put('scheme/{id}', [BusinessLoan::class, 'update'])
         ->name('bussiness.schemes.update');
- 
+
     Route::get('scheme/view/{id}', [BusinessLoan::class, 'view'])
         ->name('bussiness.schemes.view');
- 
+
     // bussiness Loan Calculation
     Route::get('calculator/index', [BusinessLoan::class, 'calculator'])
         ->name('bussiness.calculator.index');
     // get scheme data
     Route::get('bussiness/scheme/{id}', [BusinessLoan::class, 'getSchemeDetails'])
         ->name('bussiness.scheme.details');
- 
- 
+
+
     // Calculation page  
     Route::get('calculator/calculation', [BusinessLoan::class, 'calculation'])->name('bussiness.calculator.calculation');
     Route::post('bussiness/calculate', [BusinessLoan::class, 'calculateResult'])->name('bussiness.calculator.calculate');
- 
- 
+
+
     // bussiness Application page
     Route::get('applications/index', [BusinessLoan::class, 'appindex'])
         ->name('bussiness.applications.index');
- 
+
     Route::get('applications/create', [BusinessLoan::class, 'appcreate'])
         ->name('bussiness.applications.create');
- 
+
     Route::post('/businessloan/store', [BusinessLoan::class, 'storeLoanApplication'])->name('businessloan.store');
- 
+
     Route::get('/members/{id}/info', [BusinessLoan::class, 'getMemberInfo'])
         ->name('members.info');
- 
+
     Route::get('bussiness/applications/view/{id}', [BusinessLoan::class, 'appview'])
         ->name('bussiness.applications.view');
- 
+
     // Edit form
     Route::get('/bussiness/applications/{id}/edit', [BusinessLoan::class, 'appedit'])
         ->name('bussiness.applications.edit');
- 
+
     // Update
     Route::put('/bussiness/applications/{id}', [BusinessLoan::class, 'appupdate'])
         ->name('bussiness.applications.update');
- 
+
     Route::get('applications/show-emi-chart', [BusinessLoan::class, 'showEmiChart'])
         ->name('bussiness.applications.view-buttons.show-emi-chart');
- 
- 
+
+
     // Disbursement bussiness Loan
     Route::get('disbursements/index', [BusinessLoanDisburments::class, 'index'])
         ->name('bussiness.disbursements.index');
     Route::post('/bussiness/disbursements/cancel/{id}', [BusinessLoanDisburments::class, 'cancelLoan'])->name('businessdisbursements.cancel');
- 
+
     // disburse-loan page  
     Route::get('disbursements/disburse-loan/{id}', [BusinessLoanDisburments::class, 'show'])
         ->name('bussiness.disbursements.disburse-loan');
     Route::post('/bussiness/disbursements/store', [BusinessLoanDisburments::class, 'store'])->name('businessdisbursements.store');
- 
- 
+
+
     // account section start
- 
+
     Route::get('account/index', [BusinessLoanAccount::class, 'index'])->name('bussiness.account.index');
     Route::get('account/show/{id}', [BusinessLoanAccount::class, 'show'])
         ->name('bussiness.account.show');
     // emi chart for process button
     Route::post('/emi/save-status', [BusinessLoanAccount::class, 'saveEmiStatus'])
         ->name('business.emi.saveEmiStatus');
- 
+
     // pay emi tab
     Route::get('bussiness-account/payemi/{id}', [BusinessLoanAccount::class, 'mortgagePayEmi'])
         ->name('bussiness.account.pay-emi');
     Route::post('bussiness-account/payemi/{id}/pay', [BusinessLoanAccount::class, 'mortgagepayEmiLoan'])->name('bussiness.payEmiLoan');
- 
+
     // View Transction tab
     Route::get('bussiness-account/transaction/{id}', [BusinessLoanAccount::class, 'mortgageTransaction'])
         ->name('bussiness.account.transaction');
- 
+
     // loan extension tab
     Route::get('account/extension/{id}', [BusinessLoanAccount::class, 'loanextension'])
         ->name('bussiness.account.extension');
     // POST - FINAL SAVE loan extension
     Route::post('/loan-extension/store/{id}', [BusinessLoanAccount::class, 'storeLoanExtension'])->name('bussiness.extension.store');
- 
+
     // only pay tab
     Route::get('bussiness-account/pay/{id}', [BusinessLoanAccount::class, 'mortgagePay'])
         ->name('bussiness.account.pay');
     Route::post('/update-emi-status', [BusinessLoanAccount::class, 'updateEmiStatus'])->name('emi.updateStatus');
     Route::post('/bussiness/pay-emi', [BusinessLoanAccount::class, 'payEmi'])->name('bussiness.payEmi');
- 
+
     // foure close account
     Route::get('account/fourcloser/{id}', [BusinessLoanAccount::class, 'fourcloser'])
         ->name('bussiness.account.fourcloser');
     Route::post('account/fourcloser/store/{id}', [BusinessLoanAccount::class, 'storeForeCloser'])
         ->name('bussiness.account.forecloser.store');
- 
+
     // link saving account
     Route::get('account/linksaving/{id}', [BusinessLoanAccount::class, 'linksaving'])
         ->name('bussiness.account.linksaving');
     Route::post('account/linksaving/{id}', [BusinessLoanAccount::class, 'storeSavingAccount'])
         ->name('bussiness.account.storeSavingAccount');
- 
+
     // Remove account (POST to avoid CSRF problems with GET)
     Route::post('/bussiness/{id}/remove', [BusinessLoanAccount::class, 'removeAccount'])
         ->name('bussiness.remove');
- 
+
     // show audit trial tab
     Route::get('account/audit', [BusinessLoanAccount::class, 'audit'])
         ->name('bussiness.account.audit-trail');
- 
+
     // DEBIT OTHER CHARGES in gold loangold-loan.debitChargesList.form
     Route::get('/bussiness/{id}/debit-charges-list', [BusinessLoanAccount::class, 'showDebitChargesList'])
         ->name('bussiness.debitChargesList.form');
- 
+
     // debit other charge page    
     Route::get('/bussiness/{id}/debit-other-charges', [BusinessLoanAccount::class, 'DebitOtherCharges'])
         ->name('bussiness.debitOtherCharges.form');
     // Store Debit Other Charges page
     Route::post('/bussiness/{id}/debit-other-charges', [BusinessLoanAccount::class, 'storeDebitOtherCharges'])
         ->name('bussiness.debitOtherCharges.store');
- 
+
     //clear due
     Route::get('/bussiness/{id}/clear-due', [BusinessLoanAccount::class, 'mortgageLoanClearDues'])
         ->name('bussiness.clear-due.form');
     Route::post('/bussiness/{loan_id}/other-charge', [BusinessLoanAccount::class, 'clearDue'])->name('bussiness.clear-due');
- 
+
     // account section end
- 
- 
- 
+
+
+
     // Show emi chart
     Route::get('{id}/emi-chart', [BusinessLoan::class, 'emiChart'])->name('bussiness.applications.view-buttons.show-emi-chart');
- 
+
     Route::get('col-process-fee/{id}', [BusinessLoan::class, 'bussiness_process_fee'])
         ->name('bussiness.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [BusinessLoan::class, 'bussinessstoreProcessFee'])
         ->name('bussiness.col_process_fee.store');
- 
+
     Route::post('applications/{id}/submit-for-approval', [BusinessLoan::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
-        
-     //print documents view page  
+
+    //print documents view page  
     Route::get('/payout-chart-view/{loan}', [BusinessLoanPrintDocumentController::class, 'payout_chart_business_appli_view'])->name('business_loan.payout_chart_business_loan_application_view');
     Route::get('/payout-chart/{loan}', [BusinessLoanPrintDocumentController::class, 'payout_chart_business_appli'])->name('business_loan.payout_chart_loan_application.pdf');
 
@@ -1386,7 +1399,7 @@ Route::group(['prefix' => 'business'], function () {
     Route::get('/sanction-letter/{loan}', [BusinessLoanPrintDocumentController::class, 'sanction_letter'])->name('business_loan.sanction_letter.pdf');
 
     Route::get('/{loan}/loan-agreement-view', [BusinessLoanPrintDocumentController::class, 'loanAgreementView'])->name('business_loan.loanAgreement-view');
-    Route::get( '/{loan}/loan-agreement',[BusinessLoanPrintDocumentController::class, 'loanAgreement'])->name('business_loan.loanAgreement.pdf');
+    Route::get('/{loan}/loan-agreement', [BusinessLoanPrintDocumentController::class, 'loanAgreement'])->name('business_loan.loanAgreement.pdf');
 
     Route::get('/disburse-letter-view/{loan}', [BusinessLoanPrintDocumentController::class, 'disburse_letter_view'])->name('business_loan.disburse_letter.view');
     Route::get('/disburse-letter/{loan}', [BusinessLoanPrintDocumentController::class, 'disburse_letter'])->name('business_loan.disburse_letter.pdf');
@@ -1843,7 +1856,7 @@ Route::group(['prefix' => 'personal'], function () {
     Route::get('/sanction-letter/{loan}', [PersonalLoanPrintDocumentController::class, 'sanction_letter'])->name('personal_loan.sanction_letter.pdf');
 
     Route::get('/{loan}/loan-agreement-view', [PersonalLoanPrintDocumentController::class, 'loanAgreementView'])->name('personal_loan.loanAgreement-view');
-    Route::get( '/{loan}/loan-agreement',[PersonalLoanPrintDocumentController::class, 'loanAgreement'])->name('personal_loan.loanAgreement.pdf');
+    Route::get('/{loan}/loan-agreement', [PersonalLoanPrintDocumentController::class, 'loanAgreement'])->name('personal_loan.loanAgreement.pdf');
 
     Route::get('/disburse-letter-view/{loan}', [PersonalLoanPrintDocumentController::class, 'disburse_letter_view'])->name('personal_loan.disburse_letter.view');
     Route::get('/disburse-letter/{loan}', [PersonalLoanPrintDocumentController::class, 'disburse_letter'])->name('personal_loan.disburse_letter.pdf');
@@ -1987,7 +2000,7 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::post('applications/{id}/submit-for-approval', [VehicalController::class, 'submitForApproval'])
         ->name('applications.submitForApproval');
 
-    
+
     //print documents view page  
     Route::get('/payout-chart-view/{loan}', [vehicleLoanPrintDocumentController::class, 'payout_chart_vehicle_appli_view'])->name('vehicle_loan.payout_chart_vehicle_loan_application_view');
     Route::get('/payout-chart/{loan}', [vehicleLoanPrintDocumentController::class, 'payout_chart_vehicle_appli'])->name('vehicle_loan.payout_chart_loan_application.pdf');
@@ -1996,7 +2009,7 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::get('/sanction-letter/{loan}', [vehicleLoanPrintDocumentController::class, 'sanction_letter'])->name('vehicle_loan.sanction_letter.pdf');
 
     Route::get('/{loan}/loan-agreement-view', [vehicleLoanPrintDocumentController::class, 'loanAgreementView'])->name('vehicle_loan.loanAgreement-view');
-    Route::get( '/{loan}/loan-agreement',[vehicleLoanPrintDocumentController::class, 'loanAgreement'])->name('vehicle_loan.loanAgreement.pdf');
+    Route::get('/{loan}/loan-agreement', [vehicleLoanPrintDocumentController::class, 'loanAgreement'])->name('vehicle_loan.loanAgreement.pdf');
 
     Route::get('/disburse-letter-view/{loan}', [VehicleLoanPrintDocumentController::class, 'disburse_letter_view'])->name('vehicle_loan.disburse_letter.view');
     Route::get('/disburse-letter/{loan}', [vehicleLoanPrintDocumentController::class, 'disburse_letter'])->name('vehicle_loan.disburse_letter.pdf');
@@ -2057,7 +2070,7 @@ Route::group(['prefix' => 'fixed_loan'], function () {
 
     Route::get('fixed_loan/applications/view/{id}', [FixedLoanController::class, 'appview'])
         ->name('fixed_loan.applications.view');
-    
+
     Route::put(
         'fixed-loan/applications/{id}/disapprove',
         [FixedLoanController::class, 'disapprove']
@@ -2505,8 +2518,8 @@ Route::prefix('ledger-group')->group(function () {
         ->name('ledger-group.ledgers');
 
     Route::delete('/{id}', [LedgerGroupController::class, 'destroy'])
-    ->name('ledger-group.destroy');
-    
+        ->name('ledger-group.destroy');
+
 });
 
 // Only ledger Tab
@@ -2519,7 +2532,7 @@ Route::group(['prefix' => 'ledger'], function () {
         ->name('ledger.add-ledger');
 
     Route::get('ledger-groups-by-type/{type}', [LedgergroupController::class, 'groupsByType'])
-    ->name('ledger.groups.by.type');
+        ->name('ledger.groups.by.type');
 
 
     Route::post('/store', [LedgergroupController::class, 'led_store'])
@@ -2529,7 +2542,7 @@ Route::group(['prefix' => 'ledger'], function () {
         ->name('ledger.update-bulkrisk');
 
     Route::get('ledger/view/{id}', [LedgergroupController::class, 'ledgerView'])
-    ->name('ledger.view');
+        ->name('ledger.view');
 
     Route::get('ledger/edit-ledger', [LedgergroupController::class, 'edit_ledgers'])
         ->name('ledger.edit-ledger');
@@ -2841,7 +2854,7 @@ Route::get('/from-i-view', [PrintDocumentsController::class, 'formiView'])
 
 Route::get('/form-i-pdf', [PrintDocumentsController::class, 'generateFormI'])
     ->name('formi.pdf');
-    Route::get('/form-i-pdf/print', [PrintDocumentsController::class, 'generateFormIPrint'])->name('generateFormIPrint');
+Route::get('/form-i-pdf/print', [PrintDocumentsController::class, 'generateFormIPrint'])->name('generateFormIPrint');
 
 Route::get('/proceding-book-view', [PrintDocumentsController::class, 'procedingBookView'])
     ->name('proceding-book.view');
@@ -2875,7 +2888,7 @@ Route::get('/e-two-view', [PrintDocumentsController::class, 'eTwoView'])
     ->name('eTwoView');
 Route::get('/e-two', [PrintDocumentsController::class, 'eTwo'])
     ->name('eTwoForm');
-    
+
 Route::get('/form-e2/print', [PrintDocumentsController::class, 'eTwoPrint'])->name('eTwoPrint');
 
 
@@ -2886,7 +2899,7 @@ Route::get('/mis-one-view', [PrintDocumentsController::class, 'MisOneView'])
     ->name('MisOneView');
 Route::get('/mis-one', [PrintDocumentsController::class, 'MisOneForm'])
     ->name('MisOneForm');
-  Route::get('/mis-one/print', [PrintDocumentsController::class, 'MisOneFormPrint'])->name('MisOneFormPrint');
+Route::get('/mis-one/print', [PrintDocumentsController::class, 'MisOneFormPrint'])->name('MisOneFormPrint');
 
 
 Route::get('/management-info-two-view', [PrintDocumentsController::class, 'MisTwoView'])
@@ -2910,7 +2923,7 @@ Route::post('/pdf-images', [LogoImgUploadController::class, 'store'])->name('pdf
 Route::get('master-settings/index', [MasterSettingController::class, 'index'])->name('master-settings.index');
 
 Route::get('master-settings/edit', [MasterSettingController::class, 'edit'])->name('master-settings.edit');
-Route::put('/master-settings',[MasterSettingController::class,'update'])->name('master-settings.update');
+Route::put('/master-settings', [MasterSettingController::class, 'update'])->name('master-settings.update');
 // Route::post('/master-settings',[MasterSettingController::class,'update'])->name('master-settings.update');
 
 Route::get('master-settings/edit-attendence', [MasterSettingController::class, 'edit_attendence'])->name('master-settings.edit-attendence');
