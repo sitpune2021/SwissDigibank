@@ -203,10 +203,52 @@
                 <td style="padding: 5px; font-size:14px;">{{$emi_payout}}</td>
             </tr>
             <tr>
+                @if ($interest_as_first)
+                <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Interest as First EMI</td>
+                <td class="py-2 px-3 border border-gray-300">
+                    {{ $interest_as_first }}
+                </td>
+                @endif
+                @if ($interest_type === 'flat_advanced' && $interest_as_emi !== 'Yes')
+                <td class="font-semibold uppercase py-2 px-3 border border-gray-300">
+                    Interest as First EMI
+                </td>
+                <td class="py-2 px-3 border border-gray-300">
+                    {{ $interest_as_first }}
+                </td>
+                @endif
+                @if ($interest_as_emi)
+                <td class="font-semibold uppercase py-2 px-3 border border-gray-300">Interest as EMI</td>
+                <td class="py-2 px-3 border border-gray-300">
+                    {{ $interest_as_emi }}
+                </td>
+                @endif
+            </tr>
+
+            @if($isReducingWithRatio)
+            <tr>
+                <td colspan="4" class="py-2 px-3 border bg-gray-50" style="padding: 5px; font-size:14px;">
+                   Loan In Ratio: Yes
+                </td>
+            </tr>
+            <tr>
+                <td class="py-2 px-3 border bg-gray-50" style="padding: 5px; font-size:14px;">
+                    First <strong>{{ $ratioFirstEmi }}</strong> EMIs will recover
+                    <strong>{{ $ratioFirstPercentage }}%</strong> amount.
+                </td>
+                <td></td>
+                <td class="py-2 px-3 border bg-gray-50" style="padding: 5px; font-size:14px;">
+                    Remaining <strong>{{ $emi_count - $ratioFirstEmi }}</strong> EMIs will recover
+                    <strong>{{ 100 - $ratioFirstPercentage }}%</strong> amount.
+                </td>
+                <td></td>
+            </tr>
+            @endif
+            <!-- <tr>
                 <td style="padding: 5px; font-size:14px;">Loan In Ratio</td>
                 <td style="padding: 5px; font-size:14px; " colspan="3"> {{$loan_in_ratio}}</td>
 
-            </tr>
+            </tr> -->
             <tr>
                 <td style="padding: 5px; font-size:14px;">APR Rate</td>
                 <td style="padding: 5px; font-size:14px; " colspan="3">{{$apr_rate}}</td>

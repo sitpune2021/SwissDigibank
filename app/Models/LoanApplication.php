@@ -49,7 +49,13 @@ class LoanApplication extends Model
         'max_loan_amount',
         'max_loan_limit',
         'maximum_approvable_amount',
-        'approved_loan_amount'
+        'approved_loan_amount',
+        'interest_as_emi',
+        'interest_as_first',
+        'ratio_enabled',
+        'ratio_first_emi',
+        'ratio_first_percentage',
+        'applied_interest',
     ];
 
 
@@ -132,5 +138,4 @@ class LoanApplication extends Model
     {
         return $this->hasOne(GoldLoanDisbursement::class, 'loan_application_id');
     }
-
 }

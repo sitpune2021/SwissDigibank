@@ -206,6 +206,241 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
         </div>
         @endforeach
         @endforeach
+
+
+
+
+        <div class="col-span-2 md:col-span-1">
+            <div class="mb-4">
+                <label for="" class="block font-medium mb-2">Transaction Date <span
+                        class="text-red-500">*</span></label>
+                <input type="text" id="date" name="transaction_date"
+                    class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" value="{{ old('transaction_date',
+    optional($charge)->transaction_date
+        ? \Carbon\Carbon::parse($charge->transaction_date)->format('d-m-Y')
+        : ''
+) }}">
+            </div>
+            <div class="mb-4">
+                <label for="" class="block font-medium mb-2">
+                    Membership Fee
+                </label>
+                <table>
+                    <tr>
+                        <td>Amount</td>
+                        <td>M. GST Rate (%)</td>
+                        <td>T. Amount</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="number" id="" name="amount"
+                                value="{{ old('amount', $charge->amount ?? $membershipAmt ?? '') }}"
+                                class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" readonly>
+                        </td>
+                        <td><input type="number" id="" name="gst_rate"
+                                value="{{ old('gst_rate', $charge->gst_rate ?? 0) }}"
+                                class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" readonly>
+                        </td>
+                        <td> <input type="number" id="membership_fee" name="membership_fee"
+                                value="{{ old('membership_fee', $charge->total_amount ?? $membershipAmt ?? '') }}"
+                                class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3"></td>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="mb-4">
+                <label for="" class="block font-medium mb-2">Net Fee to Collect <span
+                        class="text-red-500">*</span></label>
+                <input type="number" id="net_fee" name="net_fee"
+                    value="{{ old('net_fee', $charge->net_fee ?? $membershipAmt ?? '') }}"
+                    class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" readonly>
+            </div>
+            <div class="mb-4">
+                <label for="" class="block font-medium mb-2">
+                    Remarks (if any)
+                </label>
+                <input type="text" id="" name="remarks" placeholder="Enter  Remarks (if any)"
+                    value="{{ old('remarks', $charge->remarks ?? '') }}"
+                    class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
+            </div>
+            <div class="col-span-2 md:col-span-1 bg-secondary/5 p-4 rounded-lg shadow">
+
+
+
+                <!-- Pay Mode -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-start">
+                    <label class="text-sm font-medium text-gray-700 uppercase">
+                        Pay Mode <span class="text-red-500">*</span>
+                    </label>
+                    @php
+    $payMode = old('pay_mode', optional($charge)->pay_mode ?? 'cash');
+@endphp
+                    <div class="md:col-span-2 flex flex-wrap gap-4">
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="pay_mode" value="cash"  {{ $payMode == 'cash' ? 'checked' : '' }}
+                            class="text-green-500 focus:ring-green-500">
+                            <span class="text-sm text-gray-700">Cash</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="pay_mode" value="cheque" id="payMode"
+                                class="text-green-500 focus:ring-green-500" {{ $payMode == 'cheque' ? 'checked' : '' }}>
+                            <span class="text-sm text-gray-700">Cheque</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="pay_mode" value="online" id="payMode" {{ $payMode == 'online' ? 'checked' : '' }}
+                            class="text-green-500 focus:ring-green-500">
+                            <span class="text-sm text-gray-700">Online Tr.</span>
+                        </label>
+
+                    </div>
+                </div>
+
+                <!-- Cheque Fields -->
+                <div id="chequeFields" class="space-y-4 hidden">
+                    <div class="mt-3">
+                        {{-- <label class="block text-sm font-medium text-gray-700 uppercase">Bank Name <span
+                                class="text-red-500">*</span></label> --}}
+
+                        {{--
+                        <x-searchable-dropdown :items="$banks" label="Bank Name" name="pay1_bank" display-field="name"
+                            value-field="id" :selected="old('pay1_bank')" /> --}}
+                        <div id="bankDropdownWrapper" class="mt-3 ">
+
+                            <select name="bank_id" id="bank_id" class="w-full rounded-10 border px-3 py-3 text-sm">
+                                <option value="">-- Select Bank --</option>
+
+                                @foreach($banks as $id => $name)
+                                <option value="{{ $id }}" {{ old('bank_id')==$id ? 'selected' : '' }}>
+                                    {{ $name }}
+                                </option>
+                                @endforeach
+                            </select>
+
+                            @error('bank_id')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+
+                            <!-- Cheque No -->
+                            {{-- <div class="mt-3">
+                                <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
+                                <input type="text" name="cheque_no"
+                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                    placeholder="Enter Cheque No"
+                                    value="  {{ old('cheque_no', $application->cheque_no ?? '') }}">
+                            </div> --}}
+
+                            <!-- Cheque Date -->
+                            {{-- <div class="mt-3">
+                                <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
+                                <input type="text" id="cheque_date" name="cheque_date"
+                                    value="{{ old('cheque_date', isset($application->cheque_date) ? \Carbon\Carbon::parse($application->cheque_date)->format('d-m-Y') : '') }}"
+                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                            </div> --}}
+                        </div>
+                        @error('pay1_bank')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+
+                        @error('pay1_bank')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 uppercase">Cheque No.<span
+                                class="text-red-500">*</span></label>
+                        <input type="text" name="cheque_no"
+                            class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
+                            value="{{ old('cheque_no', $charge->cheque_no ?? '') }}" placeholder="Enter Cheque No.">
+                        @error('pay1_cheque_no')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 uppercase">Cheque Date <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="date4" name="cheque_date" value="{{ old('cheque_date',
+    optional($charge)->cheque_date
+        ? \Carbon\Carbon::parse($charge->cheque_date)->format('d-m-Y')
+        : ''
+) }}" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3" placeholder="DD/MM/YYYY">
+                        @error('pay1_cheque_date')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Online Transaction Fields -->
+                <div id="onlineFields" class="space-y-4 hidden">
+                    <div class="mt-3">
+                        <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Date <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="date3" name="transfer_date"
+                            class="w-full border rounded-10 px-3 py-3 dark:bg-bg3 text-sm bg-white" value="{{ old('transfer_date',
+    optional($charge)->transfer_date
+        ? \Carbon\Carbon::parse(optional($charge)->transfer_date)->format('d-m-Y')
+        : ''
+) }}" placeholder="DD/MM/YYYY">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 uppercase">UTR / Transaction No.
+                            <span class="text-red-500">*</span></label>
+                        <input type="text" name="utr_no"
+                            class="w-full border rounded-10 px-3 py-3 text-sm dark:bg-bg3 bg-white"
+                            value="{{ old('transfer_mode', optional($charge)->transfer_mode) == 'imps' ? 'checked' : '' }}"
+                            placeholder="Enter Transaction No.">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Mode <span
+                                class="text-red-500">*</span></label>
+                        <div class="flex gap-4 mt-2">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="transfer_mode" value="imps"
+                                    class="text-green-500 focus:ring-green-500" {{ old('transfer_mode',
+                                    optional($charge)->transfer_mode) == 'imps' ? 'checked' : '' }}>
+                                <span>IMPS</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="transfer_mode" value="vpa"
+                                    class="text-green-500 focus:ring-green-500" {{ old('transfer_mode',
+                                    optional($charge)->transfer_mode) == 'vpa' ? 'checked' : '' }}>
+                                <span>VPA</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="transfer_mode" value="neft_rtgs"
+                                    class="text-green-500 focus:ring-green-500" {{ old('transfer_mode',
+                                    optional($charge)->transfer_mode) == 'neft_rtgs' ? 'checked' : '' }}>
+                                <span>NEFT/RTGS</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 uppercase">Credited in Company
+                            Account <span class="text-red-500">*</span></label>
+                        <div class="flex gap-4 mt-2">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="credited" value="yes"
+                                    class="text-green-500 focus:ring-green-500" {{ old('credited',
+                                    optional($charge)->credited ? 'yes' : 'no') == 'yes' ? 'checked' : '' }}>
+                                <span>Yes</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="credited" value="no"
+                                    class="text-green-500 focus:ring-green-500" {{ old('credited',
+                                    optional($charge)->credited ? 'yes' : 'no') == 'no' ? 'checked' : '' }}>
+                                <span>No</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saving Account Fields -->
+                <div id="savingFields" class="space-y-4 hidden mt-3">
+
+                </div>
+            </div>
+        </div>
+
+
         <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
             @if (empty($show))
             <button class="btn-primary" type="submit">
@@ -386,5 +621,35 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
               applyAlphaNumValidation('dl_no', 16);
               applyAlphaNumValidation('ci_relation', 20);
           });
+</script>
+<!--payment mode1-->
+<script>
+    //payment mode1
+        const payModeRadios = document.querySelectorAll('input[name="pay_mode"]');
+        const onlineFields = document.getElementById('onlineFields');
+        const chequeFields = document.getElementById('chequeFields');
+
+        payModeRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+
+                onlineFields.classList.add('hidden');
+                chequeFields.classList.add('hidden');
+                savingFields.classList.add('hidden');
+
+                if (radio.value === 'online') onlineFields.classList.remove('hidden');
+                if (radio.value === 'cheque') chequeFields.classList.remove('hidden');
+                if (radio.value === 'saving') savingFields.classList.remove('hidden');
+            });
+        });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const membership = document.getElementById("membership_fee");
+    const net = document.getElementById("net_fee");
+
+    membership.addEventListener("input", function () {
+        net.value = this.value;
+    });
+});
 </script>
 @endpush
