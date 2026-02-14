@@ -345,7 +345,7 @@
 
           </div>
           <p id="emiRatioError" class="text-red-600 text-sm mt-1 hidden">
-              EMI Ratio total tenure se zyada nahi ho sakta
+              EMI Ratio total cannot be greater then tenure.
           </p>
 
           
