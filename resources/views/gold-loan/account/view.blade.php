@@ -145,9 +145,9 @@
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-lg uppercase font-semibold">Gold Loan - {{ $goldLoan->id }} </h1>
                 <!-- <p class="text-gray-500">
-                        <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
-                        <a href="#" class="text-gray-500 text-sm">00460</a>
-                    </p> -->
+                                    <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
+                                    <a href="#" class="text-gray-500 text-sm">00460</a>
+                                </p> -->
             </div>
         </div>
 
@@ -161,7 +161,45 @@
                     class="btn-primary uppercase px-2 py-2 rounded-10 text-sm">
                     {{ $payButtonText }}
                 </a>
+                
+                @if (in_array(strtolower($goldLoan->scheme->gold_loan_setting), ['flat_emi', 'reducing_emi']))
+                    <a href="" class="btn-primary uppercase px-2 py-2 rounded-10 text-sm">
+                        RE-SCHEDULE EMIs
+                    </a>
+                @endif
 
+                <a href="{{ route('gold-loan.account.fourcloser', $goldLoan->id) }}"
+                    class="btn-error uppercase px-2 py-2 rounded-10 text-sm">
+                    Fore CloseLoan
+                </a>
+                <div class="relative inline-block text-left">
+                    <!-- Button -->
+                    <button type="button"
+                        class="btn-secondary uppercase px-2 py-2 rounded-10 flex items-center gap-2 text-sm"
+                        onclick="toggleDropdown('debitCharges')">
+                        Debit Other Charges
+                        <i class="las la-angle-down text-xs"></i>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div id="debitCharges"
+                        class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                        <div class="py-1">
+                            <a href="{{ route('gold-loan.debitChargesList.form', $goldLoan->id) }}"
+                                class="flex items-center uppercase gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                Other Charges List
+                            </a>
+                            <a href="{{ route('gold-loan.debitOtherCharges.form', $goldLoan->id) }}"
+                                class="flex items-center uppercase gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                Debit Other Charges
+                            </a>
+                            <a href="{{ route('gold-loan.clear-due.form', $goldLoan->id) }}"
+                                class="flex items-center uppercase gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                Clear Dues
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 @if (strtolower($goldLoan->scheme->gold_loan_setting) == 'flat_advanced_interest')
                     <a href="{{ route('gold-loan.account.extension', $goldLoan->id) }}"
                         class="btn-error uppercase px-2 py-2 rounded-10 text-sm">
@@ -176,11 +214,11 @@
                 </a>
             @endif
 
-            @if (in_array(strtolower($goldLoan->scheme->gold_loan_setting), ['flat_emi', 'reducing_emi']))
+            {{-- @if (in_array(strtolower($goldLoan->scheme->gold_loan_setting), ['flat_emi', 'reducing_emi']))
                 <a href="" class="btn-primary uppercase px-2 py-2 rounded-10 text-sm">
                     RE-SCHEDULE EMIs
                 </a>
-            @endif
+            @endif --}}
 
             @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest' &&
                     strtolower($goldLoan->scheme->gold_loan_setting) != 'reducing_emi')
@@ -190,43 +228,10 @@
             @endif
 
 
-            <a href="{{ route('gold-loan.account.fourcloser', $goldLoan->id) }}"
-                class="btn-error uppercase px-2 py-2 rounded-10 text-sm">
-                Fore CloseLoan
-            </a>
-
             <a href="{{ route('gold-loan.account.linksaving', $goldLoan->id) }}"
                 class="btn-primary uppercase px-2 py-2 rounded-10 text-sm ">
                 link saving account(Auto Debit)
             </a>
-
-            <div class="relative inline-block text-left">
-                <!-- Button -->
-                <button type="button" class="btn-secondary uppercase px-2 py-2 rounded-10 flex items-center gap-2 text-sm"
-                    onclick="toggleDropdown('debitCharges')">
-                    Debit Other Charges
-                    <i class="las la-angle-down text-xs"></i>
-                </button>
-
-                <!-- Dropdown Menu -->
-                <div id="debitCharges"
-                    class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-                    <div class="py-1">
-                        <a href="{{ route('gold-loan.debitChargesList.form', $goldLoan->id) }}"
-                            class="flex items-center uppercase gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            Other Charges List
-                        </a>
-                        <a href="{{ route('gold-loan.debitOtherCharges.form', $goldLoan->id) }}"
-                            class="flex items-center uppercase gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            Debit Other Charges
-                        </a>
-                        <a href="{{ route('gold-loan.clear-due.form', $goldLoan->id) }}"
-                            class="flex items-center uppercase gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            Clear Dues
-                        </a>
-                    </div>
-                </div>
-            </div>
 
             <form id="remove-account-form-{{ $goldLoan->id }}" action="{{ route('goldloan.remove', $goldLoan->id) }}"
                 method="POST" class="inline">
