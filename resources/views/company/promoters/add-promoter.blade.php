@@ -215,8 +215,7 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
                 <label for="" class="block font-medium mb-2">Transaction Date <span
                         class="text-red-500">*</span></label>
                 <input type="text" id="date" name="transaction_date"
-                    class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3"
-                  value="{{ old('transaction_date',
+                    class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" value="{{ old('transaction_date',
     optional($charge)->transaction_date
         ? \Carbon\Carbon::parse($charge->transaction_date)->format('d-m-Y')
         : ''
@@ -234,10 +233,12 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
                     </tr>
                     <tr>
                         <td>
-                            <input type="number" id="" name="amount" value="{{ old('amount', $charge->amount ?? $membershipAmt ?? '') }}"
+                            <input type="number" id="" name="amount"
+                                value="{{ old('amount', $charge->amount ?? $membershipAmt ?? '') }}"
                                 class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" readonly>
                         </td>
-                        <td><input type="number" id="" name="gst_rate" value="{{ old('gst_rate', $charge->gst_rate ?? 0) }}"
+                        <td><input type="number" id="" name="gst_rate"
+                                value="{{ old('gst_rate', $charge->gst_rate ?? 0) }}"
                                 class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" readonly>
                         </td>
                         <td> <input type="number" id="membership_fee" name="membership_fee"
@@ -250,14 +251,16 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
             <div class="mb-4">
                 <label for="" class="block font-medium mb-2">Net Fee to Collect <span
                         class="text-red-500">*</span></label>
-                <input type="number" id="net_fee" name="net_fee" value="{{ old('net_fee', $charge->net_fee ?? $membershipAmt ?? '') }}"
+                <input type="number" id="net_fee" name="net_fee"
+                    value="{{ old('net_fee', $charge->net_fee ?? $membershipAmt ?? '') }}"
                     class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" readonly>
             </div>
             <div class="mb-4">
                 <label for="" class="block font-medium mb-2">
                     Remarks (if any)
                 </label>
-                <input type="text" id="" name="remarks" placeholder="Enter  Remarks (if any)" value="{{ old('remarks', $charge->remarks) }}"
+                <input type="text" id="" name="remarks" placeholder="Enter  Remarks (if any)"
+                    value="{{ old('remarks', $charge->remarks ?? '') }}"
                     class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
             </div>
             <div class="col-span-2 md:col-span-1 bg-secondary/5 p-4 rounded-lg shadow">
@@ -269,20 +272,23 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
                     <label class="text-sm font-medium text-gray-700 uppercase">
                         Pay Mode <span class="text-red-500">*</span>
                     </label>
+                    @php
+    $payMode = old('pay_mode', optional($charge)->pay_mode ?? 'cash');
+@endphp
                     <div class="md:col-span-2 flex flex-wrap gap-4">
                         <label class="flex items-center gap-2">
-                            <input type="radio" name="pay_mode" id="payMode" value="cash" checked {{ old('pay_mode', $charge->pay_mode) == 'cash' ? 'checked' : '' }}
-                                class="text-green-500 focus:ring-green-500">
-                            <span class="text-sm text-gray-700"   >Cash</span>
+                            <input type="radio" name="pay_mode" value="cash"  {{ $payMode == 'cash' ? 'checked' : '' }}
+                            class="text-green-500 focus:ring-green-500">
+                            <span class="text-sm text-gray-700">Cash</span>
                         </label>
                         <label class="flex items-center gap-2">
                             <input type="radio" name="pay_mode" value="cheque" id="payMode"
-                                class="text-green-500 focus:ring-green-500" {{ old('pay_mode', $charge->pay_mode) == 'cheque' ? 'checked' : '' }}>
+                                class="text-green-500 focus:ring-green-500" {{ $payMode == 'cheque' ? 'checked' : '' }}>
                             <span class="text-sm text-gray-700">Cheque</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input type="radio" name="pay_mode" value="online" id="payMode"  {{ old('pay_mode', $charge->pay_mode) == 'online' ? 'checked' : '' }}
-                                class="text-green-500 focus:ring-green-500">
+                            <input type="radio" name="pay_mode" value="online" id="payMode" {{ $payMode == 'online' ? 'checked' : '' }}
+                            class="text-green-500 focus:ring-green-500">
                             <span class="text-sm text-gray-700">Online Tr.</span>
                         </label>
 
@@ -343,8 +349,8 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
                         <label class="block text-sm font-medium text-gray-700 uppercase">Cheque No.<span
                                 class="text-red-500">*</span></label>
                         <input type="text" name="cheque_no"
-                            class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"  value="{{ old('cheque_no', $charge->cheque_no) }}"
-                            placeholder="Enter Cheque No.">
+                            class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
+                            value="{{ old('cheque_no', $charge->cheque_no ?? '') }}" placeholder="Enter Cheque No.">
                         @error('pay1_cheque_no')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -353,11 +359,10 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
                         <label class="block text-sm font-medium text-gray-700 uppercase">Cheque Date <span
                                 class="text-red-500">*</span></label>
                         <input type="text" id="date4" name="cheque_date" value="{{ old('cheque_date',
-           $charge->cheque_date
-             ? \Carbon\Carbon::parse($charge->cheque_date)->format('d-m-Y')
-             : '') }}"
-                            class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
-                            placeholder="DD/MM/YYYY">
+    optional($charge)->cheque_date
+        ? \Carbon\Carbon::parse($charge->cheque_date)->format('d-m-Y')
+        : ''
+) }}" class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3" placeholder="DD/MM/YYYY">
                         @error('pay1_cheque_date')
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
@@ -371,16 +376,17 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
                                 class="text-red-500">*</span></label>
                         <input type="text" id="date3" name="transfer_date"
                             class="w-full border rounded-10 px-3 py-3 dark:bg-bg3 text-sm bg-white" value="{{ old('transfer_date',
-     $charge->transfer_date
-       ? \Carbon\Carbon::parse($charge->transfer_date)->format('d-m-Y')
-       : '') }}"
-                            placeholder="DD/MM/YYYY">
+    optional($charge)->transfer_date
+        ? \Carbon\Carbon::parse(optional($charge)->transfer_date)->format('d-m-Y')
+        : ''
+) }}" placeholder="DD/MM/YYYY">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 uppercase">UTR / Transaction No.
                             <span class="text-red-500">*</span></label>
                         <input type="text" name="utr_no"
-                            class="w-full border rounded-10 px-3 py-3 text-sm dark:bg-bg3 bg-white" value="{{ old('utr_no', $charge->utr_no) }}"
+                            class="w-full border rounded-10 px-3 py-3 text-sm dark:bg-bg3 bg-white"
+                            value="{{ old('transfer_mode', optional($charge)->transfer_mode) == 'imps' ? 'checked' : '' }}"
                             placeholder="Enter Transaction No.">
                     </div>
                     <div>
@@ -389,20 +395,20 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
                         <div class="flex gap-4 mt-2">
                             <label class="flex items-center gap-2">
                                 <input type="radio" name="transfer_mode" value="imps"
-                                    class="text-green-500 focus:ring-green-500"
-                                    {{ old('transfer_mode', $charge->transfer_mode) == 'imps' ? 'checked' : '' }}>
+                                    class="text-green-500 focus:ring-green-500" {{ old('transfer_mode',
+                                    optional($charge)->transfer_mode) == 'imps' ? 'checked' : '' }}>
                                 <span>IMPS</span>
                             </label>
                             <label class="flex items-center gap-2">
                                 <input type="radio" name="transfer_mode" value="vpa"
-                                    class="text-green-500 focus:ring-green-500"
-                                    {{ old('transfer_mode', $charge->transfer_mode) == 'vpa' ? 'checked' : '' }}>
+                                    class="text-green-500 focus:ring-green-500" {{ old('transfer_mode',
+                                    optional($charge)->transfer_mode) == 'vpa' ? 'checked' : '' }}>
                                 <span>VPA</span>
                             </label>
                             <label class="flex items-center gap-2">
                                 <input type="radio" name="transfer_mode" value="neft_rtgs"
-                                    class="text-green-500 focus:ring-green-500"
-                                    {{ old('transfer_mode', $charge->transfer_mode) == 'neft_rtgs' ? 'checked' : '' }}>
+                                    class="text-green-500 focus:ring-green-500" {{ old('transfer_mode',
+                                    optional($charge)->transfer_mode) == 'neft_rtgs' ? 'checked' : '' }}>
                                 <span>NEFT/RTGS</span>
                             </label>
                         </div>
@@ -413,14 +419,14 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
                         <div class="flex gap-4 mt-2">
                             <label class="flex items-center gap-2">
                                 <input type="radio" name="credited" value="yes"
-                                    class="text-green-500 focus:ring-green-500"
-                                    {{ old('credited', $charge->credited ? 'yes' : 'no') == 'yes' ? 'checked' : '' }}>
+                                    class="text-green-500 focus:ring-green-500" {{ old('credited',
+                                    optional($charge)->credited ? 'yes' : 'no') == 'yes' ? 'checked' : '' }}>
                                 <span>Yes</span>
                             </label>
                             <label class="flex items-center gap-2">
                                 <input type="radio" name="credited" value="no"
-                                    class="text-green-500 focus:ring-green-500"
-                                     {{ old('credited', $charge->credited ? 'yes' : 'no') == 'no' ? 'checked' : '' }}>
+                                    class="text-green-500 focus:ring-green-500" {{ old('credited',
+                                    optional($charge)->credited ? 'yes' : 'no') == 'no' ? 'checked' : '' }}>
                                 <span>No</span>
                             </label>
                         </div>

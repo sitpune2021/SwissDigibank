@@ -101,7 +101,8 @@ class PromotorController extends Controller
             $membershipAmt = ($settings && $settings->membership_fee_enabled == 1)
                 ? $settings->membership_fee
                 : null;
-            return view('company.promoters.add-promoter', compact('route', 'dynamicOptions', 'method', 'promoter', 'membersData', 'maritalStatuses', 'banks', 'membershipAmt'));
+                 $charge = null;
+            return view('company.promoters.add-promoter', compact('route', 'dynamicOptions', 'method', 'promoter', 'membersData', 'maritalStatuses', 'banks', 'membershipAmt','charge'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
