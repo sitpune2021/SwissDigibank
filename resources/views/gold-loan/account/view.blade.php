@@ -113,27 +113,6 @@
     </style>
 
     @if (session('success'))
-        {{-- <div 
-            id="successMessage" 
-            class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
-        >
-            {{ session('success') }}
-        </div>
-
-        <script>
-            // Auto hide after 30 seconds (30000 ms)
-            setTimeout(() => {
-                const msg = document.getElementById('successMessage');
-                if (msg) {
-                    msg.style.opacity = '0';
-                    setTimeout(() => msg.remove(), 500); // smooth fade-out
-                }
-            }, 30000);
-        </script> --}}
-
-        {{-- @if (session('success')) --}}
-
-
         {{-- //alert msg --}}
         <div class="w-44 mb-5 flex justify-end">
             <x-alert />
@@ -145,9 +124,9 @@
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-lg uppercase font-semibold">Gold Loan - {{ $goldLoan->id }} </h1>
                 <!-- <p class="text-gray-500">
-                                    <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
-                                    <a href="#" class="text-gray-500 text-sm">00460</a>
-                                </p> -->
+                                                    <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
+                                                    <a href="#" class="text-gray-500 text-sm">00460</a>
+                                                </p> -->
             </div>
         </div>
 
@@ -161,7 +140,7 @@
                     class="btn-primary uppercase px-2 py-2 rounded-10 text-sm">
                     {{ $payButtonText }}
                 </a>
-                
+
                 @if (in_array(strtolower($goldLoan->scheme->gold_loan_setting), ['flat_emi', 'reducing_emi']))
                     <a href="" class="btn-primary uppercase px-2 py-2 rounded-10 text-sm">
                         RE-SCHEDULE EMIs
@@ -172,6 +151,11 @@
                     class="btn-error uppercase px-2 py-2 rounded-10 text-sm">
                     Fore CloseLoan
                 </a>
+                <input type="hidden" name="confirm" value="1">
+                <button type="button" onclick="confirmRemove({{ $goldLoan->id }})"
+                    class="btn-error uppercase px-2 py-2 rounded-10 text-sm">
+                    Remove Account
+                </button>
                 <div class="relative inline-block text-left">
                     <!-- Button -->
                     <button type="button"
@@ -237,11 +221,11 @@
                 method="POST" class="inline">
                 @csrf
                 {{-- Optional: add a hidden input to indicate reason or confirm flag --}}
-                <input type="hidden" name="confirm" value="1">
+                {{-- <input type="hidden" name="confirm" value="1">
                 <button type="button" onclick="confirmRemove({{ $goldLoan->id }})"
                     class="btn-error uppercase px-2 py-2 rounded-10 text-sm">
                     Remove Account
-                </button>
+                </button> --}}
             </form>
 
             <div class="relative inline-block text-left">
@@ -540,7 +524,9 @@
                                     <tr class="border-b">
                                         <td class="whitespace-nowrap font-semibold text-md px-4 py-2">T. DUE</td>
                                         <td class="px-4 py-2 ">
-                                            <span class="">0.00</span>
+                                            <span class="font-semibold text-red-600">
+                                                ₹ {{ number_format($tDueAmount, 2) }}
+                                            </span>
                                         </td>
                                     </tr>
                                     <tr class="border-b">
@@ -1182,7 +1168,22 @@
                                                     {{ $emi['processed'] }}
                                                 </span>
                                             </td>
+                                            <td class="p-2 border">
+                                                @if ($emi['status'] === 'PAID')
+                                                    <a href="{{ route('loan.emi_receipt.view', [$goldLoan->id, $emi['emi_no']]) }}"
+                                                     class="btn-primary text-white px-3 py-1 rounded ">
+                                                        Print
+                                                    </a>
+                                                @elseif ($showProcessButton)
+                                                    <button class="process-btn btn-primary px-3 py-1 rounded"
+                                                        data-emi="{{ $emi['emi_no'] }}">
+                                                        PROCESS
+                                                    </button>
+                                                @endif
+                                            </td>
 
+
+                                            {{-- 
                                             <!-- ACTION BUTTON -->
                                             <td class="p-2 border">
                                                 @if ($showProcessButton)
@@ -1191,7 +1192,7 @@
                                                         PROCESS
                                                     </button>
                                                 @endif
-                                            </td>
+                                            </td> --}}
 
                                         </tr>
                                     @endforeach

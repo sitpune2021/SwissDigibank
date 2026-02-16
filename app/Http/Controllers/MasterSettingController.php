@@ -65,7 +65,10 @@ if ($record) {
         'data' => $record->toArray()
     ]);
 
-    return back()->with('success','Settings Updated Successfully');
+    // return back()->with('success','Settings Updated Successfully');
+    return redirect()
+        ->route('master-settings.index')
+        ->with('success', 'Settings Updated Successfully');
 }
    public function edit_attendence(){
      return view('master-settings.edit-attendence');
