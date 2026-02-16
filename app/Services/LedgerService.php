@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use App\Models\Ledger;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\JournalEntryLine;
 
 class LedgerService
 {
@@ -794,6 +795,81 @@ class LedgerService
         }
 
         return [$loans->count(), $closing];
+    }
+
+    public function calculateNetProfit($tillDate = null)
+    {
+        $ledgers = Ledger::all();
+
+        $totalRevenue = 0;
+        $totalExpense = 0;
+
+        foreach ($ledgers as $ledger) {
+
+            [$acc, $balance] =
+                $this->calculateLedgerBalance($ledger->code, $tillDate);
+
+            if ($ledger->type == 'Revenue') {
+                $totalRevenue += $balance;
+            }
+
+            if ($ledger->type == 'Expense') {
+                $totalExpense += $balance;
+            }
+        }
+
+        return [0, $totalRevenue - $totalExpense];
+    }
+
+    public function generateTrialBalance($fromDate, $toDate)
+    {
+        $ledgers = Ledger::with('group')->get();
+
+        $result = [];
+
+        foreach ($ledgers as $ledger) {
+
+            // Opening balance (before fromDate)
+            $openingDebit = JournalEntryLine::where('ledger_code', $ledger->code)
+                ->whereDate('created_at', '<', $fromDate)
+                ->sum('debit');
+
+            $openingCredit = JournalEntryLine::where('ledger_code', $ledger->code)
+                ->whereDate('created_at', '<', $fromDate)
+                ->sum('credit');
+
+            // Period transactions
+            $periodDebit = JournalEntryLine::where('ledger_code', $ledger->code)
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->sum('debit');
+
+            $periodCredit = JournalEntryLine::where('ledger_code', $ledger->code)
+                ->whereBetween('created_at', [$fromDate, $toDate])
+                ->sum('credit');
+
+            // Opening logic by nature
+            if (in_array($ledger->type, ['Asset','Expense'])) {
+                $opening = $ledger->opening_balance + $openingDebit - $openingCredit;
+                $closing = $opening + $periodDebit - $periodCredit;
+            } else {
+                $opening = $ledger->opening_balance + $openingCredit - $openingDebit;
+                $closing = $opening + $periodCredit - $periodDebit;
+            }
+
+            $result[] = [
+                'code' => $ledger->code,
+                'name' => $ledger->display_name,
+                'system_name' => $ledger->name,
+                'group' => $ledger->group->name ?? '',
+                'type' => $ledger->type,
+                'opening' => $opening,
+                'debit' => $periodDebit,
+                'credit' => $periodCredit,
+                'balance' => $closing
+            ];
+        }
+
+        return $result;
     }
 
 

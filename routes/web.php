@@ -2560,6 +2560,14 @@ Route::group(['prefix' => 'profit-loss'], function () {
 
 });
 
+Route::get('/balance-sheet', [LedgergroupController::class, 'balance_sheet'])
+    ->name('balance.sheet');
+
+Route::get('/trial-balance',
+    [LedgergroupController::class, 'trial_balance']
+)->name('trial.balance');
+
+
 ////////////////////////////////////    Account Section tab End     /////////////////////////////////////////////
 
 

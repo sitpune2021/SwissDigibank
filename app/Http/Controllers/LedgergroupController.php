@@ -1109,6 +1109,116 @@ class LedgergroupController extends Controller
             'netPrevious'
         ));
     }
+    
+    public function balance_sheet()
+    {
+        $today = Carbon::today();
 
+        $ledgers = Ledger::with('group')->get();
+
+        $assets = [];
+        $liabilities = [];
+        $equities = [];
+
+        $totalAssets = 0;
+        $totalLiabilities = 0;
+        $totalEquity = 0;
+
+        foreach ($ledgers as $ledger) {
+
+            [$acc, $balance] =
+                $this->ledgerService->calculateLedgerBalance($ledger->code, $today);
+
+            $balance = $balance ?: 0;
+
+            if ($ledger->type == 'Asset') {
+
+                $assets[] = [
+                    'name' => $ledger->display_name,
+                    'amount' => $balance
+                ];
+
+                $totalAssets += $balance;
+            }
+
+            if ($ledger->type == 'Liability') {
+
+                $liabilities[] = [
+                    'name' => $ledger->display_name,
+                    'amount' => $balance
+                ];
+
+                $totalLiabilities += $balance;
+            }
+
+            if ($ledger->type == 'Equity') {
+
+                $equities[] = [
+                    'name' => $ledger->display_name,
+                    'amount' => $balance
+                ];
+
+                $totalEquity += $balance;
+            }
+        }
+
+        /*
+        |------------------------------------------------------
+        | Add Current Year Profit to Equity
+        |------------------------------------------------------
+        */
+
+        [$profitAcc, $netProfit] =
+            $this->ledgerService->calculateNetProfit($today);
+
+        $totalEquity += $netProfit;
+
+        $difference = $totalAssets - ($totalLiabilities + $totalEquity);
+
+        return view('menu-accounts.balance-sheet.index', compact(
+            'assets',
+            'liabilities',
+            'equities',
+            'totalAssets',
+            'totalLiabilities',
+            'totalEquity',
+            'netProfit',
+            'difference',
+            'today'
+        ));
+    }
+
+    public function trial_balance(Request $request)
+    {
+        $from = $request->from ?? now()->startOfMonth();
+        $to   = $request->to ?? now();
+
+        $type = $request->type ?? 'ALL';
+        $search = $request->search ?? null;
+
+        $data = $this->ledgerService->generateTrialBalance($from, $to);
+
+        // Filter by type
+        if ($type !== 'ALL') {
+            $data = collect($data)->where('type', $type)->values();
+        }
+
+        // Search filter
+        if ($search) {
+            $data = collect($data)->filter(function ($item) use ($search) {
+                return str_contains(strtolower($item['name']), strtolower($search))
+                    || str_contains(strtolower($item['code']), strtolower($search));
+            })->values();
+        }
+
+        $totalDebit = collect($data)->sum('debit');
+        $totalCredit = collect($data)->sum('credit');
+
+        return view('menu-accounts.trial-balance.index', compact(
+            'data','from','to','type','search',
+            'totalDebit','totalCredit'
+        ));
+    }
+    
 
 }
