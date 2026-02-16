@@ -152,15 +152,15 @@
                                     <div class="flex grid col-span-1">
                                         <div class="flex gap-3">
                                             <label class="flex gap-2">
-                                                <input type="radio" name="stamp_payment_mode" value="cash" checked>
+                                                <input type="radio" name="processing_fee_mode" value="cash" checked>
                                                 <p>Cash</p>
                                             </label>
                                             <label class="flex gap-2">
-                                                <input type="radio" name="stamp_payment_mode" value="cheque">
+                                                <input type="radio" name="processing_fee_mode" value="cheque">
                                                 <p>Cheque</p>
                                             </label>
                                             <label class="flex gap-2">
-                                                <input type="radio" name="stamp_payment_mode" value="online">
+                                                <input type="radio" name="processing_fee_mode" value="online">
                                                 <p>Online Transfer</p>
                                             </label>
                                         </div>
@@ -321,15 +321,15 @@
                                     <div class="flex grid col-span-1">
                                         <div class="flex gap-3">
                                             <label class="flex gap-2">
-                                                <input type="radio" name="payment_mode" value="cash" checked>
+                                                <input type="radio" name="stamp_payment_mode" value="cash" checked>
                                                 <p>Cash</p>
                                             </label>
                                             <label class="flex gap-2">
-                                                <input type="radio" name="payment_mode" value="cheque">
+                                                <input type="radio" name="stamp_payment_mode" value="cheque">
                                                 <p>Cheque</p>
                                             </label>
                                             <label class="flex gap-2">
-                                                <input type="radio" name="payment_mode" value="online">
+                                                <input type="radio" name="stamp_payment_mode" value="online">
                                                 <p>Online Transfer</p>
                                             </label>
                                         </div>
@@ -337,9 +337,9 @@
                                     </div>
 
                                     <!-- Cheque Fields -->
-                                    <div id="p_cheque_fields" style="display:none; margin-top:10px;">
+                                    <div id="stamp_cheque_fields" style="display:none; margin-top:10px;">
                                         <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
-                                        <select id="bank_id" name="bank_id"
+                                        <select id="bank_id" name="stamp_bank_id"
                                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                             <option value="">-- Select Bank --</option>
                                             @foreach ($banks as $id => $name)
@@ -349,27 +349,27 @@
 
                                         <div class="mt-3">
                                             <label class="block text-sm font-medium">Cheque No.</label>
-                                            <input type="text" name="cheque_no"
+                                            <input type="text" name="stamp_cheque_no"
                                                 class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                                 placeholder="Enter Cheque No">
                                         </div>
 
                                         <div class="mt-3">
                                             <label class="block text-sm font-medium">Cheque Date</label>
-                                            <input type="text" name="cheque_date"
+                                            <input type="text" name="stamp_cheque_date"
                                                 value="{{ old('cheque_date', date('d-m-Y')) }}"
                                                 class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                         </div>
                                     </div>
 
                                     <!-- Online Fields -->
-                                    <div id="p_online_fields" style="display:none; margin-top:10px;">
+                                    <div id="stamp_online_fields" style="display:none; margin-top:10px;">
                                         <div class="mt-3">
                                             <label class="block text-sm font-medium">
                                                 Transfer Date <span class="text-red-500">*</span>
                                             </label>
-                                            <input type="text" name="transfer_date"
-                                                value="{{ old('transfer_date', date('d-m-Y')) }}"
+                                            <input type="text" name="stamp_transfer_date"
+                                                value="{{ old('stamp_transfer_date', date('d-m-Y')) }}"
                                                 class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                         </div>
 
@@ -377,7 +377,7 @@
                                             <label class="block text-sm font-medium">
                                                 UTR / Transaction No. <span class="text-red-500">*</span>
                                             </label>
-                                            <input type="text" name="utr_no" placeholder="Enter Transaction No."
+                                            <input type="text" name="stamp_utr_no" placeholder="Enter Transaction No."
                                                 class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                         </div>
 
@@ -387,15 +387,15 @@
                                             </label>
                                             <div class="flex gap-4 mt-2">
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="transfer_mode" value="imps">
+                                                    <input type="radio" name="stamp_transfer_mode" value="imps">
                                                     <span>IMPS</span>
                                                 </label>
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="transfer_mode" value="vpa">
+                                                    <input type="radio" name="stamp_transfer_mode" value="vpa">
                                                     <span>VPA</span>
                                                 </label>
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="transfer_mode" value="neft_rtgs">
+                                                    <input type="radio" name="stamp_transfer_mode" value="neft_rtgs">
                                                     <span>NEFT/RTGS</span>
                                                 </label>
                                             </div>
@@ -406,11 +406,11 @@
                                             </label>
                                             <div class="flex gap-4 mt-2">
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="credited_account" value="imps">
+                                                    <input type="radio" name="stamp_credited_account" value="yes">
                                                     <span>yes</span>
                                                 </label>
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="credited_account" value="vpa">
+                                                    <input type="radio" name="stamp_credited_account" value="no">
                                                     <span>no</span>
                                                 </label>
 
@@ -476,7 +476,7 @@
                             </table>
                             {{-- Collect Insurance Fee Separately  --}}
                             <div class="flex items-center gap-1 mt-3">
-                                <input type="checkbox" name="insurance_fee" id="insurance_fee"
+                                <input type="checkbox" name="collect_insurance_fee" id="collect_insurance_fee"
                                     data-target="insuranceWrapper" class="block toggle-paymode">
                                 <span class="block">Collect Insurance Fee Separately</span>
                             </div>
@@ -503,9 +503,9 @@
                                     </div>
 
                                     <!-- Cheque Fields -->
-                                    <div id="p_cheque_fields" style="display:none; margin-top:10px;">
+                                    <div id="insurance_cheque_fields" style="display:none; margin-top:10px;">
                                         <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
-                                        <select id="bank_id" name="bank_id"
+                                        <select id="bank_id" name="insurance_bank_id"
                                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                             <option value="">-- Select Bank --</option>
                                             @foreach ($banks as $id => $name)
@@ -515,27 +515,27 @@
 
                                         <div class="mt-3">
                                             <label class="block text-sm font-medium">Cheque No.</label>
-                                            <input type="text" name="cheque_no"
+                                            <input type="text" name="insurance_cheque_no"
                                                 class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                                 placeholder="Enter Cheque No">
                                         </div>
 
                                         <div class="mt-3">
                                             <label class="block text-sm font-medium">Cheque Date</label>
-                                            <input type="text" name="cheque_date"
-                                                value="{{ old('p_cheque_date', date('d-m-Y')) }}"
+                                            <input type="text" name="insurance_cheque_date"
+                                                value="{{ old('insurance_cheque_date', date('d-m-Y')) }}"
                                                 class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                         </div>
                                     </div>
 
                                     <!-- Online Fields -->
-                                    <div id="p_online_fields" style="display:none; margin-top:10px;">
+                                    <div id="insurance_online_fields" style="display:none; margin-top:10px;">
                                         <div class="mt-3">
                                             <label class="block text-sm font-medium">
                                                 Transfer Date <span class="text-red-500">*</span>
                                             </label>
-                                            <input type="text" name="transfer_date"
-                                                value="{{ old('transfer_date', date('d-m-Y')) }}"
+                                            <input type="text" name="insurance_transfer_date"
+                                                value="{{ old('insurance_transfer_date', date('d-m-Y')) }}"
                                                 class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                         </div>
 
@@ -543,7 +543,7 @@
                                             <label class="block text-sm font-medium">
                                                 UTR / Transaction No. <span class="text-red-500">*</span>
                                             </label>
-                                            <input type="text" name="utr_no" placeholder="Enter Transaction No."
+                                            <input type="text" name="insurance_utr_no" placeholder="Enter Transaction No."
                                                 class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                         </div>
 
@@ -553,15 +553,15 @@
                                             </label>
                                             <div class="flex gap-4 mt-2">
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="transfer_mode" value="imps">
+                                                    <input type="radio" name="insurance_transfer_mode" value="imps">
                                                     <span>IMPS</span>
                                                 </label>
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="transfer_mode" value="vpa">
+                                                    <input type="radio" name="insurance_transfer_mode" value="vpa">
                                                     <span>VPA</span>
                                                 </label>
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="transfer_mode" value="neft_rtgs">
+                                                    <input type="radio" name="insurance_transfer_mode" value="neft_rtgs">
                                                     <span>NEFT/RTGS</span>
                                                 </label>
                                             </div>
@@ -572,11 +572,11 @@
                                             </label>
                                             <div class="flex gap-4 mt-2">
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="credited_account" value="imps">
+                                                    <input type="radio" name="insurance_credited_account" value="yes">
                                                     <span>yes</span>
                                                 </label>
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="credited_account" value="vpa">
+                                                    <input type="radio" name="insurance_credited_account" value="no">
                                                     <span>no</span>
                                                 </label>
 

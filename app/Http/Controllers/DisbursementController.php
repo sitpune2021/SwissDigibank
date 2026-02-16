@@ -42,6 +42,236 @@ class DisbursementController extends Controller
 
         return redirect()->back()->with('success', 'Loan has been cancelled successfully.');
     }
+    // public function store(Request $request)
+    // {
+    //     try {
+
+    //         Log::info('--- Loan Disbursement Store Started ---', [
+    //             'user_id' => Auth::id(),
+    //             'input' => $request->all(),
+    //         ]);
+
+    //         // Basic Validation
+    //         $validated = $request->validate([
+    //             'loan_application_id' => 'required|exists:loan_applications,id',
+    //             'disbursal_date' => 'required|date_format:d-m-Y',
+    //             'emi_date' => 'required|date_format:d-m-Y',
+    //             'loan_amount' => 'required|numeric|min:0.01',
+    //             'final_amount' => 'required|numeric|min:0.01',
+    //         ]);
+
+    //         // Check Already Disbursed
+    //         $existing = GoldLoanDisbursement::where(
+    //             'loan_application_id',
+    //             $request->loan_application_id
+    //         )->first();
+
+    //         if ($existing) {
+    //             return back()
+    //                 ->withInput()
+    //                 ->withErrors(['loan_application_id' => 'This loan application is already disbursed.']);
+    //         }
+
+    //         // Date Conversion
+    //         $disbursalDate = Carbon::createFromFormat(
+    //             'd-m-Y',
+    //             $request->disbursal_date
+    //         )->format('Y-m-d');
+
+    //         $emiDate = Carbon::createFromFormat(
+    //             'd-m-Y',
+    //             $request->emi_date
+    //         )->format('Y-m-d');
+
+    //         DB::beginTransaction();
+
+    //         // Create Disbursement
+    //         $disbursement = GoldLoanDisbursement::create([
+
+    //             'loan_application_id' => $request->loan_application_id,
+    //             'disbursal_date' => $disbursalDate,
+    //             'emi_date' => $emiDate,
+    //             'loan_amount' => $request->loan_amount,
+    //             'final_amount' => $request->final_amount,
+
+    //             // Processing Fee
+    //             'processing_fee' => $request->processing_fee ?? 0,
+    //             'gst_percent' => $request->gst_percent ?? 0,
+    //             'sgst' => $request->sgst ?? 0,
+    //             'cgst' => $request->cgst ?? 0,
+    //             'igst' => $request->igst ?? 0,
+    //             'processing_fee_total' => $request->processing_fee_total ?? 0,
+
+    //             'collect_processing_fee' => $request->collect_fee ? 1 : 0,
+    //             'processing_fee_mode' => $request->processing_fee_mode,
+    //             'p_bank_id' => $request->p_bank_id,
+    //             'p_cheque_no' => $request->p_cheque_no,
+    //             'p_cheque_date' => $request->p_cheque_date
+    //                 ? Carbon::createFromFormat('d-m-Y', $request->p_cheque_date)->format('Y-m-d')
+    //                 : null,
+    //             'p_transfer_date' => $request->p_transfer_date
+    //                 ? Carbon::createFromFormat('d-m-Y', $request->p_transfer_date)->format('Y-m-d')
+    //                 : null,
+    //             'p_utr_no' => $request->p_utr_no,
+    //             'p_transfer_mode' => $request->p_transfer_mode,
+    //             'processing_credited_account' =>
+    //             $request->processing_credited_account === 'yes' ? 1 : 0,
+
+    //             // Stamp Duty
+    //             'stamp_duty_fee' => $request->stamp_duty_fee ?? 0,
+    //             'stamp_duty_total' => $request->stamp_duty_total ?? 0,
+
+    //             // Insurance
+    //             'insurance_fee' => $request->insurance_fee ?? 0,
+    //             'insurance_total' => $request->insurance_total ?? 0,
+
+    //             // Advance Interest
+    //             'advance_interest' => $request->advance_interest ?? 0,
+
+    //             // Disbursement Mode 1
+    //             'disburse_mode1' => $request->D_mode_1 ?? 0,   // OLD
+    //             'payment_mode1'  => $request->payment_mode ?? 'cash', // OLD
+
+    //             'disburse_mode1_amount' => $request->D_mode_1,
+    //             'disburse_mode1_type' => $request->payment_mode,
+    //             'bank_id1' => $request->bank_id,
+    //             'cheque_no1' => $request->cheque_no,
+    //             'cheque_date1' => $request->cheque_date
+    //                 ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d')
+    //                 : null,
+    //             'transfer_date1' => $request->transfer_date
+    //                 ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
+    //                 : null,
+    //             'utr_no1' => $request->utr_no,
+    //             'transfer_mode1' => $request->transfer_mode,
+    //             'saving_acc1' => $request->saving,
+
+
+    //             // Disbursement Mode 2
+    //             'disburse_mode2' => $request->D_mode_2 ?? 0,   // ✅ ADD THIS
+    //             'payment_mode2'  => $request->payment_mode2 ?? 'cash',
+    //             'disburse_mode2_amount' => $request->D_mode_2,
+    //             'disburse_mode2_type' => $request->payment_mode2,
+    //             'bank_id2' => $request->bank_id2,
+    //             'cheque_no2' => $request->cheque_no2,
+    //             'cheque_date2' => $request->cheque_date2
+    //                 ? Carbon::createFromFormat('d-m-Y', $request->cheque_date2)->format('Y-m-d')
+    //                 : null,
+    //             'transfer_date2' => $request->transfer_date2
+    //                 ? Carbon::createFromFormat('d-m-Y', $request->transfer_date2)->format('Y-m-d')
+    //                 : null,
+    //             'utr_no2' => $request->utr_no2,
+    //             'transfer_mode2' => $request->transfer_mode2,
+    //             'saving_acc2' => $request->saving2,
+    //         ]);
+
+    //         // Update Loan Status
+    //         DB::table('loan_applications')
+    //             ->where('id', $request->loan_application_id)
+    //             ->update(['status' => 2]);
+
+    //         // Store Stamp Duty Fee Mode
+
+    //         if ($request->has('stamp_payment_mode')) {
+
+    //             DB::table('gold_loan_disbursement_fee_modes')->insert([
+    //                 'disbursement_id' => $disbursement->id,
+    //                 'fee_type'        => 'stamp_duty',
+    //                 'payment_mode'    => $request->stamp_payment_mode,
+
+    //                 'bank_id'         => $request->stamp_payment_mode == 'cheque'
+    //                     ? $request->stamp_bank_id : null,
+
+    //                 'cheque_no'       => $request->stamp_payment_mode == 'cheque'
+    //                     ? $request->stamp_cheque_no : null,
+
+    //                 'cheque_date'     => $request->stamp_payment_mode == 'cheque' && $request->stamp_cheque_date
+    //                     ? Carbon::createFromFormat('d-m-Y', $request->stamp_cheque_date)->format('Y-m-d')
+    //                     : null,
+
+    //                 'transfer_date'   => $request->stamp_payment_mode == 'online' && $request->stamp_transfer_date
+    //                     ? Carbon::createFromFormat('d-m-Y', $request->stamp_transfer_date)->format('Y-m-d')
+    //                     : null,
+
+    //                 'utr_no'          => $request->stamp_payment_mode == 'online'
+    //                     ? $request->stamp_utr_no : null,
+
+    //                 'transfer_mode'   => $request->stamp_payment_mode == 'online'
+    //                     ? $request->stamp_transfer_mode : null,
+
+    //                 'credited_account' => $request->stamp_payment_mode == 'online'
+    //                     ? $request->stamp_credited_account : null,
+
+    //                 'created_at'      => now(),
+    //                 'updated_at'      => now(),
+    //             ]);
+    //         }
+
+    //         //Store Insurance Fee Mode
+
+    //         if ($request->has('insurance_payment_mode')) {
+
+    //             DB::table('gold_loan_disbursement_fee_modes')->insert([
+    //                 'disbursement_id' => $disbursement->id,
+    //                 'fee_type'        => 'insurance_fee',
+    //                 'payment_mode'    => $request->insurance_payment_mode,
+
+    //                 'bank_id'         => $request->insurance_payment_mode == 'cheque'
+    //                     ? $request->insurance_bank_id : null,
+
+    //                 'cheque_no'       => $request->insurance_payment_mode == 'cheque'
+    //                     ? $request->insurance_cheque_no : null,
+
+    //                 'cheque_date'     => $request->insurance_payment_mode == 'cheque' && $request->insurance_cheque_date
+    //                     ? Carbon::createFromFormat('d-m-Y', $request->insurance_cheque_date)->format('Y-m-d')
+    //                     : null,
+
+    //                 'transfer_date'   => $request->insurance_payment_mode == 'online' && $request->insurance_transfer_date
+    //                     ? Carbon::createFromFormat('d-m-Y', $request->insurance_transfer_date)->format('Y-m-d')
+    //                     : null,
+
+    //                 'utr_no'          => $request->insurance_payment_mode == 'online'
+    //                     ? $request->insurance_utr_no : null,
+
+    //                 'transfer_mode'   => $request->insurance_payment_mode == 'online'
+    //                     ? $request->insurance_transfer_mode : null,
+
+    //                 'credited_account' => $request->insurance_payment_mode == 'online'
+    //                     ? $request->insurance_credited_account : null,
+
+    //                 'created_at'      => now(),
+    //                 'updated_at'      => now(),
+    //             ]);
+    //         }
+
+    //         DB::commit();
+
+    //         Log::info('Loan Disbursement Created Successfully', [
+    //             'disbursement_id' => $disbursement->id,
+    //         ]);
+
+    //         return redirect()
+    //             ->route('gold-loan.account.index')
+    //             ->with('success', 'Loan Disbursement Created Successfully!');
+    //     } catch (ValidationException $e) {
+    //         Log::warning('Validation Failed', [
+    //             'errors' => $e->errors(),
+    //         ]);
+    //         throw $e;
+    //     } catch (Exception $e) {
+
+    //         DB::rollBack();
+
+    //         Log::error('Loan Disbursement Store Error', [
+    //             'message' => $e->getMessage(),
+    //             'line' => $e->getLine(),
+    //         ]);
+
+    //         return back()
+    //             ->withInput()
+    //             ->with('error', 'Something went wrong while saving.');
+    //     }
+    // }
     public function store(Request $request)
     {
         try {
@@ -51,9 +281,7 @@ class DisbursementController extends Controller
                 'input' => $request->all(),
             ]);
 
-            // ===============================
-            // Basic Validation
-            // ===============================
+            // Validation
             $validated = $request->validate([
                 'loan_application_id' => 'required|exists:loan_applications,id',
                 'disbursal_date' => 'required|date_format:d-m-Y',
@@ -62,9 +290,7 @@ class DisbursementController extends Controller
                 'final_amount' => 'required|numeric|min:0.01',
             ]);
 
-            // ===============================
-            // Check Already Disbursed
-            // ===============================
+            // Check already disbursed
             $existing = GoldLoanDisbursement::where(
                 'loan_application_id',
                 $request->loan_application_id
@@ -76,9 +302,7 @@ class DisbursementController extends Controller
                     ->withErrors(['loan_application_id' => 'This loan application is already disbursed.']);
             }
 
-            // ===============================
             // Date Conversion
-            // ===============================
             $disbursalDate = Carbon::createFromFormat(
                 'd-m-Y',
                 $request->disbursal_date
@@ -91,20 +315,14 @@ class DisbursementController extends Controller
 
             DB::beginTransaction();
 
-            // ===============================
             // Create Disbursement
-            // ===============================
             $disbursement = GoldLoanDisbursement::create([
-
                 'loan_application_id' => $request->loan_application_id,
                 'disbursal_date' => $disbursalDate,
                 'emi_date' => $emiDate,
                 'loan_amount' => $request->loan_amount,
                 'final_amount' => $request->final_amount,
 
-                // ===============================
-                // Processing Fee
-                // ===============================
                 'processing_fee' => $request->processing_fee ?? 0,
                 'gst_percent' => $request->gst_percent ?? 0,
                 'sgst' => $request->sgst ?? 0,
@@ -127,29 +345,16 @@ class DisbursementController extends Controller
                 'processing_credited_account' =>
                 $request->processing_credited_account === 'yes' ? 1 : 0,
 
-                // ===============================
-                // Stamp Duty
-                // ===============================
                 'stamp_duty_fee' => $request->stamp_duty_fee ?? 0,
                 'stamp_duty_total' => $request->stamp_duty_total ?? 0,
 
-                // ===============================
-                // Insurance
-                // ===============================
                 'insurance_fee' => $request->insurance_fee ?? 0,
                 'insurance_total' => $request->insurance_total ?? 0,
 
-                // ===============================
-                // Advance Interest
-                // ===============================
                 'advance_interest' => $request->advance_interest ?? 0,
 
-                // ===============================
-                // Disbursement Mode 1
-                // ===============================
-                'disburse_mode1' => $request->D_mode_1 ?? 0,   // OLD
-                'payment_mode1'  => $request->payment_mode ?? 'cash', // OLD
-
+                'disburse_mode1' => $request->D_mode_1 ?? 0,
+                'payment_mode1'  => $request->payment_mode ?? 'cash',
                 'disburse_mode1_amount' => $request->D_mode_1,
                 'disburse_mode1_type' => $request->payment_mode,
                 'bank_id1' => $request->bank_id,
@@ -164,11 +369,7 @@ class DisbursementController extends Controller
                 'transfer_mode1' => $request->transfer_mode,
                 'saving_acc1' => $request->saving,
 
-
-                // ===============================
-                // Disbursement Mode 2
-                // ===============================
-                'disburse_mode2' => $request->D_mode_2 ?? 0,   // ✅ ADD THIS
+                'disburse_mode2' => $request->D_mode_2 ?? 0,
                 'payment_mode2'  => $request->payment_mode2 ?? 'cash',
                 'disburse_mode2_amount' => $request->D_mode_2,
                 'disburse_mode2_type' => $request->payment_mode2,
@@ -185,106 +386,116 @@ class DisbursementController extends Controller
                 'saving_acc2' => $request->saving2,
             ]);
 
-            // ===============================
-            // Update Loan Status
-            // ===============================
+            Log::info('Disbursement Created', ['id' => $disbursement->id]);
+
             DB::table('loan_applications')
                 ->where('id', $request->loan_application_id)
                 ->update(['status' => 2]);
+
             /*
-|--------------------------------------------------------------------------
-| Store Stamp Duty Fee Mode
-|--------------------------------------------------------------------------
-*/
-            if ($request->has('stamp_payment_mode')) {
+        =========================
+        STAMP DUTY INSERT
+        =========================
+        */
+
+            Log::info('Checking Stamp Duty Mode', [
+                'stamp_payment_mode' => $request->stamp_payment_mode
+            ]);
+
+            if ($request->filled('stamp_payment_mode')) {
+
+                Log::info('Stamp Duty Insert Data', [
+                    'payment_mode' => $request->stamp_payment_mode,
+                    'bank_id' => $request->stamp_bank_id,
+                    'cheque_no' => $request->stamp_cheque_no,
+                    'utr_no' => $request->stamp_utr_no,
+                ]);
 
                 DB::table('gold_loan_disbursement_fee_modes')->insert([
                     'disbursement_id' => $disbursement->id,
                     'fee_type'        => 'stamp_duty',
                     'payment_mode'    => $request->stamp_payment_mode,
-
                     'bank_id'         => $request->stamp_payment_mode == 'cheque'
                         ? $request->stamp_bank_id : null,
-
                     'cheque_no'       => $request->stamp_payment_mode == 'cheque'
                         ? $request->stamp_cheque_no : null,
-
                     'cheque_date'     => $request->stamp_payment_mode == 'cheque' && $request->stamp_cheque_date
                         ? Carbon::createFromFormat('d-m-Y', $request->stamp_cheque_date)->format('Y-m-d')
                         : null,
-
                     'transfer_date'   => $request->stamp_payment_mode == 'online' && $request->stamp_transfer_date
                         ? Carbon::createFromFormat('d-m-Y', $request->stamp_transfer_date)->format('Y-m-d')
                         : null,
-
                     'utr_no'          => $request->stamp_payment_mode == 'online'
                         ? $request->stamp_utr_no : null,
-
                     'transfer_mode'   => $request->stamp_payment_mode == 'online'
                         ? $request->stamp_transfer_mode : null,
 
                     'credited_account' => $request->stamp_payment_mode == 'online'
-                        ? $request->stamp_credited_account : null,
+                        ? ($request->stamp_credited_account == 'yes' ? 1 : 0)
+                        : null,
 
                     'created_at'      => now(),
                     'updated_at'      => now(),
                 ]);
+
+                Log::info('Stamp Duty Inserted Successfully');
             }
 
             /*
-|--------------------------------------------------------------------------
-| Store Insurance Fee Mode
-|--------------------------------------------------------------------------
-*/
-            if ($request->has('insurance_payment_mode')) {
+        =========================
+        INSURANCE INSERT
+        =========================
+        */
+
+            Log::info('Checking Insurance Mode', [
+                'insurance_payment_mode' => $request->insurance_payment_mode
+            ]);
+
+            if ($request->filled('insurance_payment_mode')) {
+
+                Log::info('Insurance Insert Data', [
+                    'payment_mode' => $request->insurance_payment_mode,
+                    'bank_id' => $request->insurance_bank_id,
+                    'cheque_no' => $request->insurance_cheque_no,
+                    'utr_no' => $request->insurance_utr_no,
+                ]);
 
                 DB::table('gold_loan_disbursement_fee_modes')->insert([
                     'disbursement_id' => $disbursement->id,
-                    'fee_type'        => 'insurance_fee',
+                    'fee_type'        => 'issuer_fee',
                     'payment_mode'    => $request->insurance_payment_mode,
-
                     'bank_id'         => $request->insurance_payment_mode == 'cheque'
                         ? $request->insurance_bank_id : null,
-
                     'cheque_no'       => $request->insurance_payment_mode == 'cheque'
                         ? $request->insurance_cheque_no : null,
-
                     'cheque_date'     => $request->insurance_payment_mode == 'cheque' && $request->insurance_cheque_date
                         ? Carbon::createFromFormat('d-m-Y', $request->insurance_cheque_date)->format('Y-m-d')
                         : null,
-
                     'transfer_date'   => $request->insurance_payment_mode == 'online' && $request->insurance_transfer_date
                         ? Carbon::createFromFormat('d-m-Y', $request->insurance_transfer_date)->format('Y-m-d')
                         : null,
-
                     'utr_no'          => $request->insurance_payment_mode == 'online'
                         ? $request->insurance_utr_no : null,
-
                     'transfer_mode'   => $request->insurance_payment_mode == 'online'
                         ? $request->insurance_transfer_mode : null,
-
                     'credited_account' => $request->insurance_payment_mode == 'online'
-                        ? $request->insurance_credited_account : null,
+                        ? ($request->insurance_credited_account == 'yes' ? 1 : 0)
+                        : null,
 
                     'created_at'      => now(),
                     'updated_at'      => now(),
                 ]);
+
+                Log::info('Insurance Inserted Successfully');
             }
 
             DB::commit();
 
-            Log::info('Loan Disbursement Created Successfully', [
-                'disbursement_id' => $disbursement->id,
-            ]);
+            Log::info('Loan Disbursement Completed Successfully');
 
             return redirect()
                 ->route('gold-loan.account.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
-        } catch (ValidationException $e) {
-            Log::warning('Validation Failed', [
-                'errors' => $e->errors(),
-            ]);
-            throw $e;
         } catch (Exception $e) {
 
             DB::rollBack();
