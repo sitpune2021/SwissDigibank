@@ -147,7 +147,7 @@ $isView = $mode === 'show';
 
 
             {{-- Maturity Date --}}
-            <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1" >
 
 
                  <label class=" mb-2 font-medium block uppercase">
@@ -156,7 +156,7 @@ $isView = $mode === 'show';
 
                 <input type="text" id="maturity_date" name="maturity_date"
                     value="{{ isset($deposit->maturity_date) ? \Carbon\Carbon::parse($deposit->maturity_date)->format('d-m-Y') : '' }}"
-                    class="datepicker-field w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                    class="datepickers-field w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                     readonly />
 
                 {{-- <x-datepicker-disabled label="" name="" inputId=""
@@ -260,4 +260,32 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.datepickers-field').forEach(function(dateInput) {
+
+        const today = new Date();
+        today.setHours(0,0,0,0); // normalize time
+
+        const picker = new Datepicker(dateInput, {
+            autohide: true,
+            format: 'dd-mm-yyyy',
+            minDate: today   // blocks past dates
+        });
+
+        // Set default value to today if empty
+        if (!dateInput.value) {
+            const formattedDate = today.toLocaleDateString('en-GB').split('/').join('-');
+            dateInput.value = formattedDate;
+        }
+
+        const calendarIcon = dateInput.parentElement.querySelector('.la-calendar');
+        if (calendarIcon) {
+            calendarIcon.addEventListener('click', () => picker.show());
+        }
+    });
+});
+</script>
+
+
 @endsection

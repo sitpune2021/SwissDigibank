@@ -502,8 +502,17 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
 
         // Selects
         // document.getElementById('marital_statuses_id').value = member.member_info_marital_status ?? '';
-        document.getElementById('religions_id').value = member.member_info_religion ?? '';
+      const maritalSelect = document.getElementById('marital_statuses_id');
+const maritalText = (member.member_info_marital_status || '').toLowerCase();
 
+[...maritalSelect.options].forEach(option => {
+    option.selected = option.text.toLowerCase() === maritalText;
+});
+
+// trigger spouse enable/disable logic
+maritalSelect.dispatchEvent(new Event('change'));
+        document.getElementById('religions_id').value = member.member_info_religion ?? '';
+       
         // Radio buttons (Title)
         document.querySelectorAll('input[name="title"]').forEach(r => {
             r.checked = (r.value === member.member_info_title);
@@ -652,4 +661,33 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
     });
 });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const maritalSelect = document.getElementById('marital_statuses_id');
+    const spouseField = document.getElementById('spouse');
+
+    function toggleSpouseField() {
+        if (!maritalSelect || !spouseField) return;
+
+        const text = maritalSelect.options[maritalSelect.selectedIndex]?.text?.toLowerCase();
+
+        if (text === 'single' || text === 'unmarried') {
+            spouseField.value = '';
+            spouseField.setAttribute('disabled', true);
+            spouseField.classList.add('bg-gray-100');
+        } else {
+            spouseField.removeAttribute('disabled');
+            spouseField.classList.remove('bg-gray-100');
+        }
+    }
+
+    // run on load (edit mode support)
+    toggleSpouseField();
+
+    // run on change
+    maritalSelect?.addEventListener('change', toggleSpouseField);
+});
+</script>
+
 @endpush
