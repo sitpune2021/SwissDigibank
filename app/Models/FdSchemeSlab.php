@@ -17,6 +17,16 @@ class FdSchemeSlab extends Model
         'payout_type',
     ];
 
+    public const PAYOUT_TYPES = [
+    'Cumulative Yearly',
+    'Cumulative Half Yearly',
+    'Cumulative Quarterly',
+    'Cumulative Monthly',
+    'Monthly',
+    'Quarterly',
+    'Half Yearly',
+    'Yearly',
+];
     /**
      * Relationship: Slab belongs to a Scheme
      */

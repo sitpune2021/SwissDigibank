@@ -190,39 +190,120 @@ class FDController extends Controller
      * Update the specified resource in storage.
      */
 
-    public function update(Request $request, string $id)
-    {
-        $request->validate([
-            'scheme_name'      => 'required|string|max:255',
-            'scheme_code'      => 'required|string|max:50',
-            'min_amount'       => 'required|numeric',
-            'lock_in_period'   => 'required|integer',
-            'interest_lock_in' => 'required|integer',
-            'bonus_rate'       => 'nullable|numeric',
-            'effective_date'   => 'required|date',
-            'active'           => 'required|boolean',
+   public function update(Request $request, string $id)
+{
+    try {
+        Log::info('FD Scheme Update initiated.', [
+            'scheme_id' => $id,
+            'user_id' => Auth::id(),
+            'request_data' => $request->all()
         ]);
 
-        $fdScheme = FDScheme::findOrFail($id);
+        $validated = $request->validate([
+            'scheme_name'          => 'required|string|max:255',
+            'scheme_code'          => 'required|string|max:255',
+            'min_amount'           => 'required|numeric|min:0',
+            'lock_in_period'       => 'required|integer|min:0',
+            'interest_lock_in'     => 'required|integer|min:0',
+            'bonus_rate'           => 'nullable|numeric|min:0',
+            'bonus_type'           => 'nullable|in:percentage,fixed',
+            'cancellation_charge'  => 'nullable|numeric|min:0',
+            'cancellation_type'    => 'nullable|in:percent,fixed',
+            'penal_charge'         => 'nullable|numeric|min:0',
+            'effective_date'       => 'required|date',
+            'stationary_fee'       => 'nullable|numeric|min:0',
+            'is_active'            => 'nullable|integer|in:0,1',
 
-        $data = $request->all();
-        $data['admin']     = $request->has('admin') ? 1 : 0;
-        $data['associate'] = $request->has('associate') ? 1 : 0;
+            'rows.*.day_from'        => 'nullable|integer|min:0',
+            'rows.*.day_to'          => 'nullable|integer|min:0',
+            'rows.*.interest_rate'   => 'nullable|numeric|min:0',
+            'rows.*.sr_citizen_rate' => 'nullable|numeric|min:0',
+            'rows.*.payout_type'     => 'nullable|string',
+        ]);
 
-        $fdScheme->update($data);
+        $validated['effective_date'] = Carbon::parse($request->effective_date)->format('Y-m-d');
+        $validated['admin']     = $request->has('admin') ? 1 : 0;
+        $validated['associate'] = $request->has('associate') ? 1 : 0;
+        $validated['member']    = $request->has('member') ? 1 : 0;
 
+        DB::beginTransaction();
+
+        $scheme = FdScheme::findOrFail($id);
+        $scheme->update($validated);
+
+        Log::info('FD Scheme basic data updated.', ['scheme_id' => $scheme->id]);
+
+        // Delete old slabs
+        $scheme->fdslabs()->delete();
+        Log::info('Old FD Scheme slabs deleted.', ['scheme_id' => $scheme->id]);
+
+        // Insert updated slabs
         if ($request->has('rows')) {
-            $fdScheme->fdslabs()->delete();
-            foreach ($request->rows as $row) {
-                if (!empty($row['day_from']) && !empty($row['day_to'])) {
-                    $fdScheme->fdslabs()->create($row);
+            foreach ($request->rows as $index => $row) {
+
+                if (
+                    empty($row['day_from']) &&
+                    empty($row['day_to']) &&
+                    empty($row['interest_rate'])
+                ) {
+                    Log::warning("Skipping slab row {$index} due to missing values.", [
+                        'row_data' => $row
+                    ]);
+                    continue;
                 }
+
+                $slab = FdSchemeSlab::create([
+                    'fd_scheme_id'    => $scheme->id,
+                    'day_from'        => $row['day_from'] ?? 0,
+                    'day_to'          => $row['day_to'] ?? 0,
+                    'interest_rate'   => $row['interest_rate'] ?? 0,
+                    'sr_citizen_rate' => $row['sr_citizen_rate'] ?? 0,
+                    'payout_type'     => $row['payout_type'] ?? null,
+                ]);
+
+                Log::info("FD Scheme Slab updated/created.", [
+                    'scheme_id' => $scheme->id,
+                    'slab_id'   => $slab->id
+                ]);
             }
         }
 
-        return redirect()->route('fd-mis-schemes.index')
-            ->with('success', 'FD Scheme updated successfully.');
+        DB::commit();
+
+        Log::info('FD Scheme Update transaction committed successfully.', [
+            'scheme_id' => $scheme->id,
+            'updated_by' => Auth::id()
+        ]);
+
+        return redirect()
+            ->route('fd-mis-schemes.index')
+            ->with('success', 'FD Scheme updated successfully!');
+
+    } catch (ValidationException $e) {
+
+        Log::warning('FD Scheme update validation failed.', [
+            'errors' => $e->errors(),
+            'input'  => $request->all()
+        ]);
+
+        throw $e;
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        Log::error('FD Scheme Update Error: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString(),
+            'input' => $request->all(),
+            'user_id' => Auth::id()
+        ]);
+
+        return redirect()
+            ->back()
+            ->withInput()
+            ->with('error', 'Something went wrong while updating FD Scheme.');
     }
+}
 
     /**
      * Remove the specified resource from storage.

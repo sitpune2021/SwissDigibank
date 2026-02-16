@@ -62,7 +62,7 @@
     </div>
     <div class="flex flex-col lg:flex-row w-full gap-6">
         <div class="lg:w-[70%] w-full bg-white dark:bg-bg3 p-4 rounded-lg shadow">
-            <div class="text-end"> <a href="#" class=" p-2 btn-outline">
+            <div class="text-end"> <a href="{{ route('fd-mis-schemes.edit', $fdScheme->id) }}" class=" p-2 btn-outline">
                     <i class="las la-pen"></i>
 
                 </a> </div>
