@@ -365,24 +365,24 @@ return [
             ['title' => 'CC OD LOAN ACCOUNTS', 'route' => 'report.cc_od-loan-account'],
         ],
     ],
-    [
-        'title' => 'ACCOUNTS',
-        'icon' => 'las la-user',
-        'position' => '9',
-        'active' => '1',
-        'submenu' => [
-            // ['title' => 'TREE', 'route' => 'tree.index'],
-            ['title' => 'VENDORS', 'route' => 'vendors.index'],
-            ['title' => 'LEDGER GROUPS', 'route' => 'ledger-group.index'],
-            ['title' => 'LEDGERS', 'route' => 'ledger.index'],
+    // [
+    //     'title' => 'ACCOUNTS',
+    //     'icon' => 'las la-user',
+    //     'position' => '9',
+    //     'active' => '1',
+    //     'submenu' => [
+    //         // ['title' => 'TREE', 'route' => 'tree.index'],
+    //         ['title' => 'VENDORS', 'route' => 'vendors.index'],
+    //         ['title' => 'LEDGER GROUPS', 'route' => 'ledger-group.index'],
+    //         ['title' => 'LEDGERS', 'route' => 'ledger.index'],
             // ['title' => 'ENTRIES', 'route' => 'entries.index'],
             // ['title' => 'TRIAL BALANCE', 'route' => 'trial-balance.index'],
             // ['title' => 'PROFIT AND LOSS(P & L)', 'route' => 'profit-loss.index'],
             // ['title' => 'INCOME STATEMENT', 'route' => 'income-statement.index'],
             // ['title' => 'BALANCE SHEET', 'route' => 'balance-sheet.index'],
             // ['title' => 'FY REPORT', 'route' => 'fy-report.index'],
-        ],
-    ],
+    //     ],
+    // ],
 
     // [
     //     'title' => 'NEW JOURNAL ENTRY',
