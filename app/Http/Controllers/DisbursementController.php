@@ -191,6 +191,85 @@ class DisbursementController extends Controller
             DB::table('loan_applications')
                 ->where('id', $request->loan_application_id)
                 ->update(['status' => 2]);
+            /*
+|--------------------------------------------------------------------------
+| Store Stamp Duty Fee Mode
+|--------------------------------------------------------------------------
+*/
+            if ($request->has('stamp_payment_mode')) {
+
+                DB::table('gold_loan_disbursement_fee_modes')->insert([
+                    'disbursement_id' => $disbursement->id,
+                    'fee_type'        => 'stamp_duty',
+                    'payment_mode'    => $request->stamp_payment_mode,
+
+                    'bank_id'         => $request->stamp_payment_mode == 'cheque'
+                        ? $request->stamp_bank_id : null,
+
+                    'cheque_no'       => $request->stamp_payment_mode == 'cheque'
+                        ? $request->stamp_cheque_no : null,
+
+                    'cheque_date'     => $request->stamp_payment_mode == 'cheque' && $request->stamp_cheque_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->stamp_cheque_date)->format('Y-m-d')
+                        : null,
+
+                    'transfer_date'   => $request->stamp_payment_mode == 'online' && $request->stamp_transfer_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->stamp_transfer_date)->format('Y-m-d')
+                        : null,
+
+                    'utr_no'          => $request->stamp_payment_mode == 'online'
+                        ? $request->stamp_utr_no : null,
+
+                    'transfer_mode'   => $request->stamp_payment_mode == 'online'
+                        ? $request->stamp_transfer_mode : null,
+
+                    'credited_account' => $request->stamp_payment_mode == 'online'
+                        ? $request->stamp_credited_account : null,
+
+                    'created_at'      => now(),
+                    'updated_at'      => now(),
+                ]);
+            }
+
+            /*
+|--------------------------------------------------------------------------
+| Store Insurance Fee Mode
+|--------------------------------------------------------------------------
+*/
+            if ($request->has('insurance_payment_mode')) {
+
+                DB::table('gold_loan_disbursement_fee_modes')->insert([
+                    'disbursement_id' => $disbursement->id,
+                    'fee_type'        => 'insurance_fee',
+                    'payment_mode'    => $request->insurance_payment_mode,
+
+                    'bank_id'         => $request->insurance_payment_mode == 'cheque'
+                        ? $request->insurance_bank_id : null,
+
+                    'cheque_no'       => $request->insurance_payment_mode == 'cheque'
+                        ? $request->insurance_cheque_no : null,
+
+                    'cheque_date'     => $request->insurance_payment_mode == 'cheque' && $request->insurance_cheque_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->insurance_cheque_date)->format('Y-m-d')
+                        : null,
+
+                    'transfer_date'   => $request->insurance_payment_mode == 'online' && $request->insurance_transfer_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->insurance_transfer_date)->format('Y-m-d')
+                        : null,
+
+                    'utr_no'          => $request->insurance_payment_mode == 'online'
+                        ? $request->insurance_utr_no : null,
+
+                    'transfer_mode'   => $request->insurance_payment_mode == 'online'
+                        ? $request->insurance_transfer_mode : null,
+
+                    'credited_account' => $request->insurance_payment_mode == 'online'
+                        ? $request->insurance_credited_account : null,
+
+                    'created_at'      => now(),
+                    'updated_at'      => now(),
+                ]);
+            }
 
             DB::commit();
 
