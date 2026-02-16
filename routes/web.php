@@ -2508,16 +2508,16 @@ Route::group(['prefix' => 'cut-report'], function () {
 
 Route::prefix('ledger-group')->group(function () {
 
-    Route::get('/', [LedgerGroupController::class, 'index'])->name('ledger-group.index');
+    Route::get('/', [LedgergroupController::class, 'index'])->name('ledger-group.index');
 
-    Route::get('/create', [LedgerGroupController::class, 'create'])->name('ledger-group.create');
+    Route::get('/create', [LedgergroupController::class, 'create'])->name('ledger-group.create');
 
-    Route::post('/store', [LedgerGroupController::class, 'store'])->name('ledger-group.store');
+    Route::post('/store', [LedgergroupController::class, 'store'])->name('ledger-group.store');
 
-    Route::get('/{id}/ledgers', [LedgerGroupController::class, 'groupLedgers'])
+    Route::get('/{id}/ledgers', [LedgergroupController::class, 'groupLedgers'])
         ->name('ledger-group.ledgers');
 
-    Route::delete('/{id}', [LedgerGroupController::class, 'destroy'])
+    Route::delete('/{id}', [LedgergroupController::class, 'destroy'])
         ->name('ledger-group.destroy');
 
 });
