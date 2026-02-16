@@ -6,7 +6,7 @@
             <div style="text-align:center;">
                 <div style="text-align:center; margin-bottom:15px;">
 
-                    <a href="{{ route('loan.emi_receipt.pdf', [$loan->id, $transaction->emi_no]) }}"
+                    <a href="{{ route('loan.emi_receipt.pdf', [$loan->id, $emiNo]) }}"
                         style="background:#28a745; color:white; padding:8px 20px; border-radius:4px; text-decoration:none;">
                         PRINT
                     </a>
@@ -42,10 +42,11 @@
 
             <table width="100%" style="margin-top:10px;">
                 <tr>
-                    <td><strong>EMI No :</strong> {{ $transaction->emi_no }}</td>
+                    <td><strong>EMI No :</strong> {{ $emiNo }}
+                    </td>
                     <td style="text-align:right;">
                         <strong>EMI Date :</strong>
-                        {{ \Carbon\Carbon::parse($transaction->transaction_date)->format('d/m/Y') }}
+                        {{ \Carbon\Carbon::parse($transactions->first()->transaction_date)->format('d-m-Y') }}
                     </td>
                 </tr>
             </table>
@@ -73,28 +74,28 @@
                 <tr>
                     <td>Principal Amount</td>
                     <td>:
-                        ₹ {{ number_format($transaction->principal ?? 0, 2) }}
+                        ₹ {{ number_format($emiData['principal'], 2) }}
                     </td>
                 </tr>
 
                 <tr>
                     <td>Interest Amount</td>
                     <td>:
-                        ₹ {{ number_format($transaction->interest ?? 0, 2) }}
+                        ₹ {{ number_format($emiData['interest'], 2) }}
                     </td>
                 </tr>
 
                 <tr>
                     <td>EMI Amount</td>
                     <td>:
-                        ₹ {{ number_format($transaction->amount_collected, 2) }}
+                        ₹ {{ number_format($emiData['emi_amount'], 2) }}
                     </td>
                 </tr>
 
                 <tr>
                     <td>Balance Principal Amount</td>
                     <td>:
-                        ₹ {{ number_format($transaction->current_debt ?? 0, 2) }}
+                        ₹ {{ number_format($emiData['balance_principal'], 2) }}
                     </td>
                 </tr>
 

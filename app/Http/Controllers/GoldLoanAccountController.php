@@ -365,23 +365,30 @@ class GoldLoanAccountController extends Controller
 
                 $emi['remaining_amount'] = "0.00";
                 $emi['status'] = "PAID";
+
+                // ✅ Get paid date from DB if exists
+                $emi['paid_date'] = isset($savedPaidDates[$emi['emi_no']])
+                    ? \Carbon\Carbon::parse($savedPaidDates[$emi['emi_no']])->format('d-m-Y')
+                    : now()->format('d-m-Y');
                 $totalPaid -= $emiAmount;
             }
             // ⭐ Partial payment case
             else {
-
                 $emi['remaining_amount'] = number_format($emiAmount - $totalPaid, 2);
                 $emi['status'] = "PARTIAL";
+
+                $emi['paid_date'] = isset($savedPaidDates[$emi['emi_no']])
+                    ? \Carbon\Carbon::parse($savedPaidDates[$emi['emi_no']])->format('d-m-Y')
+                    : '';
                 $totalPaid = 0;
             }
-
             // 🔥 Safety: If remaining 0 force PAID
             if (floatval(str_replace(',', '', $emi['remaining_amount'])) == 0) {
                 $emi['status'] = 'PAID';
             }
         }
 
-        unset($emi); 
+        unset($emi);
         $eirSchedule = [];
         // ⭐ T. DUE = Only EMI 1 Remaining Amount
         $tDueAmount = 0;
@@ -621,9 +628,9 @@ class GoldLoanAccountController extends Controller
 
         $payButtonText = $hasDueEmi ? 'Pay Emi' : 'Pay';
         $emiSchedule = collect($emiSchedule)
-    ->sortBy('emi_no')
-    ->values()
-    ->toArray();
+            ->sortBy('emi_no')
+            ->values()
+            ->toArray();
         return view('gold-loan.account.view', compact(
             'goldLoan',
             'principal',

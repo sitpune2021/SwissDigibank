@@ -1419,21 +1419,61 @@ class GoldLoanPrintDocument extends Controller
     }
     public function emi_receipt_view(LoanApplication $loan, $emiNo)
     {
-        $transaction = DB::table('gold_loan_transactions')
+        $transactions = DB::table('gold_loan_transactions')
             ->where('loan_id', $loan->id)
             ->where('emi_no', $emiNo)
             ->where('status', 'paid')
-            ->first();
+            ->get();
 
-        if (!$transaction) {
+        if ($transactions->isEmpty()) {
             return back()->with('error', 'No EMI payment found.');
         }
 
-        return view('gold-loan.gold-loan-pdf.gold-appli-emi-receipt-view', [
-            'loan' => $loan,
-            'transaction' => $transaction
-        ]);
+        // 🔥 Total EMI Paid (sum of partials)
+        $totalPaid = $transactions->sum('amount_collected');
+
+
+        // 🔥 Regenerate EMI schedule (same logic as show method)
+
+        $principal = $loan->loan_amount;
+        $interestRate = $loan->scheme->annual_interest_rate ?? 0;
+        $emiCount = $loan->tenure_value;
+
+        $applicationDate = \Carbon\Carbon::parse($loan->application_date);
+        $firstEmiDate = $applicationDate->copy()->addMonthNoOverflow();
+
+        $monthlyRate = $interestRate / 12 / 100;
+        $balance = $principal;
+
+        $emi = $principal * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) /
+            (pow(1 + $monthlyRate, $emiCount) - 1);
+
+        $emiData = null;
+
+        for ($i = 0; $i < $emiCount; $i++) {
+
+            $interest = $balance * $monthlyRate;
+            $principalComponent = $emi - $interest;
+            $balance -= $principalComponent;
+
+            if (($i + 1) == $emiNo) {
+                $emiData = [
+                    'principal' => round($principalComponent, 2),
+                    'interest' => round($interest, 2),
+                    'emi_amount' => round($emi, 2),
+                    'balance_principal' => max(round($balance, 2), 0)
+                ];
+                break;
+            }
+        }
+
+        return view(
+            'gold-loan.gold-loan-pdf.gold-appli-emi-receipt-view',
+            compact('loan', 'transactions', 'emiData', 'totalPaid', 'emiNo')
+        );
     }
+
+
 
     public function emi_receipt_pdf(LoanApplication $loan, $emiNo)
     {
