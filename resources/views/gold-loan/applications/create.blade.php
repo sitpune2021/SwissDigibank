@@ -55,7 +55,7 @@
 
     <div class="box">
 
-        <form method="POST" enctype="multipart/form-data"
+        <form id="loanForm" method="POST" enctype="multipart/form-data"
             action="  {{ isset($application) ? route('gold-loan.applications.update', $application->id) : route('loan-applications.store') }}">
             @csrf
             @if(isset($application))
@@ -1029,8 +1029,169 @@
     </div>
 </div>
 
+<!-- calculation submit buttons -->
+<script>
 
+document.addEventListener("DOMContentLoaded", function () {
 
+    const form = document.getElementById("loanForm");
+    const calculateBtn = document.getElementById("calculateBtn");
+    const calculationBox = document.getElementById("calculationBox");
+
+    let isCalculated = false;
+    let isValidOrnament = false;
+
+    // ✅ GLOBAL CHANGE DETECTION (works for dynamic rows too)
+    form.addEventListener("input", function (e) {
+
+        // Only trigger recalculation for important fields
+        if (
+            e.target.classList.contains("valuePerGram") ||
+            e.target.classList.contains("netWeight") ||
+            e.target.classList.contains("tunch") ||
+            e.target.classList.contains("grossWeight") ||
+            e.target.classList.contains("noOfItem") ||
+            e.target.id === "loanAmount" ||
+            e.target.id === "insuranceAmount" ||
+            e.target.id === "scheme_id"
+        ) {
+            if (isCalculated) {
+                calculateBtn.textContent = "Re-Calculate";
+                calculateBtn.type = "button";
+                isCalculated = false;
+                isValidOrnament = false;
+            }
+        }
+    });
+
+    calculateBtn.addEventListener("click", function (e) {
+
+        if (!isCalculated) {
+
+            e.preventDefault();
+
+            let rows = document.querySelectorAll("#itemsBody tr");
+            let totalSecurity = 0;
+
+            rows.forEach(row => {
+                let valuePerGram = parseFloat(row.querySelector(".valuePerGram")?.value) || 0;
+                let netWeight = parseFloat(row.querySelector(".netWeight")?.value) || 0;
+                let tunch = parseFloat(row.querySelector(".tunch")?.value) || 0;
+
+                let fineWeight = (netWeight * tunch) / 100;
+                let totalValue = valuePerGram * fineWeight;
+
+                totalSecurity += totalValue;
+            });
+
+            let loanAmount = parseFloat(document.getElementById("loanAmount").value) || 0;
+            let insurance = parseFloat(document.getElementById("insuranceAmount").value) || 0;
+            let netLoan = loanAmount + insurance;
+
+            let scheme = document.getElementById("scheme_id");
+            let selected = scheme.options[scheme.selectedIndex];
+            let maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
+            let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
+
+            let approvable = (totalSecurity * limit) / 100;
+
+            let approvedLoan = netLoan;
+            if (approvedLoan > maxLoan) approvedLoan = maxLoan;
+            if (approvedLoan > approvable) approvedLoan = approvable;
+
+            // Show Results
+            document.getElementById("resNetLoan").textContent = netLoan.toFixed(2);
+            document.getElementById("resSecurity").textContent = totalSecurity.toFixed(2);
+            document.getElementById("resMaxLoan").textContent = maxLoan.toFixed(2);
+            document.getElementById("resLimit").textContent = limit + "%";
+            document.getElementById("resApprovable").textContent = approvable.toFixed(2);
+            document.getElementById("resApproved").textContent = approvedLoan.toFixed(2);
+
+            // Hidden fields
+            document.getElementById("security_value").value = totalSecurity.toFixed(2);
+            document.getElementById("max_loan_amount").value = maxLoan;
+            document.getElementById("max_loan_limit").value = limit;
+            document.getElementById("maximum_approvable_amount").value = approvable.toFixed(2);
+            document.getElementById("approved_loan_amount").value = approvedLoan.toFixed(2);
+
+            calculationBox.classList.remove("hidden");
+
+            calculateBtn.textContent = "Submit";
+            calculateBtn.type = "submit";
+
+            isCalculated = true;
+            isValidOrnament = true;
+        }
+    });
+
+    form.addEventListener("submit", function (e) {
+        if (!isValidOrnament) {
+            e.preventDefault();
+            alert("Please calculate first.");
+        }
+    });
+
+});
+</script>
+
+<script>
+    //No Duplicate Customer In Droupown
+document.addEventListener("DOMContentLoaded", function () {
+
+    // All related dropdowns
+    const dropdownIds = [
+        "member_id",
+        "co_applicant_1_id",
+        "co_applicant_2_id",
+        "guarantor_1_id",
+        "guarantor_2_id",
+        "guarantor_3_id",
+        "guarantor_4_id"
+    ];
+
+    const dropdowns = dropdownIds
+        .map(id => document.getElementById(id))
+        .filter(el => el !== null);
+
+    function updateDropdownOptions() {
+
+        // Collect all selected values
+        const selectedValues = dropdowns
+            .map(select => select.value)
+            .filter(value => value !== "");
+
+        dropdowns.forEach(select => {
+
+            const currentValue = select.value;
+
+            Array.from(select.options).forEach(option => {
+
+                if (option.value === "") return;
+
+                // If selected in another dropdown → hide
+                if (
+                    selectedValues.includes(option.value) &&
+                    option.value !== currentValue
+                ) {
+                    option.style.display = "none";
+                } else {
+                    option.style.display = "block";
+                }
+
+            });
+        });
+    }
+
+    // Attach change event
+    dropdowns.forEach(select => {
+        select.addEventListener("change", updateDropdownOptions);
+    });
+
+    // Run once on page load (for edit mode)
+    updateDropdownOptions();
+
+});
+</script>
 
 <!-- checkbox show when scheme select -->
 <script>
@@ -1228,7 +1389,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
 
-        const form = document.getElementById("loanForm");
+        // const form = document.getElementById("loanForm");
 
         const tenureInput = document.getElementById("tenure_value");
         const chkDivide = document.getElementById("divide_emi_ratio");
@@ -1362,7 +1523,7 @@
 </script>
 
 <!-- Calculation & Submit Button  -->
-<script>
+<!-- <script>
     let isCalculated = false; // flag set karte hain
     let isValidOrnament = false;
     document.getElementById("calculateBtn").addEventListener("click", function(e) {
@@ -1385,7 +1546,7 @@
             // Yahan kuch extra code ki zarurat nahi hai
         }
     });
-</script>
+</script> -->
 
 <!-- Memeber Box -->
 <script>
