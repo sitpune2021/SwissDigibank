@@ -289,7 +289,8 @@
                                     <td class="font-semibold px-4 py-2 uppercase">Enable Fee Collection</td>
                                     <td class="px-4 py-2">
                                         <div class="flex items-center gap-1">
-                                            @if($setting->membership_fee_enabled == 1)
+                                            {{-- @if($setting->membership_fee_enabled == 1) --}}
+                                            @if($setting?->membership_fee_enabled == 1)
                                                 <span
                                                     class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                                                     Yes
@@ -315,7 +316,7 @@
                                     </td>
                                     <td class="px-4 py-2">
                                         <div class="flex items-center gap-1">
-                                            @if($setting->associate_fee_enabled == 1)
+                                            @if($setting?->associate_fee_enabled == 1)
                                                 <span
                                                     class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                                                     Yes

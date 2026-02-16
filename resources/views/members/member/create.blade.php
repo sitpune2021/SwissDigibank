@@ -138,7 +138,7 @@ $member['member_info_first_name'] .
             <div class="col-span-2 flex items-center gap-2 mt-6">
 
                 {{-- Checkbox --}}
-                <input type="checkbox" id="toggle_{{ strtolower($sectionName) }}"
+                <input type="checkbox" id="toggle_{{ strtolower($sectionName) }}"  {{ strtolower($sectionName) == 'customer_correspondence_address' ? 'checked' : '' }}
                     class="toggle-address-checkbox w-5 h-5 cursor-pointer">
 
                 {{-- Label with Asterisk --}}
