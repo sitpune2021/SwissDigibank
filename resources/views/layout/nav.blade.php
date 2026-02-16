@@ -92,7 +92,7 @@
                            Entries
                         </li>
                         </a>
-                        <a href="">
+                        <a href="{{ route('trial.balance') }}">
                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                             <i class="las la-balance-scale"></i>
                             Trial Balance
@@ -110,7 +110,7 @@
                            Income Statement
                         </li>
                         </a>
-                         <a href="">
+                         <a href="{{ route('balance.sheet') }}">
                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                             <i class="las la-chart-bar"></i>
                             Balance Sheet

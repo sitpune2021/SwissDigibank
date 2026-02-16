@@ -8,6 +8,7 @@ use App\Models\LoanApplication;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\GoldLoanDisbursement;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class GoldLoanPrintDocument extends Controller
 {
@@ -1266,29 +1267,28 @@ class GoldLoanPrintDocument extends Controller
         // return $pdf->download('Gold_Loan_Sanction_Letter.pdf');
     }
 
-     public function application_letter_view(LoanApplication $loan)
+    public function application_letter_view(LoanApplication $loan)
     {
 
-         $loan->load(['member', 'scheme', 'disbursement', 'branch', 'ornaments']);
+        $loan->load(['member', 'scheme', 'disbursement', 'branch', 'ornaments']);
         $data = [
             'bank_name' => '',
             'printed_on' => date('d-m-Y'),
             'loan_id' => $loan->id,
-           
+
         ];
 
 
         return view('gold-loan.gold-loan-pdf.gold-loan-application-view', $data);
-        
     }
-     public function application_letter(LoanApplication $loan)
+    public function application_letter(LoanApplication $loan)
     {
 
-        
+
         $data = [
             'bank_name' => '',
             'printed_on' => date('d-m-Y'),
-           
+
         ];
 
         $pdf = PDF::loadView('gold-loan.gold-loan-pdf.gold-loan-application', $data)
@@ -1299,40 +1299,39 @@ class GoldLoanPrintDocument extends Controller
         // return $pdf->download('Gold_Loan_Sanction_Letter.pdf');
     }
     public function print_application_letter(LoanApplication $loan)
-{
+    {
 
         $data = [
             'bank_name' => '',
             'printed_on' => date('d-m-Y'),
-           
+
         ];
 
         $pdf = PDF::loadView('gold-loan.gold-loan-pdf.gold-loan-application', $data)
             ->setPaper('A4', 'portrait');
 
 
-    // trigger print dialog automatically
-    $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+        // trigger print dialog automatically
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
 
-    return $pdf->stream('gold-loan-application');
-}
+        return $pdf->stream('gold-loan-application');
+    }
 
- public function letterOf_evidencing_view(LoanApplication $loan)
+    public function letterOf_evidencing_view(LoanApplication $loan)
     {
- $data = [
+        $data = [
             'bank_name' => '',
             'printed_on' => date('d-m-Y'),
             'loan_id' => $loan->id,
         ];
 
-        
+
         return view('gold-loan.gold-loan-pdf.letter-of-evidencing-view', $data);
-        
     }
- public function letterOf_evidencing(LoanApplication $loan)
+    public function letterOf_evidencing(LoanApplication $loan)
     {
 
-        
+
         $data = [
             'bank_name' => '',
             'printed_on' => date('d-m-Y'),
@@ -1346,10 +1345,10 @@ class GoldLoanPrintDocument extends Controller
         // OR download
         // return $pdf->download('Gold_Loan_Sanction_Letter.pdf');
     }
- public function print_letterOf_evidencing(LoanApplication $loan)
-{
+    public function print_letterOf_evidencing(LoanApplication $loan)
+    {
 
-         
+
         $data = [
             'bank_name' => '',
             'printed_on' => date('d-m-Y'),
@@ -1360,33 +1359,32 @@ class GoldLoanPrintDocument extends Controller
             ->setPaper('A4', 'portrait');
 
 
-    // trigger print dialog automatically
-    $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+        // trigger print dialog automatically
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
 
-    return $pdf->stream('letter-of-evidencing');
-}
+        return $pdf->stream('letter-of-evidencing');
+    }
 
 
- public function jurisdiction_ack_letter_view(LoanApplication $loan)
+    public function jurisdiction_ack_letter_view(LoanApplication $loan)
     {
 
-        
+
         $data = [
             'bank_name' => '',
             'printed_on' => date('d-m-Y'),
             'loan_id' => $loan->id,
         ];
 
-      
 
-        return view('gold-loan.gold-loan-pdf.letter-of-jurisdiction-view',$data);
-      
+
+        return view('gold-loan.gold-loan-pdf.letter-of-jurisdiction-view', $data);
     }
 
- public function jurisdiction_ack_letter(LoanApplication $loan)
+    public function jurisdiction_ack_letter(LoanApplication $loan)
     {
 
-        
+
         $data = [
             'bank_name' => '',
             'printed_on' => date('d-m-Y'),
@@ -1400,10 +1398,10 @@ class GoldLoanPrintDocument extends Controller
         // OR download
         // return $pdf->download('Gold_Loan_Sanction_Letter.pdf');
     }
-     public function print_jurisdiction_ack_letter(LoanApplication $loan)
-{
+    public function print_jurisdiction_ack_letter(LoanApplication $loan)
+    {
 
-        
+
         $data = [
             'bank_name' => '',
             'printed_on' => date('d-m-Y'),
@@ -1414,9 +1412,87 @@ class GoldLoanPrintDocument extends Controller
             ->setPaper('A4', 'portrait');
 
 
-    // trigger print dialog automatically
-    $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+        // trigger print dialog automatically
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
 
-    return $pdf->stream('letter-of-jurisdiction');
-}
+        return $pdf->stream('letter-of-jurisdiction');
+    }
+    public function emi_receipt_view(LoanApplication $loan, $emiNo)
+    {
+        $transactions = DB::table('gold_loan_transactions')
+            ->where('loan_id', $loan->id)
+            ->where('emi_no', $emiNo)
+            ->where('status', 'paid')
+            ->get();
+
+        if ($transactions->isEmpty()) {
+            return back()->with('error', 'No EMI payment found.');
+        }
+
+        // 🔥 Total EMI Paid (sum of partials)
+        $totalPaid = $transactions->sum('amount_collected');
+
+
+        // 🔥 Regenerate EMI schedule (same logic as show method)
+
+        $principal = $loan->loan_amount;
+        $interestRate = $loan->scheme->annual_interest_rate ?? 0;
+        $emiCount = $loan->tenure_value;
+
+        $applicationDate = \Carbon\Carbon::parse($loan->application_date);
+        $firstEmiDate = $applicationDate->copy()->addMonthNoOverflow();
+
+        $monthlyRate = $interestRate / 12 / 100;
+        $balance = $principal;
+
+        $emi = $principal * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) /
+            (pow(1 + $monthlyRate, $emiCount) - 1);
+
+        $emiData = null;
+
+        for ($i = 0; $i < $emiCount; $i++) {
+
+            $interest = $balance * $monthlyRate;
+            $principalComponent = $emi - $interest;
+            $balance -= $principalComponent;
+
+            if (($i + 1) == $emiNo) {
+                $emiData = [
+                    'principal' => round($principalComponent, 2),
+                    'interest' => round($interest, 2),
+                    'emi_amount' => round($emi, 2),
+                    'balance_principal' => max(round($balance, 2), 0)
+                ];
+                break;
+            }
+        }
+
+        return view(
+            'gold-loan.gold-loan-pdf.gold-appli-emi-receipt-view',
+            compact('loan', 'transactions', 'emiData', 'totalPaid', 'emiNo')
+        );
+    }
+
+
+
+    public function emi_receipt_pdf(LoanApplication $loan, $emiNo)
+    {
+        $transaction = DB::table('gold_loan_transactions')
+            ->where('loan_id', $loan->id)
+            ->where('emi_no', $emiNo)
+            ->where('status', 'paid')
+            ->first();
+
+        if (!$transaction) {
+            return back()->with('error', 'No EMI payment found.');
+        }
+
+        $pdf = Pdf::loadView(
+            'gold-loan.gold-loan-pdf.gold-appli-emi-receipt',
+            compact('loan', 'transaction')
+        )->setPaper('A4', 'portrait');
+
+        // 🔥 OPEN in browser instead of download
+        return $pdf->stream('EMI_Receipt_EMI_' . $emiNo . '.pdf');
+    }
 }
