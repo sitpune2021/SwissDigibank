@@ -92,7 +92,14 @@
             </div>
         </div>
 
-
+ @if(session('success'))
+            <div class="">
+                <div class="w-44 mb-5 flex justify-end">
+                    <x-alert />
+                </div>
+                {{-- {{ session('success') }} --}}
+            </div>
+        @endif
 
         <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
 
@@ -234,14 +241,14 @@
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 w-1/3 uppercase">Member App Play Store URL</td>
                                     <td class="px-4 py-2">
-                                      {{ $setting->member_playstore_url }}
+                                        {{ $setting?->member_playstore_url ?? '' }}
                                     </td>
                                 </tr>
 
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Member App IOs Store URL</td>
                                     <td class="px-4 py-2">
-{{ $setting->member_ios_url }}
+                                        {{ $setting?->member_ios_url ?? '' }}
                                     </td>
                                 </tr>
 
@@ -266,7 +273,7 @@
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Tax Deduction Limit (TDS)</td>
                                     <td class="px-4 py-2">
-                                      {{$setting->tax_deduction_limit}}
+                                        {{$setting?->tax_deduction_limit ?? ''}}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -275,31 +282,31 @@
                                         <br> Citizen (TDS)
                                     </td>
                                     <td class="px-4 py-2">
-                                       {{$setting->tax_deduction_limit_senior}}
+                                        {{$setting?->tax_deduction_limit_senior ?? ''}}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Enable Fee Collection</td>
                                     <td class="px-4 py-2">
-                                      <div class="flex items-center gap-1">
-    @if($setting->membership_fee_enabled == 1)
-        <span
-            class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-            Yes
-        </span>
-    @else
-        <span
-            class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-            No
-        </span>
-    @endif
-</div>
+                                        <div class="flex items-center gap-1">
+                                            @if($setting->membership_fee_enabled == 1)
+                                                <span
+                                                    class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                                    Yes
+                                                </span>
+                                            @else
+                                                <span
+                                                    class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                                    No
+                                                </span>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Membership Fee</td>
                                     <td class="px-4 py-2">
-                                       {{$setting->membership_fee}}
+                                        {{$setting?->membership_fee ?? ''}}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -307,25 +314,25 @@
                                         <br> Registration Fee
                                     </td>
                                     <td class="px-4 py-2">
-                                         <div class="flex items-center gap-1">
-    @if($setting->associate_fee_enabled == 1)
-        <span
-            class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-            Yes
-        </span>
-    @else
-        <span
-            class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-            No
-        </span>
-    @endif
-</div>
+                                        <div class="flex items-center gap-1">
+                                            @if($setting->associate_fee_enabled == 1)
+                                                <span
+                                                    class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                                    Yes
+                                                </span>
+                                            @else
+                                                <span
+                                                    class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                                    No
+                                                </span>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Associate Registration Fee</td>
                                     <td class="px-4 py-2">
-                                       {{$setting->associate_fee}}
+                                        {{$setting?->associate_fee ?? ''}}
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -393,7 +400,7 @@
                                         <br> Every Share Allocation/ Transfer
                                     </td>
                                     <td class="px-4 py-2">
-(static)
+                                        (static)
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -517,8 +524,8 @@
                         onclick="this.nextElementSibling.classList.toggle('')">
                         <h3 class="text-lg font-semibold uppercase">BUSINESS TYPE</h3>
                         <a href="
-                        {{-- {{ route('master-settings.edit-bussiness-type') }} --}}
-                         " class=" btn-primary p-2 ">
+                            {{-- {{ route('master-settings.edit-bussiness-type') }} --}}
+                             " class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -1174,7 +1181,7 @@
                         </table>
                     </div>
                 </div>
-                
+
                 <!--CC LIMIT SETTING-->
                 <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
                     <!-- Header -->
@@ -1736,8 +1743,8 @@
                             BUSINESS LOAN SETTINGS
                         </h3>
                         <a href="
-                        {{-- {{route('master-settings.edit-bussiness-loan')}} --}}
-                        " class=" btn-primary p-2 ">
+                            {{-- {{route('master-settings.edit-bussiness-loan')}} --}}
+                            " class=" btn-primary p-2 ">
                             <i class="las la-pencil-alt"></i>
                         </a>
                     </div>
@@ -1822,7 +1829,7 @@
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Overdue Interest (%) </td>
                                     <td class="px-4 py-2">
-                                       
+
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -1851,7 +1858,7 @@
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">No Due Certificate Charges </td>
                                     <td class="px-4 py-2">
-                                              ₹
+                                        ₹
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -1987,9 +1994,9 @@
 
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                                         Number of CIBIL 
+                                        Number of CIBIL
                                         <br>
-                                         Records Mandatory
+                                        Records Mandatory
                                     </td>
                                     <td class="px-4 py-2">
 
@@ -2010,7 +2017,7 @@
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Overdue Interest (%) </td>
                                     <td class="px-4 py-2">
-                                        
+
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -2039,7 +2046,7 @@
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">No Due Certificate Charges </td>
                                     <td class="px-4 py-2">
-                                      ₹
+                                        ₹
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -2196,7 +2203,7 @@
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Overdue Interest (%) </td>
                                     <td class="px-4 py-2">
-                                       
+
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -2225,7 +2232,7 @@
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">No Due Certificate Charges </td>
                                     <td class="px-4 py-2">
-                                       ₹
+                                        ₹
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -2388,87 +2395,79 @@
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Overdue Interest (%) </td>
                                     <td class="px-4 py-2">
-                                        
+
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Processing Charges (%) </td>
                                     <td class="px-4 py-2">
-                                      %
+                                        %
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Stamp Duty Charges (%)</td>
                                     <td class="px-4 py-2">
-                                       %
+                                        %
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                                       Insurance Charges (%) 
+                                        Insurance Charges (%)
                                     </td>
                                     <td class="px-4 py-2">
-                                       %
+                                        %
                                     </td>
                                 </tr>
                                 <tr class="border-b">
-                                    <td class="font-semibold px-4 py-2 uppercase">Fitness Charges (%) 
+                                    <td class="font-semibold px-4 py-2 uppercase">Fitness Charges (%)
                                     </td>
                                     <td class="px-4 py-2">
-                                         %
+                                        %
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Fore Close Charges (%) </td>
                                     <td class="px-4 py-2">
-                                     %
+                                        %
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                                        SMS Charges per EMI (%) 
+                                        SMS Charges per EMI (%)
                                     </td>
                                     <td class="px-4 py-2">
-                                          %
+                                        %
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                                       Stationary Charges per EMI (%)
+                                        Stationary Charges per EMI (%)
                                     </td>
                                     <td class="px-4 py-2">
-                                          %
+                                        %
                                     </td>
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                                       Fuel Charges per EMI (%) 
-                                    </td>
-                                    <td class="px-4 py-2">
-                                          %
-                                    </td>
-                                </tr>
-
-                                <tr class="border-b">
-                                    <td class="font-semibold px-4 py-2 uppercase">
-                                       Maintenance Charges per EMI (%)
+                                        Fuel Charges per EMI (%)
                                     </td>
                                     <td class="px-4 py-2">
                                         %
                                     </td>
                                 </tr>
 
-                            <tr class="border-b">
+                                <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                                     Documentation Charges 
+                                        Maintenance Charges per EMI (%)
                                     </td>
                                     <td class="px-4 py-2">
-                                        ₹
+                                        %
                                     </td>
                                 </tr>
-                                 <tr class="border-b">
+
+                                <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                                    EMI Bounce Charges (Cheque) 
+                                        Documentation Charges
                                     </td>
                                     <td class="px-4 py-2">
                                         ₹
@@ -2476,9 +2475,7 @@
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                                   EMI Installment 
-                                   <br>
-                                   Cancellation Charges 
+                                        EMI Bounce Charges (Cheque)
                                     </td>
                                     <td class="px-4 py-2">
                                         ₹
@@ -2486,54 +2483,30 @@
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                                   No Due Certificate Charges 
+                                        EMI Installment
+                                        <br>
+                                        Cancellation Charges
                                     </td>
                                     <td class="px-4 py-2">
-                                      ₹
+                                        ₹
                                     </td>
                                 </tr>
-                                  <tr class="border-b">
+                                <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                                  Debit Other Charges
-                                  <br>
-                                   Directly To Loan Account 
+                                        No Due Certificate Charges
                                     </td>
                                     <td class="px-4 py-2">
-                                      <div class="flex items-center gap-1">
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                Yes
-                                            </span>
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                No
-                                            </span>
-                                        </div>
+                                        ₹
                                     </td>
                                 </tr>
-                                 <tr class="border-b">
+                                <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                                  Scheme Based Loan Account 
+                                        Debit Other Charges
+                                        <br>
+                                        Directly To Loan Account
                                     </td>
                                     <td class="px-4 py-2">
-                                      <div class="flex items-center gap-1">
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                Yes
-                                            </span>
-                                            <span
-                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                                No
-                                            </span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                 <tr class="border-b">
-                                    <td class="font-semibold px-4 py-2 uppercase">
-                                  Disburse Setting Active  
-                                    </td>
-                                    <td class="px-4 py-2">
-                                      <div class="flex items-center gap-1">
+                                        <div class="flex items-center gap-1">
                                             <span
                                                 class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                                                 Yes
@@ -2547,10 +2520,10 @@
                                 </tr>
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                                Fore Close Full Interest Debit   
+                                        Scheme Based Loan Account
                                     </td>
                                     <td class="px-4 py-2">
-                                      <div class="flex items-center gap-1">
+                                        <div class="flex items-center gap-1">
                                             <span
                                                 class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                                                 Yes
@@ -2562,12 +2535,46 @@
                                         </div>
                                     </td>
                                 </tr>
-                                 <tr class="border-b">
+                                <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">
-                               Disable Cash Disbursement 
+                                        Disburse Setting Active
                                     </td>
                                     <td class="px-4 py-2">
-                                      <div class="flex items-center gap-1">
+                                        <div class="flex items-center gap-1">
+                                            <span
+                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                                Yes
+                                            </span>
+                                            <span
+                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                                No
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="font-semibold px-4 py-2 uppercase">
+                                        Fore Close Full Interest Debit
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <div class="flex items-center gap-1">
+                                            <span
+                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                                Yes
+                                            </span>
+                                            <span
+                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                                No
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="font-semibold px-4 py-2 uppercase">
+                                        Disable Cash Disbursement
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        <div class="flex items-center gap-1">
                                             <span
                                                 class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                                                 Yes
