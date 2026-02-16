@@ -235,6 +235,271 @@ class LedgergroupController extends Controller
             ->with('success', 'Ledger Added Successfully');
     }
 
+    private function buildLoanTransactionLedger($module)
+    {
+        $ledgerRows = [];
+        $runningBalance = 0;
+
+        $loans = DB::table($module['loan'])
+            ->where('status', 2)
+            ->get();
+
+        foreach ($loans as $loan) {
+
+            $branchName = DB::table('branches')
+                ->where('id', $loan->branch_id)
+                ->value('branch_name') ?? 'HEAD OFFICE';
+
+            /*
+            |------------------------------------------
+            | 1️⃣ Loan Disbursement (Debit)
+            |------------------------------------------
+            */
+            $opening = $runningBalance;
+
+            $loanAmount = $loan->{$module['amount_column']} ?? 0;
+
+            $runningBalance += $loanAmount;
+
+            $ledgerRows[] = [
+                'branch' => $branchName,
+                'date'   => $loan->created_at,
+                'description' => 'Loan Disbursement - ID '.$loan->id,
+                'is_system'   => 'Yes',
+                'opening' => $opening,
+                'debit'   => $loanAmount,
+                'credit'  => 0,
+                'closing' => $runningBalance,
+            ];
+
+            /*
+            |------------------------------------------
+            | 2️⃣ Collections (Credit)
+            |------------------------------------------
+            */
+            $collections = DB::table($module['txn'])
+                ->where($module['loan_id'], $loan->id)
+                ->get();
+
+            foreach ($collections as $txn) {
+
+                $opening = $runningBalance;
+
+                $amount = $txn->{$module['collection_column']} ?? 0;
+
+                $runningBalance -= $amount;
+
+                $ledgerRows[] = [
+                    'branch' => $branchName,
+                    'date'   => $txn->created_at,
+                    'description' => 'Collection - Loan ID '.$loan->id,
+                    'is_system'   => 'Yes',
+                    'opening' => $opening,
+                    'debit'   => 0,
+                    'credit'  => $amount,
+                    'closing' => $runningBalance,
+                ];
+            }
+        }
+
+        usort($ledgerRows, fn($a,$b) => strtotime($a['date']) <=> strtotime($b['date']));
+
+        return $ledgerRows;
+    }
+
+    private function buildDepositTransactionLedger($module)
+    {
+        $ledgerRows = [];
+        $runningBalance = 0;
+
+        $accounts = DB::table($module['loan'])
+            ->when(isset($module['status_column']), function ($q) use ($module) {
+                $q->where($module['status_column'], $module['status_value']);
+            })
+            ->get();
+
+        foreach ($accounts as $account) {
+
+            $branchName = DB::table('branches')
+                ->where('id', $account->branch_id)
+                ->value('branch_name') ?? 'HEAD OFFICE';
+
+            // Opening Deposit (Credit)
+            $opening = $runningBalance;
+
+            $amount = $account->rd_amount 
+                ?? $account->fd_amount 
+                ?? $account->mis_amount 
+                ?? $account->dd_amount 
+                ?? 0;
+
+            $runningBalance += $amount;
+
+            $ledgerRows[] = [
+                'branch' => $branchName,
+                'date'   => $account->created_at,
+                'description' => 'Account Opening - ID '.$account->id,
+                'is_system'   => 'Yes',
+                'opening' => $opening,
+                'debit'   => 0,
+                'credit'  => $amount,
+                'closing' => $runningBalance,
+            ];
+
+            // Transactions
+            $transactions = DB::table($module['txn'])
+                ->where($module['id_column'], $account->id)
+                ->get();
+
+            foreach ($transactions as $txn) {
+
+                $opening = $runningBalance;
+
+                $txnAmount = $txn->amount ?? 0;
+
+                if ($txn->transaction_type == $module['credit_value']) {
+                    $runningBalance += $txnAmount;
+                    $credit = $txnAmount;
+                    $debit  = 0;
+                } else {
+                    $runningBalance -= $txnAmount;
+                    $credit = 0;
+                    $debit  = $txnAmount;
+                }
+
+                $ledgerRows[] = [
+                    'branch' => $branchName,
+                    'date'   => $txn->created_at,
+                    'description' => 'Transaction - Account ID '.$account->id,
+                    'is_system'   => 'Yes',
+                    'opening' => $opening,
+                    'debit'   => $debit,
+                    'credit'  => $credit,
+                    'closing' => $runningBalance,
+                ];
+            }
+        }
+
+        usort($ledgerRows, fn($a,$b) => strtotime($a['date']) <=> strtotime($b['date']));
+
+        return $ledgerRows;
+    }
+
+    private function buildExpenseLedger($module)
+    {
+        $ledgerRows = [];
+        $runningBalance = 0;
+
+        $accounts = DB::table($module['loan'])
+            ->when(isset($module['status_column']), function ($q) use ($module) {
+                $q->where($module['status_column'], $module['status_value']);
+            })
+            ->get();
+
+        foreach ($accounts as $account) {
+
+            $branchName = DB::table('branches')
+                ->where('id', $account->branch_id)
+                ->value('branch_name') ?? 'HEAD OFFICE';
+
+            $principal = $account->{$module['amount_column']} ?? 0;
+            $maturity  = $account->maturity_amount ?? 0;
+
+            $interest = max(0, $maturity - $principal);
+
+            if ($interest <= 0) continue;
+
+            $opening = $runningBalance;
+
+            // Expense → Debit Increase
+            $runningBalance += $interest;
+
+            $ledgerRows[] = [
+                'branch' => $branchName,
+                'date'   => $account->created_at,
+                'description' => 'Deposit Interest Expense - ID '.$account->id,
+                'is_system'   => 'Yes',
+                'opening' => $opening,
+                'debit'   => $interest,
+                'credit'  => 0,
+                'closing' => $runningBalance,
+            ];
+        }
+
+        usort($ledgerRows, fn($a,$b) => strtotime($a['date']) <=> strtotime($b['date']));
+
+        return $ledgerRows;
+    }
+
+    private function buildRevenueLedger($module)
+    {
+        $ledgerRows = [];
+        $runningBalance = 0;
+
+        $loans = DB::table($module['loan'])->get();
+
+        foreach ($loans as $loan) {
+
+            $branchName = DB::table('branches')
+                ->where('id', $loan->branch_id)
+                ->value('branch_name') ?? 'HEAD OFFICE';
+
+            $scheme = DB::table($module['scheme'])
+                ->where('id', $loan->scheme_id)
+                ->first();
+
+            if (!$scheme) continue;
+
+            $principal = $loan->loan_amount ?? 0;
+            $rate      = $scheme->annual_interest_rate ?? 0;
+            $months    = $scheme->tenure ?? 0;
+
+            switch ($scheme->interest_type ?? 'flat') {
+
+                case 'reducing_emi':
+                    $interest = $this->ledgerService
+                        ->calculateReducingInterest($principal, $rate, $months);
+                    break;
+
+                case 'advance':
+                    $interest = $this->ledgerService
+                        ->calculateAdvanceInterest($principal, $rate, $months);
+                    break;
+
+                case 'no_emi':
+                    $interest = $this->ledgerService
+                        ->calculateBulletInterest($principal, $rate, $months);
+                    break;
+
+                default:
+                    $interest = $this->ledgerService
+                        ->calculateFlatInterest($principal, $rate, $months);
+            }
+
+            if ($interest <= 0) continue;
+
+            $opening = $runningBalance;
+
+            // Revenue → Credit Increase
+            $runningBalance += $interest;
+
+            $ledgerRows[] = [
+                'branch' => $branchName,
+                'date'   => $loan->created_at,
+                'description' => 'Loan Interest Income - Loan ID '.$loan->id,
+                'is_system'   => 'Yes',
+                'opening' => $opening,
+                'debit'   => 0,
+                'credit'  => $interest,
+                'closing' => $runningBalance,
+            ];
+        }
+
+        usort($ledgerRows, fn($a,$b) => strtotime($a['date']) <=> strtotime($b['date']));
+
+        return $ledgerRows;
+    }
+
     private function loanModuleMap()
     {
         return [
@@ -468,7 +733,7 @@ class LedgergroupController extends Controller
                 'id_column' => 'rd_account_id',
                 'credit_value' => 1,
                 'debit_value'  => 0,
-                'status_column' => 'status',
+                //'status_column' => 'status',
                 'status_value'  => 1,
             ],
             'SAVING_ACCOUNTS' => [
@@ -563,6 +828,8 @@ class LedgergroupController extends Controller
         $closingBalance = 0;
         $lastTransactionDate = null;
 
+        $ledgerRows = [];
+
         foreach ($records as $record) {
 
             /*
@@ -596,6 +863,8 @@ class LedgergroupController extends Controller
             */
             elseif ($module['type'] === 'deposit') {
 
+                $ledgerRows = $this->buildDepositTransactionLedger($module);
+
                 $credit = DB::table($module['txn'])
                     ->where($module['id_column'], $record->id)
                     ->where('transaction_type', $module['credit_value'])
@@ -618,6 +887,8 @@ class LedgergroupController extends Controller
             */
             elseif ($module['type'] === 'deposit_interest') {
 
+                $ledgerRows = $this->buildExpenseLedger($module);
+
                 $principal = $record->{$module['amount_column']} ?? 0;
                 $maturity  = $record->maturity_amount ?? 0;
 
@@ -633,6 +904,8 @@ class LedgergroupController extends Controller
             |--------------------------------------------------------------------------
             */
             elseif ($module['type'] === 'loan_interest') {
+
+                $ledgerRows = $this->buildRevenueLedger($module);
 
                 $scheme = DB::table($module['scheme'])
                     ->where('id', $record->scheme_id)
@@ -678,6 +951,8 @@ class LedgergroupController extends Controller
             */
             elseif ($module['type'] === 'loan') {
 
+                $ledgerRows = $this->buildLoanTransactionLedger($module);
+
                 $loanAmount = $record->{$module['amount_column']} ?? 0;
 
                 $collected = DB::table($module['txn'])
@@ -698,6 +973,7 @@ class LedgergroupController extends Controller
                 $totalCredit += $credit;
                 $closingBalance += max(0, $loanAmount - $credit);
             }
+            
 
             /*
             |--------------------------------------------------------------------------
@@ -724,6 +1000,7 @@ class LedgergroupController extends Controller
 
         return view('menu-accounts.ledger.assest-ledger', compact(
             'ledger',
+            'ledgerRows',
             'totalDebit',
             'totalTransactions',
             'totalCredit',

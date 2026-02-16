@@ -121,6 +121,39 @@
             </table>
 
         </div>
+
+         <div class="w-full  overflow-x-auto rounded-10 shadow bg-white dark:bg-bg3">
+
+            <table class="w-full text-sm">
+                <thead>
+                    <tr>
+                        <th>Branch</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Is System</th>
+                        <th>O. Balance</th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                        <th>C. Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($ledgerRows as $row)
+                    <tr>
+                        <td>{{ $row['branch'] }}</td>
+                        <td>{{ \Carbon\Carbon::parse($row['date'])->format('d/m/Y H:i:s') }}</td>
+                        <td>{{ $row['description'] }}</td>
+                        <td>{{ $row['is_system'] }}</td>
+                        <td>{{ number_format($row['opening'],2) }}</td>
+                        <td>{{ number_format($row['debit'],2) }}</td>
+                        <td>{{ number_format($row['credit'],2) }}</td>
+                        <td>{{ number_format($row['closing'],2) }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            
+         </div>
         
     </div>
 
