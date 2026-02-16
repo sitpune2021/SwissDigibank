@@ -577,7 +577,6 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
 
     Route::get('/sweep-in-accounts', [FdController::class, 'sweepInAccount'])
         ->name('sweep-in-accounts');
-
 });
 
 Route::group(['prefix' => 'mds-rds-dds'], function () {
@@ -634,7 +633,6 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
     Route::get('/rdaccount/closing-form-view/{id}', [RdAccountController::class, 'rdClosingFormView'])->name('closing.form-view');
 
     Route::get('/rdaccount/closing-form/{id}', [RdAccountController::class, 'rdClosingForm'])->name('closing.form');
-
 });
 
 Route::group(['prefix' => 'deposits'], function () {
@@ -906,13 +904,22 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::get('/gold-loan-app/application-letter/{loan}', [GoldLoanPrintDocument::class, 'application_letter'])->name('loan.application_letter.pdf');
     Route::get('/gold-loan-app/application-letter-print/{loan}', [GoldLoanPrintDocument::class, 'print_application_letter'])->name('loan.application_letter_print.pdf');
 
-     Route::get('/gold-loan-app/letter-of-evidencing-view/{loan}', [GoldLoanPrintDocument::class, 'letterOf_evidencing_view'])->name('loan.letter-of-evidencing-view.pdf');
+    Route::get('/gold-loan-app/letter-of-evidencing-view/{loan}', [GoldLoanPrintDocument::class, 'letterOf_evidencing_view'])->name('loan.letter-of-evidencing-view.pdf');
     Route::get('/gold-loan-app/letter-of-evidencing/{loan}', [GoldLoanPrintDocument::class, 'letterOf_evidencing'])->name('loan.letter-of-evidencing.pdf');
     Route::get('/gold-loan-app/letter-of-evidencing-print/{loan}', [GoldLoanPrintDocument::class, 'print_letterOf_evidencing'])->name('loan.letter-of-evidencing-print.pdf');
-   
-    
+
+
     Route::get('/gold-loan-app/letter-of-jurisdiction-view/{loan}', [GoldLoanPrintDocument::class, 'jurisdiction_ack_letter_view'])->name('loan.letter-of-jurisdiction-view.pdf');
     Route::get('/gold-loan-app/letter-of-jurisdiction/{loan}', [GoldLoanPrintDocument::class, 'jurisdiction_ack_letter'])->name('loan.letter-of-jurisdiction.pdf');
+    Route::get(
+        '/gold-loan-app/emi-receipt-view/{loan}/{emiNo}',
+        [GoldLoanPrintDocument::class, 'emi_receipt_view']
+    )->name('loan.emi_receipt.view');
+
+    Route::get(
+        '/gold-loan-app/emi-receipt/{loan}/{emiNo}',
+        [GoldLoanPrintDocument::class, 'emi_receipt_pdf']
+    )->name('loan.emi_receipt.pdf');
 });
 
 
@@ -1049,7 +1056,6 @@ Route::group(['prefix' => 'mortgage'], function () {
 
     Route::get('/undertaking-letter-view/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('mortgage_loan.undertaking_letter.view');
     Route::get('/undertaking-letter/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter'])->name('mortgage_loan.undertaking_letter.pdf');
-
 });
 
 
@@ -1409,7 +1415,6 @@ Route::group(['prefix' => 'business'], function () {
 
     Route::get('/undertaking-letter-view/{loan}', [BusinessLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('business_loan.undertaking_letter.view');
     Route::get('/undertaking-letter/{loan}', [BusinessLoanPrintDocumentController::class, 'undertaking_letter'])->name('business_loan.undertaking_letter.pdf');
-
 });
 
 
@@ -1866,7 +1871,6 @@ Route::group(['prefix' => 'personal'], function () {
 
     Route::get('/undertaking-letter-view/{loan}', [PersonalLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('personal_loan.undertaking_letter.view');
     Route::get('/undertaking-letter/{loan}', [PersonalLoanPrintDocumentController::class, 'undertaking_letter'])->name('personal_loan.undertaking_letter.pdf');
-
 });
 
 
@@ -2019,7 +2023,6 @@ Route::group(['prefix' => 'vehical'], function () {
 
     Route::get('/undertaking-letter-view/{loan}', [vehicleLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('vehicle_loan.undertaking_letter.view');
     Route::get('/undertaking-letter/{loan}', [vehicleLoanPrintDocumentController::class, 'undertaking_letter'])->name('vehicle_loan.undertaking_letter.pdf');
-
 });
 
 
@@ -2203,7 +2206,6 @@ Route::group(['prefix' => 'Agricultural_loan'], function () {
     // Agricultural loan Loan Scheme
     Route::get('scheme/index', [AgriculturController::class, 'index'])
         ->name('agricultural_loan.schemes.index');
-
 });
 
 
@@ -2519,7 +2521,6 @@ Route::prefix('ledger-group')->group(function () {
 
     Route::delete('/{id}', [LedgerGroupController::class, 'destroy'])
         ->name('ledger-group.destroy');
-
 });
 
 // Only ledger Tab
@@ -2549,7 +2550,6 @@ Route::group(['prefix' => 'ledger'], function () {
 
     Route::get('ledger/journal-entry', [LedgergroupController::class, 'journal_entry_ledger'])
         ->name('ledger.journal-entry');
-
 });
 
 // Only Profit & Loss Tab
@@ -2557,7 +2557,6 @@ Route::group(['prefix' => 'profit-loss'], function () {
 
     Route::get('profit_loss', [LedgergroupController::class, 'profit_loss'])
         ->name('profit-loss.profit_loss');
-
 });
 
 ////////////////////////////////////    Account Section tab End     /////////////////////////////////////////////
@@ -2604,9 +2603,6 @@ Route::group(['prefix' => 'hr-managment'], function () {
 
     Route::get('employee/view-tran', [EmployeeController::class, 'view_tran'])
         ->name('hr-management.employee.view-trans');
-
-
-
 });
 
 //Employee attendance 
@@ -2700,8 +2696,7 @@ Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
         ->name('profile-update-password');
 
     Route::post('/profile/photo', [SettingsController::class, 'updateProfilePhoto'])
-        ->name('profile-photo.update');
-    ;
+        ->name('profile-photo.update');;
 
     Route::get('/security', [SettingsController::class, 'security'])->name('security');
     Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');

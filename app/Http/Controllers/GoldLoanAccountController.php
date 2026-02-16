@@ -320,7 +320,6 @@ class GoldLoanAccountController extends Controller
             ->exists();
 
         foreach ($emiSchedule as &$emi) {
-
             $emiAmount = floatval(str_replace(',', '', $emi['emi_amount']));
             if ($fullPaymentExists) {
                 $emi['remaining_amount'] = "0.00";
@@ -382,8 +381,17 @@ class GoldLoanAccountController extends Controller
             }
         }
 
+        unset($emi); 
         $eirSchedule = [];
+        // ⭐ T. DUE = Only EMI 1 Remaining Amount
+        $tDueAmount = 0;
 
+        foreach ($emiSchedule as $emi) {
+            if ($emi['emi_no'] == 1) {
+                $tDueAmount = floatval(str_replace(',', '', $emi['remaining_amount']));
+                break;
+            }
+        }
         // EIR should run for both flat_emi AND reducing_emi
         if (in_array($interestType, ['flat_emi', 'reducing_emi'])) {
 
@@ -534,6 +542,7 @@ class GoldLoanAccountController extends Controller
                 'tunch',
                 'fine_weight',
                 'total_value',
+
                 'status'
 
             )
@@ -544,7 +553,6 @@ class GoldLoanAccountController extends Controller
 
         // SINCE interest_paid column exists nahi hai → default zero rakho
         $paidInterest = 0;
-
         // PRINCIPAL DUE
         $emiPrincipalDue = max($principal - $paidNetPrincipal, 0);
 
@@ -610,7 +618,12 @@ class GoldLoanAccountController extends Controller
         }
 
 
+
         $payButtonText = $hasDueEmi ? 'Pay Emi' : 'Pay';
+        $emiSchedule = collect($emiSchedule)
+    ->sortBy('emi_no')
+    ->values()
+    ->toArray();
         return view('gold-loan.account.view', compact(
             'goldLoan',
             'principal',
@@ -628,7 +641,8 @@ class GoldLoanAccountController extends Controller
             'hasDueEmi',
             'totalRemainingEmiAmount',
             'payRoute',
-            'payButtonText'
+            'payButtonText',
+            'tDueAmount',
 
         ));
     }
@@ -878,54 +892,6 @@ class GoldLoanAccountController extends Controller
             return back()->with('error', 'Something went wrong while loading foreclosure page.');
         }
     }
-
-
-    // public function fourcloser($id)
-    // {
-    //     $goldLoan = LoanApplication::with(['member', 'branch', 'scheme', 'goldLoanTransactions'])
-    //         ->findOrFail($id);
-
-    //     $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
-
-    //     // Total Deposit
-    //     $totalDeposit = DB::table('gold_loan_transactions')
-    //         ->where('loan_id', $id)
-    //         ->sum('amount_collected');
-
-    //     // // Total from Other Charges (only paid)
-    //     $otherChargesDeposit = DB::table('gold_loan_other_charges')
-    //         ->where('loan_id', $id)
-    //         ->where('status', 'paid')
-    //         ->sum('amount');
-
-    //     // // FINAL DEPOSIT = Transactions + Other Charges
-    //     $totalDeposit = $totalDeposit + $otherChargesDeposit;
-
-    //     // Latest total_payable (from last transaction)
-    //     $totalPayable = DB::table('gold_loan_transactions')
-    //         ->where('loan_id', $id)
-    //         ->orderByDesc('id')
-    //         ->value('total_payable') ?? $goldLoan->loan_amount;
-
-    //     // 1. Total Transaction Deposit
-    //     $transactionDeposit = DB::table('gold_loan_transactions')
-    //         ->where('loan_id', $id)
-    //         ->sum('amount_collected');
-
-    //     // 2. Total Paid Other Charges
-    //     $otherChargesDeposit = DB::table('gold_loan_other_charges')
-    //         ->where('loan_id', $id)
-    //         ->where('status', 'paid')
-    //         ->sum('amount');
-
-    //     // 3. FINAL Total Deposit
-    //     $totalDeposit = $transactionDeposit + $otherChargesDeposit;
-
-    //     // 4. FINAL Correct Current Debt
-    //     $currentDebt = max($totalPayable - $totalDeposit, 0);
-
-    //     return view('gold-loan.account.view-buttons.fore-close.fore-close', compact('goldLoan', 'currentDebt', 'banks'));
-    // }
 
     public function storeForeCloser(Request $request, $loanId)
     {
@@ -1298,7 +1264,7 @@ class GoldLoanAccountController extends Controller
 
         $rounding = round($totalAmount) - $totalAmount;
         $netAmount = round($totalAmount + $rounding, 2);
-        
+
         // ⭐ If foreclosure approved → force everything to zero
         if ($foreclosureApproved) {
             $remainingAmount = 0;
