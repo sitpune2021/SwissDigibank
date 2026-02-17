@@ -146,9 +146,9 @@
                 <td class="px-4 py-4 text-right">
                 ₹ {{ number_format($netCurrent,2) }}
                 </td>
-                <td class="px-4 py-4 text-right">
+                <!-- <td class="px-4 py-4 text-right">
                 ₹ {{ number_format($netPrevious,2) }}
-                </td>
+                </td> -->
                 </tr>
 
                 </tbody>
@@ -332,9 +332,9 @@
                                         ₹ {{ number_format($totalRevenueCurrent,2) }}
                                     </td>
 
-                                    <td class="px-4 py-3 text-right text-green-700">
+                                    <!-- <td class="px-4 py-3 text-right text-green-700">
                                         ₹ {{ number_format($totalRevenuePrevious,2) }}
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </tfoot>
 

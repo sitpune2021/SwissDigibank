@@ -17,6 +17,20 @@ class LedgerService
         
         $ledgerCode = strtoupper($ledgerCode);
 
+        if ($ledgerCode === 'CASH_BOOK') {
+
+            [$debit, $credit, $closing] = $this->cashBookBalance();
+
+            return [$debit, $closing];
+        }
+
+        if ($ledgerCode === 'BANK_BOOK') {
+
+            [$debit, $credit, $closing] = $this->bankBookBalance();
+
+            return [$debit, $closing];
+        }
+
         // FD InterestLIABILITY MODULES FIRST
         if ($ledgerCode === 'FD_INTEREST') {
             return $this->fdInterestBalance();
@@ -140,7 +154,421 @@ class LedgerService
         return [0,0];
     }
 
-     // Interest = P × R × T / 100 
+    public function cashBookBalance()
+    {
+        $totalDebit  = 0; // Cash IN
+        $totalCredit = 0; // Cash OUT
+
+        /*
+        |------------------------------------------
+        | LOANS (Cash Disbursed = Credit)
+        |------------------------------------------
+        */
+
+        $totalCredit += \App\Models\LoanApplication::where('fee_mode', 'cash')
+                            ->where('status', 1)
+                            ->sum('approved_loan_amount');
+
+        $totalCredit += \App\Models\BusinessLoanApplication::where('fee_mode', 'cash')
+                            ->where('status', 1)
+                            ->sum('approved_loan_amount');
+
+        $totalCredit += \App\Models\CcOdLoanApplication::where('fee_mode', 'cash')
+                            ->where('status', 1)
+                            ->sum('approved_loan_amount');
+
+        // LOAN AGAINST
+        $totalCredit += \App\Models\LoanAgainstApplication::where('fee_mode', 'cash')
+                    ->where('status', 1)
+                    ->sum('approved_loan_amount');
+
+        // MORTGAGE
+        $totalCredit += \App\Models\MortgageLoanApplication::where('fee_mode', 'cash')
+                    ->where('status', 1)
+                    ->sum('approved_loan_amount');
+
+        // PERSONAL
+        $totalCredit += \App\Models\PersonalLoanApplication::where('fee_mode', 'cash')
+                    ->where('status', 1)
+                    ->sum('approved_loan_amount');
+
+        // VEHICLE
+        $totalCredit += \App\Models\VehicalApplication::where('fee_mode', 'cash')
+                        ->where('status', 1)
+                        ->sum('approved_loan_amount');
+
+
+        /*
+        |------------------------------------------
+        | DEPOSITS (Cash Received = Debit)
+        |------------------------------------------
+        */
+
+        $totalDebit += \App\Models\FdAccount::where('payment_mode', 'cash')
+                        ->where('status', 1)
+                        ->sum('fd_amount');
+
+        $totalDebit += \App\Models\RdAccount::where('payment_mode', 'cash')
+                        ->where('approve_status', 'Approved')
+                        ->sum('rd_amount');
+
+        $totalDebit += \App\Models\DdsAccount::where('payment_mode', 'cash')
+                        ->where('status', 1)
+                        ->sum('dd_amount');
+
+        $totalDebit += \App\Models\Misaccount::where('payment_mode', 'cash')
+                        ->where('status', 1)
+                        ->sum('mis_amount');
+
+        $totalDebit += \App\Models\Account::where('payment_mode', 'cash')
+                        ->where('account_status', 1)
+                        ->sum('amount_deposit');
+
+        $closing = $totalDebit - $totalCredit;
+
+        return [$totalDebit, $totalCredit, $closing];
+
+    }
+
+    public function bankBookBalance()
+    {
+        $totalDebit  = 0; // Bank IN
+        $totalCredit = 0; // Bank OUT
+
+        /*
+        |------------------------------------------
+        | LOANS (Online Disbursed = Credit)
+        |------------------------------------------
+        */
+
+        $totalCredit += \App\Models\LoanApplication::where('fee_mode', 'online')
+                            ->where('status', 1)
+                            ->sum('approved_loan_amount');
+
+        $totalCredit += \App\Models\BusinessLoanApplication::where('fee_mode', 'online')
+                            ->where('status', 1)
+                            ->sum('approved_loan_amount');
+
+        $totalCredit += \App\Models\CcOdLoanApplication::where('fee_mode', 'online')
+                            ->where('status', 1)
+                            ->sum('approved_loan_amount');
+
+        $totalCredit += \App\Models\LoanAgainstApplication::where('fee_mode', 'online')
+                            ->where('status', 1)
+                            ->sum('approved_loan_amount');
+
+        $totalCredit += \App\Models\MortgageLoanApplication::where('fee_mode', 'online')
+                            ->where('status', 1)
+                            ->sum('approved_loan_amount');
+
+        $totalCredit += \App\Models\PersonalLoanApplication::where('fee_mode', 'online')
+                            ->where('status', 1)
+                            ->sum('approved_loan_amount');
+
+        $totalCredit += \App\Models\VehicalApplication::where('fee_mode', 'online')
+                            ->where('status', 1)
+                            ->sum('approved_loan_amount');
+
+
+        /*
+        |------------------------------------------
+        | DEPOSITS (Online Received = Debit)
+        |------------------------------------------
+        */
+
+        $totalDebit += \App\Models\FdAccount::where('payment_mode', 'online')
+                            ->where('status', 1)
+                            ->sum('fd_amount');
+
+        $totalDebit += \App\Models\RdAccount::where('payment_mode', 'online')
+                            ->where('approve_status', 'Approved')
+                            ->sum('rd_amount');
+
+        $totalDebit += \App\Models\DdsAccount::where('payment_mode', 'online')
+                            ->where('status', 1)
+                            ->sum('dd_amount');
+
+        $totalDebit += \App\Models\Misaccount::where('payment_mode', 'online')
+                            ->where('status', 1)
+                            ->sum('mis_amount');
+
+        $totalDebit += \App\Models\Account::where('payment_mode', 'online')
+                            ->where('account_status', 1)
+                            ->sum('amount_deposit');
+
+        $closing = $totalDebit - $totalCredit;
+
+        return [$totalDebit, $totalCredit, $closing];
+    }
+   
+    public function buildCashLedger()
+    {
+        $ledgerRows = [];
+
+        /*
+        |----------------------------------
+        | ALL LOANS (Cash Out)
+        |----------------------------------
+        */
+
+        $loanTables = [
+            'loan_applications'            => 'GL',
+            'bussiness_loan_applications'  => 'BL',
+            'cc_od_loan_applications'      => 'CC',
+            'daily_weekly_applications'    => 'DW',
+            'loan_against_applications'    => 'LA',
+            'mortgage_loan_applications'   => 'ML',
+            'personal_loan_applications'   => 'PL',
+            'vehical_applications'         => 'VL',
+        ];
+
+        foreach ($loanTables as $table => $prefix) {
+
+            $loans = DB::table($table)
+                ->join('branches', 'branches.id', '=', $table.'.branch_id')
+                ->where($table.'.fee_mode', 'cash')
+                ->where($table.'.status', 1)
+                ->select($table.'.*', 'branches.branch_name')
+                ->get();
+
+            foreach ($loans as $loan) {
+
+                $ledgerRows[] = [
+                    'branch' => $loan->branch_name ?? 'HEAD OFFICE',
+                    'date'   => $loan->created_at,
+                    'description' => $prefix.' Loan A/c '.$prefix.$loan->id,
+                    'is_system'   => 'Yes',
+                    'debit'   => 0,
+                    'credit'  => $loan->approved_loan_amount ?? 0,
+                ];
+            }
+        }
+
+        /*
+        |----------------------------------
+        | ALL DEPOSITS (Cash In)
+        |----------------------------------
+        */
+
+        $depositTables = [
+            'rd_accounts'  => [
+                'amount_column' => 'rd_amount',
+                'prefix' => 'RD',
+                'status_column' => 'approve_status',
+                'status_value'  => 'Approved'
+            ],
+            'fd_accounts'  => [
+                'amount_column' => 'fd_amount',
+                'prefix' => 'FD',
+                'status_column' => 'status',
+                'status_value'  => 1
+            ],
+            'misaccounts'  => [
+                'amount_column' => 'mis_amount',
+                'prefix' => 'MIS',
+                'status_column' => 'status',
+                'status_value'  => 1
+            ],
+            'dds_accounts' => [
+                'amount_column' => 'dd_amount',
+                'prefix' => 'DD',
+                'status_column' => 'status',
+                'status_value'  => 1
+            ],
+        ];
+
+        foreach ($depositTables as $table => $config) {
+
+            $query = DB::table($table)
+                ->join('branches', 'branches.id', '=', $table.'.branch_id')
+                ->where($table.'.payment_mode', 'cash')
+                ->where($table.'.'.$config['status_column'], $config['status_value']);
+
+            $records = $query->select($table.'.*', 'branches.branch_name')->get();
+
+            foreach ($records as $record) {
+
+                $ledgerRows[] = [
+                    'branch' => $record->branch_name ?? 'HEAD OFFICE',
+                    'date'   => $record->created_at,
+                    'description' => 'Cash debit to '.$config['prefix'].' A/c '.$config['prefix'].$record->id,
+                    'is_system'   => 'Yes',
+                    'debit'   => $record->{$config['amount_column']} ?? 0,
+                    'credit'  => 0,
+                ];
+            }
+        }
+
+        /*
+        |----------------------------------
+        | SORT FIRST
+        |----------------------------------
+        */
+
+        usort($ledgerRows, function ($a, $b) {
+            return strtotime($a['date']) <=> strtotime($b['date']);
+        });
+
+        /*
+        |----------------------------------
+        | NOW CALCULATE RUNNING BALANCE
+        |----------------------------------
+        */
+
+        $runningBalance = 0;
+
+        foreach ($ledgerRows as $key => $row) {
+
+            $opening = $runningBalance;
+
+            $runningBalance += $row['debit'];
+            $runningBalance -= $row['credit'];
+
+            $ledgerRows[$key]['opening'] = $opening;
+            $ledgerRows[$key]['closing'] = $runningBalance;
+        }
+
+        return $ledgerRows;
+    }
+
+    public function buildOnlineLedger()
+    {
+        $ledgerRows = [];
+        $runningBalance = 0;
+
+        /*
+            |----------------------------------
+            | ALL LOANS (Bank Out)
+            |----------------------------------
+        */
+
+        $loanTables = [
+            'loan_applications'            => 'GL',
+            'bussiness_loan_applications'  => 'BL',
+            'cc_od_loan_applications'      => 'CC',
+            'daily_weekly_applications'    => 'DW',
+            'loan_against_applications'    => 'LA',
+            'mortgage_loan_applications'   => 'ML',
+            'personal_loan_applications'   => 'PL',
+            'vehical_applications'         => 'VL',
+        ];
+
+        foreach ($loanTables as $table => $prefix) {
+
+            $loans = DB::table($table)
+                ->join('branches', 'branches.id', '=', $table.'.branch_id')
+                ->where($table.'.fee_mode', 'online')
+                ->where($table.'.status', 1)
+                ->select(
+                    $table.'.*',
+                    'branches.branch_name'
+                )
+                ->get();
+
+            foreach ($loans as $loan) {
+
+                $opening = $runningBalance;
+                $amount  = $loan->approved_loan_amount ?? 0;
+
+                $runningBalance -= $amount;
+
+                $ledgerRows[] = [
+                    'branch' => $loan->branch_name ?? 'HEAD OFFICE',
+                    'date'   => $loan->created_at,
+                    'description' => $prefix.' Loan A/c '.$prefix.$loan->id,
+                    'is_system'   => 'Yes',
+                    'opening' => $opening,
+                    'debit'   => 0,
+                    'credit'  => $amount,
+                    'closing' => $runningBalance,
+                ];
+            }
+        }
+
+
+        /*
+        |----------------------------------
+        | DD / FD / etc ALL DEPOSITS (Cash In) (Cash In example)
+        |----------------------------------
+        */
+
+       $depositTables = [
+            'rd_accounts'  => [
+                'amount_column' => 'rd_amount',
+                'prefix' => 'RD',
+                'status_column' => 'approve_status',
+                'status_value'  => 'Approved'
+            ],
+            'fd_accounts'  => [
+                'amount_column' => 'fd_amount',
+                'prefix' => 'FD',
+                'status_column' => 'status',
+                'status_value'  => 1
+            ],
+            'misaccounts'  => [
+                'amount_column' => 'mis_amount',
+                'prefix' => 'MIS',
+                'status_column' => 'status',
+                'status_value'  => 1
+            ],
+            'dds_accounts' => [
+                'amount_column' => 'dd_amount',
+                'prefix' => 'DD',
+                'status_column' => 'status',
+                'status_value'  => 1
+            ],
+        ];
+
+        foreach ($depositTables as $table => $config) {
+
+            $query = DB::table($table)
+                ->join('branches', 'branches.id', '=', $table.'.branch_id')
+                ->where($table.'.payment_mode', 'online');
+
+            // 🔥 Dynamic Status Condition
+            if (isset($config['status_column'])) {
+                $query->where(
+                    $table.'.'.$config['status_column'],
+                    $config['status_value']
+                );
+            }
+
+            $records = $query->select(
+                    $table.'.*',
+                    'branches.branch_name'
+                )
+                ->get();
+
+            foreach ($records as $record) {
+
+                $opening = $runningBalance;
+                $amount  = $record->{$config['amount_column']} ?? 0;
+
+                $runningBalance += $amount;
+
+                $ledgerRows[] = [
+                    'branch' => $record->branch_name ?? 'HEAD OFFICE',
+                    'date'   => $record->created_at,
+                    'description' => 'Online debit to '.$config['prefix'].' A/c '.$config['prefix'].$record->id,
+                    'is_system'   => 'Yes',
+                    'opening' => $opening,
+                    'debit'   => $amount,
+                    'credit'  => 0,
+                    'closing' => $runningBalance,
+                ];
+            }
+        }
+
+
+        // 🔥 IMPORTANT – date wise sort after merging all branches
+        usort($ledgerRows, function ($a, $b) {
+            return strtotime($a['date']) <=> strtotime($b['date']);
+        });
+
+        return $ledgerRows;
+    }
+
+    // Interest = P × R × T / 100 
     public function calculateFlatInterest($principal, $rate, $months)
     {
         $years = $months / 12;
