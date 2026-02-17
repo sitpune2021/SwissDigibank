@@ -1251,10 +1251,10 @@ class GoldLoanController extends Controller
             $tenureValue = $request->tenure_value ?? 0;
 
             /*
-|--------------------------------------------------------------------------
-| Convert Tenure To Months
-|--------------------------------------------------------------------------
-*/
+        |--------------------------------------------------------------------------
+        | Convert Tenure To Months
+        |--------------------------------------------------------------------------
+        */
 
             if ($request->tenure_type == 'MONTHS') {
                 $tenureMonths = $tenureValue;
@@ -1267,18 +1267,15 @@ class GoldLoanController extends Controller
             }
 
             /*
-|--------------------------------------------------------------------------
-| Calculate Total Interest (Flat Example)
-|--------------------------------------------------------------------------
-*/
+     */
 
             $totalInterest = ($principal * $annualRate / 100) * ($tenureMonths / 12);
 
             /*
-|--------------------------------------------------------------------------
-| Merge Into Request
-|--------------------------------------------------------------------------
-*/
+        |--------------------------------------------------------------------------
+        | Merge Into Request
+        |--------------------------------------------------------------------------
+        */
 
             $request->merge([
                 'applied_interest' => round($totalInterest, 2)
@@ -1481,95 +1478,167 @@ class GoldLoanController extends Controller
         ));
     }
 
-    public function appupdate(Request $request, $id)
+ public function appupdate(Request $request, $id)
     {
+    DB::beginTransaction();
+
+    try {
+
         $request->validate([
-            'application_date' => 'required|date',
+            'application_date' => 'required|date_format:d-m-Y',
             'member_id'        => 'required|exists:members,id',
             'scheme_id'        => 'required|exists:gold_loan_schemes,id',
-            'loan_amount'      => 'required|numeric',
+            'loan_amount'      => 'required|numeric|min:1',
         ]);
 
         $application = LoanApplication::findOrFail($id);
 
-        // $request->merge([
-        //     'application_date' => date('Y-m-d', strtotime(str_replace('/', '-', $request->application_date)))
-        // ]);
+        /* ---------------- DATE FIX ---------------- */
 
-        if (!empty($request->application_date)) {
+        if ($request->filled('application_date')) {
             $request->merge([
-                'application_date' => date('Y-m-d', strtotime(str_replace('/', '-', $request->application_date)))
+                'application_date' => Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d'),
             ]);
         }
 
-        if (!empty($request->cheque_date)) {
+        if ($request->filled('cheque_date')) {
             $request->merge([
-                'cheque_date' => date('Y-m-d', strtotime(str_replace('/', '-', $request->cheque_date)))
+                'cheque_date' => Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d'),
             ]);
         }
 
-        $application->update($request->all());
+        /* ---------------- INTEREST OPTIONS ---------------- */
 
-        /* -----------------------------------------------
-        🟡 STEP 1: Purane ornaments delete karo
-        ------------------------------------------------*/
-        DB::table('loan_ornaments')->where('application_id', $application->id)->delete();
+        $request->merge([
+            'interest_as_emi'   => $request->has('interest_as_emi') ? 'Yes' : null,
+            'interest_as_first' => $request->has('interest_as_first') ? 'Yes' : null,
 
-        /* -----------------------------------------------
-        🟢 STEP 2: Naye ornaments insert karo
-        ------------------------------------------------*/
+            'ratio_enabled' => $request->has('divide_emi_ratio') ? 'Yes' : 'No',
+            'ratio_first_emi' => $request->has('divide_emi_ratio') ? $request->ratio_first_emi : null,
+            'ratio_first_percentage' => $request->has('divide_emi_ratio') ? $request->ratio_first_percentage : null,
+        ]);
+
+        /* ---------------- RE-CALCULATE APPLIED INTEREST ---------------- */
+
+        $scheme = GoldLoanScheme::find($request->scheme_id);
+
+        $principal   = $request->approved_loan_amount ?? $request->loan_amount;
+        $annualRate  = $scheme->annual_interest_rate ?? 0;
+        $tenureValue = $request->tenure_value ?? 0;
+
+        if ($request->tenure_type == 'MONTHS') {
+            $tenureMonths = $tenureValue;
+        } elseif ($request->tenure_type == 'WEEKS') {
+            $tenureMonths = round($tenureValue / 4, 2);
+        } elseif ($request->tenure_type == 'DAYS') {
+            $tenureMonths = round($tenureValue / 30, 2);
+        } else {
+            $tenureMonths = $tenureValue;
+        }
+
+        $totalInterest = ($principal * $annualRate / 100) * ($tenureMonths / 12);
+
+        $request->merge([
+            'applied_interest' => round($totalInterest, 2)
+        ]);
+
+        /* ---------------- UPDATE MAIN RECORD ---------------- */
+
+        $application->update($request->only([
+            'application_date',
+            'member_id',
+            'scheme_id',
+            'tenure_type',
+            'tenure_value',
+            'emi_collection',
+            'credit_period',
+            'loan_amount',
+            'insurance_amount',
+            'net_loan_amount',
+            'purpose_of_loan',
+            'processing_fee_total',
+            'approved_loan_amount',
+            'interest_as_emi',
+            'interest_as_first',
+            'ratio_enabled',
+            'ratio_first_emi',
+            'ratio_first_percentage',
+            'applied_interest',
+        ]));
+
+        /* ---------------- ORNAMENTS RESET ---------------- */
+
+        LoanOrnament::where('application_id', $application->id)->delete();
+
         if ($request->has('item_type')) {
             foreach ($request->item_type as $index => $type) {
-                DB::table('loan_ornaments')->insert([
+
+                LoanOrnament::create([
                     'application_id' => $application->id,
-                    'item_type'      => $type ?? null,
+                    'item_type'      => $type,
                     'item_name'      => $request->item_name[$index] ?? null,
-                    'no_of_items'    => $request->no_of_items[$index] ?? null,
-                    'value_per_gram' => $request->value_per_gram[$index] ?? null,
-                    'gross_weight'   => $request->gross_weight[$index] ?? null,
-                    'net_weight'     => $request->net_weight[$index] ?? null,
-                    'tunch'          => $request->tunch[$index] ?? null,
-                    'fine_weight'    => $request->fine_weight[$index] ?? null,
-                    'total_value'    => $request->total_value[$index] ?? null,
-                    'created_at'     => now(),
-                    'updated_at'     => now(),
+                    'no_of_items'    => $request->no_of_items[$index] ?? 0,
+                    'value_per_gram' => $request->value_per_gram[$index] ?? 0,
+                    'gross_weight'   => $request->gross_weight[$index] ?? 0,
+                    'net_weight'     => $request->net_weight[$index] ?? 0,
+                    'tunch'          => $request->tunch[$index] ?? 0,
+                    'fine_weight'    => $request->fine_weight[$index] ?? 0,
+                    'total_value'    => $request->total_value[$index] ?? 0,
+                    'status'         => 1,
                 ]);
             }
         }
 
-        /* -----------------------------------------------
-            🟢 STEP 3: Credit Score Details Update karo
-            ------------------------------------------------*/
-        DB::table('loan_credit_scores')->where('loan_application_id', $application->id)->delete();
+        /* ---------------- CREDIT SCORE RESET ---------------- */
+
+        $application->creditScores()->delete();
 
         if ($request->has('cibil_type')) {
             foreach ($request->cibil_type as $index => $type) {
-                // Convert report_date to proper MySQL format
-                $report_date = null;
+
+                $reportDate = null;
+
                 if (!empty($request->report_date[$index])) {
-                    $report_date = date('Y-m-d', strtotime(str_replace('/', '-', $request->report_date[$index])));
+                    $reportDate = Carbon::createFromFormat(
+                        'd-m-Y',
+                        $request->report_date[$index]
+                    )->format('Y-m-d');
                 }
 
-                DB::table('loan_credit_scores')->insert([
-                    'loan_application_id' => $application->id,
-                    'cibil_type'          => $type ?? null,
-                    'cibil_score'         => $request->cibil_score[$index] ?? null,
-                    'report_date'         => $report_date,
-                    'report_file_path'    => isset($request->report_file[$index])
-                        ? $request->report_file[$index]->store('uploads/cibil_reports', 'public')
-                        : null,
-                    'created_at'          => now(),
-                    'updated_at'          => now(),
+                $filePath = null;
+
+                if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
+                    $filePath = $request->file('report_file')[$index]
+                        ->store('cibil_reports', 'public');
+                }
+
+                $application->creditScores()->create([
+                    'cibil_type'       => $type,
+                    'cibil_score'      => $request->cibil_score[$index] ?? null,
+                    'report_date'      => $reportDate,
+                    'report_file_path' => $filePath,
                 ]);
             }
         }
 
+        DB::commit();
+
         return redirect()
             ->route('gold-loan.applications.view', $application->id)
-            ->with('success', 'Application updated successfully with ornaments & credit score');
+            ->with('success', 'Application updated successfully.');
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        Log::error('Application Update Failed', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return back()->with('error', 'Something went wrong while updating.');
     }
-
-
+}
     ////////////////////////////////////////////////////////////////////////////////
 
 
