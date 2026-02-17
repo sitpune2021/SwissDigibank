@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Member;
 use App\Models\Branch;
+use App\Models\Shareholding;
 use App\Models\Promotor;
 use App\Models\Scheme;
 use App\Models\ShareTransfer;
@@ -140,7 +141,6 @@ class CutReportController extends Controller
         return view('cut-reports.report.share-holding', compact('promoters'));
     }
 
-
     public function downloadPromoterCSV(Request $request)
     {
 
@@ -214,6 +214,7 @@ class CutReportController extends Controller
         $shareTransfers = ShareTransfer::with(['promotor', 'members'])->paginate(10);
         return view('cut-reports.report.share-transfer-history', compact('shareTransfers'));
     }
+    
     public function downloadShareTransferHistoryCsv()
     {
         $shareTransfers = ShareTransfer::with(['promotor', 'members'])->get();

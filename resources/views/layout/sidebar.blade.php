@@ -3,7 +3,7 @@ use App\Models\Menu;
 use Illuminate\Support\Facades\Auth;
 $menuItems = Menu::with('submenus')->orderBy('id')->get();
 $user = Auth::user();
-$roleName = optional($user->role)->name; // safely get role name
+$roleName = optional($user?->role)->name; // safely get role name
 
 
 @endphp

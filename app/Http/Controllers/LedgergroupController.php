@@ -795,6 +795,17 @@ class LedgergroupController extends Controller
                 'amount_column' => 'rd_amount',
             ],
 
+            'CASH_BOOK' => [
+                'type' => 'cash',
+            ],
+            'BANK_BOOK' => [
+                'type' => 'bank',
+            ],
+            'WALLET_BALANCE' => [
+                'type' => 'balance',
+            ],
+
+
         ];
     }
 
@@ -811,17 +822,23 @@ class LedgergroupController extends Controller
             abort(404, 'Ledger type not supported');
         }
 
-        $records = DB::table($module['loan'])
-            ->when(isset($module['status_column']), function ($q) use ($module) {
-                $q->where($module['status_column'], $module['status_value']);
-            })
-            ->when($module['type'] === 'bank', function ($q) use ($module) {
-                $q->where('account_type', $module['account_type'])
-                ->where('approve_status', '1')
-                ->where('account_status', 1)
-                ->whereNull('deleted_at');
-            })
-            ->get();
+        $records = collect(); // default empty collection
+
+        if (isset($module['loan'])) {
+
+            $records = DB::table($module['loan'])
+                ->when(isset($module['status_column']), function ($q) use ($module) {
+                    $q->where($module['status_column'], $module['status_value']);
+                })
+                ->when($module['type'] === 'bank', function ($q) use ($module) {
+                    $q->where('account_type', $module['account_type'])
+                    ->where('approve_status', '1')
+                    ->where('account_status', 1)
+                    ->whereNull('deleted_at');
+                })
+                ->get();
+        }
+
 
         $totalDebit  = 0;
         $totalCredit = 0;
@@ -973,7 +990,7 @@ class LedgergroupController extends Controller
                 $totalCredit += $credit;
                 $closingBalance += max(0, $loanAmount - $credit);
             }
-            
+
 
             /*
             |--------------------------------------------------------------------------
@@ -990,7 +1007,37 @@ class LedgergroupController extends Controller
                     $lastTransactionDate = $lastDate;
                 }
             }
+            
         }
+
+        // CASH BOOK HANDLE SEPARATELY
+        if ($module['type'] === 'cash') {
+
+            $cashData = $this->ledgerService->cashBookBalance();
+            $ledgerRows = $this->ledgerService->buildCashLedger();
+
+            $totalDebit  = $cashData[0] ?? 0;
+            $totalCredit = $cashData[1] ?? 0;
+
+            $closingBalance = $totalDebit - $totalCredit;
+
+            $totalTransactions = 0; // optional
+        }
+
+        // BANK BOOK HANDLE SEPARATELY
+        if ($code === 'BANK_BOOK') {
+
+            $bankData = $this->ledgerService->bankBookBalance();
+            $ledgerRows = $this->ledgerService->buildOnlineLedger();
+
+            $totalDebit  = $bankData[0] ?? 0;
+            $totalCredit = $bankData[1] ?? 0;
+
+            $closingBalance = $totalDebit - $totalCredit;
+
+            $totalTransactions = count($ledgerRows);
+        }
+
 
         $totalTransactions = $records->count();
 
@@ -1008,6 +1055,7 @@ class LedgergroupController extends Controller
             'closingBalance',
             'lastTransactionDate'
         ));
+
     }
 
     public function update_bulkrisk()
@@ -1219,6 +1267,6 @@ class LedgergroupController extends Controller
             'totalDebit','totalCredit'
         ));
     }
-    
+
 
 }
