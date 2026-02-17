@@ -27,7 +27,7 @@
     </head>
 
     <div class="main-inner">
-        
+
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <h3 class="uppercase font-semibold text-lg">Property / Mortgage Loan Disbursement</h3>
@@ -38,18 +38,19 @@
             <!-- Left: Details -->
             <div class="w-full overflow-hidden">
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
-                  
-                        <form action="{{ route('mortgagedisbursements.store') }}" method="POST">
+
+                    <form action="{{ route('mortgagedisbursements.store') }}" method="POST">
                         @csrf
                         <!-- Header -->
-                        
+
                         <div class="px-4 py-3 ">
                             <h3 class="text-lg border-b mb-4 font-semibold uppercase text-black">
                                 Application No - {{ $disbursement->id }}
-                                <input type="hidden" name="loan_application_id" value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
+                                <input type="hidden" name="loan_application_id"
+                                    value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
                             </h3>
                         </div>
-                         
+
                         <!-- Body -->
 
                         <div class="col-span-2 md:col-span-1">
@@ -84,218 +85,563 @@
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="Loan Amount" value="{{ $disbursement->approved_loan_amount ?? '' }}" readonly>
                         </div>
-                        @if(!empty($processingFee) && $processingFee > 0)
-                        <hr>
-                        <h4>Processing Fee</h4>                     
-                        <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
-                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                                <tbody>
-                                    <tr>
-                                        <th class="text-center px-3 py-2 ">Value</th>
-                                        <th class="text-center px-3 py-2 ">GST (%)</th>
-                                        <th class="text-center px-3 py-2 ">SGST</th>
-                                        <th class="text-center px-3 py-2 ">CGST</th>
-                                        <th class="text-center px-3 py-2 ">IGST</th>
-                                        <th class="text-center px-3 py-2 ">Total</th>
-                                    </tr>
+                        @if (!empty($processingFee) && $processingFee > 0)
+                            <hr>
+                            <h4 class="uppercase">Processing Fee</h4>
+                            <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
+                                <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                    <tbody>
+                                        <tr>
+                                            <th class="text-center px-3 py-2 ">Value</th>
+                                            <th class="text-center px-3 py-2 ">GST (%)</th>
+                                            <th class="text-center px-3 py-2 ">SGST</th>
+                                            <th class="text-center px-3 py-2 ">CGST</th>
+                                            <th class="text-center px-3 py-2 ">IGST</th>
+                                            <th class="text-center px-3 py-2 ">Total</th>
+                                        </tr>
 
-                                    <tr>
-                                        <!-- Value -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="processing_fee" id="processing_fee"
-                                                value="{{ number_format($processingFee, 2, '.', '') }}" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
+                                        <tr>
+                                            <!-- Value -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="processing_fee" id="processing_fee"
+                                                    value="{{ number_format($processingFee, 2, '.', '') }}" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
 
-                                        <!-- GST (%) -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="gst_percent" id="gst_percent"
-                                                value="{{ $gstPercent }}" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
+                                            <!-- GST (%) -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="gst_percent" id="gst_percent"
+                                                    value="{{ $gstPercent }}" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
 
-                                        <!-- SGST -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="sgst" id="sgst"
-                                                value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
+                                            <!-- SGST -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="sgst" id="sgst" value="0" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
 
-                                        <!-- CGST -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="cgst" id="cgst"
-                                                value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
+                                            <!-- CGST -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="cgst" id="cgst" value="0" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
 
-                                        <!-- IGST -->
-                                        <td class="px-2 py-2 ">
-                                            <input type="text" name="igst" id="igst"
-                                                value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
+                                            <!-- IGST -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="igst" id="igst" value="0" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
 
-                                        <!-- Total -->
-                                        <td class="px-2 py-2">
-                                            <input type="number" name="processing_fee_total" id="processing_fee_total"
-                                                value="{{ number_format($processingTotal, 2, '.', '') }}" readonly
-                                                class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                            <!-- Total -->
+                                            <td class="px-2 py-2">
+                                                <input type="number" name="processing_fee_total" id="processing_fee_total"
+                                                    value="{{ number_format($processingTotal, 2, '.', '') }}" readonly
+                                                    class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-                            <div class="flex items-center gap-1 mt-3">
-                                <input type="checkbox" name="collect_fee" id="collect_fee" data-target="paymodeWrapper" class="block toggle-paymode">
-                                <span class="block">Collect Processing Fee Separately</span>
+                                <div class="flex items-center gap-1 mt-3">
+                                    <input type="checkbox" name="collect_fee" id="collect_fee" data-target="paymodeWrapper"
+                                        class="block toggle-paymode">
+                                    <span class="block">Collect Processing Fee Separately</span>
+                                </div>
+
+                                <div id="paymodeWrapper" class="mt-3 hidden">
+
+                                    <div class="mt-3">
+                                        <div class="flex grid col-span-1">
+                                            <div class="flex gap-3">
+                                                <label class="flex gap-2">
+                                                    <input type="radio" name="processing_payment_mode" value="cash"
+                                                        checked>
+                                                    <p>Cash</p>
+                                                </label>
+                                                <label class="flex gap-2">
+                                                    <input type="radio" name="processing_payment_mode" value="cheque">
+                                                    <p>Cheque</p>
+                                                </label>
+                                                <label class="flex gap-2">
+                                                    <input type="radio" name="processing_payment_mode" value="online">
+                                                    <p>Online Transfer</p>
+                                                </label>
+                                            </div>
+
+                                        </div>
+
+                                        <!-- Cheque Fields -->
+                                        <div id="p_cheque_fields" style="display:none; margin-top:10px;">
+                                            <label for="bank_id" class="block mb-2 text-sm font-medium">Select
+                                                Bank</label>
+                                            <select id="processing_bank_id" name="processing_bank_id"
+                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                <option value="">-- Select Bank --</option>
+                                                @foreach ($banks as $id => $name)
+                                                    <option value="{{ $id }}">{{ $name }}</option>
+                                                @endforeach
+                                            </select>
+
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">Cheque No.</label>
+                                                <input type="text" name="processing_cheque_no"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                                    placeholder="Enter Cheque No">
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">Cheque Date</label>
+                                                <input type="text" name="processing_cheque_date"
+                                                    value="{{ old('p_cheque_date', date('d-m-Y')) }}"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+                                        </div>
+
+                                        <!-- Online Fields -->
+                                        <div id="p_online_fields" style="display:none; margin-top:10px;">
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">
+                                                    Transfer Date <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" name="processing_transfer_date"
+                                                    value="{{ old('processing_transfer_date', date('d-m-Y')) }}"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">
+                                                    UTR / Transaction No. <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" name="p_utr_no" placeholder="Enter Transaction No."
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">
+                                                    Transfer Mode <span class="text-red-500">*</span>
+                                                </label>
+                                                <div class="flex gap-4 mt-2">
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="p_transfer_mode" value="imps">
+                                                        <span>IMPS</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="p_transfer_mode" value="vpa">
+                                                        <span>VPA</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="p_transfer_mode" value="neft_rtgs">
+                                                        <span>NEFT/RTGS</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">
+                                                    Credited in Account <span class="text-red-500">*</span>
+                                                </label>
+                                                <div class="flex gap-4 mt-2">
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="processing_credited_account"
+                                                            value="yes">
+                                                        <span>yes</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="processing_credited_account"
+                                                            value="no">
+                                                        <span>no</span>
+                                                    </label>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
+                        @endif
+                        @if (!empty($stampDutyFee) && $stampDutyFee > 0)
+                            <hr>
+                            <h4 class="uppercase">Stamp Duty Fee</h4>
+                            <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
+                                <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                    <tbody>
+                                        <tr>
+                                            <th class="text-center px-3 py-2">Value</th>
+                                            <th class="text-center px-3 py-2">GST (%)</th>
+                                            <th class="text-center px-3 py-2">SGST</th>
+                                            <th class="text-center px-3 py-2">CGST</th>
+                                            <th class="text-center px-3 py-2">IGST</th>
+                                            <th class="text-center px-3 py-2">Total</th>
+                                        </tr>
 
-                            <div id="paymodeWrapper" class="mt-3 hidden">
-                                <!-- pass processing fee to your paymode component -->
-                                <x-paymode :amount="$processingFee" :showSaving="false" id="processing_fee2" :readonly="false" :amountClass="true" :bgColor="false" :hiddenheading="true" :checkedDefault="'cash'" groupName="processing_fee2" />
+                                        <tr>
+                                            <!-- Value -->
+                                            <td class="px-2 py-2">
+                                                <input type="text" name="stamp_duty_fee" id="stamp_duty_fee"
+                                                    value="{{ number_format($stampDutyFee, 2, '.', '') }}" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
+
+                                            <!-- GST (%) -->
+                                            <td class="px-2 py-2">
+                                                <input type="text" name="stamp_gst_percent" id="stamp_gst_percent"
+                                                    value="{{ $gstPercent }}" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
+
+                                            <!-- SGST -->
+                                            <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base">
+                                            </td>
+
+                                            <!-- CGST -->
+                                            <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base">
+                                            </td>
+
+                                            <!-- IGST -->
+                                            <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base">
+                                            </td>
+
+                                            <!-- Total -->
+                                            <td class="px-2 py-2">
+                                                <input type="number" name="stamp_duty_total" id="stamp_duty_total"
+                                                    value="{{ number_format($stampTotal, 2, '.', '') }}" readonly
+                                                    class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="flex items-center gap-1 mt-3">
+                                    <input type="checkbox" name="collect_stamp_duty" id="collect_stamp_duty"
+                                        data-target="stampWrapper" class="block toggle-paymode">
+                                    <span class="block">Collect Stamp Duty fee Separately</span>
+                                </div>
+
+                                <div id="stampWrapper" class="mt-3 hidden">
+
+                                    <div class="mt-3">
+                                        <div class="flex grid col-span-1">
+                                            <div class="flex gap-3">
+                                                <label class="flex gap-2">
+                                                    <input type="radio" name="stamp_payment_mode" value="cash"
+                                                        checked>
+                                                    <p>Cash</p>
+                                                </label>
+                                                <label class="flex gap-2">
+                                                    <input type="radio" name="stamp_payment_mode" value="cheque">
+                                                    <p>Cheque</p>
+                                                </label>
+                                                <label class="flex gap-2">
+                                                    <input type="radio" name="stamp_payment_mode" value="online">
+                                                    <p>Online Transfer</p>
+                                                </label>
+                                            </div>
+
+                                        </div>
+
+                                        <!-- Cheque Fields -->
+                                        <div id="stamp_cheque_fields" style="display:none; margin-top:10px;">
+                                            <label for="bank_id" class="block mb-2 text-sm font-medium">Select
+                                                Bank</label>
+                                            <select id="bank_id" name="stamp_bank_id"
+                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                <option value="">-- Select Bank --</option>
+                                                @foreach ($banks as $id => $name)
+                                                    <option value="{{ $id }}">{{ $name }}</option>
+                                                @endforeach
+                                            </select>
+
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">Cheque No.</label>
+                                                <input type="text" name="stamp_cheque_no"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                                    placeholder="Enter Cheque No">
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">Cheque Date</label>
+                                                <input type="text" name="stamp_cheque_date"
+                                                    value="{{ old('cheque_date', date('d-m-Y')) }}"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+                                        </div>
+
+                                        <!-- Online Fields -->
+                                        <div id="stamp_online_fields" style="display:none; margin-top:10px;">
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">
+                                                    Transfer Date <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" name="stamp_transfer_date"
+                                                    value="{{ old('stamp_transfer_date', date('d-m-Y')) }}"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">
+                                                    UTR / Transaction No. <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" name="stamp_utr_no"
+                                                    placeholder="Enter Transaction No."
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">
+                                                    Transfer Mode <span class="text-red-500">*</span>
+                                                </label>
+                                                <div class="flex gap-4 mt-2">
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="stamp_transfer_mode" value="imps">
+                                                        <span>IMPS</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="stamp_transfer_mode" value="vpa">
+                                                        <span>VPA</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="stamp_transfer_mode"
+                                                            value="neft_rtgs">
+                                                        <span>NEFT/RTGS</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">
+                                                    Credited in Account <span class="text-red-500">*</span>
+                                                </label>
+                                                <div class="flex gap-4 mt-2">
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="stamp_credited_account"
+                                                            value="yes">
+                                                        <span>yes</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="stamp_credited_account"
+                                                            value="no">
+                                                        <span>no</span>
+                                                    </label>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
                         @endif
-                        @if(!empty($stampDutyFee) && $stampDutyFee > 0)
-                        <hr>
-                        <h4>Stamp Duty Fee</h4>
-                        <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
-                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                                <tbody>
-                                    <tr>
-                                        <th class="text-center px-3 py-2">Value</th>
-                                        <th class="text-center px-3 py-2">GST (%)</th>
-                                        <th class="text-center px-3 py-2">SGST</th>
-                                        <th class="text-center px-3 py-2">CGST</th>
-                                        <th class="text-center px-3 py-2">IGST</th>
-                                        <th class="text-center px-3 py-2">Total</th>
-                                    </tr>
+                        @if (!empty($insuranceFee) && $insuranceFee > 0)
+                            <hr>
+                            <h4 class="uppercase">Insurance Fee</h4>
+                            <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
+                                <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                    <tbody>
+                                        <tr>
+                                            <th class="text-center px-3 py-2">Value</th>
+                                            <th class="text-center px-3 py-2">GST (%)</th>
+                                            <th class="text-center px-3 py-2">SGST</th>
+                                            <th class="text-center px-3 py-2">CGST</th>
+                                            <th class="text-center px-3 py-2">IGST</th>
+                                            <th class="text-center px-3 py-2">Total</th>
+                                        </tr>
 
-                                    <tr>
-                                        <!-- Value -->
-                                        <td class="px-2 py-2">
-                                            <input type="text" name="stamp_duty_fee" id="stamp_duty_fee"
-                                                value="{{ number_format($stampDutyFee, 2, '.', '') }}" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
+                                        <tr>
+                                            <!-- Value -->
+                                            <td class="px-2 py-2">
+                                                <input type="text" name="insurance_fee" id="insurance_fee"
+                                                    value="{{ number_format($insuranceFee, 2, '.', '') }}" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
 
-                                        <!-- GST (%) -->
-                                        <td class="px-2 py-2">
-                                            <input type="text" name="stamp_gst_percent" id="stamp_gst_percent"
-                                                value="{{ $gstPercent }}" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
+                                            <!-- GST (%) -->
+                                            <td class="px-2 py-2">
+                                                <input type="text" name="insurance_gst_percent"
+                                                    id="insurance_gst_percent" value="{{ $gstPercent }}" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
 
-                                        <!-- SGST -->
-                                        <td class="px-2 py-2"><input type="text" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
+                                            <!-- SGST -->
+                                            <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base">
+                                            </td>
 
-                                        <!-- CGST -->
-                                        <td class="px-2 py-2"><input type="text" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
+                                            <!-- CGST -->
+                                            <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base">
+                                            </td>
 
-                                        <!-- IGST -->
-                                        <td class="px-2 py-2"><input type="text" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
+                                            <!-- IGST -->
+                                            <td class="px-2 py-2"><input type="text" value="0" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base">
+                                            </td>
 
-                                        <!-- Total -->
-                                        <td class="px-2 py-2">
-                                            <input type="number" name="stamp_duty_total" id="stamp_duty_total"
-                                                value="{{ number_format($stampTotal, 2, '.', '') }}" readonly
-                                                class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        @endif
-                        @if(!empty($insuranceFee) && $insuranceFee > 0)
-                        <hr>
-                        <h4>Insurance Fee</h4>
-                        <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
-                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                                <tbody>
-                                    <tr>
-                                        <th class="text-center px-3 py-2">Value</th>
-                                        <th class="text-center px-3 py-2">GST (%)</th>
-                                        <th class="text-center px-3 py-2">SGST</th>
-                                        <th class="text-center px-3 py-2">CGST</th>
-                                        <th class="text-center px-3 py-2">IGST</th>
-                                        <th class="text-center px-3 py-2">Total</th>
-                                    </tr>
+                                            <!-- Total -->
+                                            <td class="px-2 py-2">
+                                                <input type="number" name="insurance_total" id="insurance_total"
+                                                    value="{{ number_format($insuranceTotal, 2, '.', '') }}" readonly
+                                                    class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                {{-- Collect Insurance Fee Separately  --}}
+                                <div class="flex items-center gap-1 mt-3">
+                                    <input type="checkbox" name="collect_insurance_fee" id="collect_insurance_fee"
+                                        data-target="insuranceWrapper" class="block toggle-paymode">
+                                    <span class="block">Collect Insurance Fee Separately</span>
+                                </div>
 
-                                    <tr>
-                                        <!-- Value -->
-                                        <td class="px-2 py-2">
-                                            <input type="text" name="insurance_fee" id="insurance_fee"
-                                                value="{{ number_format($insuranceFee, 2, '.', '') }}" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
+                                <div id="insuranceWrapper" class="mt-3 hidden">
 
-                                        <!-- GST (%) -->
-                                        <td class="px-2 py-2">
-                                            <input type="text" name="insurance_gst_percent" id="insurance_gst_percent"
-                                                value="{{ $gstPercent }}" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                        </td>
+                                    <div class="mt-3">
+                                        <div class="flex grid col-span-1">
+                                            <div class="flex gap-3">
+                                                <label class="flex gap-2">
+                                                    <input type="radio" name="insurance_payment_mode" value="cash"
+                                                        checked>
+                                                    <p>Cash</p>
+                                                </label>
+                                                <label class="flex gap-2">
+                                                    <input type="radio" name="insurance_payment_mode" value="cheque">
+                                                    <p>Cheque</p>
+                                                </label>
+                                                <label class="flex gap-2">
+                                                    <input type="radio" name="insurance_payment_mode" value="online">
+                                                    <p>Online Transfer</p>
+                                                </label>
+                                            </div>
 
-                                        <!-- SGST -->
-                                        <td class="px-2 py-2"><input type="text" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
+                                        </div>
 
-                                        <!-- CGST -->
-                                        <td class="px-2 py-2"><input type="text" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
+                                        <!-- Cheque Fields -->
+                                        <div id="insurance_cheque_fields" style="display:none; margin-top:10px;">
+                                            <label for="bank_id" class="block mb-2 text-sm font-medium">Select
+                                                Bank</label>
+                                            <select id="bank_id" name="insurance_bank_id"
+                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                <option value="">-- Select Bank --</option>
+                                                @foreach ($banks as $id => $name)
+                                                    <option value="{{ $id }}">{{ $name }}</option>
+                                                @endforeach
+                                            </select>
 
-                                        <!-- IGST -->
-                                        <td class="px-2 py-2"><input type="text" value="0" readonly
-                                                class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base"></td>
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">Cheque No.</label>
+                                                <input type="text" name="insurance_cheque_no"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                                    placeholder="Enter Cheque No">
+                                            </div>
 
-                                        <!-- Total -->
-                                        <td class="px-2 py-2">
-                                            <input type="number" name="insurance_total" id="insurance_total"
-                                                value="{{ number_format($insuranceTotal, 2, '.', '') }}" readonly
-                                                class="w-full px-2 py-2 text-center border rounded-10 text-sm md:text-base" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        @endif
- 
-                        @if($isAdvanceInterest)
-                        <hr>
-                        <h4>Advance Interest</h4>
-                        <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">Cheque Date</label>
+                                                <input type="text" name="insurance_cheque_date"
+                                                    value="{{ old('insurance_cheque_date', date('d-m-Y')) }}"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+                                        </div>
 
-                            <input type="number" id="finalAmount" name="advance_interest"
-                            class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
-                            value="{{ $advanceInterest }}" readonly>
+                                        <!-- Online Fields -->
+                                        <div id="insurance_online_fields" style="display:none; margin-top:10px;">
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">
+                                                    Transfer Date <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" name="insurance_transfer_date"
+                                                    value="{{ old('insurance_transfer_date', date('d-m-Y')) }}"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
 
-                            <div class="flex items-center gap-1 mt-3">
-                                <input type="checkbox" name="" id="" data-target="advance-interest"
-                                    class="block toggle-paymode">
-                                <span class="block">Collect Processing Fee Separately</span>
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">
+                                                    UTR / Transaction No. <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" name="insurance_utr_no"
+                                                    placeholder="Enter Transaction No."
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">
+                                                    Transfer Mode <span class="text-red-500">*</span>
+                                                </label>
+                                                <div class="flex gap-4 mt-2">
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="insurance_transfer_mode"
+                                                            value="imps">
+                                                        <span>IMPS</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="insurance_transfer_mode"
+                                                            value="vpa">
+                                                        <span>VPA</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="insurance_transfer_mode"
+                                                            value="neft_rtgs">
+                                                        <span>NEFT/RTGS</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium">
+                                                    Credited in Account <span class="text-red-500">*</span>
+                                                </label>
+                                                <div class="flex gap-4 mt-2">
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="insurance_credited_account"
+                                                            value="yes">
+                                                        <span>yes</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="insurance_credited_account"
+                                                            value="no">
+                                                        <span>no</span>
+                                                    </label>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-
-                            <div id="advance-interest" class="mt-3 hidden">
-                                <x-paymode :amount="$misaccount->amount ?? ''" {{-- :banks="$banks" --}} :showSaving="false"
-                                    id="processing_fee3" :readonly="false" :amountClass="true" :bgColor="false"
-                                    :hiddenheading="true" :checkedDefault="'cash'" groupName="advance-interest" />
-                            </div>
-                        </div>
                         @endif
 
-                         <hr>
+                        @if ($isAdvanceInterest)
+                            <hr>
+                            <h4>Advance Interest</h4>
+                            <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
+
+                                <input type="number" id="finalAmount" name="advance_interest"
+                                    class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
+                                    value="{{ $advanceInterest }}" readonly>
+
+                                <div class="flex items-center gap-1 mt-3">
+                                    <input type="checkbox" name="" id="" data-target="advance-interest"
+                                        class="block toggle-paymode">
+                                    <span class="block">Collect Processing Fee Separately</span>
+                                </div>
+
+                                <div id="advance-interest" class="mt-3 hidden">
+                                    <x-paymode :amount="$misaccount->amount ?? ''" {{-- :banks="$banks" --}} :showSaving="false"
+                                        id="processing_fee3" :readonly="false" :amountClass="true" :bgColor="false"
+                                        :hiddenheading="true" :checkedDefault="'cash'" groupName="advance-interest" />
+                                </div>
+                            </div>
+                        @endif
+
+                        <hr>
                         <div class="col-span-2 md:col-span-1 mb-4">
                             <label for="" class="md:text-lg font-medium block mb-4 mt-4">
                                 Final Amount To Disburse <span class="text-red-500">*</span>
                             </label>
                             <input type="number" id="finalAmount"
-                                value="{{ number_format($finalAmountToDisburse, 2, '.', '') }}"
-                                name="final_amount"
+                                value="{{ number_format($finalAmountToDisburse, 2, '.', '') }}" name="final_amount"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
                                 readonly>
+                            <hr>
+
                             <hr>
 
 
@@ -307,114 +653,122 @@
                                         <span class="text-red-500">*</span>
                                     </label>
 
-                                    <input type="text" id="D_mode_1" name="D_mode_1" value="{{ number_format($finalAmountToDisburse, 2, '.', '') }}"
-                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" readonly>
+                                    <input type="text" id="D_mode_1" name="D_mode_1"
+                                        value="{{ number_format($finalAmountToDisburse, 2, '.', '') }}"
+                                        class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                        readonly>
                                     <x-number-to-word for="D_mode_1" />
                                     <div class="mt-3">
-                                     <div class="flex gap-2">
-                                        <label class="flex gap-2">
-                                        <input type="radio" name="payment_mode" value="cash" checked> <p>Cash</p>
+                                        <div class="flex gap-2">
+                                            <label class="flex gap-2">
+                                                <input type="radio" name="payment_mode" value="cash" checked>
+                                                <p>Cash</p>
+                                            </label>
+
+                                            <label class="flex gap-2">
+                                                <input type="radio" name="payment_mode" value="cheque">
+                                                <p>Cheque</p>
+                                            </label>
+
+                                            <label class="flex gap-2">
+                                                <input type="radio" name="payment_mode" value="online">
+                                                <p>Online Transfer</p>
+                                            </label>
+                                        </div>
+                                        <label class="flex gap-2 mt-3">
+                                            <input type="radio" name="payment_mode" value="saving">
+                                            <p>Saving Account</p>
                                         </label>
 
-                                        <label class="flex gap-2">
-                                        <input type="radio" name="payment_mode" value="cheque"> <p>Cheque</p>
-                                        </label>
-
-                                        <label class="flex gap-2">
-                                        <input type="radio" name="payment_mode" value="online"> <p>Online Transfer</p>
-                                        </label>
-                                         </div>
-                                         <label class="flex gap-2 mt-3">
-                                        <input type="radio" name="payment_mode" value="saving"> <p>Saving Account</p>
-                                        </label>
-                                    
 
                                         <!-- Fields for Cheque -->
                                         <div id="cheque_fields" style="display:none; margin-top:10px;">
-                                        <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
+                                            <label for="bank_id" class="block mb-2 text-sm font-medium">Select
+                                                Bank</label>
                                             <select id="bank_id" name="bank_id"
-                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                                    <option value="">-- Select Bank --</option>
-                                                    @foreach($banks as $id => $name)
-                                                        <option value="{{ $id }}">
-                                                            {{ $name }}
-                                                        </option>
-                                                    @endforeach
-                                            </select>
-                                       <!-- Cheque No -->
-                                        <div class="mt-3">
-                                            <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
-                                            <input type="text" name="cheque_no"
-                                                class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
-                                                placeholder="Enter Cheque No">
-                                        </div>
-
-                                        <!-- Cheque Date -->
-                                        <div class="mt-3">
-                                            <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                            <input type="text" id="cheque_date" name="cheque_date"
-                                            value="{{ old('cheque_date', date('Y-m-d')) }}"
                                                 class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                <option value="">-- Select Bank --</option>
+                                                @foreach ($banks as $id => $name)
+                                                    <option value="{{ $id }}">
+                                                        {{ $name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <!-- Cheque No -->
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
+                                                <input type="text" name="cheque_no"
+                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                                    placeholder="Enter Cheque No">
+                                            </div>
+
+                                            <!-- Cheque Date -->
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
+                                                <input type="text" id="cheque_date" name="cheque_date"
+                                                    value="{{ old('cheque_date', date('Y-m-d')) }}"
+                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
                                         </div>
+
+                                        <!-- Fields for Online -->
+                                        <div id="online_fields" style="display:none; margin-top:10px;">
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium text-gray-700">
+                                                    Transfer Date <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" id="transfer_date" name="transfer_date"
+                                                    value="{{ old('transfer_date', date('Y-m-d')) }}"
+                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700">
+                                                    UTR / Transaction No. <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" id="utr_no" name="utr_no"
+                                                    placeholder="Enter Transaction No."
+                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700">
+                                                    Transfer Mode <span class="text-red-500">*</span>
+                                                </label>
+                                                <div class="flex gap-4 mt-2">
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode" value="imps">
+                                                        <span>IMPS</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode" value="vpa">
+                                                        <span>VPA</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode" value="neft_rtgs">
+                                                        <span>NEFT/RTGS</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Fields for Saving Account -->
+                                        <div id="saving_fields" style="display:none; margin-top:10px;">
+                                            <label>Saving Account:</label>
+                                            <select id="saving" name="saving"
+                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+
+                                                <option value="">-- Select Saving Acc. --</option>
+
+                                                @foreach ($savingAccounts as $acc)
+                                                    <option value="{{ $acc }}">{{ $acc }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+
                                     </div>
+                                </div>
 
-                            <!-- Fields for Online -->
-                            <div id="online_fields" style="display:none; margin-top:10px;">
-                                <div class="mt-3">
-                                    <label class="block text-sm font-medium text-gray-700">
-                                        Transfer Date <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" id="transfer_date" name="transfer_date" 
-                                    value="{{ old('transfer_date', date('Y-m-d')) }}"
-                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">
-                                        UTR / Transaction No. <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" id="utr_no" name="utr_no" placeholder="Enter Transaction No."
-                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">
-                                        Transfer Mode <span class="text-red-500">*</span>
-                                    </label>
-                                    <div class="flex gap-4 mt-2">
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="transfer_mode" value="imps">
-                                            <span>IMPS</span>
-                                        </label>
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="transfer_mode" value="vpa">
-                                            <span>VPA</span>
-                                        </label>
-                                        <label class="flex items-center gap-2">
-                                            <input type="radio" name="transfer_mode" value="neft_rtgs">
-                                            <span>NEFT/RTGS</span>
-                                        </label>
-                                    </div>
-                                </div>
                             </div>
-
-                                <!-- Fields for Saving Account -->
-                                <div id="saving_fields" style="display:none; margin-top:10px;">
-                                    <label>Saving Account:</label>
-                                    <select id="saving" name="saving"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-
-                                        <option value="">-- Select Saving Acc. --</option>
-
-                                        @foreach ($savingAccounts as $acc)
-                                            <option value="{{ $acc }}">{{ $acc }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-
-                                </div>
-                            </div>
-
-                        </div>
 
 
                             <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
@@ -426,32 +780,36 @@
 
                                     <input type="text" id="D_mode_2" name="D_mode_2" value="0"
                                         class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                                    
+
                                     <div class="mt-3">
                                         <div class="flex gap-2">
                                             <label class="flex gap-2">
-                                        <input type="radio" name="payment_mode2" value="cash" checked> <p>Cash</p>
-                                        </label>
-                                         <label class="flex gap-2">
-                                        <input type="radio" name="payment_mode2" value="cheque"> <p>Cheque</p>
-                                        </label>
-                                         <label class="flex gap-2">
-                                        <input type="radio" name="payment_mode2" value="online"> <p>Online Transfer</p>
-                                        </label>
+                                                <input type="radio" name="payment_mode2" value="cash" checked>
+                                                <p>Cash</p>
+                                            </label>
+                                            <label class="flex gap-2">
+                                                <input type="radio" name="payment_mode2" value="cheque">
+                                                <p>Cheque</p>
+                                            </label>
+                                            <label class="flex gap-2">
+                                                <input type="radio" name="payment_mode2" value="online">
+                                                <p>Online Transfer</p>
+                                            </label>
                                         </div>
-                                         <label class="flex gap-2 mt-3">
-                                        <input type="radio" name="payment_mode2" value="saving"> <p>Saving Account</p>
+                                        <label class="flex gap-2 mt-3">
+                                            <input type="radio" name="payment_mode2" value="saving">
+                                            <p>Saving Account</p>
                                         </label>
                                         <!-- Fields for Disburse Mode 2 -->
                                         <div id="cheque_fields2" style="display:none; margin-top:10px;">
                                             <select id="bank_id2" name="bank_id2"
-                                                    class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                                    <option value="">-- Select Bank --</option>
-                                                    @foreach($banks as $id => $name)
-                                                        <option value="{{ $id }}">
-                                                            {{ $name }}
-                                                        </option>
-                                                    @endforeach
+                                                class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                <option value="">-- Select Bank --</option>
+                                                @foreach ($banks as $id => $name)
+                                                    <option value="{{ $id }}">
+                                                        {{ $name }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                             <!-- Cheque No -->
                                             <div class="mt-3">
@@ -465,25 +823,26 @@
                                             <div class="mt-3">
                                                 <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
                                                 <input type="text" id="cheque_date2" name="cheque_date2"
-                                                value="{{ old('cheque_date2', date('Y-m-d')) }}"
+                                                    value="{{ old('cheque_date2', date('Y-m-d')) }}"
                                                     class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                             </div>
                                         </div>
-                                         <!-- Fields for Online -->
+                                        <!-- Fields for Online -->
                                         <div id="online_fields2" style="display:none; margin-top:10px;">
                                             <div class="mt-3">
                                                 <label class="text text-sm font-medium text-gray-700">
                                                     Transfer Date <span class="text-red-500">*</span>
                                                 </label>
-                                                <input type="date" id="transfer_date2" name="transfer_date2" 
-                                                value="{{ old('transfer_date2', date('Y-m-d')) }}"
+                                                <input type="date" id="transfer_date2" name="transfer_date2"
+                                                    value="{{ old('transfer_date2', date('Y-m-d')) }}"
                                                     class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700">
                                                     UTR / Transaction No. <span class="text-red-500">*</span>
                                                 </label>
-                                                <input type="text" id="utr_no2" name="utr_no2" placeholder="Enter Transaction No."
+                                                <input type="text" id="utr_no2" name="utr_no2"
+                                                    placeholder="Enter Transaction No."
                                                     class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                             </div>
                                             <div>
@@ -495,34 +854,34 @@
                                                         <input type="radio" name="transfer_mode2" value="imps">
                                                         <span>IMPS</span>
                                                     </label>
-                                                <label class="flex items-center gap-2">
-                                                    <input type="radio" name="transfer_mode2" value="vpa">
-                                                    <span>VPA</span>
-                                                </label>
-                                                <label class="flex items-center gap-2">
-                                                    <input type="radio" name="transfer_mode2" value="neft_rtgs">
-                                                    <span>NEFT/RTGS</span>
-                                                </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode2" value="vpa">
+                                                        <span>VPA</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="transfer_mode2" value="neft_rtgs">
+                                                        <span>NEFT/RTGS</span>
+                                                    </label>
+                                                </div>
                                             </div>
+
+                                            <!-- Fields for Saving Account -->
+                                            <div id="saving_fields2" style="display:none; margin-top:10px;">
+                                                <label>Saving Account:</label>
+                                                <select id="saving2" name="saving2"
+                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+
+                                                    <option value="">-- Select Saving Acc. --</option>
+
+                                                    @foreach ($savingAccounts as $acc)
+                                                        <option value="{{ $acc }}">{{ $acc }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
                                         </div>
 
-                                        <!-- Fields for Saving Account -->
-                                        <div id="saving_fields2" style="display:none; margin-top:10px;">
-                                            <label>Saving Account:</label>
-                                            <select id="saving2" name="saving2"
-                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-
-                                                <option value="">-- Select Saving Acc. --</option>
-
-                                                @foreach ($savingAccounts as $acc)
-                                                    <option value="{{ $acc }}">{{ $acc }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>          
-                                
                                     </div>
-
-                                </div>   
 
                                 </div>
 
@@ -536,24 +895,24 @@
                                 </button>
 
                                 <button class="btn-outline uppercase justify-center" type="reset">
-                                    <a href="{{route('mortgage.disbursements.index')}}">BACK</a>
+                                    <a href="{{ route('mortgage.disbursements.index') }}">BACK</a>
                                 </button>
                             </div>
                     </form>
 
-    <!-- Script -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('disbursementForm');
-        const paymentMode = document.getElementById('payment_mode');
-        const extraFields = document.getElementById('extraFields');
+                    <!-- Script -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const form = document.getElementById('disbursementForm');
+                            const paymentMode = document.getElementById('payment_mode');
+                            const extraFields = document.getElementById('extraFields');
 
-        paymentMode.addEventListener('change', function() {
-            const mode = this.value;
-            extraFields.innerHTML = ''; // clear previous
+                            paymentMode.addEventListener('change', function() {
+                                const mode = this.value;
+                                extraFields.innerHTML = ''; // clear previous
 
-            if (mode === 'cheque') {
-                extraFields.innerHTML = `
+                                if (mode === 'cheque') {
+                                    extraFields.innerHTML = `
                     <label>Bank Name</label>
                     <input type="text" name="bank_name" class="form-input" >
                     <label>Cheque No</label>
@@ -561,22 +920,22 @@
                     <label>Cheque Date</label>
                     <input type="date" name="cheque_date" class="form-input" >
                 `;
-            } else if (mode === 'online') {
-                extraFields.innerHTML = `
+                                } else if (mode === 'online') {
+                                    extraFields.innerHTML = `
                     <label>UTR / Transaction No</label>
                     <input type="text" name="utr_no" class="form-input" >
                     <label>Transfer Date</label>
                     <input type="date" name="transfer_date" class="form-input" >
                 `;
-            } else if (mode === 'saving') {
-                extraFields.innerHTML = `
+                                } else if (mode === 'saving') {
+                                    extraFields.innerHTML = `
                     <label>Saving Account No</label>
                     <input type="text" name="saving_acc_no" class="form-input" >
                 `;
-            }
-        });
-    });
-    </script>
+                                }
+                            });
+                        });
+                    </script>
 
 
 
@@ -620,7 +979,8 @@
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Member</td>
-                                <td class="px-3 py-2">{{ $disbursement->member->id ?? '' }} - {{ $disbursement->member->member_info_first_name ?? '' }}</td>
+                                <td class="px-3 py-2">{{ $disbursement->member->id ?? '' }} -
+                                    {{ $disbursement->member->member_info_first_name ?? '' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Amount Requested</td>
@@ -629,13 +989,13 @@
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Amount Approved</td>
                                 <td class="px-3 py-2">
-                                 ₹  {{ $disbursement->approved_loan_amount ?? '' }}
+                                    ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Interst Type</td>
                                 <td class="px-3 py-2">
-                                 {{ $disbursement->scheme->gold_loan_setting ?? '' }}
+                                    {{ $disbursement->scheme->gold_loan_setting ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
@@ -651,48 +1011,49 @@
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Credit Period</td>
                                 <td class="px-3 py-2">
-                                   {{ $disbursement->scheme->credit_period ?? '' }} Days
+                                    {{ $disbursement->scheme->credit_period ?? '' }} Days
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Total Amount to Recover</td>
                                 <td class="px-3 py-2">
-                                    <td class="px-3 py-2">₹ {{ number_format($totalRecover, 2) }}</td>
+                                <td class="px-3 py-2">₹ {{ number_format($totalRecover, 2) }}</td>
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Tenure of Loan</td>
                                 <td class="px-3 py-2">
-                                   {{ $disbursement->scheme->tenure ?? '' }} MONTHS
+                                    {{ $disbursement->scheme->tenure ?? '' }} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Collect Principal Amount as EMI</td>
                                 <td class="px-3 py-2">
-                               <span class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                          Yes
-                                        </span>
+                                    <span
+                                        class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+                                        Yes
+                                    </span>
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Processing Fee</td>
                                 <td class="px-3 py-2">
-                                    {{ number_format($processingTotal, 2, '.', '') }}  (Incl. 18.0 % GST)
+                                    {{ number_format($processingTotal, 2, '.', '') }} (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3  uppercase py-2">Stamp Duty Fee</td>
                                 <td class="px-3 py-2">
-                                   ₹ {{ $disbursement->scheme->stamp_duty_charge ?? 0 }}  (Incl. 18.0 % GST)
+                                    ₹ {{ $disbursement->scheme->stamp_duty_charge ?? 0 }} (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Insurance Fee</td>
                                 <td class="px-3 py-2">
-                                   {{ $disbursement->scheme->insurance_amount ?? 0 }} (Incl. 18.0 % GST)
+                                    {{ $disbursement->scheme->insurance_amount ?? 0 }} (Incl. 18.0 % GST)
                                 </td>
                             </tr>
-                          
+
                         </tbody>
                     </table>
 
@@ -767,151 +1128,224 @@
     </div>
     </div>
 
-<script>
-document.querySelectorAll('input[name="payment_mode"]').forEach((elem) => {
-  elem.addEventListener("change", function(event) {
-    let value = event.target.value;
+    <script>
+        document.querySelectorAll('input[name="payment_mode"]').forEach((elem) => {
+            elem.addEventListener("change", function(event) {
+                let value = event.target.value;
 
-    // hide all first
-    document.getElementById("cheque_fields").style.display = "none";
-    document.getElementById("online_fields").style.display = "none";
-    document.getElementById("saving_fields").style.display = "none";
+                // hide all first
+                document.getElementById("cheque_fields").style.display = "none";
+                document.getElementById("online_fields").style.display = "none";
+                document.getElementById("saving_fields").style.display = "none";
 
-    // show according to selection
-    if (value === "cheque") {
-      document.getElementById("cheque_fields").style.display = "block";
-    } else if (value === "online") {
-      document.getElementById("online_fields").style.display = "block";
-    } else if (value === "saving") {
-      document.getElementById("saving_fields").style.display = "block";
-    }
-  });
-});
-
-// Disburse Mode 2
-document.querySelectorAll('input[name="payment_mode2"]').forEach((elem) => {
-  elem.addEventListener("change", function(event) {
-    let value = event.target.value;
-
-    // hide all first
-    document.getElementById("cheque_fields2").style.display = "none";
-    document.getElementById("online_fields2").style.display = "none";
-    document.getElementById("saving_fields2").style.display = "none";
-
-    // show according to selection
-    if (value === "cheque") {
-      document.getElementById("cheque_fields2").style.display = "block";
-    } else if (value === "online") {
-      document.getElementById("online_fields2").style.display = "block";
-    } else if (value === "saving") {
-      document.getElementById("saving_fields2").style.display = "block";
-    }
-  });
-});
-</script>
-
-
-<script>
-    function calculateTotal() {
-        let insurance = parseFloat(document.getElementById("insurance").value) || 0;
-        let gst = parseFloat(document.getElementById("gst").value) || 0;
-        let sgst = parseFloat(document.getElementById("sgst").value) || 0;
-        let cgst = parseFloat(document.getElementById("cgst").value) || 0;
-        let igst = parseFloat(document.getElementById("igst").value) || 0;
-
-        let total = insurance + gst + sgst + cgst + igst;
-        document.getElementById("total").value = total.toFixed(2);
-    }
-
-    // Page load pe run hoga
-    window.onload = calculateTotal;
-</script>
-
-<script>
-    // Helper function to convert string to float, safely
-    function parseAmount(value) {
-        const num = parseFloat(value.replace(/,/g, ''));
-        return isNaN(num) ? 0 : num;
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const finalAmountField = document.getElementById('finalAmount');
-        const mode1Field = document.getElementById('D_mode_1');
-        const mode2Field = document.getElementById('D_mode_2');
-
-        // When final amount changes, autofill mode 1 equally
-        finalAmountField.addEventListener('input', () => {
-            let total = parseAmount(finalAmountField.value);
-            mode1Field.value = total.toFixed(2);
-            mode2Field.value = (0).toFixed(2);
-        });
-
-        // When mode 1 changes, update mode 2 with exact split
-        mode1Field.addEventListener('input', () => {
-            let total = parseAmount(finalAmountField.value);
-            let mode1 = parseAmount(mode1Field.value);
-
-            if (mode1 > total) {
-                // If mode1 > total, limit mode1 to total
-                mode1 = total;
-                mode1Field.value = mode1.toFixed(2);
-            }
-
-            let mode2 = total - mode1;
-            mode2Field.value = mode2.toFixed(2);
-        });
-    });
-</script>
-
-<!-- collapsed logic + - button-->
-<script>
-    function toggleSection(button) {
-        const section = button.closest('.box').querySelector('.overflow-x-auto');
-        const icon = button.querySelector('.toggle-icon');
-        section.classList.toggle('hidden');
-        icon.textContent = section.classList.contains('hidden') ? '+' : '−';
-    }
-
-
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const checkboxes = document.querySelectorAll(".toggle-paymode");
-
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener("change", function () {
-                const targetId = this.dataset.target;
-                const target = document.getElementById(targetId);
-
-                if (target) {
-                    target.classList.toggle("hidden", !this.checked);
+                // show according to selection
+                if (value === "cheque") {
+                    document.getElementById("cheque_fields").style.display = "block";
+                } else if (value === "online") {
+                    document.getElementById("online_fields").style.display = "block";
+                } else if (value === "saving") {
+                    document.getElementById("saving_fields").style.display = "block";
                 }
             });
         });
-    });
-</script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
+        // Disburse Mode 2
+        document.querySelectorAll('input[name="payment_mode2"]').forEach((elem) => {
+            elem.addEventListener("change", function(event) {
+                let value = event.target.value;
 
-    const d = new Date();
-    const today =
-        ("0" + d.getDate()).slice(-2) + "-" +
-        ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
-        d.getFullYear();
+                // hide all first
+                document.getElementById("cheque_fields2").style.display = "none";
+                document.getElementById("online_fields2").style.display = "none";
+                document.getElementById("saving_fields2").style.display = "none";
 
-    if (document.getElementById('cheque_date'))
-        document.getElementById('cheque_date').value = today;
+                // show according to selection
+                if (value === "cheque") {
+                    document.getElementById("cheque_fields2").style.display = "block";
+                } else if (value === "online") {
+                    document.getElementById("online_fields2").style.display = "block";
+                } else if (value === "saving") {
+                    document.getElementById("saving_fields2").style.display = "block";
+                }
+            });
+        });
+    </script>
 
-    if (document.getElementById('transfer_date'))
-        document.getElementById('transfer_date').value = today;
 
-    if (document.getElementById('cheque_date2'))
-        document.getElementById('cheque_date2').value = today;
+    <script>
+        function calculateTotal() {
+            let insurance = parseFloat(document.getElementById("insurance").value) || 0;
+            let gst = parseFloat(document.getElementById("gst").value) || 0;
+            let sgst = parseFloat(document.getElementById("sgst").value) || 0;
+            let cgst = parseFloat(document.getElementById("cgst").value) || 0;
+            let igst = parseFloat(document.getElementById("igst").value) || 0;
 
-    if (document.getElementById('transfer_date2'))
-        document.getElementById('transfer_date2').value = today;
-    });
-</script>
-    
+            let total = insurance + gst + sgst + cgst + igst;
+            document.getElementById("total").value = total.toFixed(2);
+        }
 
+        // Page load pe run hoga
+        window.onload = calculateTotal;
+    </script>
+
+    <script>
+        // Helper function to convert string to float, safely
+        function parseAmount(value) {
+            const num = parseFloat(value.replace(/,/g, ''));
+            return isNaN(num) ? 0 : num;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const finalAmountField = document.getElementById('finalAmount');
+            const mode1Field = document.getElementById('D_mode_1');
+            const mode2Field = document.getElementById('D_mode_2');
+
+            // When final amount changes, autofill mode 1 equally
+            finalAmountField.addEventListener('input', () => {
+                let total = parseAmount(finalAmountField.value);
+                mode1Field.value = total.toFixed(2);
+                mode2Field.value = (0).toFixed(2);
+            });
+
+            // When mode 1 changes, update mode 2 with exact split
+            mode1Field.addEventListener('input', () => {
+                let total = parseAmount(finalAmountField.value);
+                let mode1 = parseAmount(mode1Field.value);
+
+                if (mode1 > total) {
+                    // If mode1 > total, limit mode1 to total
+                    mode1 = total;
+                    mode1Field.value = mode1.toFixed(2);
+                }
+
+                let mode2 = total - mode1;
+                mode2Field.value = mode2.toFixed(2);
+            });
+        });
+    </script>
+
+    <!-- collapsed logic + - button-->
+    <script>
+        function toggleSection(button) {
+            const section = button.closest('.box').querySelector('.overflow-x-auto');
+            const icon = button.querySelector('.toggle-icon');
+            section.classList.toggle('hidden');
+            icon.textContent = section.classList.contains('hidden') ? '+' : '−';
+        }
+
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const checkboxes = document.querySelectorAll(".toggle-paymode");
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener("change", function() {
+                    const targetId = this.dataset.target;
+                    const target = document.getElementById(targetId);
+
+                    if (target) {
+                        target.classList.toggle("hidden", !this.checked);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const d = new Date();
+            const today =
+                ("0" + d.getDate()).slice(-2) + "-" +
+                ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
+                d.getFullYear();
+
+            if (document.getElementById('cheque_date'))
+                document.getElementById('cheque_date').value = today;
+
+            if (document.getElementById('transfer_date'))
+                document.getElementById('transfer_date').value = today;
+
+            if (document.getElementById('cheque_date2'))
+                document.getElementById('cheque_date2').value = today;
+
+            if (document.getElementById('transfer_date2'))
+                document.getElementById('transfer_date2').value = today;
+        });
+    </script>
+    {{-- processing fee mode --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const processingModes =
+                document.querySelectorAll("input[name='processing_payment_mode']");
+
+            const chequeFields = document.getElementById("p_cheque_fields");
+            const onlineFields = document.getElementById("p_online_fields");
+
+            function hideAll() {
+                chequeFields.style.display = "none";
+                onlineFields.style.display = "none";
+            }
+
+            processingModes.forEach(mode => {
+                mode.addEventListener("change", function() {
+                    hideAll();
+
+                    if (this.value === "cheque") {
+                        chequeFields.style.display = "block";
+                    }
+
+                    if (this.value === "online") {
+                        onlineFields.style.display = "block";
+                    }
+                });
+            });
+
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            // ===== Stamp =====
+            document.querySelectorAll("input[name='stamp_payment_mode']")
+                .forEach(radio => {
+                    radio.addEventListener("change", function() {
+
+                        document.getElementById("stamp_cheque_fields").style.display = "none";
+                        document.getElementById("stamp_online_fields").style.display = "none";
+
+                        if (this.value === "cheque") {
+                            document.getElementById("stamp_cheque_fields").style.display = "block";
+                        }
+
+                        if (this.value === "online") {
+                            document.getElementById("stamp_online_fields").style.display = "block";
+                        }
+                    });
+                });
+
+
+            // ===== Insurance =====
+            document.querySelectorAll("input[name='insurance_payment_mode']")
+                .forEach(radio => {
+                    radio.addEventListener("change", function() {
+
+                        document.getElementById("insurance_cheque_fields").style.display = "none";
+                        document.getElementById("insurance_online_fields").style.display = "none";
+
+                        if (this.value === "cheque") {
+                            document.getElementById("insurance_cheque_fields").style.display = "block";
+                        }
+
+                        if (this.value === "online") {
+                            document.getElementById("insurance_online_fields").style.display = "block";
+                        }
+                    });
+                });
+
+        });
+    </script>
 @endsection

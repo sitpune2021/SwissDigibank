@@ -181,6 +181,30 @@ class ApproveController extends Controller
 
             Log::info('Gold Loan EMI Query Built Successfully');
 
+            $mortgageEmiQuery = DB::table('mortgage_loan_transactions')
+                ->select(
+                    'mortgage_loan_transactions.id',
+                    DB::raw("'mortgage_loan_transactions' AS source_table"),
+                    'mortgage_loan_transactions.fee_mode AS payment_mode',
+                    'mortgage_loan_transactions.amount_collected AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'mortgage_loan_transactions.status AS approve_status',
+                    'mortgage_loan_transactions.created_at',
+                    'branches.branch_name',
+                    'mortgage_loan_transactions.loan_id AS account_no',
+                    DB::raw("'Mortgage Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    DB::raw("NULL AS member_id"),
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'EMI Payment' AS transaction_type")
+                )
+                ->join('mortgage_loan_applications', 'mortgage_loan_applications.id', '=', 'mortgage_loan_transactions.loan_id')
+                ->join('branches', 'branches.id', '=', 'mortgage_loan_applications.branch_id')
+                ->where('mortgage_loan_transactions.status', 'pending');
+            Log::info('morgage Loan EMI Query Built Successfully');
+
             /*
         |--------------------------------------------------------------------------
         | 5️⃣ UNION ALL
@@ -192,7 +216,8 @@ class ApproveController extends Controller
             $unionQuery = $transactionQuery
                 ->unionAll($membershipQuery)
                 ->unionAll($foreclosureQuery)
-                ->unionAll($goldLoanEmiQuery);
+                ->unionAll($goldLoanEmiQuery)
+                ->unionAll($mortgageEmiQuery);
 
             Log::info('Union Created Successfully');
 
@@ -483,6 +508,115 @@ class ApproveController extends Controller
                     DB::commit();
 
                     return redirect()->back()->with('success', 'Gold Loan EMI updated successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'mortgage_loan_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $transaction = DB::table('mortgage_loan_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$transaction) {
+                        DB::rollBack();
+                        return back()->with('error', 'Transaction not found');
+                    }
+
+                    // ==============================
+                    // ✅ APPROVE CASE
+                    // ==============================
+                    if ($status === 'approved') {
+
+                        // 1️⃣ Mark transaction as paid
+                        DB::table('mortgage_loan_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'paid',
+                                'paid_date' => now(),
+                                'updated_at' => now()
+                            ]);
+
+                        // 2️⃣ Get EMI status row
+                        $emiStatus = DB::table('mortgage_loan_emi_status')
+                            ->where('loan_id', $transaction->loan_id)
+                            ->where('emi_no', $transaction->emi_no)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if ($emiStatus) {
+
+                            $paidAmount = round($transaction->amount_collected, 2);
+                            $currentRemaining = round($emiStatus->remaining_amount, 2);
+
+                            $newRemaining = round($currentRemaining - $paidAmount, 2);
+
+                            // ⭐ FULL PAID
+                            if ($newRemaining <= 0) {
+
+                                DB::table('mortgage_loan_emi_status')
+                                    ->where('id', $emiStatus->id)
+                                    ->update([
+                                        'status' => 'PAID',
+                                        'remaining_amount' => 0,
+                                        'paid_date' => now(),
+                                        'updated_at' => now()
+                                    ]);
+                            }
+                            // ⭐ PARTIAL
+                            else {
+
+                                DB::table('mortgage_loan_emi_status')
+                                    ->where('id', $emiStatus->id)
+                                    ->update([
+                                        'status' => 'PARTIAL',
+                                        'remaining_amount' => $newRemaining,
+                                        'updated_at' => now()
+                                    ]);
+                            }
+                        }
+
+                        // 3️⃣ Auto Close Loan If All EMI Paid
+                        $totalRemaining = DB::table('mortgage_loan_emi_status')
+                            ->where('loan_id', $transaction->loan_id)
+                            ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
+                            ->sum('remaining_amount');
+
+                        if ($totalRemaining <= 0) {
+
+                            DB::table('mortgage_loan_applications')
+                                ->where('id', $transaction->loan_id)
+                                ->update([
+                                    'status' => 2, // closed
+                                    'updated_at' => now()
+                                ]);
+                        }
+
+                        DB::commit();
+                        return back()->with('success', 'Mortgage EMI approved successfully.');
+                    }
+
+                    // ==============================
+                    // ❌ DISAPPROVE
+                    // ==============================
+                    if ($status === 'disapproved') {
+
+                        DB::table('mortgage_loan_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'rejected',
+                                'updated_at' => now()
+                            ]);
+
+                        DB::commit();
+                        return back()->with('success', 'Mortgage EMI rejected.');
+                    }
                 } catch (\Exception $e) {
 
                     DB::rollBack();
