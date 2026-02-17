@@ -337,7 +337,7 @@ class FDController extends Controller
                         'first_name' => $m->member_info_first_name,
                         'last_name'  => $m->member_info_last_name ?? '',
                         'mobile'     => $m->member_info_mobile_no,
-                        'address'    => $m->address->member_address_line_1 ?? '',
+                        'address'    => $m->full_address,
                         'branch_id'  => $m->branch ?? [],
                         'minors'     => $m->minors ?? [],
                     ]
