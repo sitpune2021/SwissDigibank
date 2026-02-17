@@ -280,35 +280,36 @@ class MortgageAccountController extends Controller
         // Apply payments & auto status logic
         // ⭐ Apply payments on EMI schedule (front-end calculation only)
         $totalPaid = MortgageLoanTransaction::where('loan_id', $id)->sum('amount_collected');
+        $foreclosureApproved = DB::table('mortgage_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->where('status', 1)
+            ->exists();
 
         foreach ($emiSchedule as &$emi) {
 
-            $emiAmount = floatval(str_replace(',', '', $emi['emi_amount']));
+            if ($foreclosureApproved) {
 
-            // Already paid nothing?
-            if ($totalPaid <= 0) {
-                $emi['remaining_amount'] = number_format($emiAmount, 2);
-
-                // ⭐ ALWAYS load saved statuses from DB
-                if (isset($savedStatuses[$emi['emi_no']])) {
-                    $emi['status'] = $savedStatuses[$emi['emi_no']];
-                    $emi['paid_date'] = $savedPaidDates[$emi['emi_no']] ?? '';
-                } else {
-                    // Default if no data saved
-                    $emi['status'] = "UNPAID";
-                }
+                $emi['remaining_amount'] = "0.00";
+                $emi['status'] = "PAID";
+                $emi['paid_date'] = now()->format('Y-m-d');
 
                 continue;
             }
 
-            // Full payment
+            $emiAmount = floatval(str_replace(',', '', $emi['emi_amount']));
+
+            if ($totalPaid <= 0) {
+                $emi['remaining_amount'] = number_format($emiAmount, 2);
+                $emi['status'] = $savedStatuses[$emi['emi_no']] ?? "UNPAID";
+                $emi['paid_date'] = $savedPaidDates[$emi['emi_no']] ?? '';
+                continue;
+            }
+
             if ($totalPaid >= $emiAmount) {
                 $emi['remaining_amount'] = "0.00";
                 $emi['status'] = "PAID";
                 $totalPaid -= $emiAmount;
-            }
-            // Partial payment
-            else {
+            } else {
                 $emi['remaining_amount'] = number_format($emiAmount - $totalPaid, 2);
                 $emi['status'] = "PARTIAL";
                 $totalPaid = 0;
@@ -1174,9 +1175,10 @@ class MortgageAccountController extends Controller
 
     public function fourcloser($id)
     {
-        Log::info('🟢 fourcloser() START', [
+        Log::info('🟢 FORECLOSURE PAGE OPENED', [
             'loan_id' => $id,
             'user_id' => Auth::id(),
+            'time'    => now()
         ]);
 
         try {
@@ -1184,47 +1186,77 @@ class MortgageAccountController extends Controller
             $goldLoan = MortgageLoanApplication::with(['member', 'branch', 'scheme'])
                 ->findOrFail($id);
 
-            Log::info('🔹 Loan Found', [
-                'loan_id'   => $goldLoan->id,
-                'principal' => $goldLoan->loan_amount,
+            Log::info('🔹 LOAN DETAILS', [
+                'loan_id'      => $goldLoan->id,
+                'loan_amount'  => $goldLoan->loan_amount,
+                'member_id'    => $goldLoan->member_id,
+                'scheme_id'    => $goldLoan->scheme_id,
             ]);
 
             $banks = Bank::pluck('name', 'id');
 
-            // ⭐ Principal
-            $principal = $goldLoan->loan_amount;
-
-            // ⭐ Only Approved EMI Payments
-            $totalPaid = DB::table('gold_loan_transactions')
+            // ================================
+            // 🔥 TOTAL PAID (Only Approved)
+            // ================================
+            $totalPaid = DB::table('mortgage_loan_transactions')
                 ->where('loan_id', $id)
                 ->where('status', 'paid')
                 ->sum('amount_collected');
 
-            Log::info('🔹 Payment Summary', [
+            Log::info('🔹 PAYMENT SUMMARY', [
                 'loan_id'   => $id,
                 'total_paid' => $totalPaid,
             ]);
 
-            // ⭐ Correct Remaining
-            // ⭐ Check foreclosure approved
-            $foreclosureApproved = DB::table('gold_loan_fore_closures')
+            // ================================
+            // 🔥 EMI TABLE STATUS CHECK
+            // ================================
+            $emiRemaining = DB::table('mortgage_loan_emi_status')
+                ->where('loan_id', $id)
+                ->sum('remaining_amount');
+
+            $emiCount = DB::table('mortgage_loan_emi_status')
+                ->where('loan_id', $id)
+                ->count();
+
+            Log::info('🔹 EMI SUMMARY', [
+                'loan_id'           => $id,
+                'total_emi_rows'    => $emiCount,
+                'total_emi_balance' => $emiRemaining,
+            ]);
+
+            // ================================
+            // 🔥 FORECLOSURE APPROVAL CHECK
+            // ================================
+            $foreclosureApproved = DB::table('mortgage_loan_fore_closures')
                 ->where('loan_id', $id)
                 ->where('status', 1)
                 ->exists();
 
+            Log::info('🔹 FORECLOSURE STATUS CHECK', [
+                'loan_id'              => $id,
+                'foreclosure_approved' => $foreclosureApproved,
+            ]);
+
+            // ================================
+            // 🔥 FINAL REMAINING CALCULATION
+            // ================================
             if ($foreclosureApproved) {
+
                 $currentDebt = 0;
             } else {
-                $currentDebt = max($principal - $totalPaid, 0);
+
+                $currentDebt = max($goldLoan->loan_amount - $totalPaid, 0);
+                $currentDebt = round($currentDebt, 2);
             }
 
-            Log::info('🔹 Remaining Calculation', [
-                'principal'   => $principal,
+            Log::info('🔹 FINAL REMAINING CALCULATION', [
+                'loan_amount' => $goldLoan->loan_amount,
                 'total_paid'  => $totalPaid,
                 'currentDebt' => $currentDebt,
             ]);
 
-            Log::info('🟢 fourcloser() SUCCESS', [
+            Log::info('✅ FORECLOSURE PAGE LOADED SUCCESSFULLY', [
                 'loan_id' => $id
             ]);
 
@@ -1234,7 +1266,7 @@ class MortgageAccountController extends Controller
             );
         } catch (\Exception $e) {
 
-            Log::error('❌ fourcloser() FAILED', [
+            Log::error('❌ FORECLOSURE PAGE FAILED', [
                 'loan_id' => $id,
                 'error'   => $e->getMessage(),
                 'line'    => $e->getLine(),
@@ -1244,109 +1276,141 @@ class MortgageAccountController extends Controller
             return back()->with('error', 'Something went wrong while loading foreclosure page.');
         }
     }
-
     public function storeForeCloser(Request $request, $loanId)
     {
-        Log::info('---- ForeClosure Store Request START ----', [
+        Log::info('🟢 FORECLOSURE STORE STARTED', [
             'loan_id' => $loanId,
-            'request_data' => $request->all()
+            'user_id' => Auth::id(),
+            'request_data' => $request->all(),
+            'time' => now()
         ]);
+
+        DB::beginTransaction();
 
         try {
 
-            // VALIDATION
-            $request->validate([
+            // ===============================
+            // ✅ VALIDATION
+            // ===============================
+            $validated = $request->validate([
                 'remaining_amount'      => 'required|numeric',
-
                 'interest_accrued'      => 'nullable|numeric',
                 'overdue_interest'      => 'nullable|numeric',
-
                 'notice_charges'        => 'nullable|numeric',
                 'service_charges'       => 'nullable|numeric',
                 'other_charges'         => 'nullable|numeric',
                 'foreclosure_charges'   => 'nullable|numeric',
-
                 'total_amount_h'        => 'required|numeric',
                 'rounding_off_i'        => 'nullable|numeric',
                 'closure_discount_j'    => 'nullable|numeric',
                 'net_amount_k'          => 'required|numeric',
-
                 'transaction_date'      => 'required',
-
                 'payment_mode'          => 'nullable|in:cash,cheque,online',
                 'bank_id'               => 'nullable|exists:banks,id',
                 'cheque_no'             => 'nullable|string|max:100',
-                'cheque_date'           => 'nullable|date',
-                'transfer_date'         => 'nullable|date',
+                'cheque_date'           => 'nullable',
+                'transfer_date'         => 'nullable',
                 'utr_no'                => 'nullable|string|max:150',
                 'transfer_mode'         => 'nullable|in:imps,vpa,neft_rtgs',
                 'credited'              => 'nullable|in:0,1',
             ]);
 
+            Log::info('✅ VALIDATION PASSED', [
+                'loan_id' => $loanId
+            ]);
 
-            // STORE DATA
-            $save = MortgageLoanApplication::create([
+            // ===============================
+            // ✅ DATE FORMATTING
+            // ===============================
+            $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)
+                ->format('Y-m-d');
+
+            $chequeDate = $request->filled('cheque_date')
+                ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d')
+                : null;
+
+            $transferDate = $request->filled('transfer_date')
+                ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
+                : null;
+
+            Log::info('📅 DATE CONVERSION DONE', [
+                'transaction_date' => $transactionDate,
+                'cheque_date'      => $chequeDate,
+                'transfer_date'    => $transferDate
+            ]);
+
+            // ===============================
+            // ✅ SAVE FORECLOSURE RECORD
+            // ===============================
+            $save = MortgageLoanForeClosure::create([
                 'loan_id'               => $loanId,
-
                 'remaining_amount'      => $request->remaining_amount,
-                'interest_accrued'      => $request->interest_accrued,
-                'overdue_interest'      => $request->overdue_interest,
-
-                'notice_charges'        => $request->notice_charges,
-                'service_charges'       => $request->service_charges,
-                'other_charges'         => $request->other_charges,
-                'foreclosure_charges'   => $request->foreclosure_charges,
-
+                'interest_accrued'      => $request->interest_accrued ?? 0,
+                'overdue_interest'      => $request->overdue_interest ?? 0,
+                'notice_charges'        => $request->notice_charges ?? 0,
+                'service_charges'       => $request->service_charges ?? 0,
+                'other_charges'         => $request->other_charges ?? 0,
+                'foreclosure_charges'   => $request->foreclosure_charges ?? 0,
                 'total_amount_h'        => $request->total_amount_h,
-                'rounding_off_i'        => $request->rounding_off_i,
-                'closure_discount_j'    => $request->closure_discount_j,
+                'rounding_off_i'        => $request->rounding_off_i ?? 0,
+                'closure_discount_j'    => $request->closure_discount_j ?? 0,
                 'net_amount_k'          => $request->net_amount_k,
-
-                'transaction_date'      => Carbon::createFromFormat('d-m-Y', $request->transaction_date),
+                'transaction_date'      => $transactionDate,
                 'remarks'               => $request->remarks,
-
-                // NEW payment fields mapping from your form names
-                'payment_mode'          => $request->input('payment_mode') ?? null,   // cash/cheque/online
-                'bank_id'               => $request->input('bank_id') ?? null,
-                'cheque_no'             => $request->input('cheque_no') ?? null,
-                // 'cheque_date'           => $request->filled('cheque_date') ? Carbon::parse($request->input('cheque_date')) : null,
-                // 'transfer_date'         => $request->filled('transfer_date') ? Carbon::parse($request->input('transfer_date')) : null,
-                'cheque_date' => $request->filled('cheque_date')
-                    ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d')
-                    : null,
-
-                'transfer_date' => $request->filled('transfer_date')
-                    ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
-                    : null,
-
-                'utr_no'                => $request->input('utr_no') ?? null,
-                'transfer_mode'         => $request->input('transfer_mode') ?? null,
-                'credited'              => is_null($request->input('credited')) ? null : (int)$request->input('credited'),
-
+                'payment_mode'          => $request->payment_mode,
+                'bank_id'               => $request->bank_id,
+                'cheque_no'             => $request->cheque_no,
+                'cheque_date'           => $chequeDate,
+                'transfer_date'         => $transferDate,
+                'utr_no'                => $request->utr_no,
+                'transfer_mode'         => $request->transfer_mode,
+                'credited'              => $request->credited,
                 'status'                => 0
             ]);
 
-            Log::info('---- ForeClosure Stored Successfully ----', [
-                'saved_record' => $save
+            Log::info('💾 FORECLOSURE RECORD SAVED', [
+                'foreclosure_id' => $save->id,
+                'loan_id'        => $loanId,
+                'net_amount'     => $request->net_amount_k
             ]);
 
-            // UPDATE LOAN STATUS (Active → Inactive)
-            MortgageLoanApplication::where('id', $loanId)->update(['status' => 4]);
+            // ===============================
+            // ✅ UPDATE LOAN STATUS
+            // ===============================
+            MortgageLoanApplication::where('id', $loanId)
+                ->update([
+                    'status' => 4,
+                    'updated_at' => now()
+                ]);
+
+            Log::info('🔒 LOAN STATUS UPDATED TO INACTIVE (4)', [
+                'loan_id' => $loanId
+            ]);
+
+            DB::commit();
+
+            Log::info('✅ FORECLOSURE STORE COMPLETED SUCCESSFULLY', [
+                'loan_id' => $loanId
+            ]);
 
             return redirect()
                 ->route('mortgage.account.show', $loanId)
                 ->with('success', 'Fore Closure Stored Successfully!');
         } catch (\Exception $e) {
 
-            Log::error('ForeClosure Store Error', [
+            DB::rollBack();
+
+            Log::error('❌ FORECLOSURE STORE FAILED', [
                 'loan_id' => $loanId,
                 'error_message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
             ]);
 
             return back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
+
 
     // link saving account tab
     public function linksaving($id)
