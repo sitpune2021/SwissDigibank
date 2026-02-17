@@ -968,56 +968,37 @@ class MortgageAccountController extends Controller
 
         $banks = Bank::all();
 
-        $lastTransaction = $goldLoan->mortgageLoanTransactions->last();
-        $payableAmount = $lastTransaction->total_payable ?? 0;
+        // 🔥 Total Paid (only approved)
+        $totalPaid = DB::table('mortgage_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount_collected');
 
-        if ($lastTransaction) {
-            $currentDebt = (float) $lastTransaction->current_debt;
-        } else {
-            $currentDebt = (float) $goldLoan->loan_amount;
+        // 🔥 Remaining Debt = Loan Amount - Paid
+        $currentDebt = round($goldLoan->loan_amount - $totalPaid, 2);
+
+        if ($currentDebt < 0) {
+            $currentDebt = 0;
         }
 
-        $currentDebt = round($currentDebt, 2);
-
-        $nextDue = $goldLoan->emiPayments()
-            ->where('status', 'pending')
-            ->first();
-
-        if (!$nextDue) {
+        // If fully closed
+        if ($currentDebt <= 0) {
             return view('mortgage.account.view-buttons.pay.pay', [
                 'goldLoan' => $goldLoan,
                 'banks' => $banks,
                 'currentDebt' => 0,
                 'payableAmount' => 0,
-                'message' => 'All EMIs are fully paid.'
+                'message' => 'Loan already closed.'
             ]);
         }
 
-        $annualRate = (float) $goldLoan->interest_rate;
-
-        $today = Carbon::today();
-        $dueDate = Carbon::parse($nextDue->emi_date);
-
-        $daysLate = $dueDate->diffInDays($today, false);
-        $daysLate = $daysLate > 0 ? $daysLate : 0;
-
-        $interestTillToday = round(($currentDebt * $annualRate * $daysLate) / 36500, 2);
-
-        $lateFee = $daysLate * 10;
-
-        $emiAmount = (float) $nextDue->emi_amount;
-
-        // $payableAmount = round($emiAmount + $interestTillToday + $lateFee, 2);
+        $payableAmount = $currentDebt;
 
         return view('mortgage.account.view-buttons.pay.pay', compact(
             'goldLoan',
             'banks',
             'currentDebt',
-            'payableAmount',
-            'interestTillToday',
-            'lateFee',
-            'daysLate',
-            'nextDue'
+            'payableAmount'
         ));
     }
 
@@ -1063,11 +1044,9 @@ class MortgageAccountController extends Controller
 
         try {
 
-            Log::info('payEmi(): Starting validation');
-
             $rules = [
                 'loan_id'           => 'required|exists:mortgage_loan_applications,id',
-                'transaction_date'  => 'required|date',
+                'transaction_date'  => 'required',
                 'current_debt'      => 'required|numeric',
                 'total_payable'     => 'required|numeric',
                 'amount_collected'  => 'required|numeric|min:1',
@@ -1075,14 +1054,13 @@ class MortgageAccountController extends Controller
             ];
 
             if ($request->fee_mode === 'cheque') {
-
                 $rules['bank_id']     = 'required';
                 $rules['cheque_no']   = 'required';
-                $rules['cheque_date'] = 'required|date';
+                $rules['cheque_date'] = 'required';
             }
 
             if ($request->fee_mode === 'online') {
-                $rules['transfer_date'] = 'required|date';
+                $rules['transfer_date'] = 'required';
                 $rules['utr_no']        = 'required';
                 $rules['transfer_mode'] = 'required|in:imps,vpa,neft_rtgs';
                 $rules['credited']      = 'required|in:yes,no';
@@ -1090,49 +1068,35 @@ class MortgageAccountController extends Controller
 
             $request->validate($rules);
 
-            Log::info('payEmi(): Validation passed');
-
-            $loan = MortgageLoanApplication::find($request->loan_id);
-
-            if (!$loan) {
-                Log::error('payEmi(): Loan not found', ['loan_id' => $request->loan_id]);
-                return back()->withErrors(['loan_id' => 'Loan not found.']);
-            }
+            $loan = MortgageLoanApplication::findOrFail($request->loan_id);
 
             $lastEmiNo = MortgageLoanTransaction::where('loan_id', $loan->id)->max('emi_no');
             $nextEmiNo = $lastEmiNo ? $lastEmiNo + 1 : 1;
 
-            Log::info('payEmi(): Next EMI Number', [
-                'emi_no' => $nextEmiNo,
-            ]);
+            // ✅ Convert Dates Properly
+            $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)->format('Y-m-d');
 
-            $paymentDetails = ['mode' => $request->fee_mode];
+            $chequeDate = $request->cheque_date
+                ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d')
+                : null;
 
-            if ($request->fee_mode === 'cash') {
-                $paymentDetails['fee_mode']  = $request->fee_mode;
-                $paymentDetails['description'] = 'Cash payment received';
-            }
+            $transferDate = $request->transfer_date
+                ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
+                : null;
 
-            if ($request->fee_mode === 'cheque') {
-                $paymentDetails['fee_mode']  = $request->fee_mode;
-                $paymentDetails['bank_id']     = $request->bank_id;
-                $paymentDetails['cheque_no']   = $request->cheque_no;
-                $paymentDetails['cheque_date'] = $request->cheque_date;
-            }
-
-            if ($request->fee_mode === 'online') {
-                $paymentDetails['fee_mode']  = $request->fee_mode;
-                $paymentDetails['transfer_date'] = $request->transfer_date;
-                $paymentDetails['utr_no']        = $request->utr_no;
-                $paymentDetails['transfer_mode'] = $request->transfer_mode;
-                $paymentDetails['credited']      = $request->credited;
-            }
-
+            $paymentDetails = [
+                'mode' => $request->fee_mode,
+                'bank_id' => $request->bank_id ?? null,
+                'cheque_no' => $request->cheque_no ?? null,
+                'utr_no' => $request->utr_no ?? null,
+                'transfer_mode' => $request->transfer_mode ?? null,
+                'credited' => $request->credited ?? null,
+            ];
 
             $transaction = MortgageLoanTransaction::create([
                 'loan_id'          => $loan->id,
                 'emi_no'           => $nextEmiNo,
-                'transaction_date' => Carbon::parse($request->transaction_date)->format('Y-m-d'),
+                'transaction_date' => $transactionDate,
 
                 'current_debt'     => $request->current_debt,
                 'other_charges'    => $request->other_charges ?? 0,
@@ -1145,9 +1109,9 @@ class MortgageAccountController extends Controller
 
                 'bank_id'          => $request->bank_id ?? null,
                 'cheque_no'        => $request->cheque_no ?? null,
-                'cheque_date'      => $request->cheque_date ?? null,
+                'cheque_date'      => $chequeDate,
 
-                'transfer_date'    => $request->transfer_date ?? null,
+                'transfer_date'    => $transferDate,
                 'utr_no'           => $request->utr_no ?? null,
                 'transfer_mode'    => $request->transfer_mode ?? null,
                 'credited'         => $request->credited ?? null,
@@ -1155,12 +1119,9 @@ class MortgageAccountController extends Controller
                 'created_by'       => Auth::id(),
             ]);
 
-            Log::info('payEmi(): Transaction Created', [
-                'transaction_id' => $transaction->id,
-                'data' => $transaction->toArray()
-            ]);
-
-            return redirect()->route('mortgage.account.show', $loan->id)->with('success', 'EMI Payment Recorded Successfully.');
+            return redirect()
+                ->route('mortgage.account.show', $loan->id)
+                ->with('success', 'EMI Payment Recorded Successfully.');
         } catch (\Exception $e) {
 
             Log::error('payEmi(): Exception Occurred', [
@@ -1172,6 +1133,7 @@ class MortgageAccountController extends Controller
             return back()->withErrors(['error' => 'Something went wrong. Please try again.']);
         }
     }
+
 
     public function fourcloser($id)
     {

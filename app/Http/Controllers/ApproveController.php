@@ -374,16 +374,6 @@ class ApproveController extends Controller
                                 'updated_at' => now()
                             ]);
 
-                        // 2️⃣ Insert transaction entry 🔥
-                        // DB::table('mortgage_loan_transactions')
-                        //     ->where('loan_id', $foreclosure->loan_id)
-                        //     ->where('flag', 'foreclosure')
-                        //     ->where('status', 'pending')
-                        //     ->update([
-                        //         'status'    => 'paid',
-                        //         'paid_date' => now(),
-                        //         'updated_at' => now()
-                        //     ]);
 
 
                         // 3️⃣ Mark all EMI as PAID
@@ -414,8 +404,6 @@ class ApproveController extends Controller
                     return back()->with('error', $e->getMessage());
                 }
             }
-
-
 
             if ($sourceTable === 'transaction') {
 
@@ -637,7 +625,30 @@ class ApproveController extends Controller
                                 'updated_at' => now()
                             ]);
 
-                        // 2️⃣ Get EMI status row
+                        // 🔥 FULL PAYMENT CASE
+                        if (is_null($transaction->emi_no) && $transaction->flag === 'full_payment') {
+
+                            DB::table('mortgage_loan_emi_status')
+                                ->where('loan_id', $transaction->loan_id)
+                                ->update([
+                                    'status' => 'PAID',
+                                    'remaining_amount' => 0,
+                                    'paid_date' => now(),
+                                    'updated_at' => now()
+                                ]);
+
+                            DB::table('mortgage_loan_applications')
+                                ->where('id', $transaction->loan_id)
+                                ->update([
+                                    'status' => 2, // CLOSED
+                                    'updated_at' => now()
+                                ]);
+
+                            DB::commit();
+                            return back()->with('success', 'Mortgage Loan fully closed successfully.');
+                        }
+
+                        // ✅ NORMAL EMI PAYMENT CASE
                         $emiStatus = DB::table('mortgage_loan_emi_status')
                             ->where('loan_id', $transaction->loan_id)
                             ->where('emi_no', $transaction->emi_no)
@@ -651,7 +662,6 @@ class ApproveController extends Controller
 
                             $newRemaining = round($currentRemaining - $paidAmount, 2);
 
-                            // ⭐ FULL PAID
                             if ($newRemaining <= 0) {
 
                                 DB::table('mortgage_loan_emi_status')
@@ -662,9 +672,7 @@ class ApproveController extends Controller
                                         'paid_date' => now(),
                                         'updated_at' => now()
                                     ]);
-                            }
-                            // ⭐ PARTIAL
-                            else {
+                            } else {
 
                                 DB::table('mortgage_loan_emi_status')
                                     ->where('id', $emiStatus->id)
@@ -687,7 +695,7 @@ class ApproveController extends Controller
                             DB::table('mortgage_loan_applications')
                                 ->where('id', $transaction->loan_id)
                                 ->update([
-                                    'status' => 2, // closed
+                                    'status' => 2,
                                     'updated_at' => now()
                                 ]);
                         }
@@ -695,6 +703,7 @@ class ApproveController extends Controller
                         DB::commit();
                         return back()->with('success', 'Mortgage EMI approved successfully.');
                     }
+
 
                     // ==============================
                     // ❌ DISAPPROVE
