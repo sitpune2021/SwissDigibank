@@ -513,110 +513,56 @@ class ApproveController extends Controller
                     DB::rollBack();
                     return back()->with('error', $e->getMessage());
                 }
-            } elseif ($sourceTable === 'mortgage_loan_transactions') {
+            } elseif ($sourceTable === 'mortgage_loan_fore_closures') {
 
                 DB::beginTransaction();
 
                 try {
 
-                    $transaction = DB::table('mortgage_loan_transactions')
+                    $foreclosure = DB::table('mortgage_loan_fore_closures')
                         ->where('id', $id)
                         ->lockForUpdate()
                         ->first();
 
-                    if (!$transaction) {
+                    if (!$foreclosure) {
                         DB::rollBack();
-                        return back()->with('error', 'Transaction not found');
+                        return back()->with('error', 'Foreclosure record not found.');
                     }
 
-                    // ==============================
-                    // ✅ APPROVE CASE
-                    // ==============================
+                    // ✅ Approve foreclosure
                     if ($status === 'approved') {
 
-                        // 1️⃣ Mark transaction as paid
-                        DB::table('mortgage_loan_transactions')
+                        // 1️⃣ Update foreclosure status
+                        DB::table('mortgage_loan_fore_closures')
                             ->where('id', $id)
                             ->update([
-                                'status' => 'paid',
+                                'status' => 1,
+                                'remarks' => $remarks,
+                                'updated_at' => now()
+                            ]);
+
+                        // 2️⃣ Mark all EMI as PAID
+                        DB::table('mortgage_loan_emi_status')
+                            ->where('loan_id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 'PAID',
+                                'remaining_amount' => 0,
                                 'paid_date' => now(),
                                 'updated_at' => now()
                             ]);
 
-                        // 2️⃣ Get EMI status row
-                        $emiStatus = DB::table('mortgage_loan_emi_status')
-                            ->where('loan_id', $transaction->loan_id)
-                            ->where('emi_no', $transaction->emi_no)
-                            ->lockForUpdate()
-                            ->first();
-
-                        if ($emiStatus) {
-
-                            $paidAmount = round($transaction->amount_collected, 2);
-                            $currentRemaining = round($emiStatus->remaining_amount, 2);
-
-                            $newRemaining = round($currentRemaining - $paidAmount, 2);
-
-                            // ⭐ FULL PAID
-                            if ($newRemaining <= 0) {
-
-                                DB::table('mortgage_loan_emi_status')
-                                    ->where('id', $emiStatus->id)
-                                    ->update([
-                                        'status' => 'PAID',
-                                        'remaining_amount' => 0,
-                                        'paid_date' => now(),
-                                        'updated_at' => now()
-                                    ]);
-                            }
-                            // ⭐ PARTIAL
-                            else {
-
-                                DB::table('mortgage_loan_emi_status')
-                                    ->where('id', $emiStatus->id)
-                                    ->update([
-                                        'status' => 'PARTIAL',
-                                        'remaining_amount' => $newRemaining,
-                                        'updated_at' => now()
-                                    ]);
-                            }
-                        }
-
-                        // 3️⃣ Auto Close Loan If All EMI Paid
-                        $totalRemaining = DB::table('mortgage_loan_emi_status')
-                            ->where('loan_id', $transaction->loan_id)
-                            ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
-                            ->sum('remaining_amount');
-
-                        if ($totalRemaining <= 0) {
-
-                            DB::table('mortgage_loan_applications')
-                                ->where('id', $transaction->loan_id)
-                                ->update([
-                                    'status' => 2, // closed
-                                    'updated_at' => now()
-                                ]);
-                        }
-
-                        DB::commit();
-                        return back()->with('success', 'Mortgage EMI approved successfully.');
-                    }
-
-                    // ==============================
-                    // ❌ DISAPPROVE
-                    // ==============================
-                    if ($status === 'disapproved') {
-
-                        DB::table('mortgage_loan_transactions')
-                            ->where('id', $id)
+                        // 3️⃣ Close Loan
+                        DB::table('mortgage_loan_applications')
+                            ->where('id', $foreclosure->loan_id)
                             ->update([
-                                'status' => 'rejected',
+                                'status' => 2, // closed
                                 'updated_at' => now()
                             ]);
-
-                        DB::commit();
-                        return back()->with('success', 'Mortgage EMI rejected.');
                     }
+
+                    DB::commit();
+
+                    return back()->with('success', 'Mortgage Foreclosure approved successfully.');
                 } catch (\Exception $e) {
 
                     DB::rollBack();

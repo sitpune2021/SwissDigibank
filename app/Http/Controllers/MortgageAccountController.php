@@ -601,7 +601,7 @@ class MortgageAccountController extends Controller
             ->where('status', 'paid')
             ->sum('amount_collected');
 
-        // Next EMI
+        // Next EMI (only unpaid ones)
         $nextEmi = DB::table('mortgage_loan_emi_status')
             ->where('loan_id', $id)
             ->whereIn('status', ['PARTIAL', 'DUE', 'UNPAID'])
@@ -614,19 +614,30 @@ class MortgageAccountController extends Controller
 
         if ($nextEmi) {
 
-            if ($nextEmi->status == 'PARTIAL') {
-                // Show remaining only
-                $emiAmount = round($nextEmi->remaining_amount, 2);
-            } else {
-                // Show full EMI amount (remaining_amount column already holds EMI value)
-                $emiAmount = round($nextEmi->remaining_amount, 2);
-            }
-
+            // ✅ If EMI exists → show its remaining
+            $emiAmount = round($nextEmi->remaining_amount, 2);
             $remainingAmount = $emiAmount;
         } else {
-            $emiAmount = 0;
-            $remainingAmount = 0;
+
+            // 🔥 If NO EMI pending → calculate full outstanding
+
+            $totalLoanAmount = $goldLoan->loan_amount;
+
+            $totalPaid = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount_collected');
+
+            $remainingAmount = round($totalLoanAmount - $totalPaid, 2);
+
+            // Prevent negative
+            if ($remainingAmount < 0) {
+                $remainingAmount = 0;
+            }
+
+            $emiAmount = $remainingAmount;
         }
+
 
 
         // Charges
@@ -655,7 +666,6 @@ class MortgageAccountController extends Controller
             'banks'
         ));
     }
-
     private function calculateMortgagePayAmount($loanId)
     {
         $totalRemaining = DB::table('mortgage_loan_emi_status')
@@ -676,6 +686,7 @@ class MortgageAccountController extends Controller
 
         return round($loan->loan_amount - $paid, 2);
     }
+
     public function mortgagepayEmiLoan(Request $request, $id)
     {
         DB::beginTransaction();
@@ -698,8 +709,30 @@ class MortgageAccountController extends Controller
                 ->first();
 
             if (!$emi) {
-                return back()->with('error', 'No pending EMI found');
+
+                // 🔥 FULL PAYMENT CASE
+                DB::table('mortgage_loan_transactions')->insert([
+                    'loan_id' => $id,
+                    'emi_no' => null,
+                    'transaction_date' => now()->format('Y-m-d'),
+                    'amount_collected' => $cleanAmount,
+                    'total_payable' => $cleanAmount,
+                    'current_debt' => 0,
+                    'status' => 'pending',
+                    'flag' => 'full_payment',
+                    'fee_mode' => $request->fee_mode,
+                    'created_by' => Auth::id(),
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+                DB::commit();
+
+                return redirect()
+                    ->route('mortgage.account.show', $id)
+                    ->with('success', 'Full Payment Submitted For Approval');
             }
+
 
             DB::table('mortgage_loan_transactions')->insert([
                 'loan_id' => $id,
@@ -727,294 +760,6 @@ class MortgageAccountController extends Controller
         }
     }
 
-    // public function mortgagePayEmi($id)
-    // {
-    //     $goldLoan = MortgageLoanApplication::with([
-    //         'member.branch',
-    //         'branch',
-    //         'scheme'
-    //     ])->findOrFail($id);
-
-    //     $banks = Bank::pluck('name', 'id');
-    //     $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
-
-    //     $principal = $goldLoan->loan_amount;
-    //     $rate = $goldLoan->scheme->annual_interest_rate ?? 0;
-    //     $tenure = $goldLoan->tenure_value;
-
-    //     $monthlyRate = $rate / 12 / 100;
-
-    //     // EMI formula
-    //     $emi = $principal *
-    //         ($monthlyRate * pow(1 + $monthlyRate, $tenure)) /
-    //         (pow(1 + $monthlyRate, $tenure) - 1);
-
-    //     $emi = round($emi, 2);
-
-    //     // Already paid EMIs count
-    //     $paidCount = MortgageLoanTransaction::where('loan_id', $id)->count();
-
-    //     // NEXT EMI NUMBER
-    //     $nextEmiNo = $paidCount + 1;
-
-    //     if ($nextEmiNo > $tenure) {
-    //         return back()->with('error', 'All EMIs completed');
-    //     }
-
-    //     // Outstanding principal
-    //     $balance = $principal;
-
-    //     for ($i = 1; $i < $nextEmiNo; $i++) {
-    //         $interest = $balance * $monthlyRate;
-    //         $principalPart = $emi - $interest;
-    //         $balance -= $principalPart;
-    //     }
-
-    //     // NEXT EMI breakdown
-    //     $interest = $balance * $monthlyRate;
-    //     $principalPart = $emi - $interest;
-
-    //     $emiAmount = round($emi, 2);
-
-    //     // ⭐ CHECK EMI STATUS TABLE FOR PARTIAL
-    //     $emiStatus = DB::table('mortgage_loan_emi_status')
-    //         ->where('loan_id', $id)
-    //         ->where('emi_no', $nextEmiNo)
-    //         ->first();
-
-    //     if ($emiStatus && $emiStatus->remaining_amount > 0) {
-
-    //         // Use DB remaining
-    //         $remainingAmount = $emiStatus->remaining_amount;
-    //     } else {
-
-    //         // Full EMI
-    //         $remainingAmount = $emiAmount;
-    //     }
-
-    //     return view('mortgage.account.view-buttons.pay-emi.pay_emi', [
-    //         'goldLoan' => $goldLoan,
-    //         'emiAmount' => $emiAmount,
-    //         'remainingAmount' => $remainingAmount,
-    //         'netDisbursed' => 0,
-    //         'overdueInterest' => 0,
-    //         'otherCharges' => 0,
-    //         'gstRate' => 18,
-    //         'totalOverdueWithGst' => 0,
-    //         'totalAmount' => $emiAmount,
-    //         'rounding' => 0,
-    //         'netAmount' => $emiAmount,
-    //         'savingAccounts' => $savingAccounts,
-    //         'banks' => $banks,
-    //         'nextEmiNo' => $nextEmiNo
-    //     ]);
-    // }
-
-
-    // // pay emi tab data store in mortage loan transiction table
-    // public function mortgagepayEmiLoan(Request $request, $id)
-    // {
-    //     Log::info("🟩 EMI Payment Request Received", [
-    //         'loan_id' => $id,
-    //         'payload' => $request->all()
-    //     ]);
-
-    //     try {
-
-    //         // 🔥 REMOVE COMMA FROM AMOUNT BEFORE VALIDATION
-    //         $cleanAmount = str_replace(',', '', $request->amount_collected);
-    //         $request->merge(['amount_collected' => $cleanAmount]);
-
-
-    //         $request->validate([
-    //             'transaction_date' => 'required|date',
-    //             'amount_collected' => 'required|numeric|min:1',
-    //             'remarks' => 'nullable|string|max:255',
-    //             'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-    //         ]);
-
-    //         Log::info("🟦 Validation Passed for Loan ID: $id");
-
-    //         $loan = MortgageLoanApplication::with('scheme')->findOrFail($id);
-
-    //         $totalPaid = MortgageLoanTransaction::where('loan_id', $loan->id)
-    //             ->sum('amount_collected');
-
-    //         $remainingDue = max($loan->loan_amount - $totalPaid, 0);
-
-    //         $amountCollected = (float) $cleanAmount;
-    //         $newRemainingDue = max($remainingDue - $amountCollected, 0);
-
-
-    //         Log::info("🔍 Calculation", [
-    //             'remaining_due' => $remainingDue,
-    //             'amount_collected' => $amountCollected,
-    //             'new_remaining_due' => $newRemainingDue
-    //         ]);
-
-
-    //         // Upload File
-    //         $receiptPath = null;
-    //         if ($request->hasFile('receipt')) {
-    //             $receiptPath = $request->file('receipt')->store('goldloan_receipts', 'public');
-    //             Log::info("🟨 Receipt uploaded: " . $receiptPath);
-    //         }
-
-    //         // 🔥 GET NEXT EMI NUMBER (COUNT + 1)
-    //         $nextEmiNo = MortgageLoanTransaction::where('loan_id', $loan->id)->count() + 1;
-
-    //         Log::info("➡️ Next EMI No Calculated", [
-    //             'loan_id' => $loan->id,
-    //             'next_emi_no' => $nextEmiNo
-    //         ]);
-
-    //         // Store Transaction
-    //         $transaction = new MortgageLoanTransaction();
-    //         $transaction->loan_id = $loan->id;
-    //         $transaction->transaction_date = date('Y-m-d', strtotime($request->transaction_date));
-    //         $transaction->amount_collected = $amountCollected;
-    //         $transaction->current_debt = $newRemainingDue;
-    //         $transaction->other_charges = 0;
-    //         $transaction->total_payable = $remainingDue;
-    //         $transaction->status = 'pending';
-    //         $transaction->remarks = $request->remarks ?? null;
-    //         $transaction->flag = 'emi_payment';
-    //         $transaction->created_by = Auth::id() ?? null;
-
-    //         // 🟩 NEW LINE — SAVE EMI NO
-    //         $transaction->emi_no = $nextEmiNo;
-
-    //         // =============================================
-    //         // 🔥 MODE-WISE FIELDS STORE
-    //         // =============================================
-
-    //         $transaction->fee_mode = $request->fee_mode;
-
-    //         // CASH - kuch save nahi hoga
-    //         if ($request->fee_mode == 'cash') {
-
-    //             $transaction->bank_id = null;
-    //             $transaction->cheque_no = null;
-    //             $transaction->cheque_date = null;
-
-    //             $transaction->utr_no = null;
-    //             $transaction->transfer_mode = null;
-    //             $transaction->transfer_date = null;
-
-    //             $transaction->saving = null;
-    //         }
-
-    //         // CHEQUE
-    //         elseif ($request->fee_mode == 'cheque') {
-
-    //             $transaction->bank_id = $request->bank_id;
-    //             $transaction->cheque_no = $request->cheque_no;
-    //             $transaction->cheque_date = date('Y-m-d', strtotime($request->cheque_date));
-
-    //             $transaction->utr_no = null;
-    //             $transaction->transfer_mode = null;
-    //             $transaction->transfer_date = null;
-
-    //             $transaction->saving = null;
-    //         }
-
-    //         // ONLINE
-    //         elseif ($request->fee_mode == 'online') {
-
-    //             $transaction->utr_no = $request->utr_no;
-    //             $transaction->transfer_mode = $request->transfer_mode;
-    //             $transaction->transfer_date = date('Y-m-d', strtotime($request->transfer_date));
-
-    //             $transaction->bank_id = null;
-    //             $transaction->cheque_no = null;
-    //             $transaction->cheque_date = null;
-
-    //             $transaction->saving = null;
-    //         }
-
-    //         // SAVING ACCOUNT
-    //         elseif ($request->fee_mode == 'saving') {
-
-    //             $transaction->saving = $request->saving;
-
-    //             $transaction->bank_id = null;
-    //             $transaction->cheque_no = null;
-    //             $transaction->cheque_date = null;
-
-    //             $transaction->utr_no = null;
-    //             $transaction->transfer_mode = null;
-    //             $transaction->transfer_date = null;
-    //         }
-
-    //         if ($receiptPath) {
-    //             $transaction->receipt = $receiptPath;
-    //         }
-
-    //         Log::info("📝 Transaction Before Save", $transaction->toArray());
-
-    //         $transaction->save();
-    //         // ⭐ UPDATE EMI STATUS TABLE
-    //         $emiStatus = DB::table('mortgage_loan_emi_status')
-    //             ->where('loan_id', $loan->id)
-    //             ->where('emi_no', $nextEmiNo)
-    //             ->first();
-
-    //         if ($emiStatus) {
-
-    //             $currentRemaining = $emiStatus->remaining_amount;
-    //             $paid = $amountCollected;
-
-    //             $newRemaining = $currentRemaining - $paid;
-
-    //             if ($newRemaining <= 0) {
-
-    //                 DB::table('mortgage_loan_emi_status')
-    //                     ->where('id', $emiStatus->id)
-    //                     ->update([
-    //                         'status' => 'PAID',
-    //                         'remaining_amount' => 0,
-    //                         'paid_date' => now(),
-    //                         'updated_at' => now()
-    //                     ]);
-    //             } else {
-
-    //                 DB::table('mortgage_loan_emi_status')
-    //                     ->where('id', $emiStatus->id)
-    //                     ->update([
-    //                         'status' => 'PARTIAL',
-    //                         'remaining_amount' => $newRemaining,
-    //                         'updated_at' => now()
-    //                     ]);
-    //             }
-    //         }
-
-    //         Log::info("🟩 Transaction saved successfully!", [
-    //             'transaction_id' => $transaction->id
-    //         ]);
-
-    //         if ($newRemainingDue <= 0) {
-    //             $loan->status = 'closed';
-    //             $loan->save();
-
-    //             Log::info("🟢 Loan Closed Automatically", [
-    //                 'loan_id' => $loan->id
-    //             ]);
-    //         }
-
-    //         return redirect()->route('mortgage.account.show', $loan->id)
-    //             ->with('success', 'EMI Payment recorded successfully!');
-    //     } catch (\Exception $e) {
-
-    //         Log::error("❌ EMI PAYMENT ERROR", [
-    //             'loan_id' => $id,
-    //             'message' => $e->getMessage(),
-    //             'line' => $e->getLine(),
-    //             'file' => $e->getFile()
-    //         ]);
-
-    //         return back()->with('error', "Something went wrong: " . $e->getMessage());
-    //     }
-    // }
 
     // Transiction tab 
     public function mortgageTransaction(Request $request, $id)
@@ -1427,55 +1172,79 @@ class MortgageAccountController extends Controller
         }
     }
 
-    // foure closer tab
     public function fourcloser($id)
     {
-        $goldLoan = MortgageLoanApplication::with(['member', 'branch', 'scheme', 'mortgageLoanTransactions'])
-            ->findOrFail($id);
+        Log::info('🟢 fourcloser() START', [
+            'loan_id' => $id,
+            'user_id' => Auth::id(),
+        ]);
 
-        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
+        try {
 
-        // Total Deposit
-        $totalDeposit = DB::table('mortgage_loan_transactions')
-            ->where('loan_id', $id)
-            ->sum('amount_collected');
+            $goldLoan = MortgageLoanApplication::with(['member', 'branch', 'scheme'])
+                ->findOrFail($id);
 
-        // // Total from Other Charges (only paid)
-        $otherChargesDeposit = DB::table('mortgage_loan_other_charges')
-            ->where('loan_id', $id)
-            ->where('status', 'paid')
-            ->sum('amount');
+            Log::info('🔹 Loan Found', [
+                'loan_id'   => $goldLoan->id,
+                'principal' => $goldLoan->loan_amount,
+            ]);
 
-        // // FINAL DEPOSIT = Transactions + Other Charges
-        $totalDeposit = $totalDeposit + $otherChargesDeposit;
+            $banks = Bank::pluck('name', 'id');
 
-        // Latest total_payable (from last transaction)
-        $totalPayable = DB::table('mortgage_loan_transactions')
-            ->where('loan_id', $id)
-            ->orderByDesc('id')
-            ->value('total_payable') ?? $goldLoan->loan_amount;
+            // ⭐ Principal
+            $principal = $goldLoan->loan_amount;
 
-        // 1. Total Transaction Deposit
-        $transactionDeposit = DB::table('mortgage_loan_transactions')
-            ->where('loan_id', $id)
-            ->sum('amount_collected');
+            // ⭐ Only Approved EMI Payments
+            $totalPaid = DB::table('gold_loan_transactions')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount_collected');
 
-        // 2. Total Paid Other Charges
-        $otherChargesDeposit = DB::table('mortgage_loan_other_charges')
-            ->where('loan_id', $id)
-            ->where('status', 'paid')
-            ->sum('amount');
+            Log::info('🔹 Payment Summary', [
+                'loan_id'   => $id,
+                'total_paid' => $totalPaid,
+            ]);
 
-        // 3. FINAL Total Deposit
-        $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+            // ⭐ Correct Remaining
+            // ⭐ Check foreclosure approved
+            $foreclosureApproved = DB::table('gold_loan_fore_closures')
+                ->where('loan_id', $id)
+                ->where('status', 1)
+                ->exists();
 
-        // 4. FINAL Correct Current Debt
-        $currentDebt = max($totalPayable - $totalDeposit, 0);
+            if ($foreclosureApproved) {
+                $currentDebt = 0;
+            } else {
+                $currentDebt = max($principal - $totalPaid, 0);
+            }
 
-        return view('mortgage.account.view-buttons.fore-close.fore-close', compact('goldLoan', 'currentDebt', 'banks'));
+            Log::info('🔹 Remaining Calculation', [
+                'principal'   => $principal,
+                'total_paid'  => $totalPaid,
+                'currentDebt' => $currentDebt,
+            ]);
+
+            Log::info('🟢 fourcloser() SUCCESS', [
+                'loan_id' => $id
+            ]);
+
+            return view(
+                'mortgage.account.view-buttons.fore-close.fore-close',
+                compact('goldLoan', 'currentDebt', 'banks')
+            );
+        } catch (\Exception $e) {
+
+            Log::error('❌ fourcloser() FAILED', [
+                'loan_id' => $id,
+                'error'   => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while loading foreclosure page.');
+        }
     }
 
-    // foure closer store tab
     public function storeForeCloser(Request $request, $loanId)
     {
         Log::info('---- ForeClosure Store Request START ----', [
@@ -1487,31 +1256,36 @@ class MortgageAccountController extends Controller
 
             // VALIDATION
             $request->validate([
-                'remaining_amount'   => 'required|numeric',
-                'interest_accrued'   => 'required|numeric',
-                'overdue_interest'   => 'required|numeric',
-                'notice_charges'     => 'required|numeric',
-                'service_charges'    => 'required|numeric',
-                'other_charges'      => 'required|numeric',
-                'foreclosure_charges' => 'required|numeric',
-                'total_amount_h'     => 'required|numeric',
-                'rounding_off_i'     => 'required|numeric',
-                'closure_discount_j' => 'required|numeric',
-                'net_amount_k'       => 'required|numeric',
-                'transaction_date'   => 'required',
-                // optional payment fields validation:
-                'payment_mode'           => 'nullable|in:cash,cheque,online',
-                'bank_id'            => 'nullable|exists:banks,id',
-                'cheque_no'          => 'nullable|string|max:100',
-                'cheque_date'        => 'nullable|date',
-                'transfer_date'      => 'nullable|date',
-                'utr_no'             => 'nullable|string|max:150',
-                'transfer_mode'      => 'nullable|in:imps,vpa,neft_rtgs',
-                'credited'           => 'nullable|in:0,1',
+                'remaining_amount'      => 'required|numeric',
+
+                'interest_accrued'      => 'nullable|numeric',
+                'overdue_interest'      => 'nullable|numeric',
+
+                'notice_charges'        => 'nullable|numeric',
+                'service_charges'       => 'nullable|numeric',
+                'other_charges'         => 'nullable|numeric',
+                'foreclosure_charges'   => 'nullable|numeric',
+
+                'total_amount_h'        => 'required|numeric',
+                'rounding_off_i'        => 'nullable|numeric',
+                'closure_discount_j'    => 'nullable|numeric',
+                'net_amount_k'          => 'required|numeric',
+
+                'transaction_date'      => 'required',
+
+                'payment_mode'          => 'nullable|in:cash,cheque,online',
+                'bank_id'               => 'nullable|exists:banks,id',
+                'cheque_no'             => 'nullable|string|max:100',
+                'cheque_date'           => 'nullable|date',
+                'transfer_date'         => 'nullable|date',
+                'utr_no'                => 'nullable|string|max:150',
+                'transfer_mode'         => 'nullable|in:imps,vpa,neft_rtgs',
+                'credited'              => 'nullable|in:0,1',
             ]);
 
+
             // STORE DATA
-            $save = MortgageLoanForeClosure::create([
+            $save = MortgageLoanApplication::create([
                 'loan_id'               => $loanId,
 
                 'remaining_amount'      => $request->remaining_amount,
@@ -1535,8 +1309,16 @@ class MortgageAccountController extends Controller
                 'payment_mode'          => $request->input('payment_mode') ?? null,   // cash/cheque/online
                 'bank_id'               => $request->input('bank_id') ?? null,
                 'cheque_no'             => $request->input('cheque_no') ?? null,
-                'cheque_date'           => $request->filled('cheque_date') ? Carbon::parse($request->input('cheque_date')) : null,
-                'transfer_date'         => $request->filled('transfer_date') ? Carbon::parse($request->input('transfer_date')) : null,
+                // 'cheque_date'           => $request->filled('cheque_date') ? Carbon::parse($request->input('cheque_date')) : null,
+                // 'transfer_date'         => $request->filled('transfer_date') ? Carbon::parse($request->input('transfer_date')) : null,
+                'cheque_date' => $request->filled('cheque_date')
+                    ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d')
+                    : null,
+
+                'transfer_date' => $request->filled('transfer_date')
+                    ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
+                    : null,
+
                 'utr_no'                => $request->input('utr_no') ?? null,
                 'transfer_mode'         => $request->input('transfer_mode') ?? null,
                 'credited'              => is_null($request->input('credited')) ? null : (int)$request->input('credited'),
