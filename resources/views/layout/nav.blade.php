@@ -61,67 +61,67 @@
                     class="hidden absolute left-0  bg-white border  border-gray-200 rounded-lg shadow-lg z-50 w-64"
                     style="margin-left: 5px; margin-top: 55px !important;">
                     <ul>
-                         <a href="">
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        <a href="">
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
 
-                            <i class="las la-tree"></i>
-                           Tree
-                        </li>
-                       </a> 
-                       <a href="{{ route('vendors.index') }}">
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                            <i class="las la-user-friends"></i>
-                            vendors
-                        </li>
+                                <i class="las la-tree"></i>
+                                Tree
+                            </li>
+                        </a>
+                        <a href="{{ route('vendors.index') }}">
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-user-friends"></i>
+                                vendors
+                            </li>
                         </a>
                         <a href="{{ route('ledger-group.index') }}">
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                            <i class="las la-object-group"></i>
-                            Ledger Groups
-                        </li>
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-object-group"></i>
+                                Ledger Groups
+                            </li>
                         </a>
-                         <a href="{{ route('ledger.index') }}">
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                            <i class="las la-plus-circle"></i>
-                           Ledgers
-                        </li>
-                        </a>
-                         <a href="">
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                            <i class="las la-list-ul"></i>
-                           Entries
-                        </li>
-                        </a>
-                        <a href="{{ route('trial.balance') }}">
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                            <i class="las la-balance-scale"></i>
-                            Trial Balance
-                        </li>
-                        </a>
-                        <a href="{{ route('profit-loss.profit_loss') }}">
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                            <i class="las la-rupee-sign"></i>
-                            Profit and Loss (P&L)
-                        </li>
-                        </a>
-                         <a href="">
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                            <i class="las la-random"></i>
-                           Income Statement
-                        </li>
-                        </a>
-                         <a href="{{ route('balance.sheet') }}">
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                            <i class="las la-chart-bar"></i>
-                            Balance Sheet
-                        </li>
+                        <a href="{{ route('ledger.index') }}">
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-plus-circle"></i>
+                                Ledgers
+                            </li>
                         </a>
                         <a href="">
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                            <i class="las la-list"></i>
-                            FY REPORT
-                        </li>
-                       </a>
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-list-ul"></i>
+                                Entries
+                            </li>
+                        </a>
+                        <a href="{{ route('trial.balance') }}">
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-balance-scale"></i>
+                                Trial Balance
+                            </li>
+                        </a>
+                        <a href="{{ route('profit-loss.profit_loss') }}">
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-rupee-sign"></i>
+                                Profit and Loss (P&L)
+                            </li>
+                        </a>
+                        <a href="">
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-random"></i>
+                                Income Statement
+                            </li>
+                        </a>
+                        <a href="{{ route('balance.sheet') }}">
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-chart-bar"></i>
+                                Balance Sheet
+                            </li>
+                        </a>
+                        <a href="">
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-list"></i>
+                                FY REPORT
+                            </li>
+                        </a>
                     </ul>
                 </div>
 
@@ -143,7 +143,7 @@
                         </li>
                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                             <i class="las la-money-bill"></i>
-                            <a href=""> Loan Report</a>
+                            <a href="{{ route('loan-report.index') }}"> Loan Report</a>
                         </li>
                     </ul>
                 </div>
@@ -329,28 +329,48 @@
             </div>
             <!-- Profile dropdown -->
             <div class="relative shrink-0">
+                @php
+                $photo = auth()->user()?->profilePhoto?->filename;
+                @endphp
+
                 <div id="profile-btn" class="w-10 cursor-pointer md:w-12">
-                    <img src="{{ auth()->user()->profilePhoto
-            ? asset('storage/profile_photos/' . auth()->user()->profilePhoto->filename)
-            : asset('assets/images/user-big-4.png') }}" class="rounded-full"
-                        style="width: 50px; height:50px; object-fit: cover;" alt="profile img" />
+                    <img src="{{ $photo
+    ? asset('storage/profile_photos/' . $photo)
+    : asset('assets/images/user-big-4.png') }}" class="rounded-full" style="width:50px;height:50px;object-fit:cover;"
+                        alt="profile img">
+                    {{-- <img src="{{ auth()->user()->profilePhoto
+    ? asset('storage/profile_photos/' . auth()->user()->profilePhoto->filename)
+    : asset('assets/images/user-big-4.png') }}" class="rounded-full"
+                        style="width: 50px; height:50px; object-fit: cover;" alt="profile img" /> --}}
                     {{-- <img src="{{ asset('assets/images/user-big-4.png') }}" class="rounded-full" width="48"
                         height="48" alt="profile img" /> --}}
                 </div>
                 <div id="profile"
                     class="hide absolute top-full z-20 rounded-md bg-n0 shadow-[0px_6px_30px_0px_rgba(0,0,0,0.08)] duration-300 dark:bg-bg4 ltr:right-0 ltr:origin-top-right rtl:left-0 rtl:origin-top-left">
                     <div class="flex flex-col items-center border-b p-3 text-center dark:border-n500 lg:p-4">
-                        <img src="{{ auth()->user()->profilePhoto
-            ? asset('storage/profile_photos/' . auth()->user()->profilePhoto->filename)
-            : asset('assets/images/user-big-4.png') }}" class="rounded-full "
-                            style="width: 50px; height:50px; object-fit: cover;" alt="profile img" />
+                        @php
+                        $user = auth()->user();
+                        $photo = $user->profilePhoto->filename ?? null;
+                        @endphp
+                       <img src="{{ $photo
+        ? asset('storage/profile_photos/'.$photo)
+        : asset('assets/images/user-big-4.png') }}"
+     class="rounded-full"
+     style="width:50px;height:50px;object-fit:cover;"
+     alt="profile img">
                         <h6 class="h6 mt-2 uppercase">
-                            {{ auth()->user()->fname .' '. auth()->user()->lname}}
+                            {{-- {{ auth()->user()->fname . ' ' . auth()->user()->lname}} --}}
+                                {{ auth()->user()?->fname && auth()->user()?->lname
+        ? auth()->user()->fname . ' ' . auth()->user()->lname
+        : '' }}
+
                         </h6>
                         <h6 class="h6 ">
-                            {{ auth()->user()->name}}
+                            {{-- {{ auth()->user()->name}} --}}
+                            {{ auth()->user()?->name ?? '' }}
+
                         </h6>
-                        <span class="text-sm">{{auth()->user()->email}}</span>
+                        <span class="text-sm">{{auth()->user()?->email ?? ''}}</span>
                     </div>
                     <ul class="flex w-[250px] flex-col p-4">
                         <li>

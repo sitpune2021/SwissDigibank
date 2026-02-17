@@ -12,6 +12,7 @@ use App\Models\PromotorNomine;
 use App\Models\Account;
 use App\Models\Member;
 use App\Models\KycDocument;
+use App\Models\ShareHolding;
 
 class Promotor extends Model
 {
@@ -97,7 +98,7 @@ class Promotor extends Model
     }
     public function latestShare()
     {
-        return $this->hasOne(ShareHolding::class, 'promotor_id')->latest();
+        return $this->hasOne(Shareholding::class, 'promotor_id')->latest();
     }
     public function membershipCharge()
 {

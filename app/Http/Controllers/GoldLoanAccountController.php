@@ -393,12 +393,16 @@ class GoldLoanAccountController extends Controller
         // ⭐ T. DUE = Only EMI 1 Remaining Amount
         $tDueAmount = 0;
 
+
         foreach ($emiSchedule as $emi) {
-            if ($emi['emi_no'] == 1) {
+
+            if (in_array($emi['status'], ['UNPAID', 'PARTIAL', 'DUE'])) {
+
                 $tDueAmount = floatval(str_replace(',', '', $emi['remaining_amount']));
-                break;
+                break; // 🔥 only first pending EMI
             }
         }
+
         // EIR should run for both flat_emi AND reducing_emi
         if (in_array($interestType, ['flat_emi', 'reducing_emi'])) {
 
@@ -627,6 +631,7 @@ class GoldLoanAccountController extends Controller
 
 
         $payButtonText = $hasDueEmi ? 'Pay Emi' : 'Pay';
+        
         $emiSchedule = collect($emiSchedule)
             ->sortBy('emi_no')
             ->values()
