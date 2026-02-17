@@ -330,7 +330,7 @@
             <!-- Profile dropdown -->
             <div class="relative shrink-0">
                 @php
-                    $photo = auth()->user()?->profilePhoto?->filename;
+                $photo = auth()->user()?->profilePhoto?->filename;
                 @endphp
 
                 <div id="profile-btn" class="w-10 cursor-pointer md:w-12">
@@ -348,17 +348,29 @@
                 <div id="profile"
                     class="hide absolute top-full z-20 rounded-md bg-n0 shadow-[0px_6px_30px_0px_rgba(0,0,0,0.08)] duration-300 dark:bg-bg4 ltr:right-0 ltr:origin-top-right rtl:left-0 rtl:origin-top-left">
                     <div class="flex flex-col items-center border-b p-3 text-center dark:border-n500 lg:p-4">
-                        <img src="{{ auth()->user()->profilePhoto
-    ? asset('storage/profile_photos/' . auth()->user()->profilePhoto->filename)
-    : asset('assets/images/user-big-4.png') }}" class="rounded-full "
-                            style="width: 50px; height:50px; object-fit: cover;" alt="profile img" />
+                        @php
+                        $user = auth()->user();
+                        $photo = $user->profilePhoto->filename ?? null;
+                        @endphp
+                       <img src="{{ $photo
+        ? asset('storage/profile_photos/'.$photo)
+        : asset('assets/images/user-big-4.png') }}"
+     class="rounded-full"
+     style="width:50px;height:50px;object-fit:cover;"
+     alt="profile img">
                         <h6 class="h6 mt-2 uppercase">
-                            {{ auth()->user()->fname . ' ' . auth()->user()->lname}}
+                            {{-- {{ auth()->user()->fname . ' ' . auth()->user()->lname}} --}}
+                                {{ auth()->user()?->fname && auth()->user()?->lname
+        ? auth()->user()->fname . ' ' . auth()->user()->lname
+        : '' }}
+
                         </h6>
                         <h6 class="h6 ">
-                            {{ auth()->user()->name}}
+                            {{-- {{ auth()->user()->name}} --}}
+                            {{ auth()->user()?->name ?? '' }}
+
                         </h6>
-                        <span class="text-sm">{{auth()->user()->email}}</span>
+                        <span class="text-sm">{{auth()->user()?->email ?? ''}}</span>
                     </div>
                     <ul class="flex w-[250px] flex-col p-4">
                         <li>
