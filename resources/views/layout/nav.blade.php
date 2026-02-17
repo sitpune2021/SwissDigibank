@@ -143,7 +143,7 @@
                         </li>
                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                             <i class="las la-money-bill"></i>
-                            <a href=""> Loan Report</a>
+                            <a href="{{ route('loan-report.index') }}"> Loan Report</a>
                         </li>
                     </ul>
                 </div>

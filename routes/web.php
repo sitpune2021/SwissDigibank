@@ -12,6 +12,7 @@ use App\Http\Controllers\MasterSettingsController;
 use App\Http\Controllers\MortgageLoanPrintDocumentsController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\PrintDocumentsController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\SmsTemplateController;
 use App\Http\Controllers\SoftwareSettingsController;
@@ -3020,6 +3021,17 @@ Route::get('software-settings/edit-mail-setting', [SoftwareSettingsController::c
 
 Route::get('software-settings/software-service-agreement', [SoftwareSettingsController::class, 'software_service_agreement'])->name('software-settings.software-service-agreement');
 /////////////// end software-settings  //////////////////////
+
+
+
+///////////////////// Download REPORTs ///////////////////////////
+Route::get('loan-report/index', [ReportController::class, 'loan_report_index'])->name('loan-report.index');
+Route::get('maturity-indext/index', [ReportController::class, 'maturity_index'])->name('loan-report.maturity_index');
+
+
+////////////////////Download REPORTs Ends Here////////////////////////////
+
+
 
 Route::get('/dev/run/{action}', function ($action) {
     try {
