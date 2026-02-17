@@ -315,8 +315,9 @@
                                     <a href="" class="text-primary  capitalize hover:underline">
                                         <span
                                             class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                            ACTIVE
+                                            ACTIVE 
                                         </span>
+                                        (static)
                                     </a>
                                 </td>
                             </tr>

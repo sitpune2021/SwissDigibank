@@ -697,22 +697,33 @@
                         </div>
                     </div>
 
-                    <input type="hidden" name="ratio_enabled" id="ratio_enabled" value="No">
-                    <input type="hidden" name="ratio_first_emi" id="ratio_first_emi" value="">
-                    <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage" value="">
+                    <input type="hidden" name="ratio_enabled" id="ratio_enabled"
+                            value="{{ old('ratio_enabled', $application->ratio_enabled ?? 'No') }}">
 
+                    <input type="hidden" name="ratio_first_emi" id="ratio_first_emi"
+                          value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}">
 
+                    <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage"
+                            value="{{ old('ratio_first_percentage', $application->ratio_first_percentage ?? '') }}">
+
+                    <input type="hidden" name="interest_as_emi" id="interest_as_emi"
+                            value="{{ old('interest_as_emi', $application->interest_as_emi ?? '') }}">
+
+                    <input type="hidden" name="interest_as_first" id="interest_as_first"
+                        value="{{ old('interest_as_first', $application->interest_as_first ?? '') }}">
+                    
                     <div id="interestOptions" style="display:none; margin-top:10px;">
-
                         <!-- Checkbox 1 -->
                         <label class="flex gap-2" id="chk_emi_box">
-                            <input type="checkbox" name="option_interest_emi" id="option_interest_emi" value="Yes">
+                            <input type="checkbox" name="option_interest_emi" id="option_interest_emi" value="Yes"
+                            {{ old('interest_as_emi', $application->interest_as_emi ?? '') == 'Yes' ? 'checked' : '' }}>
                             <span id="chk_emi_text">Collect Interest as EMI & Principal after tenure</span>
                         </label>
 
                         <!-- Checkbox 2 -->
                         <label class="flex gap-2 mt-2" id="chk_first_box">
-                            <input type="checkbox" name="option_interest_first" id="option_interest_first" value="Yes">
+                            <input type="checkbox" name="option_interest_first" id="option_interest_first" value="Yes"
+                            {{ old('interest_as_first', $application->interest_as_first ?? '') == 'Yes' ? 'checked' : '' }}>
                             <span id="chk_emi_text">Collect Interest as EMIs First & then after Principal as EMIs</span>
                         </label>
 
@@ -722,20 +733,25 @@
                     <!-- REDUCING EMI SPECIAL CHECKBOX -->
                     <div class="flex gap-2" id="reduce_ratio_box" style="display:none;">
                         <label class="flex gap-2 items-center">
-                            <input type="checkbox"  name="divide_emi_ratio" id="divide_emi_ratio" value="1" style="width:20px !important; height:20px !important;">
+                            <input type="checkbox"  name="divide_emi_ratio" id="divide_emi_ratio" value="1" 
+                            {{ old('ratio_enabled', $application->ratio_enabled ?? '') == 'Yes' ? 'checked' : '' }}
+                            style="width:20px !important; height:20px !important;">
                         </label>
-                        <span id="" class="">Check this if you want to divide loan EMIs in ratio.</span>
+                        <span>Check this if you want to divide loan EMIs in ratio.</span>
                     </div>
 
 
                     <!-- RATIO FIELDS -->
-                    <div id="ratioFields" style="display:none; margin-top:10px;">
+                    <div id="ratioFields" style="display: {{ old('ratio_enabled', $application->ratio_enabled ?? 'No') == 'Yes' ? 'block' : 'none' }}; margin-top:10px;">
+
 
                         <!-- EMI Ratio -->
                         <label class="block mb-2 font-semibold">EMI Ratio <span id="emi_total_text"></span> </label>
 
                         <div class="flex gap-3">
-                            <input type="number" name="ratio_first_emi" id="emi_ratio_1" class="w-full rounded-10 bg-secondary/5 border p-2" min="1">
+                            <input type="number" id="emi_ratio_1" class="w-full rounded-10 bg-secondary/5 border p-2" 
+                            value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}"
+                            min="1">
                             <input type="number" id="emi_ratio_2" class="w-full rounded-10 bg-secondary/5 border p-2 bg-gray-100" readonly>
                         </div>
 
@@ -743,7 +759,8 @@
                         <label class="block mt-4 mb-2 font-semibold">Loan Amount % Ratio</label>
 
                         <div class="flex gap-3">
-                            <input type="number" name="ratio_first_percentage" id="amt_ratio_1" class="w-full border bg-secondary/5 rounded-10 p-2" min="1" max="100">
+                            <input type="number" name="ratio_first_percentage" id="amt_ratio_1" class="w-full border bg-secondary/5 rounded-10 p-2"
+                            value="{{ old('ratio_first_percentage', $application->ratio_first_percentage ?? '') }}" min="1" max="100">
                             <input type="number" id="amt_ratio_2" class="w-full border bg-secondary/5 rounded-10 p-2 bg-gray-100" readonly>
                         </div>
 
@@ -1031,7 +1048,6 @@
 
 <!-- calculation submit buttons -->
 <script>
-
 document.addEventListener("DOMContentLoaded", function () {
 
     const form = document.getElementById("loanForm");
@@ -1041,7 +1057,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let isCalculated = false;
     let isValidOrnament = false;
 
-    // ✅ GLOBAL CHANGE DETECTION (works for dynamic rows too)
+    // GLOBAL CHANGE DETECTION (works for dynamic rows too)
     form.addEventListener("input", function (e) {
 
         // Only trigger recalculation for important fields
@@ -1134,9 +1150,24 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
+<!-- for check box while in edit mode  -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    const ratioEnabled = document.getElementById('ratio_enabled').value;
+
+    if (ratioEnabled === 'Yes') {
+        document.getElementById('ratioFields').style.display = 'block';
+        document.getElementById('reduce_ratio_box').style.display = 'flex';
+        document.getElementById('divide_emi_ratio').checked = true;
+    }
+
+});
+</script>
+
 <script>
     //No Duplicate Customer In Droupown
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
 
     // All related dropdowns
     const dropdownIds = [
@@ -1197,6 +1228,28 @@ document.addEventListener("DOMContentLoaded", function () {
 <script>
     document.addEventListener("DOMContentLoaded", function() {
 
+    const schemeSelect = document.getElementById("scheme_id");
+
+        const interestOptions = document.getElementById("interestOptions");
+        const chkEmiBox = document.getElementById("chk_emi_box");
+        const chkFirstBox = document.getElementById("chk_first_box");
+        const chkEmiText = document.getElementById("chk_emi_text");
+        // NEW: Checkbox variables
+        const optEmi = document.getElementById("option_interest_emi");
+        const optFirst = document.getElementById("option_interest_first");
+
+        const reduceBox = document.getElementById("reduce_ratio_box");
+        const ratioFields = document.getElementById("ratioFields");
+
+        const emi1 = document.getElementById("emi_ratio_1");
+        const emi2 = document.getElementById("emi_ratio_2");
+
+        const amt1 = document.getElementById("amt_ratio_1");
+        const amt2 = document.getElementById("amt_ratio_2");
+
+        const chkDivide = document.getElementById("divide_emi_ratio");
+        const emiTotalText = document.getElementById("emi_total_text");
+
         // -----------------------------------------------
         //  MANUAL ENTRY → INTEREST TYPE CHECKBOX LOGIC
         // -----------------------------------------------
@@ -1250,28 +1303,7 @@ document.addEventListener("DOMContentLoaded", function () {
             r.addEventListener("change", applyManualCheckboxLogic);
         });
 
-        const schemeSelect = document.getElementById("scheme_id");
-
-        const interestOptions = document.getElementById("interestOptions");
-        const chkEmiBox = document.getElementById("chk_emi_box");
-        const chkFirstBox = document.getElementById("chk_first_box");
-        const chkEmiText = document.getElementById("chk_emi_text");
-        // NEW: Checkbox variables
-        const optEmi = document.getElementById("option_interest_emi");
-        const optFirst = document.getElementById("option_interest_first");
-
-        const reduceBox = document.getElementById("reduce_ratio_box");
-        const ratioFields = document.getElementById("ratioFields");
-
-        const emi1 = document.getElementById("emi_ratio_1");
-        const emi2 = document.getElementById("emi_ratio_2");
-
-        const amt1 = document.getElementById("amt_ratio_1");
-        const amt2 = document.getElementById("amt_ratio_2");
-
-        const chkDivide = document.getElementById("divide_emi_ratio");
-        const emiTotalText = document.getElementById("emi_total_text");
-
+        
         let totalEmi = 0;
 
         function manualInterestTypeCheck() {
@@ -1357,170 +1389,49 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 </script>
 
-<!-- reducig emi check box result show o result page -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
 
-        const form = document.getElementById("loanForm"); // ← YAHA PAKKA Sahi ID
+    const form = document.getElementById("loanForm");
+    const chkDivide = document.getElementById("divide_emi_ratio");
+    const emi1 = document.getElementById("emi_ratio_1");
+    const amt1 = document.getElementById("amt_ratio_1");
+    const tenureInput = document.getElementById("tenure_value");
+    const emi2 = document.getElementById("emi_ratio_2");
+    const errorBox = document.getElementById("emiRatioError");
 
-        const chkDivide = document.getElementById("divide_emi_ratio");
-        const emi1 = document.getElementById("emi_ratio_1");
-        const amt1 = document.getElementById("amt_ratio_1");
+    form.addEventListener("submit", function (e) {
 
-        form.addEventListener("submit", function() {
+        errorBox.classList.add("hidden");
 
-            // Ratio Enabled
-            document.getElementById("ratio_enabled").value =
-                chkDivide.checked ? "Yes" : "No";
-
-            // First EMI
-            document.getElementById("ratio_first_emi").value =
-                emi1.value || "";
-
-            // Percentage
-            document.getElementById("ratio_first_percentage").value =
-                amt1.value || "";
-        });
-
-    });
-</script>
-
-<!-- reducing emi - emi ratio validation -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-
-        // const form = document.getElementById("loanForm");
-
-        const tenureInput = document.getElementById("tenure_value");
-        const chkDivide = document.getElementById("divide_emi_ratio");
-
-        const emi1 = document.getElementById("emi_ratio_1");
-        const emi2 = document.getElementById("emi_ratio_2");
-
-        const errorBox = document.getElementById("emiRatioError");
-
-        // 🔹 Auto-calc EMI Ratio 2
-        emi1.addEventListener("input", function() {
+        if (chkDivide.checked) {
             const tenure = parseInt(tenureInput.value) || 0;
-            const first = parseInt(emi1.value) || 0;
+            const r1 = parseInt(emi1.value) || 0;
+            const r2 = parseInt(emi2.value) || 0;
 
-            if (tenure > 0 && first >= 0) {
-                emi2.value = tenure - first;
-            }
-        });
-
-        // 🔹 FORM SUBMIT VALIDATION
-        form.addEventListener("submit", function(e) {
-
-            errorBox.classList.add("hidden");
-
-            // ✅ sirf reducing + checkbox ON case
-            if (chkDivide.checked) {
-
-                const tenure = parseInt(tenureInput.value) || 0;
-                const r1 = parseInt(emi1.value) || 0;
-                const r2 = parseInt(emi2.value) || 0;
-
-                if ((r1 + r2) > tenure) {
-                    e.preventDefault(); // ⛔ form stop
-                    errorBox.classList.remove("hidden");
-                    errorBox.innerText =
-                        "EMI Ratio ka total (" + (r1 + r2) +
-                        ") tenure (" + tenure + ") se zyada nahi ho sakta";
-                }
-            }
-
-            // 🔹 Hidden fields set (tumhara existing logic)
-            document.getElementById("ratio_enabled").value =
-                chkDivide.checked ? "Yes" : "No";
-
-            document.getElementById("ratio_first_emi").value =
-                emi1.value || "";
-
-            document.getElementById("ratio_first_percentage").value =
-                document.getElementById("amt_ratio_1").value || "";
-        });
-
-    });
-</script>
-
-<!-- reducing emi - emi ratio change total as per tenure -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-
-        const form = document.getElementById("loanForm");
-
-        const tenureInput = document.getElementById("tenure_value");
-        const chkDivide = document.getElementById("divide_emi_ratio");
-
-        const emi1 = document.getElementById("emi_ratio_1");
-        const emi2 = document.getElementById("emi_ratio_2");
-
-        const emiTotalText = document.getElementById("emi_total_text");
-        const errorBox = document.getElementById("emiRatioError");
-
-        /* 🔹 UPDATE TOTAL EMI TEXT */
-        function updateTotalText() {
-            const tenure = parseInt(tenureInput.value) || 0;
-            emiTotalText.innerText = tenure > 0 ?
-                `(Total EMI : ${tenure})` :
-                "";
-        }
-
-        /* 🔹 AUTO CALCULATE SECOND RATIO */
-        function updateRatio() {
-            const tenure = parseInt(tenureInput.value) || 0;
-            const first = parseInt(emi1.value) || 0;
-
-            if (tenure >= 0 && first >= 0) {
-                emi2.value = Math.max(tenure - (parseInt(emi1.value) || 0), 0);
+            if ((r1 + r2) !== tenure) {
+                e.preventDefault();
+                errorBox.classList.remove("hidden");
+                errorBox.innerText =
+                    `EMI Ratio total (${r1 + r2}) must equal tenure (${tenure})`;
+                return;
             }
         }
 
-        /* 🔹 TENURE CHANGE */
-        tenureInput.addEventListener("input", function() {
-            updateTotalText();
-            updateRatio();
-        });
+        // 🔥 Set hidden values once only
+        document.getElementById("ratio_enabled").value =
+            chkDivide.checked ? "Yes" : "No";
 
-        /* 🔹 EMI RATIO CHANGE */
-        emi1.addEventListener("input", function() {
-            updateRatio();
-        });
+        document.getElementById("ratio_first_emi").value =
+            emi1.value || "";
 
-        /* 🔹 FORM SUBMIT VALIDATION */
-        form.addEventListener("submit", function(e) {
-
-            errorBox.classList.add("hidden");
-
-            if (chkDivide.checked) {
-
-                const tenure = parseInt(tenureInput.value) || 0;
-                const r1 = parseInt(emi1.value) || 0;
-                const r2 = parseInt(emi2.value) || 0;
-
-                if ((r1 + r2) !== tenure) {
-                    e.preventDefault();
-                    errorBox.classList.remove("hidden");
-                    errorBox.innerText =
-                        `EMI Ratio ka total (${r1 + r2}) tenure (${tenure}) ke barabar hona chahiye`;
-                    return;
-                }
-            }
-
-            // hidden fields (tumhara existing logic)
-            document.getElementById("ratio_enabled").value =
-                chkDivide.checked ? "Yes" : "No";
-
-            document.getElementById("ratio_first_emi").value =
-                emi1.value || "";
-
-            document.getElementById("ratio_first_percentage").value =
-                document.getElementById("amt_ratio_1").value || "";
-        });
-
+        document.getElementById("ratio_first_percentage").value =
+            amt1.value || "";
     });
+
+});
 </script>
+
 
 <!-- Calculation & Submit Button  -->
 <!-- <script>
@@ -2289,6 +2200,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Initial validation
         validateTenure();
+
+            // 🔥 Trigger on page load (edit mode fix)
+if (schemeSelect.value) {
+    schemeSelect.dispatchEvent(new Event('change'));
+}
 
     });
 </script>
