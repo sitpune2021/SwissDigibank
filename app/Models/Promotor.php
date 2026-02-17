@@ -12,7 +12,8 @@ use App\Models\PromotorNomine;
 use App\Models\Account;
 use App\Models\Member;
 use App\Models\KycDocument;
-use app\models\Shareholding;
+use App\Models\Shareholding;
+
 class Promotor extends Model
 {
     use SoftDeletes;
