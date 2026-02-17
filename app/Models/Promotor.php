@@ -12,7 +12,7 @@ use App\Models\PromotorNomine;
 use App\Models\Account;
 use App\Models\Member;
 use App\Models\KycDocument;
-use App\Models\Shareholding;
+use App\Models\ShareHolding;
 
 class Promotor extends Model
 {
