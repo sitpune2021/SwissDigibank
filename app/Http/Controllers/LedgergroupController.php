@@ -1331,177 +1331,6 @@ class LedgergroupController extends Controller
         ));
     }
 
-
-    // old opening and closing rule function with show book condtion
-    // public function dayBook(Request $request)
-    // {
-    //     $date = $request->date ?? now()->format('Y-m-d');
-
-    //     $ledgers = Ledger::where('show_in_day', 1)->get();
-
-    //     $openingData = [];
-    //     $closingData = [];
-    //     $dayTxnData  = [];
-
-    //     foreach ($ledgers as $ledger) {
-
-    //         [$debit, $closing] = $this->ledgerService
-    //                                   ->calculateLedgerBalance($ledger->code);
-
-    //         // ⚠ Since no date filter available:
-    //         $opening = 0; 
-    //         $dayTxn  = 0; 
-
-    //         $openingData[] = [
-    //             'name'  => $ledger->display_name,
-    //             'amount'=> $opening
-    //         ];
-
-    //         $closingData[] = [
-    //             'name'  => $ledger->display_name,
-    //             'amount'=> $closing
-    //         ];
-
-    //         $dayTxnData[] = [
-    //             'name'  => $ledger->display_name,
-    //             'amount'=> $dayTxn
-    //         ];
-    //     }
-
-    //     return view('menu-accounts.day-book.index', compact(
-    //         'date',
-    //         'openingData',
-    //         'closingData',
-    //         'dayTxnData'
-    //     ));
-    // }
-
-    // proper code but opening logic missing same count show current and opening 
-    // public function dayBook(Request $request)
-    // {
-    //     $date = $request->date ?? now()->format('Y-m-d');
-
-    //     $ledgers = Ledger::where('show_in_day', 1)->get();
-
-    //     $openingData = [];
-    //     $closingData = [];
-    //     $dayTxnData  = [];
-
-    //     foreach ($ledgers as $ledger) {
-
-    //         [, $closing] = $this->ledgerService
-    //                             ->calculateLedgerBalance($ledger->code);
-
-    //         // 🔥 Since no date logic → Opening = Closing
-    //         $opening = $closing;
-
-    //         // No daily calculation available
-    //         $dayTxn = 0;
-
-    //         $openingData[] = [
-    //             'name'   => $ledger->display_name,
-    //             'amount' => $opening
-    //         ];
-
-    //         $closingData[] = [
-    //             'name'   => $ledger->display_name,
-    //             'amount' => $closing
-    //         ];
-
-    //         $dayTxnData[] = [
-    //             'name'   => $ledger->display_name,
-    //             'amount' => $dayTxn
-    //         ];
-    //     }
-
-    //     return view('menu-accounts.day-book.index', compact(
-    //         'date',
-    //         'openingData',
-    //         'closingData',
-    //         'dayTxnData'
-    //     ));
-    // }
-
-    // perfect all logic working function -> only filter login not done
-    // public function dayBook(Request $request)
-    // {
-    //     $date = $request->date ?? now()->format('Y-m-d');
-
-    //     $ledgers = Ledger::where('show_in_day', 1)->get();
-
-    //     $openingData = [];
-    //     $closingData = [];
-    //     $dayTxnData  = [];
-
-    //     foreach ($ledgers as $ledger) {
-
-    //         $opening = 0;
-    //         $closing = 0;
-    //         $dayTxn  = 0;
-
-    //         // 🔥 CASH BOOK
-    //         if ($ledger->code === 'CASH_BOOK') {
-
-    //             $rows = $this->ledgerService->buildCashLedger();
-
-    //             $previousRows = collect($rows)
-    //                 ->where('date', '<', $date);
-
-    //             $todayRows = collect($rows)
-    //                 ->whereBetween('date', [
-    //                     $date.' 00:00:00',
-    //                     $date.' 23:59:59'
-    //                 ]);
-
-    //             $opening = $previousRows->last()['closing'] ?? 0;
-    //             $closing = collect($rows)->last()['closing'] ?? 0;
-    //             $dayTxn  = $todayRows->sum('debit') - $todayRows->sum('credit');
-    //         }
-
-    //         // 🔥 BANK BOOK
-    //         if ($ledger->code === 'BANK_BOOK') {
-
-    //             $rows = $this->ledgerService->buildOnlineLedger();
-
-    //             $previousRows = collect($rows)
-    //                 ->where('date', '<', $date);
-
-    //             $todayRows = collect($rows)
-    //                 ->whereBetween('date', [
-    //                     $date.' 00:00:00',
-    //                     $date.' 23:59:59'
-    //                 ]);
-
-    //             $opening = $previousRows->last()['closing'] ?? 0;
-    //             $closing = collect($rows)->last()['closing'] ?? 0;
-    //             $dayTxn  = $todayRows->sum('debit') - $todayRows->sum('credit');
-    //         }
-
-    //         $openingData[] = [
-    //             'name'   => $ledger->display_name,
-    //             'amount' => $opening
-    //         ];
-
-    //         $closingData[] = [
-    //             'name'   => $ledger->display_name,
-    //             'amount' => $closing
-    //         ];
-
-    //         $dayTxnData[] = [
-    //             'name'   => $ledger->display_name,
-    //             'amount' => $dayTxn
-    //         ];
-    //     }
-
-    //     return view('menu-accounts.day-book.index', compact(
-    //         'date',
-    //         'openingData',
-    //         'closingData',
-    //         'dayTxnData'
-    //     ));
-    // }
-
-
     // final working day book code with all logic and filter
     public function dayBook(Request $request)
     {
@@ -1587,46 +1416,103 @@ class LedgergroupController extends Controller
     }
 
     public function accountingTree(Request $request)
-{
-    $branchId = $request->branch_id;
+    {
+        $branchId = $request->branch_id;
 
-    $branches = Branch::all();
+        $branches = Branch::all();
 
-    $ledgers = Ledger::with('group')->get();
+        $ledgers = Ledger::with('group')->get();
 
-    $tree = [
-        'REVENUE'   => [],
-        'ASSET'     => [],
-        'LIABILITY' => [],
-        'EQUITY'    => [],
-        'EXPENSE'   => [],
-    ];
+        $tree = [
+            'REVENUE'   => [],
+            'ASSET'     => [],
+            'LIABILITY' => [],
+            'EQUITY'    => [],
+            'EXPENSE'   => [],
+        ];
 
-    foreach ($ledgers as $ledger) {
+        foreach ($ledgers as $ledger) {
 
-        [$acc, $balance] =
-            $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId);
+            [$acc, $balance] =
+                $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId);
 
-        $balance = $balance ?: 0;
+            $balance = $balance ?: 0;
 
-        $type = strtoupper($ledger->type);
+            $type = strtoupper($ledger->type);
 
-        if (isset($tree[$type])) {
+            if (isset($tree[$type])) {
 
-            $tree[$type][] = [
-                'name'   => $ledger->display_name,
-                'system' => $ledger->name,
-                'amount' => $balance
-            ];
+                $tree[$type][] = [
+                    'name'   => $ledger->display_name,
+                    'system' => $ledger->name,
+                    'amount' => $balance
+                ];
+            }
         }
+
+        return view('menu-accounts.accounting-tree.index', compact(
+            'tree',
+            'branches',
+            'branchId'
+        ));
     }
 
-    return view('menu-accounts.accounting-tree.index', compact(
-        'tree',
-        'branches',
-        'branchId'
-    ));
-}
+    public function incomeStatement(Request $request)
+    {
+        $branchId = $request->branch_id;
+
+        $branches = Branch::all();
+
+        $ledgers = Ledger::all();
+
+        $revenues = [];
+        $expenses = [];
+
+        $totalRevenue = 0;
+        $totalExpense = 0;
+
+        foreach ($ledgers as $ledger) {
+
+            [$acc, $balance] =
+                $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId);
+
+            $balance = $balance ?: 0;
+
+            // REVENUE
+            if (strtoupper($ledger->type) === 'REVENUE') {
+
+                $revenues[] = [
+                    'name'   => $ledger->display_name,
+                    'amount' => $balance
+                ];
+
+                $totalRevenue += $balance;
+            }
+
+            // EXPENSE
+            if (strtoupper($ledger->type) === 'EXPENSE') {
+
+                $expenses[] = [
+                    'name'   => $ledger->display_name,
+                    'amount' => $balance
+                ];
+
+                $totalExpense += $balance;
+            }
+        }
+
+        $netProfit = $totalRevenue - $totalExpense;
+
+        return view('menu-accounts.income-statement.index', compact(
+            'revenues',
+            'expenses',
+            'totalRevenue',
+            'totalExpense',
+            'netProfit',
+            'branches',
+            'branchId'
+        ));
+    }
 
 
 }

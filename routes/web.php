@@ -2573,6 +2573,8 @@ Route::get('/day-book', [LedgergroupController::class, 'dayBook'])
 Route::get('/accounting-tree', [LedgergroupController::class, 'accountingTree'])
     ->name('accounting.tree');
 
+Route::get('/income-statement', [LedgergroupController::class, 'incomeStatement'])
+    ->name('income.statement');
 
 
 ////////////////////////////////////    Account Section tab End     /////////////////////////////////////////////

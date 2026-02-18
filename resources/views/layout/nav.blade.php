@@ -67,12 +67,6 @@
                                 Tree
                             </li>
                         </a>
-                        <a href="{{ route('vendors.index') }}">
-                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                                <i class="las la-user-friends"></i>
-                                vendors
-                            </li>
-                        </a>
                         <a href="{{ route('ledger-group.index') }}">
                             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                                 <i class="las la-object-group"></i>
@@ -83,12 +77,6 @@
                             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                                 <i class="las la-plus-circle"></i>
                                 Ledgers
-                            </li>
-                        </a>
-                        <a href="">
-                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                                <i class="las la-list-ul"></i>
-                                Entries
                             </li>
                         </a>
                         <a href="{{ route('trial.balance') }}">
@@ -103,7 +91,7 @@
                                 Profit and Loss (P&L)
                             </li>
                         </a>
-                        <a href="">
+                        <a href="{{ route('income.statement') }}">
                             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                                 <i class="las la-random"></i>
                                 Income Statement
@@ -113,6 +101,18 @@
                             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                                 <i class="las la-chart-bar"></i>
                                 Balance Sheet
+                            </li>
+                        </a>
+                        <a href="{{ route('vendors.index') }}">
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-user-friends"></i>
+                                vendors
+                            </li>
+                        </a>
+                        <a href="">
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-list-ul"></i>
+                                Entries
                             </li>
                         </a>
                         <a href="">
