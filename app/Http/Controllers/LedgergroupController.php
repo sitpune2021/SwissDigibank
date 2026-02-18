@@ -594,6 +594,18 @@ class LedgergroupController extends Controller
                 'status_column' => 'status',
                 'status_value'  => 2,
             ],
+            'BUSSINESS_LOAN' => [
+                'type' => 'loan',
+                'loan' => 'business_loan_applications',
+                'txn'  => 'business_loan_transactions',
+                'charges' => 'business_loan_other_charges',
+                'closure' => 'business_loan_fore_closures',
+                'loan_id' => 'loan_id',
+                'amount_column' => 'loan_amount',
+                'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
+            ],
             'CC_OD_LOAN' => [
                 'type' => 'loan',
                 'loan' => 'ccod_loan_applications',
@@ -681,6 +693,11 @@ class LedgergroupController extends Controller
                 'scheme' => 'loan_against_schemes',
             ],
             'BUSSINESS_LOAN_INTEREST' => [
+                'type' => 'loan_interest',
+                'loan' => 'bussiness_loan_applications',
+                'scheme' => 'business_loan_schemes',
+            ],
+            'BUSINESS_LOAN_INTEREST' => [
                 'type' => 'loan_interest',
                 'loan' => 'bussiness_loan_applications',
                 'scheme' => 'business_loan_schemes',
