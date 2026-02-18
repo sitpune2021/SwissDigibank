@@ -11,6 +11,30 @@
         </button>
     </div>
 
+     <div>
+            <form>
+                <div class="flex justify-center box gap-3">
+                    <div class="">
+                        <select name="branch_id" class="w-64 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                            <option value="">ALL BRANCH</option>
+                            @foreach($branches as $branch)
+                                <option value="{{ $branch->id }}"
+                                    {{ request('branch_id') == $branch->id ? 'selected' : '' }}>
+                                    {{ $branch->branch_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="">
+                        <button type="submit" class="btn-warning rounded-10  ">
+                            GET
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
 
     <h3 class="mb-4 text-center">
         Balance Sheet as on {{ $today->format('d M Y') }}

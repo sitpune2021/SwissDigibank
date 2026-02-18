@@ -34,7 +34,7 @@
                         </li>
 
                         <li class="relative px-4 py-2 uppercase hover:bg-gray-100 cursor-pointer ">
-                            <a href="#">Day Book</a>
+                            <a href="{{ route('day.book') }}">Day Book</a>
                         </li>
 
                         <li class="px-4 py-2 hover:bg-gray-100 uppercase cursor-pointer">
@@ -61,17 +61,10 @@
                     class="hidden absolute left-0  bg-white border  border-gray-200 rounded-lg shadow-lg z-50 w-64"
                     style="margin-left: 5px; margin-top: 55px !important;">
                     <ul>
-                        <a href="">
+                        <a href="{{ route('accounting.tree') }}">
                             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-
                                 <i class="las la-tree"></i>
                                 Tree
-                            </li>
-                        </a>
-                        <a href="{{ route('vendors.index') }}">
-                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                                <i class="las la-user-friends"></i>
-                                vendors
                             </li>
                         </a>
                         <a href="{{ route('ledger-group.index') }}">
@@ -86,12 +79,6 @@
                                 Ledgers
                             </li>
                         </a>
-                        <a href="">
-                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-                                <i class="las la-list-ul"></i>
-                                Entries
-                            </li>
-                        </a>
                         <a href="{{ route('trial.balance') }}">
                             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                                 <i class="las la-balance-scale"></i>
@@ -104,7 +91,7 @@
                                 Profit and Loss (P&L)
                             </li>
                         </a>
-                        <a href="">
+                        <a href="{{ route('income.statement') }}">
                             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                                 <i class="las la-random"></i>
                                 Income Statement
@@ -114,6 +101,18 @@
                             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                                 <i class="las la-chart-bar"></i>
                                 Balance Sheet
+                            </li>
+                        </a>
+                        <a href="{{ route('vendors.index') }}">
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-user-friends"></i>
+                                vendors
+                            </li>
+                        </a>
+                        <a href="">
+                            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                                <i class="las la-list-ul"></i>
+                                Entries
                             </li>
                         </a>
                         <a href="">
