@@ -34,7 +34,7 @@
                         </li>
 
                         <li class="relative px-4 py-2 uppercase hover:bg-gray-100 cursor-pointer ">
-                            <a href="#">Day Book</a>
+                            <a href="{{ route('day.book') }}">Day Book</a>
                         </li>
 
                         <li class="px-4 py-2 hover:bg-gray-100 uppercase cursor-pointer">

@@ -6,155 +6,155 @@ use Illuminate\Support\Str;
 use App\Models\Ledger;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use App\Models\JournalEntryLine;
+
 
 class LedgerService
 {
 
 
-    public function calculateLedgerBalance($ledgerCode)
+    public function calculateLedgerBalance($ledgerCode, $branchId)
     {
         
         $ledgerCode = strtoupper($ledgerCode);
 
         if ($ledgerCode === 'CASH_BOOK') {
 
-            [$debit, $credit, $closing] = $this->cashBookBalance();
+            [$debit, $credit, $closing] = $this->cashBookBalance($branchId);
 
             return [$debit, $closing];
         }
 
         if ($ledgerCode === 'BANK_BOOK') {
 
-            [$debit, $credit, $closing] = $this->bankBookBalance();
+            [$debit, $credit, $closing] = $this->bankBookBalance($branchId);
 
             return [$debit, $closing];
         }
 
         // FD InterestLIABILITY MODULES FIRST
         if ($ledgerCode === 'FD_INTEREST') {
-            return $this->fdInterestBalance();
+            return $this->fdInterestBalance($branchId);
         }
 
         // FD Accounts
         if ($ledgerCode === 'FD_ACCOUNTS') {
-            return $this->fdAccountsBalance();
+            return $this->fdAccountsBalance($branchId);
         }
 
         // MIS MODULES
         if ($ledgerCode === 'MIS_ACCOUNTS') {
-            return $this->misAccountsBalance();
+            return $this->misAccountsBalance($branchId);
         }
 
         // MIS INTEREST
         if ($ledgerCode === 'MIS_INTEREST') {
-            return $this->misInterestBalance();
+            return $this->misInterestBalance($branchId);
         }
 
         // DD MODULES
         if ($ledgerCode === 'DD_ACCOUNTS') {
-            return $this->ddAccountsBalance();
+            return $this->ddAccountsBalance($branchId);
         }
 
         // DD INTEREST
         if ($ledgerCode === 'DD_INTEREST') {
-            return $this->ddInterestBalance();
+            return $this->ddInterestBalance($branchId);
         }
 
         // RD MODULES
         if ($ledgerCode === 'RD_ACCOUNTS') {
-            return $this->rdAccountsBalance();
+            return $this->rdAccountsBalance($branchId);
         }
 
         // RD INTEREST
         if ($ledgerCode === 'RD_INTEREST') {
-            return $this->rdInterestBalance();
+            return $this->rdInterestBalance($branchId);
         }
 
         // SAVING Account MODULES
 
         if (Str::contains($ledgerCode, 'SAVING')) {
-            return $this->savingAccountsBalance();
+            return $this->savingAccountsBalance($branchId);
         }
 
         // Current Account MODULES
 
         if (Str::contains($ledgerCode, 'CURRENT')) {
-            return $this->currentAccountsBalance();
+            return $this->currentAccountsBalance($branchId);
         }
 
         // ASSET MODULES  -  All Loan Module
 
         // GOLD LOAN INTEREST FIRST
         if ($ledgerCode === 'GOLD_LOAN_INTEREST') {
-            return $this->goldLoanInterestBalance();
+            return $this->goldLoanInterestBalance($branchId);
         }
 
         // Then general GOLD
         if (Str::contains($ledgerCode, 'GOLD')) {
-            return $this->goldLoanBalance();
+            return $this->goldLoanBalance($branchId);
         }
 
         if ($ledgerCode === 'MORTGAGE_LOAN_INTEREST') {
-            return $this->mortgageLoanInterestBalance();
+            return $this->mortgageLoanInterestBalance($branchId);
         }
 
         if ($ledgerCode === 'PROPERTY_LOAN_INTEREST') {
-            return $this->mortgageLoanInterestBalance();
+            return $this->mortgageLoanInterestBalance($branchId);
         }
 
         if (Str::contains($ledgerCode, 'MORTGAGE')) {
-            return $this->mortgageBalance();
+            return $this->mortgageBalance($branchId);
         }
 
         if ($ledgerCode === 'LOAN_AGINST_INTEREST') {
-            return $this->againstLoanInterestBalance();
+            return $this->againstLoanInterestBalance($branchId);
         }
 
         if (Str::contains($ledgerCode, 'AGINST')) {
-            return $this->loanagainstBalance();
+            return $this->loanagainstBalance($branchId);
         }
 
         if ($ledgerCode === 'PERSONAL_LOAN_INTEREST') {
-            return $this->personalInterestBalance();
+            return $this->personalInterestBalance($branchId);
         }
         if ($ledgerCode === 'VEHICAL_LOAN_INTEREST') {
-            return $this->vehicalInterestBalance();
+            return $this->vehicalInterestBalance($branchId);
         }
         if ($ledgerCode === 'DAILY_WEEKLY_LOAN_INTEREST') {
-            return $this->dailyweeklyLoanInterestBalance();
+            return $this->dailyweeklyLoanInterestBalance($branchId);
         }
         if ($ledgerCode === 'CC_OD_LOAN_INTEREST') {
-            return $this->ccodLoanInterestBalance();
+            return $this->ccodLoanInterestBalance($branchId);
         }
         if ($ledgerCode === 'BUSSINESS_LOAN_INTEREST') {
-            return $this->bussinessLoanInterestBalance();
+            return $this->bussinessLoanInterestBalance($branchId);
         }
 
         if (Str::contains($ledgerCode, 'PERSONAL')) {
-            return $this->personalloanBalance();
+            return $this->personalloanBalance($branchId);
         }
 
         if (Str::contains($ledgerCode, 'BUSINESS')) {
-            return $this->businessloanBalance();
+            return $this->businessloanBalance($branchId);
         }
 
         if (Str::contains($ledgerCode, 'CC_OD')) {
-            return $this->ccodloanBalance();
+            return $this->ccodloanBalance($branchId);
         }
 
         if (Str::contains($ledgerCode, ['DAILY', 'WEEKLY'])) {
-            return $this->dailyweeklyloanBalance();
+            return $this->dailyweeklyloanBalance($branchId);
         }
 
         if (Str::contains($ledgerCode, ['VEHICLE', 'VEHICAL'])) {
-            return $this->vehicalloanBalance();
+            return $this->vehicalloanBalance($branchId);
         }
 
         return [0,0];
     }
 
-    public function cashBookBalance()
+    public function cashBookBalance($branchId = null)
     {
         $totalDebit  = 0; // Cash IN
         $totalCredit = 0; // Cash OUT
@@ -167,34 +167,55 @@ class LedgerService
 
         $totalCredit += \App\Models\LoanApplication::where('fee_mode', 'cash')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\BusinessLoanApplication::where('fee_mode', 'cash')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\CcOdLoanApplication::where('fee_mode', 'cash')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('approved_loan_amount');
 
         // LOAN AGAINST
         $totalCredit += \App\Models\LoanAgainstApplication::where('fee_mode', 'cash')
                     ->where('status', 1)
+                    ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                     ->sum('approved_loan_amount');
 
         // MORTGAGE
         $totalCredit += \App\Models\MortgageLoanApplication::where('fee_mode', 'cash')
                     ->where('status', 1)
+                    ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                     ->sum('approved_loan_amount');
 
         // PERSONAL
         $totalCredit += \App\Models\PersonalLoanApplication::where('fee_mode', 'cash')
                     ->where('status', 1)
+                    ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                     ->sum('approved_loan_amount');
 
         // VEHICLE
         $totalCredit += \App\Models\VehicalApplication::where('fee_mode', 'cash')
                         ->where('status', 1)
+                        ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                         ->sum('approved_loan_amount');
 
 
@@ -206,22 +227,37 @@ class LedgerService
 
         $totalDebit += \App\Models\FdAccount::where('payment_mode', 'cash')
                         ->where('status', 1)
+                        ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                         ->sum('fd_amount');
 
         $totalDebit += \App\Models\RdAccount::where('payment_mode', 'cash')
                         ->where('approve_status', 'Approved')
+                        ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                         ->sum('rd_amount');
 
         $totalDebit += \App\Models\DdsAccount::where('payment_mode', 'cash')
                         ->where('status', 1)
+                        ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                         ->sum('dd_amount');
 
         $totalDebit += \App\Models\Misaccount::where('payment_mode', 'cash')
                         ->where('status', 1)
+                        ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                         ->sum('mis_amount');
 
         $totalDebit += \App\Models\Account::where('payment_mode', 'cash')
                         ->where('account_status', 1)
+                        ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                         ->sum('amount_deposit');
 
         $closing = $totalDebit - $totalCredit;
@@ -230,7 +266,7 @@ class LedgerService
 
     }
 
-    public function bankBookBalance()
+    public function bankBookBalance($branchId = null)
     {
         $totalDebit  = 0; // Bank IN
         $totalCredit = 0; // Bank OUT
@@ -243,30 +279,51 @@ class LedgerService
 
         $totalCredit += \App\Models\LoanApplication::where('fee_mode', 'online')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\BusinessLoanApplication::where('fee_mode', 'online')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\CcOdLoanApplication::where('fee_mode', 'online')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\LoanAgainstApplication::where('fee_mode', 'online')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\MortgageLoanApplication::where('fee_mode', 'online')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\PersonalLoanApplication::where('fee_mode', 'online')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\VehicalApplication::where('fee_mode', 'online')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('approved_loan_amount');
 
 
@@ -278,22 +335,37 @@ class LedgerService
 
         $totalDebit += \App\Models\FdAccount::where('payment_mode', 'online')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('fd_amount');
 
         $totalDebit += \App\Models\RdAccount::where('payment_mode', 'online')
                             ->where('approve_status', 'Approved')
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('rd_amount');
 
         $totalDebit += \App\Models\DdsAccount::where('payment_mode', 'online')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('dd_amount');
 
         $totalDebit += \App\Models\Misaccount::where('payment_mode', 'online')
                             ->where('status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('mis_amount');
 
         $totalDebit += \App\Models\Account::where('payment_mode', 'online')
                             ->where('account_status', 1)
+                            ->when($branchId, function($q) use ($branchId){
+                                $q->where('branch_id', $branchId);
+                            })
                             ->sum('amount_deposit');
 
         $closing = $totalDebit - $totalCredit;
@@ -301,7 +373,7 @@ class LedgerService
         return [$totalDebit, $totalCredit, $closing];
     }
    
-    public function buildCashLedger()
+    public function buildCashLedger($branchId = null)
     {
         $ledgerRows = [];
 
@@ -328,6 +400,10 @@ class LedgerService
                 ->join('branches', 'branches.id', '=', $table.'.branch_id')
                 ->where($table.'.fee_mode', 'cash')
                 ->where($table.'.status', 1)
+                ->when($branchId, function ($q) use ($table, $branchId) {
+                    $q->where($table.'.branch_id', $branchId);
+                })
+
                 ->select($table.'.*', 'branches.branch_name')
                 ->get();
 
@@ -382,7 +458,10 @@ class LedgerService
             $query = DB::table($table)
                 ->join('branches', 'branches.id', '=', $table.'.branch_id')
                 ->where($table.'.payment_mode', 'cash')
-                ->where($table.'.'.$config['status_column'], $config['status_value']);
+                ->where($table.'.'.$config['status_column'], $config['status_value'])
+                ->when($branchId, function ($q) use ($table, $branchId) {
+                    $q->where($table.'.branch_id', $branchId);
+                });
 
             $records = $query->select($table.'.*', 'branches.branch_name')->get();
 
@@ -397,6 +476,35 @@ class LedgerService
                     'credit'  => 0,
                 ];
             }
+        }
+
+        /*
+        |----------------------------------
+        | SAVING / CURRENT ACCOUNT DEPOSITS (Cash)
+        |----------------------------------
+        */
+
+        // show on day book
+        $accounts = DB::table('accounts')
+            ->join('branches', 'branches.id', '=', 'accounts.branch_id')
+            ->where('accounts.payment_mode', 'cash')
+            ->where('accounts.account_status', 1)
+            ->when($branchId, function ($q) use ($branchId) {
+                $q->where('accounts.branch_id', $branchId);
+            })
+            ->select('accounts.*', 'branches.branch_name')
+            ->get();
+
+        foreach ($accounts as $account) {
+
+            $ledgerRows[] = [
+                'branch' => $account->branch_name ?? 'HEAD OFFICE',
+                'date'   => $account->created_at,
+                'description' => 'Cash deposit to Account A/c '.$account->id,
+                'is_system'   => 'Yes',
+                'debit'   => $account->amount_deposit ?? 0,
+                'credit'  => 0,
+            ];
         }
 
         /*
@@ -431,7 +539,7 @@ class LedgerService
         return $ledgerRows;
     }
 
-    public function buildOnlineLedger()
+    public function buildOnlineLedger($branchId = null)
     {
         $ledgerRows = [];
         $runningBalance = 0;
@@ -459,6 +567,10 @@ class LedgerService
                 ->join('branches', 'branches.id', '=', $table.'.branch_id')
                 ->where($table.'.fee_mode', 'online')
                 ->where($table.'.status', 1)
+                ->when($branchId, function ($q) use ($table, $branchId) {
+                    $q->where($table.'.branch_id', $branchId);
+                })
+
                 ->select(
                     $table.'.*',
                     'branches.branch_name'
@@ -523,7 +635,11 @@ class LedgerService
 
             $query = DB::table($table)
                 ->join('branches', 'branches.id', '=', $table.'.branch_id')
-                ->where($table.'.payment_mode', 'online');
+                ->where($table.'.payment_mode', 'online')
+                ->when($branchId, function ($q) use ($table, $branchId) {
+                    $q->where($table.'.branch_id', $branchId);
+                });
+
 
             // 🔥 Dynamic Status Condition
             if (isset($config['status_column'])) {
@@ -559,6 +675,35 @@ class LedgerService
             }
         }
 
+        // show on day book
+        $accounts = DB::table('accounts')
+            ->join('branches', 'branches.id', '=', 'accounts.branch_id')
+            ->where('accounts.payment_mode', 'online')
+            ->where('accounts.account_status', 1)
+            ->when($branchId, function ($q) use ($branchId) {
+                $q->where('accounts.branch_id', $branchId);
+            })
+            ->select('accounts.*', 'branches.branch_name')
+            ->get();
+
+        foreach ($accounts as $account) {
+
+            $opening = $runningBalance;
+            $amount  = $account->amount_deposit ?? 0;
+
+            $runningBalance += $amount;
+
+            $ledgerRows[] = [
+                'branch' => $account->branch_name ?? 'HEAD OFFICE',
+                'date'   => $account->created_at,
+                'description' => 'Online deposit to Account A/c '.$account->id,
+                'is_system'   => 'Yes',
+                'opening' => $opening,
+                'debit'   => $amount,
+                'credit'  => 0,
+                'closing' => $runningBalance,
+            ];
+        }
 
         // 🔥 IMPORTANT – date wise sort after merging all branches
         usort($ledgerRows, function ($a, $b) {
@@ -601,10 +746,13 @@ class LedgerService
         return $this->calculateFlatInterest($principal, $rate, $months);
     }
 
-    public function calculateLoanInterest($loanTable, $schemeTable)
+    public function calculateLoanInterest($loanTable, $schemeTable, $branchId = null)
     {
         $loans = DB::table($loanTable)
             ->where('status', 2)
+            ->when($branchId, function($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
             ->get();
 
         $totalInterest = 0;
@@ -650,19 +798,21 @@ class LedgerService
         $ledgers = Ledger::where('group_id', $groupId)->get();
 
         if ($ledgers->isEmpty()) {
-            return [0,0]; // no ledger → no balance
+            return [0,0];
         }
 
-        $totalAccounts = 0;
-        $totalBalance  = 0;
+        $totalBalance = 0;
 
         foreach ($ledgers as $ledger) {
 
-            [$accounts, $balance] = $this->calculateLedgerBalance($ledger->code);
+            // Only balance add karo
+            [, $balance] = $this->calculateLedgerBalance($ledger->code);
 
-            $totalAccounts += $accounts;
-            $totalBalance  += $balance;
+            $totalBalance += $balance;
         }
+
+        // 🔥 Accounts = ledger count (NOT transaction count)
+        $totalAccounts = $ledgers->count();
 
         return [$totalAccounts, $totalBalance];
     }
@@ -670,6 +820,41 @@ class LedgerService
     public function calculateLedgersBalance($code)
     {
         $code = strtoupper(Str::slug($code, '_'));
+
+        /*
+        |----------------------------------
+        | CASH BOOK
+        |----------------------------------
+        */
+        if ($code === 'CASH_BOOK') {
+
+            $rows = $this->buildCashLedger();
+
+            $totalDebit  = collect($rows)->sum('debit');
+            $totalCredit = collect($rows)->sum('credit');
+
+            $balance = $totalDebit - $totalCredit;
+
+            return [count($rows), $balance];
+        }
+
+        /*
+        |----------------------------------
+        | BANK BOOK
+        |----------------------------------
+        */
+        if ($code === 'BANK_BOOK') {
+
+            $rows = $this->buildOnlineLedger(); // ya buildBankLedger()
+
+            $totalDebit  = collect($rows)->sum('debit');
+            $totalCredit = collect($rows)->sum('credit');
+
+            $balance = $totalDebit - $totalCredit;
+
+            return [count($rows), $balance];
+        }
+
 
         // Specific matches first
 
@@ -771,11 +956,14 @@ class LedgerService
         return [0, 0];
     }
 
-    private function fdAccountsBalance()
+    private function fdAccountsBalance($branchId = null)
     {
         $fds = DB::table('fd_accounts')
             ->where('status', 1)   // Approved
             ->where('active', 1)   // Active
+            ->when($branchId, function($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
             ->get();
 
         $totalAccounts = $fds->count();
@@ -787,11 +975,14 @@ class LedgerService
         return [$totalAccounts, $totalBalance];
     }
 
-    private function fdInterestBalance()
+    private function fdInterestBalance($branchId = null)
     {
         $fds = DB::table('fd_accounts')
             ->where('status', 1)
             ->where('active', 1)
+            ->when($branchId, function($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
             ->get();
 
         $totalAccounts = $fds->count();
@@ -803,10 +994,13 @@ class LedgerService
         return [$totalAccounts, $totalInterest];
     }
 
-    private function misAccountsBalance()
+    private function misAccountsBalance($branchId = null)
     {
         $fds = DB::table('misaccounts')
             ->where('status', 1)   // Approved
+            ->when($branchId, function($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
             ->get();
 
         $totalAccounts = $fds->count();
@@ -818,10 +1012,13 @@ class LedgerService
         return [$totalAccounts, $totalBalance];
     }
 
-    private function misInterestBalance()
+    private function misInterestBalance($branchId = null)
     {
         $fds = DB::table('misaccounts')
             ->where('status', 1)
+            ->when($branchId, function($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
             ->get();
 
         $totalAccounts = $fds->count();
@@ -833,10 +1030,13 @@ class LedgerService
         return [$totalAccounts, $totalInterest];
     }
 
-    private function ddAccountsBalance()
+    private function ddAccountsBalance($branchId = null)
     {
         $fds = DB::table('dds_accounts')
             ->where('status', 1)   // Approved
+            ->when($branchId, function($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
             ->get();
 
         $totalAccounts = $fds->count();
@@ -848,10 +1048,13 @@ class LedgerService
         return [$totalAccounts, $totalBalance];
     }
 
-    private function ddInterestBalance()
+    private function ddInterestBalance($branchId = null)
     {
         $fds = DB::table('dds_accounts')
             ->where('status', 1)
+            ->when($branchId, function($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
             ->get();
 
         $totalAccounts = $fds->count();
@@ -863,10 +1066,13 @@ class LedgerService
         return [$totalAccounts, $totalInterest];
     }
 
-    private function rdAccountsBalance()
+    private function rdAccountsBalance($branchId = null)
     {
         $fds = DB::table('rd_accounts')
             ->where('approve_status', 1)   // Approved
+            ->when($branchId, function($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
             ->get();
 
         $totalAccounts = $fds->count();
@@ -878,12 +1084,15 @@ class LedgerService
         return [$totalAccounts, $totalBalance];
     }
 
-    private function savingAccountsBalance()
+    private function savingAccountsBalance($branchId = null)
     {
         $accounts = DB::table('accounts')
             ->where('account_type', 'SAVING')
             ->where('approve_status', '1')   // string match
             ->where('account_status', 1)
+            ->when($branchId, function($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
             ->get();
 
         $totalAccounts = $accounts->count();
@@ -892,12 +1101,15 @@ class LedgerService
         return [$totalAccounts, $totalBalance];
     }
 
-    private function currentAccountsBalance()
+    private function currentAccountsBalance($branchId = null)
     {
         $accounts = DB::table('accounts')
             ->where('account_type', 'CURRENT')
             ->where('approve_status', '1')   // string match
             ->where('account_status', 1)
+            ->when($branchId, function($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
             ->get();
 
         $totalAccounts = $accounts->count();
@@ -906,10 +1118,13 @@ class LedgerService
         return [$totalAccounts, $totalBalance];
     }
 
-    private function rdInterestBalance()
+    private function rdInterestBalance($branchId = null)
     {
         $fds = DB::table('rd_accounts')
             ->where('approve_status', 'Approved')
+            ->when($branchId, function($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
             ->get();
 
         $totalAccounts = $fds->count();
@@ -921,74 +1136,85 @@ class LedgerService
         return [$totalAccounts, $totalInterest];
     }
 
-    private function goldLoanInterestBalance()
+    private function goldLoanInterestBalance($branchId = null)
     {
         return $this->calculateLoanInterest(
             'loan_applications',
-            'gold_loan_schemes'
+            'gold_loan_schemes',
+            $branchId
         );
     }
 
-    private function mortgageLoanInterestBalance()
+    private function mortgageLoanInterestBalance($branchId = null)
     {
         return $this->calculateLoanInterest(
             'mortgage_loan_applications',
-            'mortgage_schemes'
+            'mortgage_schemes',
+            $branchId
         );
     }
 
-    private function againstLoanInterestBalance()
+    private function againstLoanInterestBalance($branchId = null)
     {
         return $this->calculateLoanInterest(
             'loan_against_applications',
-            'loan_against_schemes'
+            'loan_against_schemes',
+            $branchId
         );
     }
 
-    private function bussinessLoanInterestBalance()
+    private function bussinessLoanInterestBalance($branchId = null)
     {
         return $this->calculateLoanInterest(
             'bussiness_loan_applications',
-            'business_loan_schemes'
+            'business_loan_schemes',
+            $branchId
         );
     }
 
-    private function ccodLoanInterestBalance()
+    private function ccodLoanInterestBalance($branchId = null)
     {
         return $this->calculateLoanInterest(
             'cc_od_loan_applications',
-            'cc_od_loan_schemes'
+            'cc_od_loan_schemes',
+            $branchId
         );
     }
 
-    private function dailyweeklyLoanInterestBalance()
+    private function dailyweeklyLoanInterestBalance($branchId = null)
     {
         return $this->calculateLoanInterest(
             'daily_weekly_applications',
-            'daily_weekly_schemes'
+            'daily_weekly_schemes',
+            $branchId
         );
     }
 
-    private function personalInterestBalance()
+    private function personalInterestBalance($branchId = null)
     {
         return $this->calculateLoanInterest(
             'personal_loan_applications',
-            'personal_schemes'
+            'personal_schemes',
+            $branchId
         );
     }
 
-    private function vehicalInterestBalance()
+    private function vehicalInterestBalance($branchId = null)
     {
         return $this->calculateLoanInterest(
             'vehical_applications',
-            'vehical_schemes'
+            'vehical_schemes',
+            $branchId
         );
     }
 
-    private function goldLoanBalance()
+    private function goldLoanBalance($branchId = null)
     {
         $loans = DB::table('loan_applications')
             ->where('status', 2)
+            ->when($branchId, function($q) use ($branchId){
+                $q->where('branch_id', $branchId);
+            })
             ->get();
 
         $closing = 0;
@@ -1015,10 +1241,13 @@ class LedgerService
         return [$loans->count(), $closing];
     }
 
-    private function mortgageBalance()
+    private function mortgageBalance($branchId = null)
     {
         $loans = DB::table('mortgage_loan_applications')
             ->where('status', 2)
+            ->when($branchId, function($q) use ($branchId){
+        $q->where('branch_id', $branchId);
+    })
             ->get();
 
         $closing = 0;
@@ -1045,10 +1274,13 @@ class LedgerService
         return [$loans->count(), $closing];
     }
 
-    private function loanagainstBalance()
+    private function loanagainstBalance($branchId = null)
     {
         $loans = DB::table('loan_against_applications')
             ->where('status', 2)
+            ->when($branchId, function($q) use ($branchId){
+        $q->where('branch_id', $branchId);
+    })
             ->get();
 
         $closing = 0;
@@ -1075,10 +1307,13 @@ class LedgerService
         return [$loans->count(), $closing];
     }
 
-    private function businessloanBalance()
+    private function businessloanBalance($branchId = null)
     {
         $loans = DB::table('bussiness_loan_applications')
             ->where('status', 2)
+            ->when($branchId, function($q) use ($branchId){
+        $q->where('branch_id', $branchId);
+    })
             ->get();
 
         $closing = 0;
@@ -1105,10 +1340,13 @@ class LedgerService
         return [$loans->count(), $closing];
     }
 
-    private function ccodloanBalance()
+    private function ccodloanBalance($branchId = null)
     {
         $loans = DB::table('cc_od_loan_applications')
             ->where('status', 2)
+            ->when($branchId, function($q) use ($branchId){
+        $q->where('branch_id', $branchId);
+    })
             ->get();
 
         $closing = 0;
@@ -1135,10 +1373,13 @@ class LedgerService
         return [$loans->count(), $closing];
     }
 
-    private function dailyweeklyloanBalance()
+    private function dailyweeklyloanBalance($branchId = null)
     {
         $loans = DB::table('daily_weekly_applications')
             ->where('status', 2)
+            ->when($branchId, function($q) use ($branchId){
+        $q->where('branch_id', $branchId);
+    })
             ->get();
 
         $closing = 0;
@@ -1165,10 +1406,13 @@ class LedgerService
         return [$loans->count(), $closing];
     }
 
-    private function personalloanBalance()
+    private function personalloanBalance($branchId = null)
     {
         $loans = DB::table('personal_loan_applications')
             ->where('status', 2)
+            ->when($branchId, function($q) use ($branchId){
+        $q->where('branch_id', $branchId);
+    })
             ->get();
 
         $closing = 0;
@@ -1195,10 +1439,13 @@ class LedgerService
         return [$loans->count(), $closing];
     }
 
-    private function vehicalloanBalance()
+    private function vehicalloanBalance($branchId = null)
     {
         $loans = DB::table('vehical_applications')
             ->where('status', 2)
+            ->when($branchId, function($q) use ($branchId){
+        $q->where('branch_id', $branchId);
+    })
             ->get();
 
         $closing = 0;
@@ -1249,7 +1496,7 @@ class LedgerService
         return [0, $totalRevenue - $totalExpense];
     }
 
-    public function generateTrialBalance($fromDate, $toDate)
+    public function generateTrialBalance($fromDate = null, $toDate = null, $branchId = null)
     {
         $ledgers = Ledger::with('group')->get();
 
@@ -1257,48 +1504,39 @@ class LedgerService
 
         foreach ($ledgers as $ledger) {
 
-            // Opening balance (before fromDate)
-            $openingDebit = JournalEntryLine::where('ledger_code', $ledger->code)
-                ->whereDate('created_at', '<', $fromDate)
-                ->sum('debit');
+            $opening = $ledger->opening_balance;
 
-            $openingCredit = JournalEntryLine::where('ledger_code', $ledger->code)
-                ->whereDate('created_at', '<', $fromDate)
-                ->sum('credit');
+            // 🔥 branch pass karna important
+            [$movementDebit, $movementBalance] =
+                $this->calculateLedgerBalance($ledger->code, $branchId);
 
-            // Period transactions
-            $periodDebit = JournalEntryLine::where('ledger_code', $ledger->code)
-                ->whereBetween('created_at', [$fromDate, $toDate])
-                ->sum('debit');
+            $closing = $opening + $movementBalance;
 
-            $periodCredit = JournalEntryLine::where('ledger_code', $ledger->code)
-                ->whereBetween('created_at', [$fromDate, $toDate])
-                ->sum('credit');
+            $balanceDebit  = 0;
+            $balanceCredit = 0;
 
-            // Opening logic by nature
-            if (in_array($ledger->type, ['Asset','Expense'])) {
-                $opening = $ledger->opening_balance + $openingDebit - $openingCredit;
-                $closing = $opening + $periodDebit - $periodCredit;
-            } else {
-                $opening = $ledger->opening_balance + $openingCredit - $openingDebit;
-                $closing = $opening + $periodCredit - $periodDebit;
+            if ($closing > 0) {
+                $balanceDebit = $closing;
+            } elseif ($closing < 0) {
+                $balanceCredit = abs($closing);
             }
 
             $result[] = [
-                'code' => $ledger->code,
-                'name' => $ledger->display_name,
-                'system_name' => $ledger->name,
-                'group' => $ledger->group->name ?? '',
-                'type' => $ledger->type,
-                'opening' => $opening,
-                'debit' => $periodDebit,
-                'credit' => $periodCredit,
-                'balance' => $closing
+                'code'        => $ledger->code,
+                'name'        => $ledger->display_name,
+                'system_name' => $ledger->system_name,
+                'group'       => $ledger->group->name ?? '',
+                'type'        => $ledger->type,
+                'opening'     => $opening,
+                'balance'     => $closing,
+                'balance_debit'  => $balanceDebit,
+                'balance_credit' => $balanceCredit,
             ];
         }
 
         return $result;
     }
+
 
 
 }

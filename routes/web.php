@@ -2567,6 +2567,9 @@ Route::get('/trial-balance',
     [LedgergroupController::class, 'trial_balance']
 )->name('trial.balance');
 
+Route::get('/day-book', [LedgergroupController::class, 'dayBook'])
+    ->name('day.book');
+
 
 ////////////////////////////////////    Account Section tab End     /////////////////////////////////////////////
 

@@ -1243,10 +1243,11 @@ class LedgergroupController extends Controller
 
         $type = $request->type ?? 'ALL';
         $search = $request->search ?? null;
+        $branchId = $request->branch_id ?? null;
 
-        $data = $this->ledgerService->generateTrialBalance($from, $to);
+        $data = $this->ledgerService->generateTrialBalance($from, $to, $branchId);
 
-        // Filter by type
+        // Type filter
         if ($type !== 'ALL') {
             $data = collect($data)->where('type', $type)->values();
         }
@@ -1259,12 +1260,269 @@ class LedgergroupController extends Controller
             })->values();
         }
 
-        $totalDebit = collect($data)->sum('debit');
-        $totalCredit = collect($data)->sum('credit');
+        $totalDebit = collect($data)->sum('balance_debit');
+        $totalCredit = collect($data)->sum('balance_credit');
+
+        $branches = \App\Models\Branch::all();
 
         return view('menu-accounts.trial-balance.index', compact(
             'data','from','to','type','search',
-            'totalDebit','totalCredit'
+            'totalDebit','totalCredit','branches','branchId'
+        ));
+    }
+    
+
+    // old opening and closing rule function with show book condtion
+    // public function dayBook(Request $request)
+    // {
+    //     $date = $request->date ?? now()->format('Y-m-d');
+
+    //     $ledgers = Ledger::where('show_in_day', 1)->get();
+
+    //     $openingData = [];
+    //     $closingData = [];
+    //     $dayTxnData  = [];
+
+    //     foreach ($ledgers as $ledger) {
+
+    //         [$debit, $closing] = $this->ledgerService
+    //                                   ->calculateLedgerBalance($ledger->code);
+
+    //         // ⚠ Since no date filter available:
+    //         $opening = 0; 
+    //         $dayTxn  = 0; 
+
+    //         $openingData[] = [
+    //             'name'  => $ledger->display_name,
+    //             'amount'=> $opening
+    //         ];
+
+    //         $closingData[] = [
+    //             'name'  => $ledger->display_name,
+    //             'amount'=> $closing
+    //         ];
+
+    //         $dayTxnData[] = [
+    //             'name'  => $ledger->display_name,
+    //             'amount'=> $dayTxn
+    //         ];
+    //     }
+
+    //     return view('menu-accounts.day-book.index', compact(
+    //         'date',
+    //         'openingData',
+    //         'closingData',
+    //         'dayTxnData'
+    //     ));
+    // }
+
+    // proper code but opening logic missing same count show current and opening 
+    // public function dayBook(Request $request)
+    // {
+    //     $date = $request->date ?? now()->format('Y-m-d');
+
+    //     $ledgers = Ledger::where('show_in_day', 1)->get();
+
+    //     $openingData = [];
+    //     $closingData = [];
+    //     $dayTxnData  = [];
+
+    //     foreach ($ledgers as $ledger) {
+
+    //         [, $closing] = $this->ledgerService
+    //                             ->calculateLedgerBalance($ledger->code);
+
+    //         // 🔥 Since no date logic → Opening = Closing
+    //         $opening = $closing;
+
+    //         // No daily calculation available
+    //         $dayTxn = 0;
+
+    //         $openingData[] = [
+    //             'name'   => $ledger->display_name,
+    //             'amount' => $opening
+    //         ];
+
+    //         $closingData[] = [
+    //             'name'   => $ledger->display_name,
+    //             'amount' => $closing
+    //         ];
+
+    //         $dayTxnData[] = [
+    //             'name'   => $ledger->display_name,
+    //             'amount' => $dayTxn
+    //         ];
+    //     }
+
+    //     return view('menu-accounts.day-book.index', compact(
+    //         'date',
+    //         'openingData',
+    //         'closingData',
+    //         'dayTxnData'
+    //     ));
+    // }
+
+    // perfect all logic working function -> only filter login not done
+    // public function dayBook(Request $request)
+    // {
+    //     $date = $request->date ?? now()->format('Y-m-d');
+
+    //     $ledgers = Ledger::where('show_in_day', 1)->get();
+
+    //     $openingData = [];
+    //     $closingData = [];
+    //     $dayTxnData  = [];
+
+    //     foreach ($ledgers as $ledger) {
+
+    //         $opening = 0;
+    //         $closing = 0;
+    //         $dayTxn  = 0;
+
+    //         // 🔥 CASH BOOK
+    //         if ($ledger->code === 'CASH_BOOK') {
+
+    //             $rows = $this->ledgerService->buildCashLedger();
+
+    //             $previousRows = collect($rows)
+    //                 ->where('date', '<', $date);
+
+    //             $todayRows = collect($rows)
+    //                 ->whereBetween('date', [
+    //                     $date.' 00:00:00',
+    //                     $date.' 23:59:59'
+    //                 ]);
+
+    //             $opening = $previousRows->last()['closing'] ?? 0;
+    //             $closing = collect($rows)->last()['closing'] ?? 0;
+    //             $dayTxn  = $todayRows->sum('debit') - $todayRows->sum('credit');
+    //         }
+
+    //         // 🔥 BANK BOOK
+    //         if ($ledger->code === 'BANK_BOOK') {
+
+    //             $rows = $this->ledgerService->buildOnlineLedger();
+
+    //             $previousRows = collect($rows)
+    //                 ->where('date', '<', $date);
+
+    //             $todayRows = collect($rows)
+    //                 ->whereBetween('date', [
+    //                     $date.' 00:00:00',
+    //                     $date.' 23:59:59'
+    //                 ]);
+
+    //             $opening = $previousRows->last()['closing'] ?? 0;
+    //             $closing = collect($rows)->last()['closing'] ?? 0;
+    //             $dayTxn  = $todayRows->sum('debit') - $todayRows->sum('credit');
+    //         }
+
+    //         $openingData[] = [
+    //             'name'   => $ledger->display_name,
+    //             'amount' => $opening
+    //         ];
+
+    //         $closingData[] = [
+    //             'name'   => $ledger->display_name,
+    //             'amount' => $closing
+    //         ];
+
+    //         $dayTxnData[] = [
+    //             'name'   => $ledger->display_name,
+    //             'amount' => $dayTxn
+    //         ];
+    //     }
+
+    //     return view('menu-accounts.day-book.index', compact(
+    //         'date',
+    //         'openingData',
+    //         'closingData',
+    //         'dayTxnData'
+    //     ));
+    // }
+
+
+    // final working day book code with all logic and filter
+    public function dayBook(Request $request)
+    {
+        $date      = $request->date ?? now()->format('Y-m-d');
+        $branchId  = $request->branch_id; // 🔥 NEW
+
+        $ledgers = Ledger::where('show_in_day', 1)->get();
+
+        $openingData = [];
+        $closingData = [];
+        $dayTxnData  = [];
+
+        foreach ($ledgers as $ledger) {
+
+            $opening = 0;
+            $closing = 0;
+            $dayTxn  = 0;
+
+            // CASH BOOK
+            if ($ledger->code === 'CASH_BOOK') {
+
+                $rows = $this->ledgerService->buildCashLedger($branchId);
+
+                $previousRows = collect($rows)
+                    ->where('date', '<', $date);
+
+                $todayRows = collect($rows)
+                    ->whereBetween('date', [
+                        $date.' 00:00:00',
+                        $date.' 23:59:59'
+                    ]);
+
+                $opening = $previousRows->last()['closing'] ?? 0;
+                $closing = collect($rows)->last()['closing'] ?? 0;
+                $dayTxn  = $todayRows->sum('debit') - $todayRows->sum('credit');
+            }
+
+            // BANK BOOK
+            if ($ledger->code === 'BANK_BOOK') {
+
+                $rows = $this->ledgerService->buildOnlineLedger($branchId);
+
+                $previousRows = collect($rows)
+                    ->where('date', '<', $date);
+
+                $todayRows = collect($rows)
+                    ->whereBetween('date', [
+                        $date.' 00:00:00',
+                        $date.' 23:59:59'
+                    ]);
+
+                $opening = $previousRows->last()['closing'] ?? 0;
+                $closing = collect($rows)->last()['closing'] ?? 0;
+                $dayTxn  = $todayRows->sum('debit') - $todayRows->sum('credit');
+            }
+
+            $openingData[] = [
+                'name'   => $ledger->display_name,
+                'amount' => $opening
+            ];
+
+            $closingData[] = [
+                'name'   => $ledger->display_name,
+                'amount' => $closing
+            ];
+
+            $dayTxnData[] = [
+                'name'   => $ledger->display_name,
+                'amount' => $dayTxn
+            ];
+        }
+
+        $branches = \App\Models\Branch::all(); // 🔥 dropdown ke liye
+
+        return view('menu-accounts.day-book.index', compact(
+            'date',
+            'branchId',
+            'branches',
+            'openingData',
+            'closingData',
+            'dayTxnData'
         ));
     }
 
