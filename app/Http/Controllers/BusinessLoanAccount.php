@@ -27,8 +27,7 @@ class BusinessLoanAccount extends Controller
             ->orderBy('id', 'desc')
             ->paginate(10);
 
-        foreach ($goldLoan as $loan) 
-        {
+        foreach ($goldLoan as $loan) {
 
             // Loan total amount
             $loanAmount = $loan->loan_amount;
@@ -71,27 +70,27 @@ class BusinessLoanAccount extends Controller
     {
 
         $savedStatuses = DB::table('business_loan_emi_status')
-        ->where('loan_id', $id)
-        ->pluck('status', 'emi_no')
-        ->toArray();
+            ->where('loan_id', $id)
+            ->pluck('status', 'emi_no')
+            ->toArray();
 
         $savedPaidDates = DB::table('business_loan_emi_status')
-        ->where('loan_id', $id)
-        ->pluck('paid_date', 'emi_no')
-        ->toArray();
+            ->where('loan_id', $id)
+            ->pluck('paid_date', 'emi_no')
+            ->toArray();
 
         // Total Deposit
         $totalDeposit = DB::table('business_loan_transactions')
             ->where('loan_id', $id)
             ->sum('amount_collected');
-            
-            // NEW: Total Foreclosure Amount
-            $foreclosureDeposit = DB::table('business_loan_fore_closures')
-                ->where('loan_id', $id)
-                ->sum('net_amount_k');
 
-            // Update Total Deposit (Already Transactions + Other Charges calculated)
-            $totalDeposit = $totalDeposit + $foreclosureDeposit;
+        // NEW: Total Foreclosure Amount
+        $foreclosureDeposit = DB::table('business_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->sum('net_amount_k');
+
+        // Update Total Deposit (Already Transactions + Other Charges calculated)
+        $totalDeposit = $totalDeposit + $foreclosureDeposit;
 
 
         // Total from Other Charges (only paid)
@@ -109,10 +108,10 @@ class BusinessLoanAccount extends Controller
             ->orderByDesc('id')
             ->value('total_payable') ?? 0;
 
-        
+
         $goldLoan = BusinessLoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1', 'BusinessLoanTransaction'])->find($id);
 
-        
+
         if (!$goldLoan) {
             return redirect()->back()->with('error', 'Loan not found.');
         }
@@ -130,8 +129,7 @@ class BusinessLoanAccount extends Controller
 
         $monthlyRate = $interestRate / 12 / 100;
 
-        switch ($interestType) 
-        {
+        switch ($interestType) {
 
             case 'reducing_emi':
 
@@ -278,46 +276,56 @@ class BusinessLoanAccount extends Controller
                 break;
         }
 
-       
+
         // Apply payments & auto status logic
         // ⭐ Apply payments on EMI schedule (front-end calculation only)
         $totalPaid = BusinessLoanTransaction::where('loan_id', $id)->sum('amount_collected');
+        $foreclosureApproved = DB::table('business_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->where('status', 1)
+            ->exists();
+        $fullPaymentExists = DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('flag', 'full_payment')
+            ->where('status', 'paid')
+            ->exists();
 
-        foreach ($emiSchedule as &$emi) 
-        {
+        foreach ($emiSchedule as &$emi) {
 
-            $emiAmount = floatval(str_replace(',', '', $emi['emi_amount']));
+            if ($foreclosureApproved) {
 
-            // Already paid nothing?
-            if ($totalPaid <= 0) 
-            {
-                $emi['remaining_amount'] = number_format($emiAmount, 2);
-
-                // ⭐ ALWAYS load saved statuses from DB
-                if (isset($savedStatuses[$emi['emi_no']])) {
-                    $emi['status'] = $savedStatuses[$emi['emi_no']];
-                    $emi['paid_date'] = $savedPaidDates[$emi['emi_no']] ?? '';
-                } else {
-                    // Default if no data saved
-                    $emi['status'] = "UNPAID";
-                }
+                $emi['remaining_amount'] = "0.00";
+                $emi['status'] = "PAID";
+                $emi['paid_date'] = now()->format('Y-m-d');
 
                 continue;
             }
+            if ($fullPaymentExists) {
 
-            // Full payment
+                $emi['remaining_amount'] = "0.00";
+                $emi['status'] = "PAID";
+                $emi['paid_date'] = now()->format('Y-m-d');
+                continue;
+            }
+
+            $emiAmount = floatval(str_replace(',', '', $emi['emi_amount']));
+
+            if ($totalPaid <= 0) {
+                $emi['remaining_amount'] = number_format($emiAmount, 2);
+                $emi['status'] = $savedStatuses[$emi['emi_no']] ?? "UNPAID";
+                $emi['paid_date'] = $savedPaidDates[$emi['emi_no']] ?? '';
+                continue;
+            }
+
             if ($totalPaid >= $emiAmount) {
                 $emi['remaining_amount'] = "0.00";
                 $emi['status'] = "PAID";
                 $totalPaid -= $emiAmount;
-            }
-            // Partial payment
-            else {
+            } else {
                 $emi['remaining_amount'] = number_format($emiAmount - $totalPaid, 2);
                 $emi['status'] = "PARTIAL";
                 $totalPaid = 0;
             }
-
         }
 
         $eirSchedule = [];
@@ -330,7 +338,7 @@ class BusinessLoanAccount extends Controller
 
             // effective EMI formula
             $eirEmi = $principal * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) /
-                    (pow(1 + $monthlyRate, $emiCount) - 1);
+                (pow(1 + $monthlyRate, $emiCount) - 1);
 
             for ($i = 0; $i < $emiCount; $i++) {
 
@@ -355,180 +363,193 @@ class BusinessLoanAccount extends Controller
         }
 
         // Close date code
-            // Fetch Principal Loan Amount
-            $loanAmount = $principal;
+        // Fetch Principal Loan Amount
+        $loanAmount = $principal;
 
-            // Step 1: Collect all deposits with their date
-            $depositTimeline = [];
+        // Step 1: Collect all deposits with their date
+        $depositTimeline = [];
 
-            // EMI Transactions
-            $transactions = DB::table('business_loan_transactions')
-                ->where('loan_id', $id)
-                ->select('amount_collected as amount', 'created_at')
-                ->get();
+        // EMI Transactions
+        $transactions = DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->select('amount_collected as amount', 'created_at')
+            ->get();
 
-            // Other Charges (Only Paid)
-            $otherCharges = DB::table('business_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->select('amount', 'created_at')
-                ->get();
+        // Other Charges (Only Paid)
+        $otherCharges = DB::table('business_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->select('amount', 'created_at')
+            ->get();
 
-            // Foreclosure Deposit
-            $foreclosurePayments = DB::table('business_loan_fore_closures')
-                ->where('loan_id', $id)
-                ->select('net_amount_k as amount', 'created_at')
-                ->get();
+        // Foreclosure Deposit
+        $foreclosurePayments = DB::table('business_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->select('net_amount_k as amount', 'created_at')
+            ->get();
 
-            // Merge All
-            foreach ($transactions as $t) {
-                $depositTimeline[] = ['amount' => $t->amount, 'date' => $t->created_at];
+        // Merge All
+        foreach ($transactions as $t) {
+            $depositTimeline[] = ['amount' => $t->amount, 'date' => $t->created_at];
+        }
+        foreach ($otherCharges as $oc) {
+            $depositTimeline[] = ['amount' => $oc->amount, 'date' => $oc->created_at];
+        }
+        foreach ($foreclosurePayments as $f) {
+            $depositTimeline[] = ['amount' => $f->amount, 'date' => $f->created_at];
+        }
+
+        // Sort by Date
+        usort($depositTimeline, fn($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
+
+
+        // STEP 2: Find close date (when cumulative >= loan amount)
+        $cumulative = 0;
+        $closeDate = null;
+
+        foreach ($depositTimeline as $entry) {
+            $cumulative += $entry['amount'];
+
+            if ($cumulative >= $loanAmount) {
+                $closeDate = Carbon::parse($entry['date'])->format('d-m-Y');
+                break;
             }
-            foreach ($otherCharges as $oc) {
-                $depositTimeline[] = ['amount' => $oc->amount, 'date' => $oc->created_at];
-            }
-            foreach ($foreclosurePayments as $f) {
-                $depositTimeline[] = ['amount' => $f->amount, 'date' => $f->created_at];
-            }
-
-            // Sort by Date
-            usort($depositTimeline, fn($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
-
-
-            // STEP 2: Find close date (when cumulative >= loan amount)
-            $cumulative = 0;
-            $closeDate = null;
-
-            foreach ($depositTimeline as $entry) {
-                $cumulative += $entry['amount'];
-
-                if ($cumulative >= $loanAmount) {
-                    $closeDate = Carbon::parse($entry['date'])->format('d-m-Y');
-                    break;
-                }
-            }
+        }
         // end close date code
 
         // current statment chart code
 
-            // ⭐ CURRENT STATEMENT TABLE DATA ⭐
-            $currentStatement = collect([]);
+        // ⭐ CURRENT STATEMENT TABLE DATA ⭐
+        $currentStatement = collect([]);
 
-            // 1️⃣ Transactions (EMI)
-            $transactions = DB::table('business_loan_transactions')
-                ->where('loan_id', $id)
-                ->select(
-                    'created_at as date',
-                    DB::raw("'EMI Payment' as type"),
-                    DB::raw("'' AS payment_mode"),              // ← no payment_mode column — return empty
-                    'amount_collected as amount',
-                    DB::raw("'PAID' as status")
-                )
-                ->get();
+        // 1️⃣ Transactions (EMI)
+        $transactions = DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->select(
+                'created_at as date',
+                DB::raw("'EMI Payment' as type"),
+                DB::raw("'' AS payment_mode"),              // ← no payment_mode column — return empty
+                'amount_collected as amount',
+                DB::raw("'PAID' as status")
+            )
+            ->get();
 
-            // 2️⃣ Other Charges
-            $otherCharges = DB::table('business_loan_other_charges')
-                ->where('loan_id', $id)
-                ->select(
-                    'created_at as date',
-                    DB::raw("'Other Charge' as type"),
-                    DB::raw("'' AS payment_mode"),              // ← empty
-                    'amount',
-                    'status'
-                )
-                ->get();
+        // 2️⃣ Other Charges
+        $otherCharges = DB::table('business_loan_other_charges')
+            ->where('loan_id', $id)
+            ->select(
+                'created_at as date',
+                DB::raw("'Other Charge' as type"),
+                DB::raw("'' AS payment_mode"),              // ← empty
+                'amount',
+                'status'
+            )
+            ->get();
 
-            // 3️⃣ Foreclosure Payments
-            $closures = DB::table('business_loan_fore_closures')
-                ->where('loan_id', $id)
-                ->select(
-                    'created_at as date',
-                    DB::raw("'Foreclosure Payment' as type"),
-                    DB::raw("'' AS payment_mode"),              // ← empty
-                    'net_amount_k as amount',
-                    DB::raw("'PAID' as status")
-                )
-                ->get();
+        // 3️⃣ Foreclosure Payments
+        $closures = DB::table('business_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->select(
+                'created_at as date',
+                DB::raw("'Foreclosure Payment' as type"),
+                DB::raw("'' AS payment_mode"),              // ← empty
+                'net_amount_k as amount',
+                DB::raw("'PAID' as status")
+            )
+            ->get();
 
-            $currentStatement = $currentStatement
-                ->merge($transactions)
-                ->merge($otherCharges)
-                ->merge($closures);
+        $currentStatement = $currentStatement
+            ->merge($transactions)
+            ->merge($otherCharges)
+            ->merge($closures);
 
-            // Sort latest first
-            $currentStatement = $currentStatement->sortByDesc('date')->values();
+        // Sort latest first
+        $currentStatement = $currentStatement->sortByDesc('date')->values();
 
         // end current statement code
 
         // ornaments show on chart
 
-            // ⭐ Fetch Ornaments Based on Loan ID
-            $ornaments = DB::table('mortgage_properties')
-                ->where('loan_application_id', $id)
-                ->select(
-                    'property_type',
-                    'expected_value',
-                    'registered'   
-                )
-                ->get();
+        // ⭐ Fetch Ornaments Based on Loan ID
+        $ornaments = DB::table('mortgage_properties')
+            ->where('loan_application_id', $id)
+            ->select(
+                'property_type',
+                'expected_value',
+                'registered'
+            )
+            ->get();
 
         // end ornaments show on chart
 
         // DYNAMIC SUMMARY CHART VALUES 
 
-            // PAID = Total deposit from calculation above
-            $paidNetPrincipal = min($totalDeposit, $principal); 
+        // PAID = Total deposit from calculation above
+        $paidNetPrincipal = min($totalDeposit, $principal);
 
-            // SINCE interest_paid column exists nahi hai → default zero rakho
-            $paidInterest = 0;
+        // SINCE interest_paid column exists nahi hai → default zero rakho
+        $paidInterest = 0;
 
-            // PRINCIPAL DUE
-            $emiPrincipalDue = max($principal - $paidNetPrincipal, 0);
+        // PRINCIPAL DUE
+        $emiPrincipalDue = max($principal - $paidNetPrincipal, 0);
 
-            // TOTAL INTEREST PLANNED (from schedule)
-            $totalInterestPlanned = array_sum(array_map(fn($emi) => floatval(str_replace(',', '', $emi['interest'])), $emiSchedule));
+        // TOTAL INTEREST PLANNED (from schedule)
+        $totalInterestPlanned = array_sum(array_map(fn($emi) => floatval(str_replace(',', '', $emi['interest'])), $emiSchedule));
 
-            // INTEREST DUE = full interest (because no interest deposited yet)
-            $interestDue = $totalInterestPlanned;
+        // INTEREST DUE = full interest (because no interest deposited yet)
+        $interestDue = $totalInterestPlanned;
 
-            // OTHER CHARGES PAID
-            $otherChargesPaid = $otherChargesDeposit;
+        // OTHER CHARGES PAID
+        $otherChargesPaid = $otherChargesDeposit;
 
-            // OTHER CHARGES DUE
-            $otherChargesTotal = DB::table('business_loan_other_charges')
-                ->where('loan_id', $id)
-                ->sum('amount');
-            $otherChargesDue = max($otherChargesTotal - $otherChargesPaid, 0);
+        // OTHER CHARGES DUE
+        $otherChargesTotal = DB::table('business_loan_other_charges')
+            ->where('loan_id', $id)
+            ->sum('amount');
+        $otherChargesDue = max($otherChargesTotal - $otherChargesPaid, 0);
 
 
-            // BUILD DATA FOR TABLE (PAID ROW)
-            $paidSummary = [
-                'net_p' => number_format($paidNetPrincipal, 2),
-                'emi_p' => number_format($paidNetPrincipal, 2),
-                'emi_int' => "0.00", // because interest_paid not stored yet
-                'emi_charges' => "0.00",
-                'overdue_int' => "0.00",
-                'other_charges' => number_format($otherChargesPaid, 2),
-                'advance' => "0.00",
-                'discount' => "0.00",
-            ];
+        // BUILD DATA FOR TABLE (PAID ROW)
+        $paidSummary = [
+            'net_p' => number_format($paidNetPrincipal, 2),
+            'emi_p' => number_format($paidNetPrincipal, 2),
+            'emi_int' => "0.00", // because interest_paid not stored yet
+            'emi_charges' => "0.00",
+            'overdue_int' => "0.00",
+            'other_charges' => number_format($otherChargesPaid, 2),
+            'advance' => "0.00",
+            'discount' => "0.00",
+        ];
 
-            // BUILD DATA FOR TABLE (DUE ROW)
-            $dueSummary = [
-                'net_p' => number_format($emiPrincipalDue, 2),
-                'emi_p' => number_format($emiPrincipalDue, 2),
-                'emi_int' => number_format($interestDue, 2),
-                'emi_charges' => "0.00",
-                'overdue_int' => "0.00",
-                'other_charges' => number_format($otherChargesDue, 2),
-                'advance' => "-",
-                'discount' => "-",
-            ];
-        
+        // BUILD DATA FOR TABLE (DUE ROW)
+        $dueSummary = [
+            'net_p' => number_format($emiPrincipalDue, 2),
+            'emi_p' => number_format($emiPrincipalDue, 2),
+            'emi_int' => number_format($interestDue, 2),
+            'emi_charges' => "0.00",
+            'overdue_int' => "0.00",
+            'other_charges' => number_format($otherChargesDue, 2),
+            'advance' => "-",
+            'discount' => "-",
+        ];
+
         // end DYNAMIC SUMMARY CHART VALUES 
 
         $currentDebt = max($goldLoan->loan_amount - $totalDeposit, 0);
 
+        // ⭐ CHECK IF ANY EMI IS DUE
+        $hasDueEmi = DB::table('business_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
+            ->exists();
+
+        if ($hasDueEmi) {
+            $payRoute = route('bussiness.account.pay-emi', $goldLoan->id);
+            $payButtonText = 'Pay EMI';
+        } else {
+            $payRoute = route('bussiness.account.pay', $goldLoan->id);
+            $payButtonText = 'Pay';
+        }
 
         return view('bussiness.account.view', compact(
             'goldLoan',
@@ -539,11 +560,14 @@ class BusinessLoanAccount extends Controller
             'closeDate',
             'currentStatement',
             'ornaments',
-            'paidSummary', 'dueSummary',
-            'totalDeposit',   
-            'currentDebt'     
+            'paidSummary',
+            'dueSummary',
+            'totalDeposit',
+            'currentDebt',
+            'hasDueEmi',
+            'payRoute',
+            'payButtonText'
         ));
-        
     }
 
     // process button status store
@@ -556,7 +580,7 @@ class BusinessLoanAccount extends Controller
             'remaining_amount' => 'required|numeric'
         ]);
 
-        DB::table('gold_loan_emi_status')->updateOrInsert(
+        DB::table('business_loan_emi_status')->updateOrInsert(
             [
                 'loan_id' => $request->loan_id,
                 'emi_no'  => $request->emi_no
@@ -571,276 +595,178 @@ class BusinessLoanAccount extends Controller
         return response()->json(['success' => true]);
     }
 
-    // pay emi tab page
+    // pay emi tab page   
     public function mortgagePayEmi($id)
     {
-        $goldLoan = BusinessLoanApplication::with([
-            'member.branch',
-            'branch',
-            'scheme',
-            'coApplicant1',
-            'guarantor1'
-        ])->findOrFail($id);
+        // ✅ Rename $loan → $goldLoan
+        $goldLoan = BusinessLoanApplication::with(['member', 'scheme'])
+            ->findOrFail($id);
 
         $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
         $banks = Bank::pluck('name', 'id');
 
-        $emiType = $goldLoan->scheme->gold_loan_setting;
-        $totalLoan = $goldLoan->loan_amount;
-        $interestRate = $goldLoan->scheme->interest_rate ?? 0;
-        $emiCount = $goldLoan->scheme->emi_count ?? 12;
-
-        $totalPaid = BusinessLoanTransaction::where('loan_id', $goldLoan->id)
+        // Only approved payments
+        $totalPaid = DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
             ->sum('amount_collected');
 
-        $remainingAmount = 0;
+        // Next EMI (only unpaid ones)
+        $nextEmi = DB::table('business_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['PARTIAL', 'DUE', 'UNPAID'])
+            ->orderByRaw("FIELD(status,'PARTIAL','DUE','UNPAID')")
+            ->orderBy('emi_no')
+            ->first();
+
         $emiAmount = 0;
-        $netDisbursed = 0;
+        $remainingAmount = 0;
 
-        switch ($emiType) {
-            case 'flat_advanced_interest':
-                $totalInterest = $totalLoan * ($interestRate / 100) * ($emiCount / 12);
-                $netDisbursed = $totalLoan - $totalInterest;
-                $emiAmount = round($totalLoan / $emiCount, 2);
-                $remainingAmount = $totalLoan - $totalPaid;
-                break;
+        if ($nextEmi) {
 
-            case 'flat_interest':
-                $totalInterest = $totalLoan * ($interestRate / 100) * ($emiCount / 12);
-                $totalPayable = $totalLoan + $totalInterest;
-                $emiAmount = $totalPayable / $emiCount;
-                $remainingAmount = $totalPayable - $totalPaid;
-                break;
+            // ✅ If EMI exists → show its remaining
+            $emiAmount = round($nextEmi->remaining_amount, 2);
+            $remainingAmount = $emiAmount;
+        } else {
 
-            case 'reducing_interest':
-                $monthlyRate = $interestRate / (12 * 100);
-                $emiAmount = $totalLoan * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) / (pow(1 + $monthlyRate, $emiCount) - 1);
-                $totalPayable = $emiAmount * $emiCount;
-                $remainingAmount = $totalPayable - $totalPaid;
-                break;
+            // 🔥 If NO EMI pending → calculate full outstanding
 
-            default:
-                $emiAmount = $totalLoan / $emiCount;
-                $remainingAmount = $totalLoan - $totalPaid;
-                break;
+            $totalLoanAmount = $goldLoan->loan_amount;
+
+            $totalPaid = DB::table('business_loan_transactions')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount_collected');
+
+            $remainingAmount = round($totalLoanAmount - $totalPaid, 2);
+
+            // Prevent negative
+            if ($remainingAmount < 0) {
+                $remainingAmount = 0;
+            }
+
+            $emiAmount = $remainingAmount;
         }
 
+
+
+        // Charges
         $overdueInterest = 0;
         $otherCharges = 0;
         $gstRate = 18;
+
         $gstAmount = ($overdueInterest * $gstRate) / 100;
         $totalOverdueWithGst = $overdueInterest + $gstAmount;
-        $totalAmount = $remainingAmount + $overdueInterest + $otherCharges;
 
-        $rounding = round($totalAmount) - $totalAmount;
-        $netAmount = $totalAmount + $rounding;
-
-        $goldLoan->current_debt = $remainingAmount;
-
-        $firstPendingEmi = BusinessLoanTransaction::where('loan_id', $goldLoan->id)
-            ->where('status', '!=', 'PAID')
-            ->orderBy('emi_no', 'asc')
-            ->first();
-
-        if ($firstPendingEmi) {
-            $firstPendingEmi->status = 'PROCESSING';
-            $firstPendingEmi->paid_date = now();
-            $firstPendingEmi->save();
-
-            Log::info('First EMI updated successfully', [
-                'loan_id' => $goldLoan->id,
-                'emi_no' => $firstPendingEmi->emi_no,
-                'status' => $firstPendingEmi->status,
-            ]);
-        }
+        $totalAmount = $emiAmount + $overdueInterest + $otherCharges;
+        $rounding = round(round($totalAmount) - $totalAmount, 2);
+        $netAmount = round($totalAmount + $rounding, 2);
 
         return view('bussiness.account.view-buttons.pay-emi.pay_emi', compact(
             'goldLoan',
             'emiAmount',
             'remainingAmount',
-            'netDisbursed',
             'overdueInterest',
             'otherCharges',
             'gstRate',
             'totalOverdueWithGst',
-            'totalAmount',
             'rounding',
             'netAmount',
             'savingAccounts',
             'banks'
         ));
     }
+    private function calculateMortgagePayAmount($loanId)
+    {
+        $totalRemaining = DB::table('business_loan_emi_status')
+            ->where('loan_id', $loanId)
+            ->whereIn('status', ['DUE', 'PARTIAL', 'PAID'])
+            ->sum('remaining_amount');
 
-    // pay emi tab data store in mortage loan transiction table
+        if ($totalRemaining > 0) {
+            return round($totalRemaining, 2);
+        }
+
+        $loan = BusinessLoanApplication::find($loanId);
+
+        $paid = DB::table('business_loan_transactions')
+            ->where('loan_id', $loanId)
+            ->where('status', 'paid')
+            ->sum('amount_collected');
+
+        return round($loan->loan_amount - $paid, 2);
+    }
+
     public function mortgagepayEmiLoan(Request $request, $id)
     {
-        Log::info("🟩 EMI Payment Request Received", [
-            'loan_id' => $id,
-            'payload' => $request->all()
-        ]);
+        DB::beginTransaction();
 
         try {
 
-            // 🔥 REMOVE COMMA FROM AMOUNT BEFORE VALIDATION
             $cleanAmount = str_replace(',', '', $request->amount_collected);
             $request->merge(['amount_collected' => $cleanAmount]);
-
 
             $request->validate([
                 'transaction_date' => 'required|date',
                 'amount_collected' => 'required|numeric|min:1',
-                'remarks' => 'nullable|string|max:255',
-                'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+                'fee_mode' => 'required|in:cash,cheque,online,saving'
             ]);
 
-            Log::info("🟦 Validation Passed for Loan ID: $id");
+            $emi = DB::table('business_loan_emi_status')
+                ->where('loan_id', $id)
+                ->whereIn('status', ['DUE', 'PARTIAL'])
+                ->orderBy('emi_no')
+                ->first();
 
-            $loan = BusinessLoanApplication::with('scheme')->findOrFail($id);
+            if (!$emi) {
 
-            $totalPaid = BusinessLoanTransaction::where('loan_id', $loan->id)
-                ->sum('amount_collected');
-
-            $remainingDue = max($loan->loan_amount - $totalPaid, 0);
-
-            $amountCollected = (float) $cleanAmount;
-            $newRemainingDue = max($remainingDue - $amountCollected, 0);
-
-
-            Log::info("🔍 Calculation", [
-                'remaining_due' => $remainingDue,
-                'amount_collected' => $amountCollected,
-                'new_remaining_due' => $newRemainingDue
-            ]);
-
-
-            // Upload File
-            $receiptPath = null;
-            if ($request->hasFile('receipt')) {
-                $receiptPath = $request->file('receipt')->store('goldloan_receipts', 'public');
-                Log::info("🟨 Receipt uploaded: " . $receiptPath);
-            }
-
-            // 🔥 GET NEXT EMI NUMBER (COUNT + 1)
-            $nextEmiNo = BusinessLoanTransaction::where('loan_id', $loan->id)->count() + 1;
-
-            Log::info("➡️ Next EMI No Calculated", [
-                'loan_id' => $loan->id,
-                'next_emi_no' => $nextEmiNo
-            ]);
-
-            // Store Transaction
-            $transaction = new BusinessLoanTransaction();
-            $transaction->loan_id = $loan->id;
-            $transaction->transaction_date = date('Y-m-d', strtotime($request->transaction_date));
-            $transaction->amount_collected = $amountCollected;
-            $transaction->current_debt = $newRemainingDue;
-            $transaction->other_charges = 0;
-            $transaction->total_payable = $remainingDue;
-            $transaction->status = 'paid';
-            $transaction->remarks = $request->remarks ?? null;
-            $transaction->flag = 'emi_payment';
-            $transaction->created_by = Auth::id() ?? null;
-
-             // 🟩 NEW LINE — SAVE EMI NO
-            $transaction->emi_no = $nextEmiNo;
-
-            // =============================================
-                // 🔥 MODE-WISE FIELDS STORE
-            // =============================================
-
-            $transaction->fee_mode = $request->fee_mode;
-
-            // CASH - kuch save nahi hoga
-            if ($request->fee_mode == 'cash') 
-            {
-
-                $transaction->bank_id = null;
-                $transaction->cheque_no = null;
-                $transaction->cheque_date = null;
-
-                $transaction->utr_no = null;
-                $transaction->transfer_mode = null;
-                $transaction->transfer_date = null;
-
-                $transaction->saving = null;
-            }
-
-            // CHEQUE
-            elseif ($request->fee_mode == 'cheque') {
-
-                $transaction->bank_id = $request->bank_id;
-                $transaction->cheque_no = $request->cheque_no;
-                $transaction->cheque_date = date('Y-m-d', strtotime($request->cheque_date));
-
-                $transaction->utr_no = null;
-                $transaction->transfer_mode = null;
-                $transaction->transfer_date = null;
-
-                $transaction->saving = null;
-            }
-
-            // ONLINE
-            elseif ($request->fee_mode == 'online') {
-
-                $transaction->utr_no = $request->utr_no;
-                $transaction->transfer_mode = $request->transfer_mode;
-                $transaction->transfer_date = date('Y-m-d', strtotime($request->transfer_date));
-
-                $transaction->bank_id = null;
-                $transaction->cheque_no = null;
-                $transaction->cheque_date = null;
-
-                $transaction->saving = null;
-            }
-
-            // SAVING ACCOUNT
-            elseif ($request->fee_mode == 'saving') {
-
-                $transaction->saving = $request->saving;
-
-                $transaction->bank_id = null;
-                $transaction->cheque_no = null;
-                $transaction->cheque_date = null;
-
-                $transaction->utr_no = null;
-                $transaction->transfer_mode = null;
-                $transaction->transfer_date = null;
-            }
-
-            if ($receiptPath) {
-                $transaction->receipt = $receiptPath;
-            }
-
-            Log::info("📝 Transaction Before Save", $transaction->toArray());
-
-            $transaction->save();
-
-            Log::info("🟩 Transaction saved successfully!", [
-                'transaction_id' => $transaction->id
-            ]);
-
-            if ($newRemainingDue <= 0) {
-                $loan->status = 'closed';
-                $loan->save();
-
-                Log::info("🟢 Loan Closed Automatically", [
-                    'loan_id' => $loan->id
+                // 🔥 FULL PAYMENT CASE
+                DB::table('business_loan_transactions')->insert([
+                    'loan_id' => $id,
+                    'emi_no' => null,
+                    'transaction_date' => now()->format('Y-m-d'),
+                    'amount_collected' => $cleanAmount,
+                    'total_payable' => $cleanAmount,
+                    'current_debt' => 0,
+                    'status' => 'pending',
+                    'flag' => 'full_payment',
+                    'fee_mode' => $request->fee_mode,
+                    'created_by' => Auth::id(),
+                    'created_at' => now(),
+                    'updated_at' => now()
                 ]);
+
+                DB::commit();
+
+                return redirect()
+                    ->route('bussiness.account.show', $id)
+                    ->with('success', 'Full Payment Submitted For Approval');
             }
 
-            return redirect()->route('bussiness.account.show', $loan->id)
-                ->with('success', 'EMI Payment recorded successfully!');
 
-        } catch (\Exception $e) {
-
-            Log::error("❌ EMI PAYMENT ERROR", [
+            DB::table('business_loan_transactions')->insert([
                 'loan_id' => $id,
-                'message' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile()
+                'emi_no' => $emi->emi_no,
+                'transaction_date' => now()->format('Y-m-d'),
+                'amount_collected' => $cleanAmount,
+                'total_payable' => $emi->remaining_amount,
+                'current_debt' => $emi->remaining_amount,
+                'status' => 'pending',   // ✅ ONLY PENDING
+                'flag' => 'emi_payment',
+                'fee_mode' => $request->fee_mode,
+                'created_by' => Auth::id(),
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
 
-            return back()->with('error', "Something went wrong: " . $e->getMessage());
+            DB::commit();
+
+            return redirect()
+                ->route('bussiness.account.show', $id)
+                ->with('success', 'EMI Payment Submitted For Approval');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', $e->getMessage());
         }
     }
 
@@ -920,10 +846,9 @@ class BusinessLoanAccount extends Controller
                 if ($row->type === 'transaction') {
                     $runningBalance -= $row->amount_collected;
                 }
-               if ($row->type === 'other_charge' || $row->type === 'foreclosure') {
+                if ($row->type === 'other_charge' || $row->type === 'foreclosure') {
                     $runningBalance -= $row->amount;
                 }
-
             }
 
             $row->balance = $runningBalance;
@@ -948,44 +873,43 @@ class BusinessLoanAccount extends Controller
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
         // Total Deposit
-            $totalDeposit = DB::table('business_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
-            
-            // // Total from Other Charges (only paid)
-            $otherChargesDeposit = DB::table('business_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        $totalDeposit = DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // // FINAL DEPOSIT = Transactions + Other Charges
-            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+        // // Total from Other Charges (only paid)
+        $otherChargesDeposit = DB::table('business_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // Latest total_payable (from last transaction)
-            $totalPayable = DB::table('business_loan_transactions')
-                ->where('loan_id', $id)
-                ->orderByDesc('id')
-                ->value('total_payable') ?? $goldLoan->loan_amount;
+        // // FINAL DEPOSIT = Transactions + Other Charges
+        $totalDeposit = $totalDeposit + $otherChargesDeposit;
 
-            // 1. Total Transaction Deposit
-            $transactionDeposit = DB::table('business_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
+        // Latest total_payable (from last transaction)
+        $totalPayable = DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->orderByDesc('id')
+            ->value('total_payable') ?? $goldLoan->loan_amount;
 
-            // 2. Total Paid Other Charges
-            $otherChargesDeposit = DB::table('business_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        // 1. Total Transaction Deposit
+        $transactionDeposit = DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // 3. FINAL Total Deposit
-            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+        // 2. Total Paid Other Charges
+        $otherChargesDeposit = DB::table('business_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // 4. FINAL Correct Current Debt
-            $currentDebt = max($totalPayable - $totalDeposit, 0);
+        // 3. FINAL Total Deposit
+        $totalDeposit = $transactionDeposit + $otherChargesDeposit;
 
-        return view('bussiness.account.loan-extension', compact('goldLoan','currentDebt','banks'));
+        // 4. FINAL Correct Current Debt
+        $currentDebt = max($totalPayable - $totalDeposit, 0);
 
+        return view('bussiness.account.loan-extension', compact('goldLoan', 'currentDebt', 'banks'));
     }
 
     // Loan extenstion tab page data store
@@ -996,8 +920,7 @@ class BusinessLoanAccount extends Controller
             'input' => $request->all()
         ]);
 
-        try 
-        {
+        try {
 
             $validated = $request->validate([
                 'remaining_amount' => 'required|numeric',
@@ -1027,10 +950,7 @@ class BusinessLoanAccount extends Controller
             ]);
 
             return redirect()->route('bussiness.account.show')->with('success', 'Loan Extension Successfully Added!');
-
-        } 
-        catch (\Throwable $e) 
-        {
+        } catch (\Throwable $e) {
 
             Log::error('Loan Extension Save Failed', [
                 'loan_id' => $id,
@@ -1041,7 +961,6 @@ class BusinessLoanAccount extends Controller
             return back()->with('error', 'Something went wrong while saving!');
         }
     }
-
     // only pay tab page
     public function mortgagePay($id)
     {
@@ -1056,56 +975,34 @@ class BusinessLoanAccount extends Controller
 
         $banks = Bank::all();
 
-        $lastTransaction = $goldLoan->BusinessLoanTransaction->last();
-        $payableAmount = $lastTransaction->total_payable ?? 0;
+        $totalPaid = DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount_collected');
 
-        if ($lastTransaction) {
-            $currentDebt = (float) $lastTransaction->current_debt;
-        } else {
-            $currentDebt = (float) $goldLoan->loan_amount;
+        $currentDebt = round($goldLoan->loan_amount - $totalPaid, 2);
+
+        if ($currentDebt < 0) {
+            $currentDebt = 0;
         }
 
-        $currentDebt = round($currentDebt, 2);
-
-        $nextDue = $goldLoan->emiPayments()
-            ->where('status', 'pending')
-            ->first();
-
-        if (!$nextDue) {
+        if ($currentDebt <= 0) {
             return view('bussiness.account.view-buttons.pay.pay', [
                 'goldLoan' => $goldLoan,
                 'banks' => $banks,
                 'currentDebt' => 0,
                 'payableAmount' => 0,
-                'message' => 'All EMIs are fully paid.'
+                'message' => 'Loan already closed.'
             ]);
         }
 
-        $annualRate = (float) $goldLoan->interest_rate;
-
-        $today = Carbon::today();
-        $dueDate = Carbon::parse($nextDue->emi_date);
-
-        $daysLate = $dueDate->diffInDays($today, false);
-        $daysLate = $daysLate > 0 ? $daysLate : 0;
-
-        $interestTillToday = round(($currentDebt * $annualRate * $daysLate) / 36500, 2);
-
-        $lateFee = $daysLate * 10;
-
-        $emiAmount = (float) $nextDue->emi_amount;
-
-        // $payableAmount = round($emiAmount + $interestTillToday + $lateFee, 2);
+        $payableAmount = $currentDebt;
 
         return view('bussiness.account.view-buttons.pay.pay', compact(
             'goldLoan',
             'banks',
             'currentDebt',
-            'payableAmount',
-            'interestTillToday',
-            'lateFee',
-            'daysLate',
-            'nextDue'
+            'payableAmount'
         ));
     }
 
@@ -1144,257 +1041,294 @@ class BusinessLoanAccount extends Controller
         ]);
     }
 
-    // store pay tab data in table
     public function payEmi(Request $request)
     {
-        Log::info('payEmi() called', ['request_data' => $request->all()]);
+        DB::beginTransaction();
 
         try {
 
-            Log::info('payEmi(): Starting validation');
-
-            $rules = [
-                'loan_id'           => 'required|exists:loan_against_applications,id',
-                'transaction_date'  => 'required|date',
-                'current_debt'      => 'required|numeric',
-                'total_payable'     => 'required|numeric',
-                'amount_collected'  => 'required|numeric|min:1',
-                'fee_mode'          => 'required|in:cash,cheque,online',
-            ];
-
-            if ($request->fee_mode === 'cheque') {
-
-                $rules['bank_id']     = 'required';
-                $rules['cheque_no']   = 'required';
-                $rules['cheque_date'] = 'required|date';
-            }
-
-            if ($request->fee_mode === 'online') {
-                $rules['transfer_date'] = 'required|date';
-                $rules['utr_no']        = 'required';
-                $rules['transfer_mode'] = 'required|in:imps,vpa,neft_rtgs';
-                $rules['credited']      = 'required|in:yes,no';
-            }
-
-            $request->validate($rules);
-
-            Log::info('payEmi(): Validation passed');
-
-            $loan = BusinessLoanApplication::find($request->loan_id);
-
-            if (!$loan) {
-                Log::error('payEmi(): Loan not found', ['loan_id' => $request->loan_id]);
-                return back()->withErrors(['loan_id' => 'Loan not found.']);
-            }
-
-            $lastEmiNo = BusinessLoanTransaction::where('loan_id', $loan->id)->max('emi_no');
-            $nextEmiNo = $lastEmiNo ? $lastEmiNo + 1 : 1;
-
-            Log::info('payEmi(): Next EMI Number', [
-                'emi_no' => $nextEmiNo,
+            $request->validate([
+                'loan_id' => 'required|exists:bussiness_loan_applications,id',
+                'transaction_date' => 'required',
+                'current_debt' => 'required|numeric',
+                'total_payable' => 'required|numeric',
+                'amount_collected' => 'required|numeric|min:1',
+                'fee_mode' => 'required|in:cash,cheque,online',
             ]);
 
-            $paymentDetails = ['mode' => $request->fee_mode];
+            $loan = BusinessLoanApplication::findOrFail($request->loan_id);
 
-            if ($request->fee_mode === 'cash') {
-                $paymentDetails['fee_mode']  = $request->fee_mode;
-                $paymentDetails['description'] = 'Cash payment received';
-            }
+            // 🔥 IMPORTANT: Decide full payment
+            $isFullPayment = floatval($request->amount_collected) >= floatval($request->current_debt);
 
-            if ($request->fee_mode === 'cheque') {
-                $paymentDetails['fee_mode']  = $request->fee_mode;
-                $paymentDetails['bank_id']     = $request->bank_id;
-                $paymentDetails['cheque_no']   = $request->cheque_no;
-                $paymentDetails['cheque_date'] = $request->cheque_date;
-            }
+            $flag = $isFullPayment ? 'full_payment' : 'emi_payment';
+            $emiNo = $isFullPayment ? null : (BusinessLoanTransaction::where('loan_id', $loan->id)->max('emi_no') + 1);
 
-            if ($request->fee_mode === 'online') {
-                $paymentDetails['fee_mode']  = $request->fee_mode;
-                $paymentDetails['transfer_date'] = $request->transfer_date;
-                $paymentDetails['utr_no']        = $request->utr_no;
-                $paymentDetails['transfer_mode'] = $request->transfer_mode;
-                $paymentDetails['credited']      = $request->credited;
-            }
+            $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)
+                ->format('Y-m-d');
 
-
-            $transaction = BusinessLoanTransaction::create([
-                'loan_id'          => $loan->id,
-                'emi_no'           => $nextEmiNo,
-                'transaction_date' => Carbon::parse($request->transaction_date)->format('Y-m-d'),
-
-                'current_debt'     => $request->current_debt,
-                'other_charges'    => $request->other_charges ?? 0,
-                'total_payable'    => $request->total_payable,
+            BusinessLoanTransaction::create([
+                'loan_id' => $loan->id,
+                'emi_no' => $emiNo,                     // NULL for full payment
+                'transaction_date' => $transactionDate,
+                'current_debt' => $request->current_debt,
+                'other_charges' => $request->other_charges ?? 0,
+                'total_payable' => $request->total_payable,
                 'amount_collected' => $request->amount_collected,
-
-                'remarks'          => $request->remarks ?? null,
-                'payment_mode'     => $request->fee_mode,
-                'payment_details'  => json_encode($paymentDetails),
-
-                'bank_id'          => $request->bank_id ?? null,
-                'cheque_no'        => $request->cheque_no ?? null,
-                'cheque_date'      => $request->cheque_date ?? null,
-
-                'transfer_date'    => $request->transfer_date ?? null,
-                'utr_no'           => $request->utr_no ?? null,
-                'transfer_mode'    => $request->transfer_mode ?? null,
-                'credited'         => $request->credited ?? null,
-
-                'created_by'       => Auth::id(),
+                'remarks' => $request->remarks ?? null,
+                'fee_mode' => $request->fee_mode,
+                'flag' => $flag,                        // 🔥 MUST STORE
+                'status' => 'pending',
+                'created_by' => Auth::id(),
             ]);
 
-            Log::info('payEmi(): Transaction Created', [
-                'transaction_id' => $transaction->id,
-                'data' => $transaction->toArray()
-            ]);
+            DB::commit();
 
-            return redirect()->route('bussiness.account.show', $loan->id)->with('success', 'EMI Payment Recorded Successfully.');
+            return redirect()
+                ->route('bussiness.account.show', $loan->id)
+                ->with('success', 'Payment Submitted For Approval.');
         } catch (\Exception $e) {
 
-            Log::error('payEmi(): Exception Occurred', [
-                'message' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile(),
-            ]);
+            DB::rollBack();
 
-            return back()->withErrors(['error' => 'Something went wrong. Please try again.']);
+            return back()->with('error', $e->getMessage());
         }
     }
 
-    // foure closer tab
+
+
     public function fourcloser($id)
     {
-        $goldLoan = BusinessLoanApplication::with(['member', 'branch', 'scheme', 'BusinessLoanTransaction'])
-            ->findOrFail($id);
-
-        $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
-
-        // Total Deposit
-            $totalDeposit = DB::table('business_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
-            
-            // // Total from Other Charges (only paid)
-            $otherChargesDeposit = DB::table('business_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
-
-            // // FINAL DEPOSIT = Transactions + Other Charges
-            $totalDeposit = $totalDeposit + $otherChargesDeposit;
-
-            // Latest total_payable (from last transaction)
-            $totalPayable = DB::table('business_loan_transactions')
-                ->where('loan_id', $id)
-                ->orderByDesc('id')
-                ->value('total_payable') ?? $goldLoan->loan_amount;
-
-            // 1. Total Transaction Deposit
-            $transactionDeposit = DB::table('business_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
-
-            // 2. Total Paid Other Charges
-            $otherChargesDeposit = DB::table('business_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
-
-            // 3. FINAL Total Deposit
-            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
-
-            // 4. FINAL Correct Current Debt
-            $currentDebt = max($totalPayable - $totalDeposit, 0);
-
-        return view('bussiness.account.view-buttons.fore-close.fore-close', compact('goldLoan','currentDebt','banks'));
-    }
-
-    // foure closer store tab
-    public function storeForeCloser(Request $request, $loanId)
-    {
-        Log::info('---- ForeClosure Store Request START ----', [
-            'loan_id' => $loanId,
-            'request_data' => $request->all()
+        Log::info('🟢 FORECLOSURE PAGE OPENED', [
+            'loan_id' => $id,
+            'user_id' => Auth::id(),
+            'time'    => now()
         ]);
 
         try {
 
-            // VALIDATION
-            $request->validate([
-                'remaining_amount'   => 'required|numeric',
-                'interest_accrued'   => 'required|numeric',
-                'overdue_interest'   => 'required|numeric',
-                'notice_charges'     => 'required|numeric',
-                'service_charges'    => 'required|numeric',
-                'other_charges'      => 'required|numeric',
-                'foreclosure_charges'=> 'required|numeric',
-                'total_amount_h'     => 'required|numeric',
-                'rounding_off_i'     => 'required|numeric',
-                'closure_discount_j' => 'required|numeric',
-                'net_amount_k'       => 'required|numeric',
-                'transaction_date'   => 'required',
-                 // optional payment fields validation:
-                'payment_mode'           => 'nullable|in:cash,cheque,online',
-                'bank_id'            => 'nullable|exists:banks,id',
-                'cheque_no'          => 'nullable|string|max:100',
-                'cheque_date'        => 'nullable|date',
-                'transfer_date'      => 'nullable|date',
-                'utr_no'             => 'nullable|string|max:150',
-                'transfer_mode'      => 'nullable|in:imps,vpa,neft_rtgs',
-                'credited'           => 'nullable|in:0,1',
+            $goldLoan = BusinessLoanApplication::with(['member', 'branch', 'scheme'])
+                ->findOrFail($id);
+
+            Log::info('🔹 LOAN DETAILS', [
+                'loan_id'      => $goldLoan->id,
+                'loan_amount'  => $goldLoan->loan_amount,
+                'member_id'    => $goldLoan->member_id,
+                'scheme_id'    => $goldLoan->scheme_id,
             ]);
 
-            // STORE DATA
+            $banks = Bank::pluck('name', 'id');
+
+            // ================================
+            // 🔥 TOTAL PAID (Only Approved)
+            // ================================
+            $totalPaid = DB::table('business_loan_transactions')
+                ->where('loan_id', $id)
+                ->where('status', 'paid')
+                ->sum('amount_collected');
+
+            Log::info('🔹 PAYMENT SUMMARY', [
+                'loan_id'   => $id,
+                'total_paid' => $totalPaid,
+            ]);
+
+            // ================================
+            // 🔥 EMI TABLE STATUS CHECK
+            // ================================
+            $emiRemaining = DB::table('business_loan_emi_status')
+                ->where('loan_id', $id)
+                ->sum('remaining_amount');
+
+            $emiCount = DB::table('business_loan_emi_status')
+                ->where('loan_id', $id)
+                ->count();
+
+            Log::info('🔹 EMI SUMMARY', [
+                'loan_id'           => $id,
+                'total_emi_rows'    => $emiCount,
+                'total_emi_balance' => $emiRemaining,
+            ]);
+
+            // ================================
+            // 🔥 FORECLOSURE APPROVAL CHECK
+            // ================================
+            $foreclosureApproved = DB::table('business_loan_fore_closures')
+                ->where('loan_id', $id)
+                ->where('status', 1)
+                ->exists();
+
+            Log::info('🔹 FORECLOSURE STATUS CHECK', [
+                'loan_id'              => $id,
+                'foreclosure_approved' => $foreclosureApproved,
+            ]);
+
+            // ================================
+            // 🔥 FINAL REMAINING CALCULATION
+            // ================================
+            if ($foreclosureApproved) {
+
+                $currentDebt = 0;
+            } else {
+
+                $currentDebt = max($goldLoan->loan_amount - $totalPaid, 0);
+                $currentDebt = round($currentDebt, 2);
+            }
+
+            Log::info('🔹 FINAL REMAINING CALCULATION', [
+                'loan_amount' => $goldLoan->loan_amount,
+                'total_paid'  => $totalPaid,
+                'currentDebt' => $currentDebt,
+            ]);
+
+            Log::info('✅ FORECLOSURE PAGE LOADED SUCCESSFULLY', [
+                'loan_id' => $id
+            ]);
+
+            return view(
+                'bussiness.account.view-buttons.fore-close.fore-close',
+                compact('goldLoan', 'currentDebt', 'banks')
+            );
+        } catch (\Exception $e) {
+
+            Log::error('❌ FORECLOSURE PAGE FAILED', [
+                'loan_id' => $id,
+                'error'   => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while loading foreclosure page.');
+        }
+    }
+    public function storeForeCloser(Request $request, $loanId)
+    {
+        Log::info('🟢 FORECLOSURE STORE STARTED', [
+            'loan_id' => $loanId,
+            'user_id' => Auth::id(),
+            'request_data' => $request->all(),
+            'time' => now()
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+
+            // ===============================
+            // ✅ VALIDATION
+            // ===============================
+            $validated = $request->validate([
+                'remaining_amount'      => 'required|numeric',
+                'interest_accrued'      => 'nullable|numeric',
+                'overdue_interest'      => 'nullable|numeric',
+                'notice_charges'        => 'nullable|numeric',
+                'service_charges'       => 'nullable|numeric',
+                'other_charges'         => 'nullable|numeric',
+                'foreclosure_charges'   => 'nullable|numeric',
+                'total_amount_h'        => 'required|numeric',
+                'rounding_off_i'        => 'nullable|numeric',
+                'closure_discount_j'    => 'nullable|numeric',
+                'net_amount_k'          => 'required|numeric',
+                'transaction_date'      => 'required',
+                'payment_mode'          => 'nullable|in:cash,cheque,online',
+                'bank_id'               => 'nullable|exists:banks,id',
+                'cheque_no'             => 'nullable|string|max:100',
+                'cheque_date'           => 'nullable',
+                'transfer_date'         => 'nullable',
+                'utr_no'                => 'nullable|string|max:150',
+                'transfer_mode'         => 'nullable|in:imps,vpa,neft_rtgs',
+                'credited'              => 'nullable|in:0,1',
+            ]);
+
+            Log::info('✅ VALIDATION PASSED', [
+                'loan_id' => $loanId
+            ]);
+
+            // ===============================
+            // ✅ DATE FORMATTING
+            // ===============================
+            $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)
+                ->format('Y-m-d');
+
+            $chequeDate = $request->filled('cheque_date')
+                ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d')
+                : null;
+
+            $transferDate = $request->filled('transfer_date')
+                ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
+                : null;
+
+            Log::info('📅 DATE CONVERSION DONE', [
+                'transaction_date' => $transactionDate,
+                'cheque_date'      => $chequeDate,
+                'transfer_date'    => $transferDate
+            ]);
+
+            // ===============================
+            // ✅ SAVE FORECLOSURE RECORD
+            // ===============================
             $save = BusinessLoanForeClosure::create([
                 'loan_id'               => $loanId,
-
                 'remaining_amount'      => $request->remaining_amount,
-                'interest_accrued'      => $request->interest_accrued,
-                'overdue_interest'      => $request->overdue_interest,
-
-                'notice_charges'        => $request->notice_charges,
-                'service_charges'       => $request->service_charges,
-                'other_charges'         => $request->other_charges,
-                'foreclosure_charges'   => $request->foreclosure_charges,
-
+                'interest_accrued'      => $request->interest_accrued ?? 0,
+                'overdue_interest'      => $request->overdue_interest ?? 0,
+                'notice_charges'        => $request->notice_charges ?? 0,
+                'service_charges'       => $request->service_charges ?? 0,
+                'other_charges'         => $request->other_charges ?? 0,
+                'foreclosure_charges'   => $request->foreclosure_charges ?? 0,
                 'total_amount_h'        => $request->total_amount_h,
-                'rounding_off_i'        => $request->rounding_off_i,
-                'closure_discount_j'    => $request->closure_discount_j,
+                'rounding_off_i'        => $request->rounding_off_i ?? 0,
+                'closure_discount_j'    => $request->closure_discount_j ?? 0,
                 'net_amount_k'          => $request->net_amount_k,
-
-                'transaction_date'      => Carbon::createFromFormat('d-m-Y', $request->transaction_date),
+                'transaction_date'      => $transactionDate,
                 'remarks'               => $request->remarks,
-
-                 // NEW payment fields mapping from your form names
-                'payment_mode'          => $request->input('payment_mode') ?? null,   // cash/cheque/online
-                'bank_id'               => $request->input('bank_id') ?? null,
-                'cheque_no'             => $request->input('cheque_no') ?? null,
-                'cheque_date'           => $request->filled('cheque_date') ? Carbon::parse($request->input('cheque_date')) : null,
-                'transfer_date'         => $request->filled('transfer_date') ? Carbon::parse($request->input('transfer_date')) : null,
-                'utr_no'                => $request->input('utr_no') ?? null,
-                'transfer_mode'         => $request->input('transfer_mode') ?? null,
-                'credited'              => is_null($request->input('credited')) ? null : (int)$request->input('credited'),
-
+                'payment_mode'          => $request->payment_mode,
+                'bank_id'               => $request->bank_id,
+                'cheque_no'             => $request->cheque_no,
+                'cheque_date'           => $chequeDate,
+                'transfer_date'         => $transferDate,
+                'utr_no'                => $request->utr_no,
+                'transfer_mode'         => $request->transfer_mode,
+                'credited'              => $request->credited,
                 'status'                => 0
             ]);
 
-            Log::info('---- ForeClosure Stored Successfully ----', [
-                'saved_record' => $save
+            Log::info('💾 FORECLOSURE RECORD SAVED', [
+                'foreclosure_id' => $save->id,
+                'loan_id'        => $loanId,
+                'net_amount'     => $request->net_amount_k
             ]);
 
-            // UPDATE LOAN STATUS (Active → Inactive)
-            BusinessLoanApplication::where('id', $loanId)->update(['status' => 4]);
+            // ===============================
+            // ✅ UPDATE LOAN STATUS
+            // ===============================
+            BusinessLoanApplication::where('id', $loanId)
+                ->update([
+                    'status' => 4,
+                    'updated_at' => now()
+                ]);
+
+            Log::info('🔒 LOAN STATUS UPDATED TO INACTIVE (4)', [
+                'loan_id' => $loanId
+            ]);
+
+            DB::commit();
+
+            Log::info('✅ FORECLOSURE STORE COMPLETED SUCCESSFULLY', [
+                'loan_id' => $loanId
+            ]);
 
             return redirect()
                 ->route('bussiness.account.show', $loanId)
                 ->with('success', 'Fore Closure Stored Successfully!');
-
         } catch (\Exception $e) {
 
-            Log::error('ForeClosure Store Error', [
+            DB::rollBack();
+
+            Log::error('❌ FORECLOSURE STORE FAILED', [
                 'loan_id' => $loanId,
                 'error_message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
             ]);
 
             return back()->with('error', 'Something went wrong: ' . $e->getMessage());
@@ -1417,43 +1351,43 @@ class BusinessLoanAccount extends Controller
 
 
         // Total Deposit
-            $totalDeposit = DB::table('business_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
-            
-            // // Total from Other Charges (only paid)
-            $otherChargesDeposit = DB::table('business_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        $totalDeposit = DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // // FINAL DEPOSIT = Transactions + Other Charges
-            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+        // // Total from Other Charges (only paid)
+        $otherChargesDeposit = DB::table('business_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // Latest total_payable (from last transaction)
-            $totalPayable = DB::table('business_loan_transactions')
-                ->where('loan_id', $id)
-                ->orderByDesc('id')
-                ->value('total_payable') ?? $goldLoan->loan_amount;
+        // // FINAL DEPOSIT = Transactions + Other Charges
+        $totalDeposit = $totalDeposit + $otherChargesDeposit;
 
-            // 1. Total Transaction Deposit
-            $transactionDeposit = DB::table('business_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
+        // Latest total_payable (from last transaction)
+        $totalPayable = DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->orderByDesc('id')
+            ->value('total_payable') ?? $goldLoan->loan_amount;
 
-            // 2. Total Paid Other Charges
-            $otherChargesDeposit = DB::table('business_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        // 1. Total Transaction Deposit
+        $transactionDeposit = DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // 3. FINAL Total Deposit
-            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+        // 2. Total Paid Other Charges
+        $otherChargesDeposit = DB::table('business_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // 4. FINAL Correct Current Debt
-            $currentDebt = max($totalPayable - $totalDeposit, 0);
+        // 3. FINAL Total Deposit
+        $totalDeposit = $transactionDeposit + $otherChargesDeposit;
 
-        return view('bussiness.account.view-buttons.link-saving-acc.link-saving-acc', compact('goldLoan','currentDebt', 'banks', 'savingAccounts'));
+        // 4. FINAL Correct Current Debt
+        $currentDebt = max($totalPayable - $totalDeposit, 0);
+
+        return view('bussiness.account.view-buttons.link-saving-acc.link-saving-acc', compact('goldLoan', 'currentDebt', 'banks', 'savingAccounts'));
     }
 
     // update and store link saving account in account table and aplication table
@@ -1474,13 +1408,13 @@ class BusinessLoanAccount extends Controller
             ]);
 
         return redirect()->route('bussiness.account.show', $loanId)
-        ->with('success', 'Saving Account Linked Successfully!');
+            ->with('success', 'Saving Account Linked Successfully!');
     }
 
     // remove account tab
     public function removeAccount(Request $request, $id)
     {
-        
+
         // Basic validation: confirm flag (optional)
         if (!$request->filled('confirm') || $request->input('confirm') != 1) {
             return redirect()->back()->with('error', 'Confirmation missing.');
@@ -1512,7 +1446,6 @@ class BusinessLoanAccount extends Controller
             ]);
 
             return redirect()->back()->with('success', 'Account removed, related transactions & charges deleted and status set to 0.');
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -1523,14 +1456,14 @@ class BusinessLoanAccount extends Controller
             ]);
 
             return redirect()
-            ->route('bussiness.account.index')
-            ->with('error', 'Something went wrong while removing the account: '.$e->getMessage());
+                ->route('bussiness.account.index')
+                ->with('error', 'Something went wrong while removing the account: ' . $e->getMessage());
         }
     }
 
     // audit tab
     public function audit(Request $request)
-    { 
+    {
         return view('bussiness.account.view-buttons.audit-trail.audit-trail');
     }
 
@@ -1625,8 +1558,8 @@ class BusinessLoanAccount extends Controller
             ->sum('amount');
         $banks = Bank::pluck('name', 'id');
         $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
-        
-        return view('bussiness.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue', 'banks','savingAccounts'));
+
+        return view('bussiness.account.view-buttons.debit-other-charges.clear-dues', compact('goldLoan', 'totalDue', 'banks', 'savingAccounts'));
     }
 
     // update / store clear due tab
@@ -1731,8 +1664,4 @@ class BusinessLoanAccount extends Controller
             return back()->with('error', 'Something went wrong while clearing the due.');
         }
     }
-
-
-
 }
-

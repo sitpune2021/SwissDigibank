@@ -2119,7 +2119,7 @@ Route::group(['prefix' => 'fixed_loan'], function () {
     // pay emi tab
     Route::get('fixed_loan-account/payemi/{id}', [FixedLoanAccount::class, 'mortgagePayEmi'])
         ->name('fixed_loan.account.pay-emi');
-    Route::post('fixed_loan-account/payemi/{id}/pay', [FixedLoanAccount::class, 'mortgagepayEmiLoan'])->name('daily_weekly.payEmiLoan');
+    // Route::post('fixed_loan-account/payemi/{id}/pay', [FixedLoanAccount::class, 'mortgagepayEmiLoan'])->name('daily_weekly.payEmiLoan');
 
     // View Transction tab
     Route::get('fixed_loan-account/transaction/{id}', [FixedLoanAccount::class, 'mortgageTransaction'])
