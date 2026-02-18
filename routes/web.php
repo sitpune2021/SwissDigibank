@@ -2119,7 +2119,7 @@ Route::group(['prefix' => 'fixed_loan'], function () {
     // pay emi tab
     Route::get('fixed_loan-account/payemi/{id}', [FixedLoanAccount::class, 'mortgagePayEmi'])
         ->name('fixed_loan.account.pay-emi');
-    Route::post('fixed_loan-account/payemi/{id}/pay', [FixedLoanAccount::class, 'mortgagepayEmiLoan'])->name('daily_weekly.payEmiLoan');
+    // Route::post('fixed_loan-account/payemi/{id}/pay', [FixedLoanAccount::class, 'mortgagepayEmiLoan'])->name('daily_weekly.payEmiLoan');
 
     // View Transction tab
     Route::get('fixed_loan-account/transaction/{id}', [FixedLoanAccount::class, 'mortgageTransaction'])
@@ -2566,6 +2566,15 @@ Route::get('/balance-sheet', [LedgergroupController::class, 'balance_sheet'])
 Route::get('/trial-balance',
     [LedgergroupController::class, 'trial_balance']
 )->name('trial.balance');
+
+Route::get('/day-book', [LedgergroupController::class, 'dayBook'])
+    ->name('day.book');
+
+Route::get('/accounting-tree', [LedgergroupController::class, 'accountingTree'])
+    ->name('accounting.tree');
+
+Route::get('/income-statement', [LedgergroupController::class, 'incomeStatement'])
+    ->name('income.statement');
 
 
 ////////////////////////////////////    Account Section tab End     /////////////////////////////////////////////

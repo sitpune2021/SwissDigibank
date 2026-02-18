@@ -65,6 +65,16 @@ class DailyWeeklyDisburments extends Controller
             // Convert date format
             $disbursalDate = Carbon::createFromFormat('d-m-Y', $request->disbursal_date)->format('Y-m-d');
             $emiDate = Carbon::createFromFormat('d-m-Y', $request->emi_date)->format('Y-m-d');
+            // Safe defaults
+            $loanAmount     = $application->loan_amount ?? 0;
+            $processingFee  = $application->processing_fee ?? 0;
+            $gstPercent     = $application->gst_percent ?? 0;
+
+            // Calculate GST
+            $gstAmount = ($processingFee * $gstPercent) / 100;
+
+            // Final Processing Total
+            $processingTotal = $processingFee + $gstAmount;
 
             // Create disbursement
             $disbursement = DailyWeeklyDisburment::create([
@@ -82,7 +92,7 @@ class DailyWeeklyDisburments extends Controller
                 'insurance_fee' => $request->insurance_fee,
                 'advance_interest' => $request->advance_interest,
                 'final_amount' => $request->final_amount,
-                
+
                 'disburse_mode1' => $request->D_mode_1,
                 'payment_mode1' => $request->payment_mode,
                 'bank_id1' => $request->bank_id,
@@ -110,7 +120,80 @@ class DailyWeeklyDisburments extends Controller
             DB::table('daily_weekly_applications')
                 ->where('id', $request->loan_application_id)
                 ->update(['status' => 2]);
+            // 🔵 PROCESSING FEE
+            if ($request->collect_fee) {
 
+                Log::info('Processing Fee Selected');
+
+                DB::table('daily_weekly_disburments_fees')->insert([
+                    'loan_id'        => $disbursement->id,
+                    'fee_type'       => 'processing_fee',
+                    'payment_mode'   => $request->processing_fee_mode,
+                    'bank_id'        => $request->p_bank_id ?? null,
+                    'cheque_no'      => $request->p_cheque_no ?? null,
+                    'cheque_date'    => $request->p_cheque_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->p_cheque_date)->format('Y-m-d') : null,
+                    'transfer_date'  => $request->p_transfer_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->p_transfer_date)->format('Y-m-d') : null,
+                    'utr_no'         => $request->p_utr_no ?? null,
+                    'transfer_mode'  => $request->p_transfer_mode ?? null,
+                    'credited_account' => $request->processing_credited_account ?? null,
+                    'created_at'     => now(),
+                    'updated_at'     => now(),
+                ]);
+
+                Log::info('Processing Fee Saved');
+            }
+
+            // 🟡 STAMP DUTY
+            if ($request->collect_stamp_duty) {
+
+                Log::info('Stamp Duty Selected');
+
+                DB::table('daily_weekly_disburments_fees')->insert([
+                    'loan_id'        => $disbursement->id,
+                    'fee_type'       => 'stamp_duty',
+                    'payment_mode'   => $request->stamp_payment_mode,
+                    'bank_id'        => $request->stamp_bank_id ?? null,
+                    'cheque_no'      => $request->stamp_cheque_no ?? null,
+                    'cheque_date'    => $request->stamp_cheque_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->stamp_cheque_date)->format('Y-m-d') : null,
+                    'transfer_date'  => $request->stamp_transfer_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->stamp_transfer_date)->format('Y-m-d') : null,
+                    'utr_no'         => $request->stamp_utr_no ?? null,
+                    'transfer_mode'  => $request->stamp_transfer_mode ?? null,
+                    'credited_account' => $request->stamp_credited_account ?? null,
+                    'created_at'     => now(),
+                    'updated_at'     => now(),
+                ]);
+
+                Log::info('Stamp Duty Saved');
+            }
+
+            // 🟢 INSURANCE FEE
+            if ($request->collect_insurance_fee) {
+
+                Log::info('Insurance Fee Selected');
+
+                DB::table('daily_weekly_disburments_fees')->insert([
+                    'loan_id'        => $disbursement->id,
+                    'fee_type'       => 'issuer_fee',
+                    'payment_mode'   => $request->insurance_payment_mode,
+                    'bank_id'        => $request->insurance_bank_id ?? null,
+                    'cheque_no'      => $request->insurance_cheque_no ?? null,
+                    'cheque_date'    => $request->insurance_cheque_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->insurance_cheque_date)->format('Y-m-d') : null,
+                    'transfer_date'  => $request->insurance_transfer_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->insurance_transfer_date)->format('Y-m-d') : null,
+                    'utr_no'         => $request->insurance_utr_no ?? null,
+                    'transfer_mode'  => $request->insurance_transfer_mode ?? null,
+                    'credited_account' => $request->insurance_credited_account ?? null,
+                    'created_at'     => now(),
+                    'updated_at'     => now(),
+                ]);
+
+                Log::info('Insurance Fee Saved');
+            }
             DB::commit();
 
             Log::info('daily_weekly Loan Disbursement Created Successfully', [
@@ -120,9 +203,7 @@ class DailyWeeklyDisburments extends Controller
             return redirect()
                 ->route('daily_weekly.account.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
-        }
-
-        catch (Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error('daily_weekly Loan Disbursement Store Error', [
                 'message' => $e->getMessage(),
@@ -138,23 +219,34 @@ class DailyWeeklyDisburments extends Controller
 
     public function show($id)
     {
-        $disbursement = DailyWeeklyApplication::with(['member', 'branch', 'scheme'])->findOrFail($id);
+        $disbursement = DailyWeeklyApplication::with(['member', 'branch', 'scheme'])
+            ->findOrFail($id);
+
         $banks = Bank::pluck('name', 'id');
-
-        $processingFee = optional($disbursement->scheme)->processing_fee ?? 0;
-        $gstPercent = 18;
-        $gstAmount = ($processingFee * $gstPercent) / 100;
-
-        $sgst = 0;
-        $cgst = 0;
-        $igst = 0;
-
-        $totalProcessingFee = $processingFee + $gstAmount;
 
         $loanAmount = $disbursement->loan_amount ?? 0;
 
-        // Final Amount
-        $finalAmount = $loanAmount - $totalProcessingFee;
+        // Processing
+        $processingFee = optional($disbursement->scheme)->processing_fee ?? 0;
+        $gstPercent = 18;
+        $gstAmount = ($processingFee * $gstPercent) / 100;
+        $processingTotal = $processingFee + $gstAmount;
+
+        // Stamp
+        $stampDutyFee = optional($disbursement->scheme)->stamp_duty_fee ?? 0;
+        $stampTotal = $stampDutyFee;
+
+        // Insurance
+        $insuranceFee = optional($disbursement->scheme)->insurance_fee ?? 0;
+        $insuranceTotal = $insuranceFee;
+
+        $advanceInterest = 0;
+
+        $finalAmount = $loanAmount
+            - $processingTotal
+            - $stampTotal
+            - $insuranceTotal
+            - $advanceInterest;
 
         return view(
             "daily_weekly.disbursements.disburse-loan",
@@ -163,15 +255,14 @@ class DailyWeeklyDisburments extends Controller
                 'banks',
                 'processingFee',
                 'gstPercent',
-                'gstAmount',
-                'sgst',
-                'cgst',
-                'igst',
-                'totalProcessingFee',
+                'processingTotal',
+                'stampDutyFee',
+                'stampTotal',
+                'insuranceFee',
+                'insuranceTotal',
+                'advanceInterest',
                 'finalAmount'
             )
         );
     }
-
-
 }

@@ -20,6 +20,7 @@ class BusinessLoanTransaction extends Model
         'paid_date',
         'fee_mode',
         'bank_id',
+        'flag',
         'cheque_no',
         'cheque_date',
         'utr_no',
