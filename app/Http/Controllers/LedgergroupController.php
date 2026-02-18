@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\LedgerGroup;
 use App\Models\Ledger;
+use App\Models\Branch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
@@ -518,6 +519,8 @@ class LedgergroupController extends Controller
                 'loan_id' => 'loan_id',
                 'amount_column' => 'loan_amount',
                 'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
             ],
             'MORTGAGE_LOAN' => [
                 'type' => 'loan',
@@ -528,6 +531,8 @@ class LedgergroupController extends Controller
                 'loan_id' => 'loan_id',
                 'amount_column' => 'loan_amount',
                 'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
             ],
             'PROPERTY_LOAN' => [
                 'type' => 'loan',
@@ -538,6 +543,8 @@ class LedgergroupController extends Controller
                 'loan_id' => 'loan_id',
                 'amount_column' => 'loan_amount',
                 'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
             ],
             'LOAN_AGAINST' => [
                 'type' => 'loan',
@@ -548,6 +555,8 @@ class LedgergroupController extends Controller
                 'loan_id' => 'loan_id',
                 'amount_column' => 'loan_amount',
                 'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
             ],
             'DEPOSIT_LOAN' => [
                 'type' => 'loan',
@@ -558,6 +567,8 @@ class LedgergroupController extends Controller
                 'loan_id' => 'loan_id',
                 'amount_column' => 'loan_amount',
                 'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
             ],
             'PERSONAL_LOAN' => [
                 'type' => 'loan',
@@ -568,6 +579,8 @@ class LedgergroupController extends Controller
                 'loan_id' => 'loan_id',
                 'amount_column' => 'loan_amount',
                 'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
             ],
             'BUSINESS_LOAN' => [
                 'type' => 'loan',
@@ -578,6 +591,8 @@ class LedgergroupController extends Controller
                 'loan_id' => 'loan_id',
                 'amount_column' => 'loan_amount',
                 'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
             ],
             'CC_OD_LOAN' => [
                 'type' => 'loan',
@@ -588,6 +603,8 @@ class LedgergroupController extends Controller
                 'loan_id' => 'loan_id',
                 'amount_column' => 'loan_amount',
                 'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
             ],
             'CCOD_LOAN' => [
                 'type' => 'loan',
@@ -598,6 +615,8 @@ class LedgergroupController extends Controller
                 'loan_id' => 'loan_id',
                 'amount_column' => 'loan_amount',
                 'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
             ],
             'DAILY_WEEKLY_LOAN' => [
                 'type' => 'loan',
@@ -608,6 +627,8 @@ class LedgergroupController extends Controller
                 'loan_id' => 'loan_id',
                 'amount_column' => 'loan_amount',
                 'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
             ],
             'DAILYWEEKLY_LOAN' => [
                 'type' => 'loan',
@@ -618,6 +639,8 @@ class LedgergroupController extends Controller
                 'loan_id' => 'loan_id',
                 'amount_column' => 'loan_amount',
                 'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
             ],
             'VEHICAL_LOAN' => [
                 'type' => 'loan',
@@ -628,6 +651,8 @@ class LedgergroupController extends Controller
                 'loan_id' => 'loan_id',
                 'amount_column' => 'loan_amount',
                 'collection_column' => 'amount_collected',
+                'status_column' => 'status',
+                'status_value'  => 2,
             ],
 
             'GOLD_LOAN_INTEREST' => [
@@ -1079,8 +1104,9 @@ class LedgergroupController extends Controller
 ////////////////////////////////    Only Profit & Loss Tab      ////////////////////////////////////////////
      
 
-    public function profit_loss()
+    public function profit_loss(Request $request)
     {
+        $branchId = $request->branch_id;
         $today = Carbon::today();
         $previous = Carbon::today()->subYear();
 
@@ -1092,7 +1118,9 @@ class LedgergroupController extends Controller
         $ledgers = Ledger::with('group')->get();
 
         foreach ($ledgers as $ledger) {
-            [$acc, $bal] = $this->ledgerService->calculateLedgerBalance($ledger->code);
+            [$acc, $bal] = $this->ledgerService
+                ->calculateLedgerBalance($ledger->code, $branchId);
+
             $ledger->balance = $bal ?: $ledger->opening_balance;
         }
 
@@ -1110,10 +1138,14 @@ class LedgergroupController extends Controller
         $totalExpenseCurrent = 0;
         $totalExpensePrevious = 0;
 
-        foreach ($ledgers as $ledger) {
+        foreach ($ledgers as $ledger) 
+        {
 
-            [$a1, $current]  = $this->ledgerService->calculateLedgerBalance($ledger->code, $today);
-            [$a2, $previousBal] = $this->ledgerService->calculateLedgerBalance($ledger->code, $previous);
+            // [$a1, $current]  = $this->ledgerService->calculateLedgerBalance($ledger->code, $today);
+            // [$a2, $previousBal] = $this->ledgerService->calculateLedgerBalance($ledger->code, $previous);
+
+            [$a1, $current] = $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId);
+            $previousBal = 0; // agar previous year logic nahi hai
 
             if ($ledger->type == 'Revenue') {
 
@@ -1143,6 +1175,9 @@ class LedgergroupController extends Controller
         $netCurrent  = $totalRevenueCurrent - $totalExpenseCurrent;
         $netPrevious = $totalRevenuePrevious - $totalExpensePrevious;
 
+        $branches = Branch::all();
+
+
         return view('menu-accounts.profit-loss.profit_loss', compact(
             'ledgers',
             'revenues',
@@ -1154,13 +1189,18 @@ class LedgergroupController extends Controller
             'totalExpenseCurrent',
             'totalExpensePrevious',
             'netCurrent',
-            'netPrevious'
+            'netPrevious',
+            'branches', 
+            'branchId' 
         ));
     }
     
-    public function balance_sheet()
+    public function balance_sheet(Request $request)
     {
         $today = Carbon::today();
+        $branchId = $request->branch_id;
+
+        $branches = Branch::all(); // dropdown ke liye
 
         $ledgers = Ledger::with('group')->get();
 
@@ -1174,8 +1214,9 @@ class LedgergroupController extends Controller
 
         foreach ($ledgers as $ledger) {
 
+            // ✅ Correct branch filter applied
             [$acc, $balance] =
-                $this->ledgerService->calculateLedgerBalance($ledger->code, $today);
+                $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId);
 
             $balance = $balance ?: 0;
 
@@ -1212,12 +1253,12 @@ class LedgergroupController extends Controller
 
         /*
         |------------------------------------------------------
-        | Add Current Year Profit to Equity
+        | Add Current Year Profit to Equity (Branch wise)
         |------------------------------------------------------
         */
 
         [$profitAcc, $netProfit] =
-            $this->ledgerService->calculateNetProfit($today);
+            $this->ledgerService->calculateNetProfit($branchId);
 
         $totalEquity += $netProfit;
 
@@ -1232,7 +1273,9 @@ class LedgergroupController extends Controller
             'totalEquity',
             'netProfit',
             'difference',
-            'today'
+            'today',
+            'branches',
+            'branchId'
         ));
     }
 
@@ -1270,7 +1313,7 @@ class LedgergroupController extends Controller
             'totalDebit','totalCredit','branches','branchId'
         ));
     }
-    
+
 
     // old opening and closing rule function with show book condtion
     // public function dayBook(Request $request)

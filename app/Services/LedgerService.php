@@ -12,7 +12,7 @@ class LedgerService
 {
 
 
-    public function calculateLedgerBalance($ledgerCode, $branchId)
+    public function calculateLedgerBalance($ledgerCode, $branchId = null)
     {
         
         $ledgerCode = strtoupper($ledgerCode);
@@ -166,21 +166,21 @@ class LedgerService
         */
 
         $totalCredit += \App\Models\LoanApplication::where('fee_mode', 'cash')
-                            ->where('status', 1)
+                            ->where('status', 2)
                             ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\BusinessLoanApplication::where('fee_mode', 'cash')
-                            ->where('status', 1)
+                            ->where('status', 2)
                             ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\CcOdLoanApplication::where('fee_mode', 'cash')
-                            ->where('status', 1)
+                            ->where('status', 2)
                             ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
@@ -188,7 +188,7 @@ class LedgerService
 
         // LOAN AGAINST
         $totalCredit += \App\Models\LoanAgainstApplication::where('fee_mode', 'cash')
-                    ->where('status', 1)
+                    ->where('status', 2)
                     ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
@@ -196,7 +196,7 @@ class LedgerService
 
         // MORTGAGE
         $totalCredit += \App\Models\MortgageLoanApplication::where('fee_mode', 'cash')
-                    ->where('status', 1)
+                    ->where('status', 2)
                     ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
@@ -204,7 +204,7 @@ class LedgerService
 
         // PERSONAL
         $totalCredit += \App\Models\PersonalLoanApplication::where('fee_mode', 'cash')
-                    ->where('status', 1)
+                    ->where('status', 2)
                     ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
@@ -212,7 +212,7 @@ class LedgerService
 
         // VEHICLE
         $totalCredit += \App\Models\VehicalApplication::where('fee_mode', 'cash')
-                        ->where('status', 1)
+                        ->where('status', 2)
                         ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
@@ -278,49 +278,49 @@ class LedgerService
         */
 
         $totalCredit += \App\Models\LoanApplication::where('fee_mode', 'online')
-                            ->where('status', 1)
+                            ->where('status', 2)
                             ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\BusinessLoanApplication::where('fee_mode', 'online')
-                            ->where('status', 1)
+                            ->where('status', 2)
                             ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\CcOdLoanApplication::where('fee_mode', 'online')
-                            ->where('status', 1)
+                            ->where('status', 2)
                             ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\LoanAgainstApplication::where('fee_mode', 'online')
-                            ->where('status', 1)
+                            ->where('status', 2)
                             ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\MortgageLoanApplication::where('fee_mode', 'online')
-                            ->where('status', 1)
+                            ->where('status', 2)
                             ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\PersonalLoanApplication::where('fee_mode', 'online')
-                            ->where('status', 1)
+                            ->where('status', 2)
                             ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
                             ->sum('approved_loan_amount');
 
         $totalCredit += \App\Models\VehicalApplication::where('fee_mode', 'online')
-                            ->where('status', 1)
+                            ->where('status', 2)
                             ->when($branchId, function($q) use ($branchId){
                                 $q->where('branch_id', $branchId);
                             })
@@ -1472,7 +1472,7 @@ class LedgerService
         return [$loans->count(), $closing];
     }
 
-    public function calculateNetProfit($tillDate = null)
+    public function calculateNetProfit($tillDate = null, $branchId = null)
     {
         $ledgers = Ledger::all();
 
