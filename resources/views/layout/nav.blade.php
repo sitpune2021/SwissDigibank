@@ -61,9 +61,8 @@
                     class="hidden absolute left-0  bg-white border  border-gray-200 rounded-lg shadow-lg z-50 w-64"
                     style="margin-left: 5px; margin-top: 55px !important;">
                     <ul>
-                        <a href="">
+                        <a href="{{ route('accounting.tree') }}">
                             <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
-
                                 <i class="las la-tree"></i>
                                 Tree
                             </li>

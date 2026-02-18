@@ -2570,6 +2570,10 @@ Route::get('/trial-balance',
 Route::get('/day-book', [LedgergroupController::class, 'dayBook'])
     ->name('day.book');
 
+Route::get('/accounting-tree', [LedgergroupController::class, 'accountingTree'])
+    ->name('accounting.tree');
+
+
 
 ////////////////////////////////////    Account Section tab End     /////////////////////////////////////////////
 

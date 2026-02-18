@@ -1586,5 +1586,47 @@ class LedgergroupController extends Controller
         ));
     }
 
+    public function accountingTree(Request $request)
+{
+    $branchId = $request->branch_id;
+
+    $branches = Branch::all();
+
+    $ledgers = Ledger::with('group')->get();
+
+    $tree = [
+        'REVENUE'   => [],
+        'ASSET'     => [],
+        'LIABILITY' => [],
+        'EQUITY'    => [],
+        'EXPENSE'   => [],
+    ];
+
+    foreach ($ledgers as $ledger) {
+
+        [$acc, $balance] =
+            $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId);
+
+        $balance = $balance ?: 0;
+
+        $type = strtoupper($ledger->type);
+
+        if (isset($tree[$type])) {
+
+            $tree[$type][] = [
+                'name'   => $ledger->display_name,
+                'system' => $ledger->name,
+                'amount' => $balance
+            ];
+        }
+    }
+
+    return view('menu-accounts.accounting-tree.index', compact(
+        'tree',
+        'branches',
+        'branchId'
+    ));
+}
+
 
 }
