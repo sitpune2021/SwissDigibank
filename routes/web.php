@@ -467,6 +467,7 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('/fd-account/{id}/deduct-reverse-tds', [FdController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('fd.creditdebit.store');
 
+    Route::post('/fetch-fd-slab', [FdController::class, 'fetchSlab'])->name('fd.fetch.slab');
 
     //////
 

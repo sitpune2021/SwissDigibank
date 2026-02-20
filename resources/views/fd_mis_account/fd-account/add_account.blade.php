@@ -160,19 +160,19 @@
                     @enderror
                 </div>
 
-                <div class="col-span-2 md:col-span-1">
+                <!-- <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Tenure Period
                         <span class="text-red-500">*</span>
                     </label>
                     <div class="md:w-2/3 flex flex-row gap-2  my-2  space-y-2 md:flex-row md:space-y-0 md:space-x-2">
-                        <input type="number" name="tenure_year" placeholder="Year"
+                        <input type="number" id="tenure_year" name="tenure_year" placeholder="Year"
                             class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
 
-                        <input type="number" name="tenure_month" placeholder="Month"
+                        <input type="number" id="tenure_month" name="tenure_month" placeholder="Month"
                             class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
 
-                        <input type="number" name="tenure_day" placeholder="Days"
+                        <input type="number" id="tenure_day" name="tenure_day" placeholder="Days"
                             class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
                     </div>
                     @error('tenure_year')
@@ -184,7 +184,7 @@
                     @error('tenure_day')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
-                </div>
+                </div> -->
 
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
@@ -195,7 +195,10 @@
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
                         <option value="">Select Scheme</option>
                         @foreach ($schemes as $scheme)
-                        <option value="{{ $scheme->id }}">{{ $scheme->scheme_name }}</option>
+                        <option value="{{ $scheme->id }}"
+                            data-min="{{ $scheme->min_amount }}">
+                            {{ $scheme->scheme_name }}
+                        </option>
                         @endforeach
                     </select>
                     @error('scheme_id')
@@ -206,16 +209,18 @@
                 <div class="col-span-2 md:col-span-1">
 
                     <x-amount-input name="fd_amount" id="fd_amount" label="FD AMOUNT" />
-                    @error('fd_amount')
+                    <p id="minAmountText" class="text-red-500 hidden">
+                        Minimum amount for FD is : ₹ <span id="minAmountValue"></span>
+                    </p> @error('fd_amount')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <div class="col-span-2 md:col-span-1">
+                <!-- <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Interest Payout Type
                     </label>
-
+                    
                     <select name="payout" id="payout"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3">
                         <option value="Cumulative Yearly">Cumulative Yearly</option>
@@ -226,8 +231,15 @@
                         <option value="Quarterly">Quarterly</option>
                         <option value="Half Yearly">Half Yearly</option>
                         <option value="Yearly">Yearly</option>
-                    </select>
-                </div>
+                    </select> 
+
+                    <input type="text"
+                        id="payout_display"
+                        class="w-full text-sm bg-gray-100 border rounded-10 px-3 py-3"
+                        readonly>
+
+                    <input type="hidden" name="payout" id="payout">
+                </div> -->
 
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
@@ -553,7 +565,76 @@
 </div>
 </div>
 
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+ Auto Fetch Slab 
+<script>
+$(document).ready(function(){
+
+    function fetchSlab() {
+
+        let schemeId = $("#scheme_id").val();
+        let years    = parseInt($("#tenure_year").val()) || 0;
+        let months   = parseInt($("#tenure_month").val()) || 0;
+        let days     = parseInt($("#tenure_day").val()) || 0;
+
+        let totalDays = (years * 365) + (months * 30) + days;
+
+        if (!schemeId || totalDays <= 0) return;
+
+        $.ajax({
+            url: "{{ route('fd.fetch.slab') }}",
+            type: "POST",
+            data: {
+                scheme_id: schemeId,
+                total_days: totalDays,
+                _token: "{{ csrf_token() }}"
+            },
+            success: function(res) {
+                if (res.success) {
+                    $("#payout_display").val(res.payout_type);
+                    $("#payout").val(res.payout_type);
+                } else {
+                    $("#payout_display").val("No Slab Found");
+                    $("#payout").val("");
+                }
+            },
+            error: function(xhr){
+                console.log(xhr.responseText);
+            }
+        });
+    }
+
+    $("#scheme_id, #tenure_year, #tenure_month, #tenure_day")
+        .on("change keyup", fetchSlab);
+
+});
+</script> -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const schemeSelect = document.getElementById("scheme_id");
+        const minText = document.getElementById("minAmountText");
+        const minValue = document.getElementById("minAmountValue");
+
+        function updateMinAmount() {
+            let selected = schemeSelect.options[schemeSelect.selectedIndex];
+
+            if (selected.value !== "") {
+                let minAmount = selected.getAttribute("data-min");
+                minValue.textContent = parseFloat(minAmount).toLocaleString('en-IN');
+                minText.classList.remove("hidden");
+            } else {
+                minText.classList.add("hidden");
+            }
+        }
+
+        schemeSelect.addEventListener("change", updateMinAmount);
+
+        // Run once on page load (for edit / old value)
+        updateMinAmount();
+    });
+</script>
 <!--nomine -->
 <script>
     //nomine
