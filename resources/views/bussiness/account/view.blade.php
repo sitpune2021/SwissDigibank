@@ -132,6 +132,18 @@
     @endif
 
     <div class="main-inner">
+        @if ($hasPendingApproval)
+            <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
+                <h4 style="margin:0;">PENDING APPROVAL REQUEST</h4>
+                <p style="margin:5px 0;">
+                    This loan has pending transaction(s) awaiting approval.
+                    <a href="{{ route('pending-transaction.index') }}"
+                        style="background:#e74c3c; color:white; padding:6px 12px; text-decoration:none; border-radius:4px;">
+                        CLICK HERE
+                    </a>
+                </p>
+            </div>
+        @endif
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-lg uppercase font-semibold">BUSINESS LOAN - {{ $goldLoan->id }} </h1>

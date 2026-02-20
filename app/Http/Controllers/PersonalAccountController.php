@@ -26,8 +26,7 @@ class PersonalAccountController extends Controller
             ->orderBy('id', 'desc')
             ->paginate(10);
 
-        foreach ($goldLoan as $loan) 
-        {
+        foreach ($goldLoan as $loan) {
 
             // Loan total amount
             $loanAmount = $loan->loan_amount;
@@ -70,27 +69,27 @@ class PersonalAccountController extends Controller
     {
 
         $savedStatuses = DB::table('personal_loan_emi_status')
-        ->where('loan_id', $id)
-        ->pluck('status', 'emi_no')
-        ->toArray();
+            ->where('loan_id', $id)
+            ->pluck('status', 'emi_no')
+            ->toArray();
 
         $savedPaidDates = DB::table('personal_loan_emi_status')
-        ->where('loan_id', $id)
-        ->pluck('paid_date', 'emi_no')
-        ->toArray();
+            ->where('loan_id', $id)
+            ->pluck('paid_date', 'emi_no')
+            ->toArray();
 
         // Total Deposit
         $totalDeposit = DB::table('personal_loan_transactions')
             ->where('loan_id', $id)
             ->sum('amount_collected');
-            
-            // NEW: Total Foreclosure Amount
-            $foreclosureDeposit = DB::table('personal_loan_fore_closures')
-                ->where('loan_id', $id)
-                ->sum('net_amount_k');
 
-            // Update Total Deposit (Already Transactions + Other Charges calculated)
-            $totalDeposit = $totalDeposit + $foreclosureDeposit;
+        // NEW: Total Foreclosure Amount
+        $foreclosureDeposit = DB::table('personal_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->sum('net_amount_k');
+
+        // Update Total Deposit (Already Transactions + Other Charges calculated)
+        $totalDeposit = $totalDeposit + $foreclosureDeposit;
 
 
         // Total from Other Charges (only paid)
@@ -108,10 +107,10 @@ class PersonalAccountController extends Controller
             ->orderByDesc('id')
             ->value('total_payable') ?? 0;
 
-        
+
         $goldLoan = PersonalLoanApplication::with(['member.branch', 'branch', 'scheme', 'coApplicant1', 'guarantor1', 'PersoalLoanTransaction'])->find($id);
 
-        
+
         if (!$goldLoan) {
             return redirect()->back()->with('error', 'Loan not found.');
         }
@@ -129,8 +128,7 @@ class PersonalAccountController extends Controller
 
         $monthlyRate = $interestRate / 12 / 100;
 
-        switch ($interestType) 
-        {
+        switch ($interestType) {
 
             case 'reducing_emi':
 
@@ -277,19 +275,17 @@ class PersonalAccountController extends Controller
                 break;
         }
 
-       
+
         // Apply payments & auto status logic
         // ⭐ Apply payments on EMI schedule (front-end calculation only)
         $totalPaid = PersoalLoanTransaction::where('loan_id', $id)->sum('amount_collected');
 
-        foreach ($emiSchedule as &$emi) 
-        {
+        foreach ($emiSchedule as &$emi) {
 
             $emiAmount = floatval(str_replace(',', '', $emi['emi_amount']));
 
             // Already paid nothing?
-            if ($totalPaid <= 0) 
-            {
+            if ($totalPaid <= 0) {
                 $emi['remaining_amount'] = number_format($emiAmount, 2);
 
                 // ⭐ ALWAYS load saved statuses from DB
@@ -316,7 +312,6 @@ class PersonalAccountController extends Controller
                 $emi['status'] = "PARTIAL";
                 $totalPaid = 0;
             }
-
         }
 
         $eirSchedule = [];
@@ -329,7 +324,7 @@ class PersonalAccountController extends Controller
 
             // effective EMI formula
             $eirEmi = $principal * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) /
-                    (pow(1 + $monthlyRate, $emiCount) - 1);
+                (pow(1 + $monthlyRate, $emiCount) - 1);
 
             for ($i = 0; $i < $emiCount; $i++) {
 
@@ -354,181 +349,192 @@ class PersonalAccountController extends Controller
         }
 
         // Close date code
-            // Fetch Principal Loan Amount
-            $loanAmount = $principal;
+        // Fetch Principal Loan Amount
+        $loanAmount = $principal;
 
-            // Step 1: Collect all deposits with their date
-            $depositTimeline = [];
+        // Step 1: Collect all deposits with their date
+        $depositTimeline = [];
 
-            // EMI Transactions
-            $transactions = DB::table('personal_loan_transactions')
-                ->where('loan_id', $id)
-                ->select('amount_collected as amount', 'created_at')
-                ->get();
+        // EMI Transactions
+        $transactions = DB::table('personal_loan_transactions')
+            ->where('loan_id', $id)
+            ->select('amount_collected as amount', 'created_at')
+            ->get();
 
-            // Other Charges (Only Paid)
-            $otherCharges = DB::table('personal_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->select('amount', 'created_at')
-                ->get();
+        // Other Charges (Only Paid)
+        $otherCharges = DB::table('personal_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->select('amount', 'created_at')
+            ->get();
 
-            // Foreclosure Deposit
-            $foreclosurePayments = DB::table('personal_loan_fore_closures')
-                ->where('loan_id', $id)
-                ->select('net_amount_k as amount', 'created_at')
-                ->get();
+        // Foreclosure Deposit
+        $foreclosurePayments = DB::table('personal_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->select('net_amount_k as amount', 'created_at')
+            ->get();
 
-            // Merge All
-            foreach ($transactions as $t) {
-                $depositTimeline[] = ['amount' => $t->amount, 'date' => $t->created_at];
+        // Merge All
+        foreach ($transactions as $t) {
+            $depositTimeline[] = ['amount' => $t->amount, 'date' => $t->created_at];
+        }
+        foreach ($otherCharges as $oc) {
+            $depositTimeline[] = ['amount' => $oc->amount, 'date' => $oc->created_at];
+        }
+        foreach ($foreclosurePayments as $f) {
+            $depositTimeline[] = ['amount' => $f->amount, 'date' => $f->created_at];
+        }
+
+        // Sort by Date
+        usort($depositTimeline, fn($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
+
+
+        // STEP 2: Find close date (when cumulative >= loan amount)
+        $cumulative = 0;
+        $closeDate = null;
+
+        foreach ($depositTimeline as $entry) {
+            $cumulative += $entry['amount'];
+
+            if ($cumulative >= $loanAmount) {
+                $closeDate = Carbon::parse($entry['date'])->format('d-m-Y');
+                break;
             }
-            foreach ($otherCharges as $oc) {
-                $depositTimeline[] = ['amount' => $oc->amount, 'date' => $oc->created_at];
-            }
-            foreach ($foreclosurePayments as $f) {
-                $depositTimeline[] = ['amount' => $f->amount, 'date' => $f->created_at];
-            }
-
-            // Sort by Date
-            usort($depositTimeline, fn($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
-
-
-            // STEP 2: Find close date (when cumulative >= loan amount)
-            $cumulative = 0;
-            $closeDate = null;
-
-            foreach ($depositTimeline as $entry) {
-                $cumulative += $entry['amount'];
-
-                if ($cumulative >= $loanAmount) {
-                    $closeDate = Carbon::parse($entry['date'])->format('d-m-Y');
-                    break;
-                }
-            }
+        }
         // end close date code
 
         // current statment chart code
 
-            // ⭐ CURRENT STATEMENT TABLE DATA ⭐
-            $currentStatement = collect([]);
+        // ⭐ CURRENT STATEMENT TABLE DATA ⭐
+        $currentStatement = collect([]);
 
-            // 1️⃣ Transactions (EMI)
-            $transactions = DB::table('personal_loan_transactions')
-                ->where('loan_id', $id)
-                ->select(
-                    'created_at as date',
-                    DB::raw("'EMI Payment' as type"),
-                    DB::raw("'' AS payment_mode"),              // ← no payment_mode column — return empty
-                    'amount_collected as amount',
-                    DB::raw("'PAID' as status")
-                )
-                ->get();
+        // 1️⃣ Transactions (EMI)
+        $transactions = DB::table('personal_loan_transactions')
+            ->where('loan_id', $id)
+            ->select(
+                'created_at as date',
+                DB::raw("'EMI Payment' as type"),
+                DB::raw("'' AS payment_mode"),              // ← no payment_mode column — return empty
+                'amount_collected as amount',
+                DB::raw("'PAID' as status")
+            )
+            ->get();
 
-            // 2️⃣ Other Charges
-            $otherCharges = DB::table('personal_loan_other_charges')
-                ->where('loan_id', $id)
-                ->select(
-                    'created_at as date',
-                    DB::raw("'Other Charge' as type"),
-                    DB::raw("'' AS payment_mode"),              // ← empty
-                    'amount',
-                    'status'
-                )
-                ->get();
+        // 2️⃣ Other Charges
+        $otherCharges = DB::table('personal_loan_other_charges')
+            ->where('loan_id', $id)
+            ->select(
+                'created_at as date',
+                DB::raw("'Other Charge' as type"),
+                DB::raw("'' AS payment_mode"),              // ← empty
+                'amount',
+                'status'
+            )
+            ->get();
 
-            // 3️⃣ Foreclosure Payments
-            $closures = DB::table('personal_loan_fore_closures')
-                ->where('loan_id', $id)
-                ->select(
-                    'created_at as date',
-                    DB::raw("'Foreclosure Payment' as type"),
-                    DB::raw("'' AS payment_mode"),              // ← empty
-                    'net_amount_k as amount',
-                    DB::raw("'PAID' as status")
-                )
-                ->get();
+        // 3️⃣ Foreclosure Payments
+        $closures = DB::table('personal_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->select(
+                'created_at as date',
+                DB::raw("'Foreclosure Payment' as type"),
+                DB::raw("'' AS payment_mode"),              // ← empty
+                'net_amount_k as amount',
+                DB::raw("'PAID' as status")
+            )
+            ->get();
 
-            $currentStatement = $currentStatement
-                ->merge($transactions)
-                ->merge($otherCharges)
-                ->merge($closures);
+        $currentStatement = $currentStatement
+            ->merge($transactions)
+            ->merge($otherCharges)
+            ->merge($closures);
 
-            // Sort latest first
-            $currentStatement = $currentStatement->sortByDesc('date')->values();
+        // Sort latest first
+        $currentStatement = $currentStatement->sortByDesc('date')->values();
 
         // end current statement code
 
         // ornaments show on chart
 
-            // ⭐ Fetch Ornaments Based on Loan ID
-            $ornaments = DB::table('mortgage_properties')
-                ->where('loan_application_id', $id)
-                ->select(
-                    'property_type',
-                    'expected_value',
-                    'registered'   
-                )
-                ->get();
+        // ⭐ Fetch Ornaments Based on Loan ID
+        $ornaments = DB::table('mortgage_properties')
+            ->where('loan_application_id', $id)
+            ->select(
+                'property_type',
+                'expected_value',
+                'registered'
+            )
+            ->get();
 
         // end ornaments show on chart
 
         // DYNAMIC SUMMARY CHART VALUES 
 
-            // PAID = Total deposit from calculation above
-            $paidNetPrincipal = min($totalDeposit, $principal); 
+        // PAID = Total deposit from calculation above
+        $paidNetPrincipal = min($totalDeposit, $principal);
 
-            // SINCE interest_paid column exists nahi hai → default zero rakho
-            $paidInterest = 0;
+        // SINCE interest_paid column exists nahi hai → default zero rakho
+        $paidInterest = 0;
 
-            // PRINCIPAL DUE
-            $emiPrincipalDue = max($principal - $paidNetPrincipal, 0);
+        // PRINCIPAL DUE
+        $emiPrincipalDue = max($principal - $paidNetPrincipal, 0);
 
-            // TOTAL INTEREST PLANNED (from schedule)
-            $totalInterestPlanned = array_sum(array_map(fn($emi) => floatval(str_replace(',', '', $emi['interest'])), $emiSchedule));
+        // TOTAL INTEREST PLANNED (from schedule)
+        $totalInterestPlanned = array_sum(array_map(fn($emi) => floatval(str_replace(',', '', $emi['interest'])), $emiSchedule));
 
-            // INTEREST DUE = full interest (because no interest deposited yet)
-            $interestDue = $totalInterestPlanned;
+        // INTEREST DUE = full interest (because no interest deposited yet)
+        $interestDue = $totalInterestPlanned;
 
-            // OTHER CHARGES PAID
-            $otherChargesPaid = $otherChargesDeposit;
+        // OTHER CHARGES PAID
+        $otherChargesPaid = $otherChargesDeposit;
 
-            // OTHER CHARGES DUE
-            $otherChargesTotal = DB::table('personal_loan_other_charges')
-                ->where('loan_id', $id)
-                ->sum('amount');
-            $otherChargesDue = max($otherChargesTotal - $otherChargesPaid, 0);
+        // OTHER CHARGES DUE
+        $otherChargesTotal = DB::table('personal_loan_other_charges')
+            ->where('loan_id', $id)
+            ->sum('amount');
+        $otherChargesDue = max($otherChargesTotal - $otherChargesPaid, 0);
 
 
-            // BUILD DATA FOR TABLE (PAID ROW)
-            $paidSummary = [
-                'net_p' => number_format($paidNetPrincipal, 2),
-                'emi_p' => number_format($paidNetPrincipal, 2),
-                'emi_int' => "0.00", // because interest_paid not stored yet
-                'emi_charges' => "0.00",
-                'overdue_int' => "0.00",
-                'other_charges' => number_format($otherChargesPaid, 2),
-                'advance' => "0.00",
-                'discount' => "0.00",
-            ];
+        // BUILD DATA FOR TABLE (PAID ROW)
+        $paidSummary = [
+            'net_p' => number_format($paidNetPrincipal, 2),
+            'emi_p' => number_format($paidNetPrincipal, 2),
+            'emi_int' => "0.00", // because interest_paid not stored yet
+            'emi_charges' => "0.00",
+            'overdue_int' => "0.00",
+            'other_charges' => number_format($otherChargesPaid, 2),
+            'advance' => "0.00",
+            'discount' => "0.00",
+        ];
 
-            // BUILD DATA FOR TABLE (DUE ROW)
-            $dueSummary = [
-                'net_p' => number_format($emiPrincipalDue, 2),
-                'emi_p' => number_format($emiPrincipalDue, 2),
-                'emi_int' => number_format($interestDue, 2),
-                'emi_charges' => "0.00",
-                'overdue_int' => "0.00",
-                'other_charges' => number_format($otherChargesDue, 2),
-                'advance' => "-",
-                'discount' => "-",
-            ];
-        
+        // BUILD DATA FOR TABLE (DUE ROW)
+        $dueSummary = [
+            'net_p' => number_format($emiPrincipalDue, 2),
+            'emi_p' => number_format($emiPrincipalDue, 2),
+            'emi_int' => number_format($interestDue, 2),
+            'emi_charges' => "0.00",
+            'overdue_int' => "0.00",
+            'other_charges' => number_format($otherChargesDue, 2),
+            'advance' => "-",
+            'discount' => "-",
+        ];
+
         // end DYNAMIC SUMMARY CHART VALUES 
 
         $currentDebt = max($goldLoan->loan_amount - $totalDeposit, 0);
 
+        $hasPendingApproval =
+            DB::table('personal_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'pending')
+            ->exists()
 
+            ||
+
+            DB::table('personal_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->where('status', 0)
+            ->exists();
         return view('personal.account.view', compact(
             'goldLoan',
             'principal',
@@ -538,11 +544,12 @@ class PersonalAccountController extends Controller
             'closeDate',
             'currentStatement',
             'ornaments',
-            'paidSummary', 'dueSummary',
-            'totalDeposit',   
-            'currentDebt'     
+            'paidSummary',
+            'dueSummary',
+            'totalDeposit',
+            'currentDebt',
+            'hasPendingApproval'
         ));
-        
     }
 
     // process button status store
@@ -761,7 +768,6 @@ class PersonalAccountController extends Controller
 
             return redirect()->route('personal.account.show', $loan->id)
                 ->with('success', 'EMI Payment recorded successfully!');
-
         } catch (\Exception $e) {
 
             Log::error("❌ EMI PAYMENT ERROR", [
@@ -851,10 +857,9 @@ class PersonalAccountController extends Controller
                 if ($row->type === 'transaction') {
                     $runningBalance -= $row->amount_collected;
                 }
-               if ($row->type === 'other_charge' || $row->type === 'foreclosure') {
+                if ($row->type === 'other_charge' || $row->type === 'foreclosure') {
                     $runningBalance -= $row->amount;
                 }
-
             }
 
             $row->balance = $runningBalance;
@@ -879,44 +884,43 @@ class PersonalAccountController extends Controller
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
         // Total Deposit
-            $totalDeposit = DB::table('personal_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
-            
-            // // Total from Other Charges (only paid)
-            $otherChargesDeposit = DB::table('personal_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        $totalDeposit = DB::table('personal_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // // FINAL DEPOSIT = Transactions + Other Charges
-            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+        // // Total from Other Charges (only paid)
+        $otherChargesDeposit = DB::table('personal_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // Latest total_payable (from last transaction)
-            $totalPayable = DB::table('personal_loan_transactions')
-                ->where('loan_id', $id)
-                ->orderByDesc('id')
-                ->value('total_payable') ?? $goldLoan->loan_amount;
+        // // FINAL DEPOSIT = Transactions + Other Charges
+        $totalDeposit = $totalDeposit + $otherChargesDeposit;
 
-            // 1. Total Transaction Deposit
-            $transactionDeposit = DB::table('personal_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
+        // Latest total_payable (from last transaction)
+        $totalPayable = DB::table('personal_loan_transactions')
+            ->where('loan_id', $id)
+            ->orderByDesc('id')
+            ->value('total_payable') ?? $goldLoan->loan_amount;
 
-            // 2. Total Paid Other Charges
-            $otherChargesDeposit = DB::table('personal_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        // 1. Total Transaction Deposit
+        $transactionDeposit = DB::table('personal_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // 3. FINAL Total Deposit
-            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+        // 2. Total Paid Other Charges
+        $otherChargesDeposit = DB::table('personal_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // 4. FINAL Correct Current Debt
-            $currentDebt = max($totalPayable - $totalDeposit, 0);
+        // 3. FINAL Total Deposit
+        $totalDeposit = $transactionDeposit + $otherChargesDeposit;
 
-        return view('personal.account.loan-extension', compact('goldLoan','currentDebt','banks'));
+        // 4. FINAL Correct Current Debt
+        $currentDebt = max($totalPayable - $totalDeposit, 0);
 
+        return view('personal.account.loan-extension', compact('goldLoan', 'currentDebt', 'banks'));
     }
 
     // Loan extenstion tab page data store
@@ -927,8 +931,7 @@ class PersonalAccountController extends Controller
             'input' => $request->all()
         ]);
 
-        try 
-        {
+        try {
 
             $validated = $request->validate([
                 'remaining_amount' => 'required|numeric',
@@ -958,10 +961,7 @@ class PersonalAccountController extends Controller
             ]);
 
             return redirect()->route('personal.account.show')->with('success', 'Loan Extension Successfully Added!');
-
-        } 
-        catch (\Throwable $e) 
-        {
+        } catch (\Throwable $e) {
 
             Log::error('Loan Extension Save Failed', [
                 'loan_id' => $id,
@@ -1201,43 +1201,43 @@ class PersonalAccountController extends Controller
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
         // Total Deposit
-            $totalDeposit = DB::table('personal_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
-            
-            // // Total from Other Charges (only paid)
-            $otherChargesDeposit = DB::table('personal_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        $totalDeposit = DB::table('personal_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // // FINAL DEPOSIT = Transactions + Other Charges
-            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+        // // Total from Other Charges (only paid)
+        $otherChargesDeposit = DB::table('personal_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // Latest total_payable (from last transaction)
-            $totalPayable = DB::table('personal_loan_transactions')
-                ->where('loan_id', $id)
-                ->orderByDesc('id')
-                ->value('total_payable') ?? $goldLoan->loan_amount;
+        // // FINAL DEPOSIT = Transactions + Other Charges
+        $totalDeposit = $totalDeposit + $otherChargesDeposit;
 
-            // 1. Total Transaction Deposit
-            $transactionDeposit = DB::table('personal_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
+        // Latest total_payable (from last transaction)
+        $totalPayable = DB::table('personal_loan_transactions')
+            ->where('loan_id', $id)
+            ->orderByDesc('id')
+            ->value('total_payable') ?? $goldLoan->loan_amount;
 
-            // 2. Total Paid Other Charges
-            $otherChargesDeposit = DB::table('personal_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        // 1. Total Transaction Deposit
+        $transactionDeposit = DB::table('personal_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // 3. FINAL Total Deposit
-            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+        // 2. Total Paid Other Charges
+        $otherChargesDeposit = DB::table('personal_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // 4. FINAL Correct Current Debt
-            $currentDebt = max($totalPayable - $totalDeposit, 0);
+        // 3. FINAL Total Deposit
+        $totalDeposit = $transactionDeposit + $otherChargesDeposit;
 
-        return view('personal.account.view-buttons.fore-close.fore-close', compact('goldLoan','currentDebt','banks'));
+        // 4. FINAL Correct Current Debt
+        $currentDebt = max($totalPayable - $totalDeposit, 0);
+
+        return view('personal.account.view-buttons.fore-close.fore-close', compact('goldLoan', 'currentDebt', 'banks'));
     }
 
     // foure closer store tab
@@ -1258,13 +1258,13 @@ class PersonalAccountController extends Controller
                 'notice_charges'     => 'required|numeric',
                 'service_charges'    => 'required|numeric',
                 'other_charges'      => 'required|numeric',
-                'foreclosure_charges'=> 'required|numeric',
+                'foreclosure_charges' => 'required|numeric',
                 'total_amount_h'     => 'required|numeric',
                 'rounding_off_i'     => 'required|numeric',
                 'closure_discount_j' => 'required|numeric',
                 'net_amount_k'       => 'required|numeric',
                 'transaction_date'   => 'required',
-                 // optional payment fields validation:
+                // optional payment fields validation:
                 'payment_mode'           => 'nullable|in:cash,cheque,online',
                 'bank_id'            => 'nullable|exists:banks,id',
                 'cheque_no'          => 'nullable|string|max:100',
@@ -1296,7 +1296,7 @@ class PersonalAccountController extends Controller
                 'transaction_date'      => Carbon::createFromFormat('d-m-Y', $request->transaction_date),
                 'remarks'               => $request->remarks,
 
-                 // NEW payment fields mapping from your form names
+                // NEW payment fields mapping from your form names
                 'payment_mode'          => $request->input('payment_mode') ?? null,   // cash/cheque/online
                 'bank_id'               => $request->input('bank_id') ?? null,
                 'cheque_no'             => $request->input('cheque_no') ?? null,
@@ -1319,7 +1319,6 @@ class PersonalAccountController extends Controller
             return redirect()
                 ->route('personal.account.show', $loanId)
                 ->with('success', 'Fore Closure Stored Successfully!');
-
         } catch (\Exception $e) {
 
             Log::error('ForeClosure Store Error', [
@@ -1348,43 +1347,43 @@ class PersonalAccountController extends Controller
 
 
         // Total Deposit
-            $totalDeposit = DB::table('personal_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
-            
-            // // Total from Other Charges (only paid)
-            $otherChargesDeposit = DB::table('personal_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        $totalDeposit = DB::table('personal_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // // FINAL DEPOSIT = Transactions + Other Charges
-            $totalDeposit = $totalDeposit + $otherChargesDeposit;
+        // // Total from Other Charges (only paid)
+        $otherChargesDeposit = DB::table('personal_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // Latest total_payable (from last transaction)
-            $totalPayable = DB::table('personal_loan_transactions')
-                ->where('loan_id', $id)
-                ->orderByDesc('id')
-                ->value('total_payable') ?? $goldLoan->loan_amount;
+        // // FINAL DEPOSIT = Transactions + Other Charges
+        $totalDeposit = $totalDeposit + $otherChargesDeposit;
 
-            // 1. Total Transaction Deposit
-            $transactionDeposit = DB::table('personal_loan_transactions')
-                ->where('loan_id', $id)
-                ->sum('amount_collected');
+        // Latest total_payable (from last transaction)
+        $totalPayable = DB::table('personal_loan_transactions')
+            ->where('loan_id', $id)
+            ->orderByDesc('id')
+            ->value('total_payable') ?? $goldLoan->loan_amount;
 
-            // 2. Total Paid Other Charges
-            $otherChargesDeposit = DB::table('personal_loan_other_charges')
-                ->where('loan_id', $id)
-                ->where('status', 'paid')
-                ->sum('amount');
+        // 1. Total Transaction Deposit
+        $transactionDeposit = DB::table('personal_loan_transactions')
+            ->where('loan_id', $id)
+            ->sum('amount_collected');
 
-            // 3. FINAL Total Deposit
-            $totalDeposit = $transactionDeposit + $otherChargesDeposit;
+        // 2. Total Paid Other Charges
+        $otherChargesDeposit = DB::table('personal_loan_other_charges')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount');
 
-            // 4. FINAL Correct Current Debt
-            $currentDebt = max($totalPayable - $totalDeposit, 0);
+        // 3. FINAL Total Deposit
+        $totalDeposit = $transactionDeposit + $otherChargesDeposit;
 
-        return view('personal.account.view-buttons.link-saving-acc.link-saving-acc', compact('goldLoan','currentDebt', 'banks', 'savingAccounts'));
+        // 4. FINAL Correct Current Debt
+        $currentDebt = max($totalPayable - $totalDeposit, 0);
+
+        return view('personal.account.view-buttons.link-saving-acc.link-saving-acc', compact('goldLoan', 'currentDebt', 'banks', 'savingAccounts'));
     }
 
     // update and store link saving account in account table and aplication table
@@ -1405,13 +1404,13 @@ class PersonalAccountController extends Controller
             ]);
 
         return redirect()->route('personal.account.show', $loanId)
-        ->with('success', 'Saving Account Linked Successfully!');
+            ->with('success', 'Saving Account Linked Successfully!');
     }
 
     // remove account tab
     public function removeAccount(Request $request, $id)
     {
-        
+
         // Basic validation: confirm flag (optional)
         if (!$request->filled('confirm') || $request->input('confirm') != 1) {
             return redirect()->back()->with('error', 'Confirmation missing.');
@@ -1443,7 +1442,6 @@ class PersonalAccountController extends Controller
             ]);
 
             return redirect()->back()->with('success', 'Account removed, related transactions & charges deleted and status set to 0.');
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -1454,14 +1452,14 @@ class PersonalAccountController extends Controller
             ]);
 
             return redirect()
-            ->route('personal.account.index')
-            ->with('error', 'Something went wrong while removing the account: '.$e->getMessage());
+                ->route('personal.account.index')
+                ->with('error', 'Something went wrong while removing the account: ' . $e->getMessage());
         }
     }
 
     // audit tab
     public function audit(Request $request)
-    { 
+    {
         return view('personal.account.view-buttons.audit-trail.audit-trail');
     }
 
@@ -1660,8 +1658,4 @@ class PersonalAccountController extends Controller
             return back()->with('error', 'Something went wrong while clearing the due.');
         }
     }
-
-
-
 }
-

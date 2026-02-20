@@ -120,13 +120,25 @@
     @endif
 
     <div class="main-inner">
+        @if ($hasPendingApproval)
+            <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
+                <h4 style="margin:0;">ALERT PENDING TRANSACTION!</h4>
+                <p style="margin:5px 0;">
+                    Some transactions are pending for approval. To approve
+                    <a href="{{ route('pending-transaction.index') }}"
+                        style="background:#2980b9; color:white; padding:6px 12px; text-decoration:none; border-radius:4px;">
+                        CLICK HERE
+                    </a>
+                </p>
+            </div>
+        @endif
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-lg uppercase font-semibold">Gold Loan - {{ $goldLoan->id }} </h1>
                 <!-- <p class="text-gray-500">
-                                                    <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
-                                                    <a href="#" class="text-gray-500 text-sm">00460</a>
-                                                </p> -->
+                                                        <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
+                                                        <a href="#" class="text-gray-500 text-sm">00460</a>
+                                                    </p> -->
             </div>
         </div>
 
@@ -315,7 +327,7 @@
                                     <a href="" class="text-primary  capitalize hover:underline">
                                         <span
                                             class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                            ACTIVE 
+                                            ACTIVE
                                         </span>
                                         (static)
                                     </a>
@@ -1172,7 +1184,7 @@
                                             <td class="p-2 border">
                                                 @if ($emi['status'] === 'PAID')
                                                     <a href="{{ route('loan.emi_receipt.view', [$goldLoan->id, $emi['emi_no']]) }}"
-                                                     class="btn-primary text-white px-3 py-1 rounded ">
+                                                        class="btn-primary text-white px-3 py-1 rounded ">
                                                         Print
                                                     </a>
                                                 @elseif ($showProcessButton)
