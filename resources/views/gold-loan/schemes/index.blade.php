@@ -32,8 +32,10 @@
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
                 <h1 class=" flex text-xl block font-semibold">GOLD LOAN SCHEMES</h1>
+                @if(hasPermission('gold-loan.scheme.create'))
                 <a href="{{route('gold-loan.schemes.create')}}" class=" block flex btn-primary uppercase ">Add
                 </a>
+                @endif
             </div>  
 
 
@@ -148,8 +150,12 @@
                                         <div class="relative">
                                             <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
                                             <ul class="horiz-option popover-content">
-                                                <li><a href="{{ route('gold-loan.schemes.view',$scheme->id) }}" class="single-option">View</a></li>
+                                                @if(hasPermission('gold-loan.scheme.show'))
+                                                <li><a href="{{ route('gold-loan.schemes.view',$scheme->id) }}" class="single-option btn-primary">View</a></li>
+                                                @endif
+                                                @if(hasPermission('gold-loan.scheme.edit'))
                                                 <li><a href="{{ route('gold-loan.schemes.edit',$scheme->id) }}" class="single-option">Edit</a></li>
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>

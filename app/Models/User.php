@@ -17,11 +17,6 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'fname',
@@ -41,25 +36,16 @@ class User extends Authenticatable
         'otp',
         'otp_expires_at'
     ];
+
     protected $casts = [
         'otp_expires_at' => 'datetime',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -90,23 +76,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(Address::class, 'member_id', 'id');
     }
-    public function role()
-    {
-        return $this->belongsTo(Role::class, 'role_id');
-    }
+    
     /* ================= Permission Logic ================= */
     public function isSuperAdmin(): bool
     {
         return (int) $this->role_id === 1;
     }
-    //  public function isSuperAdmin(): bool
-    // {
-    //     return optional($this->role)->name === 'Super Admin';
-    // }
-
 
     public function profilePhoto()
-{
-    return $this->hasOne(ProfilePhoto::class);
-}
+    {
+        return $this->hasOne(ProfilePhoto::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+
 }

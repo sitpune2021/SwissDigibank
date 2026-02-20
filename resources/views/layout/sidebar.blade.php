@@ -73,6 +73,24 @@ $logoPath = $sidebarLogo
                     <div class=""  style="padding: 0px 10px">
                     <ul class="menu-ul">
                         @foreach ($menuItems as $item)
+
+@php
+    // Skip main menu if no permission for any submenu
+    $hasSubPermission = false;
+
+    if($item->submenus->isNotEmpty()) {
+        foreach($item->submenus as $sub) {
+            if(hasPermission($sub->route)) {
+                $hasSubPermission = true;
+                break;
+            }
+        }
+    } else {
+        $hasSubPermission = hasPermission($item->route);
+    }
+
+    if(!$hasSubPermission) continue;
+@endphp
                         @php
 
                         // Skip "User" menu for Customer
@@ -128,8 +146,13 @@ $logoPath = $sidebarLogo
                                 </span>
                             </button>
 
+                            
+
                             <ul class="submenu {{ $submenuActive ? 'submenu-show' : 'submenu-hide' }}">
                                 @foreach ($item->submenus as $sub)
+                                @if(!hasPermission($sub->route))
+                                    @continue
+                                @endif
                                 <li>
                                     <a href="{{ route($sub->route) }}"
                                         class="submenu-link {{ request()->routeIs($sub->route) ? 'text-primary' : '' }}"

@@ -1,146 +1,129 @@
 <div class="tab-panel hidden">
-    <!----------------- Branches -------------------->
-    <div class="payload-section">
-        <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">Profile</div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="check_all_dashboard"
-                        class="check-all form-checkbox h-5 w-5 text-primary">
-                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
-                        Check
-                        All
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance_1" name="permissions[show_sms_balance_1]" value=""
-                        class="item-checkbox  form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance_1" class="text-base font-semibold cursor-pointer mb-0">Show Company
-                        Profile</label>
-                </div>
-            </div>
+    <!----------------- PROFILE -------------------->
+<div class="payload-section">
 
-
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance_1" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance_1" class="text-base font-semibold cursor-pointer mb-0">Upload Company
-                        Logo</label>
-                </div>
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance_3" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance_3" class="text-base font-semibold cursor-pointer mb-0">Edit Company
-                        Profile</label>
-                </div>
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance_4" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance_4" class="text-base font-semibold cursor-pointer mb-0">Upload Company
-                        Favicon</label>
-                </div>
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance_5" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance_5" class="text-base font-semibold cursor-pointer mb-0">Upload Company
-                        Login BG Image</label>
-                </div>
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Software Theme
-                        Settings</label>
-                </div>
-            </div>
-
-
-        </div>
+    <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
+        <div class="uppercase font-semibold text-lg">Profile</div>
     </div>
 
-    <br>
-    <!----------------- Branches -------------------->
-    <div class="payload-section">
-        <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">Branches</div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="check_all_dashboard"
-                        class="check-all form-checkbox h-5 w-5 text-primary">
-                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
-                        Check
-                        All
-                    </label>
-                </div>
-            </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+
+        <div>
+            <input type="checkbox"
+                   id="company_profile_view"
+                   name="permissions[]"
+                   value="company.profile.view"
+                   class="item-checkbox form-checkbox h-5 w-5 text-primary">
+            <label for="company_profile_view">Show Company Profile</label>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
 
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="check_all" class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
-                        Branch
-                        List
-                    </label>
-                </div>
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Add New
-                        Branch</label>
-                </div>
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_branch" name="permissions[]" value="show_branch"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Show Branch
-                        Info</label>
-                </div>
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Edit Branch
-                        Info</label>
-                </div>
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Branch Deposit
-                        Cash
-                        Lock</label>
-                </div>
-            </div>
-
+        <div>
+            <input type="checkbox"
+                   id="company_logo_upload"
+                   name="permissions[]"
+                   value="company.logo.upload"
+                   class="item-checkbox form-checkbox h-5 w-5 text-primary">
+            <label for="company_logo_upload">Upload Company Logo</label>
         </div>
+
+        <div>
+            <input type="checkbox"
+                   id="company_profile_edit"
+                   name="permissions[]"
+                   value="company.profile.edit"
+                   class="item-checkbox form-checkbox h-5 w-5 text-primary">
+            <label for="company_profile_edit">Edit Company Profile</label>
+        </div>
+
+        <div>
+            <input type="checkbox"
+                   id="company_favicon_upload"
+                   name="permissions[]"
+                   value="company.favicon.upload"
+                   class="item-checkbox form-checkbox h-5 w-5 text-primary">
+            <label for="company_favicon_upload">Upload Company Favicon</label>
+        </div>
+
+        <div>
+            <input type="checkbox"
+                   id="company_login_bg_upload"
+                   name="permissions[]"
+                   value="company.login_bg.upload"
+                   class="item-checkbox form-checkbox h-5 w-5 text-primary">
+            <label for="company_login_bg_upload">Upload Company Login BG Image</label>
+        </div>
+
+        <div>
+            <input type="checkbox"
+                   id="software_theme_settings"
+                   name="permissions[]"
+                   value="software.theme.settings"
+                   class="item-checkbox form-checkbox h-5 w-5 text-primary">
+            <label for="software_theme_settings">Software Theme Settings</label>
+        </div>
+
     </div>
+</div>
+
+
+<br>
+
+<!----------------- BRANCHES -------------------->
+<div class="payload-section">
+
+    <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
+        <div class="uppercase font-semibold text-lg">Branches</div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+
+        <div>
+            <input type="checkbox"
+                   id="branch_list"
+                   name="permissions[]"
+                   value="branch.list"
+                   class="item-checkbox form-checkbox h-5 w-5 text-primary">
+            <label for="branch_list">Branch List</label>
+        </div>
+
+        <div>
+            <input type="checkbox"
+                   id="branch_create"
+                   name="permissions[]"
+                   value="branch.create"
+                   class="item-checkbox form-checkbox h-5 w-5 text-primary">
+            <label for="branch_create">Add New Branch</label>
+        </div>
+
+        <div>
+            <input type="checkbox"
+                   id="branch_view"
+                   name="permissions[]"
+                   value="branch.view"
+                   class="item-checkbox form-checkbox h-5 w-5 text-primary">
+            <label for="branch_view">Show Branch Info</label>
+        </div>
+
+        <div>
+            <input type="checkbox"
+                   id="branch_edit"
+                   name="permissions[]"
+                   value="branch.edit"
+                   class="item-checkbox form-checkbox h-5 w-5 text-primary">
+            <label for="branch_edit">Edit Branch Info</label>
+        </div>
+
+        <div>
+            <input type="checkbox"
+                   id="branch_cash_lock"
+                   name="permissions[]"
+                   value="branch.cash.lock"
+                   class="item-checkbox form-checkbox h-5 w-5 text-primary">
+            <label for="branch_cash_lock">Branch Deposit Cash Lock</label>
+        </div>
+
+    </div>
+</div>
 
 
     <br>

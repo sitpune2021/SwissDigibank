@@ -17,7 +17,7 @@ class RoleController extends Controller
     {
 
         return view('roles.manage-permission');
-        
+
     }
 
     public function create()
@@ -118,11 +118,10 @@ class RoleController extends Controller
 
             $request->validate([
                 'role_id' => 'required|exists:roles,id',
-                'role_position' => 'required|string|nullable',
+                'role_position' => 'nullable|string',
                 'permission_type' => 'required|in:admin,agent,both',
                 'active' => 'required|in:Yes,No',
                 'permissions' => 'nullable|array',
-                'permissions.*' => 'string',
             ]);
 
             Log::info('Storing new role permission', [
@@ -135,24 +134,16 @@ class RoleController extends Controller
             ]);
 
             // Save to database
-            // $rolePermission = RolePermission::create([
-            //     'role_id' => $request->role_id,
-            //     'role_position' => $request->role_position,
-            //     'permission_type' => $request->permission_type,
-            //     'active' => $request->active,
-            //     'permissions' => json_encode([
-            //         'role_id' => $request->role_id,
-            //         'permissions' => $request->permissions
-            //     ]), // store as JSON
-            // ]);
+            $rolePermission = RolePermission::updateOrCreate(
+                ['role_id' => $request->role_id],
+                [
+                    'role_position'  => $request->role_position,
+                    'permission_type'=> $request->permission_type,
+                    'active'         => $request->active,
+                    'permissions'    => $request->permissions ?? [],
+                ]
+            );
 
-           $rolePermission = RolePermission::create([
-    'role_id' => $request->role_id,
-    'role_position' => $request->role_position,
-    'permission_type' => $request->permission_type,
-    'active' => $request->active,
-    'permissions' => json_encode($request->permissions ?? []),
-]);
             Log::info('Role permission saved successfully', [
                 'id' => $rolePermission->id,
                 'role_id' => $rolePermission->role_id,
