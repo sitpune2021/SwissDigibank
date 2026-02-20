@@ -41,6 +41,19 @@ class Member extends Model
     //     'general_enrollment_date' => 'date',
     // ];
 
+    public function getFullAddressAttribute()
+{
+    return collect([
+        optional($this->address)->member_address_line_1,
+        optional($this->address)->member_address_line_2,
+        optional($this->address)->member_address_area,
+        optional($this->address)->member_address_landmark,
+        optional($this->address)->member_address_city_district,
+        optional($this->address)->member_address_state,
+        optional($this->address)->member_address_pincode,
+        optional($this->address)->member_address_country,
+    ])->filter()->implode(', ');
+}
     public function address(): HasOne
     {
         return $this->hasOne(Address::class, 'member_id', 'id');

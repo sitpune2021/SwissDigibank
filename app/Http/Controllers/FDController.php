@@ -190,120 +190,118 @@ class FDController extends Controller
      * Update the specified resource in storage.
      */
 
-   public function update(Request $request, string $id)
-{
-    try {
-        Log::info('FD Scheme Update initiated.', [
-            'scheme_id' => $id,
-            'user_id' => Auth::id(),
-            'request_data' => $request->all()
-        ]);
+    public function update(Request $request, string $id)
+    {
+        try {
+            Log::info('FD Scheme Update initiated.', [
+                'scheme_id' => $id,
+                'user_id' => Auth::id(),
+                'request_data' => $request->all()
+            ]);
 
-        $validated = $request->validate([
-            'scheme_name'          => 'required|string|max:255',
-            'scheme_code'          => 'required|string|max:255',
-            'min_amount'           => 'required|numeric|min:0',
-            'lock_in_period'       => 'required|integer|min:0',
-            'interest_lock_in'     => 'required|integer|min:0',
-            'bonus_rate'           => 'nullable|numeric|min:0',
-            'bonus_type'           => 'nullable|in:percentage,fixed',
-            'cancellation_charge'  => 'nullable|numeric|min:0',
-            'cancellation_type'    => 'nullable|in:percent,fixed',
-            'penal_charge'         => 'nullable|numeric|min:0',
-            'effective_date'       => 'required|date',
-            'stationary_fee'       => 'nullable|numeric|min:0',
-            'is_active'            => 'nullable|integer|in:0,1',
+            $validated = $request->validate([
+                'scheme_name'          => 'required|string|max:255',
+                'scheme_code'          => 'required|string|max:255',
+                'min_amount'           => 'required|numeric|min:0',
+                'lock_in_period'       => 'required|integer|min:0',
+                'interest_lock_in'     => 'required|integer|min:0',
+                'bonus_rate'           => 'nullable|numeric|min:0',
+                'bonus_type'           => 'nullable|in:percentage,fixed',
+                'cancellation_charge'  => 'nullable|numeric|min:0',
+                'cancellation_type'    => 'nullable|in:percent,fixed',
+                'penal_charge'         => 'nullable|numeric|min:0',
+                'effective_date'       => 'required|date',
+                'stationary_fee'       => 'nullable|numeric|min:0',
+                'is_active'            => 'nullable|integer|in:0,1',
 
-            'rows.*.day_from'        => 'nullable|integer|min:0',
-            'rows.*.day_to'          => 'nullable|integer|min:0',
-            'rows.*.interest_rate'   => 'nullable|numeric|min:0',
-            'rows.*.sr_citizen_rate' => 'nullable|numeric|min:0',
-            'rows.*.payout_type'     => 'nullable|string',
-        ]);
+                'rows.*.day_from'        => 'nullable|integer|min:0',
+                'rows.*.day_to'          => 'nullable|integer|min:0',
+                'rows.*.interest_rate'   => 'nullable|numeric|min:0',
+                'rows.*.sr_citizen_rate' => 'nullable|numeric|min:0',
+                'rows.*.payout_type'     => 'nullable|string',
+            ]);
 
-        $validated['effective_date'] = Carbon::parse($request->effective_date)->format('Y-m-d');
-        $validated['admin']     = $request->has('admin') ? 1 : 0;
-        $validated['associate'] = $request->has('associate') ? 1 : 0;
-        $validated['member']    = $request->has('member') ? 1 : 0;
+            $validated['effective_date'] = Carbon::parse($request->effective_date)->format('Y-m-d');
+            $validated['admin']     = $request->has('admin') ? 1 : 0;
+            $validated['associate'] = $request->has('associate') ? 1 : 0;
+            $validated['member']    = $request->has('member') ? 1 : 0;
 
-        DB::beginTransaction();
+            DB::beginTransaction();
 
-        $scheme = FdScheme::findOrFail($id);
-        $scheme->update($validated);
+            $scheme = FdScheme::findOrFail($id);
+            $scheme->update($validated);
 
-        Log::info('FD Scheme basic data updated.', ['scheme_id' => $scheme->id]);
+            Log::info('FD Scheme basic data updated.', ['scheme_id' => $scheme->id]);
 
-        // Delete old slabs
-        $scheme->fdslabs()->delete();
-        Log::info('Old FD Scheme slabs deleted.', ['scheme_id' => $scheme->id]);
+            // Delete old slabs
+            $scheme->fdslabs()->delete();
+            Log::info('Old FD Scheme slabs deleted.', ['scheme_id' => $scheme->id]);
 
-        // Insert updated slabs
-        if ($request->has('rows')) {
-            foreach ($request->rows as $index => $row) {
+            // Insert updated slabs
+            if ($request->has('rows')) {
+                foreach ($request->rows as $index => $row) {
 
-                if (
-                    empty($row['day_from']) &&
-                    empty($row['day_to']) &&
-                    empty($row['interest_rate'])
-                ) {
-                    Log::warning("Skipping slab row {$index} due to missing values.", [
-                        'row_data' => $row
+                    if (
+                        empty($row['day_from']) &&
+                        empty($row['day_to']) &&
+                        empty($row['interest_rate'])
+                    ) {
+                        Log::warning("Skipping slab row {$index} due to missing values.", [
+                            'row_data' => $row
+                        ]);
+                        continue;
+                    }
+
+                    $slab = FdSchemeSlab::create([
+                        'fd_scheme_id'    => $scheme->id,
+                        'day_from'        => $row['day_from'] ?? 0,
+                        'day_to'          => $row['day_to'] ?? 0,
+                        'interest_rate'   => $row['interest_rate'] ?? 0,
+                        'sr_citizen_rate' => $row['sr_citizen_rate'] ?? 0,
+                        'payout_type'     => $row['payout_type'] ?? null,
                     ]);
-                    continue;
+
+                    Log::info("FD Scheme Slab updated/created.", [
+                        'scheme_id' => $scheme->id,
+                        'slab_id'   => $slab->id
+                    ]);
                 }
-
-                $slab = FdSchemeSlab::create([
-                    'fd_scheme_id'    => $scheme->id,
-                    'day_from'        => $row['day_from'] ?? 0,
-                    'day_to'          => $row['day_to'] ?? 0,
-                    'interest_rate'   => $row['interest_rate'] ?? 0,
-                    'sr_citizen_rate' => $row['sr_citizen_rate'] ?? 0,
-                    'payout_type'     => $row['payout_type'] ?? null,
-                ]);
-
-                Log::info("FD Scheme Slab updated/created.", [
-                    'scheme_id' => $scheme->id,
-                    'slab_id'   => $slab->id
-                ]);
             }
+
+            DB::commit();
+
+            Log::info('FD Scheme Update transaction committed successfully.', [
+                'scheme_id' => $scheme->id,
+                'updated_by' => Auth::id()
+            ]);
+
+            return redirect()
+                ->route('fd-mis-schemes.index')
+                ->with('success', 'FD Scheme updated successfully!');
+        } catch (ValidationException $e) {
+
+            Log::warning('FD Scheme update validation failed.', [
+                'errors' => $e->errors(),
+                'input'  => $request->all()
+            ]);
+
+            throw $e;
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            Log::error('FD Scheme Update Error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'input' => $request->all(),
+                'user_id' => Auth::id()
+            ]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Something went wrong while updating FD Scheme.');
         }
-
-        DB::commit();
-
-        Log::info('FD Scheme Update transaction committed successfully.', [
-            'scheme_id' => $scheme->id,
-            'updated_by' => Auth::id()
-        ]);
-
-        return redirect()
-            ->route('fd-mis-schemes.index')
-            ->with('success', 'FD Scheme updated successfully!');
-
-    } catch (ValidationException $e) {
-
-        Log::warning('FD Scheme update validation failed.', [
-            'errors' => $e->errors(),
-            'input'  => $request->all()
-        ]);
-
-        throw $e;
-
-    } catch (\Exception $e) {
-
-        DB::rollBack();
-
-        Log::error('FD Scheme Update Error: ' . $e->getMessage(), [
-            'trace' => $e->getTraceAsString(),
-            'input' => $request->all(),
-            'user_id' => Auth::id()
-        ]);
-
-        return redirect()
-            ->back()
-            ->withInput()
-            ->with('error', 'Something went wrong while updating FD Scheme.');
     }
-}
 
     /**
      * Remove the specified resource from storage.
@@ -328,7 +326,7 @@ class FDController extends Controller
         $schemes = FDScheme::all();
         $savings = Account::with('members')->get();
         // $banks = Bank::all(); // assuming you have a Bank model
-       $banks = Bank::pluck('name', 'id');
+        $banks = Bank::pluck('name', 'id');
 
         $membersData = Member::with('address', 'minors', 'branch')->get()
             ->mapWithKeys(function ($m) {
@@ -337,7 +335,7 @@ class FDController extends Controller
                         'first_name' => $m->member_info_first_name,
                         'last_name'  => $m->member_info_last_name ?? '',
                         'mobile'     => $m->member_info_mobile_no,
-                        'address'    => $m->address->member_address_line_1 ?? '',
+                        'address'    => $m->full_address,
                         'branch_id'  => $m->branch ?? [],
                         'minors'     => $m->minors ?? [],
                     ]
@@ -353,71 +351,101 @@ class FDController extends Controller
             'request_payload' => $request->all()
         ]);
 
+        $validated = $request->validate([
+            'member_id'       => 'required|exists:members,id',
+            'branch_id'       => 'required|integer|exists:branches,id',
+            'advisor_staff'   => 'nullable|integer',
+            'date'            => 'required|date',
+            // 'tenure_year'     => 'required|integer|min:0',
+            // 'tenure_month'    => 'required|integer|min:0',
+            // 'tenure_day'      => 'required|integer|min:0',
+            'fd_amount'       => 'required|numeric|min:1',
+            'payout'          => 'nullable|string',
+            'tds_deduction'    => 'nullable|string',
+            'senior_citizen'  => 'nullable|string',
+            'account_type'    => 'required|string',
+            'scheme_id'       => 'required|exists:fd_schemes,id',
+            'final_amount'    => 'nullable|numeric|min:1',
+            'transaction_date' => 'nullable|date',
+            'joint_member_id' => 'required_if:account_type,joint|nullable|integer|exists:members,id',
+
+            // Nominees
+            'nominees'        => 'nullable|in:yes,no',
+            'nominee_name.*'  => 'nullable|string|max:255',
+            'nominee_relation.*' => 'nullable|string|max:255',
+            'nominee_address.*'  => 'nullable|string|max:500',
+
+            // Payment
+            'pay1_amount'     => 'required|numeric|min:1',
+            'pay1_mode'       => 'required|string|in:cash,cheque,online,saving',
+
+            // Cheque
+            // 'pay1_bank'       => 'nullable|required_if:pay1_mode,cheque|string|max:255',
+            'bank_id'          => 'nullable|required_if:pay1_mode,cheque|exists:banks,id',
+            'pay1_cheque_no'  => 'nullable|required_if:pay1_mode,cheque|string|max:255',
+            'pay1_cheque_date' => 'nullable|required_if:pay1_mode,cheque|date',
+
+            // Online
+            'pay1_transfer_date' => 'nullable|required_if:pay1_mode,online|date',
+            'pay1_transfer_utr'  => 'nullable|required_if:pay1_mode,online|string|max:255',
+            'transferMode'       => 'nullable|required_if:pay1_mode,online|string|in:imps,vpa,neft,upi',
+            // 'transaction_type'    => 'nullable|required_if:pay1_mode,online|in:yes,no',
+            // 'transaction_type' => 'nullable|in:credit,debit',
+            'transaction_type' => 'nullable|required_if:pay1_mode,online|in:credit,debit',
+
+
+            'saving_account'     => 'nullable|required_if:pay1_mode,saving|string|max:255',
+        ]);
+
         try {
             // ---------------------------- VALIDATION ----------------------------
             Log::info('🔍 Validating request data...');
 
-            $validated = $request->validate([
-                'member_id'       => 'required|exists:members,id',
-                'branch_id'       => 'required|integer|exists:branches,id',
-                'advisor_staff'   => 'nullable|integer',
-                'date'            => 'required|date',
-                'tenure_year'     => 'required|integer|min:0',
-                'tenure_month'    => 'required|integer|min:0',
-                'tenure_day'      => 'required|integer|min:0',
-                'fd_amount'       => 'required|numeric|min:1',
-                'payout'          => 'nullable|string',
-                'tds_deduction'    => 'nullable|string',
-                'senior_citizen'  => 'nullable|string',
-                'account_type'    => 'required|string',
-                'scheme_id'       => 'required|exists:fd_schemes,id',
-                'final_amount'    => 'nullable|numeric|min:1',
-                'transaction_date' => 'nullable|date',
-                'joint_member_id' => 'required_if:account_type,joint|nullable|integer|exists:members,id',
 
-                // Nominees
-                'nominees'        => 'nullable|in:yes,no',
-                'nominee_name.*'  => 'nullable|string|max:255',
-                'nominee_relation.*' => 'nullable|string|max:255',
-                'nominee_address.*'  => 'nullable|string|max:500',
-
-                // Payment
-                'pay1_amount'     => 'required|numeric|min:1',
-                'pay1_mode'       => 'required|string|in:cash,cheque,online,saving',
-
-                // Cheque
-                // 'pay1_bank'       => 'nullable|required_if:pay1_mode,cheque|string|max:255',
-                'bank_id'          => 'nullable|required_if:pay1_mode,cheque|exists:banks,id',
-                'pay1_cheque_no'  => 'nullable|required_if:pay1_mode,cheque|string|max:255',
-                'pay1_cheque_date' => 'nullable|required_if:pay1_mode,cheque|date',
-
-                // Online
-                'pay1_transfer_date' => 'nullable|required_if:pay1_mode,online|date',
-                'pay1_transfer_utr'  => 'nullable|required_if:pay1_mode,online|string|max:255',
-                'transferMode'       => 'nullable|required_if:pay1_mode,online|string|in:imps,vpa,neft,upi',
-                // 'transaction_type'    => 'nullable|required_if:pay1_mode,online|in:yes,no',
-                // 'transaction_type' => 'nullable|in:credit,debit',
-                'transaction_type' => 'nullable|required_if:pay1_mode,online|in:credit,debit',
-
-
-                'saving_account'     => 'nullable|required_if:pay1_mode,saving|string|max:255',
-            ]);
 
             Log::info('✔ Validation Successful', ['validated_data' => $validated]);
 
             DB::beginTransaction();
-            Log::info('🟡 Database Transaction Started');
+            Log::info(' Database Transaction Started');
 
             // ---------------------------- CALCULATION ----------------------------
             Log::info('🧮 Calculating FD Maturity...');
 
+            // Calculate total days
+            $totalDays = ($request->tenure_year * 365)
+                + ($request->tenure_month * 30)
+                + ($request->tenure_day);
+
+            // Fetch slab
+            $slab = FdSchemeSlab::where('fd_scheme_id', $request->scheme_id)
+                ->where('day_from', '<=', $totalDays)
+                ->where('day_to', '>=', $totalDays)
+                ->first();
+
+            if (!$slab) {
+                return back()->with('error', 'No FD slab found for selected tenure.');
+            }
+
+            $payoutType = strtoupper(str_replace(' ', '_', $slab->payout_type));
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->date);
+            $maturityDate = $startDate->copy()->addDays($totalDays);
+
+            $tenureMonths = $startDate->diffInMonths(
+                $startDate->copy()->addDays($maturityDate)
+            );
+
+            $rate = $request->senior_citizen == 1
+                ? $slab->sr_citizen_rate
+                : $slab->interest_rate;
+
             $calc = $this->calculateInvestment(
                 'FD',
                 $request->fd_amount,
-                $request->scheme->interest_rate ?? 8,
-                ($request->tenure_year * 12) + $request->tenure_month,
-                $request->date,
-                $request->payout
+                $rate,
+                $tenureMonths,
+                $tenureMonths,
+                $startDate->format('Y-m-d'),
+                $payoutType
             );
 
             $summary = $calc->getData(true)['summary']['summary'] ?? [];
@@ -436,9 +464,9 @@ class FDController extends Controller
                 'minor_id'      => $request->minor_id,
                 'staff_id'      => $request->advisor_staff,
                 'open_date'     => Carbon::createFromFormat('d-m-Y', $request->date)->format('Y-m-d'),
-                'tenure_year'   => $request->tenure_year,
-                'tenure_month'  => $request->tenure_month,
-                'tenure_days'   => $request->tenure_day,
+                // 'tenure_year'   => $request->tenure_year,
+                // 'tenure_month'  => $request->tenure_month,
+                // 'tenure_days'   => $request->tenure_day,
                 'fd_amount'     => $request->fd_amount,
                 'interest_payout_type'  => $request->payout,
                 'tds_deduction' => $request->tds_deduction,
@@ -485,7 +513,7 @@ class FDController extends Controller
 
                 Log::info('✔ SMS Sent Successfully', ['mobile' => $mobile]);
             } catch (\Exception $smsError) {
-                Log::error('❌ SMS Sending Failed', ['error' => $smsError->getMessage()]);
+                Log::error('SMS Sending Failed', ['error' => $smsError->getMessage()]);
             }
 
             // ---------------------------- NOMINEES ----------------------------
@@ -509,11 +537,11 @@ class FDController extends Controller
                     }
                 }
 
-                Log::info('✔ Nominees Saved', ['total_nominees' => $totalNominees]);
+                Log::info('Nominees Saved', ['total_nominees' => $totalNominees]);
             }
 
             // ---------------------------- TRANSACTION ----------------------------
-            Log::info('💰 Creating FD Transaction...');
+            Log::info('Creating FD Transaction...');
             // dd($request->transaction_type);
             $fdTransaction = FdTransaction::create([
                 'fd_account_id'   => $fdAccount->id,
@@ -523,7 +551,7 @@ class FDController extends Controller
                 'amount'          => $request->pay1_amount,
                 'mode'            => $request->pay1_mode,
                 // 'bank'            => $request->pay1_bank ?? null,
-                 'bank'          => $request->bank_id,
+                'bank'          => $request->bank_id,
                 'cheque_no'       => $request->pay1_cheque_no ?? null,
                 'cheque_date'     => $request->pay1_cheque_date ? Carbon::parse($request->pay1_cheque_date) : null,
                 'transfer_date'   => $request->pay1_transfer_date ? Carbon::createFromFormat('d-m-Y', $request->pay1_transfer_date) : null,
@@ -533,19 +561,19 @@ class FDController extends Controller
                 'saving_account'  => $request->saving_account ?? null,
             ]);
 
-            Log::info('✔ FD Transaction Saved', [
+            Log::info('FD Transaction Saved', [
                 'transaction_id' => $fdTransaction->id,
                 'amount' => $fdTransaction->amount
             ]);
 
             DB::commit();
-            Log::info('🟢 FD/MIS Successfully Saved & Transaction Committed');
+            Log::info('FD/MIS Successfully Saved & Transaction Committed');
 
             return redirect()->route('fd-mis-schemes.fd_index')
                 ->with('success', 'Please approve status!');
         } catch (\Exception $ex) {
             DB::rollBack();
-            Log::error('❌ FD Store Failed', [
+            Log::error(' FD Store Failed', [
                 'error_message' => $ex->getMessage(),
                 'line'          => $ex->getLine(),
                 'file'          => $ex->getFile(),
@@ -751,58 +779,6 @@ class FDController extends Controller
         return [$results, $totalInterest, $principal];
     }
 
-    public function fd_show(string $id)
-    {
-        $fdAccount = FdAccount::with([
-            'member.address',
-            'branch',
-            'transactions.fdAccount', // REQUIRED
-            'fdscheme.fdslabs',
-            'savingAccount'
-        ])->findOrFail($id);
-
-
-        $documents = Document::where('fd_id', $fdAccount->id)->get();
-        $passbooks = Passbook::where('account_type', 'FD Accounts')
-            ->where('account_no', $fdAccount->id)
-            ->get();
-
-        $fdSlabs = FdSchemeSlab::where('fd_scheme_id', $fdAccount->scheme_id)->get();
-        $branches = Branch::all();
-        $calculation = $this->calculateFdMaturity($fdAccount);
-
-        // ✅ Get FD balance in controller
-        $fdBalances = AccountsTransactionsHelper::getFdAccountBalance($fdAccount->id);
-        $fdBalance  = $fdBalances[$fdAccount->id] ?? 0;
-
-        $linkedSavingAcc = Account::find($fdAccount->saving_account_id);
-        $balances = [];
-        if ($linkedSavingAcc) {
-            $bal = AccountsTransactionsHelper::getAccountBalacec($linkedSavingAcc->id);
-            $balances[$linkedSavingAcc->id] = $bal['total_balance'] ?? 0;
-        }
-        $summary = AccountsTransactionsHelper::getFdInterestSummary($fdAccount->id);
-
-        $fdAccount->interest_credited = $summary['interest_credited'];
-        $fdAccount->tds_deducted      = $summary['tds_deducted'];
-
-        return view('fd_mis_account.fd-account.view', array_merge(
-            [
-                'fdAccount' => $fdAccount,
-                'fdSlabs'   => $fdSlabs,
-                'branches'  => $branches,
-                'link_status' => $fdAccount->link_status,
-                'linkedSavingAcc' => $linkedSavingAcc,
-                'balances' => $balances,
-                'fdBalance' => $fdBalance, // Pass FD balance to Blade
-                'documents' => $documents,
-                'passbooks' => $passbooks,
-                'summary' => $summary,
-            ],
-            $calculation
-        ));
-    }
-
     private function calculateFdMaturity($fdAccount)
     {
         $principal = $fdAccount->fd_amount;
@@ -874,6 +850,29 @@ class FDController extends Controller
         return redirect()->back()->with('success', 'Branch updated successfully!');
     }
 
+    // public function fetchSlab(Request $request)
+    // {
+    //     $totalDays = $request->total_days;
+
+    //     $slab = FdSchemeSlab::where('fd_scheme_id', $request->scheme_id)
+    //         ->where('day_from', '<=', $totalDays)
+    //         ->where('day_to', '>=', $totalDays)
+    //         ->first();
+
+    //     if (!$slab) {
+    //         return response()->json([
+    //             'success' => false
+    //         ]);
+    //     }
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'payout_type' => $slab->payout_type,
+    //         'interest_rate' => $slab->interest_rate,
+    //         'sr_rate' => $slab->sr_citizen_rate
+    //     ]);
+    // }
+
     public function getBalance($id)
     {
 
@@ -885,6 +884,59 @@ class FDController extends Controller
             return response()->json(['balance' => 0]);
         }
     }
+
+    public function fd_show(string $id)
+    {
+        $fdAccount = FdAccount::with([
+            'member.address',
+            'branch',
+            'transactions.fdAccount', // REQUIRED
+            'fdscheme.fdslabs',
+            'savingAccount'
+        ])->findOrFail($id);
+
+
+        $documents = Document::where('fd_id', $fdAccount->id)->get();
+        $passbooks = Passbook::where('account_type', 'FD Accounts')
+            ->where('account_no', $fdAccount->id)
+            ->get();
+
+        $fdSlabs = FdSchemeSlab::where('fd_scheme_id', $fdAccount->scheme_id)->get();
+        $branches = Branch::all();
+        $calculation = $this->calculateFdMaturity($fdAccount);
+
+        //Get FD balance in controller
+        $fdBalances = AccountsTransactionsHelper::getFdAccountBalance($fdAccount->id);
+        $fdBalance  = $fdBalances[$fdAccount->id] ?? 0;
+
+        $linkedSavingAcc = Account::find($fdAccount->saving_account_id);
+        $balances = [];
+        if ($linkedSavingAcc) {
+            $bal = AccountsTransactionsHelper::getAccountBalacec($linkedSavingAcc->id);
+            $balances[$linkedSavingAcc->id] = $bal['total_balance'] ?? 0;
+        }
+        $summary = AccountsTransactionsHelper::getFdInterestSummary($fdAccount->id);
+
+        $fdAccount->interest_credited = $summary['interest_credited'];
+        $fdAccount->tds_deducted      = $summary['tds_deducted'];
+
+        return view('fd_mis_account.fd-account.view', array_merge(
+            [
+                'fdAccount' => $fdAccount,
+                'fdSlabs'   => $fdSlabs,
+                'branches'  => $branches,
+                'link_status' => $fdAccount->link_status,
+                'linkedSavingAcc' => $linkedSavingAcc,
+                'balances' => $balances,
+                'fdBalance' => $fdBalance, // Pass FD balance to Blade
+                'documents' => $documents,
+                'passbooks' => $passbooks,
+                'summary' => $summary,
+            ],
+            $calculation
+        ));
+    }
+
 
     public function getMemberSavings($member_id)
     {
@@ -960,12 +1012,12 @@ class FDController extends Controller
 
             $days = $currentFrom->diffInDays($currentTo) + 1;
 
-            // 💰 Interest calculation
+            // Interest calculation
             $interest = round(($principal * $rate * $days) / (365 * 100), 2);
             $tds = 0;
             $net = $interest - $tds;
 
-            // 📅 Due date (next day unless maturity)
+            //Due date (next day unless maturity)
             $dueDate = $currentTo->copy()->addDay();
             if ($currentTo->eq($maturityDate)) {
                 $dueDate = $currentTo->copy();
@@ -973,7 +1025,7 @@ class FDController extends Controller
 
             $transaction = $transactions->get($dueDate->format('Y-m-d'));
 
-            // 🧾 Special case: if period ends on 31 March → blank due date + blank net interest on due date
+            // Special case: if period ends on 31 March → blank due date + blank net interest on due date
             if ($currentTo->month == 3 && $currentTo->day == 31) {
                 $dueDateDisplay = '';
                 $netInterestOnDueDate = '';
@@ -982,7 +1034,7 @@ class FDController extends Controller
                 $netInterestOnDueDate = number_format($net, 2);
             }
 
-            // 🧾 Prepare data for view
+            // Prepare data for view
             $payouts[] = [
                 'period'                => $period,
                 'from'                  => $currentFrom->format('d M y'),
@@ -1029,7 +1081,7 @@ class FDController extends Controller
             ]);
         }
 
-        // ✅ LAND LOGIC (same as MIS)
+        //  LAND LOGIC (same as MIS)
         $isLand = \Carbon\Carbon::parse($dueDate)->format('d-m') === '31-03';
 
         $status    = $isLand ? 'LAND' : 'Paid';
@@ -1095,7 +1147,12 @@ class FDController extends Controller
     //     ]);
     // }
 
+
+
+
     // Change Account Info
+
+
     public function changeAccountInfo($id)
     {
         $fdAccountDetail = FdAccount::with('member.kyc', 'fdscheme', 'minor')->findOrFail($id);
@@ -1619,95 +1676,94 @@ class FDController extends Controller
         return view('fd_mis_account.fd-account.interest-tds.deduct_reverse_tds', compact('fdAccount', 'balance'));
     }
 
-    
+
     public function fdBondFormView($id)
-{
-   // Load FD account with required relations
-    $fdAccount = FdAccount::with([
-        'member',
-        'nominee',        // hasMany (recommended)
-        'fdScheme.fdSlabs' // scheme + slabs
-    ])->findOrFail($id);
+    {
+        // Load FD account with required relations
+        $fdAccount = FdAccount::with([
+            'member',
+            'nominee',        // hasMany (recommended)
+            'fdScheme.fdSlabs' // scheme + slabs
+        ])->findOrFail($id);
 
-     $amountWords = $this->numToWords((int) round($fdAccount->maturity_amount)) . ' Only';
+        $amountWords = $this->numToWords((int) round($fdAccount->maturity_amount)) . ' Only';
 
-    // 🔹 Find Super Admin
-    $superAdmin = User::whereHas('role', function ($q) {
-        $q->where('name', 'Super Admin');
-    })->first();
+        // 🔹 Find Super Admin
+        $superAdmin = User::whereHas('role', function ($q) {
+            $q->where('name', 'Super Admin');
+        })->first();
 
-    // 🔹 Fetch letterhead uploaded by Super Admin
-    $logo = null;
-    if ($superAdmin) {
-        $logo = logo_letterhead_img_uploads::where('type', 'letterhead')
-       
-            ->where('uploaded_by', $superAdmin->id)
-            ->latest()
-            ->first();
-             
+        // 🔹 Fetch letterhead uploaded by Super Admin
+        $logo = null;
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'letterhead')
+
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+        }
+        $data = [
+            'fdAccount'        => $fdAccount,
+            'amount_words'     => $amountWords,
+            'company_address'  => 'HEAD OFFICE',
+            'date'             => now()->format('d-m-Y'),
+            'company_reg_no'   => 'Reg. No. 969/03-04',
+            'logo'            => $logo,
+
+        ];
+
+        $pdf = app('dompdf.wrapper')
+            ->loadView('fd_mis_account.fd-account.print-documents.fdbond', $data)
+            ->setPaper('a4', 'portrait');
+        return view('fd_mis_account.fd-account.print-documents.fd-bond-view', [
+            'fdAccount'       => $fdAccount,
+            'amount_words'    => $amountWords,
+            'company_address' => 'HEAD OFFICE',
+            'date'            => now()->format('d-m-Y'),
+            'company_reg_no'  => 'Reg. No. 969/03-04',
+            'logo'            => $logo,
+        ]);
     }
-    $data = [
-        'fdAccount'        => $fdAccount,
-        'amount_words'     => $amountWords,
-        'company_address'  => 'HEAD OFFICE',
-        'date'             => now()->format('d-m-Y'),
-        'company_reg_no'   => 'Reg. No. 969/03-04',
-         'logo'            => $logo,
-          
-    ];
-
-    $pdf = app('dompdf.wrapper')
-        ->loadView('fd_mis_account.fd-account.print-documents.fdbond', $data)
-        ->setPaper('a4', 'portrait');
-    return view('fd_mis_account.fd-account.print-documents.fd-bond-view', [
-        'fdAccount'       => $fdAccount,
-        'amount_words'    => $amountWords,
-        'company_address' => 'HEAD OFFICE',
-        'date'            => now()->format('d-m-Y'),
-        'company_reg_no'  => 'Reg. No. 969/03-04',
-        'logo'            => $logo, 
-    ]);
-}
 
     public function fdBondForm($id)
-{
-    // Load FD account with required relations
-    $fdAccount = FdAccount::with([
-        'member',
-        'nominee',        // hasMany (recommended)
-        'fdScheme.fdSlabs' // scheme + slabs
-    ])->findOrFail($id);
+    {
+        // Load FD account with required relations
+        $fdAccount = FdAccount::with([
+            'member',
+            'nominee',        // hasMany (recommended)
+            'fdScheme.fdSlabs' // scheme + slabs
+        ])->findOrFail($id);
 
-     $amountWords = $this->numToWords((int) round($fdAccount->maturity_amount)) . ' Only';
+        $amountWords = $this->numToWords((int) round($fdAccount->maturity_amount)) . ' Only';
 
-    // 🔹 Find Super Admin
-    $superAdmin = User::whereHas('role', function ($q) {
-        $q->where('name', 'Super Admin');
-    })->first();
+        // 🔹 Find Super Admin
+        $superAdmin = User::whereHas('role', function ($q) {
+            $q->where('name', 'Super Admin');
+        })->first();
 
-    // 🔹 Fetch letterhead uploaded by Super Admin
-    $logo = null;
-    if ($superAdmin) {
-        $logo = logo_letterhead_img_uploads::where('type', 'letterhead')
-            ->where('uploaded_by', $superAdmin->id)
-            ->latest()
-            ->first();
+        // 🔹 Fetch letterhead uploaded by Super Admin
+        $logo = null;
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'letterhead')
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+        }
+        $data = [
+            'fdAccount'        => $fdAccount,
+            'amount_words'     => $amountWords,
+            'company_address'  => 'HEAD OFFICE',
+            'date'             => now()->format('d-m-Y'),
+            'company_reg_no'   => 'Reg. No. 969/03-04',
+            'logo'            => $logo,
+        ];
+
+        $pdf = app('dompdf.wrapper')
+            ->loadView('fd_mis_account.fd-account.print-documents.fdbond', $data)
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download('fd-bond-' . $fdAccount->id . '.pdf');
     }
-    $data = [
-        'fdAccount'        => $fdAccount,
-        'amount_words'     => $amountWords,
-        'company_address'  => 'HEAD OFFICE',
-        'date'             => now()->format('d-m-Y'),
-        'company_reg_no'   => 'Reg. No. 969/03-04',
-         'logo'            => $logo, 
-    ];
-
-    $pdf = app('dompdf.wrapper')
-        ->loadView('fd_mis_account.fd-account.print-documents.fdbond', $data)
-        ->setPaper('a4', 'portrait');
-
-    return $pdf->download('fd-bond-' . $fdAccount->id . '.pdf');
-}
 
     protected function numToWords($number)
     {
@@ -1776,7 +1832,7 @@ class FDController extends Controller
     }
 
 
-     public function fdOpeningFormView($id)
+    public function fdOpeningFormView($id)
     {
         // Load FD account with required relations
         $account = FdAccount::with([
@@ -1797,19 +1853,19 @@ class FDController extends Controller
         $interestRate = $slab->interest_rate ?? $account->rate_of_interest ?? 0;
 
         $member = $account->member;
-  // 🔹 Find Super Admin
-    $superAdmin = User::whereHas('role', function ($q) {
-        $q->where('name', 'Super Admin');
-    })->first();
+        // 🔹 Find Super Admin
+        $superAdmin = User::whereHas('role', function ($q) {
+            $q->where('name', 'Super Admin');
+        })->first();
 
-    // 🔹 Fetch letterhead uploaded by Super Admin
-    $logo = null;
-    if ($superAdmin) {
-        $logo = logo_letterhead_img_uploads::where('type', 'letterhead')
-            ->where('uploaded_by', $superAdmin->id)
-            ->latest()
-            ->first();
-    }
+        // 🔹 Fetch letterhead uploaded by Super Admin
+        $logo = null;
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'letterhead')
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+        }
         $pdf = app('dompdf.wrapper')
             ->loadView(
                 'fd_mis_account.fd-account.print-documents.accountopeningform',
@@ -1818,9 +1874,9 @@ class FDController extends Controller
             ->setPaper('a4', 'portrait');
 
         return view(
-                'fd_mis_account.fd-account.print-documents.accountopeningformView',
-                compact('account', 'member', 'interestRate','logo')
-            );
+            'fd_mis_account.fd-account.print-documents.accountopeningformView',
+            compact('account', 'member', 'interestRate', 'logo')
+        );
     }
     public function fdOpeningForm($id)
     {
@@ -1855,29 +1911,29 @@ class FDController extends Controller
     }
 
     public function fdClosingFormview($id)
-{
-    $fdAccount = FdAccount::with(['member.branch'])->findOrFail($id);
+    {
+        $fdAccount = FdAccount::with(['member.branch'])->findOrFail($id);
 
-    $data = [
-        'fdAccount' => $fdAccount,
-        'name' => $fdAccount->member->member_info_first_name . ' ' .
-                  $fdAccount->member->member_info_last_name,
-        'date' => now()->format('d-m-Y'),
-        'agreement_no' => $fdAccount->fd_no ?? 'FD' . str_pad($fdAccount->id, 5, '0', STR_PAD_LEFT),
-        'holder_name' => strtoupper(
-            $fdAccount->member->member_info_first_name . ' ' .
-            $fdAccount->member->member_info_last_name
-        ),
-        'expiry_date' => \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y'),
-        'branch_name' => $fdAccount->member->branch->branch_name ?? '',
-        'branch_address' => $fdAccount->member->branch->branch_address ?? '',
-    ];
+        $data = [
+            'fdAccount' => $fdAccount,
+            'name' => $fdAccount->member->member_info_first_name . ' ' .
+                $fdAccount->member->member_info_last_name,
+            'date' => now()->format('d-m-Y'),
+            'agreement_no' => $fdAccount->fd_no ?? 'FD' . str_pad($fdAccount->id, 5, '0', STR_PAD_LEFT),
+            'holder_name' => strtoupper(
+                $fdAccount->member->member_info_first_name . ' ' .
+                    $fdAccount->member->member_info_last_name
+            ),
+            'expiry_date' => \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y'),
+            'branch_name' => $fdAccount->member->branch->branch_name ?? '',
+            'branch_address' => $fdAccount->member->branch->branch_address ?? '',
+        ];
 
-    return view(
-        'fd_mis_account.fd-account.print-documents.closingformview',
-        $data
-    );
-}
+        return view(
+            'fd_mis_account.fd-account.print-documents.closingformview',
+            $data
+        );
+    }
 
     public function fdClosingForm($id)
     {
@@ -1916,9 +1972,9 @@ class FDController extends Controller
         return $pdf->download('fd-closing-form-' . $fdAccount->id . '.pdf');
     }
 
-public function sweepInAccount(){
+    public function sweepInAccount()
+    {
 
-return view('fd_mis_account.sweep-in-accounts.index');
+        return view('fd_mis_account.sweep-in-accounts.index');
     }
- 
 }

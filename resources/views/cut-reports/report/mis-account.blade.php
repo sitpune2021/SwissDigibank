@@ -56,9 +56,14 @@
 
     <div class="col-span-12 box lg:col-span-12">
         <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
+               <a href="{{ route('reports.printmis.print') }}" target="_blank"
+                    class="btn-primary rounded-10 px-2 py-2 flex justify-center  text-sm uppercase">
+                    <i class="las la-print"></i>
+                    Print Cut Report
+                </a>
             <a href="{{route('report.mis.index')}}" class="btn-primary rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
-                <i class="las la-print"></i>
-                Print Cut Report
+                <i class="las la-download"></i>
+                download Cut Report
             </a>
             <a href="{{ route('mis.account.csv') }}" class="btn-error rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
                 <i class="las la-download"></i>

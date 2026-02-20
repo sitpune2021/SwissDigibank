@@ -102,22 +102,16 @@ use App\Http\Controllers\MortgageLoanPrintDocumentController;
 use App\Http\Controllers\PersonalLoanPrintDocumentController;
 use App\Http\Controllers\VehicleLoanPrintDocumentController;
 
-// Clear cache 
-// Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
-// Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
-// Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
-// Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
+
 Route::view('/privacy-policy', 'privacy-policy')
     ->name('privacy.policy');
 
 Route::middleware(['guest', SessionProtection::class])->group(function () {
-
     Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
     Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
     Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
 });
-Route::post('/role-permission-store', [RoleController::class, 'store'])->name('role_permission.store');
 
 Route::middleware('auth.user')->group(function () {
     Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
@@ -135,6 +129,7 @@ Route::middleware('auth.user')->group(function () {
     Route::get('/get-members', [MemberController::class, 'getMembers']);
 
     Route::group(['prefix' => 'company'], function () {
+
         Route::resource('company', CompanyController::class);
         Route::resource('branch', BranchController::class);
         Route::post('/branch/toggle-status', [BranchController::class, 'toggleStatus'])
@@ -167,12 +162,16 @@ Route::middleware('auth.user')->group(function () {
         //------------------------------18-12-2025------------------------------------------//
         Route::resource('unencumbered-deposits', UnencumberedDepositController::class);
         Route::resource('bank-account', BankAccountController::class);
+
     });
 
     Route::group(['prefix' => 'user'], function () {
         Route::resource('roles', RoleController::class);
         Route::resource('users', UserController::class);
     });
+
+    Route::post('/role-permission-store', [RoleController::class, 'store'])->name('role_permission.store');
+
 
     Route::middleware('auth')->group(function () {
         Route::get('/calculator', [CalculatorController::class, 'create'])->name('calculator.index');
@@ -467,6 +466,7 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('/fd-account/{id}/deduct-reverse-tds', [FdController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('fd.creditdebit.store');
 
+    Route::post('/fetch-fd-slab', [FdController::class, 'fetchSlab'])->name('fd.fetch.slab');
 
     //////
 
@@ -2448,19 +2448,27 @@ Route::group(['prefix' => 'cut-report'], function () {
 
     Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
         ->name('report.saving-account');
+
     Route::get('/accounts/export/csv', [CutReportController::class, 'exportCsv'])
         ->name('accounts.export.csv');
     Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
+
+Route::get('/report/saving/print', [CutReportController::class, 'printSaving'])
+    ->name('reports.saving.print');
 
     Route::get('report/fd-account', [CutReportController::class, 'fdaccount_index'])
         ->name('report.fd-account');
     Route::get('/fd-accounts/export/csv', [CutReportController::class, 'fdExportCsv'])
         ->name('fd-accounts.export.csv');
     Route::get('fd-accounts/report/saving', [CutReportController::class, 'FDIndex'])->name('fd-accounts.report.saving.index');
+    Route::get('/report/fd/print', [CutReportController::class, 'printFd'])
+    ->name('reports.printFd.print');
 
     Route::get('report/mis-account', [CutReportController::class, 'misaccount_index'])
         ->name('report.mis-account');
     Route::get('report/mis', [CutReportController::class, 'misIndex'])->name('report.mis.index');
+     Route::get('/report/Mis/print', [CutReportController::class, 'printMis'])
+    ->name('reports.printmis.print');
     Route::get('/mis-account/download-csv', [CutReportController::class, 'downloadMisCsv'])
         ->name('mis.account.csv');
 
@@ -2468,9 +2476,12 @@ Route::group(['prefix' => 'cut-report'], function () {
 
     Route::get('report/dd-accounts', [CutReportController::class, 'ddaccount_index'])
         ->name('report.dd-accounts');
+        Route::get('/report/dd/print', [CutReportController::class, 'printDD'])
+    ->name('reports.printdd.print');
     Route::get('report/rd-account', [CutReportController::class, 'rd_account_index'])
         ->name('report.rd-account');
-
+  Route::get('/report/Rd/print', [CutReportController::class, 'printRD'])
+    ->name('reports.printrd.print');
 
     Route::get('report/dd', [CutReportController::class, 'ddIndex'])->name('report.dd.index');
     Route::get('/dd-accounts/download-csv', [CutReportController::class, 'ddAccountCsv'])

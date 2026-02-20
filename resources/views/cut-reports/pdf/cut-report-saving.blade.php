@@ -74,16 +74,16 @@
         <table class="header-table">
             <tr>
                 <td style="width: 10%; text-align:left;">
-                    <img src="{{ $photoPath }}" alt="Company Logo" style="width: 100px; height: 100px;">
+                    <img src="{{ $photoPath }}" alt="Company Logo" style="width: auto; height: 50px;">
                 </td>
-                <td style="width: 90%; text-align:left;">
-                    <div class="company-name" style="font-family: dejavusans; ">{{ $company['name'] }}</div>
-                    <div class="company-name" style="font-family: dejavusans;">
+                <td style="width: 90%; text-align:left; padding: 0px 20px;">
+                    <div class="company-name" style=" ">{{ $company['name'] }}</div>
+                    {{-- <div class="company-name" style="font-family: dejavusans;">
                         &nbsp;
                     </div>
                     <div class="company-name" style="font-family: dejavusans;">
                         &nbsp;
-                    </div>
+                    </div> --}}
 
                 </td>
             </tr>

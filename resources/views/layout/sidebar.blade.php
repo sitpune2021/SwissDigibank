@@ -34,19 +34,6 @@ $logoPath = $sidebarLogo
     :  asset('assets/images/SBC_Logo.png');
 @endphp
 
-{{-- @php
-use App\Models\logo_letterhead_img_uploads;
-$sidebarLogo = null;
-if (Auth::check()) {
-$sidebarLogo = logo_letterhead_img_uploads::where('type', 'logo')
-->where('uploaded_by', Auth::id())
-->first();
-}
-$logoPath = $sidebarLogo
-? asset($sidebarLogo->image_path)
-: asset('assets/images/SBC_Logo.png');
-@endphp --}}
-
 <aside id="sidebar" class="sidebar bg-n0 dark:!bg-bg4">
     <div class="sidebar-inner relative">
         <div class="logo-column">
@@ -73,6 +60,24 @@ $logoPath = $sidebarLogo
                     <div class=""  style="padding: 0px 10px">
                     <ul class="menu-ul">
                         @foreach ($menuItems as $item)
+
+                        @php
+                            // Skip main menu if no permission for any submenu
+                            $hasSubPermission = false;
+
+                            if($item->submenus->isNotEmpty()) {
+                                foreach($item->submenus as $sub) {
+                                    if(hasPermission($sub->route)) {
+                                        $hasSubPermission = true;
+                                        break;
+                                    }
+                                }
+                            } else {
+                                $hasSubPermission = hasPermission($item->route);
+                            }
+
+                            if(!$hasSubPermission) continue;
+                        @endphp
                         @php
 
                         // Skip "User" menu for Customer
@@ -128,8 +133,13 @@ $logoPath = $sidebarLogo
                                 </span>
                             </button>
 
+
+
                             <ul class="submenu {{ $submenuActive ? 'submenu-show' : 'submenu-hide' }}">
                                 @foreach ($item->submenus as $sub)
+                                @if(!hasPermission($sub->route))
+                                    @continue
+                                @endif
                                 <li>
                                     <a href="{{ route($sub->route) }}"
                                         class="submenu-link {{ request()->routeIs($sub->route) ? 'text-primary' : '' }}"

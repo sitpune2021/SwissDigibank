@@ -1,5 +1,5 @@
 <div class="tab-panel hidden">
-    <!----------------- Branches -------------------->
+    <!----------------- PROFILE -------------------->
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">Profile</div>

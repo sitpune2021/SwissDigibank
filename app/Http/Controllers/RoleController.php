@@ -11,34 +11,15 @@ use App\Models\Permissions;
 
 class RoleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+   
+
     public function index(Request $request)
     {
-        // $perPage = $request->input('perPage', 10);
-        // $query = Branch::with('state')->orderBy('created_at', 'desc');
 
-        // if ($request->has('search')) {
-        //     $search = $request->input('search');
-        //     $query->where(function ($q) use ($search) {
-        //         $q->where('branch_name', 'like', "%$search%")
-        //             ->orWhere('branch_code', 'like', "%$search%")
-        //             ->orWhere('city', 'like', "%$search%")
-        //             ->orWhere('open_date', 'like', "%$search%")
-        //             ->orWhereHas('state', function ($stateQuery) use ($search) {
-        //                 $stateQuery->where('name', 'like', "%$search%");
-        //             });
-        //     });
-        // }
-
-        // $branches = $query->paginate($perPage)->appends($request->all());
         return view('roles.manage-permission');
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $roles = Role::all();
@@ -130,20 +111,17 @@ class RoleController extends Controller
             'menuItems10'
         ));
     }
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
         try {
 
             $request->validate([
                 'role_id' => 'required|exists:roles,id',
-                'role_position' => 'required|string|nullable',
+                'role_position' => 'nullable|string',
                 'permission_type' => 'required|in:admin,agent,both',
                 'active' => 'required|in:Yes,No',
                 'permissions' => 'nullable|array',
-                'permissions.*' => 'string',
             ]);
 
             Log::info('Storing new role permission', [
@@ -156,24 +134,16 @@ class RoleController extends Controller
             ]);
 
             // Save to database
-            // $rolePermission = RolePermission::create([
-            //     'role_id' => $request->role_id,
-            //     'role_position' => $request->role_position,
-            //     'permission_type' => $request->permission_type,
-            //     'active' => $request->active,
-            //     'permissions' => json_encode([
-            //         'role_id' => $request->role_id,
-            //         'permissions' => $request->permissions
-            //     ]), // store as JSON
-            // ]);
+            $rolePermission = RolePermission::updateOrCreate(
+                ['role_id' => $request->role_id],
+                [
+                    'role_position'  => $request->role_position,
+                    'permission_type'=> $request->permission_type,
+                    'active'         => $request->active,
+                    'permissions'    => $request->permissions ?? [],
+                ]
+            );
 
-           $rolePermission = RolePermission::create([
-    'role_id' => $request->role_id,
-    'role_position' => $request->role_position,
-    'permission_type' => $request->permission_type,
-    'active' => $request->active,
-    'permissions' => json_encode($request->permissions ?? []),
-]);
             Log::info('Role permission saved successfully', [
                 'id' => $rolePermission->id,
                 'role_id' => $rolePermission->role_id,
@@ -192,35 +162,5 @@ class RoleController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+   
 }

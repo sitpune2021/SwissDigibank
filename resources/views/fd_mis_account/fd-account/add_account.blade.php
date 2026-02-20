@@ -58,7 +58,8 @@
                         <option value="">Select Customer</option>
                         @foreach ($members as $member)
                         <option value="{{ $member->id }}">{{ $member->member_info_first_name }}
-                            {{ $member->member_info_last_name }}</option>
+                            {{ $member->member_info_last_name }}
+                        </option>
                         @endforeach
                     </select>
                     @error('member_id')
@@ -159,21 +160,31 @@
                     @enderror
                 </div>
 
-                <div class="col-span-2 md:col-span-1">
+                <!-- <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Tenure Period
                         <span class="text-red-500">*</span>
                     </label>
                     <div class="md:w-2/3 flex flex-row gap-2  my-2  space-y-2 md:flex-row md:space-y-0 md:space-x-2">
-                        <input type="number" name="tenure_year" placeholder="Year"
-                            class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
-                        <input type="number" name="tenure_month" placeholder="Month"
+                        <input type="number" id="tenure_year" name="tenure_year" placeholder="Year"
                             class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
 
-                        <input type="number" name="tenure_day" placeholder="Days"
+                        <input type="number" id="tenure_month" name="tenure_month" placeholder="Month"
+                            class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
+
+                        <input type="number" id="tenure_day" name="tenure_day" placeholder="Days"
                             class="w-full md:w-1/3 border bg-secondary/5  rounded-10 px-3 py-3 ">
                     </div>
-                </div>
+                    @error('tenure_year')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror<br>
+                    @error('tenure_month')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror<br>
+                    @error('tenure_day')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div> -->
 
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
@@ -184,7 +195,10 @@
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-3 md:py-3">
                         <option value="">Select Scheme</option>
                         @foreach ($schemes as $scheme)
-                        <option value="{{ $scheme->id }}">{{ $scheme->scheme_name }}</option>
+                        <option value="{{ $scheme->id }}"
+                            data-min="{{ $scheme->min_amount }}">
+                            {{ $scheme->scheme_name }}
+                        </option>
                         @endforeach
                     </select>
                     @error('scheme_id')
@@ -195,16 +209,18 @@
                 <div class="col-span-2 md:col-span-1">
 
                     <x-amount-input name="fd_amount" id="fd_amount" label="FD AMOUNT" />
-                    @error('fd_amount')
+                    <p id="minAmountText" class="text-red-500 hidden">
+                        Minimum amount for FD is : ₹ <span id="minAmountValue"></span>
+                    </p> @error('fd_amount')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <div class="col-span-2 md:col-span-1">
+                <!-- <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                         Interest Payout Type
                     </label>
-
+                    
                     <select name="payout" id="payout"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3">
                         <option value="Cumulative Yearly">Cumulative Yearly</option>
@@ -215,8 +231,15 @@
                         <option value="Quarterly">Quarterly</option>
                         <option value="Half Yearly">Half Yearly</option>
                         <option value="Yearly">Yearly</option>
-                    </select>
-                </div>
+                    </select> 
+
+                    <input type="text"
+                        id="payout_display"
+                        class="w-full text-sm bg-gray-100 border rounded-10 px-3 py-3"
+                        readonly>
+
+                    <input type="hidden" name="payout" id="payout">
+                </div> -->
 
                 <div class="col-span-2 md:col-span-1">
                     <label for="" class="md:text-lg font-medium block mb-4 uppercase">
@@ -386,20 +409,20 @@
                         <div class="mt-3">
                             {{-- <label class="block text-sm font-medium text-gray-700 uppercase">Bank Name <span
                                     class="text-red-500">*</span></label> --}}
-                            
+
                             {{-- <x-searchable-dropdown :items="$banks" label="Bank Name" name="pay1_bank"
                                 display-field="name" value-field="id" :selected="old('pay1_bank')" /> --}}
                             <div id="bankDropdownWrapper" class="mt-3 ">
 
                                 <select name="bank_id" id="bank_id" class="w-full rounded-10 border px-3 py-3 text-sm">
-    <option value="">-- Select Bank --</option>
+                                    <option value="">-- Select Bank --</option>
 
-    @foreach($banks as $id => $name)
-        <option value="{{ $id }}" {{ old('bank_id') == $id ? 'selected' : '' }}>
-            {{ $name }}
-        </option>
-    @endforeach
-</select>
+                                    @foreach($banks as $id => $name)
+                                    <option value="{{ $id }}" {{ old('bank_id') == $id ? 'selected' : '' }}>
+                                        {{ $name }}
+                                    </option>
+                                    @endforeach
+                                </select>
 
                                 @error('bank_id')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -412,161 +435,230 @@
                                         class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                         placeholder="Enter Cheque No"
                                         value="  {{ old('cheque_no', $application->cheque_no ?? '') }}">
-                                </div> --}}
+                            </div> --}}
 
-                                <!-- Cheque Date -->
-                                {{-- <div class="mt-3">
+                            <!-- Cheque Date -->
+                            {{-- <div class="mt-3">
                                     <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
                                     <input type="text" id="cheque_date" name="cheque_date"
                                         value="{{ old('cheque_date', isset($application->cheque_date) ? \Carbon\Carbon::parse($application->cheque_date)->format('d-m-Y') : '') }}"
-                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                </div> --}}
-                            </div>
-                            @error('pay1_bank')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-
-                            @error('pay1_bank')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 uppercase">Cheque No.<span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" name="pay1_cheque_no"
-                                class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
-                                placeholder="Enter Cheque No.">
-                            @error('pay1_cheque_no')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 uppercase">Cheque Date <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" id="date4" name="pay1_cheque_date"
-                                class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
-                                placeholder="DD/MM/YYYY">
-                            @error('pay1_cheque_date')
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                            @enderror
-                        </div>
+                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                        </div> --}}
                     </div>
+                    @error('pay1_bank')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
 
-                    <!-- Online Transaction Fields -->
-                    <div id="onlineFields" class="space-y-4 hidden">
-                        <div class="mt-3">
-                            <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Date <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" id="date3" name="pay1_transfer_date"
-                                class="w-full border rounded-10 px-3 py-3 dark:bg-bg3 text-sm bg-white"
-                                placeholder="DD/MM/YYYY">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 uppercase">UTR / Transaction No.
-                                <span class="text-red-500">*</span></label>
-                            <input type="text" name="pay1_transfer_utr"
-                                class="w-full border rounded-10 px-3 py-3 text-sm dark:bg-bg3 bg-white"
-                                placeholder="Enter Transaction No.">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Mode <span
-                                    class="text-red-500">*</span></label>
-                            <div class="flex gap-4 mt-2">
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="transferMode" value="neft"
-                                        class="text-green-500 focus:ring-green-500">
-                                    <span>IMPS</span>
-                                </label>
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="transferMode" value="rtgs"
-                                        class="text-green-500 focus:ring-green-500">
-                                    <span>VPA</span>
-                                </label>
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="transferMode" value="upi"
-                                        class="text-green-500 focus:ring-green-500">
-                                    <span>NEFT/RTGS</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 uppercase">Credited in Company
-                                Account <span class="text-red-500">*</span></label>
-                            <div class="flex gap-4 mt-2">
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="credited" value="yes"
-                                        class="text-green-500 focus:ring-green-500">
-                                    <span>Yes</span>
-                                </label>
-                                <label class="flex items-center gap-2">
-                                    <input type="radio" name="credited" value="no"
-                                        class="text-green-500 focus:ring-green-500">
-                                    <span>No</span>
-                                </label>
-                            </div>
-                        </div>
+                    @error('pay1_bank')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 uppercase">Cheque No.<span
+                            class="text-red-500">*</span></label>
+                    <input type="text" name="pay1_cheque_no"
+                        class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
+                        placeholder="Enter Cheque No.">
+                    @error('pay1_cheque_no')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 uppercase">Cheque Date <span
+                            class="text-red-500">*</span></label>
+                    <input type="text" id="date4" name="pay1_cheque_date"
+                        class="w-full border rounded-10 px-3 py-3 text-sm bg-white dark:bg-bg3"
+                        placeholder="DD/MM/YYYY">
+                    @error('pay1_cheque_date')
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <!-- Online Transaction Fields -->
+            <div id="onlineFields" class="space-y-4 hidden">
+                <div class="mt-3">
+                    <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Date <span
+                            class="text-red-500">*</span></label>
+                    <input type="text" id="date3" name="pay1_transfer_date"
+                        class="w-full border rounded-10 px-3 py-3 dark:bg-bg3 text-sm bg-white"
+                        placeholder="DD/MM/YYYY">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 uppercase">UTR / Transaction No.
+                        <span class="text-red-500">*</span></label>
+                    <input type="text" name="pay1_transfer_utr"
+                        class="w-full border rounded-10 px-3 py-3 text-sm dark:bg-bg3 bg-white"
+                        placeholder="Enter Transaction No.">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 uppercase">Transfer Mode <span
+                            class="text-red-500">*</span></label>
+                    <div class="flex gap-4 mt-2">
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="transferMode" value="neft"
+                                class="text-green-500 focus:ring-green-500">
+                            <span>IMPS</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="transferMode" value="rtgs"
+                                class="text-green-500 focus:ring-green-500">
+                            <span>VPA</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="transferMode" value="upi"
+                                class="text-green-500 focus:ring-green-500">
+                            <span>NEFT/RTGS</span>
+                        </label>
                     </div>
-
-                    <!-- Saving Account Fields -->
-                    <div id="savingFields" class="space-y-4 hidden mt-3">
-                        <label class="block text-sm font-medium text-gray-700 uppercase">Select Saving Account <span
-                                class="text-red-500">*</span></label>
-                        <select class="w-full border rounded-10 dark:bg-bg3 px-3 py-3 text-sm bg-white saving-account">
-                            <option value="">Select Account</option>
-                            @foreach ($savings as $saving)
-                            <option value="{{ $saving->id }}">{{ $saving->account_no }}</option>
-                            @endforeach
-                        </select>
-                        <span id="accountBalance" style="color:red"></span>
-                        <span id="accountBalance2" style="color:red"></span>
-                        <!-- Balance display -->
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 uppercase">Credited in Company
+                        Account <span class="text-red-500">*</span></label>
+                    <div class="flex gap-4 mt-2">
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="credited" value="yes"
+                                class="text-green-500 focus:ring-green-500">
+                            <span>Yes</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="credited" value="no"
+                                class="text-green-500 focus:ring-green-500">
+                            <span>No</span>
+                        </label>
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-col sm:flex-row justify-center  gap-3 mt-5 w-full">
-                <button type="submit" class=" sm:w-auto  justify-center btn-primary uppercase open_fd">
-                    open fd
-                </button>
-                <button type="reset" class="sm:w-auto  justify-center uppercase btn-outline"
-                    onclick="document.getElementById('FDForm').reset();">
-                    Reset
-                </button>
-                <button type="button" class=" sm:w-auto  justify-center uppercase btn-outline"
-                    onclick="window.location.href='{{ route('fd-mis-schemes.fd_index') }}'">
-                    back
-                </button>
+            <!-- Saving Account Fields -->
+            <div id="savingFields" class="space-y-4 hidden mt-3">
+                <label class="block text-sm font-medium text-gray-700 uppercase">Select Saving Account <span
+                        class="text-red-500">*</span></label>
+                <select class="w-full border rounded-10 dark:bg-bg3 px-3 py-3 text-sm bg-white saving-account">
+                    <option value="">Select Account</option>
+                    @foreach ($savings as $saving)
+                    <option value="{{ $saving->id }}">{{ $saving->account_no }}</option>
+                    @endforeach
+                </select>
+                <span id="accountBalance" style="color:red"></span>
+                <span id="accountBalance2" style="color:red"></span>
+                <!-- Balance display -->
             </div>
-        </form>
     </div>
 </div>
+
+<div class="flex flex-col sm:flex-row justify-center  gap-3 mt-5 w-full">
+    <button type="submit" class=" sm:w-auto  justify-center btn-primary uppercase open_fd">
+        open fd
+    </button>
+    <button type="reset" class="sm:w-auto  justify-center uppercase btn-outline"
+        onclick="document.getElementById('FDForm').reset();">
+        Reset
+    </button>
+    <button type="button" class=" sm:w-auto  justify-center uppercase btn-outline"
+        onclick="window.location.href='{{ route('fd-mis-schemes.fd_index') }}'">
+        back
+    </button>
+</div>
+</form>
+</div>
+</div>
 </div>
 
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+ Auto Fetch Slab 
+<script>
+$(document).ready(function(){
+
+    function fetchSlab() {
+
+        let schemeId = $("#scheme_id").val();
+        let years    = parseInt($("#tenure_year").val()) || 0;
+        let months   = parseInt($("#tenure_month").val()) || 0;
+        let days     = parseInt($("#tenure_day").val()) || 0;
+
+        let totalDays = (years * 365) + (months * 30) + days;
+
+        if (!schemeId || totalDays <= 0) return;
+
+        $.ajax({
+            url: "{{ route('fd.fetch.slab') }}",
+            type: "POST",
+            data: {
+                scheme_id: schemeId,
+                total_days: totalDays,
+                _token: "{{ csrf_token() }}"
+            },
+            success: function(res) {
+                if (res.success) {
+                    $("#payout_display").val(res.payout_type);
+                    $("#payout").val(res.payout_type);
+                } else {
+                    $("#payout_display").val("No Slab Found");
+                    $("#payout").val("");
+                }
+            },
+            error: function(xhr){
+                console.log(xhr.responseText);
+            }
+        });
+    }
+
+    $("#scheme_id, #tenure_year, #tenure_month, #tenure_day")
+        .on("change keyup", fetchSlab);
+
+});
+</script> -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const schemeSelect = document.getElementById("scheme_id");
+        const minText = document.getElementById("minAmountText");
+        const minValue = document.getElementById("minAmountValue");
+
+        function updateMinAmount() {
+            let selected = schemeSelect.options[schemeSelect.selectedIndex];
+
+            if (selected.value !== "") {
+                let minAmount = selected.getAttribute("data-min");
+                minValue.textContent = parseFloat(minAmount).toLocaleString('en-IN');
+                minText.classList.remove("hidden");
+            } else {
+                minText.classList.add("hidden");
+            }
+        }
+
+        schemeSelect.addEventListener("change", updateMinAmount);
+
+        // Run once on page load (for edit / old value)
+        updateMinAmount();
+    });
+</script>
 <!--nomine -->
 <script>
     //nomine
-        function toggleSelect(show) {
-            document.getElementById("accountSelect").classList.toggle("hidden", !show);
+    function toggleSelect(show) {
+        document.getElementById("accountSelect").classList.toggle("hidden", !show);
+    }
+
+    function toggleAddMore(show) {
+        document.getElementById("addMoreText").classList.toggle("hidden", !show);
+        if (!show) {
+            document.getElementById("extraInputs").innerHTML = "";
+            nomineeIndex = 0;
         }
 
-        function toggleAddMore(show) {
-            document.getElementById("addMoreText").classList.toggle("hidden", !show);
-            if (!show) {
-                document.getElementById("extraInputs").innerHTML = "";
-                nomineeIndex = 0;
-            }
+    }
 
-        }
+    function addNomineeInputs() {
+        const container = document.getElementById("extraInputs");
+        const nomineeBlock = document.createElement("div");
 
-        function addNomineeInputs() {
-            const container = document.getElementById("extraInputs");
-            const nomineeBlock = document.createElement("div");
+        //  Added nominee-item class here
+        nomineeBlock.className = "nominee-item grid grid-cols-4 gap-2 items-center bg-gray-50 p-2 rounded-md shadow";
 
-            //  Added nominee-item class here
-            nomineeBlock.className = "nominee-item grid grid-cols-4 gap-2 items-center bg-gray-50 p-2 rounded-md shadow";
-
-            nomineeBlock.innerHTML = `
+        nomineeBlock.innerHTML = `
         <div class="nominee-row flex  flex-wrap items-start gap-6">
             <div class="flex-center  flex-1 min-w-[200px] max-w-full">
                 <label class="font-medium mb-2">Relation <span class="text-red-500">*</span></label>
@@ -619,224 +711,224 @@
             </div>
         </div> `;
 
-            container.appendChild(nomineeBlock);
-            nomineeIndex++;
+        container.appendChild(nomineeBlock);
+        nomineeIndex++;
+    }
+
+    function removeNominee(button) {
+        const item = button.closest(".nominee-item");
+        if (item) item.remove();
+
+        const container = document.getElementById("extraInputs");
+
+        // ✅ Keep container visible, just clear content if empty
+        if (container.children.length === 0) {
+            container.innerHTML = "";
         }
-
-        function removeNominee(button) {
-            const item = button.closest(".nominee-item");
-            if (item) item.remove();
-
-            const container = document.getElementById("extraInputs");
-
-            // ✅ Keep container visible, just clear content if empty
-            if (container.children.length === 0) {
-                container.innerHTML = "";
-            }
-        }
+    }
 </script>
 
 <!--payment mode1-->
 <script>
     //payment mode1
-        const payModeRadios = document.querySelectorAll('input[name="pay1_mode"]');
-        const onlineFields = document.getElementById('onlineFields');
-        const chequeFields = document.getElementById('chequeFields');
+    const payModeRadios = document.querySelectorAll('input[name="pay1_mode"]');
+    const onlineFields = document.getElementById('onlineFields');
+    const chequeFields = document.getElementById('chequeFields');
 
-        payModeRadios.forEach(radio => {
-            radio.addEventListener('change', () => {
+    payModeRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
 
-                onlineFields.classList.add('hidden');
-                chequeFields.classList.add('hidden');
-                savingFields.classList.add('hidden');
+            onlineFields.classList.add('hidden');
+            chequeFields.classList.add('hidden');
+            savingFields.classList.add('hidden');
 
-                if (radio.value === 'online') onlineFields.classList.remove('hidden');
-                if (radio.value === 'cheque') chequeFields.classList.remove('hidden');
-                if (radio.value === 'saving') savingFields.classList.remove('hidden');
-            });
+            if (radio.value === 'online') onlineFields.classList.remove('hidden');
+            if (radio.value === 'cheque') chequeFields.classList.remove('hidden');
+            if (radio.value === 'saving') savingFields.classList.remove('hidden');
         });
+    });
 </script>
 
 <script>
     //pay mode 2
-        (function() {
-            const payModeRadios2 = document.querySelectorAll('input[name="payMode2"]');
-            const onlineFields2 = document.getElementById('onlineFields2');
-            const chequeFields2 = document.getElementById('chequeFields2');
-            const savingFields2 = document.getElementById('savingFields2');
+    (function() {
+        const payModeRadios2 = document.querySelectorAll('input[name="payMode2"]');
+        const onlineFields2 = document.getElementById('onlineFields2');
+        const chequeFields2 = document.getElementById('chequeFields2');
+        const savingFields2 = document.getElementById('savingFields2');
 
-            payModeRadios2.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    onlineFields2.classList.add('hidden');
-                    chequeFields2.classList.add('hidden');
-                    savingFields2.classList.add('hidden');
+        payModeRadios2.forEach(radio => {
+            radio.addEventListener('change', () => {
+                onlineFields2.classList.add('hidden');
+                chequeFields2.classList.add('hidden');
+                savingFields2.classList.add('hidden');
 
-                    if (radio.value === 'online') onlineFields2.classList.remove('hidden');
-                    if (radio.value === 'cheque') chequeFields2.classList.remove('hidden');
-                    if (radio.value === 'saving') savingFields2.classList.remove('hidden');
-                });
+                if (radio.value === 'online') onlineFields2.classList.remove('hidden');
+                if (radio.value === 'cheque') chequeFields2.classList.remove('hidden');
+                if (radio.value === 'saving') savingFields2.classList.remove('hidden');
             });
-        })();
+        });
+    })();
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
     const membersData = @json($membersData);
-        $(document).ready(function() {
-            $('#member_id').on('change', function() {
-                const memberId = $(this).val();
-                const member = membersData[memberId];
+    $(document).ready(function() {
+        $('#member_id').on('change', function() {
+            const memberId = $(this).val();
+            const member = membersData[memberId];
 
-                if (memberId) {
-                    // 🔹 Load savings accounts via AJAX
-                    $.ajax({
-                        url: "{{ route('member.savings', '') }}/" + memberId,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(savings) {
-                            console.log(savings);
-                            let savingSelect = $("#savingAccount");
-                            savingSelect.empty().append(
-                                '<option value="">Select Account</option>');
+            if (memberId) {
+                // 🔹 Load savings accounts via AJAX
+                $.ajax({
+                    url: "{{ route('member.savings', '') }}/" + memberId,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(savings) {
+                        console.log(savings);
+                        let savingSelect = $("#savingAccount");
+                        savingSelect.empty().append(
+                            '<option value="">Select Account</option>');
 
-                            if (savings.length > 0) {
-                                $.each(savings, function(i, saving) {
-                                    savingSelect.append('<option value="' + saving.id +
-                                        '">' + saving.account_no + '</option>');
-                                });
-                                $("#savingFields").removeClass("hidden");
-                            } else {
-                                $("#savingFields").addClass("hidden");
-                            }
-                        },
-                        error: function() {
-                            alert("Error loading saving accounts");
+                        if (savings.length > 0) {
+                            $.each(savings, function(i, saving) {
+                                savingSelect.append('<option value="' + saving.id +
+                                    '">' + saving.account_no + '</option>');
+                            });
+                            $("#savingFields").removeClass("hidden");
+                        } else {
+                            $("#savingFields").addClass("hidden");
                         }
-                    });
-                } else {
-                    $("#savingFields").addClass("hidden");
-                }
-
-                // 🔹 Fill member details
-                if (member) {
-                    $('#member_name').val(member.first_name + ' ' + member.last_name);
-                    $('#member_mobile').val(member.mobile);
-                    $('#member_address').val(member.address);
-
-                    // 🔹 Load minors
-                    const $minorSelect = $('#minor_id');
-                    $minorSelect.empty().append('<option value="">Select minor</option>');
-                    if (member.minors && member.minors.length > 0) {
-                        member.minors.forEach(minor => {
-                            $minorSelect.append(
-                                `<option value="${minor.id}">${minor.first_name} ${minor.last_name}</option>`
-                            );
-                        });
+                    },
+                    error: function() {
+                        alert("Error loading saving accounts");
                     }
+                });
+            } else {
+                $("#savingFields").addClass("hidden");
+            }
 
-                    // 🔹 Load branch
-                    const $branchSelect = $('#branch_id');
-                    $branchSelect.empty();
+            // 🔹 Fill member details
+            if (member) {
+                $('#member_name').val(member.first_name + ' ' + member.last_name);
+                $('#member_mobile').val(member.mobile);
+                $('#member_address').val(member.address);
 
-                    if (member.branch_id) {
-                        // if you load single branch as object
-                        $branchSelect.append(
-                            `<option value="${member.branch_id.id}" selected>${member.branch_id.branch_name}</option>`
+                // 🔹 Load minors
+                const $minorSelect = $('#minor_id');
+                $minorSelect.empty().append('<option value="">Select minor</option>');
+                if (member.minors && member.minors.length > 0) {
+                    member.minors.forEach(minor => {
+                        $minorSelect.append(
+                            `<option value="${minor.id}">${minor.first_name} ${minor.last_name}</option>`
                         );
-                    } else if (member.branch && member.branch.length > 0) {
-                        // if member has multiple branches
-                        member.branch.forEach(branch => {
-                            $branchSelect.append(
-                                `<option value="${branch.id}">${branch.branch_name}</option>`);
-                        });
-                    }
-                } else {
-                    $('#member_name').val('');
-                    $('#member_mobile').val('');
-                    $('#member_address').val('');
-                    $('#minor_id').empty().append('<option value="">Select minor</option>');
-                    $('#branch_id').empty().append('<option value="">Select branch</option>');
+                    });
                 }
-            });
+
+                // 🔹 Load branch
+                const $branchSelect = $('#branch_id');
+                $branchSelect.empty();
+
+                if (member.branch_id) {
+                    // if you load single branch as object
+                    $branchSelect.append(
+                        `<option value="${member.branch_id.id}" selected>${member.branch_id.branch_name}</option>`
+                    );
+                } else if (member.branch && member.branch.length > 0) {
+                    // if member has multiple branches
+                    member.branch.forEach(branch => {
+                        $branchSelect.append(
+                            `<option value="${branch.id}">${branch.branch_name}</option>`);
+                    });
+                }
+            } else {
+                $('#member_name').val('');
+                $('#member_mobile').val('');
+                $('#member_address').val('');
+                $('#minor_id').empty().append('<option value="">Select minor</option>');
+                $('#branch_id').empty().append('<option value="">Select branch</option>');
+            }
         });
+    });
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-            const fdAmountInput = document.getElementById("fd_amount");
-            const finalAmountInput = document.getElementById("final_amount");
-            const pay1AmountInput = document.getElementById("pay1_amount");
+        const fdAmountInput = document.getElementById("fd_amount");
+        const finalAmountInput = document.getElementById("final_amount");
+        const pay1AmountInput = document.getElementById("pay1_amount");
 
-            fdAmountInput.addEventListener("input", function() {
-                let value = fdAmountInput.value;
+        fdAmountInput.addEventListener("input", function() {
+            let value = fdAmountInput.value;
 
-                finalAmountInput.value = value;
-                pay1AmountInput.value = value;
-            });
+            finalAmountInput.value = value;
+            pay1AmountInput.value = value;
         });
+    });
 </script>
 <script>
     $(".saving-account").on("change", function() {
-            let accountId = $(this).val(); // get selected account id
-            if (accountId) {
-                $.ajax({
-                    url: "{{ route('ajax.get.account.balance') }}",
-                    type: "POST",
-                    data: {
-                        account_id: accountId,
-                        _token: "{{ csrf_token() }}"
-                    },
-                    dataType: "json",
-                    success: function(response) {
+        let accountId = $(this).val(); // get selected account id
+        if (accountId) {
+            $.ajax({
+                url: "{{ route('ajax.get.account.balance') }}",
+                type: "POST",
+                data: {
+                    account_id: accountId,
+                    _token: "{{ csrf_token() }}"
+                },
+                dataType: "json",
+                success: function(response) {
 
-                        var currentBalace = response.balance;
+                    var currentBalace = response.balance;
 
-                        // Example: update balance field
-                        $("#accountBalance").text(response.balance);
+                    // Example: update balance field
+                    $("#accountBalance").text(response.balance);
 
-                        var fd_amount = $("#fd_amount").val();
-                        if (fd_amount !== "") {
-                            if (currentBalace < fd_amount) {
+                    var fd_amount = $("#fd_amount").val();
+                    if (fd_amount !== "") {
+                        if (currentBalace < fd_amount) {
 
-                                $("#accountBalance2").text("insufficiant balance......");
-                            }
+                            $("#accountBalance2").text("insufficiant balance......");
                         }
-
-                        // Show balance box if hidden
-                        $("#balanceBox").removeClass("hidden");
-                    },
-                    error: function(xhr) {
-                        console.log("Error:", xhr.responseText);
                     }
-                });
-            }
-        });
+
+                    // Show balance box if hidden
+                    $("#balanceBox").removeClass("hidden");
+                },
+                error: function(xhr) {
+                    console.log("Error:", xhr.responseText);
+                }
+            });
+        }
+    });
 
 
 
-        document.addEventListener('DOMContentLoaded', function() {
-            let savingFields = document.getElementById('savingFields');
+    document.addEventListener('DOMContentLoaded', function() {
+        let savingFields = document.getElementById('savingFields');
 
-            if (savingFields) {
-                savingFields.addEventListener('change', function() {
-                    let accountId = this.value;
+        if (savingFields) {
+            savingFields.addEventListener('change', function() {
+                let accountId = this.value;
 
-                    if (accountId) {
-                        fetch(`/account/balance/${accountId}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log(accountBalance);
-                                // document.getElementById('balanceBox').classList.remove('hidden');
-                                document.getElementById('accountBalance').value = accountBalance
-                            })
-                            .catch(error => console.error('Error:', error));
-                    } else {
-                        // document.getElementById('balanceBox').classList.add('hidden');
-                        document.getElementById('accountBalance').value = '';
-                    }
-                });
-            }
-        });
+                if (accountId) {
+                    fetch(`/account/balance/${accountId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(accountBalance);
+                            // document.getElementById('balanceBox').classList.remove('hidden');
+                            document.getElementById('accountBalance').value = accountBalance
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    // document.getElementById('balanceBox').classList.add('hidden');
+                    document.getElementById('accountBalance').value = '';
+                }
+            });
+        }
+    });
 </script>
 
 <script>
@@ -860,25 +952,25 @@
             });
         });
 
-            // ---- FIX: Set default date as d-m-Y ----
-            function getDMY() {
-                const d = new Date();
-                let day = String(d.getDate()).padStart(2, '0');
-                let month = String(d.getMonth() + 1).padStart(2, '0');
-                let year = d.getFullYear();
-                return `${day}-${month}-${year}`;
-            }
+        // ---- FIX: Set default date as d-m-Y ----
+        function getDMY() {
+            const d = new Date();
+            let day = String(d.getDate()).padStart(2, '0');
+            let month = String(d.getMonth() + 1).padStart(2, '0');
+            let year = d.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
 
-            const chequeDateInput = document.getElementById("cheque_date");
-            if (chequeDateInput && !chequeDateInput.value) {
-                chequeDateInput.value = getDMY();
-            }
+        const chequeDateInput = document.getElementById("cheque_date");
+        if (chequeDateInput && !chequeDateInput.value) {
+            chequeDateInput.value = getDMY();
+        }
 
-            const transferDateInput = document.getElementById("transfer_date");
-            if (transferDateInput && !transferDateInput.value) {
-                transferDateInput.value = getDMY();
-            }
+        const transferDateInput = document.getElementById("transfer_date");
+        if (transferDateInput && !transferDateInput.value) {
+            transferDateInput.value = getDMY();
+        }
 
-        });
+    });
 </script>
 @endsection

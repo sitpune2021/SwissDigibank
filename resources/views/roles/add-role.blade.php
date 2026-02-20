@@ -1,8 +1,4 @@
 @extends('layout.main')
-{{-- @php
-use App\Models\Menu;
-$menuItems = Menu::where('active', 1)->with('submenus')->orderBy('position')->get();
-@endphp --}}
 @section('page-title', '')
 
 @section('content')
@@ -25,8 +21,8 @@ $menuItems = Menu::where('active', 1)->with('submenus')->orderBy('position')->ge
     <div class="box col-span-12 lg:col-span-6">
         <div class="mb-6 pb-6 bb-dashed flex justify-between items-center">
             <h3 class="h3">ADD NEW ROLE / PERMISSION</h3>
-            <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
-            </ol>
+                <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
+                </ol>
             <hr class="my-2 border-gray-300" />
         </div>
 
@@ -38,9 +34,15 @@ $menuItems = Menu::where('active', 1)->with('submenus')->orderBy('position')->ge
                         ROLE NAME
                     </label>
 
-                    <input type="text" name="role_id"
+                    <!-- <input type="text" name="role_id"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                        placeholder="Select Role">
+                        placeholder="Select Role"> -->
+                        <select name="role_id" class="w-full border rounded px-3 py-2">
+                            <option value="">Select Role</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
                         <!-- <option value="">Select Role</option>
                         @foreach($roles as $role)
                             <option value="{{ $role->id }}">{{ $role->name }}</option>
@@ -292,7 +294,8 @@ $menuItems = Menu::where('active', 1)->with('submenus')->orderBy('position')->ge
         </form>
 
     </div>
-   <script>
+
+<script>
 document.addEventListener("DOMContentLoaded", function () {
 
     // Loop every section
@@ -324,8 +327,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+
 @endsection
-
-
-
-
