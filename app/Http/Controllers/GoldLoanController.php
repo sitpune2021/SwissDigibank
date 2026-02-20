@@ -26,6 +26,10 @@ class GoldLoanController extends Controller
 
     public function index()
     {
+        
+        if (!hasPermission('gold-loan.schemes.index')) {
+            abort(403);
+        }
         //$schemes = GoldLoanScheme::all();
         // paginate(10) => 10 records per page
         $schemes = GoldLoanScheme::orderBy('id', 'desc')->paginate(10);
@@ -34,6 +38,9 @@ class GoldLoanController extends Controller
 
     public function create()
     {
+        if (!hasPermission('gold-loan.schemes.create')) {
+            abort(403);
+        }
         return view("gold-loan.schemes.create");
     }
 
@@ -119,12 +126,18 @@ class GoldLoanController extends Controller
 
     public function show($id)
     {
+        if (!hasPermission('gold-loan.schemes.show')) {
+            abort(403);
+        }
         $scheme = GoldLoanScheme::findOrFail($id);
         return view('gold-loan.schemes.show', compact('scheme'));
     }
 
     public function edit($id)
     {
+        if (!hasPermission('gold-loan.schemes.edit')) {
+            abort(403);
+        }
         $scheme = GoldLoanScheme::findOrFail($id);
         return view('gold-loan.schemes.create', compact('scheme'));
     }
@@ -170,6 +183,9 @@ class GoldLoanController extends Controller
 
     public function calculator()
     {
+        if (!hasPermission('gold-loan.calculator.index')) {
+            abort(403);
+        }
         $scheme = GoldLoanScheme::all();
         return view("gold-loan.calculator.index", compact('scheme'));
     }
