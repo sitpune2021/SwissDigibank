@@ -327,7 +327,6 @@ class BusinessLoanAccount extends Controller
                 $totalPaid = 0;
             }
         }
-
         $eirSchedule = [];
 
         // EIR should run for both flat_emi AND reducing_emi
@@ -550,6 +549,18 @@ class BusinessLoanAccount extends Controller
             $payRoute = route('bussiness.account.pay', $goldLoan->id);
             $payButtonText = 'Pay';
         }
+        $hasPendingApproval =
+            DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'pending')
+            ->exists()
+
+            ||
+
+            DB::table('business_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->where('status', 0)
+            ->exists();
 
         return view('bussiness.account.view', compact(
             'goldLoan',
@@ -566,7 +577,8 @@ class BusinessLoanAccount extends Controller
             'currentDebt',
             'hasDueEmi',
             'payRoute',
-            'payButtonText'
+            'payButtonText',
+            'hasPendingApproval'
         ));
     }
 
@@ -1094,8 +1106,6 @@ class BusinessLoanAccount extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
-
-
 
     public function fourcloser($id)
     {

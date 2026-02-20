@@ -133,6 +133,18 @@
     @endif
 
     <div class="main-inner">
+        @if ($hasPendingApproval)
+            <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
+                <h4 style="margin:0;">ALERT PENDING TRANSACTION!</h4>
+                <p style="margin:5px 0;">
+                    Some transactions are pending for approval. To approve
+                    <a href="{{ route('pending-transaction.index') }}"
+                        style="background:#2980b9; color:white; padding:6px 12px; text-decoration:none; border-radius:4px;">
+                        CLICK HERE
+                    </a>
+                </p>
+            </div>
+        @endif
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-lg uppercase font-semibold">MORTGAGE LOAN - {{ $goldLoan->id }} </h1>
@@ -745,7 +757,8 @@
 
                                 <tr class="border-b">
                                     <td class="font-semibold uppercase px-4 py-2">Scheme Code</td>
-                                    <td class="px-4 py-2 text-right md:text-left">{{ $goldLoan->scheme->scheme_code ?? '' }}
+                                    <td class="px-4 py-2 text-right md:text-left">
+                                        {{ $goldLoan->scheme->scheme_code ?? '' }}
                                     </td>
                                 </tr>
 
@@ -1461,7 +1474,7 @@
         function confirmRemove(id) {
             if (!confirm(
                     'Are you sure you want to remove this account? This will update loan status to 0 and delete related transactions and other charges.'
-                    )) {
+                )) {
                 return;
             }
             document.getElementById('remove-account-form-' + id).submit();

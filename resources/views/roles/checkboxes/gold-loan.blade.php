@@ -1,72 +1,72 @@
 <div class="tab-panel hidden">
+    
     <!----------------- Gold Loan Schemes -------------------->
-    <div class="payload-section">
-        <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">Gold Loan Schemes</div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="check_all_dashboard"
-                        class="check-all form-checkbox h-5 w-5 text-primary">
-                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
-                        Check
-                        All
-                    </label>
+        <div class="payload-section">
+            <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
+                <div class="uppercase font-semibold text-lg">Gold Loan Schemes</div>
+                <div class="col-span-2 md:col-span-1">
+                    <div class="flex items-center gap-2 space-x-2">
+                        <input type="checkbox" id="check_all_dashboard"
+                            class="check-all form-checkbox h-5 w-5 text-primary">
+                        <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
+                            Check
+                            All
+                        </label>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox"
-                        id="gl_lon_sch"
-                        name="permissions[]"
-                        value="gold-loan.scheme.view"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="gl_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
-                        Gold Loan Scheme List
-                    </label>
+            <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
+                <div class="col-span-2 md:col-span-1">
+                    <div class="flex items-center gap-2 space-x-2">
+                        <input type="checkbox"
+                            id="gl_lon_sch"
+                            name="permissions[]"
+                            value="gold-loan.schemes.index"
+                            class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        <label for="gl_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
+                            Gold Loan Scheme List
+                        </label>
+                    </div>
                 </div>
-            </div>
 
 
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="add_new_gol_sch"
+                <div class="col-span-2 md:col-span-1">
+                    <div class="flex items-center gap-2 space-x-2">
+                        <input type="checkbox" id="add_new_gol_sch"
+                            name="permissions[]" 
+                            value="gold-loan.schemes.create"
+                            class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        <label for="add_new_gol_sch" class="text-base font-semibold cursor-pointer mb-0">
+                            Add New Gold Loan Scheme
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-span-2 md:col-span-1">
+                    <div class="flex items-center gap-2 space-x-2">
+                        <input type="checkbox" id="shw_gol_lon_sch_inf" 
                         name="permissions[]" 
-                        value="gold-loan.scheme.create"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="add_new_gol_sch" class="text-base font-semibold cursor-pointer mb-0">
-                        Add New Gold Loan Scheme
-                    </label>
+                        value="gold-loan.schemes.view"
+                            class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        <label for="shw_gol_lon_sch_inf" class="text-base font-semibold cursor-pointer mb-0">
+                            Show Gold Loan Scheme Info
+                        </label>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="shw_gol_lon_sch_inf" 
-                    name="permissions[]" 
-                    value="gold-loan.scheme.view"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="shw_gol_lon_sch_inf" class="text-base font-semibold cursor-pointer mb-0">
-                        Show Gold Loan Scheme Info
-                    </label>
+                <div class="col-span-2 md:col-span-1">
+                    <div class="flex items-center gap-2 space-x-2">
+                        <input type="checkbox" id="edit_gol_lon_sch"
+                            name="permissions[]" value="gold-loan.schemes.edit"
+                            class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        <label for="edit_gol_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
+                            Edit Gold Loan Scheme
+                        </label>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="edit_gol_lon_sch"
-                        name="permissions[]" value="gold-loan.scheme.edit"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="edit_gol_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
-                        Edit Gold Loan Scheme
-                    </label>
-                </div>
             </div>
-
         </div>
-    </div>
-    <br>
     <!----------------- Gold Loan Calculator -------------------->
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
@@ -85,7 +85,7 @@
         <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="gol_loan_calc" name="permissions[]" value="gold-loan.calculator.view"
+                    <input type="checkbox" id="gol_loan_calc" name="permissions[]" value="gold-loan.calculator.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="gol_loan_calc" class="text-base font-semibold cursor-pointer mb-0">
                         Gold Loan Calculator
@@ -116,7 +116,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="gol_lon_app_lis" name="permissions[]" value="gold-loan.application.view"
+                    <input type="checkbox" id="gol_lon_app_lis" name="permissions[]" value="gold-loan.applications.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="gol_lon_app_lis" class="text-base font-semibold cursor-pointer mb-0">
                         Gold Loan Applications List
@@ -126,7 +126,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="gol_lon_app_sms_enb" name="permissions[]" value="gold-loan.application.view"
+                    <input type="checkbox" id="gol_lon_app_sms_enb" name="permissions[]" value="gold-loan.applications.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="gol_lon_app_sms_enb" class="text-base font-semibold cursor-pointer mb-0">
                         Gold Loan Application SMS Enabled/Disabled
@@ -155,7 +155,7 @@
             </div>
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="set_dis_set" name="permissions[]" value="gold-loan.application.view"
+                    <input type="checkbox" id="set_dis_set" name="permissions[]" value="gold-loan.disbursements.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="set_dis_set" class="text-base font-semibold cursor-pointer mb-0">
                         Set Disbursement Setting
@@ -182,7 +182,7 @@
             </div>
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="up_new_orn_img" name="permissions[]" value="gold-loan.application.upload-ornament"
+                    <input type="checkbox" id="up_new_orn_img" name="permissions[]" value="gold-loan.ornaments.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="up_new_orn_img" class="text-base font-semibold cursor-pointer mb-0">
                         Upload New Ornament Image
@@ -191,7 +191,7 @@
             </div>
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="ch_upl_orn_img" name="permissions[]" value="gold-loan.application.upload-ornament"
+                    <input type="checkbox" id="ch_upl_orn_img" name="permissions[]" value="gold-loan.ornaments.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="ch_upl_orn_img" class="text-base font-semibold cursor-pointer mb-0">
                         Change Uploaded Ornament Image
@@ -258,7 +258,7 @@
         <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="gol_orn_inv" name="permissions[]" value="gold-loan.inventory.view"
+                    <input type="checkbox" id="gol_orn_inv" name="permissions[]" value="gold-loan.ornaments.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="gol_orn_inv" class="text-base font-semibold cursor-pointer mb-0">
                         Gold Ornaments Inventory
@@ -267,7 +267,7 @@
             </div>
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="up_gol_orn_sta" name="permissions[]" value="gold-loan.inventory.update-status"
+                    <input type="checkbox" id="up_gol_orn_sta" name="permissions[]" value="gold-loan.ornaments.update"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="up_gol_orn_sta" class="text-base font-semibold cursor-pointer mb-0">
                         Update Gold Ornaments Status
@@ -297,7 +297,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="gol_lon_dis_lis" name="permissions[]" value="gold-loan.disbursement.view"
+                    <input type="checkbox" id="gol_lon_dis_lis" name="permissions[]" value="gold-loan.disbursements.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="gol_lon_dis_lis" class="text-base font-semibold cursor-pointer mb-0">
                         Gold Loan Disbursements List
@@ -307,7 +307,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="dis_rel_gol_lon" name="permissions[]" value="gold-loan.disbursement.view"
+                    <input type="checkbox" id="dis_rel_gol_lon" name="permissions[]" value="gold-loan.disbursements.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="dis_rel_gol_lon" class="text-base font-semibold cursor-pointer mb-0">
                         Disburse/ Release Gold Loan
@@ -317,7 +317,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="can_gol_lon_dis" name="permissions[]" value="gold-loan.disbursement.view"
+                    <input type="checkbox" id="can_gol_lon_dis" name="permissions[]" value="golddisbursements.cancel"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="can_gol_lon_dis" class="text-base font-semibold cursor-pointer mb-0">
                         Cancel Gold Loan Disbursement
@@ -347,7 +347,7 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="gl_lon_acc_lis"
-                        name="permissions[]" value="gold-loan.account.view"
+                        name="permissions[]" value="gold-loan.account.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="gl_lon_acc_lis" class="text-base font-semibold cursor-pointer mb-0">
                         Gold Loan Accounts List
@@ -368,7 +368,7 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="gl_lon_acc_rem_sms"
-                        name="permissions[]" value="gold-loan.account.view"
+                        name="permissions[]" value="gold-loan.account.show"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="gl_lon_acc_rem_sms" class="text-base font-semibold cursor-pointer mb-0">
                         Gold Loan Accounts Reminder SMS Enabled / Disabled
@@ -378,7 +378,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="gol_lon_acc_hol_enb" name="permissions[]" value="gold-loan.account.view"
+                    <input type="checkbox" id="gol_lon_acc_hol_enb" name="permissions[]" value="gold-loan.account.show"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="gol_lon_acc_hol_enb" class="text-base font-semibold cursor-pointer mb-0">
                         Gold Loan Account HOLD Enabled/ Disabled
@@ -397,7 +397,7 @@
             </div>
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="gol_lon_trans_list" name="permissions[]" value="gold-loan.account.transaction-list-view"
+                    <input type="checkbox" id="gol_lon_trans_list" name="permissions[]" value="gold-loan.account.transaction"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="gol_lon_trans_list" class="text-base font-semibold cursor-pointer mb-0">
                         Gold Loan Transactions List
@@ -406,7 +406,7 @@
             </div>
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="shw_gol_lon_trans" name="permissions[]" value="gold-loan.account.transaction-view"
+                    <input type="checkbox" id="shw_gol_lon_trans" name="permissions[]" value="gold-loan.account.transaction"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="shw_gol_lon_trans" class="text-base font-semibold cursor-pointer mb-0">
                         Show Gold Loan Transactions
@@ -415,17 +415,16 @@
             </div>
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="up_gol_tran_time" name="permissions[]" value="gold-loan.account.transaction-update"
+                    <input type="checkbox" id="up_gol_tran_time" name="permissions[]" value="gold-loan.account.transaction"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="up_gol_tran_time" class="text-base font-semibold cursor-pointer mb-0">
                         Update Gold Loan Transaction Time
-
                     </label>
                 </div>
             </div>
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="rem_gol_trans" name="permissions[]" value="gold-loan.account.transaction-delete"
+                    <input type="checkbox" id="rem_gol_trans" name="permissions[]" value="gold-loan.account.transaction"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="rem_gol_trans" class="text-base font-semibold cursor-pointer mb-0">
                         Remove Gold Loan Transaction

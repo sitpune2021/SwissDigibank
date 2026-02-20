@@ -79,7 +79,6 @@ class BusinessLoan extends Controller
                     'maintenance_charge',
                     'collection',
                 ]));
-
             } catch (ValidationException $e) {
                 Log::warning('Validation Failed in BusinessLoanScheme', [
                     'errors' => $e->errors(),
@@ -101,7 +100,6 @@ class BusinessLoan extends Controller
             return redirect()
                 ->route('bussiness.schemes.index')
                 ->with('success', 'Scheme created successfully!');
-
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error while storing Business Loan Scheme', [
@@ -349,12 +347,10 @@ class BusinessLoan extends Controller
                 $ratePerInstallment = ($annualRate / 100) / 52;
                 $weeksPerInstallment = 1;
             }
-
         } elseif ($tenureType === 'DAYS') {
 
             $ratePerInstallment = ($annualRate / 100) / 365;  // 🔥 daily interest
             $daysPerInstallment = 1;
-
         } else {
             // MONTHLY / QUARTERLY / HALF-YEARLY / YEARLY
             if ($payout === 'yearly') {
@@ -500,7 +496,6 @@ class BusinessLoan extends Controller
                         'balance' => 0,
                     ];
                 }
-
             } elseif ($tenureType === 'WEEKS') {
                 $weeks = $installments;
                 $schedule = [];
@@ -642,8 +637,6 @@ class BusinessLoan extends Controller
                     ];
                 }
             }
-
-
         }
         // flat_advanced_interest EMI CODE END
 
@@ -716,8 +709,6 @@ class BusinessLoan extends Controller
                             'balance' => max(round($outstanding, 2), 0),
                         ];
                     }
-
-
                 }
                 // ================= DAILY (NEW – SAME AS WEEKLY) =================
                 elseif ($tenureType === 'DAYS') {
@@ -783,15 +774,12 @@ class BusinessLoan extends Controller
                         if ($i == 1) {
                             $principal = 0;
                             $interest = $firstInterest;
-
                         } elseif ($i == 2) {
                             $principal = $principal_2;
                             $interest = $secondInterest;
-
                         } elseif ($i == $installments) {
                             $principal = $outstanding;
                             $interest = 0;
-
                         } else {
                             $principal = $principal_flat;
                             $interest = 0;
@@ -863,7 +851,6 @@ class BusinessLoan extends Controller
                     ];
                 }
             }
-
         }
         // FLAT EMI CODE END
 
@@ -1251,8 +1238,8 @@ class BusinessLoan extends Controller
                             'cibil_type' => $type,
                             'cibil_score' => $request->cibil_score[$index] ?? null,
                             'report_date' => isset($request->report_date[$index]) && !empty($request->report_date[$index])
-    ? Carbon::createFromFormat('d-m-Y', $request->report_date[$index])->format('Y-m-d')
-    : null,
+                                ? Carbon::createFromFormat('d-m-Y', $request->report_date[$index])->format('Y-m-d')
+                                : null,
                             // 'report_date' => isset($request->report_date[$index])
                             //     ? Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
                             //     : null,
@@ -1269,7 +1256,7 @@ class BusinessLoan extends Controller
                 Log::warning('CIBIL block skipped — no cibil_type found in request.');
             }
 
-            return redirect()->route('bussiness.applications.index')
+            return redirect()->route('bussiness.applications.view', $loanApplication->id)
                 ->with('success', 'Business Loan Application + Credit Scores saved successfully!');
         } catch (Exception $e) {
             Log::error('❌ Error while storing Business Loan Application', [
@@ -1475,7 +1462,6 @@ class BusinessLoan extends Controller
             return redirect()
                 ->route('bussiness.applications.view', $application->id)
                 ->with('success', 'Application and credit scores updated successfully!');
-
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -1696,7 +1682,6 @@ class BusinessLoan extends Controller
                 'emi' => $emiTotal,
                 'bal_principal' => $remainingPrincipal
             ];
-
         }
 
         /* Totals */
@@ -1733,16 +1718,8 @@ class BusinessLoan extends Controller
 
     public function submitForApproval($id)
     {
-        // Fetch the relevant model — change LoanApplication to appropriate model if many models share same button.
-        $application = BusinessLoanApplication::findOrFail($id);
-
-        // Do NOT change status. Only update updated_at to current time so it becomes "latest"
-        // Option A: touch() updates updated_at automatically
-        $application->touch();
-
-        return redirect()->route('loans')
-            ->with('success', 'Submitted for approval!');
-
+        return redirect()->back()
+            ->with('pending_request', true);
     }
 
     public function bussiness_process_fee($id)
@@ -1791,6 +1768,4 @@ class BusinessLoan extends Controller
 
         return redirect()->route('bussiness.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
-
-
 }

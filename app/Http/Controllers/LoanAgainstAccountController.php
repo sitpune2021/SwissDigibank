@@ -552,6 +552,18 @@ class LoanAgainstAccountController extends Controller
 
 
         $payButtonText = $hasDueEmi ? 'Pay Emi' : 'Pay';
+        $hasPendingApproval =
+            DB::table('loan_against_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'pending')
+            ->exists()
+
+            ||
+
+            DB::table('loan_against_fore_closures')
+            ->where('loan_id', $id)
+            ->where('status', 0)
+            ->exists();
         return view('loanagainst.account.view', [
             'goldLoan' => $goldLoan,
             'principal' => $principal,
@@ -569,6 +581,7 @@ class LoanAgainstAccountController extends Controller
             'totalRemainingEmiAmount' => $totalRemainingEmiAmount,
             'payRoute' => $payRoute,
             'payButtonText' => $payButtonText,
+            'hasPendingApproval'=>$hasPendingApproval,
         ]);
     }
 

@@ -25,15 +25,15 @@ use Illuminate\Validation\ValidationException;
 
 class LoanAgainstController extends Controller
 {
-    
+
     public function index()
-    {       
+    {
         //$schemes = LoanAgainstScheme::all();
         // paginate(10) => 10 records per page
         $schemes = LoanAgainstScheme::orderBy('id', 'desc')->paginate(10);
         return view("loanagainst.schemes.index", compact('schemes'));
-    } 
-  
+    }
+
     public function create()
     {
         return view("loanagainst.schemes.create");
@@ -60,7 +60,7 @@ class LoanAgainstController extends Controller
                     'annual_interest_rate' => 'required|numeric|min:0',
                     'overdue_interest_rate' => 'required|numeric|min:0',
                     'is_active' => 'required|in:0,1',
-                     // New fields (optional)
+                    // New fields (optional)
                     'penalty_charge' => 'nullable|numeric|min:0',
                     'processing_fee' => 'nullable|numeric|min:0',
                     'stamp_duty_charge' => 'nullable|numeric|min:0',
@@ -76,7 +76,6 @@ class LoanAgainstController extends Controller
                 ], [
                     'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
                 ]);
-
             } catch (ValidationException $e) {
                 Log::warning('❌ Validation Failed in LoanAgainstScheme', [
                     'errors' => $e->errors(),
@@ -99,7 +98,6 @@ class LoanAgainstController extends Controller
             return redirect()
                 ->route('loanagainst.schemes.index')
                 ->with('success', 'Scheme created successfully!');
-
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('❌ Error while storing Loan Against Scheme', [
@@ -129,9 +127,9 @@ class LoanAgainstController extends Controller
         $scheme->update($request->all());
 
         return redirect()->route('loanagainst.schemes.index')
-                        ->with('success', 'Scheme updated successfully!');
+            ->with('success', 'Scheme updated successfully!');
     }
-  
+
     public function view($id)
     {
         $scheme = LoanAgainstScheme::findOrFail($id);
@@ -139,7 +137,7 @@ class LoanAgainstController extends Controller
     }
 
 
-//////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////
 
 
     public function calculator()
@@ -152,7 +150,7 @@ class LoanAgainstController extends Controller
     public function calculateResult(Request $request)
     {
 
-         // Store raw user tenure selection for display (before conversion)
+        // Store raw user tenure selection for display (before conversion)
         $rawTenureValue = $request->tenure_months;
         $rawTenureType = $request->tenure_type;
 
@@ -162,7 +160,7 @@ class LoanAgainstController extends Controller
         ---------------------------------------------------------*/
         $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
 
-         //  ADD HERE (Correct Location)
+        //  ADD HERE (Correct Location)
         $interestType = $request->interest_type;
         // $interestAsEmi = $request->has('option_interest_emi') ? 'Yes' : 'No';
         // $interestAsFirst = $request->has('option_interest_first') ? 'Yes' : 'No';
@@ -193,10 +191,9 @@ class LoanAgainstController extends Controller
 
         $isReducingWithRatio = ($interestType === 'reducing' && $ratioEnabled === 'Yes');
 
-        
 
-        if ($isManual) 
-        {
+
+        if ($isManual) {
 
             $request->validate([
                 'loan_amount' => 'required|numeric|min:1',
@@ -217,7 +214,7 @@ class LoanAgainstController extends Controller
             }
 
             // Create Display Format (Human Friendly)
-            $tenureDisplay = match($rawTenureType) {
+            $tenureDisplay = match ($rawTenureType) {
                 'DAYS' => $rawTenureValue . ' Days',
                 'WEEKS' => $rawTenureValue . ' Weeks',
                 'MONTHS' => $rawTenureValue . ' Months',
@@ -240,13 +237,10 @@ class LoanAgainstController extends Controller
 
             $processingFee  = (float) ($request->manual_processing_fee ?? 0);
             $stampAmount    = round($loan * ($request->manual_stamp ?? 0) / 100, 2);
-            $insuranceAmount= round($loan * ($request->manual_insurance ?? 0) / 100, 2);
+            $insuranceAmount = round($loan * ($request->manual_insurance ?? 0) / 100, 2);
 
             $scheme         = null;
-
-        } 
-        else 
-        {
+        } else {
 
             $request->validate([
                 'scheme_id' => 'required|exists:loan_against_schemes,id',
@@ -270,7 +264,7 @@ class LoanAgainstController extends Controller
             }
 
             // Create Display Format (Human Friendly)
-            $tenureDisplay = match($rawTenureType) {
+            $tenureDisplay = match ($rawTenureType) {
                 'DAYS' => $rawTenureValue . ' Days',
                 'WEEKS' => $rawTenureValue . ' Weeks',
                 'MONTHS' => $rawTenureValue . ' Months',
@@ -320,11 +314,11 @@ class LoanAgainstController extends Controller
             $installments = max(1, (int) round($rawTenureValue));
         }
         // If raw is WEEKS but payout is bi-weekly (every 2 weeks) => installments = ceil(weeks/2)
-        elseif ($rawTenureType === 'WEEKS' && in_array($payout, ['bi_weekly','bi-weekly'])) {
+        elseif ($rawTenureType === 'WEEKS' && in_array($payout, ['bi_weekly', 'bi-weekly'])) {
             $installments = max(1, (int) ceil($rawTenureValue / 2));
         }
         // If raw is WEEKS and payout is 4_weekly (every 4 wks)
-        elseif ($rawTenureType === 'WEEKS' && in_array($payout, ['4_weekly','4-weekly','4weekly'])) {
+        elseif ($rawTenureType === 'WEEKS' && in_array($payout, ['4_weekly', '4-weekly', '4weekly'])) {
             $installments = max(1, (int) ceil($rawTenureValue / 4));
         }
         // If raw is DAYS and payout = daily => days count
@@ -359,7 +353,7 @@ class LoanAgainstController extends Controller
                     $installments = max(1, (int) ceil($tenureMonths * 4)); // approximate
                 } elseif (in_array($payout, ['bi_weekly'])) {
                     $installments = max(1, (int) ceil($tenureMonths * 2)); // approx
-                } elseif (in_array($payout, ['4_weekly','4-weekly','4weekly'])) {
+                } elseif (in_array($payout, ['4_weekly', '4-weekly', '4weekly'])) {
                     $installments = max(1, (int) ceil($tenureMonths * 1)); // approx
                 } else {
                     $installments = max(1, (int) ceil($tenureMonths / 1));
@@ -369,7 +363,7 @@ class LoanAgainstController extends Controller
                 $installments = max(1, (int) ceil($tenureMonths / $monthsPerInstallment));
             }
         }
-   
+
 
         $schedule = [];
         $startDate = now();
@@ -388,13 +382,12 @@ class LoanAgainstController extends Controller
         } else {
             $totalInterest = 0; // Final total interest later calculated from schedule
         }
-            
+
 
         /* -------------------------------------------------------
             4(A). FLAT ADVANCED → ONLY ONE EMI
         ---------------------------------------------------------*/
-        if ($interestType === 'flat_advanced') 
-        {
+        if ($interestType === 'flat_advanced') {
 
             // Force principal split always
             $remainingPrincipal = $loan;
@@ -405,17 +398,13 @@ class LoanAgainstController extends Controller
                 // EMI DATE
                 if ($payout === 'daily') {
                     $emiDate = $startDate->copy()->addDays($i);
-                }
-                elseif ($payout === 'weekly') {
+                } elseif ($payout === 'weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 7);
-                }
-                elseif ($payout === 'bi_weekly') {
+                } elseif ($payout === 'bi_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 14);
-                }
-                elseif ($payout === '4_weekly') {
+                } elseif ($payout === '4_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 28);
-                }
-                else {
+                } else {
                     $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
                 }
 
@@ -447,7 +436,7 @@ class LoanAgainstController extends Controller
             $total_interest  = 0;
             $total_emi_paid  = $loan;
         }
- 
+
 
         // if ($interestType === 'flat_advanced') {
 
@@ -490,17 +479,13 @@ class LoanAgainstController extends Controller
 
                 if ($payout === 'daily') {
                     $emiDate = $startDate->copy()->addDays($i);
-                }
-                elseif ($payout === 'weekly') {
+                } elseif ($payout === 'weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 7);
-                }
-                elseif ($payout === 'bi_weekly') {
+                } elseif ($payout === 'bi_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 14);
-                }
-                elseif ($payout === '4_weekly') {
+                } elseif ($payout === '4_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 28);
-                }
-                else {
+                } else {
                     $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
                 }
 
@@ -534,107 +519,103 @@ class LoanAgainstController extends Controller
         ---------------------------------------------------------*/
         // this code as per nidhi bi_weekly
 
-            if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === 'bi_weekly') 
-            {
+        if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === 'bi_weekly') {
 
-                $installments = count($schedule);
-                $loanAmount   = (float)$loan;
-                $rate         = (float)$annualRate;
-                $tenureMonths = (float)$tenureMonths;
+            $installments = count($schedule);
+            $loanAmount   = (float)$loan;
+            $rate         = (float)$annualRate;
+            $tenureMonths = (float)$tenureMonths;
 
-                // TOTAL INTEREST (flat)
-                $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
+            // TOTAL INTEREST (flat)
+            $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
 
-                // FIXED EMI
-                $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
+            // FIXED EMI
+            $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
 
-                // Principal per EMI (2..n)
-                $principalOther = $flatEmi;
+            // Principal per EMI (2..n)
+            $principalOther = $flatEmi;
 
-                // First Principal
-                $principal1 = round($loanAmount - ($principalOther * ($installments - 1)), 2);
+            // First Principal
+            $principal1 = round($loanAmount - ($principalOther * ($installments - 1)), 2);
 
-                // First Interest = EMI - first principal
-                //$interest1 = round($flatEmi - $principal1, 2);
-                // 1st EMI must take EXACT total interest
-                $interest1   = $totalInterest;
+            // First Interest = EMI - first principal
+            //$interest1 = round($flatEmi - $principal1, 2);
+            // 1st EMI must take EXACT total interest
+            $interest1   = $totalInterest;
 
-                // Now recompute principal1 so EMI stays accurate
-                $principal1  = round($flatEmi - $interest1, 2);
+            // Now recompute principal1 so EMI stays accurate
+            $principal1  = round($flatEmi - $interest1, 2);
 
-                $remaining = $loanAmount;
+            $remaining = $loanAmount;
 
-                foreach ($schedule as $i => $row) {
+            foreach ($schedule as $i => $row) {
 
-                    $emiNo = $row['no'];
+                $emiNo = $row['no'];
 
-                    if ($emiNo == 1) {
+                if ($emiNo == 1) {
 
-                        // FIRST EMI
-                        $schedule[$i]['principal'] = $principal1;
-                        $schedule[$i]['interest']  = $interest1;
-                        $schedule[$i]['emi']       = $flatEmi;
+                    // FIRST EMI
+                    $schedule[$i]['principal'] = $principal1;
+                    $schedule[$i]['interest']  = $interest1;
+                    $schedule[$i]['emi']       = $flatEmi;
 
-                        $remaining -= $principal1;
+                    $remaining -= $principal1;
+                } else {
 
+                    // OTHER EMIs = principal only
+                    if ($emiNo == $installments) {
+                        $principal = round($remaining, 2);
                     } else {
-
-                        // OTHER EMIs = principal only
-                        if ($emiNo == $installments) {
-                            $principal = round($remaining, 2);
-                        } else {
-                            $principal = $principalOther;
-                        }
-
-                        $schedule[$i]['principal'] = $principal;
-                        $schedule[$i]['interest']  = 0;
-                        $schedule[$i]['emi']       = $flatEmi;
-
-                        $remaining -= $principal;
+                        $principal = $principalOther;
                     }
 
-                    // BALANCE UPDATE
-                    $schedule[$i]['balance'] = max(0, round($remaining, 2));
+                    $schedule[$i]['principal'] = $principal;
+                    $schedule[$i]['interest']  = 0;
+                    $schedule[$i]['emi']       = $flatEmi;
+
+                    $remaining -= $principal;
                 }
+
+                // BALANCE UPDATE
+                $schedule[$i]['balance'] = max(0, round($remaining, 2));
             }
+        }
 
-            // this code as per nidhi 4_weekly
-            if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === '4_weekly') 
-            {
+        // this code as per nidhi 4_weekly
+        if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === '4_weekly') {
 
-                $installments = count($schedule);
-                $loanAmount   = (float)$loan;
-                $rate         = (float)$annualRate;
-                $tenureMonths = (float)$tenureMonths;
+            $installments = count($schedule);
+            $loanAmount   = (float)$loan;
+            $rate         = (float)$annualRate;
+            $tenureMonths = (float)$tenureMonths;
 
-                // TOTAL INTEREST (flat)
-                $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
+            // TOTAL INTEREST (flat)
+            $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
 
-                // FIXED EMI
-                $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
+            // FIXED EMI
+            $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
 
-                // FIRST EMI takes exact total interest
-                $interest1 = $totalInterest;
+            // FIRST EMI takes exact total interest
+            $interest1 = $totalInterest;
 
-                // First principal = EMI - interest
-                $principal1 = round($flatEmi - $interest1, 2);
+            // First principal = EMI - interest
+            $principal1 = round($flatEmi - $interest1, 2);
 
-                $remaining = $loanAmount;
+            $remaining = $loanAmount;
 
-                foreach ($schedule as $i => $row) {
+            foreach ($schedule as $i => $row) {
 
-                    $emiNo = $row['no'];
+                $emiNo = $row['no'];
 
-                    if ($emiNo == 1) {
+                if ($emiNo == 1) {
 
-                        // FIRST EMI
-                        $schedule[$i]['principal'] = $principal1;
-                        $schedule[$i]['interest']  = $interest1;
-                        $schedule[$i]['emi']       = $flatEmi;
+                    // FIRST EMI
+                    $schedule[$i]['principal'] = $principal1;
+                    $schedule[$i]['interest']  = $interest1;
+                    $schedule[$i]['emi']       = $flatEmi;
 
-                        $remaining -= $principal1;
-
-                    } else {
+                    $remaining -= $principal1;
+                } else {
 
                     // OTHER EMIs = principal only
                     if ($emiNo == $installments) {
@@ -652,121 +633,120 @@ class LoanAgainstController extends Controller
 
                 // BALANCE UPDATE
                 $schedule[$i]['balance'] = max(0, round($remaining, 2));
-                }
             }
+        }
 
 
-           // --- FIX: Reducing + Quarterly => EMI count = tenureMonths / 3 ---
-            $total_principal = 0;
-            $total_interest  = 0;
-            $total_emi_paid  = 0;
+        // --- FIX: Reducing + Quarterly => EMI count = tenureMonths / 3 ---
+        $total_principal = 0;
+        $total_interest  = 0;
+        $total_emi_paid  = 0;
 
+        $totalInterestAll = 0;
+        $total_charges = 0;
+
+
+        if ($interestType === 'reducing' && strtolower($payout) === 'quarterly') {
+
+            $emiCount = ceil($tenureMonths / 3);
+            $monthlyRate = ($annualRate / 12) / 100;
+
+            $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+
+            $remaining_principal = $loan;
             $totalInterestAll = 0;
-            $total_charges = 0;
 
+            for ($i = 1; $i <= $emiCount; $i++) {
 
-            if ($interestType === 'reducing' && strtolower($payout) === 'quarterly') {
+                $emiDate = $startDate->copy()->addMonths($i * 3);
+                $dueDate = $emiDate->copy()->addDay();
 
-                $emiCount = ceil($tenureMonths / 3);
-                $monthlyRate = ($annualRate / 12) / 100;
+                $interest = 0;
 
-                $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+                for ($m = 1; $m <= 3; $m++) {
+                    $monthInterest = round($remaining_principal * $monthlyRate, 2);
+                    $interest += $monthInterest;
 
-                $remaining_principal = $loan;
-                $totalInterestAll = 0;
-
-                for ($i = 1; $i <= $emiCount; $i++) {
-
-                    $emiDate = $startDate->copy()->addMonths($i * 3);
-                    $dueDate = $emiDate->copy()->addDay();
-
-                    $interest = 0;
-
-                    for ($m = 1; $m <= 3; $m++) {
-                        $monthInterest = round($remaining_principal * $monthlyRate, 2);
-                        $interest += $monthInterest;
-
-                        $principalMonthly = round($emi - $monthInterest, 2);
-                        $remaining_principal -= $principalMonthly;
-                    }
-
-                    $totalInterestAll += $interest;
-
-                    $principal = round($emi * 3 - $interest, 2);
-
-                    $schedule[] = [
-                        'no' => $i,
-                        'emi_date'  => $emiDate->format('d/m/Y'),
-                        'due_date'  => $dueDate->format('d/m/Y'),
-                        'principal' => $principal,
-                        'interest'  => $interest,
-                        'charges'   => 0,
-                        'emi'       => $principal + $interest,
-                        'balance'   => max($remaining_principal, 0),
-                    ];
+                    $principalMonthly = round($emi - $monthInterest, 2);
+                    $remaining_principal -= $principalMonthly;
                 }
 
-                $finalTotals['principal'] = $loan;
-                $finalTotals['interest']  = $totalInterestAll;
-                $finalTotals['emi']       = $loan + $totalInterestAll;
+                $totalInterestAll += $interest;
 
-                $total_principal = $loan;
-                $total_interest  = $totalInterestAll;
-                $total_emi_paid  = $loan + $totalInterestAll;
+                $principal = round($emi * 3 - $interest, 2);
 
+                $schedule[] = [
+                    'no' => $i,
+                    'emi_date'  => $emiDate->format('d/m/Y'),
+                    'due_date'  => $dueDate->format('d/m/Y'),
+                    'principal' => $principal,
+                    'interest'  => $interest,
+                    'charges'   => 0,
+                    'emi'       => $principal + $interest,
+                    'balance'   => max($remaining_principal, 0),
+                ];
             }
 
-            // --- NOW HALF-YEARLY BLOCK — MUST USE else if ----
-            else if ($interestType === 'reducing' && strtolower($payout) === 'half-yearly') {
+            $finalTotals['principal'] = $loan;
+            $finalTotals['interest']  = $totalInterestAll;
+            $finalTotals['emi']       = $loan + $totalInterestAll;
 
-                $emiCount = ceil($tenureMonths / 6);
-                $monthlyRate = ($annualRate / 12) / 100;
+            $total_principal = $loan;
+            $total_interest  = $totalInterestAll;
+            $total_emi_paid  = $loan + $totalInterestAll;
+        }
 
-                $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+        // --- NOW HALF-YEARLY BLOCK — MUST USE else if ----
+        else if ($interestType === 'reducing' && strtolower($payout) === 'half-yearly') {
 
-                $remaining_principal = $loan;
-                $totalInterestAll = 0;
+            $emiCount = ceil($tenureMonths / 6);
+            $monthlyRate = ($annualRate / 12) / 100;
 
-                for ($i = 1; $i <= $emiCount; $i++) {
+            $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
 
-                    $emiDate = $startDate->copy()->addMonths($i * 6);
-                    $dueDate = $emiDate->copy()->addDay();
+            $remaining_principal = $loan;
+            $totalInterestAll = 0;
 
-                    $interest = 0;
+            for ($i = 1; $i <= $emiCount; $i++) {
 
-                    for ($m = 1; $m <= 6; $m++) {
-                        $monthInterest = round($remaining_principal * $monthlyRate, 2);
-                        $interest += $monthInterest;
+                $emiDate = $startDate->copy()->addMonths($i * 6);
+                $dueDate = $emiDate->copy()->addDay();
 
-                        $principalMonthly = round($emi - $monthInterest, 2);
-                        $remaining_principal -= $principalMonthly;
-                    }
+                $interest = 0;
 
-                    $totalInterestAll += $interest;
+                for ($m = 1; $m <= 6; $m++) {
+                    $monthInterest = round($remaining_principal * $monthlyRate, 2);
+                    $interest += $monthInterest;
 
-                    $principal = round($emi * 6 - $interest, 2);
-
-                    $schedule[] = [
-                        'no'        => $i,
-                        'emi_date'  => $emiDate->format('d/m/Y'),
-                        'due_date'  => $dueDate->format('d/m/Y'),
-                        'principal' => $principal,
-                        'interest'  => $interest,
-                        'charges'   => 0,
-                        'emi'       => $principal + $interest,
-                        'balance'   => max($remaining_principal, 0),
-                    ];
+                    $principalMonthly = round($emi - $monthInterest, 2);
+                    $remaining_principal -= $principalMonthly;
                 }
 
-                $finalTotals['principal'] = $loan;
-                $finalTotals['interest']  = $totalInterestAll;
-                $finalTotals['emi']       = $loan + $totalInterestAll;
+                $totalInterestAll += $interest;
 
-                $total_principal = $loan;
-                $total_interest  = $totalInterestAll;
-                $total_emi_paid  = $loan + $totalInterestAll;
+                $principal = round($emi * 6 - $interest, 2);
+
+                $schedule[] = [
+                    'no'        => $i,
+                    'emi_date'  => $emiDate->format('d/m/Y'),
+                    'due_date'  => $dueDate->format('d/m/Y'),
+                    'principal' => $principal,
+                    'interest'  => $interest,
+                    'charges'   => 0,
+                    'emi'       => $principal + $interest,
+                    'balance'   => max($remaining_principal, 0),
+                ];
             }
-      
+
+            $finalTotals['principal'] = $loan;
+            $finalTotals['interest']  = $totalInterestAll;
+            $finalTotals['emi']       = $loan + $totalInterestAll;
+
+            $total_principal = $loan;
+            $total_interest  = $totalInterestAll;
+            $total_emi_paid  = $loan + $totalInterestAll;
+        }
+
 
         /* -------------------------------------------------------
              4(C). REDUCING EMI — FULLY FIXED 
@@ -813,8 +793,7 @@ class LoanAgainstController extends Controller
         //     $total_emi_paid  = $loan + $totalInterestAll;
         // }
 
-        elseif ($interestType === 'reducing') 
-        {
+        elseif ($interestType === 'reducing') {
 
             $totalInterestAll = 0;
 
@@ -870,7 +849,7 @@ class LoanAgainstController extends Controller
                     if ($i <= $ratio_first_count) {
                         $emi = round(
                             ($principal_first_part * $ratePerPeriod) /
-                            (1 - pow(1 + $ratePerPeriod, -$ratio_first_count)),
+                                (1 - pow(1 + $ratePerPeriod, -$ratio_first_count)),
                             2
                         );
                         $interest = round($remaining_principal_first * $ratePerPeriod, 2);
@@ -878,12 +857,11 @@ class LoanAgainstController extends Controller
 
                         $remaining_principal_first -= $principal;
                         $remaining_principal = $remaining_principal_first + $remaining_principal_second;
-
                     } else {
                         $emi_second_count = $installments - $ratio_first_count;
                         $emi = round(
                             ($principal_second_part * $ratePerPeriod) /
-                            (1 - pow(1 + $ratePerPeriod, -$emi_second_count)),
+                                (1 - pow(1 + $ratePerPeriod, -$emi_second_count)),
                             2
                         );
                         $interest = round($remaining_principal_second * $ratePerPeriod, 2);
@@ -892,11 +870,10 @@ class LoanAgainstController extends Controller
                         $remaining_principal_second -= $principal;
                         $remaining_principal = $remaining_principal_first + $remaining_principal_second;
                     }
-
                 } else {
                     $emi = round(
                         ($loan * $ratePerPeriod) /
-                        (1 - pow(1 + $ratePerPeriod, -$installments)),
+                            (1 - pow(1 + $ratePerPeriod, -$installments)),
                         2
                     );
                     $interest  = round($remaining_principal * $ratePerPeriod, 2);
@@ -930,7 +907,7 @@ class LoanAgainstController extends Controller
         if ($interestType === 'reducing') {
             $totalInterest = array_sum(array_column($schedule, 'interest'));
         }
-     
+
         /* -------------------------------------------------------
             4(D). INTEREST AS EMI LOGIC (PRINCIPAL ZERO)
         ---------------------------------------------------------*/
@@ -964,7 +941,7 @@ class LoanAgainstController extends Controller
                 if ($row['no'] == $installments) {
                     $schedule[$k]['principal'] = $loan;
                     $schedule[$k]['balance'] = 0;
-                } 
+                }
                 // All other EMI - principal ZERO
                 else {
                     $schedule[$k]['principal'] = 0;
@@ -981,11 +958,9 @@ class LoanAgainstController extends Controller
             IF INTEREST AS EMI = NO → ONLY ONE ROW (flat_advanced only)
         ---------------------------------------------------------*/
 
-        if ($interestType === 'flat_advanced' && $interestAsEmi !== 'Yes') 
-        {
+        if ($interestType === 'flat_advanced' && $interestAsEmi !== 'Yes') {
 
-            if (!empty($schedule)) 
-            {
+            if (!empty($schedule)) {
 
                 // FINAL EMI DATE / DUE DATE use karenge
                 $lastRow = end($schedule);
@@ -1021,11 +996,11 @@ class LoanAgainstController extends Controller
         /* ---------------------------------------------------------
                 INTEREST AS FIRST EMI (FLAT EMI + QUARTERLY/HALF/YEARLY)
         ---------------------------------------------------------*/
-        
+
         if (
             $interestAsFirst === 'Yes' &&
             $interestType === 'flat_emi' &&
-            in_array(strtolower($payout), ['quarterly','half-yearly','yearly'])
+            in_array(strtolower($payout), ['quarterly', 'half-yearly', 'yearly'])
         ) {
             $installments = (int)$installments;   // ex: 4
             $loanAmount   = (float)$loan;
@@ -1089,12 +1064,11 @@ class LoanAgainstController extends Controller
                 // ensure no tiny negative balance due to rounding
                 $schedule[$i]['balance'] = round(max(0, $remaining), 2);
             }
-
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////        
 
-        
+
         // perefect only month show
         /* ---------------------------------------------------------
             PERFECT FIX — Flat EMI + Interest As First EMI (MONTHLY)
@@ -1138,7 +1112,6 @@ class LoanAgainstController extends Controller
                     $schedule[$i]['interest']  = $interest1;
                     $schedule[$i]['emi']       = $flatEmi;
                     $schedule[$i]['balance']   = $remaining;
-
                 } elseif ($emiNo == 2) {
 
                     // 2nd EMI → remaining interest + partial principal
@@ -1151,25 +1124,22 @@ class LoanAgainstController extends Controller
 
                     $remaining -= $principal;
                     $schedule[$i]['balance'] = round($remaining, 2);
+                } else {
 
-                } 
-                else {
-
-                        // 3rd EMI onward → principal = EMI (interest zero)
-                        if ($emiNo == $installments) {
-                            $principal = round($remaining, 2);
-                        } else {
-                            $principal = $flatEmi;
-                        }
-
-                        $schedule[$i]['principal'] = $principal;
-                        $schedule[$i]['interest']  = 0;
-                        $schedule[$i]['emi']       = $flatEmi;
-
-                        $remaining -= $principal;
-                        $schedule[$i]['balance'] = max(0, round($remaining, 2));
+                    // 3rd EMI onward → principal = EMI (interest zero)
+                    if ($emiNo == $installments) {
+                        $principal = round($remaining, 2);
+                    } else {
+                        $principal = $flatEmi;
                     }
 
+                    $schedule[$i]['principal'] = $principal;
+                    $schedule[$i]['interest']  = 0;
+                    $schedule[$i]['emi']       = $flatEmi;
+
+                    $remaining -= $principal;
+                    $schedule[$i]['balance'] = max(0, round($remaining, 2));
+                }
             }
         }
 
@@ -1214,7 +1184,6 @@ class LoanAgainstController extends Controller
                     $schedule[$i]['emi']       = $flatEmi;
 
                     $remaining -= $principal;
-
                 } else {
 
                     // OTHER EMIs -> ONLY PRINCIPAL = flatEmi (last one adjust)
@@ -1245,7 +1214,7 @@ class LoanAgainstController extends Controller
         ---------------------------------------------------------*/
         $grandTotalPayable = $loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount;
 
-         /* --------------------------------------------
+        /* --------------------------------------------
         FINAL FIX — Ensure correct value after mapping
         ---------------------------------------------*/
         $isReducingWithRatio = ($interestType === 'reducing' && $ratioEnabled === 'Yes');
@@ -1274,7 +1243,7 @@ class LoanAgainstController extends Controller
             'interest_as_emi' => $interestAsEmi,
             'interest_as_first' => $interestAsFirst,
 
-           'tenure_display' => $tenureDisplay,
+            'tenure_display' => $tenureDisplay,
             'ratio_enabled' => $ratioEnabled,
             'ratio_first_emi' => $ratioFirstEmi,
             'ratio_first_percentage' => $ratioFirstPercentage,
@@ -1284,16 +1253,15 @@ class LoanAgainstController extends Controller
             'ratioFirstPercentage' => $ratioFirstPercentage,
 
             'interestType' => $interestType,
-   
+
             'total_interest' => round($totalInterest, 2),
             'total_principal' => $loan,
             'total_emi_paid' => round(($interestType == 'flat_advanced' ? $loan : $loan + $totalInterest), 2),
             'grand_total_payable' => round($grandTotalPayable, 2),
         ]);
-
     }
 
-////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
 
 
     public function appindex()
@@ -1306,16 +1274,16 @@ class LoanAgainstController extends Controller
         return view("loanagainst.applications.index", compact('applications'));
     }
 
-    public function appcreate() 
+    public function appcreate()
     {
         //$members = Member::all();
-        $members = Member::select('id', 'member_info_first_name','member_info_mobile_no','general_branch')->get();
+        $members = Member::select('id', 'member_info_first_name', 'member_info_mobile_no', 'general_branch')->get();
         $branch = Branch::all();
         $scheme = LoanAgainstScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
-        return view("loanagainst.applications.create", compact('members','branch','scheme','banks'));
+        return view("loanagainst.applications.create", compact('members', 'branch', 'scheme', 'banks'));
     }
-   
+
     public function storeLoanApplication(Request $request)
     {
         Log::info('--- Loan Against Deposite Application Store Started ---', [
@@ -1342,63 +1310,63 @@ class LoanAgainstController extends Controller
             Log::warning('application_date field is empty');
         }
         // Convert cheque_date (d-m-Y → Y-m-d)
-if ($request->filled('cheque_date')) {
-    try {
-        $originalChequeDate = $request->cheque_date;
+        if ($request->filled('cheque_date')) {
+            try {
+                $originalChequeDate = $request->cheque_date;
 
-        $convertedChequeDate = Carbon::createFromFormat('d-m-Y', $originalChequeDate)
-            ->format('Y-m-d');
+                $convertedChequeDate = Carbon::createFromFormat('d-m-Y', $originalChequeDate)
+                    ->format('Y-m-d');
 
-        $request->merge([
-            'cheque_date' => $convertedChequeDate,
-        ]);
+                $request->merge([
+                    'cheque_date' => $convertedChequeDate,
+                ]);
 
-        Log::info('Converted cheque_date successfully', [
-            'original'  => $originalChequeDate,
-            'converted' => $convertedChequeDate,
-            'user_id'   => Auth::id(),
-        ]);
-    } catch (\Exception $e) {
-        Log::error('Invalid cheque_date format', [
-            'value'   => $request->cheque_date,
-            'user_id' => Auth::id(),
-            'error'   => $e->getMessage(),
-        ]);
-    }
-} else {
-    Log::warning('cheque_date field is empty', [
-        'user_id' => Auth::id(),
-    ]);
-}
-// Convert transfer_date (d-m-Y → Y-m-d)
-if ($request->filled('transfer_date')) {
-    try {
-        $originalTransferDate = $request->transfer_date;
+                Log::info('Converted cheque_date successfully', [
+                    'original'  => $originalChequeDate,
+                    'converted' => $convertedChequeDate,
+                    'user_id'   => Auth::id(),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Invalid cheque_date format', [
+                    'value'   => $request->cheque_date,
+                    'user_id' => Auth::id(),
+                    'error'   => $e->getMessage(),
+                ]);
+            }
+        } else {
+            Log::warning('cheque_date field is empty', [
+                'user_id' => Auth::id(),
+            ]);
+        }
+        // Convert transfer_date (d-m-Y → Y-m-d)
+        if ($request->filled('transfer_date')) {
+            try {
+                $originalTransferDate = $request->transfer_date;
 
-        $convertedTransferDate = Carbon::createFromFormat('d-m-Y', $originalTransferDate)
-            ->format('Y-m-d');
+                $convertedTransferDate = Carbon::createFromFormat('d-m-Y', $originalTransferDate)
+                    ->format('Y-m-d');
 
-        $request->merge([
-            'transfer_date' => $convertedTransferDate,
-        ]);
+                $request->merge([
+                    'transfer_date' => $convertedTransferDate,
+                ]);
 
-        Log::info('Converted transfer_date successfully', [
-            'original'  => $originalTransferDate,
-            'converted' => $convertedTransferDate,
-            'user_id'   => Auth::id(),
-        ]);
-    } catch (\Exception $e) {
-        Log::error('Invalid transfer_date format', [
-            'value'   => $request->transfer_date,
-            'user_id' => Auth::id(),
-            'error'   => $e->getMessage(),
-        ]);
-    }
-} else {
-    Log::warning('transfer_date field is empty', [
-        'user_id' => Auth::id(),
-    ]);
-}
+                Log::info('Converted transfer_date successfully', [
+                    'original'  => $originalTransferDate,
+                    'converted' => $convertedTransferDate,
+                    'user_id'   => Auth::id(),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Invalid transfer_date format', [
+                    'value'   => $request->transfer_date,
+                    'user_id' => Auth::id(),
+                    'error'   => $e->getMessage(),
+                ]);
+            }
+        } else {
+            Log::warning('transfer_date field is empty', [
+                'user_id' => Auth::id(),
+            ]);
+        }
 
 
         // Step 2: Validation (with detailed logging)
@@ -1436,7 +1404,7 @@ if ($request->filled('transfer_date')) {
                 'credit_period.required' => 'Please enter Credit Period.',
             ]);
 
-             // Validate CIBIL scores (each must be 3 digits between 300–900)
+            // Validate CIBIL scores (each must be 3 digits between 300–900)
             if ($request->has('cibil_score')) {
                 foreach ($request->cibil_score as $index => $score) {
                     if (!empty($score)) {
@@ -1452,7 +1420,7 @@ if ($request->filled('transfer_date')) {
             Log::info('Validation passed successfully', [
                 'validated_data' => $validated,
             ]);
-           
+
             // ---------- Insert this block HERE (after validation passed) ----------
             /*
             * SECURITY CHECK:
@@ -1461,9 +1429,8 @@ if ($request->filled('transfer_date')) {
             * 3. If security_type = dd_to_self → check dds_accounts table (DD_OF_SELF)
             * If the required account doesn’t exist, throw a validation error.
             */
-           
-            if ($request->filled('securety_type')) 
-            {
+
+            if ($request->filled('securety_type')) {
                 $scheme = DB::table('loan_against_schemes')->where('id', $request->scheme_id)->first();
 
                 if (!$scheme) {
@@ -1593,8 +1560,8 @@ if ($request->filled('transfer_date')) {
                             'cibil_type'       => $type,
                             'cibil_score'      => $request->cibil_score[$index] ?? null,
                             'report_date'      => isset($request->report_date[$index])
-                            ? Carbon::createFromFormat('d-m-Y', $request->report_date[$index])->format('Y-m-d') // ✅ Correct format
-                            : null,
+                                ? Carbon::createFromFormat('d-m-Y', $request->report_date[$index])->format('Y-m-d') // ✅ Correct format
+                                : null,
                             'report_file_path' => $filePath,
                         ]);
                     } catch (Exception $e) {
@@ -1608,9 +1575,8 @@ if ($request->filled('transfer_date')) {
                 Log::warning('CIBIL block skipped — no cibil_type found in request.');
             }
 
-            return redirect()->route('loanagainst.applications.index')
+            return redirect()->route('loanagainst.applications.view', $loanApplication->id)
                 ->with('success', 'Loan Against Deposit Create successfully!');
-
         } catch (Exception $e) {
             Log::error('Error while storing Loan Against Deposit', [
                 'error_message' => $e->getMessage(),
@@ -1670,40 +1636,44 @@ if ($request->filled('transfer_date')) {
         $banks = Bank::pluck('name', 'id');
 
         return view('loanagainst.applications.create', compact(
-            'application', 'members', 'scheme', 'branch', 'banks'
+            'application',
+            'members',
+            'scheme',
+            'branch',
+            'banks'
         ));
     }
 
     public function appupdate(Request $request, $id)
     {
         // --- Normalize application_date ---
-if ($request->filled('application_date')) {
-    try {
-        $original = $request->application_date;
+        if ($request->filled('application_date')) {
+            try {
+                $original = $request->application_date;
 
-        $converted = Carbon::createFromFormat('d-m-Y', $original)
-            ->format('Y-m-d');
+                $converted = Carbon::createFromFormat('d-m-Y', $original)
+                    ->format('Y-m-d');
 
-        $request->merge([
-            'application_date' => $converted,
-        ]);
+                $request->merge([
+                    'application_date' => $converted,
+                ]);
 
-        Log::info('Converted application_date (UPDATE)', [
-            'application_id' => $id,
-            'original' => $original,
-            'converted' => $converted,
-            'user_id' => auth()->id(),
-        ]);
-    } catch (\Exception $e) {
-        Log::error('Invalid application_date format (UPDATE)', [
-            'application_id' => $id,
-            'value' => $request->application_date,
-            'error' => $e->getMessage(),
-        ]);
+                Log::info('Converted application_date (UPDATE)', [
+                    'application_id' => $id,
+                    'original' => $original,
+                    'converted' => $converted,
+                    'user_id' => auth()->id(),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Invalid application_date format (UPDATE)', [
+                    'application_id' => $id,
+                    'value' => $request->application_date,
+                    'error' => $e->getMessage(),
+                ]);
 
-        return back()->with('error', 'Invalid application date format.');
-    }
-}
+                return back()->with('error', 'Invalid application date format.');
+            }
+        }
         Log::info('--- Loan Application Update Started ---', [
             'user_id' => auth()->id(),
             'application_id' => $id,
@@ -1813,7 +1783,6 @@ if ($request->filled('application_date')) {
             return redirect()
                 ->route('loanagainst.applications.view', $application->id)
                 ->with('success', 'Application and credit scores updated successfully!');
-
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -1828,8 +1797,8 @@ if ($request->filled('application_date')) {
     }
 
 
-//////////////////////////////////////////////////////////////////////////////////
-   
+    //////////////////////////////////////////////////////////////////////////////////
+
 
     public function linepropertyindex()
     {
@@ -1901,8 +1870,8 @@ if ($request->filled('application_date')) {
     }
 
 
-///////////////////////////////////////////////////////////////////////////////////
-  
+    ///////////////////////////////////////////////////////////////////////////////////
+
 
     public function emiChart($id)
     {
@@ -1950,9 +1919,20 @@ if ($request->filled('application_date')) {
         /* Collection Frequency */
         $collection = strtolower($application->emi_collection ?? 'monthly');
         switch ($collection) {
-            case 'daily':    $periodIncrement = 'addDay';  $periodName = 'DAILY';   $periodsPerYear = 365; break;
-            case 'weekly':   $periodIncrement = 'addWeek'; $periodName = 'WEEKLY';  $periodsPerYear = 52; break;
-            default:         $periodIncrement = 'addMonth';$periodName = 'MONTHLY'; $periodsPerYear = 12;
+            case 'daily':
+                $periodIncrement = 'addDay';
+                $periodName = 'DAILY';
+                $periodsPerYear = 365;
+                break;
+            case 'weekly':
+                $periodIncrement = 'addWeek';
+                $periodName = 'WEEKLY';
+                $periodsPerYear = 52;
+                break;
+            default:
+                $periodIncrement = 'addMonth';
+                $periodName = 'MONTHLY';
+                $periodsPerYear = 12;
         }
 
         $periodicRate = ($annualRate / 100) / $periodsPerYear;
@@ -1973,9 +1953,9 @@ if ($request->filled('application_date')) {
         /*  SPECIAL CASE — **ONLY 1 ROW** (Flat Advanced) */
         if ($interestType == 'flat_advanced') {
 
-        $emiDate = $emiDate->copy()->{$periodIncrement}(1);
-        $formattedEmiDate = $emiDate->format('d-m-Y');
-        $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
+            $emiDate = $emiDate->copy()->{$periodIncrement}(1);
+            $formattedEmiDate = $emiDate->format('d-m-Y');
+            $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
 
             $schedule[] = [
                 'no' => 1,
@@ -1995,11 +1975,23 @@ if ($request->filled('application_date')) {
             $totalEmi = $loanAmount;
 
             return view('loanagainst.applications.view-buttons.show-emi-chart', compact(
-                'application','loanAmount','disburseDate',
-                'processingFeeInc','stampDutyInc','insuranceInc','fitnessInc',
-                'tenure','chargesPerEmi','schedule',
-                'totalPrincipal','totalInterest','totalCharges','totalEmi',
-                'annualRate','interestType','periodName'
+                'application',
+                'loanAmount',
+                'disburseDate',
+                'processingFeeInc',
+                'stampDutyInc',
+                'insuranceInc',
+                'fitnessInc',
+                'tenure',
+                'chargesPerEmi',
+                'schedule',
+                'totalPrincipal',
+                'totalInterest',
+                'totalCharges',
+                'totalEmi',
+                'annualRate',
+                'interestType',
+                'periodName'
             ));
         }
 
@@ -2057,20 +2049,19 @@ if ($request->filled('application_date')) {
                 'no' => $i,
                 'emi_date' => $formattedEmiDate,
                 'due_date' => $dueDate,
-                'principal' => $principalThis,         
-                'interest' => $interestForPeriod,      
-                'charges_per_emi' => $chargesPerEmi,   
-                'emi' => $emiTotal,                    
-                'bal_principal' => $remainingPrincipal 
+                'principal' => $principalThis,
+                'interest' => $interestForPeriod,
+                'charges_per_emi' => $chargesPerEmi,
+                'emi' => $emiTotal,
+                'bal_principal' => $remainingPrincipal
             ];
-
         }
 
         /* Totals */
-        $totalPrincipal = array_sum(array_map(fn($r)=>floatval($r['principal']), $schedule));
-        $totalInterest  = array_sum(array_map(fn($r)=>floatval($r['interest']), $schedule));
-        $totalCharges   = array_sum(array_map(fn($r)=>floatval($r['charges_per_emi']), $schedule));
-        $totalEmi       = array_sum(array_map(fn($r)=>floatval($r['emi']), $schedule));
+        $totalPrincipal = array_sum(array_map(fn($r) => floatval($r['principal']), $schedule));
+        $totalInterest  = array_sum(array_map(fn($r) => floatval($r['interest']), $schedule));
+        $totalCharges   = array_sum(array_map(fn($r) => floatval($r['charges_per_emi']), $schedule));
+        $totalEmi       = array_sum(array_map(fn($r) => floatval($r['emi']), $schedule));
         if ($interestType === 'no_emi') {
             $totalPrincipal = 0;
             $totalInterest  = 0;
@@ -2078,11 +2069,23 @@ if ($request->filled('application_date')) {
             $totalEmi       = 0;
         }
         return view('loanagainst.applications.view-buttons.show-emi-chart', compact(
-            'application','loanAmount','disburseDate',
-            'processingFeeInc','stampDutyInc','insuranceInc','fitnessInc',
-            'tenure','chargesPerEmi','schedule',
-            'totalPrincipal','totalInterest','totalCharges','totalEmi',
-            'annualRate','interestType','periodName'
+            'application',
+            'loanAmount',
+            'disburseDate',
+            'processingFeeInc',
+            'stampDutyInc',
+            'insuranceInc',
+            'fitnessInc',
+            'tenure',
+            'chargesPerEmi',
+            'schedule',
+            'totalPrincipal',
+            'totalInterest',
+            'totalCharges',
+            'totalEmi',
+            'annualRate',
+            'interestType',
+            'periodName'
         ));
     }
 
@@ -2098,7 +2101,7 @@ if ($request->filled('application_date')) {
 
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view("loanagainst.applications.view-buttons.col_process_fee", compact('application','banks'));
+        return view("loanagainst.applications.view-buttons.col_process_fee", compact('application', 'banks'));
     }
 
     public function loanagainststoreProcessFee(Request $request, $id)
@@ -2140,22 +2143,22 @@ if ($request->filled('application_date')) {
         LoanagainstProcessingFee::create($data);
 
         return redirect()->route('loanagainst.applications.view', $id)
-                        ->with('success', 'Processing Fee Collected Successfully!');
+            ->with('success', 'Processing Fee Collected Successfully!');
     }
-
     public function submitForApproval($id)
     {
-        // Fetch the relevant model — change LoanApplication to appropriate model if many models share same button.
-        $application = LoanAgainstApplication::findOrFail($id);
-
-        // Do NOT change status. Only update updated_at to current time so it becomes "latest"
-        // Option A: touch() updates updated_at automatically
-        $application->touch();
-        
-        return redirect()->route('loans')
-        ->with('success', 'Submitted for approval!');      
-        
+        return redirect()->back()
+            ->with('pending_request', true);
     }
 
-    
+    // public function submitForApproval($id)
+    // {
+    //     $application = LoanAgainstApplication::findOrFail($id);
+
+    //     $application->status = 1;
+    //     $application->save();
+
+    //     return redirect()->back()
+    //         ->with('success', 'Submitted for approval.');
+    // }
 }
