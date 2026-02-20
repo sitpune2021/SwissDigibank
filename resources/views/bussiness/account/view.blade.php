@@ -1163,7 +1163,6 @@
                                                 </span>
                                             </td>
 
-
                                             <!-- PROCESSED -->
                                             <td class="p-2 border processed">
                                                 <span
@@ -1171,10 +1170,13 @@
                                                     {{ $emi['processed'] }}
                                                 </span>
                                             </td>
-
-                                            <!-- ACTION BUTTON -->
                                             <td class="p-2 border">
-                                                @if ($showProcessButton)
+                                                @if ($emi['status'] === 'PAID')
+                                                    <a href="{{ route('loan.emi_receipt.view', [$goldLoan->id, $emi['emi_no']]) }}"
+                                                        class="btn-primary text-white px-3 py-1 rounded ">
+                                                        Print
+                                                    </a>
+                                                @elseif ($showProcessButton)
                                                     <button class="process-btn btn-primary px-3 py-1 rounded"
                                                         data-emi="{{ $emi['emi_no'] }}">
                                                         PROCESS
