@@ -64,14 +64,13 @@
             accent-color: green;
             /* Modern browser support */
         }
-
     </style>
 </head>
 
 
 <div class="main-inner">
 
-   
+
     <div class="mb-2">
         <h3 class="text-xl font-semibold uppercase">FD/ MIS CALCULATOR</h3>
     </div>
@@ -83,23 +82,23 @@
 
                 <form id="fdForm" class="space-y-6" onsubmit="event.preventDefault(); calculateFD();">
 
-                 <div class="mb-3">
-                <label for="scheme_id" class="form-label block font-medium mb-2 uppercase">
-                    FD Scheme 
-                    <span class="text-error">*</span>
-                </label>
-                <select name="scheme_id" id="scheme_id" class="form-select w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 ">
-                    <option value="">-- Select Scheme --</option>
-                </select>
-            </div>
+                    <div class="mb-3">
+                        <label for="scheme_id" class="form-label block font-medium mb-2 uppercase">
+                            FD Scheme
+                            <span class="text-error">*</span>
+                        </label>
+                        <select name="scheme_id" id="scheme_id" class="form-select w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 ">
+                            <option value="">-- Select Scheme --</option>
+                        </select>
+                    </div>
 
-       <div class="mb-3">
-                <label for="" class="form-label  flex items-center gap-3 font-medium mb-2 uppercase">
-                                   
-                <input type="checkbox" id="" class="form-select w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 ">
-                <span class="block">Enter Values Manually</span>
-                </label>
-            </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label  flex items-center gap-3 font-medium mb-2 uppercase">
+
+                            <input type="checkbox" id="" class="form-select w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 ">
+                            <span class="block">Enter Values Manually</span>
+                        </label>
+                    </div>
                     {{-- Open Date --}}
                     <div>
                         <label class="font-medium uppercase mb-2 block">Open Date *</label>
@@ -126,7 +125,7 @@
                     <div>
                         <label class="font-medium uppercase mb-2 block">Interest Payout Type *</label>
                         <select id="interest_payout_type"
-                                class="w-full border rounded-10 px-3 py-3 text-sm">
+                            class="w-full border rounded-10 px-3 py-3 text-sm">
                             <option value="">Select</option>
                             <option value="CUMULATIVE_YEARLY">Cumulative Yearly</option>
                             <option value="CUMULATIVE_HALF_YEARLY">Cumulative Half Yearly</option>
@@ -165,7 +164,7 @@
                         <label class="font-medium uppercase mb-2 block">Bonus</label>
                         <div class="flex gap-3">
                             <select id="bonus_type"
-                                    class="w-24 border rounded-10 px-3 py-3 text-sm">
+                                class="w-24 border rounded-10 px-3 py-3 text-sm">
                                 <option value="%">%</option>
                                 <option value="fixed">Fixed</option>
                             </select>
@@ -187,17 +186,17 @@
                     {{-- Submit --}}
                     <div class="text-center">
                         <button type="submit"
-                                class="btn-primary px-4 py-2 uppercase">
+                            class="btn-primary px-4 py-2 uppercase">
                             Calculate
                         </button>
                     </div>
 
-                </form>    
+                </form>
 
             </div>
 
             <div class="">
-                
+
                 <div id="result" class="  col-span-2 md:col-span-1  dark:bg-bg3 rounded-2xl ">
                     <div id="scheme-details" class="p-3 mt-3 box  rounded-10 bg-gray-50" style="display:none;">
 
@@ -206,7 +205,7 @@
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 w-1/3 uppercase">Scheme Code</td>
                                     <td class="px-4 py-2 text-primary">
-                                    <span id="d_scheme_code"></span>
+                                        <span id="d_scheme_code"></span>
                                     </td>
                                 </tr>
                                 <tr class="border-b">
@@ -227,14 +226,14 @@
                                         <span id="d_min_amount"></span>
                                     </td>
                                 </tr>
-                            
+
                                 <tr class="border-b">
                                     <td class="font-semibold px-4 py-2 uppercase">Annual Interest Rate (%)</td>
                                     <td class="px-4 py-2    ">
                                         <span id="d_interest_rate"></span>
                                     </td>
                                 </tr>
-                                
+
 
                             </tbody>
                         </table>
@@ -250,7 +249,7 @@
         <!--Tabs-->
         <div id="accordion" style="display:none;" class="box">
 
-            <h3 class="mt-5 uppercase">Tabs</h3>
+            <h3 class="mt-5 uppercase">FD/ MIS Payout Information</h3>
 
             <div class="tab mt-5 flex gap-2" id="tabButtons">
                 <!-- JS tabs injected here-->
@@ -259,37 +258,37 @@
 
             <!-- Default Final Payment tab content -->
             <div id="finalpayment" class="tabcontent w-full" style="display:block;">
-            
+
                 <table class="w-full text-sm border">
                     <tbody class="divide-y divide-gray-200">
-                    <tr>
-                        <td class="font-semibold">Principal Amount (A)</td>
-                        <td id="principal"></td>
-                    </tr>
-                    <tr>
-                        <td class="font-semibold">Interest Earned (B)</td>
-                        <td id="interest_earned"></td>
-                    </tr>
-                    <tr>
-                        <td class="font-semibold">TDS Deducted (C)</td>
-                        <td id="tds_deducted"></td>
-                    </tr>
-                    <tr>
-                        <td class="font-semibold">Net Interest Earned (D = B - C)</td>
-                        <td id="net_interest"></td>
-                    </tr>
-                    <tr>
-                        <td class="font-semibold">Maturity Bonus Amount (E)</td>
-                        <td id="maturity_bonus"></td>
-                    </tr>
-                    <tr>
-                        <td class="font-semibold">Maturity Amount (A + D + E)</td>
-                        <td id="maturity_amount"></td>
-                    </tr>
-                    <tr>
-                        <td class="font-semibold">Maturity Date</td>
-                        <td id="maturity_date"></td>
-                    </tr>
+                        <tr>
+                            <td class="font-semibold">Principal Amount (A)</td>
+                            <td id="principal"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Interest Earned (B)</td>
+                            <td id="interest_earned"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">TDS Deducted (C)</td>
+                            <td id="tds_deducted"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Net Interest Earned (D = B - C)</td>
+                            <td id="net_interest"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Maturity Bonus Amount (E)</td>
+                            <td id="maturity_bonus"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Maturity Amount (A + D + E)</td>
+                            <td id="maturity_amount"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-semibold">Maturity Date</td>
+                            <td id="maturity_date"></td>
+                        </tr>
                     </tbody>
                 </table>
 
@@ -298,7 +297,7 @@
         </div>
 
     </div>
-    
+
 </div>
 
 @endsection
@@ -307,8 +306,7 @@
 
 <script>
     //console.log(summary);
-    function openTab(evt, tabId) 
-    {
+    function openTab(evt, tabId) {
         var i, tabcontent, tablinks;
 
         // Hide all tab contents
@@ -329,8 +327,7 @@
     }
 
 
-    function calculateFD() 
-    {
+    function calculateFD() {
 
         let formData = {
             amount: $("#amount").val(),
@@ -351,10 +348,8 @@
             type: "POST",
             data: formData,
             dataType: "json",
-           success: function(response) 
-           {
-                if (response.success) 
-                {
+            success: function(response) {
+                if (response.success) {
                     let summary = response.results.summary;
 
                     // --- पहले summary update करो
@@ -372,16 +367,20 @@
 
                     // --- अब yearly breakdown add करो
                     if (response.results.details && response.results.details.length > 0) {
-                    let final = {
-                        principal: 0, interest: 0, tds: 0,
-                        netInterest: 0, bonus: 0,
-                        maturityAmount: 0, maturityDate: ""
-                    };
-let rows = '';
+                        let final = {
+                            principal: 0,
+                            interest: 0,
+                            tds: 0,
+                            netInterest: 0,
+                            bonus: 0,
+                            maturityAmount: 0,
+                            maturityDate: ""
+                        };
+                        let rows = '';
 
-if (response.results.periods && response.results.periods.length > 0) {
-    response.results.periods.forEach(p => {
-        rows += `
+                        if (response.results.periods && response.results.periods.length > 0) {
+                            response.results.periods.forEach(p => {
+                                rows += `
         <tr class="border-b">
             <td>${formatDateWithDash(p.period)}</td>
             <td>${p.days}</td>
@@ -393,46 +392,46 @@ if (response.results.periods && response.results.periods.length > 0) {
             <td>${p.principal_at_eoy ?? ''}</td>
             <td>${formatDateWithDash(p.due_by)}</td>
         </tr>`;
-    });
-}
+                            });
+                        }
 
 
-response.results.details.forEach(function (yearData, index) {
+                        response.results.details.forEach(function(yearData, index) {
 
-    // =========================
-    // FINAL ACCUMULATION ✅
-    // =========================
-    if (index === 0) {
-        final.principal = parseFloat(yearData.principal) || 0;
-    }
+                            // =========================
+                            // FINAL ACCUMULATION ✅
+                            // =========================
+                            if (index === 0) {
+                                final.principal = parseFloat(yearData.principal) || 0;
+                            }
 
-    final.interest       += parseFloat(yearData.interestEarned) || 0;
-    final.tds            += parseFloat(yearData.tds) || 0;
-    final.netInterest    += parseFloat(yearData.netInterest) || 0;
-    final.bonus          += parseFloat(yearData.bonus) || 0;
-    final.maturityAmount  = parseFloat(yearData.maturity) || 0;
-    final.maturityDate    = formatDateDMY(yearData.date);
+                            final.interest += parseFloat(yearData.interestEarned) || 0;
+                            final.tds += parseFloat(yearData.tds) || 0;
+                            final.netInterest += parseFloat(yearData.netInterest) || 0;
+                            final.bonus += parseFloat(yearData.bonus) || 0;
+                            final.maturityAmount = parseFloat(yearData.maturity) || 0;
+                            final.maturityDate = formatDateDMY(yearData.date);
 
-    // =========================
-    // YEAR TAB BUTTON
-    // =========================
-    $("#tabButtons").append(`
+                            // =========================
+                            // YEAR TAB BUTTON
+                            // =========================
+                            $("#tabButtons").append(`
         <button class="tablinks yearlyTabBtn"
             onclick="openTab(event, 'year_${yearData.year}')">
             ${yearData.year} Year
         </button>
     `);
 
-    // =========================
-    // YEAR ROWS (FILTER)
-    // =========================
-    let yearRows = '';
+                            // =========================
+                            // YEAR ROWS (FILTER)
+                            // =========================
+                            let yearRows = '';
 
-    if (response.results.periods && response.results.periods.length > 0) {
-        response.results.periods
-            .filter(p => parseInt(p.fd_year) === parseInt(yearData.year))
-            .forEach(p => {
-                yearRows += `
+                            if (response.results.periods && response.results.periods.length > 0) {
+                                response.results.periods
+                                    .filter(p => parseInt(p.fd_year) === parseInt(yearData.year))
+                                    .forEach(p => {
+                                        yearRows += `
                 <tr class="border-b">
                     <td>${formatDateWithDash(p.period)}</td>
                     <td>${p.days}</td>
@@ -444,13 +443,13 @@ response.results.details.forEach(function (yearData, index) {
                     <td>${p.principal_at_eoy ?? ''}</td>
                     <td>${formatDateWithDash(p.due_by)}</td>
                 </tr>`;
-            });
-    }
+                                    });
+                            }
 
-    // =========================
-    // YEAR TAB CONTENT
-    // =========================
-    $("#accordion").append(`
+                            // =========================
+                            // YEAR TAB CONTENT
+                            // =========================
+                            $("#accordion").append(`
         <div id="year_${yearData.year}" class="tabcontent yearlyTabContent">
             <table class="w-full text-sm border mt-3">
                 <thead class="bg-gray-100">
@@ -473,7 +472,7 @@ response.results.details.forEach(function (yearData, index) {
                 </div>
             `);
 
-        });
+                        });
 
 
 
@@ -491,9 +490,11 @@ response.results.details.forEach(function (yearData, index) {
                     // अब calculation दिखाओ
                     $("#accordion").show();
 
-                } 
-                else 
-                {
+                    // Smooth scroll to tabs
+                    $('html, body').animate({
+                        scrollTop: $("#accordion").offset().top - 80
+                    }, 600);
+                } else {
                     $("#result").html(`<div class="alert alert-danger">Something went wrong.</div>`);
                 }
             },
@@ -505,8 +506,7 @@ response.results.details.forEach(function (yearData, index) {
         });
     }
 
-    function numberToWords(n) 
-    {
+    function numberToWords(n) {
         const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
             "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
         ];
@@ -520,116 +520,109 @@ response.results.details.forEach(function (yearData, index) {
         return numberToWords(Math.floor(n / 10000000)) + " Crore " + (n % 10000000 ? numberToWords(n % 10000000) : "");
     }
 
-    function updateAmountInWords() 
-    {
+    function updateAmountInWords() {
         const amount = parseInt($("#amount").val(), 10);
         $("#amount-in-words").text(!isNaN(amount) && amount >= 0 ? numberToWords(amount) : '');
     }
-
-
-
 </script>
 
 <!-- date fomate show d-m-y -->
 <script>
-   function formatDateDMY(dateStr) {
-    if (!dateStr) return '';
+    function formatDateDMY(dateStr) {
+        if (!dateStr) return '';
 
-    // Case 1: YYYY-MM-DD
-    if (dateStr.includes('-')) {
-        const [y, m, d] = dateStr.split('-');
-        if (y.length === 4) {
+        // Case 1: YYYY-MM-DD
+        if (dateStr.includes('-')) {
+            const [y, m, d] = dateStr.split('-');
+            if (y.length === 4) {
+                return `${d}-${m}-${y}`;
+            }
+        }
+
+        // Case 2: DD/MM/YYYY
+        if (dateStr.includes('/')) {
+            const [d, m, y] = dateStr.split('/');
             return `${d}-${m}-${y}`;
         }
+
+        return dateStr;
     }
-
-    // Case 2: DD/MM/YYYY
-    if (dateStr.includes('/')) {
-        const [d, m, y] = dateStr.split('/');
-        return `${d}-${m}-${y}`;
-    }
-
-    return dateStr;
-}
-
 </script>
 
 <script>
     function formatDateWithDash(dateStr) {
-    if (!dateStr) return '';
+        if (!dateStr) return '';
 
-    // agar period jaisa ho: "14/12/2025 - 14/01/2026"
-    if (dateStr.includes('-')) {
-        return dateStr.split('-').map(part => {
-            return part.trim().replaceAll('/', '-');
-        }).join(' - ');
+        // agar period jaisa ho: "14/12/2025 - 14/01/2026"
+        if (dateStr.includes('-')) {
+            return dateStr.split('-').map(part => {
+                return part.trim().replaceAll('/', '-');
+            }).join(' - ');
+        }
+
+        // normal single date
+        return dateStr.replaceAll('/', '-');
     }
-
-    // normal single date
-    return dateStr.replaceAll('/', '-');
-}
-
 </script>
 
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    fetch("{{ route('fd.schemes.fetch') }}")
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                let dropdown = document.getElementById("scheme_id");
-                result.data.forEach(function (scheme) {
-                    let opt = document.createElement("option");
-                    opt.value = scheme.id;
-                    opt.textContent = scheme.scheme_name;
-                    dropdown.appendChild(opt);
-                });
-            }
-        })
-        .catch(err => console.error(err));
-});
-
-document.getElementById("scheme_id").addEventListener("change", function () {
-    let schemeId = this.value;
-
-    if (schemeId) {
-        fetch(`/fetch-scheme/${schemeId}`)
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("{{ route('fd.schemes.fetch') }}")
             .then(response => response.json())
             .then(result => {
                 if (result.success) {
-                    let s = result.data;
-                    document.getElementById("d_scheme_code").textContent = s.scheme_code;
-                    document.getElementById("d_scheme_name").textContent = s.scheme_name;
-                    document.getElementById("d_tenure").textContent = s.tenure + " MONTHS";
-                    document.getElementById("d_min_amount").textContent = s.min_amount + " INR";
-                    document.getElementById("d_interest_rate").textContent = s.annual_interest_rate + " %";
-
-                    document.getElementById("scheme-details").style.display = "block";
-
-                    // Auto-fill भी कर सकते हो
-                    document.getElementById("annual_interest_rate").value = s.annual_interest_rate;
-                    document.getElementById("tenure_month").value = s.tenure;
-                    document.getElementById("amount").value = s.min_amount;
-                     // Auto select payout type
-                    let payoutSelect = document.getElementById("interest_payout_type");
-                    if (s.tenure == 6) {
-                        payoutSelect.value = "HALF_YEARLY";
-                    } else if (s.tenure == 12) {
-                        payoutSelect.value = "YEARLY";
-                    } else {
-                        payoutSelect.value = ""; // default
-                    }
-
-                } else {
-                    document.getElementById("scheme-details").style.display = "none";
+                    let dropdown = document.getElementById("scheme_id");
+                    result.data.forEach(function(scheme) {
+                        let opt = document.createElement("option");
+                        opt.value = scheme.id;
+                        opt.textContent = scheme.scheme_name;
+                        dropdown.appendChild(opt);
+                    });
                 }
             })
             .catch(err => console.error(err));
-    } else {
-        document.getElementById("scheme-details").style.display = "none";
-    }
-});
+    });
 
+    document.getElementById("scheme_id").addEventListener("change", function() {
+        let schemeId = this.value;
+
+        if (schemeId) {
+            fetch(`/fetch-scheme/${schemeId}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        let s = result.data;
+                        document.getElementById("d_scheme_code").textContent = s.scheme_code;
+                        document.getElementById("d_scheme_name").textContent = s.scheme_name;
+                        document.getElementById("d_tenure").textContent = s.tenure + " MONTHS";
+                        document.getElementById("d_min_amount").textContent = s.min_amount + " INR";
+                        document.getElementById("d_interest_rate").textContent = s.annual_interest_rate + " %";
+
+                        document.getElementById("scheme-details").style.display = "block";
+
+                        // Auto-fill भी कर सकते हो
+                        document.getElementById("annual_interest_rate").value = s.annual_interest_rate;
+                        document.getElementById("tenure_month").value = s.tenure;
+                        document.getElementById("amount").value = s.min_amount;
+                        // Auto select payout type
+                        let payoutSelect = document.getElementById("interest_payout_type");
+                        if (s.tenure == 6) {
+                            payoutSelect.value = "HALF_YEARLY";
+                        } else if (s.tenure == 12) {
+                            payoutSelect.value = "YEARLY";
+                        } else {
+                            payoutSelect.value = ""; // default
+                        }
+
+                    } else {
+                        document.getElementById("scheme-details").style.display = "none";
+                    }
+                })
+                .catch(err => console.error(err));
+        } else {
+            document.getElementById("scheme-details").style.display = "none";
+        }
+    });
 </script>
 @endpush

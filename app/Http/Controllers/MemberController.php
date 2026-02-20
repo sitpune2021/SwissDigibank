@@ -185,9 +185,11 @@ class MemberController extends Controller
             'member_gps_location_longitude' => 'nullable|numeric',
 
             // KYC Info
-            'member_kyc_aadhaar_no'     => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:kyc_and_nominees,member_kyc_aadhaar_no',
+            'member_kyc_aadhaar_no'     => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:kyc_and_nominees,member_kyc_aadhaar_no',
+            // 'member_kyc_aadhaar_no'     => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:kyc_and_nominees,member_kyc_aadhaar_no',
             'member_kyc_voter_id_no' => 'nullable|string|regex:/^[A-Za-z0-9]+$/|unique:kyc_and_nominees,member_kyc_voter_id_no',
-            'member_kyc_pan_no'         => 'required|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/|unique:kyc_and_nominees,member_kyc_pan_no',
+            'member_kyc_pan_no'         => 'nullable|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/|unique:kyc_and_nominees,member_kyc_pan_no',
+            // 'member_kyc_pan_no'         => 'required|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/|unique:kyc_and_nominees,member_kyc_pan_no',
             'member_kyc_ration_card_no' => 'nullable|string|unique:kyc_and_nominees,member_kyc_ration_card_no',
             'member_kyc_meter_no'       => 'nullable|string|unique:kyc_and_nominees,member_kyc_meter_no',
 
@@ -604,20 +606,33 @@ class MemberController extends Controller
                 'member_gps_location_longitude' => 'nullable|numeric',
 
                 // KYC Info
-                'member_kyc_aadhaar_no' => [
-                    'required',
+
+                 'member_kyc_aadhaar_no' => [
+                    'nullable',
                     'digits:12',
                     'regex:/^[2-9]{1}[0-9]{11}$/',
                     Rule::unique('kyc_and_nominees', 'member_kyc_aadhaar_no')->ignore($kycId),
                 ],
+                // 'member_kyc_aadhaar_no' => [
+                //     'required',
+                //     'digits:12',
+                //     'regex:/^[2-9]{1}[0-9]{11}$/',
+                //     Rule::unique('kyc_and_nominees', 'member_kyc_aadhaar_no')->ignore($kycId),
+                // ],
                 'member_kyc_voter_id_no' => 'nullable|string|regex:/^[A-Za-z0-9]+$/|unique:kyc_and_nominees,member_kyc_voter_id_no',
 
-                'member_kyc_pan_no' => [
-                    'required',
+                   'member_kyc_pan_no' => [
+                    'nullable',
                     'string',
                     'regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
                     Rule::unique('kyc_and_nominees', 'member_kyc_pan_no')->ignore($kycId),
                 ],
+                // 'member_kyc_pan_no' => [
+                //     'required',
+                //     'string',
+                //     'regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
+                //     Rule::unique('kyc_and_nominees', 'member_kyc_pan_no')->ignore($kycId),
+                // ],
                 'member_kyc_ration_card_no' => [
                     'nullable',
                     'string',
