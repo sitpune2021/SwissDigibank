@@ -926,6 +926,8 @@ Route::group(['prefix' => 'gold-loan'], function () {
         '/gold-loan-app/emi-receipt/{loan}/{emiNo}',
         [GoldLoanPrintDocument::class, 'emi_receipt_pdf']
     )->name('loan.emi_receipt.pdf');
+    Route::get('/emi-receipt/{loan}/{emiNo}', [GoldLoanPrintDocument::class, 'emi_receipt_print'])
+        ->name('emi.receipt.print');
 });
 
 

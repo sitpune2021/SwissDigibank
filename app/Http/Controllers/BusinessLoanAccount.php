@@ -549,6 +549,18 @@ class BusinessLoanAccount extends Controller
             $payRoute = route('bussiness.account.pay', $goldLoan->id);
             $payButtonText = 'Pay';
         }
+        $hasPendingApproval =
+            DB::table('business_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'pending')
+            ->exists()
+
+            ||
+
+            DB::table('business_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->where('status', 0)
+            ->exists();
 
         return view('bussiness.account.view', compact(
             'goldLoan',
@@ -565,7 +577,8 @@ class BusinessLoanAccount extends Controller
             'currentDebt',
             'hasDueEmi',
             'payRoute',
-            'payButtonText'
+            'payButtonText',
+            'hasPendingApproval'
         ));
     }
 

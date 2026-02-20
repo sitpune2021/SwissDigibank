@@ -631,11 +631,25 @@ class GoldLoanAccountController extends Controller
 
 
         $payButtonText = $hasDueEmi ? 'Pay Emi' : 'Pay';
-        
+
         $emiSchedule = collect($emiSchedule)
             ->sortBy('emi_no')
             ->values()
             ->toArray();
+        // ⭐ PENDING EMI / FULL PAYMENT
+        $hasPendingTransaction = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'pending')
+            ->exists();
+
+        // ⭐ PENDING FORECLOSURE
+        $hasPendingForeclosure = DB::table('gold_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->where('status', 0) // 0 = pending
+            ->exists();
+
+        // ⭐ FINAL FLAG
+        $hasPendingApproval = $hasPendingTransaction || $hasPendingForeclosure;
         return view('gold-loan.account.view', compact(
             'goldLoan',
             'principal',
@@ -655,6 +669,7 @@ class GoldLoanAccountController extends Controller
             'payRoute',
             'payButtonText',
             'tDueAmount',
+            'hasPendingApproval'
 
         ));
     }

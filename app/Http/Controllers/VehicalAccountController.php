@@ -551,7 +551,18 @@ class VehicalAccountController extends Controller
             $payRoute = route('vehical.account.pay', $goldLoan->id);
             $payButtonText = 'Pay';
         }
+        $hasPendingApproval =
+            DB::table('vehical_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'pending')
+            ->exists()
 
+            ||
+
+            DB::table('vehical_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->where('status', 0)
+            ->exists();
 
         return view('vehical.account.view', compact(
             'goldLoan',
@@ -568,7 +579,8 @@ class VehicalAccountController extends Controller
             'currentDebt',
             'hasDueEmi',
             'payRoute',
-            'payButtonText'
+            'payButtonText',
+            'hasPendingApproval'
         ));
     }
 

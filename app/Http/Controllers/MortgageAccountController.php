@@ -539,6 +539,20 @@ class MortgageAccountController extends Controller
             $payRoute = route('mortgage.account.pay', $goldLoan->id);
             $payButtonText = 'Pay';
         }
+        // ⭐ CHECK PENDING EMI / FULL PAYMENT
+        $hasPendingTransaction = DB::table('mortgage_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'pending')
+            ->exists();
+
+        // ⭐ CHECK PENDING FORECLOSURE
+        $hasPendingForeclosure = DB::table('mortgage_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->where('status', 0) // 0 = pending
+            ->exists();
+
+        // ⭐ FINAL FLAG
+        $hasPendingApproval = $hasPendingTransaction || $hasPendingForeclosure;
         return view('mortgage.account.view', compact(
             'goldLoan',
             'principal',
@@ -554,7 +568,8 @@ class MortgageAccountController extends Controller
             'currentDebt',
             'hasDueEmi',
             'payRoute',
-            'payButtonText'
+            'payButtonText',
+            'hasPendingApproval'
 
         ));
     }
