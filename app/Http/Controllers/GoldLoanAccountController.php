@@ -22,6 +22,9 @@ class GoldLoanAccountController extends Controller
 
     public function index(Request $request)
     {
+        if (!hasPermission('gold-loan.account.index')) {
+            abort(403);
+        }
         $goldLoan = LoanApplication::with(['member', 'branch', 'scheme', 'goldLoanTransactions'])
             ->where('status', [2])
             ->orderBy('id', 'desc')
@@ -67,6 +70,7 @@ class GoldLoanAccountController extends Controller
 
     public function show(Request $request, $id)
     {
+        
         $savedStatuses = DB::table('gold_loan_emi_status')
             ->where('loan_id', $id)
             ->pluck('status', 'emi_no')
@@ -631,11 +635,25 @@ class GoldLoanAccountController extends Controller
 
 
         $payButtonText = $hasDueEmi ? 'Pay Emi' : 'Pay';
-        
+
         $emiSchedule = collect($emiSchedule)
             ->sortBy('emi_no')
             ->values()
             ->toArray();
+        // ⭐ PENDING EMI / FULL PAYMENT
+        $hasPendingTransaction = DB::table('gold_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'pending')
+            ->exists();
+
+        // ⭐ PENDING FORECLOSURE
+        $hasPendingForeclosure = DB::table('gold_loan_fore_closures')
+            ->where('loan_id', $id)
+            ->where('status', 0) // 0 = pending
+            ->exists();
+
+        // ⭐ FINAL FLAG
+        $hasPendingApproval = $hasPendingTransaction || $hasPendingForeclosure;
         return view('gold-loan.account.view', compact(
             'goldLoan',
             'principal',
@@ -655,6 +673,7 @@ class GoldLoanAccountController extends Controller
             'payRoute',
             'payButtonText',
             'tDueAmount',
+            'hasPendingApproval'
 
         ));
     }
@@ -775,7 +794,6 @@ class GoldLoanAccountController extends Controller
             compact('account', 'mergedData')
         );
     }
-
     public function removeAccount(Request $request, $id)
     {
         // Optional: authorization check
@@ -832,6 +850,7 @@ class GoldLoanAccountController extends Controller
 
         return view('gold-loan.account.view-buttons.audit-trail.audit-trail');
     }
+
     public function fourcloser($id)
     {
         Log::info('🟢 fourcloser() START', [
@@ -1477,7 +1496,6 @@ class GoldLoanAccountController extends Controller
         }
     }
 
-
     public function updateEmiStatus(Request $request)
     {
         Log::info('🟢 updateEmiStatus() called', $request->all());
@@ -1967,4 +1985,6 @@ class GoldLoanAccountController extends Controller
             return back()->withErrors(['error' => 'Something went wrong.']);
         }
     }
+
+    
 }

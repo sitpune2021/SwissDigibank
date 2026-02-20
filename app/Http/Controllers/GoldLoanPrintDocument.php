@@ -1493,6 +1493,58 @@ class GoldLoanPrintDocument extends Controller
         )->setPaper('A4', 'portrait');
 
         // 🔥 OPEN in browser instead of download
+        return $pdf->download('EMI_Receipt_EMI_' . $emiNo . '.pdf');
+    }
+    public function emi_receipt_print(LoanApplication $loan, $emiNo)
+    {
+        $transactions = DB::table('gold_loan_transactions')
+            ->where('loan_id', $loan->id)
+            ->where('emi_no', $emiNo)
+            ->where('status', 'paid')
+            ->get();
+
+        if ($transactions->isEmpty()) {
+            return back()->with('error', 'No EMI payment found.');
+        }
+
+        // Total Paid
+        $totalPaid = $transactions->sum('amount_collected');
+
+        // EMI Calculation
+        $principal = $loan->loan_amount;
+        $interestRate = $loan->scheme->annual_interest_rate ?? 0;
+        $emiCount = $loan->tenure_value;
+
+        $monthlyRate = $interestRate / 12 / 100;
+        $balance = $principal;
+
+        $emi = $principal * ($monthlyRate * pow(1 + $monthlyRate, $emiCount)) /
+            (pow(1 + $monthlyRate, $emiCount) - 1);
+
+        $emiData = null;
+
+        for ($i = 0; $i < $emiCount; $i++) {
+
+            $interest = $balance * $monthlyRate;
+            $principalComponent = $emi - $interest;
+            $balance -= $principalComponent;
+
+            if (($i + 1) == $emiNo) {
+                $emiData = [
+                    'principal' => round($principalComponent, 2),
+                    'interest' => round($interest, 2),
+                    'emi_amount' => round($emi, 2),
+                    'balance_principal' => max(round($balance, 2), 0)
+                ];
+                break;
+            }
+        }
+
+        $pdf = Pdf::loadView(
+            'gold-loan.gold-loan-pdf.gold-appli-emi-receipt',
+            compact('loan', 'transactions', 'emiData', 'totalPaid', 'emiNo')
+        )->setPaper('A4', 'portrait');
+
         return $pdf->stream('EMI_Receipt_EMI_' . $emiNo . '.pdf');
     }
 }

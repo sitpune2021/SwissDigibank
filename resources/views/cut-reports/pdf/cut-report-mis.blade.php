@@ -74,20 +74,41 @@
         <table class="header-table">
             <tr>
                 <td style="width: 10%; text-align:left;">
-                    <img src="{{ $photoPath }}" alt="Company Logo" style="width: 100px; height: 100px;">
+                    <img src="{{ $photoPath }}" alt="Company Logo"  style="width:auto; height:50px;">
                 </td>
-                <td style="width: 90%; text-align:left;">
-                    <div class="company-name" style="font-family: dejavusans; ">{{ $company['name'] }}</div>
-                    <div class="company-name" style="font-family: dejavusans;">
-                        &nbsp;
-                    </div>
-                    <div class="company-name" style="font-family: dejavusans;">
-                        &nbsp;
-                    </div>
+                <td style="width: 90%; text-align:left; padding: 0px 20px;">
+                    <div class="company-name" style="">{{ $company['name'] }}</div>
+                    
 
                 </td>
             </tr>
         </table>
+        {{-- <div style="width:100%; font-family: dejavusans; ">
+
+                <!-- Logo -->
+                <div style="float:left; width:50%; padding: 0px 5px; text-align:left;">
+                    <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
+                        style="width:auto; height:50px;">
+                </div>
+
+                <!-- Title Section -->
+                <div style="float:left; width:50%; text-align:center;">
+                    <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; ">
+                      
+                    </div>
+
+                    <div style="height:10px; ">&nbsp;</div>
+
+
+                </div>
+
+                <!-- Clear Float -->
+                <div style="clear:both; "></div>
+                <h4 style=" padding-bottom: 5px;  margin:0; text-align: center;  font-size:18px; font-weight:bold;">
+       {{ $company['name'] }}   
+                </h4 >
+                <hr>
+            </div> --}}
 
         <h3 style="font-family: dejavusans; font-size: 18x; margin:20px 20px; ">
             MIS ACCOUNTS CUT REPORT: {{ date('d-m-Y') }}

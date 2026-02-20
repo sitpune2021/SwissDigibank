@@ -466,6 +466,7 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('/fd-account/{id}/deduct-reverse-tds', [FdController::class, 'storeCreditDebitInterestAndTDS'])
         ->name('fd.creditdebit.store');
 
+    Route::post('/fetch-fd-slab', [FdController::class, 'fetchSlab'])->name('fd.fetch.slab');
 
     //////
 
@@ -729,6 +730,11 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::get('gold-loan/applications/view/{id}', [GoldLoanController::class, 'appview'])
         ->name('gold-loan.applications.view');
+    Route::post(
+        'applications/{id}/submit-approval',
+        [GoldLoanController::class, 'submitForApproval']
+    )->name('gold-loan.submit.approval');
+
 
     // Edit form
     Route::get('/gold-loan/applications/{id}/edit', [GoldLoanController::class, 'appedit'])
@@ -920,6 +926,8 @@ Route::group(['prefix' => 'gold-loan'], function () {
         '/gold-loan-app/emi-receipt/{loan}/{emiNo}',
         [GoldLoanPrintDocument::class, 'emi_receipt_pdf']
     )->name('loan.emi_receipt.pdf');
+    Route::get('/emi-receipt/{loan}/{emiNo}', [GoldLoanPrintDocument::class, 'emi_receipt_print'])
+        ->name('emi.receipt.print');
 });
 
 
@@ -1394,8 +1402,8 @@ Route::group(['prefix' => 'business'], function () {
     Route::post('col-process-fee/store/{id}', [BusinessLoan::class, 'bussinessstoreProcessFee'])
         ->name('bussiness.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [BusinessLoan::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+    // Route::post('applications/{id}/submit-for-approval', [BusinessLoan::class, 'submitForApproval'])
+    //     ->name('applications.submitForApproval');
 
     //print documents view page  
     Route::get('/payout-chart-view/{loan}', [BusinessLoanPrintDocumentController::class, 'payout_chart_business_appli_view'])->name('business_loan.payout_chart_business_loan_application_view');
@@ -1568,8 +1576,8 @@ Route::group(['prefix' => 'cc_od'], function () {
     Route::post('cc-od/col-process-fee/store/{id}', [CcOdLoanController::class, 'storeProcessFee'])
         ->name('ccod.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [CcOdLoanController::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+    // Route::post('applications/{id}/submit-for-approval', [CcOdLoanController::class, 'submitForApproval'])
+    //     ->name('applications.submitForApproval');
 });
 
 
@@ -1732,8 +1740,8 @@ Route::group(['prefix' => 'daily_weekly'], function () {
     Route::get('daily_weekly/{id}/disbursment', [DailyWeeklyController::class, 'disbursment'])
         ->name('daily_weekly.applications.view-buttons.disburse-setting');
 
-    Route::post('applications/{id}/submit-for-approval', [DailyWeeklyController::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+    // Route::post('applications/{id}/submit-for-approval', [DailyWeeklyController::class, 'submitForApproval'])
+    //     ->name('applications.submitForApproval');
 });
 
 
@@ -1850,8 +1858,8 @@ Route::group(['prefix' => 'personal'], function () {
     Route::post('col-process-fee/store/{id}', [PersonalController::class, 'personalstoreProcessFee'])
         ->name('personal.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [PersonalController::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+    // Route::post('applications/{id}/submit-for-approval', [PersonalController::class, 'submitForApproval'])
+    //     ->name('applications.submitForApproval');
 
     //print documents view page  
     Route::get('/payout-chart-view/{loan}', [PersonalLoanPrintDocumentController::class, 'payout_chart_personal_appli_view'])->name('personal_loan.payout_chart_personal_loan_application_view');
@@ -2001,8 +2009,8 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::post('col-process-fee/store/{id}', [VehicalController::class, 'VehicalstoreProcessFee'])
         ->name('vehical.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [VehicalController::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+    // Route::post('applications/{id}/submit-for-approval', [VehicalController::class, 'submitForApproval'])
+    //     ->name('applications.submitForApproval');
 
 
     //print documents view page  
@@ -2190,8 +2198,8 @@ Route::group(['prefix' => 'fixed_loan'], function () {
     Route::get('fixed_loan/{id}/disbursment', [FixedLoanController::class, 'disbursment'])
         ->name('fixed_loan.applications.view-buttons.disburse-setting');
 
-    Route::post('applications/{id}/submit-for-approval', [FixedLoanController::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+    // Route::post('applications/{id}/submit-for-approval', [FixedLoanController::class, 'submitForApproval'])
+    //     ->name('applications.submitForApproval');
 });
 
 
@@ -2418,19 +2426,27 @@ Route::group(['prefix' => 'cut-report'], function () {
 
     Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
         ->name('report.saving-account');
+
     Route::get('/accounts/export/csv', [CutReportController::class, 'exportCsv'])
         ->name('accounts.export.csv');
     Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
+
+Route::get('/report/saving/print', [CutReportController::class, 'printSaving'])
+    ->name('reports.saving.print');
 
     Route::get('report/fd-account', [CutReportController::class, 'fdaccount_index'])
         ->name('report.fd-account');
     Route::get('/fd-accounts/export/csv', [CutReportController::class, 'fdExportCsv'])
         ->name('fd-accounts.export.csv');
     Route::get('fd-accounts/report/saving', [CutReportController::class, 'FDIndex'])->name('fd-accounts.report.saving.index');
+    Route::get('/report/fd/print', [CutReportController::class, 'printFd'])
+    ->name('reports.printFd.print');
 
     Route::get('report/mis-account', [CutReportController::class, 'misaccount_index'])
         ->name('report.mis-account');
     Route::get('report/mis', [CutReportController::class, 'misIndex'])->name('report.mis.index');
+     Route::get('/report/Mis/print', [CutReportController::class, 'printMis'])
+    ->name('reports.printmis.print');
     Route::get('/mis-account/download-csv', [CutReportController::class, 'downloadMisCsv'])
         ->name('mis.account.csv');
 
@@ -2438,9 +2454,12 @@ Route::group(['prefix' => 'cut-report'], function () {
 
     Route::get('report/dd-accounts', [CutReportController::class, 'ddaccount_index'])
         ->name('report.dd-accounts');
+        Route::get('/report/dd/print', [CutReportController::class, 'printDD'])
+    ->name('reports.printdd.print');
     Route::get('report/rd-account', [CutReportController::class, 'rd_account_index'])
         ->name('report.rd-account');
-
+  Route::get('/report/Rd/print', [CutReportController::class, 'printRD'])
+    ->name('reports.printrd.print');
 
     Route::get('report/dd', [CutReportController::class, 'ddIndex'])->name('report.dd.index');
     Route::get('/dd-accounts/download-csv', [CutReportController::class, 'ddAccountCsv'])
@@ -2562,7 +2581,8 @@ Route::group(['prefix' => 'profit-loss'], function () {
 Route::get('/balance-sheet', [LedgergroupController::class, 'balance_sheet'])
     ->name('balance.sheet');
 
-Route::get('/trial-balance',
+Route::get(
+    '/trial-balance',
     [LedgergroupController::class, 'trial_balance']
 )->name('trial.balance');
 
