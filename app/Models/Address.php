@@ -36,4 +36,5 @@ class Address extends Model
     {
         return $this->belongsTo(State::class, 'member_address_state');
     }
+
 }
