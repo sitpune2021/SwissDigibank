@@ -15,12 +15,12 @@ use Illuminate\Validation\ValidationException;
 
 class VehicalDisbursementController extends Controller
 {
-   
+
     public function index()
     {
-            $disbursements = VehicalApplication::with(['member', 'branch', 'scheme'])
+        $disbursements = VehicalApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
-             ->orderBy('id', 'desc')
+            ->orderBy('id', 'desc')
             ->paginate(10);
 
         return view('vehical.disbursements.index', compact('disbursements'));
@@ -116,7 +116,80 @@ class VehicalDisbursementController extends Controller
             DB::table('vehical_applications')
                 ->where('id', $request->loan_application_id)
                 ->update(['status' => 2]);
+            // 🔵 PROCESSING FEE
+            if ($request->collect_fee) {
 
+                Log::info('Processing Fee Selected');
+
+                DB::table('vehical_disbursements_fees')->insert([
+                    'loan_id'        => $disbursement->id,
+                    'fee_type'       => 'processing_fee',
+                    'payment_mode'   => $request->processing_fee_mode,
+                    'bank_id'        => $request->p_bank_id ?? null,
+                    'cheque_no'      => $request->p_cheque_no ?? null,
+                    'cheque_date'    => $request->p_cheque_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->p_cheque_date)->format('Y-m-d') : null,
+                    'transfer_date'  => $request->p_transfer_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->p_transfer_date)->format('Y-m-d') : null,
+                    'utr_no'         => $request->p_utr_no ?? null,
+                    'transfer_mode'  => $request->p_transfer_mode ?? null,
+                    'credited_account' => $request->processing_credited_account ?? null,
+                    'created_at'     => now(),
+                    'updated_at'     => now(),
+                ]);
+
+                Log::info('Processing Fee Saved');
+            }
+
+            // 🟡 STAMP DUTY
+            if ($request->collect_stamp_duty) {
+
+                Log::info('Stamp Duty Selected');
+
+                DB::table('vehical_disbursements_fees')->insert([
+                    'loan_id'        => $disbursement->id,
+                    'fee_type'       => 'stamp_duty',
+                    'payment_mode'   => $request->stamp_payment_mode,
+                    'bank_id'        => $request->stamp_bank_id ?? null,
+                    'cheque_no'      => $request->stamp_cheque_no ?? null,
+                    'cheque_date'    => $request->stamp_cheque_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->stamp_cheque_date)->format('Y-m-d') : null,
+                    'transfer_date'  => $request->stamp_transfer_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->stamp_transfer_date)->format('Y-m-d') : null,
+                    'utr_no'         => $request->stamp_utr_no ?? null,
+                    'transfer_mode'  => $request->stamp_transfer_mode ?? null,
+                    'credited_account' => $request->stamp_credited_account ?? null,
+                    'created_at'     => now(),
+                    'updated_at'     => now(),
+                ]);
+
+                Log::info('Stamp Duty Saved');
+            }
+
+            // 🟢 INSURANCE FEE
+            if ($request->collect_insurance_fee) {
+
+                Log::info('Insurance Fee Selected');
+
+                DB::table('vehical_disbursements_fees')->insert([
+                    'loan_id'        => $disbursement->id,
+                    'fee_type'       => 'issuer_fee',
+                    'payment_mode'   => $request->insurance_payment_mode,
+                    'bank_id'        => $request->insurance_bank_id ?? null,
+                    'cheque_no'      => $request->insurance_cheque_no ?? null,
+                    'cheque_date'    => $request->insurance_cheque_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->insurance_cheque_date)->format('Y-m-d') : null,
+                    'transfer_date'  => $request->insurance_transfer_date
+                        ? Carbon::createFromFormat('d-m-Y', $request->insurance_transfer_date)->format('Y-m-d') : null,
+                    'utr_no'         => $request->insurance_utr_no ?? null,
+                    'transfer_mode'  => $request->insurance_transfer_mode ?? null,
+                    'credited_account' => $request->insurance_credited_account ?? null,
+                    'created_at'     => now(),
+                    'updated_at'     => now(),
+                ]);
+
+                Log::info('Insurance Fee Saved');
+            }
             DB::commit();
 
             Log::info('Loan Disbursement Created Successfully', [
@@ -153,7 +226,7 @@ class VehicalDisbursementController extends Controller
                 ->with('error', 'Something went wrong while saving the disbursement. Please try again.');
         }
     }
-    
+
     public function show($id)
     {
         // Load loan + scheme + member + branch
@@ -199,7 +272,7 @@ class VehicalDisbursementController extends Controller
         $finalAmountToDisburse = $loanAmount - $totalDeductions;
         if ($finalAmountToDisburse < 0) $finalAmountToDisburse = 0; // safety
 
-         // Approved Loan Amount
+        // Approved Loan Amount
         $approvedLoan = (float) ($disbursement->approved_loan_amount ?? 0);
 
         // Annual interest rate
@@ -215,7 +288,7 @@ class VehicalDisbursementController extends Controller
         if ($monthlyRate > 0) {
             $emi = round(
                 ($approvedLoan * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths)) /
-                (pow(1 + $monthlyRate, $tenureMonths) - 1),
+                    (pow(1 + $monthlyRate, $tenureMonths) - 1),
                 2
             );
         } else {
@@ -233,21 +306,29 @@ class VehicalDisbursementController extends Controller
             compact(
                 'disbursement',
                 'banks',
-                'processingFee', 'processingGst', 'processingTotal',
-                'stampDutyFee', 'stampGst', 'stampTotal',
-                'insuranceFee', 'insuranceGst', 'insuranceTotal',
+                'processingFee',
+                'processingGst',
+                'processingTotal',
+                'stampDutyFee',
+                'stampGst',
+                'stampTotal',
+                'insuranceFee',
+                'insuranceGst',
+                'insuranceTotal',
                 'gstPercent',
-                'sgst', 'cgst', 'igst',
-                'maxLoanAmount', 'annualInterestRate', 'advanceInterest',
+                'sgst',
+                'cgst',
+                'igst',
+                'maxLoanAmount',
+                'annualInterestRate',
+                'advanceInterest',
                 'finalAmountToDisburse',
                 'loanAmount',
                 'totalDeductions',
-                 'totalInterest',      
-                'totalRecover',       
+                'totalInterest',
+                'totalRecover',
                 'emi'
             )
         );
     }
-
-   
 }

@@ -1418,7 +1418,10 @@ class GoldLoanController extends Controller
                 'loan_application_id' => $loanApplication->id,
             ]);
 
-            return redirect()->route('gold-loan.applications.index')
+            return redirect()->route(
+                'gold-loan.applications.view',
+                $loanApplication->id
+            )
                 ->with('success', 'Loan Application + Credit Scores + Ornaments saved successfully!');
         } catch (Exception $e) {
             Log::error('Error while storing Loan Application', [
@@ -1465,6 +1468,11 @@ class GoldLoanController extends Controller
 
         return view("gold-loan.applications.view", compact('application', 'emiChart'));
     }
+      public function submitForApproval($id)
+    {
+        return redirect()->back()
+            ->with('pending_request', true);
+    }
 
     public function appedit($id)
     {
@@ -1494,167 +1502,166 @@ class GoldLoanController extends Controller
         ));
     }
 
- public function appupdate(Request $request, $id)
+    public function appupdate(Request $request, $id)
     {
-    DB::beginTransaction();
+        DB::beginTransaction();
 
-    try {
+        try {
 
-        $request->validate([
-            'application_date' => 'required|date_format:d-m-Y',
-            'member_id'        => 'required|exists:members,id',
-            'scheme_id'        => 'required|exists:gold_loan_schemes,id',
-            'loan_amount'      => 'required|numeric|min:1',
-        ]);
-
-        $application = LoanApplication::findOrFail($id);
-
-        /* ---------------- DATE FIX ---------------- */
-
-        if ($request->filled('application_date')) {
-            $request->merge([
-                'application_date' => Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d'),
+            $request->validate([
+                'application_date' => 'required|date_format:d-m-Y',
+                'member_id'        => 'required|exists:members,id',
+                'scheme_id'        => 'required|exists:gold_loan_schemes,id',
+                'loan_amount'      => 'required|numeric|min:1',
             ]);
-        }
 
-        if ($request->filled('cheque_date')) {
-            $request->merge([
-                'cheque_date' => Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d'),
-            ]);
-        }
+            $application = LoanApplication::findOrFail($id);
 
-        /* ---------------- INTEREST OPTIONS ---------------- */
+            /* ---------------- DATE FIX ---------------- */
 
-        $request->merge([
-            'interest_as_emi'   => $request->has('interest_as_emi') ? 'Yes' : null,
-            'interest_as_first' => $request->has('interest_as_first') ? 'Yes' : null,
-
-            'ratio_enabled' => $request->has('divide_emi_ratio') ? 'Yes' : 'No',
-            'ratio_first_emi' => $request->has('divide_emi_ratio') ? $request->ratio_first_emi : null,
-            'ratio_first_percentage' => $request->has('divide_emi_ratio') ? $request->ratio_first_percentage : null,
-        ]);
-
-        /* ---------------- RE-CALCULATE APPLIED INTEREST ---------------- */
-
-        $scheme = GoldLoanScheme::find($request->scheme_id);
-
-        $principal   = $request->approved_loan_amount ?? $request->loan_amount;
-        $annualRate  = $scheme->annual_interest_rate ?? 0;
-        $tenureValue = $request->tenure_value ?? 0;
-
-        if ($request->tenure_type == 'MONTHS') {
-            $tenureMonths = $tenureValue;
-        } elseif ($request->tenure_type == 'WEEKS') {
-            $tenureMonths = round($tenureValue / 4, 2);
-        } elseif ($request->tenure_type == 'DAYS') {
-            $tenureMonths = round($tenureValue / 30, 2);
-        } else {
-            $tenureMonths = $tenureValue;
-        }
-
-        $totalInterest = ($principal * $annualRate / 100) * ($tenureMonths / 12);
-
-        $request->merge([
-            'applied_interest' => round($totalInterest, 2)
-        ]);
-
-        /* ---------------- UPDATE MAIN RECORD ---------------- */
-
-        $application->update($request->only([
-            'application_date',
-            'member_id',
-            'scheme_id',
-            'tenure_type',
-            'tenure_value',
-            'emi_collection',
-            'credit_period',
-            'loan_amount',
-            'insurance_amount',
-            'net_loan_amount',
-            'purpose_of_loan',
-            'processing_fee_total',
-            'approved_loan_amount',
-            'interest_as_emi',
-            'interest_as_first',
-            'ratio_enabled',
-            'ratio_first_emi',
-            'ratio_first_percentage',
-            'applied_interest',
-        ]));
-
-        /* ---------------- ORNAMENTS RESET ---------------- */
-
-        LoanOrnament::where('application_id', $application->id)->delete();
-
-        if ($request->has('item_type')) {
-            foreach ($request->item_type as $index => $type) {
-
-                LoanOrnament::create([
-                    'application_id' => $application->id,
-                    'item_type'      => $type,
-                    'item_name'      => $request->item_name[$index] ?? null,
-                    'no_of_items'    => $request->no_of_items[$index] ?? 0,
-                    'value_per_gram' => $request->value_per_gram[$index] ?? 0,
-                    'gross_weight'   => $request->gross_weight[$index] ?? 0,
-                    'net_weight'     => $request->net_weight[$index] ?? 0,
-                    'tunch'          => $request->tunch[$index] ?? 0,
-                    'fine_weight'    => $request->fine_weight[$index] ?? 0,
-                    'total_value'    => $request->total_value[$index] ?? 0,
-                    'status'         => 1,
+            if ($request->filled('application_date')) {
+                $request->merge([
+                    'application_date' => Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d'),
                 ]);
             }
-        }
 
-        /* ---------------- CREDIT SCORE RESET ---------------- */
-
-        $application->creditScores()->delete();
-
-        if ($request->has('cibil_type')) {
-            foreach ($request->cibil_type as $index => $type) {
-
-                $reportDate = null;
-
-                if (!empty($request->report_date[$index])) {
-                    $reportDate = Carbon::createFromFormat(
-                        'd-m-Y',
-                        $request->report_date[$index]
-                    )->format('Y-m-d');
-                }
-
-                $filePath = null;
-
-                if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
-                    $filePath = $request->file('report_file')[$index]
-                        ->store('cibil_reports', 'public');
-                }
-
-                $application->creditScores()->create([
-                    'cibil_type'       => $type,
-                    'cibil_score'      => $request->cibil_score[$index] ?? null,
-                    'report_date'      => $reportDate,
-                    'report_file_path' => $filePath,
+            if ($request->filled('cheque_date')) {
+                $request->merge([
+                    'cheque_date' => Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d'),
                 ]);
             }
+
+            /* ---------------- INTEREST OPTIONS ---------------- */
+
+            $request->merge([
+                'interest_as_emi'   => $request->has('interest_as_emi') ? 'Yes' : null,
+                'interest_as_first' => $request->has('interest_as_first') ? 'Yes' : null,
+
+                'ratio_enabled' => $request->has('divide_emi_ratio') ? 'Yes' : 'No',
+                'ratio_first_emi' => $request->has('divide_emi_ratio') ? $request->ratio_first_emi : null,
+                'ratio_first_percentage' => $request->has('divide_emi_ratio') ? $request->ratio_first_percentage : null,
+            ]);
+
+            /* ---------------- RE-CALCULATE APPLIED INTEREST ---------------- */
+
+            $scheme = GoldLoanScheme::find($request->scheme_id);
+
+            $principal   = $request->approved_loan_amount ?? $request->loan_amount;
+            $annualRate  = $scheme->annual_interest_rate ?? 0;
+            $tenureValue = $request->tenure_value ?? 0;
+
+            if ($request->tenure_type == 'MONTHS') {
+                $tenureMonths = $tenureValue;
+            } elseif ($request->tenure_type == 'WEEKS') {
+                $tenureMonths = round($tenureValue / 4, 2);
+            } elseif ($request->tenure_type == 'DAYS') {
+                $tenureMonths = round($tenureValue / 30, 2);
+            } else {
+                $tenureMonths = $tenureValue;
+            }
+
+            $totalInterest = ($principal * $annualRate / 100) * ($tenureMonths / 12);
+
+            $request->merge([
+                'applied_interest' => round($totalInterest, 2)
+            ]);
+
+            /* ---------------- UPDATE MAIN RECORD ---------------- */
+
+            $application->update($request->only([
+                'application_date',
+                'member_id',
+                'scheme_id',
+                'tenure_type',
+                'tenure_value',
+                'emi_collection',
+                'credit_period',
+                'loan_amount',
+                'insurance_amount',
+                'net_loan_amount',
+                'purpose_of_loan',
+                'processing_fee_total',
+                'approved_loan_amount',
+                'interest_as_emi',
+                'interest_as_first',
+                'ratio_enabled',
+                'ratio_first_emi',
+                'ratio_first_percentage',
+                'applied_interest',
+            ]));
+
+            /* ---------------- ORNAMENTS RESET ---------------- */
+
+            LoanOrnament::where('application_id', $application->id)->delete();
+
+            if ($request->has('item_type')) {
+                foreach ($request->item_type as $index => $type) {
+
+                    LoanOrnament::create([
+                        'application_id' => $application->id,
+                        'item_type'      => $type,
+                        'item_name'      => $request->item_name[$index] ?? null,
+                        'no_of_items'    => $request->no_of_items[$index] ?? 0,
+                        'value_per_gram' => $request->value_per_gram[$index] ?? 0,
+                        'gross_weight'   => $request->gross_weight[$index] ?? 0,
+                        'net_weight'     => $request->net_weight[$index] ?? 0,
+                        'tunch'          => $request->tunch[$index] ?? 0,
+                        'fine_weight'    => $request->fine_weight[$index] ?? 0,
+                        'total_value'    => $request->total_value[$index] ?? 0,
+                        'status'         => 1,
+                    ]);
+                }
+            }
+
+            /* ---------------- CREDIT SCORE RESET ---------------- */
+
+            $application->creditScores()->delete();
+
+            if ($request->has('cibil_type')) {
+                foreach ($request->cibil_type as $index => $type) {
+
+                    $reportDate = null;
+
+                    if (!empty($request->report_date[$index])) {
+                        $reportDate = Carbon::createFromFormat(
+                            'd-m-Y',
+                            $request->report_date[$index]
+                        )->format('Y-m-d');
+                    }
+
+                    $filePath = null;
+
+                    if ($request->hasFile('report_file') && isset($request->file('report_file')[$index])) {
+                        $filePath = $request->file('report_file')[$index]
+                            ->store('cibil_reports', 'public');
+                    }
+
+                    $application->creditScores()->create([
+                        'cibil_type'       => $type,
+                        'cibil_score'      => $request->cibil_score[$index] ?? null,
+                        'report_date'      => $reportDate,
+                        'report_file_path' => $filePath,
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return redirect()
+                ->route('gold-loan.applications.view', $application->id)
+                ->with('success', 'Application updated successfully.');
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            Log::error('Application Update Failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()->with('error', 'Something went wrong while updating.');
         }
-
-        DB::commit();
-
-        return redirect()
-            ->route('gold-loan.applications.view', $application->id)
-            ->with('success', 'Application updated successfully.');
-
-    } catch (\Exception $e) {
-
-        DB::rollBack();
-
-        Log::error('Application Update Failed', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-
-        return back()->with('error', 'Something went wrong while updating.');
     }
-}
     ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -2041,16 +2048,16 @@ class GoldLoanController extends Controller
         return view("gold-loan.applications.view-buttons.disburse-setting", compact('application'));
     }
 
-    public function submitForApproval($id)
-    {
-        // Fetch the relevant model — change LoanApplication to appropriate model if many models share same button.
-        $application = LoanApplication::findOrFail($id);
+    // public function submitForApproval($id)
+    // {
+    //     // Fetch the relevant model — change LoanApplication to appropriate model if many models share same button.
+    //     $application = LoanApplication::findOrFail($id);
 
-        // Do NOT change status. Only update updated_at to current time so it becomes "latest"
-        // Option A: touch() updates updated_at automatically
-        $application->touch();
+    //     // Do NOT change status. Only update updated_at to current time so it becomes "latest"
+    //     // Option A: touch() updates updated_at automatically
+    //     $application->touch();
 
-        return redirect()->route('loans')
-            ->with('success', 'Submitted for approval!');
-    }
+    //     return redirect()->route('loans')
+    //         ->with('success', 'Submitted for approval!');
+    // }
 }

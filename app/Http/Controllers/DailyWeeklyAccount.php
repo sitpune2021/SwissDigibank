@@ -164,11 +164,11 @@ class DailyWeeklyAccount extends Controller
         // ⭐ Apply payments on EMI schedule (front-end calculation only)
         $totalPaid = DailyWeeklyLoanTransaction::where('loan_id', $id)->sum('amount_collected');
 
-        $foreclosureApproved = DB::table('business_loan_fore_closures')
+        $foreclosureApproved = DB::table('daily_weekly_loan_fore_closures')
             ->where('loan_id', $id)
             ->where('status', 1)
             ->exists();
-        $fullPaymentExists = DB::table('business_loan_transactions')
+        $fullPaymentExists = DB::table('daily_weekly_loan_transactions')
             ->where('loan_id', $id)
             ->where('flag', 'full_payment')
             ->where('status', 'paid')
@@ -420,6 +420,18 @@ class DailyWeeklyAccount extends Controller
         // end DYNAMIC SUMMARY CHART VALUES 
 
         $currentDebt = max($goldLoan->loan_amount - $totalDeposit, 0);
+        $hasDueEmi = DB::table('daily_weekly_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
+            ->exists();
+
+        if ($hasDueEmi) {
+            $payRoute = route('daily_weekly.account.pay-emi', $goldLoan->id);
+            $payButtonText = 'Pay EMI';
+        } else {
+            $payRoute = route('daily_weekly.account.pay', $goldLoan->id);
+            $payButtonText = 'Pay';
+        }
 
 
         return view('daily_weekly.account.view', compact(
@@ -434,7 +446,10 @@ class DailyWeeklyAccount extends Controller
             'paidSummary',
             'dueSummary',
             'totalDeposit',
-            'currentDebt'
+            'currentDebt',
+            'hasDueEmi',
+            'payRoute',
+            'payButtonText'
         ));
     }
 
@@ -967,11 +982,16 @@ class DailyWeeklyAccount extends Controller
 
     public function payEmi(Request $request)
     {
+        Log::info('🟢 Daily Weekly payEmi Started', [
+            'payload' => $request->all(),
+            'user_id' => Auth::id()
+        ]);
+
         DB::beginTransaction();
 
         try {
 
-            $request->validate([
+            $validated = $request->validate([
                 'loan_id' => 'required|exists:daily_weekly_applications,id',
                 'transaction_date' => 'required',
                 'current_debt' => 'required|numeric',
@@ -980,20 +1000,41 @@ class DailyWeeklyAccount extends Controller
                 'fee_mode' => 'required|in:cash,cheque,online',
             ]);
 
+            Log::info('✅ Validation Passed', $validated);
+
             $loan = DailyWeeklyApplication::findOrFail($request->loan_id);
 
-            // 🔥 IMPORTANT: Decide full payment
+            Log::info('🔎 Loan Found', [
+                'loan_id' => $loan->id,
+                'loan_amount' => $loan->loan_amount
+            ]);
+
+            // 🔥 Decide full payment
             $isFullPayment = floatval($request->amount_collected) >= floatval($request->current_debt);
 
             $flag = $isFullPayment ? 'full_payment' : 'emi_payment';
-            $emiNo = $isFullPayment ? null : (DailyWeeklyLoanTransaction::where('loan_id', $loan->id)->max('emi_no') + 1);
+
+            $emiNo = $isFullPayment
+                ? null
+                : (DailyWeeklyLoanTransaction::where('loan_id', $loan->id)->max('emi_no') + 1);
+
+            Log::info('💡 Payment Decision', [
+                'is_full_payment' => $isFullPayment,
+                'flag' => $flag,
+                'emi_no' => $emiNo
+            ]);
 
             $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)
                 ->format('Y-m-d');
 
-            DailyWeeklyLoanTransaction::create([
+            Log::info('📅 Converted Date', [
+                'original' => $request->transaction_date,
+                'formatted' => $transactionDate
+            ]);
+
+            $transaction = DailyWeeklyLoanTransaction::create([
                 'loan_id' => $loan->id,
-                'emi_no' => $emiNo,                     // NULL for full payment
+                'emi_no' => $emiNo,
                 'transaction_date' => $transactionDate,
                 'current_debt' => $request->current_debt,
                 'other_charges' => $request->other_charges ?? 0,
@@ -1001,12 +1042,18 @@ class DailyWeeklyAccount extends Controller
                 'amount_collected' => $request->amount_collected,
                 'remarks' => $request->remarks ?? null,
                 'fee_mode' => $request->fee_mode,
-                'flag' => $flag,                        // 🔥 MUST STORE
+                'flag' => $flag,
                 'status' => 'pending',
                 'created_by' => Auth::id(),
             ]);
 
+            Log::info('💾 Transaction Inserted Successfully', [
+                'transaction_id' => $transaction->id
+            ]);
+
             DB::commit();
+
+            Log::info('✅ payEmi Completed Successfully');
 
             return redirect()
                 ->route('daily_weekly.account.show', $loan->id)
@@ -1014,6 +1061,13 @@ class DailyWeeklyAccount extends Controller
         } catch (\Exception $e) {
 
             DB::rollBack();
+
+            Log::error('❌ payEmi FAILED', [
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'loan_id' => $request->loan_id ?? null
+            ]);
 
             return back()->with('error', $e->getMessage());
         }
@@ -1205,15 +1259,16 @@ class DailyWeeklyAccount extends Controller
             // ===============================
             // ✅ DATE FORMATTING
             // ===============================
+
             $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)
                 ->format('Y-m-d');
 
             $chequeDate = $request->filled('cheque_date')
-                ? Carbon::createFromFormat('d-m-Y', $request->cheque_date)->format('Y-m-d')
+                ? Carbon::parse($request->cheque_date)->format('Y-m-d')
                 : null;
 
             $transferDate = $request->filled('transfer_date')
-                ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
+                ? Carbon::parse($request->transfer_date)->format('Y-m-d')
                 : null;
 
             Log::info('📅 DATE CONVERSION DONE', [

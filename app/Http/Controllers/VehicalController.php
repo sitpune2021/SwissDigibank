@@ -25,14 +25,14 @@ use App\Models\VehicleDistributor;
 
 class VehicalController extends Controller
 {
-   
+
 
     public function index()
-    {       
+    {
         $schemes = VehicalScheme::orderBy('id', 'desc')->paginate(10);
         return view("vehical.schemes.index", compact('schemes'));
-    } 
-  
+    }
+
     public function create()
     {
         return view("vehical.schemes.create");
@@ -84,10 +84,18 @@ class VehicalController extends Controller
 
             // Convert null numeric fields to 0 to avoid integrity constraint error
             $numericDefaults = [
-                'overdue_interest_rate', 'penalty_charge', 'processing_fee',
-                'stamp_duty_charge', 'insurance_fee', 'fore_closer_charge',
-                'credit_period', 'sms_charge', 'fuel_charge', 'stationary_charge',
-                'maintenance_charge', 'collection'
+                'overdue_interest_rate',
+                'penalty_charge',
+                'processing_fee',
+                'stamp_duty_charge',
+                'insurance_fee',
+                'fore_closer_charge',
+                'credit_period',
+                'sms_charge',
+                'fuel_charge',
+                'stationary_charge',
+                'maintenance_charge',
+                'collection'
             ];
 
             foreach ($numericDefaults as $field) {
@@ -139,9 +147,9 @@ class VehicalController extends Controller
         $scheme->update($request->all());
 
         return redirect()->route('vehical.schemes.index')
-                        ->with('success', 'Scheme updated successfully!');
+            ->with('success', 'Scheme updated successfully!');
     }
-  
+
     public function view($id)
     {
         $scheme = VehicalScheme::findOrFail($id);
@@ -149,7 +157,7 @@ class VehicalController extends Controller
     }
 
 
-//////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////
 
 
     public function calculator()
@@ -158,11 +166,11 @@ class VehicalController extends Controller
         return view("vehical.calculator.index", compact('scheme'));
     }
 
-   // same function Mortgage, Loanagainst, Vehical
+    // same function Mortgage, Loanagainst, Vehical
     public function calculateResult(Request $request)
     {
 
-         // Store raw user tenure selection for display (before conversion)
+        // Store raw user tenure selection for display (before conversion)
         $rawTenureValue = $request->tenure_months;
         $rawTenureType = $request->tenure_type;
 
@@ -172,7 +180,7 @@ class VehicalController extends Controller
         ---------------------------------------------------------*/
         $isManual = $request->has('manual_interest_rate') && $request->manual_interest_rate != '';
 
-         //  ADD HERE (Correct Location)
+        //  ADD HERE (Correct Location)
         $interestType = $request->interest_type;
         // $interestAsEmi = $request->has('option_interest_emi') ? 'Yes' : 'No';
         // $interestAsFirst = $request->has('option_interest_first') ? 'Yes' : 'No';
@@ -203,10 +211,9 @@ class VehicalController extends Controller
 
         $isReducingWithRatio = ($interestType === 'reducing' && $ratioEnabled === 'Yes');
 
-        
 
-        if ($isManual) 
-        {
+
+        if ($isManual) {
 
             $request->validate([
                 'loan_amount' => 'required|numeric|min:1',
@@ -227,7 +234,7 @@ class VehicalController extends Controller
             }
 
             // Create Display Format (Human Friendly)
-            $tenureDisplay = match($rawTenureType) {
+            $tenureDisplay = match ($rawTenureType) {
                 'DAYS' => $rawTenureValue . ' Days',
                 'WEEKS' => $rawTenureValue . ' Weeks',
                 'MONTHS' => $rawTenureValue . ' Months',
@@ -250,13 +257,10 @@ class VehicalController extends Controller
 
             $processingFee  = (float) ($request->manual_processing_fee ?? 0);
             $stampAmount    = round($loan * ($request->manual_stamp ?? 0) / 100, 2);
-            $insuranceAmount= round($loan * ($request->manual_insurance ?? 0) / 100, 2);
+            $insuranceAmount = round($loan * ($request->manual_insurance ?? 0) / 100, 2);
 
             $scheme         = null;
-
-        } 
-        else 
-        {
+        } else {
 
             $request->validate([
                 'scheme_id' => 'required|exists:vehical_schemes,id',
@@ -280,7 +284,7 @@ class VehicalController extends Controller
             }
 
             // Create Display Format (Human Friendly)
-            $tenureDisplay = match($rawTenureType) {
+            $tenureDisplay = match ($rawTenureType) {
                 'DAYS' => $rawTenureValue . ' Days',
                 'WEEKS' => $rawTenureValue . ' Weeks',
                 'MONTHS' => $rawTenureValue . ' Months',
@@ -330,11 +334,11 @@ class VehicalController extends Controller
             $installments = max(1, (int) round($rawTenureValue));
         }
         // If raw is WEEKS but payout is bi-weekly (every 2 weeks) => installments = ceil(weeks/2)
-        elseif ($rawTenureType === 'WEEKS' && in_array($payout, ['bi_weekly','bi-weekly'])) {
+        elseif ($rawTenureType === 'WEEKS' && in_array($payout, ['bi_weekly', 'bi-weekly'])) {
             $installments = max(1, (int) ceil($rawTenureValue / 2));
         }
         // If raw is WEEKS and payout is 4_weekly (every 4 wks)
-        elseif ($rawTenureType === 'WEEKS' && in_array($payout, ['4_weekly','4-weekly','4weekly'])) {
+        elseif ($rawTenureType === 'WEEKS' && in_array($payout, ['4_weekly', '4-weekly', '4weekly'])) {
             $installments = max(1, (int) ceil($rawTenureValue / 4));
         }
         // If raw is DAYS and payout = daily => days count
@@ -369,7 +373,7 @@ class VehicalController extends Controller
                     $installments = max(1, (int) ceil($tenureMonths * 4)); // approximate
                 } elseif (in_array($payout, ['bi_weekly'])) {
                     $installments = max(1, (int) ceil($tenureMonths * 2)); // approx
-                } elseif (in_array($payout, ['4_weekly','4-weekly','4weekly'])) {
+                } elseif (in_array($payout, ['4_weekly', '4-weekly', '4weekly'])) {
                     $installments = max(1, (int) ceil($tenureMonths * 1)); // approx
                 } else {
                     $installments = max(1, (int) ceil($tenureMonths / 1));
@@ -379,8 +383,8 @@ class VehicalController extends Controller
                 $installments = max(1, (int) ceil($tenureMonths / $monthsPerInstallment));
             }
         }
-   
-        
+
+
         $schedule = [];
         $startDate = now();
         $outstanding = $loan;
@@ -398,13 +402,12 @@ class VehicalController extends Controller
         } else {
             $totalInterest = 0; // Final total interest later calculated from schedule
         }
-            
+
 
         /* -------------------------------------------------------
             4(A). FLAT ADVANCED → ONLY ONE EMI
         ---------------------------------------------------------*/
-        if ($interestType === 'flat_advanced') 
-        {
+        if ($interestType === 'flat_advanced') {
 
             // Force principal split always
             $remainingPrincipal = $loan;
@@ -415,17 +418,13 @@ class VehicalController extends Controller
                 // EMI DATE
                 if ($payout === 'daily') {
                     $emiDate = $startDate->copy()->addDays($i);
-                }
-                elseif ($payout === 'weekly') {
+                } elseif ($payout === 'weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 7);
-                }
-                elseif ($payout === 'bi_weekly') {
+                } elseif ($payout === 'bi_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 14);
-                }
-                elseif ($payout === '4_weekly') {
+                } elseif ($payout === '4_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 28);
-                }
-                else {
+                } else {
                     $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
                 }
 
@@ -457,7 +456,7 @@ class VehicalController extends Controller
             $total_interest  = 0;
             $total_emi_paid  = $loan;
         }
- 
+
 
         /* -------------------------------------------------------
              4(B). FLAT EMI
@@ -472,17 +471,13 @@ class VehicalController extends Controller
 
                 if ($payout === 'daily') {
                     $emiDate = $startDate->copy()->addDays($i);
-                }
-                elseif ($payout === 'weekly') {
+                } elseif ($payout === 'weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 7);
-                }
-                elseif ($payout === 'bi_weekly') {
+                } elseif ($payout === 'bi_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 14);
-                }
-                elseif ($payout === '4_weekly') {
+                } elseif ($payout === '4_weekly') {
                     $emiDate = $startDate->copy()->addDays($i * 28);
-                }
-                else {
+                } else {
                     $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
                 }
 
@@ -516,107 +511,103 @@ class VehicalController extends Controller
         ---------------------------------------------------------*/
         // this code as per nidhi bi_weekly
 
-            if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === 'bi_weekly') 
-            {
+        if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === 'bi_weekly') {
 
-                $installments = count($schedule);
-                $loanAmount   = (float)$loan;
-                $rate         = (float)$annualRate;
-                $tenureMonths = (float)$tenureMonths;
+            $installments = count($schedule);
+            $loanAmount   = (float)$loan;
+            $rate         = (float)$annualRate;
+            $tenureMonths = (float)$tenureMonths;
 
-                // TOTAL INTEREST (flat)
-                $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
+            // TOTAL INTEREST (flat)
+            $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
 
-                // FIXED EMI
-                $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
+            // FIXED EMI
+            $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
 
-                // Principal per EMI (2..n)
-                $principalOther = $flatEmi;
+            // Principal per EMI (2..n)
+            $principalOther = $flatEmi;
 
-                // First Principal
-                $principal1 = round($loanAmount - ($principalOther * ($installments - 1)), 2);
+            // First Principal
+            $principal1 = round($loanAmount - ($principalOther * ($installments - 1)), 2);
 
-                // First Interest = EMI - first principal
-                //$interest1 = round($flatEmi - $principal1, 2);
-                // 1st EMI must take EXACT total interest
-                $interest1   = $totalInterest;
+            // First Interest = EMI - first principal
+            //$interest1 = round($flatEmi - $principal1, 2);
+            // 1st EMI must take EXACT total interest
+            $interest1   = $totalInterest;
 
-                // Now recompute principal1 so EMI stays accurate
-                $principal1  = round($flatEmi - $interest1, 2);
+            // Now recompute principal1 so EMI stays accurate
+            $principal1  = round($flatEmi - $interest1, 2);
 
-                $remaining = $loanAmount;
+            $remaining = $loanAmount;
 
-                foreach ($schedule as $i => $row) {
+            foreach ($schedule as $i => $row) {
 
-                    $emiNo = $row['no'];
+                $emiNo = $row['no'];
 
-                    if ($emiNo == 1) {
+                if ($emiNo == 1) {
 
-                        // FIRST EMI
-                        $schedule[$i]['principal'] = $principal1;
-                        $schedule[$i]['interest']  = $interest1;
-                        $schedule[$i]['emi']       = $flatEmi;
+                    // FIRST EMI
+                    $schedule[$i]['principal'] = $principal1;
+                    $schedule[$i]['interest']  = $interest1;
+                    $schedule[$i]['emi']       = $flatEmi;
 
-                        $remaining -= $principal1;
+                    $remaining -= $principal1;
+                } else {
 
+                    // OTHER EMIs = principal only
+                    if ($emiNo == $installments) {
+                        $principal = round($remaining, 2);
                     } else {
-
-                        // OTHER EMIs = principal only
-                        if ($emiNo == $installments) {
-                            $principal = round($remaining, 2);
-                        } else {
-                            $principal = $principalOther;
-                        }
-
-                        $schedule[$i]['principal'] = $principal;
-                        $schedule[$i]['interest']  = 0;
-                        $schedule[$i]['emi']       = $flatEmi;
-
-                        $remaining -= $principal;
+                        $principal = $principalOther;
                     }
 
-                    // BALANCE UPDATE
-                    $schedule[$i]['balance'] = max(0, round($remaining, 2));
+                    $schedule[$i]['principal'] = $principal;
+                    $schedule[$i]['interest']  = 0;
+                    $schedule[$i]['emi']       = $flatEmi;
+
+                    $remaining -= $principal;
                 }
+
+                // BALANCE UPDATE
+                $schedule[$i]['balance'] = max(0, round($remaining, 2));
             }
+        }
 
-            // this code as per nidhi 4_weekly
-            if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === '4_weekly') 
-            {
+        // this code as per nidhi 4_weekly
+        if ($interestAsFirst === 'Yes' && $interestType === 'flat_emi' && strtolower($payout) === '4_weekly') {
 
-                $installments = count($schedule);
-                $loanAmount   = (float)$loan;
-                $rate         = (float)$annualRate;
-                $tenureMonths = (float)$tenureMonths;
+            $installments = count($schedule);
+            $loanAmount   = (float)$loan;
+            $rate         = (float)$annualRate;
+            $tenureMonths = (float)$tenureMonths;
 
-                // TOTAL INTEREST (flat)
-                $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
+            // TOTAL INTEREST (flat)
+            $totalInterest = round($loanAmount * $rate / 100 * ($tenureMonths / 12), 2);
 
-                // FIXED EMI
-                $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
+            // FIXED EMI
+            $flatEmi = round(($loanAmount + $totalInterest) / $installments, 2);
 
-                // FIRST EMI takes exact total interest
-                $interest1 = $totalInterest;
+            // FIRST EMI takes exact total interest
+            $interest1 = $totalInterest;
 
-                // First principal = EMI - interest
-                $principal1 = round($flatEmi - $interest1, 2);
+            // First principal = EMI - interest
+            $principal1 = round($flatEmi - $interest1, 2);
 
-                $remaining = $loanAmount;
+            $remaining = $loanAmount;
 
-                foreach ($schedule as $i => $row) {
+            foreach ($schedule as $i => $row) {
 
-                    $emiNo = $row['no'];
+                $emiNo = $row['no'];
 
-                    if ($emiNo == 1) {
+                if ($emiNo == 1) {
 
-                        // FIRST EMI
-                        $schedule[$i]['principal'] = $principal1;
-                        $schedule[$i]['interest']  = $interest1;
-                        $schedule[$i]['emi']       = $flatEmi;
+                    // FIRST EMI
+                    $schedule[$i]['principal'] = $principal1;
+                    $schedule[$i]['interest']  = $interest1;
+                    $schedule[$i]['emi']       = $flatEmi;
 
-                        $remaining -= $principal1;
-
-                    } else {
+                    $remaining -= $principal1;
+                } else {
 
                     // OTHER EMIs = principal only
                     if ($emiNo == $installments) {
@@ -634,127 +625,124 @@ class VehicalController extends Controller
 
                 // BALANCE UPDATE
                 $schedule[$i]['balance'] = max(0, round($remaining, 2));
-                }
             }
+        }
 
 
-           // --- FIX: Reducing + Quarterly => EMI count = tenureMonths / 3 ---
-            $total_principal = 0;
-            $total_interest  = 0;
-            $total_emi_paid  = 0;
+        // --- FIX: Reducing + Quarterly => EMI count = tenureMonths / 3 ---
+        $total_principal = 0;
+        $total_interest  = 0;
+        $total_emi_paid  = 0;
 
+        $totalInterestAll = 0;
+        $total_charges = 0;
+
+
+        if ($interestType === 'reducing' && strtolower($payout) === 'quarterly') {
+
+            $emiCount = ceil($tenureMonths / 3);
+            $monthlyRate = ($annualRate / 12) / 100;
+
+            $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+
+            $remaining_principal = $loan;
             $totalInterestAll = 0;
-            $total_charges = 0;
 
+            for ($i = 1; $i <= $emiCount; $i++) {
 
-            if ($interestType === 'reducing' && strtolower($payout) === 'quarterly') {
+                $emiDate = $startDate->copy()->addMonths($i * 3);
+                $dueDate = $emiDate->copy()->addDay();
 
-                $emiCount = ceil($tenureMonths / 3);
-                $monthlyRate = ($annualRate / 12) / 100;
+                $interest = 0;
 
-                $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+                for ($m = 1; $m <= 3; $m++) {
+                    $monthInterest = round($remaining_principal * $monthlyRate, 2);
+                    $interest += $monthInterest;
 
-                $remaining_principal = $loan;
-                $totalInterestAll = 0;
-
-                for ($i = 1; $i <= $emiCount; $i++) {
-
-                    $emiDate = $startDate->copy()->addMonths($i * 3);
-                    $dueDate = $emiDate->copy()->addDay();
-
-                    $interest = 0;
-
-                    for ($m = 1; $m <= 3; $m++) {
-                        $monthInterest = round($remaining_principal * $monthlyRate, 2);
-                        $interest += $monthInterest;
-
-                        $principalMonthly = round($emi - $monthInterest, 2);
-                        $remaining_principal -= $principalMonthly;
-                    }
-
-                    $totalInterestAll += $interest;
-
-                    $principal = round($emi * 3 - $interest, 2);
-
-                    $schedule[] = [
-                        'no' => $i,
-                        'emi_date'  => $emiDate->format('d/m/Y'),
-                        'due_date'  => $dueDate->format('d/m/Y'),
-                        'principal' => $principal,
-                        'interest'  => $interest,
-                        'charges'   => 0,
-                        'emi'       => $principal + $interest,
-                        'balance'   => max($remaining_principal, 0),
-                    ];
+                    $principalMonthly = round($emi - $monthInterest, 2);
+                    $remaining_principal -= $principalMonthly;
                 }
 
-                $finalTotals['principal'] = $loan;
-                $finalTotals['interest']  = $totalInterestAll;
-                $finalTotals['emi']       = $loan + $totalInterestAll;
+                $totalInterestAll += $interest;
 
-                $total_principal = $loan;
-                $total_interest  = $totalInterestAll;
-                $total_emi_paid  = $loan + $totalInterestAll;
+                $principal = round($emi * 3 - $interest, 2);
 
+                $schedule[] = [
+                    'no' => $i,
+                    'emi_date'  => $emiDate->format('d/m/Y'),
+                    'due_date'  => $dueDate->format('d/m/Y'),
+                    'principal' => $principal,
+                    'interest'  => $interest,
+                    'charges'   => 0,
+                    'emi'       => $principal + $interest,
+                    'balance'   => max($remaining_principal, 0),
+                ];
             }
 
-            // --- NOW HALF-YEARLY BLOCK — MUST USE else if ----
-            else if ($interestType === 'reducing' && strtolower($payout) === 'half-yearly') {
+            $finalTotals['principal'] = $loan;
+            $finalTotals['interest']  = $totalInterestAll;
+            $finalTotals['emi']       = $loan + $totalInterestAll;
 
-                $emiCount = ceil($tenureMonths / 6);
-                $monthlyRate = ($annualRate / 12) / 100;
+            $total_principal = $loan;
+            $total_interest  = $totalInterestAll;
+            $total_emi_paid  = $loan + $totalInterestAll;
+        }
 
-                $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+        // --- NOW HALF-YEARLY BLOCK — MUST USE else if ----
+        else if ($interestType === 'reducing' && strtolower($payout) === 'half-yearly') {
 
-                $remaining_principal = $loan;
-                $totalInterestAll = 0;
+            $emiCount = ceil($tenureMonths / 6);
+            $monthlyRate = ($annualRate / 12) / 100;
 
-                for ($i = 1; $i <= $emiCount; $i++) {
+            $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
 
-                    $emiDate = $startDate->copy()->addMonths($i * 6);
-                    $dueDate = $emiDate->copy()->addDay();
+            $remaining_principal = $loan;
+            $totalInterestAll = 0;
 
-                    $interest = 0;
+            for ($i = 1; $i <= $emiCount; $i++) {
 
-                    for ($m = 1; $m <= 6; $m++) {
-                        $monthInterest = round($remaining_principal * $monthlyRate, 2);
-                        $interest += $monthInterest;
+                $emiDate = $startDate->copy()->addMonths($i * 6);
+                $dueDate = $emiDate->copy()->addDay();
 
-                        $principalMonthly = round($emi - $monthInterest, 2);
-                        $remaining_principal -= $principalMonthly;
-                    }
+                $interest = 0;
 
-                    $totalInterestAll += $interest;
+                for ($m = 1; $m <= 6; $m++) {
+                    $monthInterest = round($remaining_principal * $monthlyRate, 2);
+                    $interest += $monthInterest;
 
-                    $principal = round($emi * 6 - $interest, 2);
-
-                    $schedule[] = [
-                        'no'        => $i,
-                        'emi_date'  => $emiDate->format('d/m/Y'),
-                        'due_date'  => $dueDate->format('d/m/Y'),
-                        'principal' => $principal,
-                        'interest'  => $interest,
-                        'charges'   => 0,
-                        'emi'       => $principal + $interest,
-                        'balance'   => max($remaining_principal, 0),
-                    ];
+                    $principalMonthly = round($emi - $monthInterest, 2);
+                    $remaining_principal -= $principalMonthly;
                 }
 
-                $finalTotals['principal'] = $loan;
-                $finalTotals['interest']  = $totalInterestAll;
-                $finalTotals['emi']       = $loan + $totalInterestAll;
+                $totalInterestAll += $interest;
 
-                $total_principal = $loan;
-                $total_interest  = $totalInterestAll;
-                $total_emi_paid  = $loan + $totalInterestAll;
+                $principal = round($emi * 6 - $interest, 2);
+
+                $schedule[] = [
+                    'no'        => $i,
+                    'emi_date'  => $emiDate->format('d/m/Y'),
+                    'due_date'  => $dueDate->format('d/m/Y'),
+                    'principal' => $principal,
+                    'interest'  => $interest,
+                    'charges'   => 0,
+                    'emi'       => $principal + $interest,
+                    'balance'   => max($remaining_principal, 0),
+                ];
             }
-      
+
+            $finalTotals['principal'] = $loan;
+            $finalTotals['interest']  = $totalInterestAll;
+            $finalTotals['emi']       = $loan + $totalInterestAll;
+
+            $total_principal = $loan;
+            $total_interest  = $totalInterestAll;
+            $total_emi_paid  = $loan + $totalInterestAll;
+        }
+
 
         /* -------------------------------------------------------
             4(C). REDUCING EMI — MULTI-PAYOUT SUPPORT
-        ---------------------------------------------------------*/
-        elseif ($interestType === 'reducing')
-        {
+        ---------------------------------------------------------*/ elseif ($interestType === 'reducing') {
             $schedule = [];
             $remaining_principal = $loan;
             $totalInterestAll = 0;
@@ -783,22 +771,22 @@ class VehicalController extends Controller
                     break;
 
                 case 'weekly':
-                    $periods = 12/52; 
+                    $periods = 12 / 52;
                     $addDate = fn($d, $i) => $d->copy()->addDays($i * 7);
                     break;
 
                 case 'bi_weekly':
-                    $periods = 12/26;
+                    $periods = 12 / 26;
                     $addDate = fn($d, $i) => $d->copy()->addDays($i * 14);
                     break;
 
                 case '4_weekly':
-                    $periods = 12/13;
+                    $periods = 12 / 13;
                     $addDate = fn($d, $i) => $d->copy()->addDays($i * 28);
                     break;
 
                 case 'daily':
-                    $periods = 12/365;
+                    $periods = 12 / 365;
                     $addDate = fn($d, $i) => $d->copy()->addDays($i);
                     break;
 
@@ -821,7 +809,9 @@ class VehicalController extends Controller
                 $interest = round($remaining_principal * $ratePer, 2);
                 $principal = round($emi - $interest, 2);
 
-                if ($principal < 0) { $principal = 0; }
+                if ($principal < 0) {
+                    $principal = 0;
+                }
 
                 $schedule[] = [
                     'no'        => $i,
@@ -848,7 +838,7 @@ class VehicalController extends Controller
             $totalInterest = array_sum(array_column($schedule, 'interest'));
         }
 
-     
+
         /* -------------------------------------------------------
             4(D). INTEREST AS EMI LOGIC (PRINCIPAL ZERO)
         ---------------------------------------------------------*/
@@ -862,7 +852,7 @@ class VehicalController extends Controller
                 if ($row['no'] == $installments) {
                     $schedule[$k]['principal'] = $loan;
                     $schedule[$k]['balance'] = 0;
-                } 
+                }
                 // All other EMI - principal ZERO
                 else {
                     $schedule[$k]['principal'] = 0;
@@ -879,11 +869,9 @@ class VehicalController extends Controller
             IF INTEREST AS EMI = NO → ONLY ONE ROW (flat_advanced only)
         ---------------------------------------------------------*/
 
-        if ($interestType === 'flat_advanced' && $interestAsEmi !== 'Yes') 
-        {
+        if ($interestType === 'flat_advanced' && $interestAsEmi !== 'Yes') {
 
-            if (!empty($schedule)) 
-            {
+            if (!empty($schedule)) {
 
                 // FINAL EMI DATE / DUE DATE use karenge
                 $lastRow = end($schedule);
@@ -919,11 +907,11 @@ class VehicalController extends Controller
         /* ---------------------------------------------------------
                 INTEREST AS FIRST EMI (FLAT EMI + QUARTERLY/HALF/YEARLY)
         ---------------------------------------------------------*/
-        
+
         if (
             $interestAsFirst === 'Yes' &&
             $interestType === 'flat_emi' &&
-            in_array(strtolower($payout), ['quarterly','half-yearly','yearly'])
+            in_array(strtolower($payout), ['quarterly', 'half-yearly', 'yearly'])
         ) {
             $installments = (int)$installments;   // ex: 4
             $loanAmount   = (float)$loan;
@@ -987,12 +975,11 @@ class VehicalController extends Controller
                 // ensure no tiny negative balance due to rounding
                 $schedule[$i]['balance'] = round(max(0, $remaining), 2);
             }
-
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////        
 
-        
+
         // perefect only month show
         /* ---------------------------------------------------------
             PERFECT FIX — Flat EMI + Interest As First EMI (MONTHLY)
@@ -1036,7 +1023,6 @@ class VehicalController extends Controller
                     $schedule[$i]['interest']  = $interest1;
                     $schedule[$i]['emi']       = $flatEmi;
                     $schedule[$i]['balance']   = $remaining;
-
                 } elseif ($emiNo == 2) {
 
                     // 2nd EMI → remaining interest + partial principal
@@ -1049,25 +1035,22 @@ class VehicalController extends Controller
 
                     $remaining -= $principal;
                     $schedule[$i]['balance'] = round($remaining, 2);
+                } else {
 
-                } 
-                else {
-
-                        // 3rd EMI onward → principal = EMI (interest zero)
-                        if ($emiNo == $installments) {
-                            $principal = round($remaining, 2);
-                        } else {
-                            $principal = $flatEmi;
-                        }
-
-                        $schedule[$i]['principal'] = $principal;
-                        $schedule[$i]['interest']  = 0;
-                        $schedule[$i]['emi']       = $flatEmi;
-
-                        $remaining -= $principal;
-                        $schedule[$i]['balance'] = max(0, round($remaining, 2));
+                    // 3rd EMI onward → principal = EMI (interest zero)
+                    if ($emiNo == $installments) {
+                        $principal = round($remaining, 2);
+                    } else {
+                        $principal = $flatEmi;
                     }
 
+                    $schedule[$i]['principal'] = $principal;
+                    $schedule[$i]['interest']  = 0;
+                    $schedule[$i]['emi']       = $flatEmi;
+
+                    $remaining -= $principal;
+                    $schedule[$i]['balance'] = max(0, round($remaining, 2));
+                }
             }
         }
 
@@ -1112,7 +1095,6 @@ class VehicalController extends Controller
                     $schedule[$i]['emi']       = $flatEmi;
 
                     $remaining -= $principal;
-
                 } else {
 
                     // OTHER EMIs -> ONLY PRINCIPAL = flatEmi (last one adjust)
@@ -1143,7 +1125,7 @@ class VehicalController extends Controller
         ---------------------------------------------------------*/
         $grandTotalPayable = $loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount;
 
-         /* --------------------------------------------
+        /* --------------------------------------------
         FINAL FIX — Ensure correct value after mapping
         ---------------------------------------------*/
         $isReducingWithRatio = ($interestType === 'reducing' && $ratioEnabled === 'Yes');
@@ -1172,7 +1154,7 @@ class VehicalController extends Controller
             'interest_as_emi' => $interestAsEmi,
             'interest_as_first' => $interestAsFirst,
 
-           'tenure_display' => $tenureDisplay,
+            'tenure_display' => $tenureDisplay,
             'ratio_enabled' => $ratioEnabled,
             'ratio_first_emi' => $ratioFirstEmi,
             'ratio_first_percentage' => $ratioFirstPercentage,
@@ -1182,18 +1164,17 @@ class VehicalController extends Controller
             'ratioFirstPercentage' => $ratioFirstPercentage,
 
             'interestType' => $interestType,
-   
+
             'total_interest' => round($totalInterest, 2),
             'total_principal' => $loan,
             'total_emi_paid' => round(($interestType == 'flat_advanced' ? $loan : $loan + $totalInterest), 2),
             'grand_total_payable' => round($grandTotalPayable, 2),
         ]);
-
     }
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
 
 
     public function appindex()
@@ -1204,17 +1185,17 @@ class VehicalController extends Controller
         return view("vehical.applications.index", compact('applications'));
     }
 
-    public function appcreate() 
+    public function appcreate()
     {
         //$members = Member::all();
-        $members = Member::select('id', 'member_info_first_name','member_info_mobile_no','general_branch')->get();
+        $members = Member::select('id', 'member_info_first_name', 'member_info_mobile_no', 'general_branch')->get();
         $branch = Branch::all();
         $scheme = VehicalScheme::all();
-        $banks = Bank::pluck('name', 'id'); 
+        $banks = Bank::pluck('name', 'id');
         $distributors = VehicleDistributor::all();
-        return view("vehical.applications.create", compact('members','branch','scheme','banks','distributors'));
+        return view("vehical.applications.create", compact('members', 'branch', 'scheme', 'banks', 'distributors'));
     }
-   
+
     public function storeLoanApplication(Request $request)
     {
         Log::info('--- vehical Loan Application Store Started ---', [
@@ -1295,7 +1276,7 @@ class VehicalController extends Controller
                 'motor_power'      => $request->motor_power,
                 'battery_capacity' => $request->battery_capacity,
                 'battery_warranty' => $request->battery_warranty,
-                'current_valuation'=> $request->current_valuation,
+                'current_valuation' => $request->current_valuation,
 
                 // New important fields
                 'vehicle_price'    => $request->vehicle_price,
@@ -1307,16 +1288,16 @@ class VehicalController extends Controller
                 'purpose_of_loan'          => $request->purpose_of_loan,
                 'max_loan_amount'          => $request->max_loan_amount,
                 'max_loan_limit'           => $request->max_loan_limit,
-                'maximum_approvable_amount'=> $request->maximum_approvable_amount,
+                'maximum_approvable_amount' => $request->maximum_approvable_amount,
                 'approved_loan_amount'     => $request->approved_loan_amount,
-                'fee_mode'     => $request->fee_mode,        
-                'bank_id'     => $request->bank_id,        
-                'cheque_no'     => $request->cheque_no,        
-                'cheque_date'     => $request->cheque_date,        
-                'transfer_date'     => $request->transfer_date,        
-                'utr_no'     => $request->utr_no,        
-                'transfer_mode'     => $request->transfer_mode,        
-                'credited'     => $request->credited ?? 0,        
+                'fee_mode'     => $request->fee_mode,
+                'bank_id'     => $request->bank_id,
+                'cheque_no'     => $request->cheque_no,
+                'cheque_date'     => $request->cheque_date,
+                'transfer_date'     => $request->transfer_date,
+                'utr_no'     => $request->utr_no,
+                'transfer_mode'     => $request->transfer_mode,
+                'credited'     => $request->credited ?? 0,
                 'created_by'               => Auth::id(),
             ]);
 
@@ -1362,9 +1343,8 @@ class VehicalController extends Controller
                 }
             }
 
-            return redirect()->route('vehical.applications.index')
+            return redirect()->route('vehical.applications.view',$loanApplication->id)
                 ->with('success', 'vehical Loan, Credit Score details saved successfully.');
-
         } catch (Exception $e) {
             Log::error('Error while storing Loan Application', [
                 'error_message' => $e->getMessage(),
@@ -1417,7 +1397,7 @@ class VehicalController extends Controller
         $banks   = Bank::pluck('name', 'id');
         $distributors = VehicleDistributor::all();
 
-        return view('vehical.applications.create', compact('application', 'members', 'schemes', 'branch', 'scheme', 'banks','distributors'));
+        return view('vehical.applications.create', compact('application', 'members', 'schemes', 'branch', 'scheme', 'banks', 'distributors'));
     }
 
     public function appupdate(Request $request, $id)
@@ -1483,7 +1463,7 @@ class VehicalController extends Controller
     }
 
 
-//////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////
 
 
     public function emiChart($id)
@@ -1532,9 +1512,20 @@ class VehicalController extends Controller
         /* Collection Frequency */
         $collection = strtolower($application->emi_collection ?? 'monthly');
         switch ($collection) {
-            case 'daily':    $periodIncrement = 'addDay';  $periodName = 'DAILY';   $periodsPerYear = 365; break;
-            case 'weekly':   $periodIncrement = 'addWeek'; $periodName = 'WEEKLY';  $periodsPerYear = 52; break;
-            default:         $periodIncrement = 'addMonth';$periodName = 'MONTHLY'; $periodsPerYear = 12;
+            case 'daily':
+                $periodIncrement = 'addDay';
+                $periodName = 'DAILY';
+                $periodsPerYear = 365;
+                break;
+            case 'weekly':
+                $periodIncrement = 'addWeek';
+                $periodName = 'WEEKLY';
+                $periodsPerYear = 52;
+                break;
+            default:
+                $periodIncrement = 'addMonth';
+                $periodName = 'MONTHLY';
+                $periodsPerYear = 12;
         }
 
         $periodicRate = ($annualRate / 100) / $periodsPerYear;
@@ -1555,9 +1546,9 @@ class VehicalController extends Controller
         /*  SPECIAL CASE — **ONLY 1 ROW** (Flat Advanced) */
         if ($interestType == 'flat_advanced') {
 
-        $emiDate = $emiDate->copy()->{$periodIncrement}(1);
-        $formattedEmiDate = $emiDate->format('d-m-Y');
-        $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
+            $emiDate = $emiDate->copy()->{$periodIncrement}(1);
+            $formattedEmiDate = $emiDate->format('d-m-Y');
+            $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
 
             $schedule[] = [
                 'no' => 1,
@@ -1577,11 +1568,23 @@ class VehicalController extends Controller
             $totalEmi = $loanAmount;
 
             return view('vehical.applications.view-buttons.show-emi-chart', compact(
-                'application','loanAmount','disburseDate',
-                'processingFeeInc','stampDutyInc','insuranceInc','fitnessInc',
-                'tenure','chargesPerEmi','schedule',
-                'totalPrincipal','totalInterest','totalCharges','totalEmi',
-                'annualRate','interestType','periodName'
+                'application',
+                'loanAmount',
+                'disburseDate',
+                'processingFeeInc',
+                'stampDutyInc',
+                'insuranceInc',
+                'fitnessInc',
+                'tenure',
+                'chargesPerEmi',
+                'schedule',
+                'totalPrincipal',
+                'totalInterest',
+                'totalCharges',
+                'totalEmi',
+                'annualRate',
+                'interestType',
+                'periodName'
             ));
         }
 
@@ -1639,20 +1642,19 @@ class VehicalController extends Controller
                 'no' => $i,
                 'emi_date' => $formattedEmiDate,
                 'due_date' => $dueDate,
-                'principal' => $principalThis,         
-                'interest' => $interestForPeriod,      
-                'charges_per_emi' => $chargesPerEmi,   
-                'emi' => $emiTotal,                    
-                'bal_principal' => $remainingPrincipal 
+                'principal' => $principalThis,
+                'interest' => $interestForPeriod,
+                'charges_per_emi' => $chargesPerEmi,
+                'emi' => $emiTotal,
+                'bal_principal' => $remainingPrincipal
             ];
-
         }
 
         /* Totals */
-        $totalPrincipal = array_sum(array_map(fn($r)=>floatval($r['principal']), $schedule));
-        $totalInterest  = array_sum(array_map(fn($r)=>floatval($r['interest']), $schedule));
-        $totalCharges   = array_sum(array_map(fn($r)=>floatval($r['charges_per_emi']), $schedule));
-        $totalEmi       = array_sum(array_map(fn($r)=>floatval($r['emi']), $schedule));
+        $totalPrincipal = array_sum(array_map(fn($r) => floatval($r['principal']), $schedule));
+        $totalInterest  = array_sum(array_map(fn($r) => floatval($r['interest']), $schedule));
+        $totalCharges   = array_sum(array_map(fn($r) => floatval($r['charges_per_emi']), $schedule));
+        $totalEmi       = array_sum(array_map(fn($r) => floatval($r['emi']), $schedule));
         if ($interestType === 'no_emi') {
             $totalPrincipal = 0;
             $totalInterest  = 0;
@@ -1660,11 +1662,23 @@ class VehicalController extends Controller
             $totalEmi       = 0;
         }
         return view('vehical.applications.view-buttons.show-emi-chart', compact(
-            'application','loanAmount','disburseDate',
-            'processingFeeInc','stampDutyInc','insuranceInc','fitnessInc',
-            'tenure','chargesPerEmi','schedule',
-            'totalPrincipal','totalInterest','totalCharges','totalEmi',
-            'annualRate','interestType','periodName'
+            'application',
+            'loanAmount',
+            'disburseDate',
+            'processingFeeInc',
+            'stampDutyInc',
+            'insuranceInc',
+            'fitnessInc',
+            'tenure',
+            'chargesPerEmi',
+            'schedule',
+            'totalPrincipal',
+            'totalInterest',
+            'totalCharges',
+            'totalEmi',
+            'annualRate',
+            'interestType',
+            'periodName'
         ));
     }
 
@@ -1681,7 +1695,7 @@ class VehicalController extends Controller
 
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view("vehical.applications.view-buttons.col_process_fee", compact('application','banks'));
+        return view("vehical.applications.view-buttons.col_process_fee", compact('application', 'banks'));
     }
 
     public function VehicalstoreProcessFee(Request $request, $id)
@@ -1718,18 +1732,7 @@ class VehicalController extends Controller
 
     public function submitForApproval($id)
     {
-        // Fetch the relevant model — change LoanApplication to appropriate model if many models share same button.
-        $application = VehicalApplication::findOrFail($id);
-
-        // Do NOT change status. Only update updated_at to current time so it becomes "latest"
-        // Option A: touch() updates updated_at automatically
-        $application->touch();
-        
-        return redirect()->route('loans')
-        ->with('success', 'Submitted for approval!');      
-        
+        return redirect()->back()
+            ->with('pending_request', true);
     }
-
-
-    
 }

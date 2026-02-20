@@ -75,7 +75,6 @@ class CcOdLoanController extends Controller
                     'maintenance_charge',
                     'collection',
                 ]));
-
             } catch (ValidationException $e) {
                 Log::warning('Validation Failed in CcOdLoanScheme', [
                     'errors' => $e->errors(),
@@ -97,7 +96,6 @@ class CcOdLoanController extends Controller
             return redirect()
                 ->route('cc_od.schemes.index')
                 ->with('success', 'Scheme created successfully!');
-
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error while storing cc_od Loan Scheme', [
@@ -226,7 +224,7 @@ class CcOdLoanController extends Controller
                 'guarantor_3_id' => $request->guarantor_3_id,
                 'guarantor_4_id' => $request->guarantor_4_id,
                 'scheme_id' => $request->scheme_id,
-                   'tenure_value'     => $request->tenure_value, // ✅ REQUIRED
+                'tenure_value'     => $request->tenure_value, // ✅ REQUIRED
                 'net_loan_amount' => $request->net_loan_amount,
                 'purpose_of_loan' => $request->purpose_of_loan,
                 'credit_period' => $request->credit_period,
@@ -290,7 +288,7 @@ class CcOdLoanController extends Controller
                 Log::warning('CIBIL block skipped — no cibil_type found in request.');
             }
 
-            return redirect()->route('cc_od.applications.index')
+            return redirect()->route('cc_od.applications.view', $loanApplication->id)
                 ->with('success', 'cc / od Loan Application + Credit Scores saved successfully!');
         } catch (Exception $e) {
             Log::error('❌ Error while storing Business Loan Application', [
@@ -483,7 +481,6 @@ class CcOdLoanController extends Controller
             return redirect()
                 ->route('cc_od.applications.view', $application->id)
                 ->with('success', 'Application and credit scores updated successfully!');
-
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -545,18 +542,7 @@ class CcOdLoanController extends Controller
 
     public function submitForApproval($id)
     {
-        // Fetch the relevant model — change LoanApplication to appropriate model if many models share same button.
-        $application = CcOdLoanApplication::findOrFail($id);
-
-        // Do NOT change status. Only update updated_at to current time so it becomes "latest"
-        // Option A: touch() updates updated_at automatically
-        $application->touch();
-
-        return redirect()->route('loans')
-            ->with('success', 'Submitted for approval!');
-
+        return redirect()->back()
+            ->with('pending_request', true);
     }
-
-
-
 }

@@ -145,13 +145,11 @@ $settingLabel = '';
         <a href="{{route('vehical.account.transaction',$goldLoan->id)}}" class="btn-secondary uppercase px-2 py-2 rounded-10 ">
             View Transaction
         </a>
-        @if(
-                strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi'
-                
-            )
-            <a href="{{route('vehical.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-                Pay Emi
-            </a>
+              @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
+                <a href="{{ $payRoute }}" class="btn-primary uppercase text-sm px-2 py-2 rounded-10">
+                    {{ $payButtonText }}
+                </a>
+
             @if(strtolower($goldLoan->scheme->gold_loan_setting) == 'flat_advanced_interest')
                 <a href="{{ route('vehical.account.extension',$goldLoan->id) }}" class="btn-error uppercase px-2 py-2 rounded-10 ">
                     LOAN EXTENSION
