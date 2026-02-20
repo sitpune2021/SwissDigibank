@@ -102,22 +102,16 @@ use App\Http\Controllers\MortgageLoanPrintDocumentController;
 use App\Http\Controllers\PersonalLoanPrintDocumentController;
 use App\Http\Controllers\VehicleLoanPrintDocumentController;
 
-// Clear cache 
-// Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
 
-// Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
-// Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
-// Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
+
 Route::view('/privacy-policy', 'privacy-policy')
     ->name('privacy.policy');
 
 Route::middleware(['guest', SessionProtection::class])->group(function () {
-
     Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
     Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
     Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
 });
-Route::post('/role-permission-store', [RoleController::class, 'store'])->name('role_permission.store');
 
 Route::middleware('auth.user')->group(function () {
     Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
@@ -135,6 +129,7 @@ Route::middleware('auth.user')->group(function () {
     Route::get('/get-members', [MemberController::class, 'getMembers']);
 
     Route::group(['prefix' => 'company'], function () {
+
         Route::resource('company', CompanyController::class);
         Route::resource('branch', BranchController::class);
         Route::post('/branch/toggle-status', [BranchController::class, 'toggleStatus'])
@@ -167,12 +162,16 @@ Route::middleware('auth.user')->group(function () {
         //------------------------------18-12-2025------------------------------------------//
         Route::resource('unencumbered-deposits', UnencumberedDepositController::class);
         Route::resource('bank-account', BankAccountController::class);
+
     });
 
     Route::group(['prefix' => 'user'], function () {
         Route::resource('roles', RoleController::class);
         Route::resource('users', UserController::class);
     });
+
+    Route::post('/role-permission-store', [RoleController::class, 'store'])->name('role_permission.store');
+
 
     Route::middleware('auth')->group(function () {
         Route::get('/calculator', [CalculatorController::class, 'create'])->name('calculator.index');
