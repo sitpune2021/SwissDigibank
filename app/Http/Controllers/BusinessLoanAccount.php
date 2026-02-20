@@ -327,7 +327,6 @@ class BusinessLoanAccount extends Controller
                 $totalPaid = 0;
             }
         }
-
         $eirSchedule = [];
 
         // EIR should run for both flat_emi AND reducing_emi
@@ -1094,8 +1093,6 @@ class BusinessLoanAccount extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
-
-
 
     public function fourcloser($id)
     {

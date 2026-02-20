@@ -730,6 +730,11 @@ Route::group(['prefix' => 'gold-loan'], function () {
 
     Route::get('gold-loan/applications/view/{id}', [GoldLoanController::class, 'appview'])
         ->name('gold-loan.applications.view');
+    Route::post(
+        'applications/{id}/submit-approval',
+        [GoldLoanController::class, 'submitForApproval']
+    )->name('gold-loan.submit.approval');
+
 
     // Edit form
     Route::get('/gold-loan/applications/{id}/edit', [GoldLoanController::class, 'appedit'])
@@ -1395,8 +1400,8 @@ Route::group(['prefix' => 'business'], function () {
     Route::post('col-process-fee/store/{id}', [BusinessLoan::class, 'bussinessstoreProcessFee'])
         ->name('bussiness.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [BusinessLoan::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+    // Route::post('applications/{id}/submit-for-approval', [BusinessLoan::class, 'submitForApproval'])
+    //     ->name('applications.submitForApproval');
 
     //print documents view page  
     Route::get('/payout-chart-view/{loan}', [BusinessLoanPrintDocumentController::class, 'payout_chart_business_appli_view'])->name('business_loan.payout_chart_business_loan_application_view');
@@ -1569,8 +1574,8 @@ Route::group(['prefix' => 'cc_od'], function () {
     Route::post('cc-od/col-process-fee/store/{id}', [CcOdLoanController::class, 'storeProcessFee'])
         ->name('ccod.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [CcOdLoanController::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+    // Route::post('applications/{id}/submit-for-approval', [CcOdLoanController::class, 'submitForApproval'])
+    //     ->name('applications.submitForApproval');
 });
 
 
@@ -1733,8 +1738,8 @@ Route::group(['prefix' => 'daily_weekly'], function () {
     Route::get('daily_weekly/{id}/disbursment', [DailyWeeklyController::class, 'disbursment'])
         ->name('daily_weekly.applications.view-buttons.disburse-setting');
 
-    Route::post('applications/{id}/submit-for-approval', [DailyWeeklyController::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+    // Route::post('applications/{id}/submit-for-approval', [DailyWeeklyController::class, 'submitForApproval'])
+    //     ->name('applications.submitForApproval');
 });
 
 
@@ -1851,8 +1856,8 @@ Route::group(['prefix' => 'personal'], function () {
     Route::post('col-process-fee/store/{id}', [PersonalController::class, 'personalstoreProcessFee'])
         ->name('personal.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [PersonalController::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+    // Route::post('applications/{id}/submit-for-approval', [PersonalController::class, 'submitForApproval'])
+    //     ->name('applications.submitForApproval');
 
     //print documents view page  
     Route::get('/payout-chart-view/{loan}', [PersonalLoanPrintDocumentController::class, 'payout_chart_personal_appli_view'])->name('personal_loan.payout_chart_personal_loan_application_view');
@@ -2002,8 +2007,8 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::post('col-process-fee/store/{id}', [VehicalController::class, 'VehicalstoreProcessFee'])
         ->name('vehical.col_process_fee.store');
 
-    Route::post('applications/{id}/submit-for-approval', [VehicalController::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+    // Route::post('applications/{id}/submit-for-approval', [VehicalController::class, 'submitForApproval'])
+    //     ->name('applications.submitForApproval');
 
 
     //print documents view page  
@@ -2191,8 +2196,8 @@ Route::group(['prefix' => 'fixed_loan'], function () {
     Route::get('fixed_loan/{id}/disbursment', [FixedLoanController::class, 'disbursment'])
         ->name('fixed_loan.applications.view-buttons.disburse-setting');
 
-    Route::post('applications/{id}/submit-for-approval', [FixedLoanController::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+    // Route::post('applications/{id}/submit-for-approval', [FixedLoanController::class, 'submitForApproval'])
+    //     ->name('applications.submitForApproval');
 });
 
 
@@ -2563,7 +2568,8 @@ Route::group(['prefix' => 'profit-loss'], function () {
 Route::get('/balance-sheet', [LedgergroupController::class, 'balance_sheet'])
     ->name('balance.sheet');
 
-Route::get('/trial-balance',
+Route::get(
+    '/trial-balance',
     [LedgergroupController::class, 'trial_balance']
 )->name('trial.balance');
 

@@ -83,7 +83,6 @@ class DailyWeeklyController extends Controller
                     'fitness_fee',
                     'credit_period',
                 ]));
-
             } catch (ValidationException $e) {
                 Log::warning('Validation Failed in DailyWeeklyScheme', [
                     'errors' => $e->errors(),
@@ -105,7 +104,6 @@ class DailyWeeklyController extends Controller
             return redirect()
                 ->route('daily_weekly.schemes.index')
                 ->with('success', 'Scheme created successfully!');
-
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error while storing daily_weekly Loan Scheme', [
@@ -324,7 +322,7 @@ class DailyWeeklyController extends Controller
                 Log::warning('CIBIL block skipped — no cibil_type found in request.');
             }
 
-            return redirect()->route('daily_weekly.applications.index')
+            return redirect()->route('daily_weekly.applications.view', $loanApplication->id)
                 ->with('success', 'daily_weekly Loan Application + Credit Scores saved successfully!');
         } catch (Exception $e) {
             Log::error('Error while storing Business Loan Application', [
@@ -435,12 +433,12 @@ class DailyWeeklyController extends Controller
             ]);
 
             $inputData = $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']);
-             if (!empty($inputData['application_date'])) {
-            $inputData['application_date'] = Carbon::createFromFormat(
-                'd-m-Y',
-                $inputData['application_date']
-            )->format('Y-m-d');
-        }
+            if (!empty($inputData['application_date'])) {
+                $inputData['application_date'] = Carbon::createFromFormat(
+                    'd-m-Y',
+                    $inputData['application_date']
+                )->format('Y-m-d');
+            }
 
 
             if (isset($inputData['credited'])) {
@@ -521,7 +519,6 @@ class DailyWeeklyController extends Controller
             return redirect()
                 ->route('daily_weekly.applications.view', $application->id)
                 ->with('success', 'Application and credit scores updated successfully!');
-
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -723,17 +720,7 @@ class DailyWeeklyController extends Controller
 
     public function submitForApproval($id)
     {
-        // Fetch the relevant model — change LoanApplication to appropriate model if many models share same button.
-        $application = DailyWeeklyApplication::findOrFail($id);
-
-        // Do NOT change status. Only update updated_at to current time so it becomes "latest"
-        // Option A: touch() updates updated_at automatically
-        $application->touch();
-
-        return redirect()->route('loans')
-            ->with('success', 'Submitted for approval!');
-
+        return redirect()->back()
+            ->with('pending_request', true);
     }
-
-
 }

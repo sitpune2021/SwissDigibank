@@ -149,13 +149,17 @@ $settingLabel = '';
         <a href="{{route('daily_weekly.account.transaction',$goldLoan->id)}}" class="btn-secondary uppercase text-sm px-2 py-2 rounded-10 ">
             View Transaction
         </a>
-        @if(
+        {{-- @if(
                 strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi'
                 
             )
             <a href="{{route('daily_weekly.account.pay-emi',$goldLoan->id)}}" class="btn-primary uppercase text-sm px-2 py-2 rounded-10 ">
                 Pay Emi
-            </a>
+            </a> --}}
+               @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
+                <a href="{{ $payRoute }}" class="btn-primary uppercase text-sm px-2 py-2 rounded-10">
+                    {{ $payButtonText }}
+                </a>
             @if(strtolower($goldLoan->scheme->gold_loan_setting) == 'flat_advanced_interest')
                 <a href="{{ route('daily_weekly.account.extension',$goldLoan->id) }}" class="btn-error uppercase text-sm px-2 py-2 rounded-10 ">
                     LOAN EXTENSION
@@ -176,7 +180,7 @@ $settingLabel = '';
             </a>
         @endif
 
-        @if(
+        {{-- @if(
                 strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest' &&
                 strtolower($goldLoan->scheme->gold_loan_setting) != 'reducing_emi'
             )
@@ -184,7 +188,7 @@ $settingLabel = '';
             class="btn-primary uppercase text-sm px-2 py-2 rounded-10">
                 Pay
             </a>
-        @endif  
+        @endif   --}}
 
         <a href="{{ route('daily_weekly.account.fourcloser', $goldLoan->id) }}" class="btn-error uppercase text-sm px-2 py-2 rounded-10 ">
             Fore CloseLoan

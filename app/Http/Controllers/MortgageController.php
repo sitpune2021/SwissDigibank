@@ -238,7 +238,6 @@ class MortgageController extends Controller
             $insuranceAmount = round($loan * ($request->manual_insurance ?? 0) / 100, 2);
 
             $scheme = null;
-
         } else {
 
             $request->validate([
@@ -532,7 +531,6 @@ class MortgageController extends Controller
                     $schedule[$i]['emi'] = $flatEmi;
 
                     $remaining -= $principal1;
-
                 } else {
 
                     // OTHER EMIs = principal only
@@ -588,7 +586,6 @@ class MortgageController extends Controller
                     $schedule[$i]['emi'] = $flatEmi;
 
                     $remaining -= $principal1;
-
                 } else {
 
                     // OTHER EMIs = principal only
@@ -668,7 +665,6 @@ class MortgageController extends Controller
             $total_principal = $loan;
             $total_interest = $totalInterestAll;
             $total_emi_paid = $loan + $totalInterestAll;
-
         }
 
         // --- NOW HALF-YEARLY BLOCK — MUST USE else if ----
@@ -958,7 +954,6 @@ class MortgageController extends Controller
                 // ensure no tiny negative balance due to rounding
                 $schedule[$i]['balance'] = round(max(0, $remaining), 2);
             }
-
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////        
@@ -1008,7 +1003,6 @@ class MortgageController extends Controller
                     $schedule[$i]['interest'] = $interest1;
                     $schedule[$i]['emi'] = $flatEmi;
                     $schedule[$i]['balance'] = $remaining;
-
                 } elseif ($emiNo == 2) {
 
                     // 2nd EMI → remaining interest + partial principal
@@ -1021,7 +1015,6 @@ class MortgageController extends Controller
 
                     $remaining -= $principal;
                     $schedule[$i]['balance'] = round($remaining, 2);
-
                 } else {
 
                     // 3rd EMI onward → principal = EMI (interest zero)
@@ -1038,7 +1031,6 @@ class MortgageController extends Controller
                     $remaining -= $principal;
                     $schedule[$i]['balance'] = max(0, round($remaining, 2));
                 }
-
             }
         }
 
@@ -1083,7 +1075,6 @@ class MortgageController extends Controller
                     $schedule[$i]['emi'] = $flatEmi;
 
                     $remaining -= $principal;
-
                 } else {
 
                     // OTHER EMIs -> ONLY PRINCIPAL = flatEmi (last one adjust)
@@ -1159,7 +1150,6 @@ class MortgageController extends Controller
             'total_emi_paid' => round(($interestType == 'flat_advanced' ? $loan : $loan + $totalInterest), 2),
             'grand_total_payable' => round($grandTotalPayable, 2),
         ]);
-
     }
 
 
@@ -1301,49 +1291,49 @@ class MortgageController extends Controller
                     }
                 }
             }
-                  
-            
-//             if ($request->has('properties') && is_array($request->properties)) {
 
-//     foreach ($request->properties as $i => $prop) {
 
-//         if (empty($prop['property_type'])) continue;
+            //             if ($request->has('properties') && is_array($request->properties)) {
 
-//         $data = [
-//             'loan_application_id' => $loanApplication->id,
-//             'property_type' => $prop['property_type'] ?? null,
-//             'doc_number' => trim($prop['doc_number'] ?? ''),
-//             'registrar_name' => trim($prop['registrar_name'] ?? ''),
-//             'owner_name' => trim($prop['owner_name'] ?? ''),
-//             'parent_name' => trim($prop['parent_name'] ?? ''),
-//             'plot_no' => trim($prop['plot_no'] ?? ''),
-//             'tehsil' => trim($prop['tehsil'] ?? ''),
-//             'district' => trim($prop['district'] ?? ''),
-//             'area_sqft' => trim($prop['area_sqft'] ?? ''),
-//             'expected_value' => $prop['expected_value'] ?? null,
-//             'total_security_amount' => $request->total_security_amount ?? null,
-//             'registered' => $prop['registered'] ?? 'no',
-//             'boundary_sale_east' => $prop['boundary_sale_east'] ?? null,
-//             'boundary_sale_west' => $prop['boundary_sale_west'] ?? null,
-//             'boundary_sale_north' => $prop['boundary_sale_north'] ?? null,
-//             'boundary_sale_south' => $prop['boundary_sale_south'] ?? null,
-//             'boundary_tech_east' => $prop['boundary_tech_east'] ?? null,
-//             'boundary_tech_west' => $prop['boundary_tech_west'] ?? null,
-//             'boundary_tech_north' => $prop['boundary_tech_north'] ?? null,
-//             'boundary_tech_south' => $prop['boundary_tech_south'] ?? null,
-//         ];
+            //     foreach ($request->properties as $i => $prop) {
 
-//         // 🔥 UPDATE OR CREATE
-//         MortgageProperty::updateOrCreate(
-//             [
-//                 'id' => $prop['id'] ?? null
-//             ],
-//             $data
-//         );
-//     }
-// }
+            //         if (empty($prop['property_type'])) continue;
 
-            
+            //         $data = [
+            //             'loan_application_id' => $loanApplication->id,
+            //             'property_type' => $prop['property_type'] ?? null,
+            //             'doc_number' => trim($prop['doc_number'] ?? ''),
+            //             'registrar_name' => trim($prop['registrar_name'] ?? ''),
+            //             'owner_name' => trim($prop['owner_name'] ?? ''),
+            //             'parent_name' => trim($prop['parent_name'] ?? ''),
+            //             'plot_no' => trim($prop['plot_no'] ?? ''),
+            //             'tehsil' => trim($prop['tehsil'] ?? ''),
+            //             'district' => trim($prop['district'] ?? ''),
+            //             'area_sqft' => trim($prop['area_sqft'] ?? ''),
+            //             'expected_value' => $prop['expected_value'] ?? null,
+            //             'total_security_amount' => $request->total_security_amount ?? null,
+            //             'registered' => $prop['registered'] ?? 'no',
+            //             'boundary_sale_east' => $prop['boundary_sale_east'] ?? null,
+            //             'boundary_sale_west' => $prop['boundary_sale_west'] ?? null,
+            //             'boundary_sale_north' => $prop['boundary_sale_north'] ?? null,
+            //             'boundary_sale_south' => $prop['boundary_sale_south'] ?? null,
+            //             'boundary_tech_east' => $prop['boundary_tech_east'] ?? null,
+            //             'boundary_tech_west' => $prop['boundary_tech_west'] ?? null,
+            //             'boundary_tech_north' => $prop['boundary_tech_north'] ?? null,
+            //             'boundary_tech_south' => $prop['boundary_tech_south'] ?? null,
+            //         ];
+
+            //         // 🔥 UPDATE OR CREATE
+            //         MortgageProperty::updateOrCreate(
+            //             [
+            //                 'id' => $prop['id'] ?? null
+            //             ],
+            //             $data
+            //         );
+            //     }
+            // }
+
+
 
             // Step 4: Create main loan application
             $loanApplication = MortgageLoanApplication::create([
@@ -1502,9 +1492,8 @@ class MortgageController extends Controller
                 'loan_application_id' => $loanApplication->id,
             ]);
 
-            return redirect()->route('mortgage.applications.index')
+            return redirect()->route('mortgage.applications.view', $loanApplication->id)
                 ->with('success', 'Mortgage Loan, Credit Score details saved successfully.');
-
         } catch (Exception $e) {
             Log::error('Error while storing Loan Application', [
                 'error_message' => $e->getMessage(),
@@ -1523,7 +1512,6 @@ class MortgageController extends Controller
                 ->withInput()
                 ->with('error', 'Something went wrong while saving the loan application.');
         }
-
     }
 
     public function getMemberInfo($id)
@@ -1599,7 +1587,7 @@ class MortgageController extends Controller
         $data = $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']);
 
         // Convert application_date from d-m-Y → Y-m-d
-        
+
         // if (!empty($data['application_date'])) {
         //     $data['application_date'] = Carbon::createFromFormat('d-m-Y', $data['application_date'])->format('Y-m-d');
         // }
@@ -1614,41 +1602,41 @@ class MortgageController extends Controller
         //     $data['transfer_date'] = Carbon::createFromFormat('d-m-Y', $data['transfer_date'])->format('Y-m-d');
         // }
 
-// Convert application_date from d-m-Y → Y-m-d
-if (!empty($data['application_date'])) {
-    try {
-        $data['application_date'] = Carbon::createFromFormat(
-            'd-m-Y',
-            trim($data['application_date'])
-        )->format('Y-m-d');
-    } catch (\Exception $e) {
-        $data['application_date'] = null; // prevent crash
-    }
-}
+        // Convert application_date from d-m-Y → Y-m-d
+        if (!empty($data['application_date'])) {
+            try {
+                $data['application_date'] = Carbon::createFromFormat(
+                    'd-m-Y',
+                    trim($data['application_date'])
+                )->format('Y-m-d');
+            } catch (\Exception $e) {
+                $data['application_date'] = null; // prevent crash
+            }
+        }
 
-// Convert cheque_date if it exists
-if (!empty($data['cheque_date'])) {
-    try {
-        $data['cheque_date'] = Carbon::createFromFormat(
-            'd-m-Y',
-            trim($data['cheque_date'])
-        )->format('Y-m-d');
-    } catch (\Exception $e) {
-        $data['cheque_date'] = null;
-    }
-}
+        // Convert cheque_date if it exists
+        if (!empty($data['cheque_date'])) {
+            try {
+                $data['cheque_date'] = Carbon::createFromFormat(
+                    'd-m-Y',
+                    trim($data['cheque_date'])
+                )->format('Y-m-d');
+            } catch (\Exception $e) {
+                $data['cheque_date'] = null;
+            }
+        }
 
-// Convert transfer_date if it exists
-if (!empty($data['transfer_date'])) {
-    try {
-        $data['transfer_date'] = Carbon::createFromFormat(
-            'd-m-Y',
-            trim($data['transfer_date'])
-        )->format('Y-m-d');
-    } catch (\Exception $e) {
-        $data['transfer_date'] = null;
-    }
-}
+        // Convert transfer_date if it exists
+        if (!empty($data['transfer_date'])) {
+            try {
+                $data['transfer_date'] = Carbon::createFromFormat(
+                    'd-m-Y',
+                    trim($data['transfer_date'])
+                )->format('Y-m-d');
+            } catch (\Exception $e) {
+                $data['transfer_date'] = null;
+            }
+        }
 
 
 
@@ -1671,14 +1659,14 @@ if (!empty($data['transfer_date'])) {
                     'cibil_score' => $request->cibil_score[$index],
                     // 'report_date' => Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d')
                     'report_date' => !empty($request->report_date[$index])
-    ? (function ($v) {
-        try {
-            return \Carbon\Carbon::createFromFormat('d/m/Y', trim($v))->format('Y-m-d');
-        } catch (\Exception $e) {
-            return null;
-        }
-    })($request->report_date[$index])
-    : null,
+                        ? (function ($v) {
+                            try {
+                                return \Carbon\Carbon::createFromFormat('d/m/Y', trim($v))->format('Y-m-d');
+                            } catch (\Exception $e) {
+                                return null;
+                            }
+                        })($request->report_date[$index])
+                        : null,
                     'report_file_path' => $filePath,
                 ]);
             }
@@ -1887,7 +1875,6 @@ if (!empty($data['transfer_date'])) {
                 'emi' => $emiTotal,
                 'bal_principal' => $remainingPrincipal
             ];
-
         }
 
         /* Totals */
@@ -2049,22 +2036,11 @@ if (!empty($data['transfer_date'])) {
 
     public function submitForApproval($id)
     {
-        // Fetch the relevant model — change LoanApplication to appropriate model if many models share same button.
-        $application = MortgageLoanApplication::findOrFail($id);
-
-        // Do NOT change status. Only update updated_at to current time so it becomes "latest"
-        // Option A: touch() updates updated_at automatically
-        $application->touch();
-
-        return redirect()->route('loans')
-            ->with('success', 'Submitted for approval!');
-
+        return redirect()->back()
+            ->with('pending_request', true);
     }
-
     public function audit(Request $request)
     {
         return view('mortgage.applications.view-buttons.audit-trail');
     }
-
-
 }
