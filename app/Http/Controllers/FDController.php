@@ -337,7 +337,7 @@ class FDController extends Controller
                         'first_name' => $m->member_info_first_name,
                         'last_name'  => $m->member_info_last_name ?? '',
                         'mobile'     => $m->member_info_mobile_no,
-                        'address'    => $m->address->member_address_line_1 ?? '',
+                        'address'    => $m->full_address,
                         'branch_id'  => $m->branch ?? [],
                         'minors'     => $m->minors ?? [],
                     ]
@@ -353,11 +353,7 @@ class FDController extends Controller
             'request_payload' => $request->all()
         ]);
 
-        try {
-            // ---------------------------- VALIDATION ----------------------------
-            Log::info('🔍 Validating request data...');
-
-            $validated = $request->validate([
+         $validated = $request->validate([
                 'member_id'       => 'required|exists:members,id',
                 'branch_id'       => 'required|integer|exists:branches,id',
                 'advisor_staff'   => 'nullable|integer',
@@ -402,6 +398,12 @@ class FDController extends Controller
 
                 'saving_account'     => 'nullable|required_if:pay1_mode,saving|string|max:255',
             ]);
+
+        try {
+            // ---------------------------- VALIDATION ----------------------------
+            Log::info('🔍 Validating request data...');
+
+           
 
             Log::info('✔ Validation Successful', ['validated_data' => $validated]);
 

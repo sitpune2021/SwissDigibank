@@ -67,7 +67,11 @@
                                 ACTIVE
                             </div>
                         </th>
-                        <th class="text-center !py-5" data-sortable="false">ACTION</th>
+                        <th class="text-center !py-5 px-6 min-w-[100px]" data-sortable="false">
+                            <div class="flex items-center gap-1">
+                                ACTION
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -147,6 +151,7 @@
                                 @include('partials._vertical-options', [
                                 'id' => $fdScheme->id,
                                 'viewRoute' => 'fd-mis-schemes.show',
+                                'editRoute' => 'fd-mis-schemes.edit',
 
                                 ])
                             </div>
