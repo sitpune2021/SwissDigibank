@@ -1,4 +1,5 @@
 <div class="tab-panel hidden">
+    
     <!----------------- Gold Loan Schemes -------------------->
         <div class="payload-section">
             <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
