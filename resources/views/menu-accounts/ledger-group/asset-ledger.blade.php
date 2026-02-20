@@ -102,8 +102,8 @@
         {{-- responsive scroll wrapper --}}
         <table class="w-full whitespace-nowrap mt-3 text-sm text-left px-2">
 
-                        {{-- HEADER --}}
-             <thead class="bg-gray-100 dark:bg-bg2 sticky top-0 z-10">
+                {{-- HEADER --}}
+                <thead class="bg-gray-100 dark:bg-bg2 sticky top-0 z-10">
                 <tr class="text-sm bg-secondary/5 uppercase tracking-wider text-gray-600 dark:text-gray-300">
                   
                         <th class="text-start px-4 py-3">Code</th>

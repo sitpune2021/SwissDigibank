@@ -232,11 +232,198 @@ class ApproveController extends Controller
 
             Log::info('Mortgage Foreclosure Query Built Successfully');
 
-            /*
-        |--------------------------------------------------------------------------
-        | 5️⃣ UNION ALL
-        |--------------------------------------------------------------------------
-        */
+            Log::info('Step 5B: Building Loan Against EMI Pending Query');
+
+            $loanAgainstEmiQuery = DB::table('loan_against_transactions')
+                ->select(
+                    'loan_against_transactions.id',
+                    DB::raw("'loan_against_transactions' AS source_table"),
+                    'loan_against_transactions.fee_mode AS payment_mode',
+                    'loan_against_transactions.amount_collected AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'loan_against_transactions.status AS approve_status',
+                    'loan_against_transactions.created_at',
+                    'branches.branch_name',
+                    'loan_against_applications.id AS account_no',
+                    DB::raw("'Loan Against Deposit' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'loan_against_applications.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'EMI Payment' AS transaction_type")
+                )
+                ->join('loan_against_applications', 'loan_against_applications.id', '=', 'loan_against_transactions.loan_id')
+                ->join('branches', 'branches.id', '=', 'loan_against_applications.branch_id')
+                ->where('loan_against_transactions.status', '=', 'pending');
+
+            Log::info('Loan Against EMI Query Built Successfully');
+            Log::info('Step X: Building Loan Against Foreclosure Pending Query');
+
+            $loanAgainstForeclosureQuery = DB::table('loan_against_fore_closures')
+                ->select(
+                    'loan_against_fore_closures.id',
+                    DB::raw("'loan_against_fore_closures' AS source_table"),
+                    'loan_against_fore_closures.payment_mode AS payment_mode',
+                    'loan_against_fore_closures.net_amount_k AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'loan_against_fore_closures.status AS approve_status',
+                    'loan_against_fore_closures.created_at',
+                    'branches.branch_name',
+                    'loan_against_applications.id AS account_no',
+                    DB::raw("'Loan Against Deposit' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'loan_against_applications.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'Foreclosure' AS transaction_type")
+                )
+                ->join('loan_against_applications', 'loan_against_applications.id', '=', 'loan_against_fore_closures.loan_id')
+                ->join('branches', 'branches.id', '=', 'loan_against_applications.branch_id')
+                ->where('loan_against_fore_closures.status', '=', 0);
+
+            Log::info('Loan Against Foreclosure Query Built Successfully');
+
+            $businessEmiQuery = DB::table('business_loan_transactions')
+                ->select(
+                    'business_loan_transactions.id',
+                    DB::raw("'business_loan_transactions' AS source_table"),
+                    'business_loan_transactions.fee_mode AS payment_mode',
+                    'business_loan_transactions.amount_collected AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'business_loan_transactions.status AS approve_status',
+                    'business_loan_transactions.created_at',
+                    'branches.branch_name',
+                    'business_loan_transactions.loan_id AS account_no',
+                    DB::raw("'Business Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    DB::raw("NULL AS member_id"),
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'EMI Payment' AS transaction_type")
+                )
+                ->join(
+                    'bussiness_loan_applications',
+                    'bussiness_loan_applications.id',
+                    '=',
+                    'business_loan_transactions.loan_id'
+                )
+                ->join(
+                    'branches',
+                    'branches.id',
+                    '=',
+                    'bussiness_loan_applications.branch_id'
+                )
+                ->where('business_loan_transactions.status', 'pending');
+
+            Log::info('Business Loan EMI Query Built Successfully');
+
+            $businessForeclosureQuery = DB::table('business_loan_fore_closures')
+                ->select(
+                    'business_loan_fore_closures.id',
+                    DB::raw("'business_loan_fore_closures' AS source_table"),
+                    'business_loan_fore_closures.payment_mode AS payment_mode',
+                    'business_loan_fore_closures.net_amount_k AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'business_loan_fore_closures.status AS approve_status',
+                    'business_loan_fore_closures.created_at',
+                    'branches.branch_name',
+                    'bussiness_loan_applications.id AS account_no',
+                    DB::raw("'Business Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'bussiness_loan_applications.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'Foreclosure' AS transaction_type")
+                )
+                ->join(
+                    'bussiness_loan_applications',
+                    'bussiness_loan_applications.id',
+                    '=',
+                    'business_loan_fore_closures.loan_id'
+                )
+                ->join(
+                    'branches',
+                    'branches.id',
+                    '=',
+                    'bussiness_loan_applications.branch_id'
+                )
+                ->where('business_loan_fore_closures.status', '=', 0);
+
+            Log::info('Business Loan Foreclosure Query Built Successfully');
+            $dailyWeeklyEmiQuery = DB::table('daily_weekly_loan_transactions')
+                ->select(
+                    'daily_weekly_loan_transactions.id',
+                    DB::raw("'daily_weekly_loan_transactions' AS source_table"),
+                    'daily_weekly_loan_transactions.fee_mode AS payment_mode',
+                    'daily_weekly_loan_transactions.amount_collected AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'daily_weekly_loan_transactions.status AS approve_status',
+                    'daily_weekly_loan_transactions.created_at',
+                    'branches.branch_name',
+                    'daily_weekly_loan_transactions.loan_id AS account_no',
+                    DB::raw("'Daily Weekly Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    DB::raw("NULL AS member_id"),
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'EMI Payment' AS transaction_type")
+                )
+                ->join(
+                    'daily_weekly_applications',
+                    'daily_weekly_applications.id',
+                    '=',
+                    'daily_weekly_loan_transactions.loan_id'
+                )
+                ->join(
+                    'branches',
+                    'branches.id',
+                    '=',
+                    'daily_weekly_applications.branch_id'
+                )
+                ->where('daily_weekly_loan_transactions.status', 'pending');
+
+            Log::info('Daily Weekly EMI Query Built Successfully');
+            $dailyWeeklyForeclosureQuery = DB::table('daily_weekly_loan_fore_closures')
+                ->select(
+                    'daily_weekly_loan_fore_closures.id',
+                    DB::raw("'daily_weekly_loan_fore_closures' AS source_table"),
+                    'daily_weekly_loan_fore_closures.payment_mode AS payment_mode',
+                    'daily_weekly_loan_fore_closures.net_amount_k AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'daily_weekly_loan_fore_closures.status AS approve_status',
+                    'daily_weekly_loan_fore_closures.created_at',
+                    'branches.branch_name',
+                    'daily_weekly_applications.id AS account_no',
+                    DB::raw("'Daily Weekly Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'daily_weekly_applications.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'Foreclosure' AS transaction_type")
+                )
+                ->join(
+                    'daily_weekly_applications',
+                    'daily_weekly_applications.id',
+                    '=',
+                    'daily_weekly_loan_fore_closures.loan_id'
+                )
+                ->join(
+                    'branches',
+                    'branches.id',
+                    '=',
+                    'daily_weekly_applications.branch_id'
+                )
+                ->where('daily_weekly_loan_fore_closures.status', '=', 0);
+
+            Log::info('Daily Weekly Foreclosure Query Built Successfully');
+
+            // ️UNION ALL
 
             Log::info('Step 6: Combining All Queries Using UNION');
 
@@ -245,16 +432,18 @@ class ApproveController extends Controller
                 ->unionAll($foreclosureQuery)
                 ->unionAll($goldLoanEmiQuery)
                 ->unionAll($mortgageEmiQuery)
-                ->unionAll($mortgageForeclosureQuery);
+                ->unionAll($loanAgainstEmiQuery)
+                ->unionAll($mortgageForeclosureQuery)
+                ->unionAll($loanAgainstForeclosureQuery)
+                ->unionAll($businessForeclosureQuery)
+                ->unionAll($businessEmiQuery)
+                ->unionAll($dailyWeeklyEmiQuery)
+                ->unionAll($dailyWeeklyForeclosureQuery);
+
 
             Log::info('Union Created Successfully');
 
-            /*
-        |--------------------------------------------------------------------------
-        | 6️⃣ FINAL QUERY
-        |--------------------------------------------------------------------------
-        */
-
+            //  6️⃣ FINAL QUERY
             Log::info('Step 7: Creating Final Combined Query');
 
             $finalQuery = DB::query()
@@ -287,7 +476,6 @@ class ApproveController extends Controller
         }
     }
 
-
     public function update(Request $request, $id)
     {
         try {
@@ -297,7 +485,6 @@ class ApproveController extends Controller
             $remarks = $request->input('remarks');
             $paymentStatus = $request->input('payment_status');
 
-            // NEW Foreclosure Condition
             // NEW Foreclosure Condition
             if ($sourceTable === 'gold_loan_fore_closures') {
 
@@ -398,6 +585,177 @@ class ApproveController extends Controller
                     DB::commit();
 
                     return back()->with('success', 'Mortgage Foreclosure approved successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'loan_against_fore_closures') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $foreclosure = DB::table('loan_against_fore_closures')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$foreclosure) {
+                        DB::rollBack();
+                        return back()->with('error', 'Foreclosure record not found.');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // 1️⃣ Mark foreclosure approved
+                        DB::table('loan_against_fore_closures')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 1,
+                                'updated_at' => now()
+                            ]);
+
+                        // 2️⃣ Mark all EMI as PAID
+                        DB::table('loan_against_emi_status')
+                            ->where('loan_id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 'PAID',
+                                'remaining_amount' => 0,
+                                'paid_date' => now(),
+                                'updated_at' => now()
+                            ]);
+
+                        // 3️⃣ Close loan
+                        DB::table('loan_against_applications')
+                            ->where('id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 2,
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'Loan Against Foreclosure approved successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'business_loan_fore_closures') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $foreclosure = DB::table('business_loan_fore_closures')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$foreclosure) {
+                        DB::rollBack();
+                        return back()->with('error', 'Business Loan Foreclosure record not found.');
+                    }
+
+                    if ($status === 'approved') {
+
+                        Log::info('Approving Business Loan Foreclosure', [
+                            'foreclosure_id' => $id,
+                            'loan_id' => $foreclosure->loan_id
+                        ]);
+
+                        // 1️⃣ Mark foreclosure approved
+                        DB::table('business_loan_fore_closures')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 1,
+                                'updated_at' => now()
+                            ]);
+
+                        // 2️⃣ Mark all EMI as PAID
+                        DB::table('business_loan_emi_status')
+                            ->where('loan_id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 'PAID',
+                                'remaining_amount' => 0,
+                                'paid_date' => now(),
+                                'updated_at' => now()
+                            ]);
+
+                        // 3️⃣ Close Business Loan
+                        DB::table('bussiness_loan_applications')
+                            ->where('id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 2, // Closed
+                                'updated_at' => now()
+                            ]);
+
+                        Log::info('Business Loan Foreclosure Approved Successfully');
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'Business Loan Foreclosure approved successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+
+                    Log::error('Business Loan Foreclosure Approval Failed', [
+                        'error' => $e->getMessage()
+                    ]);
+
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'daily_weekly_loan_fore_closures') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $foreclosure = DB::table('daily_weekly_loan_fore_closures')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$foreclosure) {
+                        DB::rollBack();
+                        return back()->with('error', 'Daily Weekly Foreclosure record not found.');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // 1️⃣ Mark foreclosure approved
+                        DB::table('daily_weekly_loan_fore_closures')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 1,
+                                'updated_at' => now()
+                            ]);
+
+                        // 2️⃣ Mark all EMI as PAID
+                        DB::table('daily_weekly_loan_emi_status')
+                            ->where('loan_id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 'PAID',
+                                'remaining_amount' => 0,
+                                'paid_date' => now(),
+                                'updated_at' => now()
+                            ]);
+
+                        // 3️⃣ Close Loan
+                        DB::table('daily_weekly_applications')
+                            ->where('id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 2,
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'Daily Weekly Foreclosure approved successfully.');
                 } catch (\Exception $e) {
 
                     DB::rollBack();
@@ -719,6 +1077,336 @@ class ApproveController extends Controller
 
                         DB::commit();
                         return back()->with('success', 'Mortgage EMI rejected.');
+                    }
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'loan_against_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $transaction = DB::table('loan_against_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$transaction) {
+                        DB::rollBack();
+                        return back()->with('error', 'Transaction not found');
+                    }
+
+                    if ($status === 'approved') {
+
+                        DB::table('loan_against_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'paid',
+                                'paid_date' => now(),
+                                'updated_at' => now()
+                            ]);
+
+                        // 🔥 Update EMI STATUS TABLE
+                        $emiStatus = DB::table('loan_against_emi_status')
+                            ->where('loan_id', $transaction->loan_id)
+                            ->where('emi_no', $transaction->emi_no)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if ($emiStatus) {
+
+                            $paidAmount = round($transaction->amount_collected, 2);
+                            $currentRemaining = round($emiStatus->remaining_amount, 2);
+
+                            $newRemaining = round($currentRemaining - $paidAmount, 2);
+
+                            if ($newRemaining <= 0) {
+
+                                DB::table('loan_against_emi_status')
+                                    ->where('id', $emiStatus->id)
+                                    ->update([
+                                        'status' => 'PAID',
+                                        'remaining_amount' => 0,
+                                        'paid_date' => now(),
+                                        'updated_at' => now()
+                                    ]);
+                            } else {
+
+                                DB::table('loan_against_emi_status')
+                                    ->where('id', $emiStatus->id)
+                                    ->update([
+                                        'status' => 'PARTIAL',
+                                        'remaining_amount' => $newRemaining,
+                                        'updated_at' => now()
+                                    ]);
+                            }
+                        }
+
+                        DB::commit();
+                        return back()->with('success', 'Loan Against EMI approved successfully.');
+                    }
+
+                    if ($status === 'disapproved') {
+
+                        DB::table('loan_against_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'rejected',
+                                'updated_at' => now()
+                            ]);
+
+                        DB::commit();
+                        return back()->with('success', 'Loan Against EMI rejected.');
+                    }
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'business_loan_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $transaction = DB::table('business_loan_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$transaction) {
+                        DB::rollBack();
+                        return back()->with('error', 'Business Loan transaction not found');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // 1️⃣ Mark Transaction Paid
+                        DB::table('business_loan_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'paid',
+                                'paid_date' => now(),
+                                'updated_at' => now()
+                            ]);
+
+                        // 🔥 FULL PAYMENT CASE
+                        if ($transaction->flag === 'full_payment') {
+
+                            DB::table('business_loan_emi_status')
+                                ->where('loan_id', $transaction->loan_id)
+                                ->update([
+                                    'status' => 'PAID',
+                                    'remaining_amount' => 0,
+                                    'paid_date' => now(),
+                                    'updated_at' => now()
+                                ]);
+
+                            DB::table('bussiness_loan_applications')
+                                ->where('id', $transaction->loan_id)
+                                ->update([
+                                    'status' => 2, // CLOSED
+                                    'updated_at' => now()
+                                ]);
+
+                            DB::commit();
+                            return back()->with('success', 'Business Loan fully closed successfully.');
+                        }
+
+                        // ✅ NORMAL EMI PAYMENT
+                        $emiStatus = DB::table('business_loan_emi_status')
+                            ->where('loan_id', $transaction->loan_id)
+                            ->where('emi_no', $transaction->emi_no)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if ($emiStatus) {
+                            $paidAmount = round($transaction->amount_collected, 2);
+                            $currentRemaining = round($emiStatus->remaining_amount, 2);
+
+                            // Safety check
+                            if ($paidAmount >= $currentRemaining) {
+
+                                $newRemaining = 0;
+
+                                DB::table('business_loan_emi_status')
+                                    ->where('id', $emiStatus->id)
+                                    ->update([
+                                        'status' => 'PAID',
+                                        'remaining_amount' => 0,
+                                        'paid_date' => now(),
+                                        'updated_at' => now()
+                                    ]);
+                            } else {
+
+                                $newRemaining = round($currentRemaining - $paidAmount, 2);
+
+                                DB::table('business_loan_emi_status')
+                                    ->where('id', $emiStatus->id)
+                                    ->update([
+                                        'status' => 'PARTIAL',
+                                        'remaining_amount' => $newRemaining,
+                                        'updated_at' => now()
+                                    ]);
+                            }
+                        }
+                        // 🔄 AUTO CLOSE CHECK
+                        $totalRemaining = DB::table('business_loan_emi_status')
+                            ->where('loan_id', $transaction->loan_id)
+                            ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
+                            ->sum('remaining_amount');
+
+                        if ($totalRemaining <= 0) {
+
+                            DB::table('bussiness_loan_applications')
+                                ->where('id', $transaction->loan_id)
+                                ->update([
+                                    'status' => 2,
+                                    'updated_at' => now()
+                                ]);
+                        }
+
+                        DB::commit();
+                        return back()->with('success', 'Business Loan EMI approved successfully.');
+                    }
+
+                    if ($status === 'disapproved') {
+
+                        DB::table('business_loan_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'rejected',
+                                'updated_at' => now()
+                            ]);
+
+                        DB::commit();
+                        return back()->with('success', 'Business Loan EMI rejected.');
+                    }
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'daily_weekly_loan_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $transaction = DB::table('daily_weekly_loan_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$transaction) {
+                        DB::rollBack();
+                        return back()->with('error', 'Daily Weekly transaction not found');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // 1️⃣ Mark Transaction Paid
+                        DB::table('daily_weekly_loan_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'paid',
+                                'paid_date' => now(),
+                                'updated_at' => now()
+                            ]);
+
+                        // 🔥 FULL PAYMENT CASE
+                        if (is_null($transaction->emi_no) && $transaction->flag === 'full_payment') {
+
+                            DB::table('daily_weekly_loan_emi_status')
+                                ->where('loan_id', $transaction->loan_id)
+                                ->update([
+                                    'status' => 'PAID',
+                                    'remaining_amount' => 0,
+                                    'paid_date' => now(),
+                                    'updated_at' => now()
+                                ]);
+
+                            DB::table('daily_weekly_applications')
+                                ->where('id', $transaction->loan_id)
+                                ->update([
+                                    'status' => 2,
+                                    'updated_at' => now()
+                                ]);
+
+                            DB::commit();
+                            return back()->with('success', 'Daily Weekly Loan fully closed successfully.');
+                        }
+
+                        // ✅ NORMAL EMI PAYMENT
+                        $emiStatus = DB::table('daily_weekly_loan_emi_status')
+                            ->where('loan_id', $transaction->loan_id)
+                            ->where('emi_no', $transaction->emi_no)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if ($emiStatus) {
+
+                            $paidAmount = round($transaction->amount_collected, 2);
+                            $currentRemaining = round($emiStatus->remaining_amount, 2);
+
+                            if ($paidAmount >= $currentRemaining) {
+
+                                DB::table('daily_weekly_loan_emi_status')
+                                    ->where('id', $emiStatus->id)
+                                    ->update([
+                                        'status' => 'PAID',
+                                        'remaining_amount' => 0,
+                                        'paid_date' => now(),
+                                        'updated_at' => now()
+                                    ]);
+                            } else {
+
+                                $newRemaining = round($currentRemaining - $paidAmount, 2);
+
+                                DB::table('daily_weekly_loan_emi_status')
+                                    ->where('id', $emiStatus->id)
+                                    ->update([
+                                        'status' => 'PARTIAL',
+                                        'remaining_amount' => $newRemaining,
+                                        'updated_at' => now()
+                                    ]);
+                            }
+                        }
+
+                        // 🔄 AUTO CLOSE CHECK
+                        $totalRemaining = DB::table('daily_weekly_loan_emi_status')
+                            ->where('loan_id', $transaction->loan_id)
+                            ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
+                            ->sum('remaining_amount');
+
+                        if ($totalRemaining <= 0) {
+
+                            DB::table('daily_weekly_applications')
+                                ->where('id', $transaction->loan_id)
+                                ->update([
+                                    'status' => 2,
+                                    'updated_at' => now()
+                                ]);
+                        }
+
+                        DB::commit();
+                        return back()->with('success', 'Daily Weekly EMI approved successfully.');
+                    }
+
+                    if ($status === 'disapproved') {
+
+                        DB::table('daily_weekly_loan_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'rejected',
+                                'updated_at' => now()
+                            ]);
+
+                        DB::commit();
+                        return back()->with('success', 'Daily Weekly EMI rejected.');
                     }
                 } catch (\Exception $e) {
 
