@@ -6,7 +6,7 @@
 
     {{-- Breadcrumb --}}
     <div class="uppercase text-lg font-semibold mb-3">
-        <a href="{{ route('ledger.index') }}" class="">Asset Ledger</a>
+        <a href="{{ route('ledger.index') }}" class=" text-lg">Asset Ledger</a>
         - {{ $ledger->display_name }}
     </div>
 
@@ -43,75 +43,79 @@
 
                     <tr class="border-b hover:bg-gray-50">
 
-                        <td class="px-5 py-3 text-sm">
+                        <td class="px-5 py-3 ">
                             {{ $ledger->code }}
                         </td>
 
                         <td class="px-5 py-3 ">
-                            <span class="px-1 text-sm">
+                            <span class="px-1 ">
                                 {{ $ledger->group->display_name ?? '-' }}
                             </span>
                         </td>
 
-                        <td class="px-5 py-3 text-sm">
+                        <td class="px-5 py-3 ">
                             {{ $ledger->display_name }}
                         </td>
 
-                        <td class="px-5 py-3 text-sm">
+                        <td class="px-5 py-3 ">
                             {{ $ledger->system_name }}
                         </td>
 
-                        <td class="px-5 py-3 text-sm">
+                        <td class="px-5 py-3 ">
                             {{ $ledger->type }}
                         </td>
 
-                        <td class="px-5 py-3 text-sm">
+                        <td class="px-5 py-3 ">
                             -
                         </td>
 
-                        <td class="px-5 py-3 text-sm">
+                        <td class="px-5 py-3 ">
                             -
                         </td>
 
-                        <td class="px-5 py-3 text-sm">
+                        <td class="px-5 py-3 ">
                             -
                         </td>
 
-                        <td class="px-5 py-3 text-sm">
+                        <td class="px-5 py-3 ">
                             %
                         </td>
 
                         {{-- TOTAL T --}}
-                        <td class="px-5 py-3 text-sm ">
+                        <td class="px-6 py-3  ">
                             <span class="px-2">
                                 {{ $totalTransactions }}
                             </span>
                         </td>
 
-                        <td class="px-5 py-3 text-sm">
-                            {{ $lastTransactionDate ? \Carbon\Carbon::parse($lastTransactionDate)->format('d/m/Y H:i:s') : '-' }}
+                        <td class="px-5 py-3 ">
+                            {{ $lastTransactionDate ? \Carbon\Carbon::parse($lastTransactionDate)->format('d-m-Y') : '-' }}
                         </td>
 
                         {{-- T DEBITS --}}
-                        <td class="px-5 py-3 text-sm text-primary">
-                        <span class="">
+                        <td class="px-6 py-3  text-primary">
+                        <div class="">
                             ₹ {{ number_format($totalDebit, 2) }}
-                        </span>
+                        </div>
                         </td>
 
                         {{-- T CREDITS --}}
-                        <td class="px-5 py-3 text-sm text-error">
+                        <td class="px-6 py-3  text-error">
                             ₹ {{ number_format($totalCredit, 2) }}
                         </td>
 
                         {{-- DIFF --}}
-                        <td class="px-5 py-3 text-sm">
-                            ₹ {{ number_format($difference, 2) }}
+                        <td class="px-6 py-3 ">
+                           <div class="px-2">
+                             ₹ {{ number_format($difference, 2) }}
+                           </div>
                         </td>
 
                         {{-- CLOSING BALANCE --}}
-                        <td class="px-5 py-3 text-sm text-primary">
+                        <td class="px-6 py-3  text-primary">
+                               <div class="px-2" >
                             ₹ {{ number_format($closingBalance, 2) }}
+                           </div>
                         </td>
 
                     </tr>
@@ -122,32 +126,32 @@
 
         </div>
 
-         <div class="w-full  overflow-x-auto rounded-10 shadow bg-white dark:bg-bg3">
+         <div class="w-full  overflow-x-auto rounded-10 shadow mt-5 bg-white dark:bg-bg3">
 
-            <table class="w-full text-sm">
+            <table class="w-full whitespace-nowrap text-sm">
                 <thead>
-                    <tr>
-                        <th>Branch</th>
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th>Is System</th>
-                        <th>O. Balance</th>
-                        <th>Debit</th>
-                        <th>Credit</th>
-                        <th>C. Balance</th>
+                    <tr class="bg-secondary/5">
+                        <th class="px-5 py-3 text-start uppercase" >Branch</th>
+                        <th class="px-5 py-3 text-start uppercase" >Date</th>
+                        <th class="px-5 py-3 text-start uppercase" >Description</th>
+                        <th class="px-5 py-3 text-start uppercase" >Is System</th>
+                        <th class="px-5 py-3 text-start uppercase" >O. Balance</th>
+                        <th class="px-5 py-3 text-start uppercase" >Debit</th>
+                        <th class="px-5 py-3 text-start uppercase" >Credit</th>
+                        <th class="px-5 py-3 text-start uppercase" >C. Balance</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($ledgerRows as $row)
-                    <tr>
-                        <td>{{ $row['branch'] }}</td>
-                        <td>{{ \Carbon\Carbon::parse($row['date'])->format('d/m/Y H:i:s') }}</td>
-                        <td>{{ $row['description'] }}</td>
-                        <td>{{ $row['is_system'] }}</td>
-                        <td>{{ number_format($row['opening'],2) }}</td>
-                        <td>{{ number_format($row['debit'],2) }}</td>
-                        <td>{{ number_format($row['credit'],2) }}</td>
-                        <td>{{ number_format($row['closing'],2) }}</td>
+                    <tr  class="border-b">
+                        <td class="px-5 py-3 text-start uppercase" >{{ $row['branch'] }}</td>
+                        <td class="px-5 py-3 text-start uppercase" >{{ \Carbon\Carbon::parse($row['date'])->format('d-m-Y') }}</td>
+                        <td class="px-5 py-3 text-start uppercase" >{{ $row['description'] }}</td>
+                        <td class="px-5 py-3 text-start uppercase" >{{ $row['is_system'] }}</td>
+                        <td class="px-5 py-3 text-start uppercase" >{{ number_format($row['opening'],2) }}</td>
+                        <td class="px-5 py-3 text-start uppercase" >{{ number_format($row['debit'],2) }}</td>
+                        <td class="px-5 py-3 text-start uppercase" >{{ number_format($row['credit'],2) }}</td>
+                        <td class="px-5 py-3 text-start uppercase" >{{ number_format($row['closing'],2) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
