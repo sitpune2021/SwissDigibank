@@ -21,7 +21,7 @@
                         <input type="checkbox"
                             id="gl_lon_sch"
                             name="permissions[]"
-                            value="ggold-loan.schemes.index"
+                            value="gold-loan.schemes.index"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                         <label for="gl_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
                             Gold Loan Scheme List
