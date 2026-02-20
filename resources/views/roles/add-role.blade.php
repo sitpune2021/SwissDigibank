@@ -1,8 +1,4 @@
 @extends('layout.main')
-{{-- @php
-use App\Models\Menu;
-$menuItems = Menu::where('active', 1)->with('submenus')->orderBy('position')->get();
-@endphp --}}
 @section('page-title', '')
 
 @section('content')
@@ -25,8 +21,8 @@ $menuItems = Menu::where('active', 1)->with('submenus')->orderBy('position')->ge
     <div class="box col-span-12 lg:col-span-6">
         <div class="mb-6 pb-6 bb-dashed flex justify-between items-center">
             <h3 class="h3">ADD NEW ROLE / PERMISSION</h3>
-            <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
-            </ol>
+                <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
+                </ol>
             <hr class="my-2 border-gray-300" />
         </div>
 
@@ -292,7 +288,8 @@ $menuItems = Menu::where('active', 1)->with('submenus')->orderBy('position')->ge
         </form>
 
     </div>
-   <script>
+
+<script>
 document.addEventListener("DOMContentLoaded", function () {
 
     // Loop every section
@@ -324,8 +321,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+
 @endsection
-
-
-
-
