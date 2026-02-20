@@ -126,6 +126,10 @@
 
         </div>
 
+<div class="mt-5 text-lg uppercase font-semibold">
+    Transactions
+</div>
+        
          <div class="w-full  overflow-x-auto rounded-10 shadow mt-5 bg-white dark:bg-bg3">
 
             <table class="w-full whitespace-nowrap text-sm">
