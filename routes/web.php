@@ -2419,19 +2419,27 @@ Route::group(['prefix' => 'cut-report'], function () {
 
     Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
         ->name('report.saving-account');
+
     Route::get('/accounts/export/csv', [CutReportController::class, 'exportCsv'])
         ->name('accounts.export.csv');
     Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
+
+Route::get('/report/saving/print', [CutReportController::class, 'printSaving'])
+    ->name('reports.saving.print');
 
     Route::get('report/fd-account', [CutReportController::class, 'fdaccount_index'])
         ->name('report.fd-account');
     Route::get('/fd-accounts/export/csv', [CutReportController::class, 'fdExportCsv'])
         ->name('fd-accounts.export.csv');
     Route::get('fd-accounts/report/saving', [CutReportController::class, 'FDIndex'])->name('fd-accounts.report.saving.index');
+    Route::get('/report/fd/print', [CutReportController::class, 'printFd'])
+    ->name('reports.printFd.print');
 
     Route::get('report/mis-account', [CutReportController::class, 'misaccount_index'])
         ->name('report.mis-account');
     Route::get('report/mis', [CutReportController::class, 'misIndex'])->name('report.mis.index');
+     Route::get('/report/Mis/print', [CutReportController::class, 'printMis'])
+    ->name('reports.printmis.print');
     Route::get('/mis-account/download-csv', [CutReportController::class, 'downloadMisCsv'])
         ->name('mis.account.csv');
 
@@ -2439,9 +2447,12 @@ Route::group(['prefix' => 'cut-report'], function () {
 
     Route::get('report/dd-accounts', [CutReportController::class, 'ddaccount_index'])
         ->name('report.dd-accounts');
+        Route::get('/report/dd/print', [CutReportController::class, 'printDD'])
+    ->name('reports.printdd.print');
     Route::get('report/rd-account', [CutReportController::class, 'rd_account_index'])
         ->name('report.rd-account');
-
+  Route::get('/report/Rd/print', [CutReportController::class, 'printRD'])
+    ->name('reports.printrd.print');
 
     Route::get('report/dd', [CutReportController::class, 'ddIndex'])->name('report.dd.index');
     Route::get('/dd-accounts/download-csv', [CutReportController::class, 'ddAccountCsv'])

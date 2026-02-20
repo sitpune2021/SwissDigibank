@@ -29,6 +29,9 @@ use App\Models\Promotor;
 use App\Models\Scheme;
 use App\Models\ShareTransfer;
 use Illuminate\Support\Facades\Response;
+use Mpdf\Mpdf;
+
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CutReportController extends Controller
 {
@@ -284,6 +287,34 @@ class CutReportController extends Controller
         return view('cut-reports.report.share-transfer-history', compact('shareTransfers'));
     }
 
+     private function getMarathiMpdf()
+    {
+        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        $fontDirs = $defaultConfig['fontDir'];
+
+        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        $fontData = $defaultFontConfig['fontdata'];
+
+        $fontData['marathi'] = [
+            'R' => 'TiroDevanagariMarathi-Regular.ttf',
+            'B' => 'TiroDevanagariMarathi-Italic.ttf',
+        ];
+
+        return new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
+            'fontdata' => $fontData,
+            'default_font' => 'marathi',
+            'autoScriptToLang' => true,
+            'autoLangToFont' => true,
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 10,
+            'margin_bottom' => 10,
+        ]);
+    }
+
 
     // shareHoldingIndex Cut Reports start here
 
@@ -329,38 +360,89 @@ class CutReportController extends Controller
             ],
             'associates' => $associates,
             'totalAmount' =>  $totalAmount,
-            'photoPath' => public_path('assets/images/sbc-image.jpg'),
+            'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
         $html = view('cut-reports.pdf.cut-report-saving', $data)->render();
-        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
+        // $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        // $fontDirs = $defaultConfig['fontDir'];
 
-        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
+        // $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        // $fontData = $defaultFontConfig['fontdata'];
 
-        $mpdf = new \Mpdf\Mpdf([
-            'format' => 'A4',
-            'margin_left' => 10,
-            'margin_right' => 10,
-            'margin_top' => 10,
-            'margin_bottom' => 10,
-            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
-            'fontdata' => $fontData + [
-                'mukta' => [
-                    'R' => 'TiroDevanagariMarathi-Regular.ttf',
-                    'B' => 'Mukta-Bold.ttf',
-                ]
-            ],
-            'default_font' => 'mukta',
-        ]);
+        // $mpdf = new \Mpdf\Mpdf([
+        //     'format' => 'A4',
+        //     'margin_left' => 10,
+        //     'margin_right' => 10,
+        //     'margin_top' => 10,
+        //     'margin_bottom' => 10,
+        //     'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
+        //     'fontdata' => $fontData + [
+        //         'mukta' => [
+        //             'R' => 'TiroDevanagariMarathi-Regular.ttf',
+        //             'B' => 'Mukta-Bold.ttf',
+        //         ]
+        //     ],
+        //     'default_font' => 'mukta',
+        // ]);
 
-        $mpdf->SetAutoPageBreak(true, 10);
+        // $mpdf->SetAutoPageBreak(true, 10);
+        // $mpdf->WriteHTML($html);
+
+        $mpdf = $this->getMarathiMpdf();
         $mpdf->WriteHTML($html);
 
         return response($mpdf->Output('cut-report-saving.pdf', 'D'))
             ->header('Content-Type', 'application/pdf');
     }
+
+    public function printSaving()
+    {
+        
+        $associates = Account::select(
+            'accounts.id',
+            'accounts.account_no',
+            'members.member_info_first_name as name',
+            'members.member_info_last_name as last_name',
+            'members.member_info_title as title'
+        )
+            ->leftJoin('members', 'members.id', '=', 'accounts.member_id')
+            ->get();
+
+        $associates = collect($associates)->map(function ($item) {
+
+            $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
+
+            // If helper returns array
+            if (is_array($balance) && isset($balance['total_balance'])) {
+                $item->amount = (float) $balance['total_balance'];
+            } else {
+                $item->amount = 0; // fallback
+            }
+
+            return $item;
+        });
+
+        $totalAmount = $associates->sum('amount');
+        $data = [
+            'company' => [
+                'name' => Company::first()->company_name ?? 'SBC GLOBAL'
+            ],
+            'associates' => $associates,
+            'totalAmount' =>  $totalAmount,
+            'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
+        ];
+
+        $html = view('cut-reports.pdf.cut-report-saving', $data)->render();
+        $mpdf = $this->getMarathiMpdf();
+        $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->WriteHTML($html);
+
+        return response(
+            $mpdf->Output('saving-report.pdf', 'I')
+        )->header('Content-Type', 'application/pdf');
+    }
+
 
     public function exportCsv()
     {
@@ -445,39 +527,88 @@ class CutReportController extends Controller
             ],
             'associates' => $associates,
             'totalAmount' =>  $totalAmount,
-            'photoPath' => public_path('assets/images/sbc-image.jpg'),
+            'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
         $html = view('cut-reports.pdf.cut-report-fd', $data)->render();
-        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
+        // $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        // $fontDirs = $defaultConfig['fontDir'];
 
-        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
+        // $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        // $fontData = $defaultFontConfig['fontdata'];
 
-        $mpdf = new \Mpdf\Mpdf([
-            'format' => 'A4',
-            'margin_left' => 10,
-            'margin_right' => 10,
-            'margin_top' => 10,
-            'margin_bottom' => 10,
-            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
-            'fontdata' => $fontData + [
-                'mukta' => [
-                    'R' => 'TiroDevanagariMarathi-Regular.ttf',
-                    'B' => 'Mukta-Bold.ttf',
-                ]
-            ],
-            'default_font' => 'mukta',
-        ]);
+        // $mpdf = new \Mpdf\Mpdf([
+        //     'format' => 'A4',
+        //     'margin_left' => 10,
+        //     'margin_right' => 10,
+        //     'margin_top' => 10,
+        //     'margin_bottom' => 10,
+        //     'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
+        //     'fontdata' => $fontData + [
+        //         'mukta' => [
+        //             'R' => 'TiroDevanagariMarathi-Regular.ttf',
+        //             'B' => 'Mukta-Bold.ttf',
+        //         ]
+        //     ],
+        //     'default_font' => 'mukta',
+        // ]);
 
-        $mpdf->SetAutoPageBreak(true, 10);
+        // $mpdf->SetAutoPageBreak(true, 10);
+        // $mpdf->WriteHTML($html);
+        $mpdf = $this->getMarathiMpdf();
         $mpdf->WriteHTML($html);
 
         return response($mpdf->Output('cut-report-fd_account.pdf', 'D'))
             ->header('Content-Type', 'application/pdf');
     }
 
+     public function printFd()
+    {
+        
+        $associates = FdAccount::select(
+            'fd_accounts.id',
+            'fd_accounts.fd_no',
+            'members.member_info_first_name as name',
+            'members.member_info_last_name as last_name',
+            'members.member_info_title as title',
+        )
+            ->leftJoin('members', 'members.id', '=', 'fd_accounts.member_id')
+            ->get();
+
+        $associates = collect($associates)->map(function ($item) {
+
+            $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
+
+            // If helper returns array
+            if (is_array($balance) && isset($balance['total_balance'])) {
+                $item->amount = (float) $balance['total_balance'];
+            } else {
+                $item->amount = 0; // fallback
+            }
+
+            return $item;
+        });
+
+        $totalAmount = $associates->sum('amount');
+        $data = [
+            'company' => [
+                'name' => Company::first()->company_name ?? 'SBC GLOBAL'
+            ],
+            'associates' => $associates,
+            'totalAmount' =>  $totalAmount,
+            'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
+        ];
+
+        $html = view('cut-reports.pdf.cut-report-fd', $data)->render();
+      
+        $mpdf = $this->getMarathiMpdf();
+        $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->WriteHTML($html);
+
+       
+        return response($mpdf->Output('cut-report-fd_account.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+    }
     public function fdExportCsv()
     {
         $accounts = FdAccount::with(['member', 'branch', 'fdscheme.fdslabs'])->get();
@@ -573,38 +704,91 @@ class CutReportController extends Controller
             ],
             'associates' => $associates,
             'totalAmount' =>  $totalAmount,
-            'photoPath' => public_path('assets/images/sbc-image.jpg'),
+            'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
         $html = view('cut-reports.pdf.cut-report-mis', $data)->render();
-        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
+        // $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        // $fontDirs = $defaultConfig['fontDir'];
 
-        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
+        // $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        // $fontData = $defaultFontConfig['fontdata'];
 
-        $mpdf = new \Mpdf\Mpdf([
-            'format' => 'A4',
-            'margin_left' => 10,
-            'margin_right' => 10,
-            'margin_top' => 10,
-            'margin_bottom' => 10,
-            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
-            'fontdata' => $fontData + [
-                'mukta' => [
-                    'R' => 'TiroDevanagariMarathi-Regular.ttf',
-                    'B' => 'Mukta-Bold.ttf',
-                ]
-            ],
-            'default_font' => 'mukta',
-        ]);
+        // $mpdf = new \Mpdf\Mpdf([
+        //     'format' => 'A4',
+        //     'margin_left' => 10,
+        //     'margin_right' => 10,
+        //     'margin_top' => 10,
+        //     'margin_bottom' => 10,
+        //     'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
+        //     'fontdata' => $fontData + [
+        //         'mukta' => [
+        //             'R' => 'TiroDevanagariMarathi-Regular.ttf',
+        //             'B' => 'Mukta-Bold.ttf',
+        //         ]
+        //     ],
+        //     'default_font' => 'mukta',
+        // ]);
 
-        $mpdf->SetAutoPageBreak(true, 10);
+        // $mpdf->SetAutoPageBreak(true, 10);
+        // $mpdf->WriteHTML($html);
+
+        $mpdf = $this->getMarathiMpdf();
         $mpdf->WriteHTML($html);
-
         return response($mpdf->Output('cut-report-mis_account.pdf', 'D'))
             ->header('Content-Type', 'application/pdf');
     }
+
+
+
+     public function printMis()
+    {
+       
+        $associates = Misaccount::select(
+            'misaccounts.id',
+            'misaccounts.mis_account_no',
+            'members.member_info_first_name as name',
+            'members.member_info_last_name as last_name',
+            'members.member_info_title as title',
+        )
+            ->leftJoin('members', 'members.id', '=', 'misaccounts.member_id')
+            ->get();
+
+        $associates = collect($associates)->map(function ($item) {
+
+            $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
+
+            // If helper returns array
+            if (is_array($balance) && isset($balance['total_balance'])) {
+                $item->amount = (float) $balance['total_balance'];
+            } else {
+                $item->amount = 0; // fallback
+            }
+
+            return $item;
+        });
+
+        $totalAmount = $associates->sum('amount');
+        $data = [
+            'company' => [
+                'name' => Company::first()->company_name ?? 'SBC GLOBAL'
+            ],
+            'associates' => $associates,
+            'totalAmount' =>  $totalAmount,
+            'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
+        ];
+
+        $html = view('cut-reports.pdf.cut-report-mis', $data)->render();
+    
+        $mpdf = $this->getMarathiMpdf();
+        $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->WriteHTML($html);
+
+       
+        return response($mpdf->Output('cut-report-fd_account.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+    }
+
     public function downloadMisCsv()
     {
         $accounts = Misaccount::with(['member', 'branch', 'fdscheme'])
@@ -708,34 +892,83 @@ class CutReportController extends Controller
             'company' => ['name' => Company::first()->company_name ?? 'SBC GLOBAL'],
             'associates' => $associates,
             'totalAmount' => $totalAmount,
-            'photoPath' => public_path('assets/images/sbc-image.jpg'),
+            'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
         $html = view('cut-reports.pdf.cut-report-dd', $data)->render();
 
-        $mpdf = new \Mpdf\Mpdf([
-            'format' => 'A4',
-            'margin_left' => 10,
-            'margin_right' => 10,
-            'margin_top' => 10,
-            'margin_bottom' => 10,
-            'fontDir' => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], [storage_path('fonts')]),
-            'fontdata' => (new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'] + [
-                'mukta' => [
-                    'R' => 'TiroDevanagariMarathi-Regular.ttf',
-                    'B' => 'Mukta-Bold.ttf',
-                ]
-            ],
-            'default_font' => 'mukta',
-        ]);
+        // $mpdf = new \Mpdf\Mpdf([
+        //     'format' => 'A4',
+        //     'margin_left' => 10,
+        //     'margin_right' => 10,
+        //     'margin_top' => 10,
+        //     'margin_bottom' => 10,
+        //     'fontDir' => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], [storage_path('fonts')]),
+        //     'fontdata' => (new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'] + [
+        //         'mukta' => [
+        //             'R' => 'TiroDevanagariMarathi-Regular.ttf',
+        //             'B' => 'Mukta-Bold.ttf',
+        //         ]
+        //     ],
+        //     'default_font' => 'mukta',
+        // ]);
 
-        $mpdf->SetAutoPageBreak(true, 10);
+        // $mpdf->SetAutoPageBreak(true, 10);
+        // $mpdf->WriteHTML($html);
+
+        $mpdf = $this->getMarathiMpdf();
         $mpdf->WriteHTML($html);
-
         return response($mpdf->Output('cut-report-dd_account.pdf', 'D'))
             ->header('Content-Type', 'application/pdf');
     }
 
+    
+     public function printDD()
+    {
+       
+        
+        $associates = DdsAccount::with(['member', 'branch', 'scheme'])
+            ->get()
+            ->map(function ($item, $key) {
+                $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
+
+                return [
+                    'sr_no' => $key + 1,
+                    'dd_account_no' => $item->dd_no,
+                    'name' => $item->member->member_info_first_name ?? '',
+                    'last_name' => $item->member->member_info_last_name ?? '',
+                    'branch_name' => $item->branch->branch_name ?? '',
+                    'scheme_name' => $item->scheme->scheme_name ?? '',
+                    'scheme_code' => $item->scheme->scheme_code ?? '',
+                    'dd_amount' => $item->dd_amount ?? 0,
+                    'amount' => is_array($balance) && isset($balance['total_balance'])
+                        ? (float) $balance['total_balance']
+                        : 0,
+                    'open_date' => $item->open_date ? \Carbon\Carbon::parse($item->open_date)->format('d-m-Y') : '',
+                    'maturity_date' => $item->maturity_date ? \Carbon\Carbon::parse($item->maturity_date)->format('d-m-Y') : '',
+                    'rr_dd_frequency' => $item->scheme->rr_dd_frequency ?? '',
+                    'final_status' => $item->final_status ?? '',
+                ];
+            });
+
+        $totalAmount = $associates->sum('amount');
+
+        $data = [
+            'company' => ['name' => Company::first()->company_name ?? 'SBC GLOBAL'],
+            'associates' => $associates,
+            'totalAmount' => $totalAmount,
+            'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
+        ];
+
+        $html = view('cut-reports.pdf.cut-report-dd', $data)->render();
+
+        $mpdf = $this->getMarathiMpdf();
+        $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->WriteHTML($html);
+
+       return response($mpdf->Output('cut-report-dd_account.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+    }
 
     public function ddAccountCsv()
     {
@@ -842,38 +1075,89 @@ class CutReportController extends Controller
             ],
             'associates' => $associates,
             'totalAmount' =>  $totalAmount,
-            'photoPath' => public_path('assets/images/sbc-image.jpg'),
+            'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
         $html = view('cut-reports.pdf.cut-report-rd', $data)->render();
-        $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
-        $fontDirs = $defaultConfig['fontDir'];
+        // $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+        // $fontDirs = $defaultConfig['fontDir'];
 
-        $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-        $fontData = $defaultFontConfig['fontdata'];
+        // $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
+        // $fontData = $defaultFontConfig['fontdata'];
 
-        $mpdf = new \Mpdf\Mpdf([
-            'format' => 'A4',
-            'margin_left' => 10,
-            'margin_right' => 10,
-            'margin_top' => 10,
-            'margin_bottom' => 10,
-            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
-            'fontdata' => $fontData + [
-                'mukta' => [
-                    'R' => 'TiroDevanagariMarathi-Regular.ttf',
-                    'B' => 'Mukta-Bold.ttf',
-                ]
-            ],
-            'default_font' => 'mukta',
-        ]);
+        // $mpdf = new \Mpdf\Mpdf([
+        //     'format' => 'A4',
+        //     'margin_left' => 10,
+        //     'margin_right' => 10,
+        //     'margin_top' => 10,
+        //     'margin_bottom' => 10,
+        //     'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
+        //     'fontdata' => $fontData + [
+        //         'mukta' => [
+        //             'R' => 'TiroDevanagariMarathi-Regular.ttf',
+        //             'B' => 'Mukta-Bold.ttf',
+        //         ]
+        //     ],
+        //     'default_font' => 'mukta',
+        // ]);
 
-        $mpdf->SetAutoPageBreak(true, 10);
+        // $mpdf->SetAutoPageBreak(true, 10);
+        // $mpdf->WriteHTML($html);
+
+        $mpdf = $this->getMarathiMpdf();
         $mpdf->WriteHTML($html);
-
         return response($mpdf->Output('cut-report-rd_account.pdf', 'D'))
             ->header('Content-Type', 'application/pdf');
     }
+
+      public function printRD()
+    {
+       
+        
+        $associates = RdAccount::select(
+            'rd_accounts.id',
+            'rd_accounts.rd_no',
+            'members.member_info_first_name as name',
+            'members.member_info_last_name as last_name',
+            'members.member_info_title as title',
+        )
+            ->leftJoin('members', 'members.id', '=', 'rd_accounts.member_id')
+            ->get();
+
+        $associates = collect($associates)->map(function ($item, $key) {
+            $item->sr_no = $key + 1;
+            $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
+
+            // If helper returns array
+            if (is_array($balance) && isset($balance['total_balance'])) {
+                $item->amount = (float) $balance['total_balance'];
+            } else {
+                $item->amount = 0; // fallback
+            }
+
+            return $item;
+        });
+
+        $totalAmount = $associates->sum('amount');
+        $data = [
+            'company' => [
+                'name' => Company::first()->company_name ?? 'SBC GLOBAL'
+            ],
+            'associates' => $associates,
+            'totalAmount' =>  $totalAmount,
+            'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
+        ];
+
+        $html = view('cut-reports.pdf.cut-report-rd', $data)->render();
+
+        $mpdf = $this->getMarathiMpdf();
+        $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->WriteHTML($html);
+
+       return response($mpdf->Output('cut-report-rd_account.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+    }
+
     // Download CSV
     public function rdAccountCsv()
     {
