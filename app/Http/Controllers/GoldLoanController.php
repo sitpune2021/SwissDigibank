@@ -1161,6 +1161,9 @@ class GoldLoanController extends Controller
 
     public function appindex()
     {
+        if (!hasPermission('gold-loan.applications.index')) {
+            abort(403);
+        }
         //  loan applications fetch 
         $applications = LoanApplication::with(['creditScores'])->latest()->paginate(10);
 
@@ -1169,6 +1172,9 @@ class GoldLoanController extends Controller
 
     public function appcreate()
     {
+        if (!hasPermission('gold-loan.applications.create')) {
+            abort(403);
+        }
         //$members = Member::all();
         $members = Member::select('id', 'member_info_first_name', 'member_info_mobile_no', 'general_branch')->get();
         $branch = Branch::all();
@@ -1453,6 +1459,9 @@ class GoldLoanController extends Controller
 
     public function appview($id)
     {
+        if (!hasPermission('gold-loan.applications.view')) {
+            abort(403);
+        }
         $application = LoanApplication::with([
             'member',
             'coApplicant1',
@@ -1468,7 +1477,8 @@ class GoldLoanController extends Controller
 
         return view("gold-loan.applications.view", compact('application', 'emiChart'));
     }
-      public function submitForApproval($id)
+    
+    public function submitForApproval($id)
     {
         return redirect()->back()
             ->with('pending_request', true);
@@ -1476,6 +1486,9 @@ class GoldLoanController extends Controller
 
     public function appedit($id)
     {
+        if (!hasPermission('gold-loan.applications.create')) {
+            abort(403);
+        }
         $application = LoanApplication::with(['member', 'scheme'])->findOrFail($id);
 
         //  Fetch all related CIBIL records for this loan application
@@ -1662,11 +1675,16 @@ class GoldLoanController extends Controller
             return back()->with('error', 'Something went wrong while updating.');
         }
     }
+
+    
     ////////////////////////////////////////////////////////////////////////////////
 
 
     public function showdisbursesetting($id)
     {
+        if (!hasPermission('gold-loan.applications.view-buttons.disburse-setting')) {
+            abort(403);
+        }
         $application = LoanApplication::with(['member', 'scheme', 'branch'])->findOrFail($id);
 
         $emiChart = $this->generateEmiChart($application);
@@ -1681,7 +1699,7 @@ class GoldLoanController extends Controller
         $annualInterest = $application->scheme->annual_interest_rate;
 
         if (empty($months) || $months <= 0) {
-            $months = 1; // या error throw कर दो
+            $months = 1; 
         }
 
         $monthlyInterestRate = ($annualInterest / 12) / 100;
@@ -2048,16 +2066,5 @@ class GoldLoanController extends Controller
         return view("gold-loan.applications.view-buttons.disburse-setting", compact('application'));
     }
 
-    // public function submitForApproval($id)
-    // {
-    //     // Fetch the relevant model — change LoanApplication to appropriate model if many models share same button.
-    //     $application = LoanApplication::findOrFail($id);
 
-    //     // Do NOT change status. Only update updated_at to current time so it becomes "latest"
-    //     // Option A: touch() updates updated_at automatically
-    //     $application->touch();
-
-    //     return redirect()->route('loans')
-    //         ->with('success', 'Submitted for approval!');
-    // }
 }
