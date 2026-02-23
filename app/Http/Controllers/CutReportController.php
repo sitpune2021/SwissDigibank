@@ -304,8 +304,7 @@ class CutReportController extends Controller
         return new Mpdf([
             'mode' => 'utf-8',
             'format' => 'A4',
-           // 'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
-            'fontDir' => array_merge($fontDirs, [storage_path('app/mpdf-temp')]),
+            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
             'fontdata' => $fontData,
             'default_font' => 'marathi',
             'autoScriptToLang' => true,
@@ -314,6 +313,7 @@ class CutReportController extends Controller
             'margin_right' => 10,
             'margin_top' => 10,
             'margin_bottom' => 10,
+            'tempDir' => storage_path('app/mpdf'),
         ]);
     }
 
