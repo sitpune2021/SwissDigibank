@@ -2581,4 +2581,22 @@ class CutReportController extends Controller
             "Content-Disposition" => "attachment; filename={$filename}",
         ]);
     }
+
+
+    public function printMembers()
+{
+      $members = Member::with([
+        'branch',
+        'kyc'
+    ])->get();
+
+    $pdf = Pdf::loadView(
+        'cut-reports.pdf.promoter-member-cut-report',
+        compact('members')
+    )->setPaper('A4','portrait');
+
+    $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+
+    return $pdf->stream('all-members.pdf');
+}
 }
