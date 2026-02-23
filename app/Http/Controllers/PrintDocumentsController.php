@@ -624,11 +624,13 @@ $companyName = Company::value('company_name');
 
     }
    
-    public function MisOneForm()
+    public function MisOneForm(Request $request)
     {
+          $month = $request->month;
+          $year = $request->year;
          $companyName = Company::value('company_name');
         $html = view(
-            'print-documents.management-info-systems.management-info-sys-one', compact('companyName')
+            'print-documents.management-info-systems.management-info-sys-one', compact('companyName','month','year')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
@@ -639,12 +641,14 @@ $companyName = Company::value('company_name');
             $mpdf->Output('MIS-1.pdf', 'D')
         )->header('Content-Type', 'application/pdf');
     }
-    public function MisOneFormPrint()
+    public function MisOneFormPrint(Request $request)
     {
-        
+
+         $month = $request->month;
+          $year = $request->year;
      $companyName = Company::value('company_name');
         $html = view(
-            'print-documents.management-info-systems.management-info-sys-one', compact('companyName')
+            'print-documents.management-info-systems.management-info-sys-one', compact('companyName','month','year')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
@@ -663,12 +667,14 @@ $companyName = Company::value('company_name');
 
 }
 
-     public function MisTwo()
+     public function MisTwo(Request $request)
 {
+     $month = $request->month;
+          $year = $request->year;
     $companyName = Company::value('company_name');
     $html = view(
         'print-documents.management-info-systems.management-info-two'
-   , compact('companyName') )->render();
+   , compact('companyName','month','year') )->render();
 
     $mpdf = $this->getMarathiMpdf();
 
@@ -681,13 +687,14 @@ $companyName = Company::value('company_name');
         $mpdf->Output('MIS-2.pdf', 'D')
     )->header('Content-Type', 'application/pdf');
 }
-  public function MisTwoPrint()
+  public function MisTwoPrint(Request $request)
 {
-    
+     $month = $request->month;
+          $year = $request->year;
     $companyName = Company::value('company_name');
     $html = view(
         'print-documents.management-info-systems.management-info-two'
-   , compact('companyName') )->render();
+   , compact('companyName','month','year') )->render();
 
     $mpdf = $this->getMarathiMpdf();
 
