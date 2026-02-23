@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Member;
 use App\Models\Branch;
 //use App\Models\Shareholding;
-use App\Models\Shareholding;
+use App\Models\ShareHolding;
 use App\Models\Promotor;
 use App\Models\Scheme;
 use App\Models\ShareTransfer;
