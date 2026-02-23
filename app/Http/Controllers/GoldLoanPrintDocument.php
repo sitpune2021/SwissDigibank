@@ -1473,8 +1473,6 @@ class GoldLoanPrintDocument extends Controller
         );
     }
 
-
-
     public function emi_receipt_pdf(LoanApplication $loan, $emiNo)
     {
         $transaction = DB::table('gold_loan_transactions')

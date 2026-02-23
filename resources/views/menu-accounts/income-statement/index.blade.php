@@ -3,12 +3,18 @@
 @section('content')
 
 <div class="container">
+ <div class="flex flex-wrap items-center justify-between gap-4 px-4 lg:mb-4">
+        <h3 class=" flex text-lg  uppercase font-semibold">
+           INCOME STATEMENT
+        </h3>
 
-    <h3 class="mb-4 text-center">INCOME STATEMENT</h3>
+    </div>
+
+   
 
     {{-- Branch Filter --}}
-    <form class="mb-4 text-center">
-        <select name="branch_id" class="form-control w-25 d-inline">
+     <form class="mb-4 text-center">
+        <select name="branch_id" class="form-control w-64 border rounded-10 px-3 py-3  text-sm bg-secondary/5  dark:bg-bg3">
             <option value="">ALL BRANCH</option>
             @foreach($branches as $branch)
                 <option value="{{ $branch->id }}"
@@ -18,10 +24,11 @@
             @endforeach
         </select>
 
-        <button class="btn btn-primary">GET</button>
+        <button class="btn btn-primary rounded-10 text-sm">GET</button>
     </form>
+   </div>
 
-    <div class="card shadow">
+    <div class="card shadow box">
         <div class="card-body">
 
             {{-- REVENUES --}}

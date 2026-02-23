@@ -1064,6 +1064,17 @@ Route::group(['prefix' => 'mortgage'], function () {
 
     Route::get('/undertaking-letter-view/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('mortgage_loan.undertaking_letter.view');
     Route::get('/undertaking-letter/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter'])->name('mortgage_loan.undertaking_letter.pdf');
+     Route::get(
+        '/mortgage-loan-app/emi-receipt-view/{loan}/{emiNo}',
+        [MortgageLoanPrintDocumentController::class, 'emi_receipt_view']
+    )->name('loan.emi_receipt.view');
+
+    Route::get(
+        '/mortgage-loan-app/emi-receipt/{loan}/{emiNo}',
+        [MortgageLoanPrintDocumentController::class, 'emi_receipt_pdf']
+    )->name('loan.emi_receipt.pdf');
+    Route::get('/emi-receipt/{loan}/{emiNo}', [MortgageLoanPrintDocumentController::class, 'emi_receipt_print'])
+        ->name('emi.receipt.print');
 });
 
 
@@ -1423,6 +1434,17 @@ Route::group(['prefix' => 'business'], function () {
 
     Route::get('/undertaking-letter-view/{loan}', [BusinessLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('business_loan.undertaking_letter.view');
     Route::get('/undertaking-letter/{loan}', [BusinessLoanPrintDocumentController::class, 'undertaking_letter'])->name('business_loan.undertaking_letter.pdf');
+      Route::get(
+        '/business-loan-app/emi-receipt-view/{loan}/{emiNo}',
+        [BusinessLoanPrintDocumentController::class, 'emi_receipt_view']
+    )->name('loan.emi_receipt.view');
+
+    Route::get(
+        '/business-loan-app/emi-receipt/{loan}/{emiNo}',
+        [BusinessLoanPrintDocumentController::class, 'emi_receipt_pdf']
+    )->name('loan.emi_receipt.pdf');
+    Route::get('/emi-receipt/{loan}/{emiNo}', [BusinessLoanPrintDocumentController::class, 'emi_receipt_print'])
+        ->name('emi.receipt.print');
 });
 
 
