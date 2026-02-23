@@ -5,11 +5,7 @@
 <div class="container">
 
 
-    <div class="text-end  mb-3 no-print">
-        <button onclick="printBalanceSheet()" class="btn btn-dark  btn-primary text-sm rounded-10 px-4 py-2">
-            <i class="las la-print"></i> Print
-        </button>
-    </div>
+   
 
      <div class="mt-5">
             <form>
@@ -37,6 +33,11 @@
 
 
    <div class="box mt-5">
+     <div class="text-end  mb-3 no-print">
+        <button onclick="printBalanceSheet()" class="btn btn-dark  btn-primary text-sm rounded-10 px-4 py-2 uppercase">
+            <i class="las la-print"></i> Print
+        </button>
+    </div>
      <h3 class="mb-4 text-center text-lg uppercase mt-5">
         Balance Sheet as on {{ $today->format('d-m-Y') }}
     </h3>
@@ -70,7 +71,7 @@
                                 <td class="text-start px-4 py-2">
                                     @if(isset($assets[$i]))
                                         <div class="d-flex justify-content-between">
-                                            <span>{{ $assets[$i]['name'] }}</span>
+                                            <span class="uppercase">{{ $assets[$i]['name'] }}</span>
                                             <span>{{ number_format($assets[$i]['amount'],2) }}</span>
                                         </div>
                                     @endif
@@ -82,7 +83,7 @@
                                     {{-- Liabilities --}}
                                     @if(isset($liabilities[$i]))
                                         <div class="d-flex justify-content-between">
-                                            <span>{{ $liabilities[$i]['name'] }}</span>
+                                            <span class="uppercase">{{ $liabilities[$i]['name'] }}</span>
                                             <span>{{ number_format($liabilities[$i]['amount'],2) }}</span>
                                         </div>
                                     @endif
@@ -90,7 +91,7 @@
                                     {{-- Equity --}}
                                     @if(isset($equities[$i - count($liabilities)]))
                                         <div class="d-flex justify-content-between">
-                                            <span>{{ $equities[$i - count($liabilities)]['name'] }}</span>
+                                            <span class="uppercase">{{ $equities[$i - count($liabilities)]['name'] }}</span>
                                             <span>{{ number_format($equities[$i - count($liabilities)]['amount'],2) }}</span>
                                         </div>
                                     @endif
