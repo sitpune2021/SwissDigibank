@@ -29,5 +29,13 @@ class AppServiceProvider extends ServiceProvider
         View::composer('layouts.sidebar', function ($view) {
             $view->with('menu', Menu::all());
         });
+
+        // ✅ Load PermissionHelper manually so hasPermission() works without composer dump-autoload
+        $helperPath = app_path('Helpers/PermissionHelper.php');
+        if (file_exists($helperPath)) {
+            require_once $helperPath;
+        }
+
     }
+    
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AccountsTransactionsHelper;
+use App\Models\FdTransaction;
 use App\Models\ShareTransfer;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -1707,6 +1708,19 @@ class ApproveController extends Controller
                 $fdAccount->status = $validated['transaction_status'];
                 $fdAccount->remarks = $validated['remarks'];
                 $fdAccount->save();
+
+                if ($fdAccount->status == 1) {
+
+                    // 🔹 Approve first principal transaction
+                    FdTransaction::where('fd_account_id', $fdAccount->id)
+                        ->where('transaction_type', 1) // credit
+                        ->whereNull('status') // only pending ones
+                        ->update([
+                            'status' => 'Approved',
+                            'transaction_purpose' => 'principal',
+                            'processed' => 1
+                        ]);
+                }
 
                 try {
                     $fdaccount = \App\Models\FdAccount::with('member')->find($fdAccount->id);

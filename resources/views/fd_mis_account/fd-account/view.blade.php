@@ -109,9 +109,9 @@
         <div x-data="{ open: false }" class="relative inline-block">
             <a @click="open = !open"
                 class="btn-secondary px-2 py-2 text-sm  cursor-pointer rounded-10 flex items-center justify-between space-x-2">
-                  ACCOUNT DETAILS      
-              <i class="las la-angle-down text-sm transition-transform duration-300"
-           :class="{ 'rotate-180': open }"></i>
+                ACCOUNT DETAILS
+                <i class="las la-angle-down text-sm transition-transform duration-300"
+                    :class="{ 'rotate-180': open }"></i>
             </a>
             <div x-show="open" @click.outside="open = false"
                 class="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
@@ -165,8 +165,8 @@
             <a @click="open = !open"
                 class="btn-secondary px-2 py-2 rounded-10 flex items-center cursor-pointer justify-between text-sm space-x-2">
                 <i class="las la-print "></i><span class="text-sm">PRINT DOCUMENTS</span>
-                 <i class="las la-angle-down text-sm transition-transform duration-300"
-           :class="{ 'rotate-180': open }"></i>
+                <i class="las la-angle-down text-sm transition-transform duration-300"
+                    :class="{ 'rotate-180': open }"></i>
             </a>
 
             <!-- Dropdown -->
@@ -260,13 +260,13 @@
                                 {{ \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y') }}
                             </td>
                         </tr>
-                        <tr class="border-b">
+                        <!-- <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Tenure of FD/MIS</td>
                             <td class="px-4 py-2">
                                 {{ $fdAccount->tenure_year }}Y,{{ $fdAccount->tenure_month }}M,{{
                                 $fdAccount->tenure_days }}D
                             </td>
-                        </tr>
+                        </tr> -->
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Interest Payout Type</td>
                             <td class="px-4 py-2">{{ $fdAccount->interest_payout_type }}</td>
@@ -274,11 +274,11 @@
 
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Close Date</td>
-                            <td class="px-4 py-2">-</td>
+                            <td class="px-4 py-2">{{ optional($fdAccount->close_date)->format('d-m-Y') ?? '-' }}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Annual Interest Rate (%)</td>
-                            <td class="px-4 py-2">{{ $fdAnnualIntrest }} %</td>
+                            <td class="px-4 py-2">{{ $fdAnnualInterest }} %</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Balance Available</td>
@@ -346,12 +346,12 @@
                                 </td>
                             </tr>
 
-                            <tr  class="border-b">
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Mobile No</td>
                                 <td class="px-4 py-2">{{ $fdAccount->member->member_info_mobile_no ?? '' }}</td>
                             </tr>
 
-                            <tr  class="border-b">
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Address</td>
                                 <td class="px-4 py-2">{{ $fdAccount->member->address->member_address_line_1 ?? '' }}
                                 </td>
@@ -868,47 +868,55 @@
                 <div class="overflow-x-auto mt-5">
                     <table class="w-full border-collapse rounded-lg overflow-hidden  bg-white dark:bg-bg3">
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                            <tr class="border-b"> 
+                            <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Scheme Name</td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    {{ $fdAccount->fdscheme->scheme_name ?? 'NA' }}</td>
+                                    {{ $fdAccount->fdscheme->scheme_name ?? 'NA' }}
+                                </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Scheme Code</td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    {{ $fdAccount->fdscheme->scheme_code }}</td>
+                                    {{ $fdAccount->fdscheme->scheme_code }}
+                                </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Minimum Locking Period</td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    {{ $fdAccount->fdscheme->lock_in_period ?? 0 }}Months</td>
+                                    {{ $fdAccount->fdscheme->lock_in_period ?? 0 }}Months
+                                </td>
                             </tr>
 
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 uppercase">Interest Locking Period</td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    {{ $fdAccount->fdscheme->interest_lock_in ?? 0 }} Months</td>
+                                    {{ $fdAccount->fdscheme->interest_lock_in ?? 0 }} Months
+                                </td>
                             </tr>
 
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2 uppercase">Bonus Rate</td>
                                 <td class="px-4 py-2  text-right md:text-left">
-                                    {{ $fdAccount->fdscheme->bonus_rate ?? 0.0 }} %</td>
+                                    {{ $fdAccount->fdscheme->bonus_rate ?? 0.0 }} %
+                                </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2 uppercase">Cancellation Charges</td>
                                 <td class="px-4 py-2  text-right md:text-left">₹
-                                    {{ $fdAccount->fdscheme->cancellation_charge ?? 0 }}</td>
+                                    {{ $fdAccount->fdscheme->cancellation_charge ?? 0 }}
+                                </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2 uppercase">Penal Charges (%)</td>
                                 <td class="px-4 py-2   text-right md:text-left">
-                                    {{ $fdAccount->fdscheme->penal_charge ?? 0.0 }} %</td>
+                                    {{ $fdAccount->fdscheme->penal_charge ?? 0.0 }} %
+                                </td>
                             </tr>
                             <tr class="border-b">
                                 <td class="font-bold px-4 py-2 uppercase">Min. Amount</td>
                                 <td class="px-4 py-2  text-right md:text-left">₹
-                                    {{ $fdAccount->fdscheme->min_amount ?? 0 }}</td>
+                                    {{ $fdAccount->fdscheme->min_amount ?? 0 }}
+                                </td>
                             </tr>
 
                         </tbody>
@@ -972,7 +980,8 @@
                             <tr class="border-b">
                                 <td class="font-semibold px-4 py-2 w-1/2 md:w-1/3 uppercase">Maturity Date</td>
                                 <td class="px-4 py-2 text-right md:text-left">
-                                    {{ \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y') }}</td>
+                                    {{ \Carbon\Carbon::parse($fdAccount->maturity_date)->format('d-m-Y') }}
+                                </td>
                             </tr>
 
                             <tr class="border-b">
@@ -1033,7 +1042,7 @@
                                         @else
                                         ₹{{ number_format($fdAccount->interest_credited, 2) }}
                                         @endif
-                                </td>
+                                        </td>
                             </tr>
 
                             <tr class="border-b">
@@ -1044,7 +1053,7 @@
                                         @else
                                         ₹{{ number_format($fdAccount->interest_released, 2) }}
                                         @endif
-                                </td>
+                                        </td>
                             </tr>
 
                             <tr class="border-b">
@@ -1055,7 +1064,7 @@
                                         @else
                                         ₹{{ number_format($fdAccount->tds_deducted, 2) }}
                                         @endif
-                                </td>
+                                        </td>
                             </tr>
                         </tbody>
                     </table>
@@ -1063,6 +1072,40 @@
 
             </div>
 
+
+            <!-- FD Nominee Info -->
+            @if($fdAccount->nominee->isNotEmpty())
+
+            <div class="box shadow-md dark:bg-bg3 mt-5 rounded-lg overflow-hidden">
+
+                <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3">
+                    <h3 class="text-lg font-semibold uppercase">Nominee Information</h3>
+                </div>
+
+                <div class="overflow-x-auto mt-5">
+                    <table class="w-full border-collapse shadow-md bg-white dark:bg-bg3">
+                        <thead>
+                            <tr class="bg-secondary/5 border-b ">
+                                <th class="px-4 py-2 text-left">Name</th>
+                                <th class="px-4 py-2 text-left">Relation</th>
+                                <th class="px-4 py-2 text-left">Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($fdAccount->nominee as $nom)
+                            <tr class="border-b">
+                                <td class="px-4 py-2 text-center">{{ $nom->nominee_name ?? '-' }}</td>
+                                <td class="px-4 py-2 text-center">{{ $nom->nominee_relation ?? '-' }}</td>
+                                <td class="px-4 py-2 text-center">{{ $nom->nominee_address ?? '-' }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            @endif
 
             <!--FD  Branch Info-->
 
@@ -1100,7 +1143,7 @@
                                 </td>
                                 <td class="px-4 py-2 text-right md:text-left">{{ $fdAccount->savingAccount->branch_name
                                     }}
-                                </td>
+                            </td>
                             </tr> --}}
                         </tbody>
                     </table>
@@ -1115,38 +1158,38 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-                const interestButton = document.getElementById('interestButton');
-                const interestMenu = document.getElementById('interestMenu');
-                const interestArrow = document.getElementById('interestArrow');
+            const interestButton = document.getElementById('interestButton');
+            const interestMenu = document.getElementById('interestMenu');
+            const interestArrow = document.getElementById('interestArrow');
 
-                // Toggle menu on button click
-                interestButton.addEventListener('click', function(e) {
-                    e.stopPropagation(); // Prevent click from closing immediately
+            // Toggle menu on button click
+            interestButton.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent click from closing immediately
 
-                    interestMenu.classList.toggle('hidden');
-                    interestArrow.classList.toggle('rotate-180');
-                });
-
-                // Close menu when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (!interestMenu.classList.contains('hidden')) {
-                        interestMenu.classList.add('hidden');
-                        interestArrow.classList.remove('rotate-180');
-                    }
-                });
+                interestMenu.classList.toggle('hidden');
+                interestArrow.classList.toggle('rotate-180');
             });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!interestMenu.classList.contains('hidden')) {
+                    interestMenu.classList.add('hidden');
+                    interestArrow.classList.remove('rotate-180');
+                }
+            });
+        });
     </script>
     <script>
         // Label update on toggle
-            document.querySelectorAll('.slider-toggle').forEach(toggle => {
-                toggle.addEventListener('change', function() {
-                    const label = document.getElementById(this.dataset.labelId);
-                    label.textContent = this.checked ? 'ON' : 'OFF';
-                });
-
-                // Initialize label on page load
-                toggle.dispatchEvent(new Event('change'));
+        document.querySelectorAll('.slider-toggle').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const label = document.getElementById(this.dataset.labelId);
+                label.textContent = this.checked ? 'ON' : 'OFF';
             });
+
+            // Initialize label on page load
+            toggle.dispatchEvent(new Event('change'));
+        });
     </script>
 
     @endsection
