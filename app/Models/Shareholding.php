@@ -8,6 +8,7 @@ use App\Models\Promotor;
 
 class ShareHolding extends Model
 {
+    protected $table = 'shareholdings';
     protected $fillable = [
         'promotor_id',
         'allotment_date',

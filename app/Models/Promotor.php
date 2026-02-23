@@ -98,7 +98,7 @@ class Promotor extends Model
     }
     public function latestShare()
     {
-        return $this->hasOne(Shareholding::class, 'promotor_id')->latest();
+        return $this->hasOne(ShareHolding::class, 'promotor_id')->latest();
     }
     public function membershipCharge()
 {
