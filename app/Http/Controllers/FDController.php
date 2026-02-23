@@ -399,7 +399,7 @@ class FDController extends Controller
 
         try {
             // ---------------------------- VALIDATION ----------------------------
-            Log::info('🔍 Validating request data...');
+            Log::info(' Validating request data...');
 
 
 
@@ -409,45 +409,42 @@ class FDController extends Controller
             Log::info(' Database Transaction Started');
 
             // ---------------------------- CALCULATION ----------------------------
-            Log::info('🧮 Calculating FD Maturity...');
+            Log::info('Calculating FD Maturity...');
 
-            // Calculate total days
-            $totalDays = ($request->tenure_year * 365)
-                + ($request->tenure_month * 30)
-                + ($request->tenure_day);
+            // ---------------------------- CALCULATION ----------------------------
 
-            // Fetch slab
             $slab = FdSchemeSlab::where('fd_scheme_id', $request->scheme_id)
-                ->where('day_from', '<=', $totalDays)
-                ->where('day_to', '>=', $totalDays)
+                ->orderByDesc('day_to')
                 ->first();
 
             if (!$slab) {
-                return back()->with('error', 'No FD slab found for selected tenure.');
+                return back()->with('error', 'No FD slab configured for this scheme.');
             }
 
-            $payoutType = strtoupper(str_replace(' ', '_', $slab->payout_type));
+            $totalDays = $slab->day_to;
+
             $startDate = Carbon::createFromFormat('d-m-Y', $request->date);
             $maturityDate = $startDate->copy()->addDays($totalDays);
 
-            $tenureMonths = $startDate->diffInMonths(
-                $startDate->copy()->addDays($maturityDate)
-            );
+            // Convert days → months (for existing function)
+            $tenureMonths = $startDate->diffInMonths($maturityDate);
 
+            // Pick interest
             $rate = $request->senior_citizen == 1
                 ? $slab->sr_citizen_rate
                 : $slab->interest_rate;
+
+            $payoutType = strtoupper(str_replace(' ', '_', $slab->payout_type));
 
             $calc = $this->calculateInvestment(
                 'FD',
                 $request->fd_amount,
                 $rate,
                 $tenureMonths,
-                $tenureMonths,
                 $startDate->format('Y-m-d'),
                 $payoutType
             );
-
+            // dd($payoutType);
             $summary = $calc->getData(true)['summary']['summary'] ?? [];
 
             // ---------------------------- FD ACCOUNT CREATE ----------------------------
@@ -468,7 +465,7 @@ class FDController extends Controller
                 // 'tenure_month'  => $request->tenure_month,
                 // 'tenure_days'   => $request->tenure_day,
                 'fd_amount'     => $request->fd_amount,
-                'interest_payout_type'  => $request->payout,
+                'interest_payout_type'  => $payoutType,
                 'tds_deduction' => $request->tds_deduction,
                 'senior_citizen' => $request->senior_citizen ?? 0,
                 'account_type'  => $request->account_type,
@@ -495,7 +492,7 @@ class FDController extends Controller
             $fdAccount->fd_no = 'FD' . str_pad($fdAccount->id, 10, '0', STR_PAD_LEFT);
             $fdAccount->save();
 
-            Log::info('🔄 FD Account Number Updated', [
+            Log::info('FD Account Number Updated', [
                 'final_account_no' => $fdAccount->account_no,
                 'final_fd_no'      => $fdAccount->fd_no
             ]);
@@ -703,6 +700,168 @@ class FDController extends Controller
         ]);
     }
 
+
+    private function calculateFdMaturity($fdAccount)
+    {
+        $principal = $fdAccount->fd_amount;
+
+        // Fetch slab (latest slab for scheme)
+        $slab = FdSchemeSlab::where('fd_scheme_id', $fdAccount->scheme_id)
+            ->orderByDesc('day_to')
+            ->first();
+
+        if (!$slab) {
+            return null;
+        }
+
+        // Slab controls tenure
+        $tenureDays = $slab->day_to;
+
+        // Pick correct rate
+        $fdAnnualInterest = $fdAccount->senior_citizen == 1
+            ? $slab->sr_citizen_rate
+            : $slab->interest_rate;
+
+        // Convert days → years (banking style 365)
+        $timeInYears = $tenureDays / 365;
+
+        $totalInterest = ($principal * $fdAnnualInterest * $timeInYears) / 100;
+
+        // TDS
+        $exemption = $fdAccount->senior_citizen ? 50000 : 40000;
+        $tds = ($totalInterest > $exemption) ? $totalInterest * 0.10 : 0;
+
+        // Bonus
+        $bonus = 0;
+        if (!is_null($fdAccount->fdscheme->bonus_rate)) {
+            $bonusRate = $fdAccount->fdscheme->bonus_rate;
+            $bonusType = $fdAccount->fdscheme->bonus_type ?? 'percentage';
+
+            if ($bonusType === 'percentage') {
+                $bonus = ($principal * $bonusRate) / 100;
+            } elseif ($bonusType === 'fixed') {
+                $bonus = $bonusRate;
+            }
+        }
+
+        $maturityAmount = $principal + $totalInterest + $bonus;
+        $netMaturityAmount = $maturityAmount - $tds;
+
+        return [
+            'fdAnnualInterest'   => $fdAnnualInterest,
+            'tenureDays'         => $tenureDays,
+            'totalInterest'      => round($totalInterest, 2),
+            'tds'                => round($tds, 2),
+            'bonus'              => round($bonus, 2),
+            'maturityAmount'     => round($maturityAmount, 2),
+            'netMaturityAmount'  => round($netMaturityAmount, 2),
+        ];
+    }
+    public function updateBranch(Request $request, $id)
+    {
+        $request->validate([
+            'branch_id' => 'required|exists:branches,id',
+        ]);
+
+        $fdAccount = FdAccount::findOrFail($id);
+        $fdAccount->branch_id = $request->branch_id;
+        $fdAccount->save();
+
+        return redirect()->back()->with('success', 'Branch updated successfully!');
+    }
+
+    // public function fetchSlab(Request $request)
+    // {
+    //     $totalDays = $request->total_days;
+
+    //     $slab = FdSchemeSlab::where('fd_scheme_id', $request->scheme_id)
+    //         ->where('day_from', '<=', $totalDays)
+    //         ->where('day_to', '>=', $totalDays)
+    //         ->first();
+
+    //     if (!$slab) {
+    //         return response()->json([
+    //             'success' => false
+    //         ]);
+    //     }
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'payout_type' => $slab->payout_type,
+    //         'interest_rate' => $slab->interest_rate,
+    //         'sr_rate' => $slab->sr_citizen_rate
+    //     ]);
+    // }
+
+    public function fd_show(string $id)
+    {
+        $fdAccount = FdAccount::with([
+            'member.address',
+            'branch',
+            'transactions.fdAccount', // REQUIRED
+            'fdscheme.fdslabs',
+            'savingAccount',
+            'nominee'
+        ])->findOrFail($id);
+
+        $documents = Document::where('fd_id', $fdAccount->id)->get();
+        $passbooks = Passbook::where('account_type', 'FD Accounts')
+            ->where('account_no', $fdAccount->id)
+            ->get();
+
+        $fdSlabs = FdSchemeSlab::where('fd_scheme_id', $fdAccount->scheme_id)->get();
+        $branches = Branch::all();
+        $calculation = $this->calculateFdMaturity($fdAccount);
+
+        //Get FD balance in controller
+        $fdBalances = AccountsTransactionsHelper::getFdAccountBalance($fdAccount->id);
+        $fdBalance  = $fdBalances[$fdAccount->id] ?? 0;
+
+        $linkedSavingAcc = Account::find($fdAccount->saving_account_id);
+        $balances = [];
+        if ($linkedSavingAcc) {
+            $bal = AccountsTransactionsHelper::getAccountBalacec($linkedSavingAcc->id);
+            $balances[$linkedSavingAcc->id] = $bal['total_balance'] ?? 0;
+        }
+        $summary = AccountsTransactionsHelper::getFdInterestSummary($fdAccount->id);
+
+        $fdAccount->interest_credited = $summary['interest_credited'];
+        $fdAccount->tds_deducted      = $summary['tds_deducted'];
+
+        return view('fd_mis_account.fd-account.view', array_merge(
+            [
+                'fdAccount' => $fdAccount,
+                'fdSlabs'   => $fdSlabs,
+                'branches'  => $branches,
+                'link_status' => $fdAccount->link_status,
+                'linkedSavingAcc' => $linkedSavingAcc,
+                'balances' => $balances,
+                'fdBalance' => $fdBalance, // Pass FD balance to Blade
+                'documents' => $documents,
+                'passbooks' => $passbooks,
+                'summary' => $summary,
+            ],
+            $calculation
+        ));
+    }
+
+    public function getMemberSavings($member_id)
+    {
+        try {
+            $savings = Account::where('member_id', $member_id)->get();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $savings
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     function processPeriod(
         $results,
         $periodStart,
@@ -779,199 +938,25 @@ class FDController extends Controller
         return [$results, $totalInterest, $principal];
     }
 
-    private function calculateFdMaturity($fdAccount)
-    {
-        $principal = $fdAccount->fd_amount;
-
-        $years  = $fdAccount->tenure_year ?? 0;
-        $months = $fdAccount->tenure_month ?? 0;
-        $days   = $fdAccount->tenure_days ?? 0;
-
-        $tenureDays = ($years * 365) + ($months * 30) + $days;
-
-        $fdAnnualIntrest = null;
-
-        if ($tenureDays > 0) {
-            $slab = FdSchemeSlab::where('fd_scheme_id', $fdAccount->scheme_id)
-                ->where('day_from', '<=', $tenureDays)
-                ->where('day_to', '>=', $tenureDays)
-                ->first();
-
-            if ($slab) {
-                if (!empty($fdAccount->senior_citizen) && $fdAccount->senior_citizen == 1) {
-                    $fdAnnualIntrest = $slab->sr_citizen_rate;
-                } else {
-                    $fdAnnualIntrest = $slab->interest_rate;
-                }
-            }
-        }
-
-        $timeInYears = (($years * 360) + ($months * 30) + $days) / 360;
-
-        $totalInterest = ($principal * $fdAnnualIntrest * $timeInYears) / 100;
-
-        $exemption = $fdAccount->senior_citizen ? 50000 : 40000;
-        $tds = ($totalInterest > $exemption) ? $totalInterest * 0.10 : 0;
-
-        $bonus = 0;
-        if (!is_null($fdAccount->fdscheme->bonus_rate)) {
-            $bonusRate = $fdAccount->fdscheme->bonus_rate;
-            $bonusType = $fdAccount->fdscheme->bonus_type ?? 'percentage';
-
-            if ($bonusType === 'percentage') {
-                $bonus = ($principal * $bonusRate) / 100;
-            } elseif ($bonusType === 'fixed') {
-                $bonus = $bonusRate;
-            }
-        }
-
-        $maturityAmount = $principal + $totalInterest + $bonus;
-        $netMaturityAmount = $maturityAmount - $tds;
-
-        return [
-            'fdAnnualIntrest'   => $fdAnnualIntrest,
-            'totalInterest'     => $totalInterest,
-            'tds'               => $tds,
-            'bonus'             => $bonus,
-            'maturityAmount'    => $maturityAmount,
-            'netMaturityAmount' => $netMaturityAmount,
-        ];
-    }
-    public function updateBranch(Request $request, $id)
-    {
-        $request->validate([
-            'branch_id' => 'required|exists:branches,id',
-        ]);
-
-        $fdAccount = FdAccount::findOrFail($id);
-        $fdAccount->branch_id = $request->branch_id;
-        $fdAccount->save();
-
-        return redirect()->back()->with('success', 'Branch updated successfully!');
-    }
-
-    // public function fetchSlab(Request $request)
-    // {
-    //     $totalDays = $request->total_days;
-
-    //     $slab = FdSchemeSlab::where('fd_scheme_id', $request->scheme_id)
-    //         ->where('day_from', '<=', $totalDays)
-    //         ->where('day_to', '>=', $totalDays)
-    //         ->first();
-
-    //     if (!$slab) {
-    //         return response()->json([
-    //             'success' => false
-    //         ]);
-    //     }
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'payout_type' => $slab->payout_type,
-    //         'interest_rate' => $slab->interest_rate,
-    //         'sr_rate' => $slab->sr_citizen_rate
-    //     ]);
-    // }
-
-    public function getBalance($id)
-    {
-
-        $account = Account::find($id);
-
-        if ($account) {
-            return response()->json(['balance' => $account->balance]);
-        } else {
-            return response()->json(['balance' => 0]);
-        }
-    }
-
-    public function fd_show(string $id)
-    {
-        $fdAccount = FdAccount::with([
-            'member.address',
-            'branch',
-            'transactions.fdAccount', // REQUIRED
-            'fdscheme.fdslabs',
-            'savingAccount'
-        ])->findOrFail($id);
-
-
-        $documents = Document::where('fd_id', $fdAccount->id)->get();
-        $passbooks = Passbook::where('account_type', 'FD Accounts')
-            ->where('account_no', $fdAccount->id)
-            ->get();
-
-        $fdSlabs = FdSchemeSlab::where('fd_scheme_id', $fdAccount->scheme_id)->get();
-        $branches = Branch::all();
-        $calculation = $this->calculateFdMaturity($fdAccount);
-
-        //Get FD balance in controller
-        $fdBalances = AccountsTransactionsHelper::getFdAccountBalance($fdAccount->id);
-        $fdBalance  = $fdBalances[$fdAccount->id] ?? 0;
-
-        $linkedSavingAcc = Account::find($fdAccount->saving_account_id);
-        $balances = [];
-        if ($linkedSavingAcc) {
-            $bal = AccountsTransactionsHelper::getAccountBalacec($linkedSavingAcc->id);
-            $balances[$linkedSavingAcc->id] = $bal['total_balance'] ?? 0;
-        }
-        $summary = AccountsTransactionsHelper::getFdInterestSummary($fdAccount->id);
-
-        $fdAccount->interest_credited = $summary['interest_credited'];
-        $fdAccount->tds_deducted      = $summary['tds_deducted'];
-
-        return view('fd_mis_account.fd-account.view', array_merge(
-            [
-                'fdAccount' => $fdAccount,
-                'fdSlabs'   => $fdSlabs,
-                'branches'  => $branches,
-                'link_status' => $fdAccount->link_status,
-                'linkedSavingAcc' => $linkedSavingAcc,
-                'balances' => $balances,
-                'fdBalance' => $fdBalance, // Pass FD balance to Blade
-                'documents' => $documents,
-                'passbooks' => $passbooks,
-                'summary' => $summary,
-            ],
-            $calculation
-        ));
-    }
-
-
-    public function getMemberSavings($member_id)
-    {
-        try {
-            $savings = Account::where('member_id', $member_id)->get();
-
-            return response()->json([
-                'status' => 'success',
-                'data' => $savings
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-
     public function fdPayout($id)
     {
         $fdAccount = FdAccount::with(['member.address', 'branch', 'fdscheme.fdslabs'])
             ->findOrFail($id);
 
-        $totalDays = ($fdAccount->tenure_year * 365)
-            + ($fdAccount->tenure_month * 30)
-            + $fdAccount->tenure_days;
-
-        $slab = $fdAccount->fdscheme->fdslabs
-            ->where('day_from', '<=', $totalDays)
-            ->where('day_to', '>=', $totalDays)
+        $slab = FdSchemeSlab::where('fd_scheme_id', $fdAccount->scheme_id)
+            ->orderByDesc('day_to')
             ->first();
 
+        if (!$slab) {
+            abort(404, 'No slab found for this FD.');
+        }
+
+        $tenureDays = $slab->day_to;
+        $rate = $fdAccount->senior_citizen == 1
+            ? $slab->sr_citizen_rate
+            : $slab->interest_rate;
+
         $principal = $fdAccount->fd_amount;
-        $rate      = $slab->interest_rate ?? 0;
 
         $startDate    = \Carbon\Carbon::parse($fdAccount->open_date);
         $maturityDate = \Carbon\Carbon::parse($fdAccount->maturity_date);
@@ -1013,7 +998,8 @@ class FDController extends Controller
             $days = $currentFrom->diffInDays($currentTo) + 1;
 
             // Interest calculation
-            $interest = round(($principal * $rate * $days) / (365 * 100), 2);
+            $daysInYear = $currentFrom->isLeapYear() ? 366 : 365;
+            $interest = round(($principal * $rate * $days) / ($daysInYear * 100), 2);
             $tds = 0;
             $net = $interest - $tds;
 
@@ -1051,8 +1037,13 @@ class FDController extends Controller
                 'processed'             => $transaction->processed ?? 0,
             ];
 
+            $payoutType = strtoupper(str_replace(' ', '_', $fdAccount->interest_payout_type));
+            $isCumulative = str_starts_with($payoutType, 'CUMULATIVE');
+
             // Update principal for next period
-            $principal = round($principal + $net, 2);
+            if ($isCumulative) {
+                $principal = round($principal + $net, 2);
+            }
 
             // Move to next period
             $period++;
@@ -1090,14 +1081,18 @@ class FDController extends Controller
         $transaction = FdTransaction::create([
             'fd_account_id'    => $fdAccountId,
             'transaction_date' => now(),
+            'transaction_purpose' => 'interest',
+            'transaction_type' => 1, // Credit
+            'paid_no'          => now(),
             'amount'           => $request->interest,
             'interest'         => $request->interest,
             'tds'              => $request->tds,
             'net_interest'     => $request->net_interest,
             'due_date'         => $dueDate,
-            'status'           => $status,      // 🔥 LAND or Paid
-            'processed'        => $processed,   // 🔥 2 or 1
-            'mode'             => 'system',     // recommended
+            'status'           => $status,      // LAND or Paid
+            'processed'        => $processed,   // 2 or 1
+            'mode'             => 'system',
+
         ]);
 
         return response()->json([
@@ -1108,51 +1103,7 @@ class FDController extends Controller
         ]);
     }
 
-    // public function processPayout(Request $request)
-    // {
-    //     $fdAccountId = $request->fd_account_id;
-    //     $dueDate     = $request->due_date;
-
-    //     $existing = FdTransaction::where('fd_account_id', $fdAccountId)
-    //         ->where('due_date', $dueDate)
-    //         ->first();
-
-    //     if ($existing) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Already processed for this due date',
-    //             'processed_label' => 'Yes',
-    //             'state' => 'Paid'
-    //         ]);
-    //     }
-
-    //     $payoutData = [
-    //         'fd_account_id'   => $fdAccountId,
-    //         'transaction_date' => now(),
-    //         'amount'          => $request->interest,
-    //         'interest'        => $request->interest,
-    //         'tds'             => $request->tds,
-    //         'net_interest'    => $request->net_interest,
-    //         'due_date'        => $dueDate,
-    //         'status'          => 'Approved',
-    //         'processed'       => 1,
-    //     ];
-    //     $transaction = FdTransaction::create($payoutData);
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'processed_label' => 'Yes',
-    //         'state' => 'Paid',
-    //         'processed' => $transaction->processed
-    //     ]);
-    // }
-
-
-
-
     // Change Account Info
-
-
     public function changeAccountInfo($id)
     {
         $fdAccountDetail = FdAccount::with('member.kyc', 'fdscheme', 'minor')->findOrFail($id);
@@ -1245,36 +1196,49 @@ class FDController extends Controller
 
     public function viewTransactions(Request $request, $id)
     {
-        $fdAccount = FdAccount::with('member', 'branch', 'fdscheme')->findOrFail($id);
+        $fdAccount = FdAccount::with('member', 'branch', 'fdscheme')
+            ->findOrFail($id);
 
         $transactions = FdTransaction::where('fd_account_id', $id)
             ->orderBy('transaction_date', 'asc')
             ->orderBy('id', 'asc')
             ->get();
 
-        $cumulativeBalance = $fdAccount->status == 1 ? $fdAccount->fd_amount : 0; // Start with FD principal if approved
+        // 🔹 Start balance using helper
+        $balances = AccountsTransactionsHelper::getFdAccountBalance($id);
+        $currentBalance = $balances[$id] ?? 0;
+
+        $runningBalance = $fdAccount->status == 1 ? $fdAccount->fd_amount : 0;
 
         foreach ($transactions as $tran) {
-            if ($tran->status === 'approved') {
-                // Add/Subtract only approved transactions
+
+            $isApproved = in_array($tran->status, ['Paid', 'LAND']);
+
+            if ($isApproved) {
+
                 if ($tran->transaction_type == 1) { // Credit
-                    $cumulativeBalance += $tran->amount;
+                    $runningBalance += $tran->amount;
                 } elseif ($tran->transaction_type == 0) { // Debit
-                    $cumulativeBalance -= $tran->amount;
+                    $runningBalance -= $tran->amount;
                 }
-                $tran->balance = $cumulativeBalance;
+
+                $tran->balance = round($runningBalance, 2);
             } else {
-                // Pending transactions → just show their own amount
-                $tran->balance = $tran->amount;
+                // Pending → do not affect running balance
+                $tran->balance = round($runningBalance, 2);
             }
         }
 
-        // Show latest transactions first
+        // Latest first
         $transactions = $transactions->sortByDesc('transaction_date')
             ->sortByDesc('id')
             ->values();
 
-        return view('fd_mis_account.fd-account.viewTransactions', compact('fdAccount', 'transactions'));
+        return view('fd_mis_account.fd-account.viewTransactions', compact(
+            'fdAccount',
+            'transactions',
+            'currentBalance'
+        ));
     }
 
     public function transactionsDetails($accountId, $transactionId)
