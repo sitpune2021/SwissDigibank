@@ -279,20 +279,35 @@ class LoanAgainstAccountController extends Controller
 
         // Apply payments & auto status logic
         // ⭐ Apply payments on EMI schedule (front-end calculation only)
-        $totalPaid = LoanAgainstTransactions::where('loan_id', $id)->sum('amount_collected');
-
-        //foreclose .........................................
+        $totalPaid = LoanAgainstTransactions::where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount_collected');
         $foreclosureApproved = DB::table('loan_against_fore_closures')
             ->where('loan_id', $id)
-            ->where('status', 1) // or 1 if numeric
+            ->where('status', 1)
             ->exists();
+
+        $fullPaymentExists = DB::table('loan_against_transactions')
+            ->where('loan_id', $id)
+            ->where('flag', 'full_payment')
+            ->where('status', 'paid')
+            ->exists();
+
         foreach ($emiSchedule as &$emi) {
 
-            // ⭐ If foreclosure approved → everything paid
             if ($foreclosureApproved) {
+
                 $emi['remaining_amount'] = "0.00";
                 $emi['status'] = "PAID";
-                $emi['paid_date'] = now()->format('d-m-Y');
+                $emi['paid_date'] = now()->format('Y-m-d');
+
+                continue;
+            }
+            if ($fullPaymentExists) {
+
+                $emi['remaining_amount'] = "0.00";
+                $emi['status'] = "PAID";
+                $emi['paid_date'] = now()->format('Y-m-d');
                 continue;
             }
 
@@ -300,13 +315,8 @@ class LoanAgainstAccountController extends Controller
 
             if ($totalPaid <= 0) {
                 $emi['remaining_amount'] = number_format($emiAmount, 2);
-
-                if (isset($savedStatuses[$emi['emi_no']])) {
-                    $emi['status'] = $savedStatuses[$emi['emi_no']];
-                    $emi['paid_date'] = $savedPaidDates[$emi['emi_no']] ?? '';
-                } else {
-                    $emi['status'] = "UNPAID";
-                }
+                $emi['status'] = $savedStatuses[$emi['emi_no']] ?? "UNPAID";
+                $emi['paid_date'] = $savedPaidDates[$emi['emi_no']] ?? '';
                 continue;
             }
 
@@ -320,6 +330,7 @@ class LoanAgainstAccountController extends Controller
                 $totalPaid = 0;
             }
         }
+
 
         $eirSchedule = [];
 
@@ -529,26 +540,25 @@ class LoanAgainstAccountController extends Controller
 
         // end DYNAMIC SUMMARY CHART VALUES 
         // 🔥 Check if any EMI is due
-        $hasDueEmi = DB::table('gold_loan_emi_status')
+        $hasDueEmi = DB::table('loan_against_emi_status')
             ->where('loan_id', $id)
             ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
             ->exists();
 
         // 🔥 Total Remaining EMI Amount
-        $totalRemainingEmiAmount = DB::table('gold_loan_emi_status')
+        $totalRemainingEmiAmount = DB::table('loan_against_emi_status')
             ->where('loan_id', $id)
             ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
             ->sum('remaining_amount');
 
         // 🔥 Decide Route + Text
         if ($hasDueEmi) {
-            $payRoute = route('gold-loan.account.pay-emi', $goldLoan->id);
+            $payRoute = route('loanagainst.account.pay-emi', $goldLoan->id);
             $payButtonText = 'Pay EMI';
         } else {
-            $payRoute = route('gold-loan.account.pay', $goldLoan->id);
+            $payRoute = route('loanagainst.account.pay', $goldLoan->id);
             $payButtonText = 'Pay';
         }
-
 
 
         $payButtonText = $hasDueEmi ? 'Pay Emi' : 'Pay';
@@ -564,6 +574,7 @@ class LoanAgainstAccountController extends Controller
             ->where('loan_id', $id)
             ->where('status', 0)
             ->exists();
+
         return view('loanagainst.account.view', [
             'goldLoan' => $goldLoan,
             'principal' => $principal,
@@ -581,7 +592,7 @@ class LoanAgainstAccountController extends Controller
             'totalRemainingEmiAmount' => $totalRemainingEmiAmount,
             'payRoute' => $payRoute,
             'payButtonText' => $payButtonText,
-            'hasPendingApproval'=>$hasPendingApproval,
+            'hasPendingApproval' => $hasPendingApproval,
         ]);
     }
 
