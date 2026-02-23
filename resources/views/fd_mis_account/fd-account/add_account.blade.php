@@ -139,8 +139,8 @@
                     <select name="advisor_staff" id="advisor_staff"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border  rounded-10 px-3 md:px-6   py-3 md:py-3">
                         <option value="">select associate/user code</option>
-                        <option value="1">ABC</option>
-                        <option value="2">XYZ</option>
+                        <option value="1">ABC static </option>
+                        <option value="2">XYZ static</option>
                     </select>
                     @error('advisor_staff')
                     <span class="text-red-500 text-sm">{{ $message }}</span>

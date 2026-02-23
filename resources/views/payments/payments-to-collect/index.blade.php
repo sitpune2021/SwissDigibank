@@ -1,6 +1,5 @@
 @extends('layout.main')
 @section('content')
-
     <style>
         .breadcrumb {
             list-style: none;
@@ -71,7 +70,8 @@
             </div>
 
             @php
-                function detectLoanType($loanId) {
+                function detectLoanType($loanId)
+                {
                     $map = [
                         'gold_loan_emi_status' => 'Gold Loan',
                         'mortgage_loan_emi_status' => 'Mortgage Loan',
@@ -91,9 +91,9 @@
                     return '-';
                 }
             @endphp
-            
+
             <div class="pb-4 overflow-x-auto lg:pb-6">
-                
+
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3">
@@ -174,179 +174,199 @@
                     </thead>
                     <tbody>
                         @foreach ($applications as $app)
-                        <tr class="border-b dark:border-bg3">
+                            <tr class="border-b dark:border-bg3">
 
-                            {{-- Branch Name --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 uppercase">
-                                    {{ $app->branch_name ?? '-' }}
-                                </div>
-                            </td>
-
-                            {{-- Branch Code --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 capitalize">
-                                    -
-                                </div>
-                            </td>
-
-                            {{-- Member Full Name --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 uppercase">
-                                    -
-                                </div>
-                            </td>
-
-                            {{-- Member No & Name --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    <a href="{{ url('members/member/' . $app->member_id) }}" 
-                                    class="text-green-600 hover:underline">
-                                         {{ $app->member_no ?? '-' }} -
-                                        {{ $app->member_info_first_name ?? '-' }}
-                                    </a>
-                                </div>
-                            </td>
-
-                            {{-- Loan Type --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px]">
-                                {{ detectLoanType($app->app_id) }}
-                            </td>
-
-                            {{-- Application Number --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px]">
-                                @php
-                                    $route = '';
-                                    if ($app->loan_type === 'Gold Loan') {
-                                        $route = route('gold-loan.account.show', $app->loan_id);
-                                    } elseif ($app->loan_type === 'Mortgage Loan') {
-                                        $route = route('mortgage.account.show', $app->loan_id);
-                                    } elseif ($app->loan_type === 'Personal Loan') {
-                                        $route = route('personal.account.show', $app->loan_id);
-                                    }
-                                    elseif ($app->loan_type === 'Loan Against Deposit') {
-                                        $route = route('loanagainst.account.show', $app->loan_id);
-                                    }
-                                    elseif ($app->loan_type === 'Daily/Weekly Loan') {
-                                        $route = route('daily_weekly.account.show', $app->loan_id);
-                                    }
-                                    elseif ($app->loan_type === 'CC/OD Loan') {
-                                        $route = route('cc_od.account.show', $app->loan_id);
-                                    }
-                                    elseif ($app->loan_type === 'Vehicle Loan') {
-                                        $route = route('vehical.account.show', $app->loan_id);
-                                    }
-                                    elseif ($app->loan_type === 'Business Loan') {
-                                        $route = route('bussiness.account.show', $app->loan_id);
-                                    }
-                                @endphp                          
-                                <a href="{{ $route }}" class="text-primary">
-                                    {{ $app->loan_id ?? '-' }}
-                                </a>
-                            </td>
-
-                            {{-- EMI --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px]">
-                                -
-                            </td>
-
-                            {{-- Pending EMI --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px]">
-                                -
-                            </td>
-
-                            {{-- Total Paid EMI --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px]">
-                                -
-                            </td>
-
-                            {{-- Loan Date --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px]">
-                                {{ $app->paid_date ? date('d-m-Y', strtotime($app->paid_date)) : '-' }}
-                            </td>
-
-                            {{-- Days --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px]">
-                                @if ($app->paid_date)
-                                    {{
-                                        \Carbon\Carbon::parse(
-                                            date('Y-m-d', strtotime($app->paid_date))
-                                        )->diffInDays(\Carbon\Carbon::now()->startOfDay())
-                                    }}
-                                @else
-                                    -
-                                @endif
-                            </td>
-
-                            {{-- Advisor --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px]">
-                                -
-                            </td>
-
-                            {{-- Loan Amount --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px]">
-                               {{ number_format($app->remaining_amount ?? 0, 2) }}
-                            </td>
-
-                            {{-- Options --}}
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex justify-center">
-                                    <div class="relative">
-                                        <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                                        <ul class="horiz-option popover-content">
-                                            <li>
-                                                @php
-                                                    $collectRoute = '';
-
-                                                    if ($app->loan_type === 'Gold Loan') {
-                                                        $collectRoute = route('gold-loan.account.pay-emi', $app->loan_id);
-                                                    } elseif ($app->loan_type === 'Mortgage Loan') {
-                                                        $collectRoute = route('mortgage.account.pay-emi', $app->loan_id);
-                                                    } elseif ($app->loan_type === 'Personal Loan') {
-                                                        $collectRoute = route('personal.account.pay-emi', $app->loan_id); // OPTIONAL
-                                                    }
-                                                    elseif ($app->loan_type === 'Loan Against Deposit') {
-                                                        $collectRoute = route('loanagainst.account.pay-emi', $app->loan_id); // OPTIONAL
-                                                    }
-                                                    elseif ($app->loan_type === 'Daily/Weekly Loan') {
-                                                        $collectRoute = route('daily_weekly.account.pay-emi', $app->loan_id); // OPTIONAL
-                                                    }
-                                                    elseif ($app->loan_type === 'CC/OD Loan') {
-                                                        $collectRoute = route('cc_od.account.pay-emi', $app->loan_id); // OPTIONAL
-                                                    }
-                                                    elseif ($app->loan_type === 'Vehicle Loan') {
-                                                        $collectRoute = route('vehical.account.pay-emi', $app->loan_id); // OPTIONAL
-                                                    }
-                                                    elseif ($app->loan_type === 'Business Loan') {
-                                                        $collectRoute = route('bussiness.account.pay-emi', $app->loan_id); // OPTIONAL
-                                                    }                                                   
-                                                @endphp
-                                                <a href="{{ $collectRoute }}" class="single-option">COLLECT</a>
-                                            </li>
-
-                                            <li>
-                                                <a href="{{ route('loan.generate.collection.link', [$app->loan_type, $app->loan_id]) }}"
-                                                class="single-option">
-                                                GENERATE COLLECTION LINK
-                                                </a>
-                                            </li>
-
-                                            <li><button class="single-option">COMMENTS</button></li>
-                                            <li>
-                                                <a 
-                                                    href="{{ route('loan.mark.done', [$app->loan_type, $app->loan_id, $app->emi_no, $app->remaining_amount]) }}" 
-                                                    class="single-option"
-                                                >
-                                                    MARK DONE
-                                                </a>
-                                            </li>
-
-                                        </ul>
+                                {{-- Branch Name --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <div class="flex items-center gap-1 uppercase">
+                                        {{ $app->branch_name ?? '-' }}
                                     </div>
-                                </div>
-                            </td>
+                                </td>
 
-                        </tr>
+                                {{-- Branch Code --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <div class="flex items-center gap-1 capitalize">
+                                        -
+                                    </div>
+                                </td>
+
+                                {{-- Member Full Name --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <div class="flex items-center gap-1 uppercase">
+                                        -
+                                    </div>
+                                </td>
+
+                                {{-- Member No & Name --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <div class="flex items-center gap-1">
+                                        <a href="{{ url('members/member/' . $app->member_id ?? '') }}"
+                                            class="text-green-600 hover:underline">
+                                            {{ $app->member_no ?? '-' }} -
+                                            {{ $app->member_info_first_name ?? '-' }}
+                                        </a>
+                                    </div>
+                                </td>
+
+                                {{-- Loan Type --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px]">
+                                    {{ $app->loan_type }} </td>
+
+                                {{-- Application Number --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px]">
+                                    @php
+                                        $route = '';
+                                        if ($app->loan_type === 'Gold Loan') {
+                                            $route = route('gold-loan.account.show', $app->loan_id);
+                                        } elseif ($app->loan_type === 'Mortgage Loan') {
+                                            $route = route('mortgage.account.show', $app->loan_id);
+                                        } elseif ($app->loan_type === 'Personal Loan') {
+                                            $route = route('personal.account.show', $app->loan_id);
+                                        } elseif ($app->loan_type === 'Loan Against Deposit') {
+                                            $route = route('loanagainst.account.show', $app->loan_id);
+                                        } elseif ($app->loan_type === 'Daily/Weekly Loan') {
+                                            $route = route('daily_weekly.account.show', $app->loan_id);
+                                        } elseif ($app->loan_type === 'CC/OD Loan') {
+                                            $route = route('cc_od.account.show', $app->loan_id);
+                                        } elseif ($app->loan_type === 'Vehicle Loan') {
+                                            $route = route('vehical.account.show', $app->loan_id);
+                                        } elseif ($app->loan_type === 'Business Loan') {
+                                            $route = route('bussiness.account.show', $app->loan_id);
+                                        }
+                                    @endphp
+                                    <a href="{{ $route }}" class="text-primary">
+                                        {{ $app->loan_id ?? '-' }}
+                                    </a>
+                                </td>
+
+                                {{-- EMI --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px]">
+                                    -
+                                </td>
+
+                                {{-- Pending EMI --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px]">
+                                    -
+                                </td>
+
+                                {{-- Total Paid EMI --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px]">
+                                    -
+                                </td>
+
+                                {{-- Loan Date --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px]">
+                                    {{ $app->due_date ? date('d-m-Y', strtotime($app->due_date)) : '-' }} </td>
+
+                                {{-- Days --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px]">
+                                    @if ($app->due_date)
+                                        @php
+                                            $dueDate = \Carbon\Carbon::parse($app->due_date)->startOfDay();
+                                            $today = \Carbon\Carbon::now()->startOfDay();
+                                            $days = (int) $today->diffInDays($dueDate, false);
+                                        @endphp
+
+                                        @if ($days > 0)
+                                            <span class="text-red-600 font-semibold">{{ $days }} Days</span>
+                                        @elseif($days < 0)
+                                            <span class="text-blue-600">{{ abs($days) }} Days Left</span>
+                                        @else
+                                            <span class="text-green-600">Today</span>
+                                        @endif
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+
+                                {{-- Advisor --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px]">
+                                    -
+                                </td>
+
+                                {{-- Loan Amount --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px]">
+                                    {{ number_format($app->remaining_amount ?? 0, 2) }}
+                                </td>
+
+                                {{-- Options --}}
+                                <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                    <div class="flex justify-center">
+                                        <div class="relative">
+                                            <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+                                            <ul class="horiz-option popover-content">
+                                                <li>
+                                                    @php
+                                                        $collectRoute = '';
+
+                                                        if ($app->loan_type === 'Gold Loan') {
+                                                            $collectRoute = route(
+                                                                'gold-loan.account.pay-emi',
+                                                                $app->loan_id,
+                                                            );
+                                                        } elseif ($app->loan_type === 'Mortgage Loan') {
+                                                            $collectRoute = route(
+                                                                'mortgage.account.pay-emi',
+                                                                $app->loan_id,
+                                                            );
+                                                        } elseif ($app->loan_type === 'Personal Loan') {
+                                                            $collectRoute = route(
+                                                                'personal.account.pay-emi',
+                                                                $app->loan_id,
+                                                            ); // OPTIONAL
+                                                        } elseif ($app->loan_type === 'Loan Against Deposit') {
+                                                            $collectRoute = route(
+                                                                'loanagainst.account.pay-emi',
+                                                                $app->loan_id,
+                                                            ); // OPTIONAL
+                                                        } elseif ($app->loan_type === 'Daily/Weekly Loan') {
+                                                            $collectRoute = route(
+                                                                'daily_weekly.account.pay-emi',
+                                                                $app->loan_id,
+                                                            ); // OPTIONAL
+                                                        } elseif ($app->loan_type === 'CC/OD Loan') {
+                                                            $collectRoute = route(
+                                                                'cc_od.account.pay-emi',
+                                                                $app->loan_id,
+                                                            ); // OPTIONAL
+                                                        } elseif ($app->loan_type === 'Vehicle Loan') {
+                                                            $collectRoute = route(
+                                                                'vehical.account.pay-emi',
+                                                                $app->loan_id,
+                                                            ); // OPTIONAL
+                                                        } elseif ($app->loan_type === 'Business Loan') {
+                                                            $collectRoute = route(
+                                                                'bussiness.account.pay-emi',
+                                                                $app->loan_id,
+                                                            ); // OPTIONAL
+                                                        }
+                                                    @endphp
+                                                    <a href="{{ $collectRoute }}" class="single-option">COLLECT</a>
+                                                </li>
+
+                                                <li>
+                                                    <a href="{{ route('loan.generate.collection.link', [$app->loan_type, $app->loan_id]) }}"
+                                                        class="single-option">
+                                                        GENERATE COLLECTION LINK
+                                                    </a>
+                                                </li>
+
+                                                <li><button class="single-option">COMMENTS</button></li>
+                                                @if (!empty($app->emi_no) && !empty($app->remaining_amount))
+                                                    <li>
+                                                        <a href="{{ route('loan.mark.done', [$app->loan_type, $app->loan_id, $app->emi_no, $app->remaining_amount]) }}"
+                                                            class="single-option">
+                                                            MARK DONE
+                                                        </a>
+                                                    </li>
+                                                @endif
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+
+                            </tr>
                         @endforeach
                     </tbody>
                     <!-- Pagination Links -->
@@ -434,7 +454,8 @@
 
                                 <thead>
                                     <tr>
-                                        <th colspan="5" class="bg-gray-50 py-2 text-center text-lg font-semibold uppercase">
+                                        <th colspan="5"
+                                            class="bg-gray-50 py-2 text-center text-lg font-semibold uppercase">
                                             Last Credit Transaction Info
                                         </th>
                                     </tr>
@@ -446,24 +467,37 @@
                                         <th class="py-2 text-start">Status</th>
                                     </tr>
                                 </thead>
-
                                 <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="py-2 pr-4">DD6491</td>
-                                        <td class="py-2 pr-4">13-12-2024</td>
-                                        <td class="py-2 pr-4">Cash</td>
-                                        <td class="py-2 pr-4">1500.0</td>
-                                        <td class="py-2">
-                                            <div class="flex items-center gap-1">
-                                                <span
-                                                    class="block w-28 rounded-[30px] border border-n30 bg-yellow-100 py-2 text-center text-xs text-yellow-600">
-                                                    Pending
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
 
+                                    @if (!empty($app->last_transaction))
+                                        <tr>
+                                            <td>{{ $app->last_transaction->id ?? '-' }}</td>
+
+                                            <td>
+                                                {{ $app->last_transaction->transaction_date
+                                                    ? date('d-m-Y', strtotime($app->last_transaction->transaction_date))
+                                                    : '-' }}
+                                            </td>
+
+                                            <td>{{ $app->last_transaction->fee_mode ?? '-' }}</td>
+
+                                            <td>
+                                                {{ number_format($app->last_transaction->amount_collected ?? 0, 2) }}
+                                            </td>
+
+                                            <td>
+                                                {{ strtoupper($app->last_transaction->status ?? '-') }}
+                                            </td>
+                                        </tr>
+                                    @else
+                                        <tr>
+                                            <td colspan="5" class="text-center text-gray-500">
+                                                No Transaction History Found
+                                            </td>
+                                        </tr>
+                                    @endif
+
+                                </tbody>
                             </table>
                         </div>
 
@@ -471,7 +505,8 @@
 
                         <!-- Comment Form -->
                         <form class="space-y-4 mt-4">
-                            <label class="text-lg uppercase font-medium">Add New Comment <span class="text-red-500">*</span></label>
+                            <label class="text-lg uppercase font-medium">Add New Comment <span
+                                    class="text-red-500">*</span></label>
 
                             <textarea class="w-full bg-secondary/5 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500"
                                 rows="3" placeholder="Write Your Comment Here..."></textarea>
@@ -482,8 +517,7 @@
                                     SAVE
                                 </button>
 
-                                <button type="button" onclick="closeLoanModal()"
-                                    class="btn-outline uppercase">
+                                <button type="button" onclick="closeLoanModal()" class="btn-outline uppercase">
                                     Back
                                 </button>
 
@@ -498,15 +532,13 @@
         </div>
 
 
-<script>
-    function openLoanModal() {
-        document.getElementById('loanModal').classList.remove('hidden');
-    }
+        <script>
+            function openLoanModal() {
+                document.getElementById('loanModal').classList.remove('hidden');
+            }
 
-    function closeLoanModal() {
-        document.getElementById('loanModal').classList.add('hidden');
-    }
-</script>
-
-
-@endsection
+            function closeLoanModal() {
+                document.getElementById('loanModal').classList.add('hidden');
+            }
+        </script>
+    @endsection

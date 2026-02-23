@@ -9,6 +9,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\GoldLoanDisbursement;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GoldLoanPrintDocument extends Controller
 {
@@ -1419,28 +1420,39 @@ class GoldLoanPrintDocument extends Controller
     }
     public function emi_receipt_view(LoanApplication $loan, $emiNo)
     {
+        Log::info('---- EMI RECEIPT VIEW START ----', [
+            'loan_id' => $loan->id,
+            'emi_no' => $emiNo
+        ]);
+
         $transactions = DB::table('gold_loan_transactions')
             ->where('loan_id', $loan->id)
             ->where('emi_no', $emiNo)
             ->where('status', 'paid')
             ->get();
 
+        Log::info('Transactions Fetched', [
+            'count' => $transactions->count(),
+            'data' => $transactions
+        ]);
+
         if ($transactions->isEmpty()) {
+            Log::warning('No EMI payment found for receipt view', [
+                'loan_id' => $loan->id,
+                'emi_no' => $emiNo
+            ]);
             return back()->with('error', 'No EMI payment found.');
         }
 
-        // 🔥 Total EMI Paid (sum of partials)
         $totalPaid = $transactions->sum('amount_collected');
 
-
-        // 🔥 Regenerate EMI schedule (same logic as show method)
+        Log::info('Total EMI Paid Calculated', [
+            'total_paid' => $totalPaid
+        ]);
 
         $principal = $loan->loan_amount;
         $interestRate = $loan->scheme->annual_interest_rate ?? 0;
         $emiCount = $loan->tenure_value;
-
-        $applicationDate = \Carbon\Carbon::parse($loan->application_date);
-        $firstEmiDate = $applicationDate->copy()->addMonthNoOverflow();
 
         $monthlyRate = $interestRate / 12 / 100;
         $balance = $principal;
@@ -1466,6 +1478,10 @@ class GoldLoanPrintDocument extends Controller
                 break;
             }
         }
+
+        Log::info('EMI Calculation Data', $emiData ?? []);
+
+        Log::info('---- EMI RECEIPT VIEW END ----');
 
         return view(
             'gold-loan.gold-loan-pdf.gold-appli-emi-receipt-view',
@@ -1475,6 +1491,11 @@ class GoldLoanPrintDocument extends Controller
 
     public function emi_receipt_pdf(LoanApplication $loan, $emiNo)
     {
+        Log::info('---- EMI RECEIPT PDF START ----', [
+            'loan_id' => $loan->id,
+            'emi_no' => $emiNo
+        ]);
+
         $transaction = DB::table('gold_loan_transactions')
             ->where('loan_id', $loan->id)
             ->where('emi_no', $emiNo)
@@ -1482,19 +1503,34 @@ class GoldLoanPrintDocument extends Controller
             ->first();
 
         if (!$transaction) {
+            Log::warning('No EMI payment found for PDF', [
+                'loan_id' => $loan->id,
+                'emi_no' => $emiNo
+            ]);
             return back()->with('error', 'No EMI payment found.');
         }
+
+        Log::info('Transaction Found For PDF', [
+            'transaction_id' => $transaction->id ?? null,
+            'amount_collected' => $transaction->amount_collected ?? null
+        ]);
 
         $pdf = Pdf::loadView(
             'gold-loan.gold-loan-pdf.gold-appli-emi-receipt',
             compact('loan', 'transaction')
         )->setPaper('A4', 'portrait');
 
-        // 🔥 OPEN in browser instead of download
+        Log::info('PDF Generated Successfully');
+
         return $pdf->download('EMI_Receipt_EMI_' . $emiNo . '.pdf');
     }
     public function emi_receipt_print(LoanApplication $loan, $emiNo)
     {
+        Log::info('---- EMI RECEIPT PRINT START ----', [
+            'loan_id' => $loan->id,
+            'emi_no' => $emiNo
+        ]);
+
         $transactions = DB::table('gold_loan_transactions')
             ->where('loan_id', $loan->id)
             ->where('emi_no', $emiNo)
@@ -1502,13 +1538,19 @@ class GoldLoanPrintDocument extends Controller
             ->get();
 
         if ($transactions->isEmpty()) {
+            Log::warning('No EMI payment found for print', [
+                'loan_id' => $loan->id,
+                'emi_no' => $emiNo
+            ]);
             return back()->with('error', 'No EMI payment found.');
         }
 
-        // Total Paid
         $totalPaid = $transactions->sum('amount_collected');
 
-        // EMI Calculation
+        Log::info('Total Paid For Print', [
+            'total_paid' => $totalPaid
+        ]);
+
         $principal = $loan->loan_amount;
         $interestRate = $loan->scheme->annual_interest_rate ?? 0;
         $emiCount = $loan->tenure_value;
@@ -1538,10 +1580,14 @@ class GoldLoanPrintDocument extends Controller
             }
         }
 
+        Log::info('EMI Data For Print', $emiData ?? []);
+
         $pdf = Pdf::loadView(
             'gold-loan.gold-loan-pdf.gold-appli-emi-receipt',
             compact('loan', 'transactions', 'emiData', 'totalPaid', 'emiNo')
         )->setPaper('A4', 'portrait');
+
+        Log::info('PDF Stream Ready');
 
         return $pdf->stream('EMI_Receipt_EMI_' . $emiNo . '.pdf');
     }

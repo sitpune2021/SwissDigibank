@@ -141,39 +141,49 @@ class AccountsTransactionsHelper
         return $totalCredit - $totalDebit;
     }
     public static function getFdAccountBalance($fdAccountIds)
-    {
-        if (!is_array($fdAccountIds)) {
-            $fdAccountIds = [$fdAccountIds];
-        }
-
-        // Get all approved FD transactions
-        $transactions = \App\Models\FdTransaction::whereIn('fd_account_id', $fdAccountIds)
-            ->where('status', 'approved')
-            ->get()
-            ->groupBy('fd_account_id');
-
-        $balances = [];
-
-        foreach ($fdAccountIds as $fdAccountId) {
-            $fdAccount = \App\Models\FdAccount::find($fdAccountId);
-
-            $balance = 0;
-            if ($fdAccount && $fdAccount->status == 1) { // Approved FD
-                $balance = $fdAccount->fd_amount;
-            }
-
-            if (isset($transactions[$fdAccountId])) {
-                $group = $transactions[$fdAccountId];
-                $credit = $group->where('transaction_type', 1)->sum('amount'); // 1 = Credit
-                $debit  = $group->where('transaction_type', 0)->sum('amount'); // 0 = Debit
-                $balance += ($credit - $debit);
-            }
-
-            $balances[$fdAccountId] = $balance;
-        }
-
-        return $balances;
+{
+    if (!is_array($fdAccountIds)) {
+        $fdAccountIds = [$fdAccountIds];
     }
+
+    $balances = [];
+
+    foreach ($fdAccountIds as $fdAccountId) {
+
+        $fdAccount = \App\Models\FdAccount::find($fdAccountId);
+        if (!$fdAccount) {
+            $balances[$fdAccountId] = 0;
+            continue;
+        }
+
+        $principal = $fdAccount->fd_amount;
+
+        $txns = \App\Models\FdTransaction::where('fd_account_id', $fdAccountId)
+            ->whereNull('deleted_at')
+            ->get();
+
+        $interestCredit = $txns
+            ->where('transaction_purpose', 'interest')
+            ->where('transaction_type', 1)
+            ->sum('amount');
+
+        $interestDebit = $txns
+            ->where('transaction_purpose', 'interest')
+            ->where('transaction_type', 0)
+            ->sum('amount');
+
+        $tdsDebit = $txns
+            ->where('transaction_purpose', 'tds')
+            ->where('transaction_type', 0)
+            ->sum('amount');
+
+        $balance = $principal + $interestCredit - $interestDebit - $tdsDebit;
+
+        $balances[$fdAccountId] = round($balance, 2);
+    }
+
+    return $balances;
+}
 
     // public static function getFdInterestSummary($fdAccountId)
     // {

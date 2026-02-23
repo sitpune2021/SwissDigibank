@@ -298,7 +298,7 @@
                         <div class="mt-3 flex gap-3 ">
                             <!-- Pay Mode -->
                             <label class="mr-4 flex items-center flex-row gap-3">
-                                <input type="radio" name="payment_mode" value="cash" {{ old('payment_mode',
+                                <input type="radio" name="payment_mode" value="cash" checked {{ old('payment_mode',
                                     $application->payment_mode ?? '') == 'cash' ? 'checked' : '' }}>
                                         Cash
                             </label>

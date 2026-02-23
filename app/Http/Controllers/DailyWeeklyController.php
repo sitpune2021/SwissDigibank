@@ -175,7 +175,7 @@ class DailyWeeklyController extends Controller
                 'application_date' => 'required|date',
                 'member_id' => 'required|exists:members,id',
                 'branch_id' => 'required|exists:branches,id',
-                'scheme_id' => 'required|exists:loan_against_schemes,id',
+                'scheme_id' => 'required|exists:daily_weekly_schemes,id',
                 'purpose_of_loan' => 'required|string|max:255',
                 'credit_period' => 'required|numeric|min:1',
                 'tenure_value' => 'required|numeric|min:1',
@@ -412,7 +412,7 @@ class DailyWeeklyController extends Controller
             $request->validate([
                 'application_date' => 'required|date',
                 'member_id' => 'required|exists:members,id',
-                'scheme_id' => 'required|exists:gold_loan_schemes,id',
+                'scheme_id' => 'required|exists:daily_weekly_schemes,id',
             ]);
 
             // Step 2: Fetch record
@@ -598,10 +598,25 @@ class DailyWeeklyController extends Controller
         $insuranceInc = floatval($application->insurance_fee ?? 0);
         $fitnessInc = floatval($application->fitness_fee ?? 0);
 
-        $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
+        // $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
+        // // Charges per EMI
+        // $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
 
-        // Charges per EMI
-        $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
+        /* PER EMI CHARGES FROM SCHEME */
+        $smsCharge        = floatval($application->scheme->sms_charge ?? 0);
+        $fuelCharge       = floatval($application->scheme->fuel_charge ?? 0);
+        $stationaryCharge = floatval($application->scheme->stationary_charge ?? 0);
+        $maintenanceCharge= floatval($application->scheme->maintenance_charge ?? 0);
+        $collectionCharge = floatval($application->scheme->collection ?? 0);
+
+        $chargesPerEmi = round(
+            $smsCharge +
+            $fuelCharge +
+            $stationaryCharge +
+            $maintenanceCharge +
+            $collectionCharge,
+        2);
+
 
         // Interest rate (annual) & periodic rate
         $annualRate = floatval($application->scheme->annual_interest_rate ?? 0); // e.g. 8
