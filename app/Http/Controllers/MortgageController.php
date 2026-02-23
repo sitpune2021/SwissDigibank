@@ -1143,7 +1143,7 @@ class MortgageController extends Controller
             'application_date' => 'required|date_format:d-m-Y',
             'member_id' => 'required|exists:members,id',
             'branch_id' => 'required|exists:branches,id',
-            'scheme_id' => 'required|exists:gold_loan_schemes,id',
+            'scheme_id' => 'required|exists:mortgage_schemes,id',
             'loan_amount' => 'required|numeric|min:1',
             'tenure_type' => 'required',
             'tenure_value' => 'required',
@@ -1534,7 +1534,7 @@ class MortgageController extends Controller
             'application_date' => 'required|regex:/^\d{2}-\d{2}-\d{4}$/',
 
             'member_id' => 'required|exists:members,id',
-            'scheme_id' => 'required|exists:gold_loan_schemes,id',
+            'scheme_id' => 'required|exists:mortgage_schemes,id',
             'loan_amount' => 'required|numeric',
         ]);
 
@@ -1542,22 +1542,6 @@ class MortgageController extends Controller
         //$application->update($request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']));
         // Convert date format before update
         $data = $request->except(['cibil_type', 'cibil_score', 'report_date', 'report_file']);
-
-        // Convert application_date from d-m-Y → Y-m-d
-
-        // if (!empty($data['application_date'])) {
-        //     $data['application_date'] = Carbon::createFromFormat('d-m-Y', $data['application_date'])->format('Y-m-d');
-        // }
-
-        // Convert cheque_date if it exists and not already in Y-m-d
-        // if (!empty($data['cheque_date']) && strpos($data['cheque_date'], '-') === 2) {
-        //     $data['cheque_date'] = Carbon::createFromFormat('d-m-Y', $data['cheque_date'])->format('Y-m-d');
-        // }
-
-        // Convert transfer_date if exists
-        // if (!empty($data['transfer_date']) && strpos($data['transfer_date'], '-') === 2) {
-        //     $data['transfer_date'] = Carbon::createFromFormat('d-m-Y', $data['transfer_date'])->format('Y-m-d');
-        // }
 
         // Convert application_date from d-m-Y → Y-m-d
         if (!empty($data['application_date'])) {
@@ -1687,8 +1671,24 @@ class MortgageController extends Controller
         $insuranceInc = floatval($application->insurance_fee ?? 0);
         $fitnessInc = floatval($application->fitness_fee ?? 0);
 
-        $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
-        $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
+        // $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
+        // $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
+
+        /* PER EMI CHARGES FROM SCHEME */
+        $smsCharge        = floatval($application->scheme->sms_charge ?? 0);
+        $fuelCharge       = floatval($application->scheme->fuel_charge ?? 0);
+        $stationaryCharge = floatval($application->scheme->stationary_charge ?? 0);
+        $maintenanceCharge= floatval($application->scheme->maintenance_charge ?? 0);
+        $collectionCharge = floatval($application->scheme->collection ?? 0);
+
+        $chargesPerEmi = round(
+            $smsCharge +
+            $fuelCharge +
+            $stationaryCharge +
+            $maintenanceCharge +
+            $collectionCharge,
+        2);
+
 
         /* Interest Rate */
         $annualRate = floatval($application->scheme->annual_interest_rate ?? 0);

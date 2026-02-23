@@ -167,7 +167,7 @@ class CcOdLoanController extends Controller
                 'application_date' => 'required|date',
                 'member_id' => 'required|exists:members,id',
                 'branch_id' => 'required|exists:branches,id',
-                'scheme_id' => 'required|exists:loan_against_schemes,id',
+                'scheme_id' => 'required|exists:cc_od_loan_schemes,id',
                 'purpose_of_loan' => 'required|string|max:255',
                 'net_loan_amount' => 'required|numeric|min:1',
                 'credit_period' => 'required|numeric|min:1',
@@ -374,7 +374,7 @@ class CcOdLoanController extends Controller
             $request->validate([
                 'application_date' => 'required|date',
                 'member_id' => 'required|exists:members,id',
-                'scheme_id' => 'required|exists:gold_loan_schemes,id',
+                'scheme_id' => 'required|exists:cc_od_loan_schemes,id',
             ]);
 
             // Step 2: Fetch record

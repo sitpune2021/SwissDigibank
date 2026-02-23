@@ -2312,7 +2312,7 @@ class BusinessLoan extends Controller
             $request->validate([
                 'application_date' => 'required|date',
                 'member_id' => 'required|exists:members,id',
-                'scheme_id' => 'required|exists:gold_loan_schemes,id',
+                'scheme_id' => 'required|exists:business_loan_schemes,id',
                 'loan_amount' => 'required|numeric',
             ]);
 

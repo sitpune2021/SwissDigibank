@@ -1537,7 +1537,7 @@ class LoanAgainstController extends Controller
             $request->validate([
                 'application_date' => 'required|date',
                 'member_id'        => 'required|exists:members,id',
-                'scheme_id'        => 'required|exists:gold_loan_schemes,id',
+                'scheme_id'        => 'required|exists:loan_against_schemes,id',
                 'loan_amount'      => 'required|numeric',
             ]);
 
@@ -1760,8 +1760,23 @@ class LoanAgainstController extends Controller
         $insuranceInc     = floatval($application->insurance_fee ?? 0);
         $fitnessInc       = floatval($application->fitness_fee ?? 0);
 
-        $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
-        $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
+        // $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
+        // $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
+        /* PER EMI CHARGES FROM SCHEME */
+        $smsCharge        = floatval($application->scheme->sms_charge ?? 0);
+        $fuelCharge       = floatval($application->scheme->fuel_charge ?? 0);
+        $stationaryCharge = floatval($application->scheme->stationary_charge ?? 0);
+        $maintenanceCharge= floatval($application->scheme->maintenance_charge ?? 0);
+        $collectionCharge = floatval($application->scheme->collection ?? 0);
+
+        $chargesPerEmi = round(
+            $smsCharge +
+            $fuelCharge +
+            $stationaryCharge +
+            $maintenanceCharge +
+            $collectionCharge,
+        2);
+
 
         /* Interest Rate */
         $annualRate = floatval($application->scheme->annual_interest_rate ?? 0);

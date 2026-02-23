@@ -1316,7 +1316,7 @@ class PersonalController extends Controller
         $validated = $request->validate([
             'application_date' => 'required|date_format:d-m-Y',
             'member_id'        => 'required|exists:members,id',
-            'scheme_id'        => 'required|exists:gold_loan_schemes,id',
+            'scheme_id'        => 'required|exists:personal_schemes,id',
             'loan_amount'      => 'required|numeric|min:1',
         ]);
 
@@ -1412,34 +1412,23 @@ class PersonalController extends Controller
         $tenure = intval($application->tenure_value ?? ($application->scheme->no_of_emi ?? 1));
         if ($tenure <= 0) $tenure = 1;
 
-        /* Charges */
-        // $processingFeeInc = floatval($application->processing_fee ?? 0);
-        // $stampDutyInc     = floatval($application->stamp_duty ?? 0);
-        // $insuranceInc     = floatval($application->insurance_fee ?? 0);
-        // $fitnessInc       = floatval($application->fitness_fee ?? 0);
+        /* =====================================================
+            PER EMI CHARGES FROM SCHEME TABLE
+        ===================================================== */
 
-        // $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
-        /* Charges */
-        $processingFeeInc = floatval($application->processing_fee ?? 0);
-        $stampDutyInc     = floatval($application->stamp_duty ?? 0);
-        $insuranceInc     = floatval($application->insurance_fee ?? 0);
-        $fitnessInc       = floatval($application->fitness_fee ?? 0);
+        $smsCharge         = floatval($application->scheme->sms_charge ?? 0);
+        $fuelCharge        = floatval($application->scheme->fuel_charge ?? 0);
+        $stationaryCharge  = floatval($application->scheme->stationary_charge ?? 0);
+        $maintenanceCharge = floatval($application->scheme->maintenance_charge ?? 0);
+        $collectionCharge  = floatval($application->scheme->collection ?? 0);
 
-        $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
-
-        /* EMI Type Logic: charge_per_emi = 1 => On EMI, 0 => On Principal */
-        $chargeType = intval($application->scheme->charge_per_emi ?? 1);
-
-        if ($chargeType === 1) {
-            // Charges distributed across EMIs
-            $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
-        } else {
-            // Charges deducted upfront (On Principal)
-            $chargesPerEmi = 0;
-            $loanAmount = max(0, $loanAmount - $totalChargesInc);
-        }
-
-        $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
+        $chargesPerEmi = round(
+            $smsCharge +
+            $fuelCharge +
+            $stationaryCharge +
+            $maintenanceCharge +
+            $collectionCharge,
+        2);
 
         /* Interest Rate */
         $annualRate = floatval($application->scheme->annual_interest_rate ?? 0);

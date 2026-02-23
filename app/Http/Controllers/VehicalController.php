@@ -1363,7 +1363,7 @@ class VehicalController extends Controller
         $request->validate([
             'application_date' => 'required|date',
             'member_id'        => 'required|exists:members,id',
-            'scheme_id'        => 'required|exists:gold_loan_schemes,id',
+            'scheme_id'        => 'required|exists:vehical_schemes,id',
             'loan_amount'      => 'required|numeric',
         ]);
 
@@ -1586,16 +1586,6 @@ class VehicalController extends Controller
             $emiTotal = round($principalThis + $interestForPeriod + $chargesPerEmi, 2);
             $remainingPrincipal = round($remainingPrincipal - $principalThis, 2);
 
-            // $schedule[] = [
-            //     'no' => $i,
-            //     'emi_date' => $formattedEmiDate,
-            //     'due_date' => $dueDate,
-            //     'principal' => number_format($principalThis, 2),
-            //     'interest' => number_format($interestForPeriod, 2),
-            //     'charges_per_emi' => number_format($chargesPerEmi, 2),
-            //     'emi' => number_format($emiTotal, 2),
-            //     'bal_principal' => number_format($remainingPrincipal, 2),
-            // ];
             $schedule[] = [
                 'no' => $i,
                 'emi_date' => $formattedEmiDate,
@@ -1619,6 +1609,7 @@ class VehicalController extends Controller
             $totalCharges   = 0;
             $totalEmi       = 0;
         }
+        
         return view('vehical.applications.view-buttons.show-emi-chart', compact(
             'application',
             'loanAmount',
