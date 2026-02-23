@@ -12,4 +12,10 @@ class RolePermission extends Model
     protected $casts = [
         'permissions' => 'array', // automatically cast JSON to array
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
 }

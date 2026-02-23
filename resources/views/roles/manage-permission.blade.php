@@ -40,6 +40,51 @@
                 </tr>
             </thead>
             {{-- Table body should be rendered here with roles data --}}
+            <tbody>
+                @forelse($roles as $key => $role)
+                    <tr class="border-b">
+                        <td class="px-6 py-4">
+                            {{ $key + 1 }}
+                        </td>
+
+                        <td class="px-6 py-4">
+                            {{ $role->role->name ?? '-' }}
+                        </td>
+
+                        <td class="px-6 py-4">
+                            {{ $role->role_position ?? '-' }}
+                        </td>
+
+                        <td class="px-6 py-4">
+                            @if($role->active == 'Yes')
+                                <span class="text-green-600 font-semibold">Active</span>
+                            @else
+                                <span class="text-red-600 font-semibold">Inactive</span>
+                            @endif
+                        </td>
+
+                        <td class="px-6 py-4">
+                            {{ $role->role_id ?? '-' }}
+                        </td>
+
+                        <td class="px-6 py-4">
+                            {{ $role->permission_id ?? '-' }}
+                        </td>
+
+                        <td class="px-6 py-4 text-center">
+                            <a href="#" class="text-blue-600">Edit</a>
+                            |
+                            <a href="#" class="text-red-600">Delete</a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            No Roles Found
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
         </table>
     </div>
 </div>

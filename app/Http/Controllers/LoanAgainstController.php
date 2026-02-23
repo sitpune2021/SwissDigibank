@@ -146,7 +146,7 @@ class LoanAgainstController extends Controller
         return view("loanagainst.calculator.index", compact('scheme'));
     }
 
-    // same function Mortgage, Loanagainst, Vehical
+    // same function Gold, Mortgage, Loanagainst, Vehical
     public function calculateResult(Request $request)
     {
 
@@ -168,7 +168,7 @@ class LoanAgainstController extends Controller
         $interestAsEmi = $request->has('option_interest_emi') ? 'Yes' : '';
         $interestAsFirst = $request->has('option_interest_first') ? 'Yes' : '';
 
-        // 🔥 If one is selected, hide the other
+        // If one is selected, hide the other
         if ($interestAsEmi === 'Yes') {
             $interestAsFirst = '';
         }
@@ -190,8 +190,6 @@ class LoanAgainstController extends Controller
         $ratioFirstPercentage = $request->ratio_first_percentage ?? null;
 
         $isReducingWithRatio = ($interestType === 'reducing' && $ratioEnabled === 'Yes');
-
-
 
         if ($isManual) {
 
@@ -231,6 +229,7 @@ class LoanAgainstController extends Controller
                 'reducing', 'reducing_emi' => 'reducing',
                 'flat_advanced', 'flat_advance_interest' => 'flat_advanced',
                 'flat_interest', 'flat_emi' => 'flat_emi',
+                'no_emi' => 'no_emi',
                 default => 'flat_emi',
             };
 
@@ -281,9 +280,9 @@ class LoanAgainstController extends Controller
                 'reducing_balance', 'reducing', 'reducing_emi' => 'reducing',
                 'flat_advance_interest', 'flat_advanced_interest' => 'flat_advanced',
                 'flat_interest' => 'flat_emi',
+                'no_emi' => 'no_emi',
                 default => 'flat_emi',
             };
-
 
             $processingFee   = (float) ($scheme->processing_fee ?? 0);
             $stampAmount     = round($loan * ($scheme->stamp_duty_charge ?? 0) / 100, 2);
@@ -369,6 +368,22 @@ class LoanAgainstController extends Controller
         $startDate = now();
         $outstanding = $loan;
 
+        /* -------------------------------------------------------
+            CHARGES PER EMI (FROM SCHEME TABLE)
+        ---------------------------------------------------------*/
+
+        $chargesPerEmi = 0;
+
+        if (!$isManual && $scheme) {
+
+            $chargesPerEmi =
+                (float)($scheme->sms_charge ?? 0) +
+                (float)($scheme->fuel_charge ?? 0) +
+                (float)($scheme->stationary_charge ?? 0) +
+                (float)($scheme->maintenance_charge ?? 0) +
+                (float)($scheme->collection ?? 0);
+        }
+
 
         /* -------------------------------------------------------
             3. INTEREST CALCULATION
@@ -437,34 +452,6 @@ class LoanAgainstController extends Controller
             $total_emi_paid  = $loan;
         }
 
-
-        // if ($interestType === 'flat_advanced') {
-
-        //     if ($payout === 'daily') {
-        //         $emiDate = $startDate->copy()->addDays($installments);
-        //     } elseif ($payout === 'weekly') {
-        //         $emiDate = $startDate->copy()->addDays($installments * 7);
-        //     } elseif ($payout === 'bi_weekly' || $payout === 'bi-weekly') {
-        //         $emiDate = $startDate->copy()->addDays($installments * 14);
-        //     } elseif ($payout === '4_weekly' || $payout === '4-weekly') {
-        //         $emiDate = $startDate->copy()->addDays($installments * 28);
-        //     } else {
-        //         $emiDate = $startDate->copy()->addMonths($monthsPerInstallment);
-        //     }
-
-        //     $dueDate = $emiDate->copy()->addDay();
-
-        //     $schedule[] = [
-        //         'no' => 1,
-        //         'emi_date'  => $emiDate->format('d/m/Y'),
-        //         'due_date'  => $dueDate->format('d/m/Y'),
-        //         'principal' => round($loan, 2),
-        //         'interest'  => 0,
-        //         'charges'   => 0,
-        //         'emi'       => round($loan, 2),
-        //         'balance'   => 0
-        //     ];
-        // }
 
         /* -------------------------------------------------------
              4(B). FLAT EMI
@@ -646,260 +633,72 @@ class LoanAgainstController extends Controller
         $total_charges = 0;
 
 
-        if ($interestType === 'reducing' && strtolower($payout) === 'quarterly') {
-
-            $emiCount = ceil($tenureMonths / 3);
-            $monthlyRate = ($annualRate / 12) / 100;
-
-            $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
-
-            $remaining_principal = $loan;
-            $totalInterestAll = 0;
-
-            for ($i = 1; $i <= $emiCount; $i++) {
-
-                $emiDate = $startDate->copy()->addMonths($i * 3);
-                $dueDate = $emiDate->copy()->addDay();
-
-                $interest = 0;
-
-                for ($m = 1; $m <= 3; $m++) {
-                    $monthInterest = round($remaining_principal * $monthlyRate, 2);
-                    $interest += $monthInterest;
-
-                    $principalMonthly = round($emi - $monthInterest, 2);
-                    $remaining_principal -= $principalMonthly;
-                }
-
-                $totalInterestAll += $interest;
-
-                $principal = round($emi * 3 - $interest, 2);
-
-                $schedule[] = [
-                    'no' => $i,
-                    'emi_date'  => $emiDate->format('d/m/Y'),
-                    'due_date'  => $dueDate->format('d/m/Y'),
-                    'principal' => $principal,
-                    'interest'  => $interest,
-                    'charges'   => 0,
-                    'emi'       => $principal + $interest,
-                    'balance'   => max($remaining_principal, 0),
-                ];
-            }
-
-            $finalTotals['principal'] = $loan;
-            $finalTotals['interest']  = $totalInterestAll;
-            $finalTotals['emi']       = $loan + $totalInterestAll;
-
-            $total_principal = $loan;
-            $total_interest  = $totalInterestAll;
-            $total_emi_paid  = $loan + $totalInterestAll;
-        }
-
-        // --- NOW HALF-YEARLY BLOCK — MUST USE else if ----
-        else if ($interestType === 'reducing' && strtolower($payout) === 'half-yearly') {
-
-            $emiCount = ceil($tenureMonths / 6);
-            $monthlyRate = ($annualRate / 12) / 100;
-
-            $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
-
-            $remaining_principal = $loan;
-            $totalInterestAll = 0;
-
-            for ($i = 1; $i <= $emiCount; $i++) {
-
-                $emiDate = $startDate->copy()->addMonths($i * 6);
-                $dueDate = $emiDate->copy()->addDay();
-
-                $interest = 0;
-
-                for ($m = 1; $m <= 6; $m++) {
-                    $monthInterest = round($remaining_principal * $monthlyRate, 2);
-                    $interest += $monthInterest;
-
-                    $principalMonthly = round($emi - $monthInterest, 2);
-                    $remaining_principal -= $principalMonthly;
-                }
-
-                $totalInterestAll += $interest;
-
-                $principal = round($emi * 6 - $interest, 2);
-
-                $schedule[] = [
-                    'no'        => $i,
-                    'emi_date'  => $emiDate->format('d/m/Y'),
-                    'due_date'  => $dueDate->format('d/m/Y'),
-                    'principal' => $principal,
-                    'interest'  => $interest,
-                    'charges'   => 0,
-                    'emi'       => $principal + $interest,
-                    'balance'   => max($remaining_principal, 0),
-                ];
-            }
-
-            $finalTotals['principal'] = $loan;
-            $finalTotals['interest']  = $totalInterestAll;
-            $finalTotals['emi']       = $loan + $totalInterestAll;
-
-            $total_principal = $loan;
-            $total_interest  = $totalInterestAll;
-            $total_emi_paid  = $loan + $totalInterestAll;
-        }
-
-
         /* -------------------------------------------------------
-             4(C). REDUCING EMI — FULLY FIXED 
+            4(C). REDUCING EMI — MULTI-PAYOUT SUPPORT
         ---------------------------------------------------------*/
-        // elseif ($interestType === 'reducing') 
-        // {
-        //     $monthlyRate = ($annualRate / 12) / 100;
-        //     $emi = round(($loan * $monthlyRate) / (1 - pow(1 + $monthlyRate, -$tenureMonths)), 2);
+        if ($interestType === 'reducing') {
 
-        //     $remaining_principal = $loan;
-        //     $totalInterestAll = 0;
+            $schedule = [];
+            $remaining = $loan;
 
-        //     for ($i = 1; $i <= $tenureMonths; $i++) 
-        //     {
+            $isRatio = ($ratioEnabled === 'Yes' && in_array($payout, ['daily', 'weekly', 'bi_weekly', '4_weekly', 'monthly', 'quarterly', 'half-yearly', 'yearly']));
+            $ratioEmiCount   = (int) $ratioFirstEmi;
+            $ratioPercentage = (float) $ratioFirstPercentage;
 
-        //         $emiDate = $startDate->copy()->addMonths($i);
-        //         $dueDate = $emiDate->copy()->addDay();
+            $ratioPrincipalTotal = round($loan * $ratioPercentage / 100, 2);
+            $ratioPrincipalPerEmi = $ratioEmiCount > 0 ? round($ratioPrincipalTotal / $ratioEmiCount, 2) : 0;
 
-        //         $interest = round($remaining_principal * $monthlyRate, 2);
-        //         $principal = round($emi - $interest, 2);
+            // Days per EMI mapping
+            $daysPerEmi = match ($payout) {
+                'daily'       => 1,
+                'weekly'      => 7,
+                'bi_weekly'   => 14,
+                '4_weekly'    => 28,
+                'monthly'     => 30,
+                'quarterly'   => 91,
+                'half-yearly' => 182,
+                'yearly'      => 365,
+                default       => 30,
+            };
 
-        //         if ($principal < 0) {
-        //             $principal = 0;
-        //         }
-
-        //         $schedule[] = [
-        //             'no'        => $i,
-        //             'emi_date'  => $emiDate->format('d/m/Y'),
-        //             'due_date'  => $dueDate->format('d/m/Y'),
-        //             'principal' => $principal,
-        //             'interest'  => $interest,
-        //             'charges'   => 0,
-        //             'emi'       => $principal + $interest,
-        //             'balance'   => max($remaining_principal - $principal, 0),
-        //         ];
-
-        //         $remaining_principal -= $principal;
-        //         $totalInterestAll += $interest;
-        //     }
-
-        //     // ⭐ FINALLY — TOTALS HERE ONLY (bahar, loop ke baad)
-        //     $total_principal = $loan;
-        //     $total_interest  = $totalInterestAll;
-        //     $total_emi_paid  = $loan + $totalInterestAll;
-        // }
-
-        elseif ($interestType === 'reducing') {
-
-            $totalInterestAll = 0;
-
-            // ✔ Interest rate per period
-            switch (strtolower($payout)) {
-                case 'daily':
-                    $ratePerPeriod = ($annualRate / 365) / 100;
-                    $addFn = fn($d, $i) => $d->copy()->addDays($i);
-                    break;
-                case 'weekly':
-                    $ratePerPeriod = ($annualRate / 52) / 100;
-                    $addFn = fn($d, $i) => $d->copy()->addWeeks($i);
-                    break;
-                case 'bi_weekly':
-                    $ratePerPeriod = ($annualRate / 26) / 100;
-                    $addFn = fn($d, $i) => $d->copy()->addDays($i * 14);
-                    break;
-                case '4_weekly':
-                    $ratePerPeriod = ($annualRate / 13) / 100;
-                    $addFn = fn($d, $i) => $d->copy()->addDays($i * 28);
-                    break;
-                default: // monthly
-                    $ratePerPeriod = ($annualRate / 12) / 100;
-                    $addFn = fn($d, $i) => $d->copy()->addMonths($i);
-                    break;
-            }
-
-            // Initialize principal balances
-            $remaining_principal = $loan; // ✅ always define this
-            $remaining_principal_first = 0;
-            $remaining_principal_second = 0;
-
-            // Ratio settings
-            $use_ratio = isset($_POST['divide_emi_ratio']) && $_POST['divide_emi_ratio'] == 1;
-            $ratio_first_count = 5; // first 5 EMIs
-            $ratio_first_principal_pct = $use_ratio ? floatval($_POST['amt_ratio_1']) / 100 : 1;
-            $ratio_second_principal_pct = $use_ratio ? 1 - $ratio_first_principal_pct : 1;
-
-            if ($use_ratio) {
-                $principal_first_part = round($loan * $ratio_first_principal_pct, 2);
-                $principal_second_part = $loan - $principal_first_part;
-
-                $remaining_principal_first = $principal_first_part;
-                $remaining_principal_second = $principal_second_part;
-            }
+            // Interest rate per period
+            $periodRate = ($annualRate / 100) * ($daysPerEmi / 365);
 
             for ($i = 1; $i <= $installments; $i++) {
 
-                $emiDate = $addFn($startDate, $i);
-                $dueDate = $emiDate->copy()->addDay();
-
-                if ($use_ratio) {
-                    if ($i <= $ratio_first_count) {
-                        $emi = round(
-                            ($principal_first_part * $ratePerPeriod) /
-                                (1 - pow(1 + $ratePerPeriod, -$ratio_first_count)),
-                            2
-                        );
-                        $interest = round($remaining_principal_first * $ratePerPeriod, 2);
-                        $principal = round($emi - $interest, 2);
-
-                        $remaining_principal_first -= $principal;
-                        $remaining_principal = $remaining_principal_first + $remaining_principal_second;
-                    } else {
-                        $emi_second_count = $installments - $ratio_first_count;
-                        $emi = round(
-                            ($principal_second_part * $ratePerPeriod) /
-                                (1 - pow(1 + $ratePerPeriod, -$emi_second_count)),
-                            2
-                        );
-                        $interest = round($remaining_principal_second * $ratePerPeriod, 2);
-                        $principal = round($emi - $interest, 2);
-
-                        $remaining_principal_second -= $principal;
-                        $remaining_principal = $remaining_principal_first + $remaining_principal_second;
-                    }
+                if ($isRatio && $i <= $ratioEmiCount) {
+                    // First ratio EMI → fixed principal
+                    $principal = $ratioPrincipalPerEmi;
+                    $interest  = round($remaining * $periodRate, 2);
                 } else {
-                    $emi = round(
-                        ($loan * $ratePerPeriod) /
-                            (1 - pow(1 + $ratePerPeriod, -$installments)),
-                        2
-                    );
-                    $interest  = round($remaining_principal * $ratePerPeriod, 2);
-                    $principal = round($emi - $interest, 2);
-
-                    $remaining_principal -= $principal;
+                    // Remaining EMIs → split remaining principal equally
+                    $remainingInstallments = $installments - $i + 1;
+                    $principal = round($remaining / $remainingInstallments, 2);
+                    $interest  = round($remaining * $periodRate, 2);
                 }
 
-                if ($principal < 0) $principal = 0;
-                $totalInterestAll += $interest;
+                // Last EMI adjustment to avoid rounding issues
+                if ($i == $installments) {
+                    $principal = round($remaining, 2);
+                    $interest  = round($remaining * $periodRate, 2);
+                }
+
+                $remaining -= $principal;
 
                 $schedule[] = [
                     'no'        => $i,
-                    'emi_date'  => $emiDate->format('d/m/Y'),
-                    'due_date'  => $dueDate->format('d/m/Y'),
+                    'emi_date'  => now()->addDays($i * $daysPerEmi)->format('d/m/Y'),
+                    'due_date'  => now()->addDays($i * $daysPerEmi + 1)->format('d/m/Y'),
                     'principal' => $principal,
                     'interest'  => $interest,
                     'charges'   => 0,
-                    'emi'       => $principal + $interest,
-                    'balance'   => max(0, round($remaining_principal, 2)),
+                    'emi'       => round($principal + $interest, 2),
+                    'balance'   => max(0, round($remaining, 2)),
                 ];
             }
 
             $total_principal = $loan;
-            $total_interest  = $totalInterestAll;
-            $total_emi_paid  = $loan + $totalInterestAll;
+            $total_emi_paid  = array_sum(array_map(fn($e) => $e['emi'], $schedule));
         }
 
 
@@ -908,32 +707,49 @@ class LoanAgainstController extends Controller
             $totalInterest = array_sum(array_column($schedule, 'interest'));
         }
 
+
+        /* -------------------------------------------------------
+            4(AA). NO EMI — Every EMI shows same principal only
+        ---------------------------------------------------------*/ elseif (strtolower($interestType) === 'no_emi') {
+
+            for ($i = 1; $i <= $installments; $i++) {
+
+                // EMI Date
+                if ($payout === 'daily') {
+                    $emiDate = $startDate->copy()->addDays($i);
+                } elseif ($payout === 'weekly') {
+                    $emiDate = $startDate->copy()->addDays($i * 7);
+                } elseif ($payout === 'bi_weekly') {
+                    $emiDate = $startDate->copy()->addDays($i * 14);
+                } elseif ($payout === '4_weekly') {
+                    $emiDate = $startDate->copy()->addDays($i * 28);
+                } else {
+                    $emiDate = $startDate->copy()->addMonths($i * $monthsPerInstallment);
+                }
+
+                $dueDate = $emiDate->copy()->addDay();
+
+                $schedule[] = [
+                    'no'        => $i,
+                    'emi_date'  => $emiDate->format('d/m/Y'),
+                    'due_date'  => $dueDate->format('d/m/Y'),
+                    'principal' => round($loan, 2),   // SAME VALUE EVERY EMI
+                    'interest'  => '',                // NO INTEREST
+                    'charges'   => '',                // NO CHARGES
+                    'emi'       => '',                // NO EMI
+                    'balance'   => ''                 // ALWAYS EMPTY
+                ];
+            }
+        }
+
+
         /* -------------------------------------------------------
             4(D). INTEREST AS EMI LOGIC (PRINCIPAL ZERO)
         ---------------------------------------------------------*/
-        // if ($interestAsEmi === 'Yes') {
-
-        //     foreach ($schedule as $k => $row) {
-
-        //         // LAST EMI - full principal
-        //         if ($row['no'] == $installments) {
-        //             $schedule[$k]['principal'] = $loan;
-        //             $schedule[$k]['balance'] = 0;
-        //         } 
-        //         // All other EMI - principal ZERO
-        //         else {
-        //             $schedule[$k]['principal'] = 0;
-        //             $schedule[$k]['balance'] = $loan;
-        //         }
-
-        //         // EMI = interest only
-        //         $schedule[$k]['emi'] = $schedule[$k]['principal'] + $schedule[$k]['interest'];
-        //     }
-        // }
-
 
         /* INTEREST AS EMI LOGIC (PRINCIPAL ZERO) */
-        if ($interestAsEmi === 'Yes' && $interestType !== 'flat_advanced') {
+        //if ($interestAsEmi === 'Yes' && $interestType !== 'flat_advanced') {
+        if ($interestAsEmi === 'Yes' && $interestType === 'flat_emi') {
 
             foreach ($schedule as $k => $row) {
 
@@ -1067,6 +883,26 @@ class LoanAgainstController extends Controller
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////        
+
+        /* -------------------------------------------------------
+            APPLY CHARGES TO ALL EMI (EXCEPT NO EMI)
+        ---------------------------------------------------------*/
+
+        if (strtolower($interestType) !== 'no_emi') {
+
+            foreach ($schedule as $k => $row) {
+
+                $schedule[$k]['charges'] = $chargesPerEmi;
+
+                // EMI me charges add karo
+                if ($schedule[$k]['emi'] !== '' && $schedule[$k]['emi'] !== null) {
+                    $schedule[$k]['emi'] = round(
+                        (float)$schedule[$k]['emi'] + $chargesPerEmi,
+                        2
+                    );
+                }
+            }
+        }
 
 
         // perefect only month show
@@ -1212,7 +1048,18 @@ class LoanAgainstController extends Controller
         /* -------------------------------------------------------
              5. TOTAL PAYABLE
         ---------------------------------------------------------*/
-        $grandTotalPayable = $loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount;
+        //$grandTotalPayable = $loan + $totalInterest + $processingFee + $stampAmount + $insuranceAmount;
+
+        //$totalCharges = $chargesPerEmi * count($schedule);
+        $totalCharges = array_sum(array_column($schedule, 'charges'));
+
+        $grandTotalPayable =
+            $loan
+            + $totalInterest
+            + $totalCharges
+            + $processingFee
+            + $stampAmount
+            + $insuranceAmount;
 
         /* --------------------------------------------
         FINAL FIX — Ensure correct value after mapping
@@ -1256,8 +1103,11 @@ class LoanAgainstController extends Controller
 
             'total_interest' => round($totalInterest, 2),
             'total_principal' => $loan,
-            'total_emi_paid' => round(($interestType == 'flat_advanced' ? $loan : $loan + $totalInterest), 2),
+            //'total_emi_paid' => round(($interestType == 'flat_advanced' ? $loan : $loan + $totalInterest), 2),
+            'total_emi_paid' => round(array_sum(array_column($schedule, 'emi')), 2),
             'grand_total_payable' => round($grandTotalPayable, 2),
+            'total_charges' => round($totalCharges, 2),
+
         ]);
     }
 
@@ -1687,7 +1537,7 @@ class LoanAgainstController extends Controller
             $request->validate([
                 'application_date' => 'required|date',
                 'member_id'        => 'required|exists:members,id',
-                'scheme_id'        => 'required|exists:gold_loan_schemes,id',
+                'scheme_id'        => 'required|exists:loan_against_schemes,id',
                 'loan_amount'      => 'required|numeric',
             ]);
 
@@ -1910,8 +1760,23 @@ class LoanAgainstController extends Controller
         $insuranceInc     = floatval($application->insurance_fee ?? 0);
         $fitnessInc       = floatval($application->fitness_fee ?? 0);
 
-        $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
-        $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
+        // $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
+        // $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
+        /* PER EMI CHARGES FROM SCHEME */
+        $smsCharge        = floatval($application->scheme->sms_charge ?? 0);
+        $fuelCharge       = floatval($application->scheme->fuel_charge ?? 0);
+        $stationaryCharge = floatval($application->scheme->stationary_charge ?? 0);
+        $maintenanceCharge= floatval($application->scheme->maintenance_charge ?? 0);
+        $collectionCharge = floatval($application->scheme->collection ?? 0);
+
+        $chargesPerEmi = round(
+            $smsCharge +
+            $fuelCharge +
+            $stationaryCharge +
+            $maintenanceCharge +
+            $collectionCharge,
+        2);
+
 
         /* Interest Rate */
         $annualRate = floatval($application->scheme->annual_interest_rate ?? 0);

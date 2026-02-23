@@ -1190,7 +1190,7 @@
                                             </td>
                                             <td class="p-2 border">
                                                 @if ($emi['status'] === 'PAID')
-                                                    <a href="{{ route('loan.emi_receipt.view', [$goldLoan->id, $emi['emi_no']]) }}"
+                                                    <a href="{{ route('mortgage_loan.emi_receipt.view', [$goldLoan->id, $emi['emi_no']]) }}"
                                                         class="btn-primary text-white px-3 py-1 rounded ">
                                                         Print
                                                     </a>

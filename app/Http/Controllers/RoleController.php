@@ -15,9 +15,9 @@ class RoleController extends Controller
 
     public function index(Request $request)
     {
+        $roles = RolePermission::with('role')->latest()->get();
 
-        return view('roles.manage-permission');
-
+        return view('roles.manage-permission', compact('roles'));
     }
 
     public function create()
@@ -149,7 +149,9 @@ class RoleController extends Controller
                 'role_id' => $rolePermission->role_id,
             ]);
 
-            return redirect()->back()->with('success', 'Role permissions saved successfully!');
+            return redirect()
+                ->route('roles.index')
+                ->with('success', 'Role permissions saved successfully!');
         } catch (\Exception $e) {
             // Log any error
             Log::error('Error storing role permission', [
