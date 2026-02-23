@@ -15,60 +15,70 @@ class ReportController extends Controller
     {
         return view("associate-report.index");
     }
-    public function branch_index()
+
+    public function branch_index(Request $request)
     {
-        return view("branch-report.index");
+        $from = $request->from_date ?? now()->startOfMonth();
+        $to   = $request->to_date ?? now();
+        $mode = $request->mode ?? 'all';
+
+        $branches = \App\Models\Branch::with([
+            'Member',
+            'ddsAccounts'
+        ])->get();
+
+        return view("menu-reports.branch-report.index", compact('branches', 'from', 'to', 'mode'));
     }
     public function maturity_index()
     {
         return view("menu-reports.maturity-report.index");
     }
-   public function loan_report_index(Request $request)
-{
-    $loanType = $request->loan_type;
-    $status   = $request->status;
+    public function loan_report_index(Request $request)
+    {
+        $loanType = $request->loan_type;
+        $status   = $request->status;
 
-    $query = null;
+        $query = null;
 
-    switch ($loanType) {
+        switch ($loanType) {
 
-        case 'gold_loan':
-            $query = \App\Models\LoanApplication::with(['member','scheme','branch','emiPayments','disbursement']);
-            break;
-        case 'mortgage_loan':
-            $query = \App\Models\MortgageLoanApplication::with(['member','scheme','branch','emiPayments','disbursement']);
-            break;
-        case 'loan_against':
-            $query = \App\Models\LoanAgainstApplication::with(['member','scheme','branch','emiPayments',]);
-            break;
-        case 'cc_od':
-            $query = \App\Models\CcOdLoanApplication::with(['member','scheme','branch','emiPayments',]);
-            break;
-        case 'daily_weekly':
-            $query = \App\Models\DailyWeeklyApplication::with(['member','scheme','branch','emiPayments']);
-            break;
-        case 'fixed_loan':
-            $query = \App\Models\FixedLoanApplication::with(['member','scheme','branch','emiPayments']);
-            break;
+            case 'gold_loan':
+                $query = \App\Models\LoanApplication::with(['member', 'scheme', 'branch', 'emiPayments', 'disbursement']);
+                break;
+            case 'mortgage_loan':
+                $query = \App\Models\MortgageLoanApplication::with(['member', 'scheme', 'branch', 'emiPayments', 'disbursement']);
+                break;
+            case 'loan_against':
+                $query = \App\Models\LoanAgainstApplication::with(['member', 'scheme', 'branch', 'emiPayments',]);
+                break;
+            case 'cc_od':
+                $query = \App\Models\CcOdLoanApplication::with(['member', 'scheme', 'branch', 'emiPayments',]);
+                break;
+            case 'daily_weekly':
+                $query = \App\Models\DailyWeeklyApplication::with(['member', 'scheme', 'branch', 'emiPayments']);
+                break;
+            case 'fixed_loan':
+                $query = \App\Models\FixedLoanApplication::with(['member', 'scheme', 'branch', 'emiPayments']);
+                break;
 
-        case 'other_loan':
-            $query = \App\Models\BusinessLoanApplication::with(['member','scheme','branch','emiPayments','disbursement']);
-            break;
+            case 'other_loan':
+                $query = \App\Models\BusinessLoanApplication::with(['member', 'scheme', 'branch', 'emiPayments', 'disbursement']);
+                break;
 
-        case 'personal_loan':
-            $query = \App\Models\PersonalLoanApplication::with(['member','scheme','branch','emiPayments']);
-            break;
+            case 'personal_loan':
+                $query = \App\Models\PersonalLoanApplication::with(['member', 'scheme', 'branch', 'emiPayments']);
+                break;
 
-        case 'vehicle_loan':
-            $query = \App\Models\VehicalApplication::with(['member','scheme','branch','emiPayments','disbursement']);
-            break;
+            case 'vehicle_loan':
+                $query = \App\Models\VehicalApplication::with(['member', 'scheme', 'branch', 'emiPayments', 'disbursement']);
+                break;
 
-        default:
-            $query = collect();
-    }
+            default:
+                $query = collect();
+        }
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | STATUS MAPPING
     |--------------------------------------------------------------------------
@@ -85,38 +95,37 @@ class ReportController extends Controller
             $query->where('status', $statusMap[$status]);
         }
 
-//     if ($query instanceof \Illuminate\Database\Eloquent\Builder && $status) {
+        //     if ($query instanceof \Illuminate\Database\Eloquent\Builder && $status) {
 
-//     if ($status === 'fore_closed') {
+        //     if ($status === 'fore_closed') {
 
-//         // only loans that exist in foreclosure table
-//         $query->whereHas('foreclosure');
+        //         // only loans that exist in foreclosure table
+        //         $query->whereHas('foreclosure');
 
-//     } else {
+        //     } else {
 
-//         $statusMap = [
-//             'active' => 2,
-//             // 'closed' => 3,
-//         ];
+        //         $statusMap = [
+        //             'active' => 2,
+        //             // 'closed' => 3,
+        //         ];
 
-//         if (isset($statusMap[$status])) {
-//             $query->where('status', $statusMap[$status]);
-//         }
-//     }
-// }
+        //         if (isset($statusMap[$status])) {
+        //             $query->where('status', $statusMap[$status]);
+        //         }
+        //     }
+        // }
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | RESULT
     |--------------------------------------------------------------------------
     */
 
-    $loans = $query instanceof \Illuminate\Database\Eloquent\Builder
-        ? $query->latest()->get()
-        : collect();
+        $loans = $query instanceof \Illuminate\Database\Eloquent\Builder
+            ? $query->latest()->get()
+            : collect();
 
-    return view('menu-reports.loan-report.index', compact('loans'));
-}
-
+        return view('menu-reports.loan-report.index', compact('loans'));
+    }
 }

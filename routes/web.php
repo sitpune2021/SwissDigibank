@@ -3095,6 +3095,7 @@ Route::get('software-settings/software-service-agreement', [SoftwareSettingsCont
 ///////////////////// Download REPORTs ///////////////////////////
 Route::get('loan-report/index', [ReportController::class, 'loan_report_index'])->name('loan-report.index');
 Route::get('maturity-indext/index', [ReportController::class, 'maturity_index'])->name('loan-report.maturity_index');
+Route::get('/reports/branch-report', [ReportController::class, 'branch_index'])->name('reports.branch');
 
 
 ////////////////////Download REPORTs Ends Here////////////////////////////
