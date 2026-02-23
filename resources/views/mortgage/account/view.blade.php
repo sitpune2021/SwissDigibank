@@ -1165,7 +1165,7 @@
                                             </td>
 
 
-                                            <!-- PROCESSED -->
+                                            {{-- <!-- PROCESSED -->
                                             <td class="p-2 border  processed">
                                                 <span
                                                     class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">
@@ -1181,7 +1181,27 @@
                                                         PROCESS
                                                     </button>
                                                 @endif
+                                            </td> --}}
+                                            <td class="p-2 border processed">
+                                                <span
+                                                    class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">
+                                                    {{ $emi['processed'] }}
+                                                </span>
                                             </td>
+                                            <td class="p-2 border">
+                                                @if ($emi['status'] === 'PAID')
+                                                    <a href="{{ route('loan.emi_receipt.view', [$goldLoan->id, $emi['emi_no']]) }}"
+                                                        class="btn-primary text-white px-3 py-1 rounded ">
+                                                        Print
+                                                    </a>
+                                                @elseif ($showProcessButton)
+                                                    <button class="process-btn btn-primary px-3 py-1 rounded"
+                                                        data-emi="{{ $emi['emi_no'] }}">
+                                                        PROCESS
+                                                    </button>
+                                                @endif
+                                            </td>
+
 
                                         </tr>
                                     @endforeach
