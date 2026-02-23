@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Promotor;
 
-class Shareholding extends Model
+class ShareHolding extends Model
 {
     protected $fillable = [
         'promotor_id',
