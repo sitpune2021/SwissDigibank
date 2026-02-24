@@ -1,4 +1,5 @@
 <div class="tab-panel hidden">
+
 <!-----------------Deposit Accounts --------------------> 
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
@@ -86,7 +87,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="la_apr_req_lis" name="permissions[la_apr_req_lis]" value=""
+                    <input type="checkbox" id="la_apr_req_lis" name="permissions[]" value="loans"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="la_apr_req_lis" class="text-base font-semibold cursor-pointer mb-0">
             Loan Applications Approvals Request List
@@ -96,56 +97,30 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="apr_rej_app_req" name="permissions[apr_rej_app_req]" value=""
+                    <input type="checkbox" id="apr_rej_app_req" name="permissions[]" value="updateStatus"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="apr_rej_app_req" class="text-base font-semibold cursor-pointer mb-0">
-                 Approve/ Reject Loan Application Request
+                 Approve / Reject Loan Application Request
                     </label>
                 </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="non_comp_lis" name="permissions[non_comp_lis]" value=""
+                    <input type="checkbox" id="non_comp_lis" name="permissions[]" value="approvals_history"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="non_comp_lis" class="text-base font-semibold cursor-pointer mb-0">
-               Non-Compliance List
+               Approve History List
                     </label>
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="apr_rej_nc" name="permissions[apr_rej_nc]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="apr_rej_nc" class="text-base font-semibold cursor-pointer mb-0">
-                 Approve/ Reject Non-Compliance
-                    </label>
-                </div>
-            </div>
-          
-             <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="la_cls_req_lis" name="permissions[la_cls_req_lis]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="la_cls_req_lis" class="text-base font-semibold cursor-pointer mb-0">
-                 Loan Account Closure Request List
-                    </label>
-                </div>
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="apr_rej_lcr" name="permissions[apr_rej_lcr]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="apr_rej_lcr" class="text-base font-semibold cursor-pointer mb-0">
-               Approve/ Reject Loan Closure Request
-                    </label>
-                </div>
-            </div>
         </div>
     </div>
+
     <br>
     <!----------------- Accounting Approvals-------------------->
+
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">
@@ -186,8 +161,10 @@
             </div>
         </div>
     </div>
+
     <br>
-     <!----------------- Printing Approvals-------------------->
+    <!----------------- Printing Approvals-------------------->
+
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">
@@ -228,8 +205,10 @@
             </div>
         </div>
     </div>
+
     <br>
-     <!----------------- Reschedule Loan Approvals-------------------->
+    <!----------------- Reschedule Loan Approvals-------------------->
+
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">
@@ -270,8 +249,10 @@
             </div>
         </div>
     </div>
+
     <br>
-  <!-----------------Approval Requests--------------------> 
+    <!-----------------Approval Requests--------------------> 
+
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">Approval Requests</div>
@@ -425,7 +406,7 @@
        </div>
     </div>
 
-     <!-----------------Approval History--------------------> 
+    <!-----------------Approval History--------------------> 
     <div class="payload-section">
         <div class="mb-3 mt-5 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">Approval History</div>
@@ -604,7 +585,8 @@
             
        </div>
     </div>
-     <!-----------------Master Slave Permission--------------------> 
+
+    <!-----------------Master Slave Permission--------------------> 
     <div class="payload-section">
         <div class="mb-3 mt-5 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">Master Slave Permission</div>

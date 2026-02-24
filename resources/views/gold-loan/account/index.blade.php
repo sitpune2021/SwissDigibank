@@ -164,6 +164,7 @@
                             </td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">{{ number_format($loan->current_debt, 2) }}</td>
                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                @if(hasPermission('gold-loan.account.show'))
                                 <div class="flex justify-center">
                                     <!-- <div class="relative">
                                         <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
@@ -178,6 +179,7 @@
                                     'viewRoute' => 'gold-loan.account.show',
                                     ])
                                 </div>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

@@ -8,6 +8,8 @@ use App\Models\LoanApplication;
 use App\Models\PersonalLoanApplication;
 use App\Models\VehicalApplication;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ReportController extends Controller
 {
@@ -29,10 +31,89 @@ class ReportController extends Controller
 
         return view("menu-reports.branch-report.index", compact('branches', 'from', 'to', 'mode'));
     }
-    public function maturity_index()
+    public function maturity_index(Request $request)
     {
-        return view("menu-reports.maturity-report.index");
+        $from = $request->from_date ?? '2000-01-01';
+        $to   = $request->to_date ?? '2100-12-31';
+        /* ================= RD ================= */
+        $rdQuery = DB::table('rd_accounts')
+            ->where('approve_status', 'Approved')
+            ->whereBetween('maturity_date', [$from, $to]);
+
+        $rdTotalAccounts = $rdQuery->count();
+        $rdTotalMaturity = $rdQuery->sum('maturity_amount');
+        $rdTotalBalance  = $rdQuery->sum(DB::raw('principal + total_interest'));
+
+
+        /* ================= DD ================= */
+        $ddQuery = DB::table('dds_accounts')
+            ->where('status', 1)
+            ->whereBetween('maturity_date', [$from, $to]);
+
+        $ddTotalAccounts = $ddQuery->count();
+        $ddTotalMaturity = $ddQuery->sum('maturity_amount');
+        $ddTotalBalance  = $ddQuery->sum('balance'); // correct
+
+
+        /* ================= FD ================= */
+        $fdQuery = DB::table('fd_accounts')
+            ->where('status', 1)
+            ->where('active', 1)
+            ->whereBetween('maturity_date', [$from, $to]);
+
+        $fdTotalAccounts = $fdQuery->count();
+        $fdTotalMaturity = $fdQuery->sum('maturity_amount');
+        $fdTotalBalance  = $fdQuery->sum('final_amount'); // correct
+
+
+        /* ================= MIS ================= */
+        $misQuery = DB::table('misaccounts')
+            ->where('status', 1)
+            ->whereBetween('maturity_date', [$from, $to]);
+
+        $misTotalAccounts = $misQuery->count();
+        $misTotalMaturity = $misQuery->sum('maturity_amount');
+        $misTotalBalance  = $misQuery->sum('final_amount'); // ✅ FIXED
+
+
+        /* ================= GRAND TOTAL ================= */
+        $grandAccounts =
+            $rdTotalAccounts +
+            $ddTotalAccounts +
+            $fdTotalAccounts +
+            $misTotalAccounts;
+
+        $grandMaturity =
+            $rdTotalMaturity +
+            $ddTotalMaturity +
+            $fdTotalMaturity +
+            $misTotalMaturity;
+
+        $grandBalance =
+            $rdTotalBalance +
+            $ddTotalBalance +
+            $fdTotalBalance +
+            $misTotalBalance;
+
+        return view("menu-reports.maturity-report.index", compact(
+            'rdTotalAccounts',
+            'rdTotalMaturity',
+            'rdTotalBalance',
+            'ddTotalAccounts',
+            'ddTotalMaturity',
+            'ddTotalBalance',
+            'fdTotalAccounts',
+            'fdTotalMaturity',
+            'fdTotalBalance',
+            'misTotalAccounts',
+            'misTotalMaturity',
+            'misTotalBalance',
+            'grandAccounts',
+            'grandMaturity',
+            'grandBalance'
+        ));
     }
+
     public function loan_report_index(Request $request)
     {
         $loanType = $request->loan_type;

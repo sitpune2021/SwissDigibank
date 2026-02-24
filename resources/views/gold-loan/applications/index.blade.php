@@ -4,30 +4,15 @@
         
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
                 <h3 class=" flex text-xl block uppercase font-semibold">GOLD LOAN APPLICATIONS</h3>
+                @if(hasPermission('gold-loan.applications.create'))
                 <a href="{{route('gold-loan.applications.create')}}" class=" block flex 
                 btn-primary uppercase ">
                     add
                 </a>
+                @endif
             </div>
 
       @if(session('success'))
-        {{-- <div 
-            id="successMessage" 
-            class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
-        >
-            {{ session('success') }}
-        </div>
-
-        <script>
-            // Auto hide after 30 seconds (30000 ms)
-            setTimeout(() => {
-                const msg = document.getElementById('successMessage');
-                if (msg) {
-                    msg.style.opacity = '0';
-                    setTimeout(() => msg.remove(), 500); // smooth fade-out
-                }
-            }, 30000);
-        </script> --}}
 
         {{-- //alert msg --}}
         <div class="w-44 mb-5 flex justify-end">
@@ -52,7 +37,6 @@
                                    APPLICATION DATE
                                 </div>
                             </th>
-
 
                             <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                                 <div class="flex items-center gap-1">
@@ -95,82 +79,93 @@
                         </tr>
                     </thead>
                     <tbody>
-    @foreach($applications as $application)
-        <tr class="border-b dark:border-bg3">
-          
-            <!-- Application No. -->
-           <td class="text-start !py-5 px-6">
-                <a href="{{ route('gold-loan.applications.view', $application->id) }}" 
-                class="text-green-600 hover:underline">
-                    {{-- {{ $application->id }} --}}
-                     {{ str_pad($application->id, 10, '0', STR_PAD_LEFT) }}
-                </a>
-            </td>
+                        @foreach($applications as $application)
+                            <tr class="border-b dark:border-bg3">
+                            
+                                <!-- Application No. -->
+                            <td class="text-start !py-5 px-6">
+                                    <a href="{{ route('gold-loan.applications.view', $application->id) }}" 
+                                    class="text-green-600 hover:underline">
+                                        {{-- {{ $application->id }} --}}
+                                        {{ str_pad($application->id, 10, '0', STR_PAD_LEFT) }}
+                                    </a>
+                                </td>
 
-            <!-- Application Date -->
-            <td class="text-start !py-5 px-6">
-                {{ \Carbon\Carbon::parse($application->application_date)->format('d-m-Y') }}
-            </td>
+                                <!-- Application Date -->
+                                <td class="text-start !py-5 px-6">
+                                    {{ \Carbon\Carbon::parse($application->application_date)->format('d-m-Y') }}
+                                </td>
 
-            <!-- Member No -->
-            <td class="text-start !py-5 px-6">
-                <a href="{{ url('members/member/' . $application->member_id) }}" 
-                class="text-green-600 hover:underline">
-                    {{ str_pad($application->member_id, 6, '0', STR_PAD_LEFT) }}
-                </a>
-            </td>
+                                <!-- Member No -->
+                                <td class="text-start !py-5 px-6">
+                                    <a href="{{ url('members/member/' . $application->member_id) }}" 
+                                    class="text-green-600 hover:underline">
+                                        {{ str_pad($application->member_id, 6, '0', STR_PAD_LEFT) }}
+                                    </a>
+                                </td>
 
 
-            <!-- Member Name (अगर relation है तो member->name, अभी के लिए member_id ही दिखा रहा हूँ) -->
-            <td class="text-start !py-5 px-6">
-                {{ $application->member->member_info_first_name ?? 'N/A' }}
-            </td>
+                                <!-- Member Name -->
+                                <td class="text-start !py-5 px-6">
+                                    {{ $application->member->member_info_first_name ?? 'N/A' }}
+                                </td>
 
-            <!-- Branch -->
-            <td class="text-start !py-5 px-6">
-                {{ $application->branch->branch_name ?? 'N/A' }}
-            </td>
+                                <!-- Branch -->
+                                <td class="text-start !py-5 px-6">
+                                    {{ $application->branch->branch_name ?? 'N/A' }}
+                                </td>
 
-            <!-- Scheme -->
-            <td class="text-start !py-5 px-6">
-                {{ $application->scheme->scheme_name ?? 'N/A' }}
-            </td>
+                                <!-- Scheme -->
+                                <td class="text-start !py-5 px-6">
+                                    {{ $application->scheme->scheme_name ?? 'N/A' }}
+                                </td>
 
-            <!-- Principal Amount -->
-            <td class="text-start !py-5 px-6">
-                {{ number_format($application->net_loan_amount, 2) }}
-            </td>
+                                <!-- Principal Amount -->
+                                <td class="text-start !py-5 px-6">
+                                    {{ number_format($application->net_loan_amount, 2) }}
+                                </td>
 
-           <!-- Status -->
-            <td class="text-start !py-5 px-6">
-                @if($application->status == 0)
-                    DRAFT
-                @elseif($application->status == 1)
-                    APPROVED
-                    @elseif($application->status == 2)
-                    DISBURSED
-                @else
-                    CANCELED
-                @endif
-            </td>
+                            <!-- Status -->
+                                <td class="text-start !py-5 px-6">
+                                    @if($application->status == 0)
+                                        DRAFT
+                                    @elseif($application->status == 1)
+                                        APPROVED
+                                        @elseif($application->status == 2)
+                                        DISBURSED
+                                    @else
+                                        CANCELED
+                                    @endif
+                                </td>
 
-            <!-- Actions -->
-            <td class="text-start !py-5 px-6">
-                <div class="flex justify-center">
-                    <div class="relative">
-                        <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                        <ul class="horiz-option popover-content">
-                            <li><a href="{{ route('gold-loan.applications.view',$application->id) }}" class="single-option">View</a></li>
-                            @if($application->status != 2)
-                            <li><a href="{{ route('gold-loan.applications.edit',$application->id) }}" class="single-option">Edit</a></li>
-                            @endif
-                        </ul>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    @endforeach
-</tbody>
+                                <!-- Actions -->
+                                <td class="text-start !py-5 px-6">
+                                    <div class="flex justify-center">
+                                        <div class="relative">
+                                            <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
+                                                <ul class="horiz-option popover-content">
+                                                    @if(hasPermission('gold-loan.applications.view'))
+                                                        <li>
+                                                            <a href="{{ route('gold-loan.applications.view',$application->id) }}" class="single-option">
+                                                                View
+                                                            </a>
+                                                        </li>
+                                                    @endif
+
+                                                    @if(hasPermission('gold-loan.applications.edit') && $application->status != 2)
+                                                        <li>
+                                                            <a href="{{ route('gold-loan.applications.edit',$application->id) }}" class="single-option">
+                                                                Edit
+                                                            </a>
+                                                        </li>
+                                                    @endif
+                                                </ul>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
 
                 </table>
                 <!-- Pagination Links -->

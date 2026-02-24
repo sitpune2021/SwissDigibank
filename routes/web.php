@@ -8,12 +8,9 @@ use App\Http\Controllers\GroupCommentController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\LogoImgUploadController;
 use App\Http\Controllers\MasterSettingController;
-use App\Http\Controllers\MasterSettingsController;
-use App\Http\Controllers\MortgageLoanPrintDocumentsController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\PrintDocumentsController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\SmsController;
 use App\Http\Controllers\SmsTemplateController;
 use App\Http\Controllers\SoftwareSettingsController;
 use App\Http\Controllers\UnencumberedDepositController;
@@ -46,9 +43,7 @@ use App\Http\Controllers\ShareTransferController;
 use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\DisbursementController;
 use App\Http\Controllers\OrnamentController;
-use App\Http\Controllers\KycDocumentsController;
 use App\Http\Controllers\CalculatorController;
-use App\Http\Controllers\FdCalculatorController;
 use App\Http\Controllers\RDCalculatorController;
 use App\Http\Controllers\DdsAccountsController;
 use App\Http\Controllers\FDController;
@@ -58,7 +53,6 @@ use App\Http\Controllers\PersonalDisbursementController;
 use App\Http\Controllers\PersonalAccountController;
 use App\Http\Controllers\MDSController;
 use App\Http\Controllers\MisaccountController;
-use App\Http\Controllers\MortgageLoneController;
 use App\Http\Controllers\RdAccountController;
 use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\RdschemesController;
@@ -1066,17 +1060,7 @@ Route::group(['prefix' => 'mortgage'], function () {
 
     Route::get('/undertaking-letter-view/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('mortgage_loan.undertaking_letter.view');
     Route::get('/undertaking-letter/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter'])->name('mortgage_loan.undertaking_letter.pdf');
-    // Route::get(
-    //     '/mortgage-loan-app/emi-receipt-view/{loan}/{emiNo}',
-    //     [MortgageLoanPrintDocumentController::class, 'emi_receipt_view']
-    // )->name('loan.emi_receipt.view');
 
-    // Route::get(
-    //     '/mortgage-loan-app/emi-receipt/{loan}/{emiNo}',
-    //     [MortgageLoanPrintDocumentController::class, 'emi_receipt_pdf']
-    // )->name('loan.emi_receipt.pdf');
-    // Route::get('/emi-receipt/{loan}/{emiNo}', [MortgageLoanPrintDocumentController::class, 'emi_receipt_print'])
-    //     ->name('emi.receipt.print');
 });
 
 Route::prefix('mortgage-loan-app')->group(function () {
@@ -1096,6 +1080,8 @@ Route::prefix('mortgage-loan-app')->group(function () {
         [MortgageLoanPrintDocumentController::class, 'emi_receipt_print']
     )->name('mortgage_emi.receipt.print');
 });
+
+
 /////////////////////////////////////   END Mortgage LOAN   ////////////////////////////////////////////////////////
 
 

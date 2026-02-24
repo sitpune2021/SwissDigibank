@@ -52,42 +52,45 @@ class PersonalLoanApplication extends Model
         'approved_loan_amount',
         'status',
         'charges_per_emi_type',
+        'ratio_enabled',
+        'ratio_first_emi',
+        'ratio_first_percentage',
     ];
 
 
 
-public function member()
-{
-    return $this->belongsTo(Member::class, 'member_id');
-}
-public function coApplicant1()
-{
-    return $this->belongsTo(Member::class, 'co_applicant_1_id');
-}
-public function guarantor1()
-{
-    return $this->belongsTo(Member::class, 'guarantor_1_id');
-}
+    public function member()
+    {
+        return $this->belongsTo(Member::class, 'member_id');
+    }
+    public function coApplicant1()
+    {
+        return $this->belongsTo(Member::class, 'co_applicant_1_id');
+    }
+    public function guarantor1()
+    {
+        return $this->belongsTo(Member::class, 'guarantor_1_id');
+    }
 
-public function branch()
-{
-    return $this->belongsTo(Branch::class, 'branch_id');
-}
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
 
-public function scheme()
-{
-    return $this->belongsTo(PersonalScheme::class, 'scheme_id');
-}
+    public function scheme()
+    {
+        return $this->belongsTo(PersonalScheme::class, 'scheme_id');
+    }
 
-public function properties()
-{
-    return $this->hasMany(MortgageProperty::class, 'loan_application_id');
-}
+    public function properties()
+    {
+        return $this->hasMany(MortgageProperty::class, 'loan_application_id');
+    }
 
-public function creditScores()
-{
-    return $this->hasMany(PersonalCreditScore::class, 'loan_application_id');
-}
+    public function creditScores()
+    {
+        return $this->hasMany(PersonalCreditScore::class, 'loan_application_id');
+    }
 
     public function PersoalLoanTransaction()
     {
@@ -98,6 +101,4 @@ public function creditScores()
     {
         return $this->hasMany(PersoalLoanTransaction::class, 'loan_id', 'id');
     }
-
-
 }
