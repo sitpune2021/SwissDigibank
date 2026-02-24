@@ -1,10 +1,10 @@
 <div class="tab-panel hidden">
 
-<!----------------- Property Loan Schemes --------------------> 
+<!----------------- Business Loan Schemes --------------------> 
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">Property Loan Schemes</div>
-           <div class="col-span-2 md:col-span-1">
+            <div class="uppercase font-semibold text-lg">Business Loan Schemes</div>
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="check_all_dashboard"
                         class="check-all form-checkbox h-5 w-5 text-primary">
@@ -18,43 +18,43 @@
         <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="pl_sch_lis"
-                     name="permissions[]" value="mortgage.schemes.index"
+                    <input type="checkbox" id="oth_lon_sch_lis"
+                     name="permissions[]" value="bussiness.schemes.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="pl_sch_lis" class="text-base font-semibold cursor-pointer mb-0">
-                     Property Loan Scheme List
+                    <label for="oth_lon_sch_lis" class="text-base font-semibold cursor-pointer mb-0">
+                  Business Loan Schemes List
                     </label>
                 </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="add_new_pro_lon_sch" 
-                    name="permissions[]" value="mortgage.schemes.create"
+                    <input type="checkbox" id="add_new_oth_lon_sch" 
+                    name="permissions[]" value="bussiness.schemes.create"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="add_new_pro_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
-                     Add New Property Loan Scheme
+                    <label for="add_new_oth_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
+                   New Business Loan Scheme
                     </label>
                 </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="shw_pro_lon_sch_inf" name="permissions[]" value="mortgage.schemes.show"
+                    <input type="checkbox" id="shw_oth_lon_sch" name="permissions[]" value="bussiness.schemes.show"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="shw_pro_lon_sch_inf" class="text-base font-semibold cursor-pointer mb-0">
-                    Show Property Loan Scheme Info
+                    <label for="shw_oth_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
+                  Show Business Loan Scheme
                     </label>
                 </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="edit_pro_lon_sch" 
-                    name="permissions[]" value="mortgage.schemes.edit"
+                    <input type="checkbox" id="edit_oth_lon_sch" 
+                    name="permissions[]" value="bussiness.schemes.edit"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="edit_pro_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
-                      Edit Property Loan Scheme
+                    <label for="edit_oth_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
+                   Edit Business Loan Scheme
                     </label>
                 </div>
             </div>
@@ -63,11 +63,11 @@
     </div>
 
     <br>
-<!-----------------Property Loan Calculator --------------------> 
+<!----------------- Business Loan Calculator --------------------> 
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">Property Loan Calculator</div>
-           <div class="col-span-2 md:col-span-1">
+            <div class="uppercase font-semibold text-lg">Business Loan Calculator</div>
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="check_all_dashboard"
                         class="check-all form-checkbox h-5 w-5 text-primary">
@@ -81,10 +81,10 @@
         <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="pro_lon_calc" name="permissions[]" value="mortgage.calculator.index"
+                    <input type="checkbox" id="oth_lon_calc" name="permissions[]" value="bussiness.calculator.calculation"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="pro_lon_calc" class="text-base font-semibold cursor-pointer mb-0">
-                      Property Loan Calculator
+                    <label for="oth_lon_calc" class="text-base font-semibold cursor-pointer mb-0">
+                      Business Loan Calculator
                     </label>
                 </div>
             </div>          
@@ -93,13 +93,13 @@
     </div>
 
     <br>
-<!----------------- Property Loan Applications --------------------> 
+<!----------------- Business Loan Applications--------------------> 
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">
-                Property Loan Applications
+              Business Loan Applications
             </div>
-            <div class="col-span-2 md:col-span-1">
+           <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="check_all_dashboard"
                         class="check-all form-checkbox h-5 w-5 text-primary">
@@ -115,49 +115,49 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="pro_lon_app_lis" name="permissions[]" value="mortgage.applications.index"
+                    <input type="checkbox" id="oth_lon_app_lis" name="permissions[]" value="bussiness.applications.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="pro_lon_app_lis" class="text-base font-semibold cursor-pointer mb-0">
-                  Property Loan Applications List
+                    <label for="oth_lon_app_lis" class="text-base font-semibold cursor-pointer mb-0">
+                Business Loan Applications List
                     </label>
                 </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="op_new_pro_lon_app" name="permissions[]" value="mortgage.applications.create"
+                    <input type="checkbox" id="new_oth_ln_app" name="permissions[]" value="bussiness.applications.create"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="op_new_pro_lon_app" class="text-base font-semibold cursor-pointer mb-0">
-                     Open New Property Loan Application
+                    <label for="new_oth_ln_app" class="text-base font-semibold cursor-pointer mb-0">
+                    New Business Loan Applications
                     </label>
                 </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="shw_pro_app_inf" name="permissions[]" value="mortgage.applications.view"
+                    <input type="checkbox" id="shw_oth_ln_app" name="permissions[]" value="bussiness.applications.view"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="shw_pro_app_inf" class="text-base font-semibold cursor-pointer mb-0">
-                    Show Property Loan Application Info
+                    <label for="shw_oth_ln_app" class="text-base font-semibold cursor-pointer mb-0">
+                  Show Business Loan Application
                     </label>
                 </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="edi_pro_lon_app_apr" name="permissions[]" value="mortgage.applications.edit"
+                    <input type="checkbox" id="edi_oth_lon_app" name="permissions[]" value="bussiness.applications.edit"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="edi_pro_lon_app_apr" class="text-base font-semibold cursor-pointer mb-0">
-                  Edit Property Loan Application Info before Application is 'APPROVED'
+                    <label for="edi_oth_lon_app" class="text-base font-semibold cursor-pointer mb-0">
+                Edit Business Loan Application
                     </label>
                 </div>
             </div>
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="rem_pro_lon_app" name="permissions[]" value=""
+                    <input type="checkbox" id="rem_oth_lon_app" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="rem_pro_lon_app" class="text-base font-semibold cursor-pointer mb-0">
-                 Remove Property Loan Application
+                    <label for="rem_oth_lon_app" class="text-base font-semibold cursor-pointer mb-0">
+               Remove Business Loan Application
                     </label>
                 </div>
             </div>
@@ -167,40 +167,11 @@
     </div>
 
     <br>
- <!-----------------Property Loan Items-------------------->
-    <div class="payload-section">
-        <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">Property Loan Items</div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="check_all_dashboard"
-                        class="check-all form-checkbox h-5 w-5 text-primary">
-                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
-                        Check
-                        All
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="pro_itm_rep" name="permissions[]" value="mortgage.lineproperty.index"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="pro_itm_rep" class="text-base font-semibold cursor-pointer mb-0">
-                  Property Loan Items Report
-                    </label>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <br>
-    <!----------------- Property Loan Disbursements -------------------->
+    <!----------------- Business Loan Disbursements -------------------->
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">
-                Property Loan Disbursements
+              Other Loan Disbursements
             </div>
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
@@ -218,41 +189,42 @@
             
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="pro_lon_dis_lis" name="permissions[]" value="mortgage.disbursements.index"
+                    <input type="checkbox" id="oth_lon_dis_lis" name="permissions[]" value="bussiness.disbursements.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="pro_lon_dis_lis" class="text-base font-semibold cursor-pointer mb-0">
-                    Property Loan Disbursements List
+                    <label for="oth_lon_dis_lis" class="text-base font-semibold cursor-pointer mb-0">
+                   Business Loan Disbursements List
                     </label>
                 </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="dis_rel_pro_lon" name="permissions[]" value="mortgage.disbursements.disburse-loan"
+                    <input type="checkbox" id="dis_oth_lon" name="permissions[]" value="bussiness.disbursements.disburse-loan"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="dis_rel_pro_lon" class="text-base font-semibold cursor-pointer mb-0">
-                      Disburse / Release Property Loan
+                    <label for="dis_oth_lon" class="text-base font-semibold cursor-pointer mb-0">
+                   Disburse Business Loan
                     </label>
                 </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="can_pro_lon_dis" name="permissions[]" value="mortgagedisbursements.cancel"
+                    <input type="checkbox" id="can_oth_lon" name="permissions[]" value="businessdisbursements.cancel"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="can_pro_lon_dis" class="text-base font-semibold cursor-pointer mb-0">
-                    Cancel Property Loan
+                    <label for="can_oth_lon" class="text-base font-semibold cursor-pointer mb-0">
+                  Cancel Business Loan
                     </label>
                 </div>
             </div>
+
         </div>
     </div>
 
     <br>
-  <!----------------- Property Loan Accounts --------------------> 
+<!----------------- Business Loan Accounts --------------------> 
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">Property Loan Accounts</div>
+            <div class="uppercase font-semibold text-lg">Business Loan Accounts</div>
            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="check_all_dashboard"
@@ -268,37 +240,37 @@
       
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="pro_lon_acc_lis" 
-                    name="permissions[]" value="mortgage.account.index"
+                    <input type="checkbox" id="oth_lon_acc_lis" 
+                    name="permissions[]" value="bussiness.account.index"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="pro_lon_acc_lis" class="text-base font-semibold cursor-pointer mb-0">
-                   Property Loan Accounts List
+                    <label for="oth_lon_acc_lis" class="text-base font-semibold cursor-pointer mb-0">
+              Business Loan Accounts List
                     </label>
                 </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="shw_pro_lon_acc" name="permissions[]" value="mortgage.account.show"
+                    <input type="checkbox" id="shw_oth_lon_acc" name="permissions[]" value="bussiness.account.show"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="shw_pro_lon_acc" class="text-base font-semibold cursor-pointer mb-0">
-                  Show Property Account Loan
+                    <label for="shw_oth_lon_acc" class="text-base font-semibold cursor-pointer mb-0">
+                Show Business Loan Account
                     </label>
                 </div>
             </div>
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="rm_pro_lon_acc" 
-                    name="permissions[]" value="mortgage.remove"
+                    <input type="checkbox" id="rm_oth_lon_acc" 
+                    name="permissions[]" value="bussiness.remove"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="rm_pro_lon_acc" class="text-base font-semibold cursor-pointer mb-0">
-                    Remove Property Loan Account
+                    <label for="rm_oth_lon_acc" class="text-base font-semibold cursor-pointer mb-0">
+                  Remove Business Loan Account
                     </label>
                 </div>
             </div>
 
        </div>
     </div>
-    
+
 </div>

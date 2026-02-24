@@ -34,6 +34,10 @@ class DisbursementController extends Controller
 
     public function cancelLoan($id)
     {
+        if (!hasPermission('golddisbursements.cancel')) {
+            abort(403);
+        }
+
         $loan = LoanApplication::find($id);
 
         if (!$loan) {
@@ -46,8 +50,10 @@ class DisbursementController extends Controller
 
         return redirect()->back()->with('success', 'Loan has been cancelled successfully.');
     }
+
     public function store(Request $request)
     {
+
         Log::info('================ LOAN DISBURSEMENT STORE START ================');
 
         try {
@@ -244,6 +250,7 @@ class DisbursementController extends Controller
                 ->with('error', 'Something went wrong while saving.');
         }
     }
+
     public function show($id)
     {
         // Load loan + scheme + member + branch
@@ -366,4 +373,6 @@ class DisbursementController extends Controller
             )
         );
     }
+
+
 }

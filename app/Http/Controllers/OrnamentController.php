@@ -13,6 +13,10 @@ class OrnamentController extends Controller
    
     public function index(Request $request)
     {
+        if (!hasPermission('gold-loan.ornaments.index')) {
+            abort(403);
+        }
+
         $query = LoanOrnament::query()->with('loanApplication');
 
         if ($request->filled('application_id')) {
@@ -138,6 +142,7 @@ class OrnamentController extends Controller
 
     public function update(Request $request, $id)
     {
+
         $ornament = LoanOrnament::findOrFail($id);
 
         // Force integer conversion (prevents 'Released'/'Mortgage' text issues)

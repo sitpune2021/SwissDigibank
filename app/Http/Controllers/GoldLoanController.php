@@ -173,6 +173,9 @@ class GoldLoanController extends Controller
 
     public function view($id)
     {
+        if (!hasPermission('gold-loan.schemes.view')) {
+            abort(403);
+        }
         $scheme = GoldLoanScheme::findOrFail($id);
         return view("gold-loan.schemes.view", compact('scheme'));
     }
@@ -1486,7 +1489,7 @@ class GoldLoanController extends Controller
 
     public function appedit($id)
     {
-        if (!hasPermission('gold-loan.applications.create')) {
+        if (!hasPermission('gold-loan.applications.edit')) {
             abort(403);
         }
         $application = LoanApplication::with(['member', 'scheme'])->findOrFail($id);

@@ -70,6 +70,9 @@ class GoldLoanAccountController extends Controller
 
     public function show(Request $request, $id)
     {
+        if (!hasPermission('gold-loan.account.show')) {
+            abort(403);
+        }
 
         $savedStatuses = DB::table('gold_loan_emi_status')
             ->where('loan_id', $id)
@@ -796,8 +799,9 @@ class GoldLoanAccountController extends Controller
     }
     public function removeAccount(Request $request, $id)
     {
-        // Optional: authorization check
-        // $this->authorize('delete', LoanApplication::class);
+        if (!hasPermission('gold-loan.account.show')) {
+            abort(403);
+        }
 
         // Basic validation: confirm flag (optional)
         if (!$request->filled('confirm') || $request->input('confirm') != 1) {
