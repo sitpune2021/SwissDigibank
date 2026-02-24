@@ -1185,7 +1185,6 @@ class GoldLoanController extends Controller
 
     public function storeLoanApplication(Request $request)
     {
-        //dd('ghf');
         Log::info('--- Loan Application Store Started ---', [
             'user_id' => Auth::id(),
             'input_data' => $request->all(),

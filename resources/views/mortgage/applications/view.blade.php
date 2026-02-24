@@ -95,14 +95,20 @@
 
     <div class="main-inner">
         {{-- Submit button only when Draft --}}
-        @if ($application->status == 0 && !session('pending_request'))
-            <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST">
-                @csrf
-                <button type="submit" class="btn-primary">
-                    SUBMIT FOR APPROVAL
-                </button>
-            </form>
+        @if (session('pending_request') && $application->status == 0)
+            <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
+                <h4 style="margin:0;">PENDING REQUEST</h4>
+                <p style="margin:5px 0;">
+                    Approval request has been made for the loan application & is pending for approval.
+                    To approve
+                    <a href="{{ route('loans') }}"
+                        style="background:#e74c3c; color:white; padding:6px 12px; text-decoration:none; border-radius:4px;">
+                        CLICK HERE
+                    </a>
+                </p>
+            </div>
         @endif
+
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-lg uppercase font-semibold">Mortgage Loan Application </h1>
@@ -116,18 +122,13 @@
                 SHOW EMI CHART
             </a>
             {{-- Submit button only when Draft --}}
-            @if (session('pending_request') && $application->status == 0)
-                <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
-                    <h4 style="margin:0;">PENDING REQUEST</h4>
-                    <p style="margin:5px 0;">
-                        Approval request has been made for the loan application & is pending for approval.
-                        To approve
-                        <a href="{{ route('loans') }}"
-                            style="background:#e74c3c; color:white; padding:6px 12px; text-decoration:none; border-radius:4px;">
-                            CLICK HERE
-                        </a>
-                    </p>
-                </div>
+            @if ($application->status == 0 && !session('pending_request'))
+                <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn-primary">
+                        SUBMIT FOR APPROVAL
+                    </button>
+                </form>
             @endif
 
             @if ($application->status != 2)
@@ -440,8 +441,8 @@
                         </h3>
                         <div class="">
                             <!-- <a href="{{ route('gold-loan.applications.upload_documents') }}" class="btn-primary p-1 pointer">
-                                                <i class="las la-upload y"></i>
-                                            </a> -->
+                                                    <i class="las la-upload y"></i>
+                                                </a> -->
 
                             <button type="button" class="p-1 rounded transition"
                                 onclick="toggleSection(this, 'Documents')">
