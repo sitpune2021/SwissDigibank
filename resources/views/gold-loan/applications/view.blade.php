@@ -116,28 +116,12 @@
             </div>
         </div>
         @if (session('success'))
-            {{-- <div 
-            id="successMessage" 
-            class="max-w-md mx-auto mt-4 bg-green-100 border border-green-300 text-green-800 text-center px-4 py-3 rounded-lg shadow-md transition-opacity duration-500 ease-in-out"
-        >
-            {{ session('success') }}
-        </div>
-
-        <script>
-            // Auto hide after 30 seconds (30000 ms)
-            setTimeout(() => {
-                const msg = document.getElementById('successMessage');
-                if (msg) {
-                    msg.style.opacity = '0';
-                    setTimeout(() => msg.remove(), 500); // smooth fade-out
-                }
-            }, 30000);
-        </script> --}}
 
             {{-- //alert msg --}}
             <div class="w-44 mb-5 flex justify-end">
                 <x-alert />
             </div>
+
         @endif
 
 
@@ -158,7 +142,6 @@
                 </form>
             @endif
 			
-
             @if ($application->status != 1 && $application->status != 2)
                 <a href="{{ route('gold-loan.applications.view-buttons.col_process_fee', $application->id) }}"
                     class="btn-warning uppercase px-2 py-2 rounded-10  text-sm">
@@ -273,49 +256,6 @@
                 </div>
             @endif
 
-            {{-- If NOT CANCELED (3) then show print menu --}}
-            {{-- @if ($application->status != 3 && $application->status != 0)
-        <div class="relative inline-block text-left">
-
-            <!-- Print Button -->
-            <button type="button" class="btn-secondary px-2 py-2 rounded-10 flex items-center gap-2"
-                onclick="toggleDropdown('printDropdown')">
-                <i class="las la-print text-lg"></i>
-                PRINT DOCUMENTS
-                <i class="las la-angle-down text-xs"></i>
-            </button>
-
-            <!-- Print Dropdown Menu -->
-            <div id="printDropdown"
-                class="hidden absolute right-0 mt-2 w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-
-                @php $printDocs = [
-                'APPLICATION FORM',
-                'EMI SCHEDULE CHART',
-                'SANCTION LETTER',
-                'LOAN AGREEMENT',
-                'DISBURSE LETTER',
-                'PROMISSORY NOTE',
-                'LETTER OF UNDERTAKING',
-                'LETTER OF EVIDENCING',
-                'GUARANTOR AGREEMENT',
-                'JURISDICTION ACK LETTER',
-                'INDEMNIFICATION LETTER'
-                ]; @endphp
-
-                <div class="py-1">
-                    @foreach ($printDocs as $doc)
-                    <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="las la-print text-secondary"></i> {{ $doc }}
-                    </a>
-                    @endforeach
-                </div>
-
-            </div>
-
-        </div>
-        @endif --}}
-
         </div>
 
 
@@ -325,14 +265,15 @@
             <div class=" w-full  overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <div class="text-end p-3">
+                        @if(hasPermission('gold-loan.applications.edit') && $application->status != 2)
                         <a href="{{ route('gold-loan.applications.edit', $application->id) }}" class="p-2 btn-primary">
                             <i class="las la-pencil-alt"></i>
                         </a>
+                        @endif
                         <a href="#" class=" p-2 btn-error">
                             <i class="las la-trash-alt"></i>
                         </a>
                     </div>
-
 
                     <table class="w-full text-sm text-left border-collapse">
                         <tbody class="divide-y divide-gray-200">
@@ -432,6 +373,7 @@
 
                         </tbody>
                     </table>
+                    
                 </div>
 
 

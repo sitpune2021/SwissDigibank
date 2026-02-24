@@ -142,7 +142,7 @@
                         </li>
                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                             <i class="las la-balance-scale"></i>
-                            <a href="">Maturity Report</a>
+                            <a href="{{route('loan-report.maturity_index')}}">Maturity Report</a>
                         </li>
                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                             <i class="las la-money-bill"></i>

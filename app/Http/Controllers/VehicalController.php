@@ -1198,7 +1198,19 @@ class VehicalController extends Controller
                     Log::warning('Invalid application_date format', ['value' => $request->application_date]);
                 }
             }
+            // Ratio + Interest checkbox merge
+            $request->merge([
 
+                'ratio_enabled' => $request->has('divide_emi_ratio') ? 'Yes' : 'No',
+
+                'ratio_first_emi' => $request->has('divide_emi_ratio')
+                    ? $request->ratio_first_emi
+                    : null,
+
+                'ratio_first_percentage' => $request->has('divide_emi_ratio')
+                    ? $request->ratio_first_percentage
+                    : null,
+            ]);
             // Step 3: Create Loan Application
             $loanApplication = VehicalApplication::create([
                 'application_date' => $request->application_date,
@@ -1256,6 +1268,9 @@ class VehicalController extends Controller
                 'utr_no'     => $request->utr_no,
                 'transfer_mode'     => $request->transfer_mode,
                 'credited'     => $request->credited ?? 0,
+                'ratio_enabled' => $request->ratio_enabled ?? 'No',
+                'ratio_first_emi' => $request->ratio_first_emi,
+                'ratio_first_percentage' => $request->ratio_first_percentage,
                 'created_by'               => Auth::id(),
             ]);
 
@@ -1301,7 +1316,7 @@ class VehicalController extends Controller
                 }
             }
 
-            return redirect()->route('vehical.applications.view',$loanApplication->id)
+            return redirect()->route('vehical.applications.view', $loanApplication->id)
                 ->with('success', 'vehical Loan, Credit Score details saved successfully.');
         } catch (Exception $e) {
             Log::error('Error while storing Loan Application', [
@@ -1609,7 +1624,7 @@ class VehicalController extends Controller
             $totalCharges   = 0;
             $totalEmi       = 0;
         }
-        
+
         return view('vehical.applications.view-buttons.show-emi-chart', compact(
             'application',
             'loanAmount',
@@ -1683,6 +1698,4 @@ class VehicalController extends Controller
         return redirect()->back()
             ->with('pending_request', true);
     }
-
-
 }

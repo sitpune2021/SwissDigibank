@@ -1,4 +1,5 @@
 <div class="tab-panel hidden">
+
 <!----------------- Saving Schemes --------------------> 
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
@@ -53,21 +54,20 @@
                     </label>
                 </div>
             </div>
-             <div class="col-span-2 md:col-span-1">
+
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="set_com_chart" name="permissions[set_com_chart]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="set_com_chart" class="text-base font-semibold cursor-pointer mb-0">
                      Set Commission Chart
-
                     </label>
                 </div>
-            </div>
-
-           
+            </div> -->
 
         </div>
     </div>
+
     <br>
     <!----------------- Saving Accounts --------------------> 
     <div class="payload-section">
@@ -130,6 +130,16 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="rm_sav_acc" name="permissions[rm_sav_acc]" value=""
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="rm_sav_acc" class="text-base font-semibold cursor-pointer mb-0">
+                   Remove Saving Account
+                    </label>
+                </div>
+            </div>
+
+            <!-- <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="ch_up_sav_acc" name="permissions[ch_up_sav_acc]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="ch_up_sav_acc" class="text-base font-semibold cursor-pointer mb-0">
@@ -137,7 +147,7 @@
                     </label>
                 </div>
             </div>
-             <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="cha_up_sav_acc_old" name="permissions[cha_up_sav_acc_old]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -146,7 +156,7 @@
                     </label>
                 </div>
             </div>
-              <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="ch_up_sav_re_lod" name="permissions[ch_up_sav_re_lod]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -164,7 +174,7 @@
                     </label>
                 </div>
             </div>
-             <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="ch_up_sav_acc_branch" name="permissions[ch_up_sav_acc_branch]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -173,7 +183,7 @@
                     </label>
                 </div>
             </div>
-             <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="ch_up_sav_acc_agent" name="permissions[ch_up_sav_acc_agent]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -182,7 +192,7 @@
                     </label>
                 </div>
             </div>
-              <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="ch_up_loc_bal" name="permissions[ch_up_loc_bal]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -191,7 +201,7 @@
                     </label>
                 </div>
             </div>
-              <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="sb_swp_enb" name="permissions[sb_swp_enb]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -200,7 +210,7 @@
                     </label>
                 </div>
             </div>
-             <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="ch_up_loc_bal_sb_fd" name="permissions[ch_up_loc_bal_sb_fd]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -209,16 +219,7 @@
                     </label>
                 </div>
             </div>
-              <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="rm_sav_acc" name="permissions[rm_sav_acc]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="rm_sav_acc" class="text-base font-semibold cursor-pointer mb-0">
-                   Remove Saving Account
-                    </label>
-                </div>
-            </div>
-             <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="sub_acc_adm_re_app" name="permissions[sub_acc_adm_re_app]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -227,7 +228,7 @@
                     </label>
                 </div>
             </div>
-             <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="sav_acc_sm_enb_dsb" name="permissions[sav_acc_sm_enb_dsb]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -236,7 +237,7 @@
                     </label>
                 </div>
             </div>
-           <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="sav_acc_hol_en_dsb" name="permissions[sav_acc_hol_en_dsb]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -245,7 +246,7 @@
                     </label>
                 </div>
             </div>
-             <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="up_sav_acc_new_sch" name="permissions[up_sav_acc_new_sch]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -254,7 +255,7 @@
                     </label>
                 </div>
             </div>
-             <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="ch_acc_type_sin_joi" name="permissions[ch_acc_type_sin_joi]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -263,7 +264,7 @@
                     </label>
                 </div>
             </div>
-              <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="clo_sav_acc" name="permissions[clo_sav_acc]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -434,7 +435,7 @@
                Saving Account Transaction Receipt
                    </label>
                 </div>
-            </div>
+            </div> -->
 
        </div>
     </div>

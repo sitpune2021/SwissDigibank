@@ -1,226 +1,198 @@
 <div class="tab-panel hidden">
-    <!----------------Personal Loan Schemes------------------->
-    <div class="payload-section">
-        <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">
-                Personal Loan Schemes
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="check_all_dashboard"
-                        class="check-all form-checkbox h-5 w-5 text-primary">
-                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
-                        Check
-                        All
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="per_loan_sch_list" name="permissions[]" value="personal.schemes.index"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="per_loan_sch_list" class="text-base font-semibold cursor-pointer mb-0">
-                        Personal Loan Schemes List
-                    </label>
-                </div>
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="new_personal_loan_sch" name="permissions[]" value="personal.schemes.create"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="new_personal_loan_sch" class="text-base font-semibold cursor-pointer mb-0">
-                        New Personal Loan Scheme
-                    </label>
-                </div>
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="shw_per_loan_sch" name="permissions[]" value="personal.schemes.show"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="shw_per_loan_sch" class="text-base font-semibold cursor-pointer mb-0">
-                        Show Personal Loan Scheme
-                    </label>
-                </div>
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="edit_per_loan_sch" name="permissions[]" value="personal.schemes.edit"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="edit_per_loan_sch" class="text-base font-semibold cursor-pointer mb-0">
-                        Edit Personal Loan Scheme
-                    </label>
-                </div>
-            </div>
-        </div>
-    </div>
-    <br>
-    <!---------------Personal Loan Calculator------------------->
-    <div class="payload-section">
-        <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">
-                Personal Loan Calculator
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="check_all_dashboard"
-                        class="check-all form-checkbox h-5 w-5 text-primary">
-                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
-                        Check
-                        All
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="per_loan_calc" name="permissions[]" value="personal.calculator.index"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="per_loan_calc" class="text-base font-semibold cursor-pointer mb-0">
-                        Personal Loan Calculator
-                    </label>
-                </div>
-            </div>
-        </div>
-    </div>
-    <br>
-    <!----------------Personal Loan Applications------------------->
-    <div class="payload-section">
-        <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">
-                Personal Loan Applications
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="check_all_dashboard"
-                        class="check-all form-checkbox h-5 w-5 text-primary">
-                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
-                        Check
-                        All
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="per_lon_app_lis" name="permissions[]" value="personal.applications.index"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="per_lon_app_lis" class="text-base font-semibold cursor-pointer mb-0">
-                        Personal Loan Applications List
-                    </label>
-                </div>
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="new_per_loan_app" name="permissions[]" value="personal.applications.create"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="new_per_loan_app" class="text-base font-semibold cursor-pointer mb-0">
-                        New Personal Loan Applications
-                    </label>
-                </div>
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="shw_per_lon_app" name="permissions[]" value="personal.applications.view"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="shw_per_lon_app" class="text-base font-semibold cursor-pointer mb-0">
-                        Show Personal Loan Application
-                    </label>
-                </div>
-            </div>
-            
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="edit_per_loan_app" name="permissions[]" value="personal.applications.edit"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="edit_per_loan_app" class="text-base font-semibold cursor-pointer mb-0">
-                        Edit Personal Loan Application
-                    </label>
-                </div>
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="rem_personal_loan_app" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="rem_personal_loan_app" class="text-base font-semibold cursor-pointer mb-0">
-                        Remove Personal Loan Application
-                    </label>
-                </div>
-            </div>
-            
-        </div>
-    </div>
-    <br>
-    <!----------------Personal Loan Disbursements------------------->
-    <div class="payload-section">
-        <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">
-                Personal Loan Disbursements
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="check_all_dashboard"
-                        class="check-all form-checkbox h-5 w-5 text-primary">
-                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
-                        Check
-                        All
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="per_ld_lis" name="permissions[]" value="personal.disbursements.index"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="per_ld_lis" class="text-base font-semibold cursor-pointer mb-0">
-                        Personal Loan Disbursements List
-                    </label>
-                </div>
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="dis_per_loan" name="permissions[]" value="personal.disbursements.disburse-loan"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="dis_per_loan" class="text-base font-semibold cursor-pointer mb-0">
-                        Disburse Personal Loan
-                    </label>
-                </div>
-            </div>
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="can_personal_loan" name="permissions[]" value="personal.cancel"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="can_personal_loan" class="text-base font-semibold cursor-pointer mb-0">
-                        Cancel Personal Loan
 
+    <!---------------- Daily Weekly Schemes ------------------->
+    <div class="payload-section">
+        <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
+            <div class="uppercase font-semibold text-lg">
+                Daily Weekly Schemes
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="check_all_dashboard"
+                        class="check-all form-checkbox h-5 w-5 text-primary">
+                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
+                        Check
+                        All
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="cc_lim_sch_lis" name="permissions[]" value="daily_weekly.schemes.index"
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="cc_lim_sch_lis" class="text-base font-semibold cursor-pointer mb-0">
+                        Daily Weekly Schemes List
+                    </label>
+                </div>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="nw_cc_limit_sch" name="permissions[]" value="daily_weekly.schemes.create"
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="nw_cc_limit_sch" class="text-base font-semibold cursor-pointer mb-0">
+                        New Daily Weekly Scheme
+                    </label>
+                </div>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="shw_cc_limit_sch" name="permissions[]" value="daily_weekly.schemes.show"
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="shw_cc_limit_sch" class="text-base font-semibold cursor-pointer mb-0">
+                        Show Daily Weekly Scheme
+                    </label>
+                </div>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="edit_cc_limit_sch" name="permissions[]" value="daily_weekly.schemes.edit"
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="edit_cc_limit_sch" class="text-base font-semibold cursor-pointer mb-0">
+                        Edit Daily Weekly Scheme
                     </label>
                 </div>
             </div>
         </div>
     </div>
+
+    <br>
+    <!---------------- Daily Weekly Applications ------------------->
+    <div class="payload-section">
+        <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
+            <div class="uppercase font-semibold text-lg">
+                Daily Weekly Applications
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="check_all_dashboard"
+                        class="check-all form-checkbox h-5 w-5 text-primary">
+                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
+                        Check
+                        All
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="cc_app_list" name="permissions[]" value="aily_weekly.applications.index"
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="cc_app_list" class="text-base font-semibold cursor-pointer mb-0">
+                        Daily Weekly Applications List
+                    </label>
+                </div>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="new_cc_lim_app" name="permissions[]" value="aily_weekly.applications.create"
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="new_cc_lim_app" class="text-base font-semibold cursor-pointer mb-0">
+                        New Daily Weekly Applications
+                    </label>
+                </div>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="shw_cc_lim_app" name="permissions[]" value="aily_weekly.applications.view"
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="shw_cc_lim_app" class="text-base font-semibold cursor-pointer mb-0">
+                        Show Daily Weekly Application
+                    </label>
+                </div>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="edit_cc_lim_app" name="permissions[]" value="aily_weekly.applications.edit"
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="edit_cc_lim_app" class="text-base font-semibold cursor-pointer mb-0">
+                        Edit Daily Weekly Application
+                    </label>
+                </div>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="rmv_cc_lim_app" name="permissions[]" value=""
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="rmv_cc_lim_app" class="text-base font-semibold cursor-pointer mb-0">
+                        Remove Daily Weekly Application
+                    </label>
+                </div>
+            </div>
+              
+        </div>
+    </div>
+
+    <br>
+    <!---------------- DAILY WEEKLY Disbursements ------------------->
+    <div class="payload-section">
+        <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
+            <div class="uppercase font-semibold text-lg">
+                Daily Weekly Disbursements
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="check_all_dashboard"
+                        class="check-all form-checkbox h-5 w-5 text-primary">
+                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
+                        Check
+                        All
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="cc_lim_dl" name="permissions[]" value="daily_weekly.disbursements.index"
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="cc_lim_dl" class="text-base font-semibold cursor-pointer mb-0">
+                        Daily Weekly Disbursements List
+                    </label>
+                </div>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="dis_cc_lim" name="permissions[]" value="daily_weekly.disbursements.disburse-loan"
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="dis_cc_lim" class="text-base font-semibold cursor-pointer mb-0">
+                        Disburse Daily Weekly
+                    </label>
+                </div>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 space-x-2">
+                    <input type="checkbox" id="can_cc_limit" name="permissions[]" value="daily_weekly.cancel"
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <label for="can_cc_limit" class="text-base font-semibold cursor-pointer mb-0">
+                        Cancel Daily Weekly
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <br>
 
     @php
-    $perLoanAcc = [
-    ['key' => 'personal.account.index', 'label' => 'Personal Loan Accounts List'],
-    ['key' =>
-    'personal.account.show', 'label' => 'Show Personal Loan Account'],
-    ['key' =>
-    'personal.remove', 'label' => 'Remove Personal Loan Account'],
+
+    $ccLimitAcc=[
+    ['key' => 'daily_weekly.account.index', 'label' => 'Daily Weekly Accounts List'],
+    ['key' => 'daily_weekly.account.show', 'label' => 'Show Daily Weekly Account'],
+    ['key' => 'daily_weekly.remove', 'label' => 'Remove Daily Weekly Account'],
     ];
+
     @endphp
 
-
-    <!----Personal Loan Accounts----->
+    <!--- DAILY WEEKLY Accounts ----->
     <div class="payload-section">
 
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">Personal Loan Accounts</div>
-           <div class="col-span-2 md:col-span-1">
+            <div class="uppercase font-semibold text-lg">Daily Weekly Accounts</div>
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="check_all_dashboard"
                         class="check-all form-checkbox h-5 w-5 text-primary">
@@ -233,7 +205,7 @@
         </div>
         <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
 
-            @foreach ($perLoanAcc as $perm)
+            @foreach ($ccLimitAcc as $perm)
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
 
@@ -250,4 +222,5 @@
 
         </div>
     </div>
+
 </div>

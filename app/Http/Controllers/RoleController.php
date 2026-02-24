@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Branch;
+
 use App\Models\Role;
 use App\Models\RolePermission;
 use Illuminate\Http\Request;
@@ -29,7 +29,7 @@ class RoleController extends Controller
             ['title' => 'COMPANY'],
             ['title' => 'USER MANAGEMENT'],
             ['title' => 'COLLECTION CENTERS'],
-            ['title' => 'MEMBER MANAGEMENT'],
+            ['title' => 'CUSTOMER MANAGEMENT'],
         ];
         $menuItems2 = [
             ['title' => 'SAVING ACCOUNTS'],
@@ -40,13 +40,15 @@ class RoleController extends Controller
         ];
         $menuItems3 = [
             ['title' => 'DEPOSIT LOAN'],
-            ['title' => 'OTHER LOAN'],
-            ['title' => 'FIXED LOAN'],
-            ['title' => 'APPROVALS'],
-            ['title' => 'PAYMENT COLLECTIONS'],
+            ['title' => 'BUSINESS LOAN'],
+            ['title' => 'CC LIMIT'],
+            ['title' => 'VEHICLE LOAN'],
         ];
         $menuItems4 = [
-            ['title' => 'PAYMENT PAYOUTS'],
+            ['title' => 'PERSONAL LOAN'],
+            ['title' => 'DAILY WEEKLY'],
+            ['title' => 'APPROVALS'],
+            //['title' => 'FIXED LOAN'],
             ['title' => 'MACHINE COLLECTION'],
             ['title' => 'PASSBOOKS'],
             ['title' => 'PRINT DOCUMENTS'],
@@ -85,12 +87,11 @@ class RoleController extends Controller
             ['title' => 'APPOINTMENTS'],
             ['title' => 'INQUIRY'],
             ['title' => 'ENACH'],
-            ['title' => 'CC LIMIT'],
         ];
         $menuItems10 = [
             ['title' => 'AXISBANK'],
-            ['title' => 'VEHICLE LOAN'],
-            ['title' => 'PERSONAL LOAN'],
+            ['title' => 'PAYMENT COLLECTIONS'],
+            ['title' => 'PAYMENT PAYOUTS'],
             ['title' => 'CKYC REPORTS'],
             ['title' => 'PAYLOADS'],
 
