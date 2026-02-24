@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Branch;
+
 use App\Models\Role;
 use App\Models\RolePermission;
 use Illuminate\Http\Request;
