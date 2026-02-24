@@ -1133,6 +1133,7 @@ class MortgageController extends Controller
 
     public function storeLoanApplication(Request $request)
     {
+        // dd($request->all());
         Log::info('--- Mortgage Loan Application Store Started ---', [
             'user_id' => Auth::id(),
             'input_data' => $request->all(),
@@ -1206,6 +1207,22 @@ class MortgageController extends Controller
 
             Log::info('Validation Passed');
 
+            // Ratio + Interest checkbox merge
+            $request->merge([
+
+                // Ratio checkbox
+                'ratio_enabled' => $request->has('divide_emi_ratio') ? 'Yes' : 'No',
+
+                // EMI Ratio value
+                'ratio_first_emi' => $request->has('divide_emi_ratio')
+                    ? $request->emi_ratio_1
+                    : null,
+
+                // Loan % ratio
+                'ratio_first_percentage' => $request->has('divide_emi_ratio')
+                    ? $request->ratio_first_percentage
+                    : null,
+            ]);
             // Step 3.5: Check if any property already exists before creating loan
 
             if ($request->has('properties') && is_array($request->properties)) {
@@ -1249,49 +1266,6 @@ class MortgageController extends Controller
                 }
             }
 
-
-            //             if ($request->has('properties') && is_array($request->properties)) {
-
-            //     foreach ($request->properties as $i => $prop) {
-
-            //         if (empty($prop['property_type'])) continue;
-
-            //         $data = [
-            //             'loan_application_id' => $loanApplication->id,
-            //             'property_type' => $prop['property_type'] ?? null,
-            //             'doc_number' => trim($prop['doc_number'] ?? ''),
-            //             'registrar_name' => trim($prop['registrar_name'] ?? ''),
-            //             'owner_name' => trim($prop['owner_name'] ?? ''),
-            //             'parent_name' => trim($prop['parent_name'] ?? ''),
-            //             'plot_no' => trim($prop['plot_no'] ?? ''),
-            //             'tehsil' => trim($prop['tehsil'] ?? ''),
-            //             'district' => trim($prop['district'] ?? ''),
-            //             'area_sqft' => trim($prop['area_sqft'] ?? ''),
-            //             'expected_value' => $prop['expected_value'] ?? null,
-            //             'total_security_amount' => $request->total_security_amount ?? null,
-            //             'registered' => $prop['registered'] ?? 'no',
-            //             'boundary_sale_east' => $prop['boundary_sale_east'] ?? null,
-            //             'boundary_sale_west' => $prop['boundary_sale_west'] ?? null,
-            //             'boundary_sale_north' => $prop['boundary_sale_north'] ?? null,
-            //             'boundary_sale_south' => $prop['boundary_sale_south'] ?? null,
-            //             'boundary_tech_east' => $prop['boundary_tech_east'] ?? null,
-            //             'boundary_tech_west' => $prop['boundary_tech_west'] ?? null,
-            //             'boundary_tech_north' => $prop['boundary_tech_north'] ?? null,
-            //             'boundary_tech_south' => $prop['boundary_tech_south'] ?? null,
-            //         ];
-
-            //         // 🔥 UPDATE OR CREATE
-            //         MortgageProperty::updateOrCreate(
-            //             [
-            //                 'id' => $prop['id'] ?? null
-            //             ],
-            //             $data
-            //         );
-            //     }
-            // }
-
-
-
             // Step 4: Create main loan application
             $loanApplication = MortgageLoanApplication::create([
                 'application_date' => $request->application_date,
@@ -1318,6 +1292,9 @@ class MortgageController extends Controller
                 'max_loan_limit' => $request->max_loan_limit,
                 'maximum_approvable_amount' => $request->maximum_approvable_amount,
                 'approved_loan_amount' => $request->approved_loan_amount,
+                'ratio_enabled' => $request->ratio_enabled ?? 'No',
+                'ratio_first_emi' => $request->ratio_first_emi,
+                'ratio_first_percentage' => $request->ratio_first_percentage,
                 'created_by' => Auth::id(),
             ]);
 
@@ -1678,16 +1655,17 @@ class MortgageController extends Controller
         $smsCharge        = floatval($application->scheme->sms_charge ?? 0);
         $fuelCharge       = floatval($application->scheme->fuel_charge ?? 0);
         $stationaryCharge = floatval($application->scheme->stationary_charge ?? 0);
-        $maintenanceCharge= floatval($application->scheme->maintenance_charge ?? 0);
+        $maintenanceCharge = floatval($application->scheme->maintenance_charge ?? 0);
         $collectionCharge = floatval($application->scheme->collection ?? 0);
 
         $chargesPerEmi = round(
             $smsCharge +
-            $fuelCharge +
-            $stationaryCharge +
-            $maintenanceCharge +
-            $collectionCharge,
-        2);
+                $fuelCharge +
+                $stationaryCharge +
+                $maintenanceCharge +
+                $collectionCharge,
+            2
+        );
 
 
         /* Interest Rate */

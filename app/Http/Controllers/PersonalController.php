@@ -23,13 +23,13 @@ use Illuminate\Support\Facades\Auth;
 
 class PersonalController extends Controller
 {
-    
+
     public function index()
-    {       
+    {
         $schemes = PersonalScheme::orderBy('id', 'desc')->paginate(10);
         return view("personal.schemes.index", compact('schemes'));
-    } 
-  
+    }
+
     public function create()
     {
         return view("personal.schemes.create");
@@ -54,7 +54,7 @@ class PersonalController extends Controller
 
             // optional numeric fields (these will be saved if present)
             'overdue_interest_rate' => 'nullable|numeric',
-            'overdue_type' => 'nullable|in:TYPE_1,TYPE_2', 
+            'overdue_type' => 'nullable|in:TYPE_1,TYPE_2',
             'penalty_charge' => 'nullable|numeric',
             'processing_fee' => 'nullable|numeric',
             'stamp_duty_charge' => 'nullable|numeric',
@@ -121,9 +121,9 @@ class PersonalController extends Controller
         $scheme->update($request->all());
 
         return redirect()->route('personal.schemes.index')
-                        ->with('success', 'Scheme updated successfully!');
+            ->with('success', 'Scheme updated successfully!');
     }
-  
+
     public function view($id)
     {
         $scheme = PersonalScheme::findOrFail($id);
@@ -131,7 +131,7 @@ class PersonalController extends Controller
     }
 
 
-//////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////
 
 
     public function calculator()
@@ -1113,7 +1113,7 @@ class PersonalController extends Controller
     }
 
 
-////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
 
 
     public function appindex()
@@ -1124,45 +1124,45 @@ class PersonalController extends Controller
         return view("personal.applications.index", compact('applications'));
     }
 
-    public function appcreate() 
+    public function appcreate()
     {
         //$members = Member::all();
-        $members = Member::select('id', 'member_info_first_name','member_info_mobile_no','general_branch')->get();
+        $members = Member::select('id', 'member_info_first_name', 'member_info_mobile_no', 'general_branch')->get();
         $branch = Branch::all();
         $scheme = PersonalScheme::all();
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
-        return view("personal.applications.create", compact('members','branch','scheme','banks'));
+        return view("personal.applications.create", compact('members', 'branch', 'scheme', 'banks'));
     }
-   
+
     public function storeLoanApplication(Request $request)
     {
-    Log::info('--- Loan Application Store Started ---', [
-        'user_id' => Auth::id(),
-        'input_data' => $request->all(),
-    ]);
-
-    try {
-        // Step 1: Validate main fields
-        $validated = $request->validate([
-            'application_date'   => 'required|date_format:d-m-Y',
-            'member_id'          => 'required|exists:members,id',
-            'branch_id'          => 'required|exists:branches,id',
-            'scheme_id'          => 'required|exists:personal_schemes,id',
-            'loan_amount'        => 'required|numeric|min:1',
-            'insurance_amount'   => 'required|numeric|min:0',
-            'net_loan_amount'    => 'required|numeric|min:1',
-            'tenure_type'        => 'required|string',
-            'tenure_value'       => 'required|numeric|min:1',
-            'emi_collection'     => 'required|string',
-            'credit_period'      => 'required|numeric|min:1',
-            'purpose_of_loan'    => 'required|string|max:255',
-            // Optional (if not always sent)
-            'total_security_amount' => 'nullable|numeric|min:0',
-            'charges_per_emi_type' => 'required|in:ON EMI,ON PRINCIPAL',
-
+        Log::info('--- Loan Application Store Started ---', [
+            'user_id' => Auth::id(),
+            'input_data' => $request->all(),
         ]);
 
-         // Validate CIBIL scores (each must be 3 digits between 300–900)
+        try {
+            // Step 1: Validate main fields
+            $validated = $request->validate([
+                'application_date'   => 'required|date_format:d-m-Y',
+                'member_id'          => 'required|exists:members,id',
+                'branch_id'          => 'required|exists:branches,id',
+                'scheme_id'          => 'required|exists:personal_schemes,id',
+                'loan_amount'        => 'required|numeric|min:1',
+                'insurance_amount'   => 'required|numeric|min:0',
+                'net_loan_amount'    => 'required|numeric|min:1',
+                'tenure_type'        => 'required|string',
+                'tenure_value'       => 'required|numeric|min:1',
+                'emi_collection'     => 'required|string',
+                'credit_period'      => 'required|numeric|min:1',
+                'purpose_of_loan'    => 'required|string|max:255',
+                // Optional (if not always sent)
+                'total_security_amount' => 'nullable|numeric|min:0',
+                'charges_per_emi_type' => 'required|in:ON EMI,ON PRINCIPAL',
+
+            ]);
+
+            // Validate CIBIL scores (each must be 3 digits between 300–900)
             if ($request->has('cibil_score')) {
                 foreach ($request->cibil_score as $index => $score) {
                     if (!empty($score)) {
@@ -1175,95 +1175,108 @@ class PersonalController extends Controller
                 }
             }
 
-        // Step 2: Convert application_date to MySQL format
-        $formattedDate = Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d');
-        $request->merge(['application_date' => $formattedDate]);
+            // Step 2: Convert application_date to MySQL format
+            $formattedDate = Carbon::createFromFormat('d-m-Y', $request->application_date)->format('Y-m-d');
+            $request->merge(['application_date' => $formattedDate]);
 
-        // Step 3: Map total_security_amount → security_amount
-        $securityAmount = $request->filled('total_security_amount') 
-            ? $request->total_security_amount 
-            : ($request->security_amount ?? 0);
-        
-        // Step 4: Create main loan application
-        $loanApplication = PersonalLoanApplication::create([
-            'application_date'            => $request->application_date,
-            'member_id'                   => $request->member_id,
-            'branch_id'                   => $request->branch_id,
-            'scheme_id'                   => $request->scheme_id,
-            'co_applicant_1_id'           => $request->co_applicant_1_id,
-            'co_applicant_2_id'           => $request->co_applicant_2_id,
-            'guarantor_1_id'              => $request->guarantor_1_id,
-            'guarantor_2_id'              => $request->guarantor_2_id,
-            'guarantor_3_id'              => $request->guarantor_3_id,
-            'guarantor_4_id'              => $request->guarantor_4_id,
-            'tenure_type'                 => $request->tenure_type,
-            'tenure_value'                => $request->tenure_value,
-            'emi_collection'              => $request->emi_collection,
-            'credit_period'               => $request->credit_period,
-            'loan_amount'                 => $request->loan_amount,
-            'insurance_amount'            => $request->insurance_amount,
-            'net_loan_amount'             => $request->net_loan_amount,
-            'purpose_of_loan'             => $request->purpose_of_loan,
-            'security_amount'             => $securityAmount,
-            'securety_type'               => $request->securety_type ?? 'Property',
-            'max_loan_amount'             => $request->max_loan_amount,
-            'max_loan_limit'              => $request->max_loan_limit,
-            'maximum_approvable_amount'   => $request->maximum_approvable_amount,
-            'approved_loan_amount'        => $request->approved_loan_amount,
-            'charges_per_emi_type' => $request->charges_per_emi_type,
-            'created_by'                  => Auth::id(),
-        ]);
+            // Step 3: Map total_security_amount → security_amount
+            $securityAmount = $request->filled('total_security_amount')
+                ? $request->total_security_amount
+                : ($request->security_amount ?? 0);
 
-        Log::info('Loan Application Created', ['loan_application_id' => $loanApplication->id]);
+            // Step 4: Create main loan application
+            $loanApplication = PersonalLoanApplication::create([
+                'application_date'            => $request->application_date,
+                'member_id'                   => $request->member_id,
+                'branch_id'                   => $request->branch_id,
+                'scheme_id'                   => $request->scheme_id,
+                'co_applicant_1_id'           => $request->co_applicant_1_id,
+                'co_applicant_2_id'           => $request->co_applicant_2_id,
+                'guarantor_1_id'              => $request->guarantor_1_id,
+                'guarantor_2_id'              => $request->guarantor_2_id,
+                'guarantor_3_id'              => $request->guarantor_3_id,
+                'guarantor_4_id'              => $request->guarantor_4_id,
+                'tenure_type'                 => $request->tenure_type,
+                'tenure_value'                => $request->tenure_value,
+                'emi_collection'              => $request->emi_collection,
+                'credit_period'               => $request->credit_period,
+                'loan_amount'                 => $request->loan_amount,
+                'insurance_amount'            => $request->insurance_amount,
+                'net_loan_amount'             => $request->net_loan_amount,
+                'purpose_of_loan'             => $request->purpose_of_loan,
+                'security_amount'             => $securityAmount,
+                'securety_type'               => $request->securety_type ?? 'Property',
+                'max_loan_amount'             => $request->max_loan_amount,
+                'max_loan_limit'              => $request->max_loan_limit,
+                'maximum_approvable_amount'   => $request->maximum_approvable_amount,
+                'approved_loan_amount'        => $request->approved_loan_amount,
+                'charges_per_emi_type' => $request->charges_per_emi_type,
+                'ratio_enabled' => $request->ratio_enabled ?? 'No',
+                'ratio_first_emi' => $request->ratio_first_emi,
+                'ratio_first_percentage' => $request->ratio_first_percentage,
+                'created_by'                  => Auth::id(),
+            ]);
 
-        // Step 5: Save CIBIL details if available
-        if ($request->has('cibil_type') && is_array($request->cibil_type)) {
-            foreach ($request->cibil_type as $index => $type) {
-                if (empty($type)) continue;
+            Log::info('Loan Application Created', ['loan_application_id' => $loanApplication->id]);
 
-                try {
-                    $reportDate = null;
-                    if (!empty($request->report_date[$index])) {
-                        $reportDate = Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d');
+            // Step 5: Save CIBIL details if available
+            if ($request->has('cibil_type') && is_array($request->cibil_type)) {
+                foreach ($request->cibil_type as $index => $type) {
+                    if (empty($type)) continue;
+
+                    try {
+                        $reportDate = null;
+                        if (!empty($request->report_date[$index])) {
+                            $reportDate = Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d');
+                        }
+
+                        $filePath = null;
+                        if ($request->hasFile("report_file.$index")) {
+                            $filePath = $request->file("report_file.$index")
+                                ->store('uploads/cibil_reports', 'public');
+                        }
+                        // Ratio + Interest checkbox merge
+                        $request->merge([
+
+                            'ratio_enabled' => $request->has('divide_emi_ratio') ? 'Yes' : 'No',
+
+                            'ratio_first_emi' => $request->has('divide_emi_ratio')
+                                ? $request->ratio_first_emi
+                                : null,
+
+                            'ratio_first_percentage' => $request->has('divide_emi_ratio')
+                                ? $request->ratio_first_percentage
+                                : null,
+                        ]);
+                        PersonalCreditScore::create([
+                            'loan_application_id' => $loanApplication->id,
+                            'cibil_type'          => $type,
+                            'cibil_score'         => $request->cibil_score[$index] ?? null,
+                            'report_date'         => $reportDate,
+                            'report_file_path'    => $filePath,
+                        ]);
+                    } catch (Exception $e) {
+                        Log::warning('CIBIL Record Insert Failed', [
+                            'index' => $index,
+                            'error' => $e->getMessage(),
+                        ]);
                     }
-
-                    $filePath = null;
-                    if ($request->hasFile("report_file.$index")) {
-                        $filePath = $request->file("report_file.$index")
-                            ->store('uploads/cibil_reports', 'public');
-                    }
-
-                    PersonalCreditScore::create([
-                        'loan_application_id' => $loanApplication->id,
-                        'cibil_type'          => $type,
-                        'cibil_score'         => $request->cibil_score[$index] ?? null,
-                        'report_date'         => $reportDate,
-                        'report_file_path'    => $filePath,
-                    ]);
-
-                } catch (Exception $e) {
-                    Log::warning('CIBIL Record Insert Failed', [
-                        'index' => $index,
-                        'error' => $e->getMessage(),
-                    ]);
                 }
             }
+
+            Log::info('All Data Saved Successfully', ['loan_application_id' => $loanApplication->id]);
+
+            return redirect()
+                ->route('personal.applications.view', $loanApplication->id)
+                ->with('success', 'Loan application saved successfully.');
+        } catch (Exception $e) {
+            Log::error('Error while storing Loan Application', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while saving the loan application.');
         }
-
-        Log::info('All Data Saved Successfully', ['loan_application_id' => $loanApplication->id]);
-
-        return redirect()
-            ->route('personal.applications.view',$loanApplication->id)
-            ->with('success', 'Loan application saved successfully.');
-
-    } catch (Exception $e) {
-        Log::error('Error while storing Loan Application', [
-            'error_message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-        ]);
-
-        return back()->with('error', 'Something went wrong while saving the loan application.');
-    }
     }
 
     public function getMemberInfo($id)
@@ -1378,7 +1391,7 @@ class PersonalController extends Controller
     }
 
 
-//////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////
 
 
     public function emiChart($id)
@@ -1424,11 +1437,12 @@ class PersonalController extends Controller
 
         $chargesPerEmi = round(
             $smsCharge +
-            $fuelCharge +
-            $stationaryCharge +
-            $maintenanceCharge +
-            $collectionCharge,
-        2);
+                $fuelCharge +
+                $stationaryCharge +
+                $maintenanceCharge +
+                $collectionCharge,
+            2
+        );
 
         /* Interest Rate */
         $annualRate = floatval($application->scheme->annual_interest_rate ?? 0);
@@ -1436,9 +1450,20 @@ class PersonalController extends Controller
         /* Collection Frequency */
         $collection = strtolower($application->emi_collection ?? 'monthly');
         switch ($collection) {
-            case 'daily':    $periodIncrement = 'addDay';  $periodName = 'DAILY';   $periodsPerYear = 365; break;
-            case 'weekly':   $periodIncrement = 'addWeek'; $periodName = 'WEEKLY';  $periodsPerYear = 52; break;
-            default:         $periodIncrement = 'addMonth';$periodName = 'MONTHLY'; $periodsPerYear = 12;
+            case 'daily':
+                $periodIncrement = 'addDay';
+                $periodName = 'DAILY';
+                $periodsPerYear = 365;
+                break;
+            case 'weekly':
+                $periodIncrement = 'addWeek';
+                $periodName = 'WEEKLY';
+                $periodsPerYear = 52;
+                break;
+            default:
+                $periodIncrement = 'addMonth';
+                $periodName = 'MONTHLY';
+                $periodsPerYear = 12;
         }
 
         $periodicRate = ($annualRate / 100) / $periodsPerYear;
@@ -1459,9 +1484,9 @@ class PersonalController extends Controller
         /*  SPECIAL CASE — **ONLY 1 ROW** (Flat Advanced) */
         if ($interestType == 'flat_advanced') {
 
-        $emiDate = $emiDate->copy()->{$periodIncrement}(1);
-        $formattedEmiDate = $emiDate->format('d-m-Y');
-        $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
+            $emiDate = $emiDate->copy()->{$periodIncrement}(1);
+            $formattedEmiDate = $emiDate->format('d-m-Y');
+            $dueDate = $emiDate->copy()->addDay()->format('d-m-Y');
 
             $schedule[] = [
                 'no' => 1,
@@ -1481,11 +1506,23 @@ class PersonalController extends Controller
             $totalEmi = $loanAmount;
 
             return view('personal.applications.view-buttons.show-emi-chart', compact(
-                'application','loanAmount','disburseDate',
-                'processingFeeInc','stampDutyInc','insuranceInc','fitnessInc',
-                'tenure','chargesPerEmi','schedule',
-                'totalPrincipal','totalInterest','totalCharges','totalEmi',
-                'annualRate','interestType','periodName'
+                'application',
+                'loanAmount',
+                'disburseDate',
+                'processingFeeInc',
+                'stampDutyInc',
+                'insuranceInc',
+                'fitnessInc',
+                'tenure',
+                'chargesPerEmi',
+                'schedule',
+                'totalPrincipal',
+                'totalInterest',
+                'totalCharges',
+                'totalEmi',
+                'annualRate',
+                'interestType',
+                'periodName'
             ));
         }
 
@@ -1543,20 +1580,19 @@ class PersonalController extends Controller
                 'no' => $i,
                 'emi_date' => $formattedEmiDate,
                 'due_date' => $dueDate,
-                'principal' => $principalThis,         
-                'interest' => $interestForPeriod,      
-                'charges_per_emi' => $chargesPerEmi,   
-                'emi' => $emiTotal,                    
-                'bal_principal' => $remainingPrincipal 
+                'principal' => $principalThis,
+                'interest' => $interestForPeriod,
+                'charges_per_emi' => $chargesPerEmi,
+                'emi' => $emiTotal,
+                'bal_principal' => $remainingPrincipal
             ];
-
         }
 
         /* Totals */
-        $totalPrincipal = array_sum(array_map(fn($r)=>floatval($r['principal']), $schedule));
-        $totalInterest  = array_sum(array_map(fn($r)=>floatval($r['interest']), $schedule));
-        $totalCharges   = array_sum(array_map(fn($r)=>floatval($r['charges_per_emi']), $schedule));
-        $totalEmi       = array_sum(array_map(fn($r)=>floatval($r['emi']), $schedule));
+        $totalPrincipal = array_sum(array_map(fn($r) => floatval($r['principal']), $schedule));
+        $totalInterest  = array_sum(array_map(fn($r) => floatval($r['interest']), $schedule));
+        $totalCharges   = array_sum(array_map(fn($r) => floatval($r['charges_per_emi']), $schedule));
+        $totalEmi       = array_sum(array_map(fn($r) => floatval($r['emi']), $schedule));
         if ($interestType === 'no_emi') {
             $totalPrincipal = 0;
             $totalInterest  = 0;
@@ -1564,11 +1600,23 @@ class PersonalController extends Controller
             $totalEmi       = 0;
         }
         return view('personal.applications.view-buttons.show-emi-chart', compact(
-            'application','loanAmount','disburseDate',
-            'processingFeeInc','stampDutyInc','insuranceInc','fitnessInc',
-            'tenure','chargesPerEmi','schedule',
-            'totalPrincipal','totalInterest','totalCharges','totalEmi',
-            'annualRate','interestType','periodName'
+            'application',
+            'loanAmount',
+            'disburseDate',
+            'processingFeeInc',
+            'stampDutyInc',
+            'insuranceInc',
+            'fitnessInc',
+            'tenure',
+            'chargesPerEmi',
+            'schedule',
+            'totalPrincipal',
+            'totalInterest',
+            'totalCharges',
+            'totalEmi',
+            'annualRate',
+            'interestType',
+            'periodName'
         ));
     }
 
@@ -1584,7 +1632,7 @@ class PersonalController extends Controller
 
         $banks = Bank::pluck('name', 'id'); // ['id' => 'name']
 
-        return view("personal.applications.view-buttons.col_process_fee", compact('application','banks'));
+        return view("personal.applications.view-buttons.col_process_fee", compact('application', 'banks'));
     }
 
     public function personalstoreProcessFee(Request $request, $id)
@@ -1619,10 +1667,9 @@ class PersonalController extends Controller
         return redirect()->route('personal.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
 
-     public function submitForApproval($id)
+    public function submitForApproval($id)
     {
         return redirect()->back()
             ->with('pending_request', true);
     }
-    
 }

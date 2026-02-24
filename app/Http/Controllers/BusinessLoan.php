@@ -2067,6 +2067,7 @@ class BusinessLoan extends Controller
 
     public function storeLoanApplication(Request $request)
     {
+        // dd($request->all());
         Log::info('--- Business Loan Application Store Started ---', [
             'user_id' => Auth::id(),
             'input_data' => $request->all(),
@@ -2116,7 +2117,20 @@ class BusinessLoan extends Controller
                     }
                 }
             }
+            // Ratio + Interest checkbox merge
+            $request->merge([
 
+                'ratio_enabled' => $request->has('divide_emi_ratio') ? 'Yes' : 'No',
+
+                'ratio_first_emi' => $request->has('divide_emi_ratio')
+                    ? $request->ratio_first_emi
+                    : null,
+
+                'ratio_first_percentage' => $request->has('divide_emi_ratio')
+                    ? $request->ratio_first_percentage
+                    : null,
+            ]);
+            
             Log::info('Validation passed successfully.');
         } catch (ValidationException $e) {
             Log::error('Validation failed', [
@@ -2184,6 +2198,9 @@ class BusinessLoan extends Controller
                 'maximum_approvable_amount' => $request->maximum_approvable_amount ?? 0,
                 'approved_loan_amount' => $request->approved_loan_amount ?? 0,
                 // Security fields set to null (since removed from form)
+                'ratio_enabled' => $request->ratio_enabled ?? 'No',
+                'ratio_first_emi' => $request->ratio_first_emi,
+                'ratio_first_percentage' => $request->ratio_first_percentage,
                 'security_type' => null,
                 'security_amount' => null,
             ]);

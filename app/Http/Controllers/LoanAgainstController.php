@@ -1254,6 +1254,22 @@ class LoanAgainstController extends Controller
                 'credit_period.required' => 'Please enter Credit Period.',
             ]);
 
+            // Ratio + Interest checkbox merge
+            $request->merge([
+
+                // Ratio checkbox
+                'ratio_enabled' => $request->has('divide_emi_ratio') ? 'Yes' : 'No',
+
+                // EMI Ratio value
+                'ratio_first_emi' => $request->has('divide_emi_ratio')
+                    ? $request->ratio_first_emi
+                    : null,
+
+                // Loan % ratio
+                'ratio_first_percentage' => $request->has('divide_emi_ratio')
+                    ? $request->ratio_first_percentage
+                    : null,
+            ]);
             // Validate CIBIL scores (each must be 3 digits between 300–900)
             if ($request->has('cibil_score')) {
                 foreach ($request->cibil_score as $index => $score) {
@@ -1335,7 +1351,8 @@ class LoanAgainstController extends Controller
 
         // Step 3: Store data
         try {
-            $loanApplication = LoanAgainstApplication::create($request->only([
+
+            $data = $request->only([
                 'application_date',
                 'member_id',
                 'co_applicant_1_id',
@@ -1378,12 +1395,20 @@ class LoanAgainstController extends Controller
                 'max_loan_limit',
                 'maximum_approvable_amount',
                 'approved_loan_amount',
-            ]));
+            ]);
+
+            // 🔥 Add ratio fields properly
+            $data['ratio_enabled'] = $request->ratio_enabled ?? 'No';
+            $data['ratio_first_emi'] = $request->ratio_first_emi;
+            $data['ratio_first_percentage'] = $request->ratio_first_percentage;
+
+            // 🔎 Debug once if needed
+
+            $loanApplication = LoanAgainstApplication::create($data);
 
             Log::info('Loan Against Deposit created successfully', [
                 'loan_application_id' => $loanApplication->id,
             ]);
-
             // Step 4: Handle CIBIL details
             if ($request->has('cibil_type')) {
                 Log::info('CIBIL block triggered', [
@@ -1766,16 +1791,17 @@ class LoanAgainstController extends Controller
         $smsCharge        = floatval($application->scheme->sms_charge ?? 0);
         $fuelCharge       = floatval($application->scheme->fuel_charge ?? 0);
         $stationaryCharge = floatval($application->scheme->stationary_charge ?? 0);
-        $maintenanceCharge= floatval($application->scheme->maintenance_charge ?? 0);
+        $maintenanceCharge = floatval($application->scheme->maintenance_charge ?? 0);
         $collectionCharge = floatval($application->scheme->collection ?? 0);
 
         $chargesPerEmi = round(
             $smsCharge +
-            $fuelCharge +
-            $stationaryCharge +
-            $maintenanceCharge +
-            $collectionCharge,
-        2);
+                $fuelCharge +
+                $stationaryCharge +
+                $maintenanceCharge +
+                $collectionCharge,
+            2
+        );
 
 
         /* Interest Rate */

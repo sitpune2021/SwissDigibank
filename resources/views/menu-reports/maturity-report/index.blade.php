@@ -98,9 +98,9 @@ Summary (RD) <br>(Active & Matured)
 <td class="border p-3">Total Current Balance</td>
 </tr>
 <tr class="font-semibold">
-<td class="border p-3">0</td>
-<td class="border p-3">0.00</td>
-<td class="border p-3">0.00</td>
+<td class="border p-3">{{ $rdTotalAccounts ?? 0 }}</td>
+<td class="border p-3">{{ number_format($rdTotalMaturity ?? 0,2) }}</td>
+<td class="border p-3">{{ number_format($rdTotalBalance ?? 0,2) }}</td>
 </tr>
 </table>
 </div>
@@ -121,9 +121,9 @@ Summary (DD) <br>(Active & Matured)
 <td class="border p-3">Total Current Balance</td>
 </tr>
 <tr class="font-semibold">
-<td class="border p-3">0</td>
-<td class="border p-3">0.00</td>
-<td class="border p-3">0.00</td>
+<td class="border p-3">{{ $ddTotalAccounts ?? 0 }}</td>
+<td class="border p-3">{{ number_format($ddTotalMaturity ?? 0,2) }}</td>
+<td class="border p-3">{{ number_format($ddTotalBalance ?? 0,2) }}</td>
 </tr>
 </table>
 </div>
@@ -144,9 +144,9 @@ Summary (FD) <br>(Active & Matured)
 <td class="border p-3">Total Current Balance</td>
 </tr>
 <tr class="font-semibold">
-<td class="border p-3">0</td>
-<td class="border p-3">0.00</td>
-<td class="border p-3">0.00</td>
+<td class="border p-3">{{ $fdTotalAccounts ?? 0 }}</td>
+<td class="border p-3">{{ number_format($fdTotalMaturity ?? 0,2) }}</td>
+<td class="border p-3">{{ number_format($fdTotalBalance ?? 0,2) }}</td>
 </tr>
 </table>
 </div>
@@ -167,9 +167,9 @@ Summary (MIS) <br>(Active & Matured)
 <td class="border p-3">Total Current Balance</td>
 </tr>
 <tr class="font-semibold">
-<td class="border p-3">0</td>
-<td class="border p-3">0.00</td>
-<td class="border p-3">0.00</td>
+<td class="border p-3">{{ $misTotalAccounts ?? 0 }}</td>
+<td class="border p-3">{{ number_format($misTotalMaturity ?? 0,2) }}</td>
+<td class="border p-3">{{ number_format($misTotalBalance ?? 0,2) }}</td>
 </tr>
 </table>
 </div>
@@ -182,9 +182,9 @@ Summary (MIS) <br>(Active & Matured)
 <table class="w-full border border-gray-300 text-center font-semibold">
 <tr>
 <td class="border p-3 w-[30%]">GRAND TOTAL</td>
-<td class="border p-3 w-[20%]">0</td>
-<td class="border p-3 w-[20%]">0.00</td>
-<td class="border p-3 w-[30%]">0.00</td>
+<td class="border p-3">{{ $grandAccounts ?? 0 }}</td>
+<td class="border p-3">{{ number_format($grandMaturity ?? 0,2) }}</td>
+<td class="border p-3">{{ number_format($grandBalance ?? 0,2) }}</td>
 </tr>
 </table>
 </div>

@@ -166,7 +166,10 @@
                         <th>TOTAL (DEBIT)</th>
                     </tr>
                 </thead>
-
+                @php
+                    $grandCredit = 0;
+                    $grandDebit = 0;
+                @endphp
                 <tbody>
 
                     @foreach ($branches as $index => $branch)
@@ -286,116 +289,239 @@
                             };
 
                             // ================= GOLD =================
-                            $goldRecovery = $loanMode(
-                                DB::table('gold_loan_transactions')
-                                    ->join(
-                                        'loan_applications',
-                                        'loan_applications.id',
-                                        '=',
-                                        'gold_loan_transactions.loan_id',
-                                    )
-                                    ->where('loan_applications.branch_id', $branch->id)
-                                    ->where('gold_loan_transactions.status', 'paid')
-                                    ->whereBetween('gold_loan_transactions.transaction_date', [$from, $to]),
-                            )->sum('gold_loan_transactions.amount_collected');
-
+                            $goldRecovery = DB::table('gold_loan_transactions')
+                                ->join(
+                                    'loan_applications',
+                                    'loan_applications.id',
+                                    '=',
+                                    'gold_loan_transactions.loan_id',
+                                )
+                                ->where('loan_applications.branch_id', $branch->id)
+                                ->where('gold_loan_transactions.status', 'paid')
+                                ->whereBetween('gold_loan_transactions.transaction_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('gold_loan_transactions.fee_mode', $mode);
+                                })
+                                ->sum('gold_loan_transactions.amount_collected');
                             // ================= LOAN AGAINST =================
-                            $loanAgainstRecovery = $loanMode(
-                                DB::table('loan_against_transactions')
-                                    ->join(
-                                        'loan_against_applications',
-                                        'loan_against_applications.id',
-                                        '=',
-                                        'loan_against_transactions.loan_id',
-                                    )
-                                    ->where('loan_against_applications.branch_id', $branch->id)
-                                    ->where('loan_against_transactions.status', 'paid')
-                                    ->whereBetween('loan_against_transactions.transaction_date', [$from, $to]),
-                            )->sum('loan_against_transactions.amount_collected');
+                            $loanAgainstRecovery = DB::table('loan_against_transactions')
+                                ->join(
+                                    'loan_against_applications',
+                                    'loan_against_applications.id',
+                                    '=',
+                                    'loan_against_transactions.loan_id',
+                                )
+                                ->where('loan_against_applications.branch_id', $branch->id)
+                                ->where('loan_against_transactions.status', 'paid')
+                                ->whereBetween('loan_against_transactions.transaction_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('loan_against_transactions.fee_mode', $mode);
+                                })
+                                ->sum('loan_against_transactions.amount_collected');
 
                             // ================= PROPERTY / MORTGAGE =================
-                            $mortgageRecovery = $loanMode(
-                                DB::table('mortgage_loan_transactions')
-                                    ->join(
-                                        'mortgage_loan_applications',
-                                        'mortgage_loan_applications.id',
-                                        '=',
-                                        'mortgage_loan_transactions.loan_id',
-                                    )
-                                    ->where('mortgage_loan_applications.branch_id', $branch->id)
-                                    ->where('mortgage_loan_transactions.status', 'paid')
-                                    ->whereBetween('mortgage_loan_transactions.transaction_date', [$from, $to]),
-                            )->sum('mortgage_loan_transactions.amount_collected');
-
+                            $mortgageRecovery = DB::table('mortgage_loan_transactions')
+                                ->join(
+                                    'mortgage_loan_applications',
+                                    'mortgage_loan_applications.id',
+                                    '=',
+                                    'mortgage_loan_transactions.loan_id',
+                                )
+                                ->where('mortgage_loan_applications.branch_id', $branch->id)
+                                ->where('mortgage_loan_transactions.status', 'paid')
+                                ->whereBetween('mortgage_loan_transactions.transaction_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('mortgage_loan_transactions.fee_mode', $mode);
+                                })
+                                ->sum('mortgage_loan_transactions.amount_collected');
                             // ================= BUSINESS =================
-                            $businessRecovery = $loanMode(
-                                DB::table('business_loan_transactions')
-                                    ->join(
-                                        'business_loan_applications',
-                                        'business_loan_applications.id',
-                                        '=',
-                                        'business_loan_transactions.loan_id',
-                                    )
-                                    ->where('business_loan_applications.branch_id', $branch->id)
-                                    ->where('business_loan_transactions.status', 'paid')
-                                    ->whereBetween('business_loan_transactions.transaction_date', [$from, $to]),
-                            )->sum('business_loan_transactions.amount_collected');
-
+                            $businessRecovery = DB::table('business_loan_transactions')
+                                ->join(
+                                    'bussiness_loan_applications', // ⚠ double s
+                                    'bussiness_loan_applications.id',
+                                    '=',
+                                    'business_loan_transactions.loan_id',
+                                )
+                                ->where('bussiness_loan_applications.branch_id', $branch->id)
+                                ->where('business_loan_transactions.status', 'paid')
+                                ->whereBetween('business_loan_transactions.transaction_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('business_loan_transactions.fee_mode', $mode);
+                                })
+                                ->sum('business_loan_transactions.amount_collected');
                             // ================= FIXED =================
-                            $fixedRecovery = $loanMode(
-                                DB::table('fixed_loan_transactions')
-                                    ->join(
-                                        'fixed_loan_applications',
-                                        'fixed_loan_applications.id',
-                                        '=',
-                                        'fixed_loan_transactions.loan_id',
-                                    )
-                                    ->where('fixed_loan_applications.branch_id', $branch->id)
-                                    ->where('fixed_loan_transactions.status', 'paid')
-                                    ->whereBetween('fixed_loan_transactions.transaction_date', [$from, $to]),
-                            )->sum('fixed_loan_transactions.amount_collected');
-
+                            $fixedRecovery = DB::table('fixed_loan_transactions')
+                                ->join(
+                                    'fixed_loan_applications',
+                                    'fixed_loan_applications.id',
+                                    '=',
+                                    'fixed_loan_transactions.loan_id',
+                                )
+                                ->where('fixed_loan_applications.branch_id', $branch->id)
+                                ->where('fixed_loan_transactions.status', 'paid')
+                                ->whereBetween('fixed_loan_transactions.transaction_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('fixed_loan_transactions.fee_mode', $mode);
+                                })
+                                ->sum('fixed_loan_transactions.amount_collected');
                             // ================= VEHICLE =================
-                            $vehicleRecovery = $loanMode(
-                                DB::table('vehical_loan_transactions')
-                                    ->join(
-                                        'vehical_applications',
-                                        'vehical_applications.id',
-                                        '=',
-                                        'vehical_loan_transactions.loan_id',
-                                    )
-                                    ->where('vehical_applications.branch_id', $branch->id)
-                                    ->where('vehical_loan_transactions.status', 'paid')
-                                    ->whereBetween('vehical_loan_transactions.transaction_date', [$from, $to]),
-                            )->sum('vehical_loan_transactions.amount_collected');
-
-                            // ================= PERSONAL =================
-                            $personalRecovery = $loanMode(
-                                DB::table('personal_loan_transactions')
-                                    ->join(
-                                        'personal_loan_applications',
-                                        'personal_loan_applications.id',
-                                        '=',
-                                        'personal_loan_transactions.loan_id',
-                                    )
-                                    ->where('personal_loan_applications.branch_id', $branch->id)
-                                    ->where('personal_loan_transactions.status', 'paid')
-                                    ->whereBetween('personal_loan_transactions.transaction_date', [$from, $to]),
-                            )->sum('personal_loan_transactions.amount_collected');
-
+                            $vehicleRecovery = DB::table('vehical_loan_transactions')
+                                ->join(
+                                    'vehical_applications',
+                                    'vehical_applications.id',
+                                    '=',
+                                    'vehical_loan_transactions.loan_id',
+                                )
+                                ->where('vehical_applications.branch_id', $branch->id)
+                                ->where('vehical_loan_transactions.status', 'paid')
+                                ->whereBetween('vehical_loan_transactions.transaction_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('vehical_loan_transactions.fee_mode', $mode);
+                                })
+                                ->sum('vehical_loan_transactions.amount_collected'); // ================= PERSONAL =================
+                            $personalRecovery = DB::table('personal_loan_transactions')
+                                ->join(
+                                    'personal_loan_applications',
+                                    'personal_loan_applications.id',
+                                    '=',
+                                    'personal_loan_transactions.loan_id',
+                                )
+                                ->where('personal_loan_applications.branch_id', $branch->id)
+                                ->where('personal_loan_transactions.status', 'paid')
+                                ->whereBetween('personal_loan_transactions.transaction_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('personal_loan_transactions.fee_mode', $mode);
+                                })
+                                ->sum('personal_loan_transactions.amount_collected');
                             // ================= CC / OD =================
-                            $ccRecovery = $loanMode(
-                                DB::table('cc_od_loan_transactions')
-                                    ->join(
-                                        'cc_od_loan_applications',
-                                        'cc_od_loan_applications.id',
-                                        '=',
-                                        'cc_od_loan_transactions.loan_id',
-                                    )
-                                    ->where('cc_od_loan_applications.branch_id', $branch->id)
-                                    ->where('cc_od_loan_transactions.status', 'paid')
-                                    ->whereBetween('cc_od_loan_transactions.transaction_date', [$from, $to]),
-                            )->sum('cc_od_loan_transactions.amount_collected');
+                            $ccRecovery = DB::table('cc_od_loan_disbursments')
+                                ->join(
+                                    'cc_od_loan_applications',
+                                    'cc_od_loan_applications.id',
+                                    '=',
+                                    'cc_od_loan_disbursments.loan_application_id',
+                                )
+                                ->where('cc_od_loan_applications.branch_id', $branch->id)
+                                ->whereBetween('cc_od_loan_disbursments.disbursal_date', [$from, $to])
+                                ->sum('cc_od_loan_disbursments.loan_amount');
+
+                            $goldReleased = DB::table('gold_loan_disbursements')
+                                ->join(
+                                    'loan_applications',
+                                    'loan_applications.id',
+                                    '=',
+                                    'gold_loan_disbursements.loan_application_id',
+                                )
+                                ->where('loan_applications.branch_id', $branch->id)
+                                ->whereBetween('gold_loan_disbursements.disbursal_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('gold_loan_disbursements.disburse_mode1', $mode);
+                                })
+                                ->sum('gold_loan_disbursements.loan_amount');
+
+                            $loanAgainstReleased = DB::table('loanagainsst_disbursements')
+                                ->join(
+                                    'loan_against_applications',
+                                    'loan_against_applications.id',
+                                    '=',
+                                    'loanagainsst_disbursements.loan_application_id',
+                                )
+                                ->where('loan_against_applications.branch_id', $branch->id)
+                                ->whereBetween('loanagainsst_disbursements.disbursal_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('loanagainsst_disbursements.disburse_mode1', $mode);
+                                })
+                                ->sum('loanagainsst_disbursements.loan_amount');
+                            $mortgageReleased = DB::table('mortgage_loan_disbursements')
+                                ->join(
+                                    'mortgage_loan_applications',
+                                    'mortgage_loan_applications.id',
+                                    '=',
+                                    'mortgage_loan_disbursements.loan_application_id',
+                                )
+                                ->where('mortgage_loan_applications.branch_id', $branch->id)
+                                ->whereBetween('mortgage_loan_disbursements.disbursal_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('mortgage_loan_disbursements.disburse_mode1', $mode);
+                                })
+                                ->sum('mortgage_loan_disbursements.loan_amount');
+                            $businessReleased = DB::table('business_loan_disbursements')
+                                ->join(
+                                    'bussiness_loan_applications',
+                                    'bussiness_loan_applications.id',
+                                    '=',
+                                    'business_loan_disbursements.loan_application_id',
+                                )
+                                ->where('bussiness_loan_applications.branch_id', $branch->id)
+                                ->whereBetween('business_loan_disbursements.disbursal_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('business_loan_disbursements.disburse_mode1', $mode);
+                                })
+                                ->sum('business_loan_disbursements.loan_amount');
+                            $fixedReleased = DB::table('fixe_loan_disburments')
+                                ->join(
+                                    'fixed_loan_applications',
+                                    'fixed_loan_applications.id',
+                                    '=',
+                                    'fixe_loan_disburments.loan_application_id',
+                                )
+                                ->where('fixed_loan_applications.branch_id', $branch->id)
+                                ->whereBetween('fixe_loan_disburments.disbursal_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('fixe_loan_disburments.payment_mode', $mode);
+                                })
+                                ->sum('fixe_loan_disburments.loan_amount');
+                            $vehicleReleased = DB::table('vehical_disbursements')
+                                ->join(
+                                    'vehical_applications',
+                                    'vehical_applications.id',
+                                    '=',
+                                    'vehical_disbursements.loan_application_id',
+                                )
+                                ->where('vehical_applications.branch_id', $branch->id)
+                                ->whereBetween('vehical_disbursements.disbursal_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where(function ($query) use ($mode) {
+                                        $query
+                                            ->where('vehical_disbursements.payment_mode1', $mode)
+                                            ->orWhere('vehical_disbursements.payment_mode2', $mode);
+                                    });
+                                })
+                                ->sum('vehical_disbursements.loan_amount');
+                            $personalReleased = DB::table('personal_disburments')
+                                ->join(
+                                    'personal_loan_applications',
+                                    'personal_loan_applications.id',
+                                    '=',
+                                    'personal_disburments.loan_application_id',
+                                )
+                                ->where('personal_loan_applications.branch_id', $branch->id)
+                                ->whereBetween('personal_disburments.disbursal_date', [$from, $to])
+                                ->when($mode != 'all', function ($q) use ($mode) {
+                                    $q->where('personal_disburments.disburse_mode1', $mode);
+                                })
+                                ->sum('personal_disburments.loan_amount');
+                            $ccReleased = DB::table('cc_od_loan_disbursments')
+                                ->join(
+                                    'cc_od_loan_applications',
+                                    'cc_od_loan_applications.id',
+                                    '=',
+                                    'cc_od_loan_disbursments.loan_application_id',
+                                )
+                                ->where('cc_od_loan_applications.branch_id', $branch->id)
+                                ->whereBetween('cc_od_loan_disbursments.disbursal_date', [$from, $to])
+                                ->sum('cc_od_loan_disbursments.loan_amount');
+                            $releasedTotal =
+                                ($goldReleased ?? 0) +
+                                ($loanAgainstReleased ?? 0) +
+                                ($mortgageReleased ?? 0) +
+                                ($businessReleased ?? 0) +
+                                ($fixedReleased ?? 0) +
+                                ($vehicleReleased ?? 0) +
+                                ($personalReleased ?? 0) +
+                                ($ccReleased ?? 0);
+                            $grandCredit += $totalCredit;
+                            $grandDebit += $releasedTotal;
                         @endphp
 
                         {{-- ================= BRANCH HEADER ROW ================= --}}
@@ -476,10 +602,35 @@
                         </tr>
 
                         {{-- ================= RELEASED ================= --}}
-                        <tr class="bg-yellow-100 font-semibold">
+                        <tr class="released-row">
                             <td></td>
                             <td>RELEASED</td>
-                            <td colspan="7">0.00</td>
+
+                            <td>{{ number_format($goldReleased ?? 0, 2) }}</td>
+                            <td>{{ number_format($loanAgainstReleased ?? 0, 2) }}</td>
+                            <td>{{ number_format($mortgageReleased ?? 0, 2) }}</td>
+                            <td>{{ number_format($businessReleased ?? 0, 2) }}</td>
+                            <td>{{ number_format($fixedReleased ?? 0, 2) }}</td>
+                            <td>{{ number_format($vehicleReleased ?? 0, 2) }}</td>
+                            <td>{{ number_format($personalReleased ?? 0, 2) }}</td>
+                            <td>{{ number_format($ccReleased ?? 0, 2) }}</td>
+
+                            {{-- TOTAL COLUMN --}}
+                            <td class="total-credit">
+                                {{ number_format($releasedTotal, 2) }}
+                            </td>
+
+                        </tr>
+                        <tr style="background:#f3f4f6; font-weight:bold;">
+                            <td colspan="7" class="text-right">GRAND TOTAL</td>
+
+                            <td class="total-credit">
+                                {{ number_format($grandCredit, 2) }}
+                            </td>
+
+                            <td class="total-debit">
+                                {{ number_format($grandDebit, 2) }}
+                            </td>
                         </tr>
                     @endforeach
 
