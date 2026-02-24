@@ -1,4 +1,5 @@
 <div class="tab-panel hidden">
+
 <!-----------------Fixed Loan Schemes --------------------> 
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
@@ -26,7 +27,6 @@
                 </div>
             </div>
 
-
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="new_fixed_scheme" 
@@ -34,7 +34,6 @@
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="new_fixed_scheme" class="text-base font-semibold cursor-pointer mb-0">
                   Add New Fixed Loan Scheme
-
                     </label>
                 </div>
             </div>
@@ -56,7 +55,6 @@
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="edit_fl_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
                   Edit Fixed Loan Scheme
-
                     </label>
                 </div>
             </div>
@@ -102,7 +100,6 @@
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="new_fix_ln_app" class="text-base font-semibold cursor-pointer mb-0">
                   New fixed Loan Applications
-
                     </label>
                 </div>
             </div>
@@ -117,7 +114,7 @@
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="set_dis_fix_set" name="permissions[set_dis_fix_set]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -126,8 +123,7 @@
                     </label>
                 </div>
             </div>
-          
-             <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="edi_dis_set_enach_fix" name="permissions[edi_dis_set_enach_fix]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -135,7 +131,8 @@
                   Edit Disbursement Setting After eNach Creation
                     </label>
                 </div>
-            </div>
+            </div> -->
+
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="edi_fix_lon_app" name="permissions[edi_fix_lon_app]" value=""
@@ -154,7 +151,8 @@
                     </label>
                 </div>
             </div>
-            <div class="col-span-2 md:col-span-1">
+
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="fix_lon_app_sms_enb" name="permissions[fix_lon_app_sms_enb]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -171,8 +169,7 @@
            Submit for Re-Approval Fixed Loan Application
                     </label>
                 </div>
-            </div>
-        
+            </div>    
              <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="up_fix_lon_app" name="permissions[up_fix_lon_app]" value=""
@@ -190,13 +187,14 @@
         Delete Fixed Loan Application Documents
                     </label>
                 </div>
-            </div>
+            </div> -->
+
         </div>
     </div>
 
     <br>
-
     <!----------------- Fixed Loan Disbursements-------------------->
+
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">
@@ -248,6 +246,7 @@
             </div>
         </div>
     </div>
+
     <br>
   <!-----------------Fixed Loan Accounts--------------------> 
     <div class="payload-section">
@@ -298,7 +297,7 @@
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="fix_lon_tran_lis" name="permissions[fix_lon_tran_lis]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -307,7 +306,6 @@
                     </label>
                 </div>
             </div>
-
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="up_fix_lon_trans" name="permissions[up_fix_lon_trans]" value=""
@@ -451,8 +449,7 @@
              On-Hold E-Nach Subscription
                     </label>
                 </div>
-            </div>
-           
+            </div>         
              <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="oth_ch_fl_acc" name="permissions[oth_ch_fl_acc]" value=""
@@ -479,8 +476,7 @@
             Other Charges - Clear Due
                    </label>
                 </div>
-            </div>
-           
+            </div>         
              <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="oth_chr_waive_amt" name="permissions[oth_chr_waive_amt]" value=""
@@ -663,7 +659,8 @@
             Re-Generate Deleted Entry
                    </label>
                 </div>
-            </div>
+            </div> -->
+
        </div>
     </div>
 

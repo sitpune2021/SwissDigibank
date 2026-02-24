@@ -1,4 +1,5 @@
 <div class="tab-panel hidden">
+
     <!----------------- PROFILE -------------------->
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
@@ -25,14 +26,14 @@
             </div>
 
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="show_sms_balance_1" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance_1" class="text-base font-semibold cursor-pointer mb-0">Upload Company
                         Logo</label>
                 </div>
-            </div>
+            </div> -->
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
@@ -43,32 +44,32 @@
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="show_sms_balance_4" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance_4" class="text-base font-semibold cursor-pointer mb-0">Upload Company
                         Favicon</label>
                 </div>
-            </div>
+            </div> -->
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="show_sms_balance_5" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance_5" class="text-base font-semibold cursor-pointer mb-0">Upload Company
                         Login BG Image</label>
                 </div>
-            </div>
+            </div> -->
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Software Theme
                         Settings</label>
                 </div>
-            </div>
+            </div> -->
 
 
         </div>
@@ -129,7 +130,7 @@
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -137,11 +138,10 @@
                         Cash
                         Lock</label>
                 </div>
-            </div>
+            </div> -->
 
         </div>
     </div>
-
 
     <br>
     <!----------------- Promoters -------------------->
@@ -199,7 +199,7 @@
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -215,7 +215,7 @@
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Show Promoter
                         Transaction</label>
                 </div>
-            </div>
+            </div> -->
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
@@ -226,7 +226,7 @@
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -302,7 +302,8 @@
                         KYC
                         Status</label>
                 </div>
-            </div>
+            </div> -->
+
         </div>
 
     </div>
@@ -348,7 +349,7 @@
 
     <br>
     <!----------------- Promoters Login Credentials-------------------->
-    <div class="payload-section">
+    <!-- <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">
                 Promoters Login Credentials
@@ -396,7 +397,8 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
+    
     <br>
     <!----------------- Promoters Share Holdings-------------------->
     <div class="payload-section">
@@ -514,12 +516,13 @@
         </div>
 
     </div>
+
     <br>
     <!-----------------Encumbered Deposits-------------------->
 
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">Encumbered Deposits</div>
+            <div class="uppercase font-semibold text-lg">Unencumbered Deposits</div>
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="check_all_dashboard"
@@ -573,6 +576,7 @@
 
         </div>
     </div>
+    
     <br>
     <!-----------------Bank Accounts-------------------->
     <div class="payload-section">

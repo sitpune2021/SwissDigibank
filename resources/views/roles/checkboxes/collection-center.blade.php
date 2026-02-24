@@ -1,4 +1,5 @@
 <div class="tab-panel hidden">
+
 <!----------------- Collection Centers --------------------> 
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
@@ -57,6 +58,7 @@
             </div>
         </div>
     </div>
+
     <br>
 <!----------------- Member Groups --------------------> 
     <div class="payload-section">
@@ -114,7 +116,7 @@
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="add_group_comment" name="permissions[add_group_comment]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -122,8 +124,9 @@
                        Add Group Comment
                     </label>
                 </div>
-            </div>
+            </div> -->
 
         </div>
     </div>
+    
 </div>
