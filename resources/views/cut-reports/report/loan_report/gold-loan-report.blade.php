@@ -55,7 +55,7 @@
             </h3>
         </div>
 
-        <div class="box mb-5 mt-5 ">
+        {{-- <div class="box mb-5 mt-5 ">
             <div class="flex justify-between" id="toggleBtn">
                 <p class="font-semibold uppercase text-lg">
                     Search Box
@@ -132,7 +132,7 @@
                 </form>
             </div>
 
-        </div>
+        </div> --}}
 
         <div class="col-span-12 box lg:col-span-12">
 

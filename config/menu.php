@@ -79,7 +79,7 @@ return [
             ['title' => 'CALCULATOR', 'route' => 'calculator.index'],
             ['title' => 'FD ACCOUNTS', 'route' => 'fd-mis-schemes.fd_index'],
             ['title' => 'MIS ACCOUNTS', 'route' => 'misaccount.index'],
-             ['title' => 'SWEEP IN ACCOUNTS', 'route' => 'sweep-in-accounts']
+            ['title' => 'SWEEP IN ACCOUNTS', 'route' => 'sweep-in-accounts']
         ]
     ],
     [
@@ -298,7 +298,7 @@ return [
             ['title' => 'LETTER HEAD', 'route' => 'print.letter-head'],
             // ['title' => 'FORM I AND J', 'route' => 'index-from-i'],
             // ['title' => 'FORM E', 'route' => 'index-from-e'],
- 
+
 
         ],
     ],
@@ -311,7 +311,7 @@ return [
     ],
     [
         'title' => 'REPORTS',
-        'icon' => 'las la-user',
+        'icon' => 'las la-book',
         'position' => '10',
         'active' => '1',
         'submenu' => [
@@ -331,7 +331,17 @@ return [
             ['title' => 'DAILY WEEKLY LOAN ACCOUNTS', 'route' => 'report.daily_weekly-loan-account'],
             ['title' => 'VEHICLE LOAN ACCOUNTS', 'route' => 'report.vehical-loan-account'],
             ['title' => 'CC OD LOAN ACCOUNTS', 'route' => 'report.cc_od-loan-account'],
-        ],
+            ['title' => 'TRANSACTIONS', 'route' => 'report.transactions'],
+            ['title' => 'LOAN EMIs', 'route' => 'report.loan-emi'],
+            ['title' => 'RD/DD INSTALLMENTS', 'route' => 'report.rd-installment'],
+            ['title' => 'DEPOSIT BALANCE REPORT', 'route' => 'report.deposit-balance-report'],
+            ['title' => 'LOAN BALANCE REPORT', 'route' => 'report.loan-balance-report'],
+            ['title' => 'LOAN ACCRUED REPORT', 'route' => 'report.loan-accrued-report'],
+            ['title' => 'GROUP REPORT', 'route' => 'report.group-report'],
+            ['title' => 'TDS REPORT', 'route' => 'report.tds-report'],
+            ['title' => 'ATTENDANCE REPORT', 'route' => 'report.attendance-report'],
+            ['title' => 'LOAN PORTFOLIO REPORT', 'route' => 'report.loan-portfolio-report'],
+        ],  
     ],
     [
         'title' => 'HR MANAGEMENT',
@@ -384,12 +394,12 @@ return [
     //         ['title' => 'VENDORS', 'route' => 'vendors.index'],
     //         ['title' => 'LEDGER GROUPS', 'route' => 'ledger-group.index'],
     //         ['title' => 'LEDGERS', 'route' => 'ledger.index'],
-            // ['title' => 'ENTRIES', 'route' => 'entries.index'],
-            // ['title' => 'TRIAL BALANCE', 'route' => 'trial-balance.index'],
-            // ['title' => 'PROFIT AND LOSS(P & L)', 'route' => 'profit-loss.index'],
-            // ['title' => 'INCOME STATEMENT', 'route' => 'income-statement.index'],
-            // ['title' => 'BALANCE SHEET', 'route' => 'balance-sheet.index'],
-            // ['title' => 'FY REPORT', 'route' => 'fy-report.index'],
+    // ['title' => 'ENTRIES', 'route' => 'entries.index'],
+    // ['title' => 'TRIAL BALANCE', 'route' => 'trial-balance.index'],
+    // ['title' => 'PROFIT AND LOSS(P & L)', 'route' => 'profit-loss.index'],
+    // ['title' => 'INCOME STATEMENT', 'route' => 'income-statement.index'],
+    // ['title' => 'BALANCE SHEET', 'route' => 'balance-sheet.index'],
+    // ['title' => 'FY REPORT', 'route' => 'fy-report.index'],
     //     ],
     // ],
 

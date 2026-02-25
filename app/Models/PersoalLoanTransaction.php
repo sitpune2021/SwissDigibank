@@ -29,8 +29,13 @@ class PersoalLoanTransaction extends Model
         'credited_to_company'
     ];
 
+    public function persoalLoanApplication()
+{
+    return $this->belongsTo(PersonalLoanApplication::class, 'loan_id', 'id');
+}
     public function PersoalLoanTransaction()
-    {
+    { 
+        
         return $this->hasMany(PersoalLoanTransaction::class, 'loan_id', 'id');
     }
 }

@@ -29,8 +29,14 @@ class DailyWeeklyLoanTransaction extends Model
         'credited_to_company'
     ];
 
+    public function dailyWeeklyapplication()
+{
+    return $this->belongsTo(DailyWeeklyApplication::class, 'loan_id', 'id');
+}
+
     public function DailyWeeklyLoanTransaction()
     {
+        
         return $this->hasMany(DailyWeeklyLoanTransaction::class, 'loan_id', 'id');
     }
 }
