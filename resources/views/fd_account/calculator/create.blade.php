@@ -234,6 +234,40 @@
                                     </td>
                                 </tr>
 
+                                <tr>
+                                    <td class="font-semibold px-4 py-2 uppercase">Lock In Period</td>
+                                    <td class="px-4 py-2">
+                                        <span id="d_lock_in"></span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="font-semibold px-4 py-2 uppercase">Interest Lock</td>
+                                    <td class="px-4 py-2">
+                                        <span id="d_interest_lock"></span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="font-semibold px-4 py-2 uppercase">Bonus</td>
+                                    <td class="px-4 py-2">
+                                        <span id="d_bonus"></span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="font-semibold px-4 py-2 uppercase">Penal Charge</td>
+                                    <td class="px-4 py-2">
+                                        <span id="d_penal"></span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="font-semibold px-4 py-2 uppercase">Cancellation Charge</td>
+                                    <td class="px-4 py-2">
+                                        <span id="d_cancel"></span>
+                                    </td>
+                                </tr>
 
                             </tbody>
                         </table>
@@ -585,44 +619,67 @@
     });
 
     document.getElementById("scheme_id").addEventListener("change", function() {
-        let schemeId = this.value;
 
-        if (schemeId) {
-            fetch(`/fetch-scheme/${schemeId}`)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        let s = result.data;
-                        document.getElementById("d_scheme_code").textContent = s.scheme_code;
-                        document.getElementById("d_scheme_name").textContent = s.scheme_name;
-                        document.getElementById("d_tenure").textContent = s.tenure + " MONTHS";
-                        document.getElementById("d_min_amount").textContent = s.min_amount + " INR";
-                        document.getElementById("d_interest_rate").textContent = s.annual_interest_rate + " %";
+    let schemeId = this.value;
 
-                        document.getElementById("scheme-details").style.display = "block";
+    if (schemeId) {
 
-                        // Auto-fill भी कर सकते हो
-                        document.getElementById("annual_interest_rate").value = s.annual_interest_rate;
-                        document.getElementById("tenure_month").value = s.tenure;
-                        document.getElementById("amount").value = s.min_amount;
-                        // Auto select payout type
-                        let payoutSelect = document.getElementById("interest_payout_type");
-                        if (s.tenure == 6) {
-                            payoutSelect.value = "HALF_YEARLY";
-                        } else if (s.tenure == 12) {
-                            payoutSelect.value = "YEARLY";
-                        } else {
-                            payoutSelect.value = ""; // default
-                        }
+        fetch("{{ route('fd.scheme.details', ':id') }}".replace(':id', schemeId))
+        .then(response => response.json())
+        .then(result => {
 
-                    } else {
-                        document.getElementById("scheme-details").style.display = "none";
-                    }
-                })
-                .catch(err => console.error(err));
-        } else {
-            document.getElementById("scheme-details").style.display = "none";
-        }
-    });
+            if (result.success) {
+
+                let s = result.data;
+
+                // Basic Details
+                document.getElementById("d_scheme_code").textContent = s.scheme_code ?? '-';
+                document.getElementById("d_scheme_name").textContent = s.scheme_name ?? '-';
+                document.getElementById("d_tenure").textContent = (s.tenure ?? 0) + " MONTHS";
+                document.getElementById("d_min_amount").textContent = parseFloat(s.min_amount ?? 0).toFixed(2) + " INR";
+                document.getElementById("d_interest_rate").textContent = (s.annual_interest_rate ?? 0) + " %";
+
+                // Lock In
+                document.getElementById("d_lock_in").textContent = (s.lock_in_period ?? 0) + " Months";
+                document.getElementById("d_interest_lock").textContent = (s.interest_lock_in ?? 0) + " Months";
+
+                // Bonus
+                if (s.bonus_rate) {
+                    document.getElementById("d_bonus").textContent =
+                        s.bonus_rate + " " + (s.bonus_type ?? '');
+                } else {
+                    document.getElementById("d_bonus").textContent = "0";
+                }
+
+                // Penal
+                document.getElementById("d_penal").textContent =
+                    (s.penal_charge ?? 0) + " %";
+
+                // Cancellation
+                if (s.cancellation_charge) {
+                    document.getElementById("d_cancel").textContent =
+                        s.cancellation_charge + " " + (s.cancellation_type ?? '');
+                } else {
+                    document.getElementById("d_cancel").textContent =
+                        s.cancellation_type ?? "N/A";
+                }
+
+                document.getElementById("scheme-details").style.display = "block";
+
+                // -------- AUTO FILL CALCULATOR --------
+                document.getElementById("annual_interest_rate").value = s.annual_interest_rate ?? '';
+                document.getElementById("tenure_month").value = s.tenure ?? '';
+                document.getElementById("amount").value = s.min_amount ?? '';
+
+            } else {
+                document.getElementById("scheme-details").style.display = "none";
+            }
+        });
+
+    } else {
+        document.getElementById("scheme-details").style.display = "none";
+    }
+});
+
 </script>
 @endpush

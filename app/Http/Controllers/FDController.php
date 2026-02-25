@@ -30,9 +30,7 @@ use App\Models\Transaction;
 
 class FDController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
 
     public function index(Request $request)
     {
@@ -52,14 +50,11 @@ class FDController extends Controller
         return view('fd_mis_account.fd_scheme.index', compact('fdSchemes', 'search'));
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('fd_mis_account.fd_scheme.add-scheme');
     }
+
     public function store(Request $request)
     {
         try {
@@ -159,9 +154,6 @@ class FDController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $fdScheme = FDScheme::with('fdslabs')->findOrFail($id);
@@ -177,18 +169,11 @@ class FDController extends Controller
         return view('fd_mis_account.fd_scheme.view-scheme', compact('fdScheme'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $fdScheme = FDScheme::with('fdslabs')->findOrFail($id);
         return view('fd_mis_account.fd_scheme.add-scheme', compact('fdScheme'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
 
     public function update(Request $request, string $id)
     {
@@ -301,14 +286,6 @@ class FDController extends Controller
                 ->withInput()
                 ->with('error', 'Something went wrong while updating FD Scheme.');
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 
     public function fd_index()
@@ -770,29 +747,6 @@ class FDController extends Controller
         return redirect()->back()->with('success', 'Branch updated successfully!');
     }
 
-    // public function fetchSlab(Request $request)
-    // {
-    //     $totalDays = $request->total_days;
-
-    //     $slab = FdSchemeSlab::where('fd_scheme_id', $request->scheme_id)
-    //         ->where('day_from', '<=', $totalDays)
-    //         ->where('day_to', '>=', $totalDays)
-    //         ->first();
-
-    //     if (!$slab) {
-    //         return response()->json([
-    //             'success' => false
-    //         ]);
-    //     }
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'payout_type' => $slab->payout_type,
-    //         'interest_rate' => $slab->interest_rate,
-    //         'sr_rate' => $slab->sr_citizen_rate
-    //     ]);
-    // }
-
     public function fd_show(string $id)
     {
         $fdAccount = FdAccount::with([
@@ -1121,6 +1075,7 @@ class FDController extends Controller
 
         return view('fd_mis_account.fd-account.fdchangeaccinfo', compact('fdAccountDetail', 'members', 'schemes', 'minors'));
     }
+
     public function updateAccountInfo(Request $request, $id)
     {
         Log::info("FD ID Received: $id");
@@ -1253,6 +1208,7 @@ class FDController extends Controller
 
         return view('fd_mis_account.fd-account.transaction-details', compact('fdAccount', 'transaction'));
     }
+
     public function destroyTransaction($ddsAccountId, $tranxId)
     {
         Log::info("Deleting Transaction ID: $tranxId for DDS Account: $ddsAccountId");
@@ -1262,6 +1218,7 @@ class FDController extends Controller
 
         return back()->with('success', 'Transaction deleted.');
     }
+
     public function printReceipt($id, $transactionId)
     {
         $transaction = FdAccount::with(['member', 'transactions' => function ($query) use ($transactionId) {
@@ -1278,6 +1235,7 @@ class FDController extends Controller
 
         return view('fd_mis_account.fd-account.transactionPrintReceipt', compact('transaction', 'printedOn', 'printedBy', 'fdBalance'));
     }
+
     public function createLinkSavingAcc($id)
     {
         $fdAccount = fdAccount::with('member', 'branch', 'transactions', 'fdscheme')
@@ -1297,6 +1255,7 @@ class FDController extends Controller
 
         return view('fd_mis_account.fd-account.link-account', compact('fdAccount', 'savingAccounts', 'balances'));
     }
+
     public function storeLinkSavingAcc(Request $request, $id)
     {
         $request->validate([
@@ -1385,67 +1344,6 @@ class FDController extends Controller
             );
     }
 
-
-    // public function storeLinkSavingAcc(Request $request, $id)
-    // {
-    //     $request->validate([
-    //         'saving_account_id' => 'nullable|exists:accounts,id',
-    //     ]);
-
-    //     $fdAccount = FdAccount::findOrFail($id);
-    //     $savingAccId = $request->saving_account_id;
-
-    //     $linkStatus = $savingAccId ? 1 : 0;
-
-    //     $savingAcc = $savingAccId ? Account::find($savingAccId) : null;
-    //     $savingAccNo = $savingAcc->account_no ?? 'N/A';
-
-    //     // -----------------------------
-    //     // Prepare log message (ONLY for log file)
-    //     // -----------------------------
-    //     $logMessage = $linkStatus
-    //         ? "✔ Linked Saving A/c ({$savingAccNo}) to FD Account ID {$fdAccount->id}"
-    //         : "✘ Unlinked Saving A/c from FD Account ID {$fdAccount->id}";
-
-    //     // -----------------------------
-    //     // Update FD account (NO remarks)
-    //     // -----------------------------
-    //     $fdAccount->update([
-    //         'saving_account_id' => $savingAccId,
-    //         'link_status'       => $linkStatus,
-    //     ]);
-
-    //     // -----------------------------
-    //     // Log to laravel.log only
-    //     // -----------------------------
-    //     Log::info($logMessage, [
-    //         'fd_account_id'     => $fdAccount->id,
-    //         'saving_account_id' => $savingAccId,
-    //         'link_status'       => $linkStatus,
-    //     ]);
-
-    //     // -----------------------------
-    //     // FD transaction entry (system log)
-    //     // -----------------------------
-    //     FdTransaction::create([
-    //         'fd_account_id'     => $fdAccount->id,
-    //         'branch_id'         => $fdAccount->branch_id,
-    //         'saving_account_id' => $savingAccId,
-    //         'pay_mode'          => 'saving',
-    //         'transaction_date'  => now(),
-    //         'balance_available' => 0,
-    //         'amount'            => 0,
-    //     ]);
-
-    //     $message = $linkStatus
-    //         ? "Saving Account No {$savingAccNo} has been successfully linked to FD Account."
-    //         : "Saving Account has been successfully unlinked from FD Account.";
-
-    //     return redirect()
-    //         ->route('fd-mis-schemes.fd_show', $id)
-    //         ->with('success', $message);
-    // }
-
     public function confirmUnlink($id)
     {
         $fdAccount = FdAccount::with(['member', 'branch', 'fdscheme', 'transactions'])->findOrFail($id);
@@ -1455,7 +1353,6 @@ class FDController extends Controller
 
         return view('fd_mis_account.fd-account.unlink_confirm', compact('fdAccount', 'linkedSavingAcc', 'availableBalance'));
     }
-
 
     public function uploadDocuments($id)
     {
@@ -1497,7 +1394,6 @@ class FDController extends Controller
         return redirect()->route('fd-mis-schemes.fd_show', $id)
             ->with('success', 'Documents uploaded successfully.');
     }
-
 
     public function addComment($id)
     {
@@ -1576,6 +1472,7 @@ class FDController extends Controller
 
         return view('fd_mis_account.fd-account.interest-tds.credit_debit_interest', compact('fdAccount', 'balance', 'transaction'));
     }
+
     public function storeCreditDebitInterestAndTDS(Request $request, $id)
     {
         $request->validate([
@@ -1639,7 +1536,6 @@ class FDController extends Controller
 
         return view('fd_mis_account.fd-account.interest-tds.deduct_reverse_tds', compact('fdAccount', 'balance'));
     }
-
 
     public function fdBondFormView($id)
     {
@@ -1795,7 +1691,6 @@ class FDController extends Controller
         return trim($result);
     }
 
-
     public function fdOpeningFormView($id)
     {
         // Load FD account with required relations
@@ -1842,6 +1737,7 @@ class FDController extends Controller
             compact('account', 'member', 'interestRate', 'logo')
         );
     }
+
     public function fdOpeningForm($id)
     {
         // Load FD account with required relations
@@ -1941,4 +1837,6 @@ class FDController extends Controller
 
         return view('fd_mis_account.sweep-in-accounts.index');
     }
+
+    
 }
