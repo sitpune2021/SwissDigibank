@@ -27,9 +27,12 @@ class MortgageLoanTransaction extends Model
         'credited_to_company'
     ];
 
-    public function mortgageLoanTransactions()
+   public function mortgageloanApplication()
     {
-        return $this->hasMany(MortgageLoanTransaction::class, 'loan_id', 'id');
+        return $this->belongsTo(MortgageLoanApplication::class, 'loan_id', 'id');
+    }
+    public function mortgageLoanTransactions()
+    {         return $this->hasMany(MortgageLoanTransaction::class, 'loan_id', 'id');
     }
 
 }

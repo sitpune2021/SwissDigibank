@@ -28,8 +28,13 @@ class BusinessLoanTransaction extends Model
         'credited_to_company'
     ];
 
+    public function businessloanApplication()
+{
+    return $this->belongsTo(BusinessLoanApplication::class, 'loan_id', 'id');
+}
     public function BusinessLoanTransaction()
     {
+        
         return $this->hasMany(BusinessLoanTransaction::class, 'loan_id', 'id');
     }
 }

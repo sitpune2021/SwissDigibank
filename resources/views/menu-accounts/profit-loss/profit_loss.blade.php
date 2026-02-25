@@ -50,7 +50,7 @@
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h3 class=" flex text-xl block  uppercase  font-bold">
+            <h3 class=" flex text-lg block  uppercase  font-bold">
                Profit & Loss
             </h3>
         </div>
@@ -71,7 +71,7 @@
                     </div>
 
                     <div class="">
-                        <button type="submit" class="btn-warning rounded-10  ">
+                        <button type="submit" class="btn-warning text-sm px-4 rounded-10  ">
                             GET
                         </button>
                     </div>
@@ -108,45 +108,45 @@
                 <!-- Tab 4 : Profit & Loss Only -->
                 <div id="tab4" class="tab-pane hidden">
 
-                <div class="overflow-x-auto rounded-xl border bg-white">
+                <div class="overflow-x-auto bg-white">
 
-                <table class="min-w-full text-sm">
+                <table class="w-full text-sm">
 
-                <thead class="bg-gray-100 font-bold">
-                <tr>
-                <th class="px-4 py-3 text-left">PARTICULARS</th>
-                <th class="px-4 py-3 text-right">CURRENT</th>
-                <th class="px-4 py-3 text-right">PREVIOUS</th>
+                <thead class="">
+                <tr class="bg-secondary/5">
+                <th class="px-4 py-3 text-start text-sm uppercase">PARTICULARS</th>
+                <th class="px-4 py-3 text-start uppercase text-sm ">CURRENT</th>
+                <th class="px-4 py-3 text-start uppercase text-sm ">PREVIOUS</th>
                 </tr>
                 </thead>
 
                 <tbody>
 
                 {{-- Revenue --}}
-                <tr>
-                <td class="px-4 py-3 font-semibold">Total Revenue</td>
-                <td class="px-4 py-3 text-right text-green-600 font-bold">
+                <tr class="border-b">
+                <td class="px-4 py-3 font-semibold text-sm uppercase">Total Revenue</td>
+                <td class="px-4 py-3  text-start">
                 ₹ {{ number_format($totalRevenueCurrent,2) }}
                 </td>
-                <td class="px-4 py-3 text-right text-green-600 font-bold">
+                <td class="px-4 py-3 text-start">
                 ₹ {{ number_format($totalRevenuePrevious,2) }}
                 </td>
                 </tr>
 
                 {{-- Expense --}}
-                <tr>
-                <td class="px-4 py-3 font-semibold">Total Expense</td>
-                <td class="px-4 py-3 text-right text-red-600 font-bold">
+                <tr class="border-b">
+                <td class="px-4 py-3 font-semibold text-sm uppercase">Total Expense</td>
+                <td class="px-4 py-3 text-start  ">
                 ₹ {{ number_format($totalExpenseCurrent,2) }}
                 </td>
-                <td class="px-4 py-3 text-right text-red-600 font-bold">
+                <td class="px-4 py-3 text-start  ">
                 ₹ {{ number_format($totalExpensePrevious,2) }}
                 </td>
                 </tr>
 
                 {{-- Net Profit / Loss --}}
-                <tr class="bg-blue-100 text-lg font-bold">
-                <td class="px-4 py-4">Net Profit / Loss</td>
+                <tr class="bg-blue-100 border-b ">
+                <td class="px-4 py-4 uppercase text-sm font-semibold">Net Profit / Loss</td>
                 <td class="px-4 py-4 text-right">
                 ₹ {{ number_format($netCurrent,2) }}
                 </td>
@@ -164,21 +164,21 @@
                 <!-- Tab 5 : EXPENSES -->
                 <div id="tab5" class="tab-pane hidden">
 
-                    <div class="overflow-x-auto rounded-xl border bg-white">
+                    <div class="overflow-x-auto  bg-white">
 
-                        <table class="min-w-full text-sm text-left">
+                        <table class="w-full text-sm text-left">
 
                             {{-- ================= HEAD ================= --}}
-                            <thead class="bg-gray-100 text-gray-700 uppercase text-xs sticky top-0">
-                                <tr>
-                                    <th class="px-4 py-3">Code</th>
-                                    <th class="px-4 py-3">Name</th>
-                                    <th class="px-4 py-3">System Name</th>
-                                    <th class="px-4 py-3">Group</th>
-                                    <th class="px-4 py-3">Type</th>
-                                    <th class="px-4 py-3">Bank A/C</th>
-                                    <th class="px-4 py-3 text-right">Balance</th>
-                                    <th class="px-4 py-3 text-center">Action</th>
+                            <thead class=" ">
+                                <tr class="bg-secondary/5">
+                                    <th class="px-4 uppercase text-start text-sm py-3">Code</th>
+                                    <th class="px-4 uppercase text-start text-sm py-3">Name</th>
+                                    <th class="px-4 uppercase text-start text-sm py-3">System Name</th>
+                                    <th class="px-4 uppercase text-start text-sm py-3">Group</th>
+                                    <th class="px-4 uppercase text-start text-sm py-3">Type</th>
+                                    <th class="px-4 uppercase text-start text-sm py-3">Bank A/C</th>
+                                    <th class="px-4 uppercase text-start text-sm py-3 ">Balance</th>
+                                    <th class="px-4 uppercase text-start text-sm py-3 ">Action</th>
                                 </tr>
                             </thead>
 
@@ -193,47 +193,47 @@
 
                                     <tr class="hover:bg-gray-50 transition">
 
-                                        <td class="px-4 py-3 font-semibold text-indigo-600">
+                                        <td class="px-4 text-start py-3 font-semibold ">
                                             {{ $ledger->code }}
                                         </td>
 
-                                        <td class="px-4 py-3 font-medium">
+                                        <td class="px-4 text-start py-3 ">
                                             {{ $ledger->display_name }}
                                         </td>
 
-                                        <td class="px-4 py-3 text-gray-500">
+                                        <td class="px-4 text-start py-3 ">
                                             {{ $ledger->system_name }}
                                         </td>
 
-                                        <td class="px-4 py-3">
+                                        <td class="px-4 text-start py-3">
                                             {{ $ledger->group->display_name ?? '-' }}
                                         </td>
 
                                         {{-- Type Badge --}}
-                                        <td class="px-4 py-3">
-                                            <span class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700">
+                                        <td class="px-4 text-start py-3">
+                                            <span class="px-3 py-1  rounded-full ">
                                                 {{ $ledger->type }}
                                             </span>
                                         </td>
 
                                         {{-- Bank --}}
-                                        <td class="px-4 py-3">
+                                        <td class="px-4 text-start py-3">
                                             @if($ledger->is_bank_acc)
-                                                <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Yes</span>
+                                                <span  class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">Yes</span>
                                             @else
-                                                <span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded-full">No</span>
+                                                <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">No</span>
                                             @endif
                                         </td>
 
                                         {{-- Balance --}}
-                                        <td class="px-4 py-3 font-semibold text-right">
+                                        <td class="px-4 text-start py-3 font-semibold ">
                                             ₹ {{ number_format($ledger->balance,2) }}
                                         </td>
 
                                         {{-- Action --}}
-                                        <td class="px-4 py-3 text-center">
+                                        <td class="px-4  py-3 text-start">
                                             <a href=""
-                                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs hover:bg-indigo-700 transition">
+                                            class="px-4 py-2 rounded-lg text-xs  transition">
                                                 Edit
                                             </a>
                                         </td>
@@ -251,12 +251,12 @@
                             </tbody>
 
                             {{-- ================= FOOTER TOTAL ================= --}}
-                            <tfoot class="bg-red-50 font-bold">
+                            <tfoot class="">
                                 <tr>
-                                    <td colspan="6" class="px-4 py-3 text-right">
+                                    <td colspan="6" class="px-4 py-3  font-semibold text-sm">
                                         TOTAL EXPENSE
                                     </td>
-                                    <td class="px-4 py-3 text-right text-red-700">
+                                    <td class="px-4 py-3  text-sm font-semibold">
                                         ₹ {{ number_format($totalExpense,2) }}
                                     </td>
                                     <td></td>
@@ -271,16 +271,16 @@
                 <!-- Tab 6 : REVENUE ONLY -->
                 <div id="tab6" class="tab-pane hidden">
 
-                    <div class="overflow-x-auto rounded-xl border bg-white">
+                    <div class="overflow-x-auto  bg-white">
 
-                        <table class="min-w-full text-sm">
+                        <table class="w-full text-sm">
 
                             {{-- ================= HEAD ================= --}}
-                            <thead class="bg-gray-100 font-bold uppercase text-xs">
-                                <tr>
-                                    <th class="px-4 py-3 text-left">PARTICULARS</th>
-                                    <th class="px-4 py-3 text-right">CURRENT</th>
-                                    <th class="px-4 py-3 text-right">PREVIOUS</th>
+                            <thead class="bg-gray-100 font-bold uppercase text-sm">
+                                <tr class="bg-secondary/5">
+                                    <th class="px-4 py-3 text-start">PARTICULARS</th>
+                                    <th class="px-4 py-3 text-start">CURRENT</th>
+                                    <th class="px-4 py-3 text-start">PREVIOUS</th>
                                 </tr>
                             </thead>
 
@@ -301,15 +301,15 @@
 
                                     <tr class="border-b hover:bg-gray-50">
 
-                                        <td class="px-4 py-2 font-medium">
+                                        <td class="px-4 py-2 text-start">
                                             {{ $row['name'] }}
                                         </td>
 
-                                        <td class="px-4 py-2 text-right">
+                                        <td class="px-4 py-2 text-start ">
                                             ₹ {{ number_format($row['current'],2) }}
                                         </td>
 
-                                        <td class="px-4 py-2 text-right">
+                                        <td class="px-4 py-2  text-start">
                                             ₹ {{ number_format($row['previous'],2) }}
                                         </td>
 
@@ -326,13 +326,13 @@
                             </tbody>
 
                             {{-- ================= TOTAL ================= --}}
-                            <tfoot class="bg-green-100 font-bold text-lg">
+                            <tfoot class="bg-green-100 ">
                                 <tr>
-                                    <td class="px-4 py-3">
+                                    <td class="px-4 py-3 text-sm font-semibold">
                                         TOTAL REVENUE
                                     </td>
 
-                                    <td class="px-4 py-3 text-right text-green-700">
+                                    <td class="px-4 py-3 text-sm font-semibold ">
                                         ₹ {{ number_format($totalRevenueCurrent,2) }}
                                     </td>
 

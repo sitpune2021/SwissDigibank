@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Account;
+use App\Models\DailyWeeklyLoanComment;
 
 class DailyWeeklyAccount extends Controller
 {
@@ -68,7 +69,18 @@ class DailyWeeklyAccount extends Controller
     // view page
     public function show(Request $request, $id)
     {
+        $disbursement = DB::table('daily_weekly_disburments')
+            ->where('loan_application_id', $id)
+            ->first();
 
+        $disbursementId = $disbursement->id ?? null;
+        $comments = collect();
+
+        if ($disbursementId) {
+            $comments = DailyWeeklyLoanComment::where('loan_id', $disbursementId)
+                ->orderBy('created_at', 'desc')
+                ->paginate(5);
+        }
         $savedStatuses = DB::table('daily_weekly_loan_emi_status')
             ->where('loan_id', $id)
             ->pluck('status', 'emi_no')
@@ -449,7 +461,9 @@ class DailyWeeklyAccount extends Controller
             'currentDebt',
             'hasDueEmi',
             'payRoute',
-            'payButtonText'
+            'payButtonText',
+            'comments',
+            'disbursementId'
         ));
     }
 
@@ -1673,6 +1687,64 @@ class DailyWeeklyAccount extends Controller
             ]);
 
             return back()->with('error', 'Something went wrong while clearing the due.');
+        }
+    }
+    public function addComment($loan_id)
+    {
+        $comments = DailyWeeklyLoanComment::where('loan_id', $loan_id)
+            ->orderBy('created_at', 'desc') // use created_at (safer)
+            ->paginate(5);
+
+        return view(
+            'cc_od.account.comments.addComments',
+            compact('comments', 'loan_id')
+        );
+    }
+
+
+    public function storeComment(Request $request)
+    {
+        Log::info('Daily/Weekly Loan Comment Store Attempt', [
+            'request_data' => $request->all(),
+            'user_id' => auth()->id(),
+            'ip_address' => $request->ip(),
+            'url' => $request->fullUrl(),
+        ]);
+
+        $validated = $request->validate([
+            'comment' => 'required|string',
+            'loan_id' => 'required|exists:daily_weekly_disburments,id',
+        ]);
+
+        try {
+
+            $comment = DailyWeeklyLoanComment::create([
+                'loan_id' => $validated['loan_id'],
+                'date' => now(),
+                'comment' => $validated['comment'],
+                'commented_by' => auth()->user()->name ?? 'Admin',
+            ]);
+
+            Log::info('Daily/Weekly Loan Comment Stored Successfully', [
+                'comment_id' => $comment->id,
+                'loan_id' => $validated['loan_id'],
+                'commented_by' => auth()->user()->name ?? 'Admin',
+                'user_id' => auth()->id(),
+            ]);
+
+            return redirect()
+                ->route('dailyw.addComment', $validated['loan_id'])
+                ->with('success', 'Comment added successfully!');
+        } catch (\Exception $e) {
+
+            Log::error('Daily/Weekly Loan Comment Store Failed', [
+                'loan_id' => $validated['loan_id'] ?? null,
+                'user_id' => auth()->id(),
+                'error_message' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->withErrors('There was an error storing your comment.');
         }
     }
 }

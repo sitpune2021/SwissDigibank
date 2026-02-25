@@ -85,14 +85,14 @@
                 {{-- मटकारी गल्ली, माहेश्वरी भवन जवळ, शेगाव 444203 जि. बुलढाणा --}}
             </td>
             <td style="text-align:right;border: none;">
-                फोन:
+             फोन:........................
                  {{-- (09876) 23456 --}}
             </td>
         </tr>
     </table>
     <hr>
     <div class="" style="height: 500px">
-       <div class="" style="margin-top:50px;">
+       <div class="" style="margin-top:10px;">
         <table style="width:100%; border: none;">
         <tr>
             <td style="text-align:left; border: none;">

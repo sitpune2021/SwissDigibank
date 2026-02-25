@@ -5,13 +5,9 @@
 <div class="container">
 
 
-    <div class="text-end mb-3 no-print">
-        <button onclick="printBalanceSheet()" class="btn btn-dark  btn-primary">
-            <i class="fa fa-print"></i> Print
-        </button>
-    </div>
+   
 
-     <div>
+     <div class="mt-5">
             <form>
                 <div class="flex justify-center box gap-3">
                     <div class="">
@@ -27,7 +23,7 @@
                     </div>
 
                     <div class="">
-                        <button type="submit" class="btn-warning rounded-10  ">
+                        <button type="submit" class="btn-warning rounded-10  text-sm">
                             GET
                         </button>
                     </div>
@@ -36,20 +32,26 @@
         </div>
 
 
-    <h3 class="mb-4 text-center">
-        Balance Sheet as on {{ $today->format('d M Y') }}
+   <div class="box mt-5">
+     <div class="text-end  mb-3 no-print">
+        <button onclick="printBalanceSheet()" class="btn btn-dark  btn-primary text-sm rounded-10 px-4 py-2 uppercase">
+            <i class="las la-print"></i> Print
+        </button>
+    </div>
+     <h3 class="mb-4 text-center text-lg uppercase mt-5">
+        Balance Sheet as on {{ $today->format('d-m-Y') }}
     </h3>
 
-    <div class="card shadow-sm">
+    <div class="card ">
         <div class="card-body p-0">
 
             <div class="table-responsive" id="printArea">
-                <table class="table table-bordered table-striped mb-0">
+                <table class="w-full table table-bordered table-striped mb-0">
 
                     <thead class="table-dark text-center">
-                        <tr>
-                            <th width="50%">ASSETS</th>
-                            <th width="50%">LIABILITIES & EQUITY</th>
+                        <tr class="bg-secondary/5 ">
+                            <th class="text-start px-4 py-2">ASSETS</th>
+                            <th class="text-start px-4 py-2">LIABILITIES & EQUITY</th>
                         </tr>
                     </thead>
 
@@ -63,25 +65,25 @@
                         @endphp
 
                         @for($i = 0; $i < $maxRows; $i++)
-                            <tr>
+                            <tr class="border-b">
 
                                 {{-- ASSETS COLUMN --}}
-                                <td>
+                                <td class="text-start px-4 py-2">
                                     @if(isset($assets[$i]))
                                         <div class="d-flex justify-content-between">
-                                            <span>{{ $assets[$i]['name'] }}</span>
+                                            <span class="uppercase">{{ $assets[$i]['name'] }}</span>
                                             <span>{{ number_format($assets[$i]['amount'],2) }}</span>
                                         </div>
                                     @endif
                                 </td>
 
                                 {{-- LIABILITIES + EQUITY COLUMN --}}
-                                <td>
+                                <td class="text-start px-4 py-2">
 
                                     {{-- Liabilities --}}
                                     @if(isset($liabilities[$i]))
                                         <div class="d-flex justify-content-between">
-                                            <span>{{ $liabilities[$i]['name'] }}</span>
+                                            <span class="uppercase">{{ $liabilities[$i]['name'] }}</span>
                                             <span>{{ number_format($liabilities[$i]['amount'],2) }}</span>
                                         </div>
                                     @endif
@@ -89,7 +91,7 @@
                                     {{-- Equity --}}
                                     @if(isset($equities[$i - count($liabilities)]))
                                         <div class="d-flex justify-content-between">
-                                            <span>{{ $equities[$i - count($liabilities)]['name'] }}</span>
+                                            <span class="uppercase">{{ $equities[$i - count($liabilities)]['name'] }}</span>
                                             <span>{{ number_format($equities[$i - count($liabilities)]['amount'],2) }}</span>
                                         </div>
                                     @endif
@@ -108,15 +110,15 @@
                         @endfor
 
                         {{-- TOTAL ROW --}}
-                        <tr class="fw-bold table-secondary">
-                            <td>
+                        <tr class="fw-bold table-secondary border-b">
+                            <td class="text-start px-4 py-2">
                                 <div class="d-flex justify-content-between">
                                     <span>Total Assets</span>
                                     <span>{{ number_format($totalAssets,2) }}</span>
                                 </div>
                             </td>
-                            <td>
-                                <div class="d-flex justify-content-between">
+                            <td class="text-start ">
+                                <div class="d-flex px-4 justify-content-between">
                                     <span>Total Liabilities & Equity</span>
                                     <span>{{ number_format($totalLiabilities + $totalEquity,2) }}</span>
                                 </div>
@@ -130,20 +132,22 @@
 
         </div>
     </div>
-
+    
     {{-- Difference Alert --}}
     @if($difference != 0)
-        <div class="alert alert-danger mt-4 text-center">
+        <div class="alert alert-danger mt-5 text-center">
             ⚠ Balance Sheet Not Matching. Difference:
             {{ number_format($difference,2) }}
         </div>
     @else
-        <div class="alert alert-success mt-4 text-center">
+        <div class="alert alert-success mt-5 text-center">
             ✅ Balance Sheet Matched Perfectly
         </div>
     @endif
 
 </div>
+   </div>
+
 
 <script>
 function printBalanceSheet() {

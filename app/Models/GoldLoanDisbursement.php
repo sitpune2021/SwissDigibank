@@ -58,4 +58,8 @@ class GoldLoanDisbursement extends Model
         'p_transfer_mode',
         'processing_credited_account',
     ];
+    public function comments()
+    {
+        return $this->hasMany(GoldLoanComment::class, 'gold_loan_id');
+    }
 }

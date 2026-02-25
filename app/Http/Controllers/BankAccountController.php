@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Bank;
 use App\Models\Branch;
-// use App\Models\Account;
 use App\Models\BankAccount;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -168,4 +167,6 @@ class BankAccountController extends Controller
     }
 
     public function destroy(string $id) {}
+
+  
 }
