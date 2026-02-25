@@ -29,7 +29,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h3 class="uppercase font-semibold">PERSONAL LOAN DISBURSMETS</h3>
+                <h3 class="uppercase text-lg font-semibold">BUSINESS LOAN DISBURSMETS</h3>
             </div>
         </div>
 
@@ -41,11 +41,12 @@
                         @csrf
 
                         <!-- Header -->
-                        <div class="px-4 py-3">
-                            <h3 class="text-lg border-b mb-4 font-semibold text-black">
+                        <div class=" py-3">
+                            <h3 class="text-lg border-b mb-4 font-semibold uppercase text-black">
                                 Application No - {{ $disbursement->id }}
                             </h3>
                             <input type="hidden" name="loan_application_id"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 value="{{ $disbursement->loan_application_id ?? $disbursement->id }}">
                         </div>
 
@@ -54,8 +55,9 @@
                             <label class="md:text-lg font-medium block mb-2">
                                 Loan Disbursement Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="disbursal_date" class="form-input" value="{{ date('d-m-Y') }}"
-                                required>
+                            <input type="text" name="disbursal_date"
+                                class="form-input w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                value="{{ date('d-m-Y') }}" required>
                         </div>
 
                         <!-- First EMI Date -->
@@ -63,15 +65,17 @@
                             <label class="md:text-lg font-medium block mb-2">
                                 First EMI Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="emi_date" class="form-input"
+                            <input type="text" name="emi_date"
+                                class="form-input w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 value="{{ \Carbon\Carbon::now()->addMonth()->format('d-m-Y') }}" required>
                         </div>
 
                         <!-- Loan Amount -->
                         <div class="mb-4">
                             <label class="md:text-lg font-medium block mb-2">Loan Amount</label>
-                            <input type="number" name="loan_amount" class="form-input"
-                                value="{{ $disbursement->approved_loan_amount ?? '' }}" readonly>
+                            <input type="number" name="loan_amount"
+                                class="form-input w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                value="{{ number_format($loanAmount,2,'.','') }}" readonly>
                         </div>
                         @if (!empty($processingFee) && $processingFee > 0)
                             <hr>
@@ -592,6 +596,72 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
+                                <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                    <tbody>
+                                        <tr>
+                                            <th class="text-center uppercase px-3 py-2 ">Value</th>
+                                            <th class="text-center uppercase px-3 py-2 ">GST (%)</th>
+                                            <th class="text-center uppercase px-3 py-2 ">SGST</th>
+                                            <th class="text-center uppercase px-3 py-2 ">CGST</th>
+                                            <th class="text-center uppercase px-3 py-2 ">IGST</th>
+                                            <th class="text-center uppercase px-3 py-2 ">Total</th>
+                                        </tr>
+
+                                        <tr>
+                                            <!-- Value -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="processing_fee" id="processing_fee"
+                                                    value="{{ number_format($processingFee, 2, '.', '') }}" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
+
+                                            <!-- GST (%) -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="gst_percent" id="gst_percent"
+                                                    value="{{ $gstPercent }}" readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
+
+                                            <!-- SGST -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="sgst" id="sgst" value="0"
+                                                    readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
+
+                                            <!-- CGST -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="cgst" id="cgst" value="0"
+                                                    readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
+
+                                            <!-- IGST -->
+                                            <td class="px-2 py-2 ">
+                                                <input type="text" name="igst" id="igst" value="0"
+                                                    readonly
+                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
+                                            </td>
+
+                                            <!-- Total -->
+                                            <td class="px-2 py-2">
+                                                <input type="number" name="processing_fee_total"
+                                                    id="processing_fee_total"
+                                                    value="{{ number_format($processingTotal, 2, '.', '') }}" readonly
+                                                    class="w-full px-2 py-2 text-center border  rounded-10 text-sm md:text-base" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div id="paymodeWrapper" class="mt-3 hidden">
+                                    <!-- pass processing fee to your paymode component -->
+                                    <x-paymode :amount="$processingFee" :showSaving="false" id="processing_fee2" :readonly="false"
+                                        :amountClass="true" :bgColor="false" :hiddenheading="true" :checkedDefault="'cash'"
+                                        groupName="processing_fee2" />
+                                </div>
+                            </div>
                         @endif
 
                         <!-- Final Amount -->
@@ -599,8 +669,9 @@
                             <label class="md:text-lg font-medium block mb-2">
                                 Final Amount To Disburse <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" name="final_amount" id="finalAmount" class="form-input"
-                                value="{{ $disbursement->approved_loan_amount ?? '' }}" readonly>
+                            <input type="number" name="final_amount" id="finalAmount"
+                                class="form-input w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                value="{{ number_format($finalAmountToDisburse,2,'.','') }}" readonly>
                         </div>
 
                         <h3>Disbursement Amount :</h3>
@@ -613,29 +684,37 @@
 
                                 <input type="text" id="D_mode_1" name="D_mode_1"
                                     class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    value="{{ $disbursement->approved_loan_amount ?? '' }}">
+                                    value="{{ number_format($finalAmountToDisburse,2,'.','') }}">
                                 <x-number-to-word for="D_mode_1" />
                                 <div class="mt-3">
-                                    <label>
-                                        <input type="radio" name="payment_mode" value="cash" checked> Cash
-                                    </label>
+                                    <div class="">
+                                        <div class="flex gap-2 items-center">
+                                            <label class="flex gap-2 items-center ">
+                                                <input type="radio" name="payment_mode" value="cash" checked>
+                                                <p>Cash</p>
+                                            </label>
 
-                                    <label>
-                                        <input type="radio" name="payment_mode" value="cheque"> Cheque
-                                    </label>
+                                            <label class="flex gap-2 items-center">
+                                                <input type="radio" name="payment_mode" value="cheque">
+                                                <p>Cheque</p>
+                                            </label>
 
-                                    <label>
-                                        <input type="radio" name="payment_mode" value="online"> Online Transfer
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="payment_mode" value="saving"> Saving Account
-                                    </label>
+                                            <label class="flex gap-2 items-center">
+                                                <input type="radio" name="payment_mode" value="online">
+                                                <p>Online Transfer</p>
+                                            </label>
+                                        </div>
+                                        <label class="flex gap-2 items-center mt-3">
+                                            <input type="radio" name="payment_mode" value="saving">
+                                            <p>Saving Account</p>
+                                        </label>
+                                    </div>
 
                                     <!-- Fields for Cheque -->
                                     <div id="cheque_fields" style="display:none; margin-top:10px;">
                                         <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
                                         <select id="bank_id" name="bank_id"
-                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                            class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                             <option value="">-- Select Bank --</option>
                                             @foreach ($banks as $id => $name)
                                                 <option value="{{ $id }}">
@@ -647,16 +726,16 @@
                                         <div class="mt-3">
                                             <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
                                             <input type="text" name="cheque_no"
-                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                                class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                                 placeholder="Enter Cheque No">
                                         </div>
 
                                         <!-- Cheque Date -->
                                         <div class="mt-3">
                                             <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
-                                            <input type="date" id="cheque_date" name="cheque_date"
+                                            <input type="text" id="cheque_date" name="cheque_date"
                                                 value="{{ old('cheque_date', date('Y-m-d')) }}"
-                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                         </div>
                                     </div>
 
@@ -666,9 +745,9 @@
                                             <label class="block text-sm font-medium text-gray-700">
                                                 Transfer Date <span class="text-red-500">*</span>
                                             </label>
-                                            <input type="date" id="transfer_date" name="transfer_date"
+                                            <input type="text" id="transfer_date" name="transfer_date"
                                                 value="{{ old('transfer_date', date('Y-m-d')) }}"
-                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700">
@@ -676,7 +755,7 @@
                                             </label>
                                             <input type="text" id="utr_no" name="utr_no"
                                                 placeholder="Enter Transaction No."
-                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700">
@@ -704,8 +783,12 @@
                                         <label>Saving Account:</label>
                                         <select id="saving" name="saving"
                                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+
                                             <option value="">-- Select Saving Acc. --</option>
-                                            <option value="abcd">abcd</option>
+
+                                            @foreach ($savingAccounts as $acc)
+                                                <option value="{{ $acc }}">{{ $acc }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
 
@@ -722,25 +805,31 @@
                                                 value="0" readonly>
 
                                             <div class="mt-3">
-                                                <label>
-                                                    <input type="radio" name="payment_mode2" value="cash" checked>
-                                                    Cash
-                                                </label>
-                                                <label>
-                                                    <input type="radio" name="payment_mode2" value="cheque"> Cheque
-                                                </label>
-                                                <label>
-                                                    <input type="radio" name="payment_mode2" value="online"> Online
-                                                    Transfer
-                                                </label>
-                                                <label>
-                                                    <input type="radio" name="payment_mode2" value="saving"> Saving
-                                                    Account
-                                                </label>
+                                                <div class="">
+                                                    <div class="flex gap-2">
+                                                        <label class="flex gap-2 items-center">
+                                                            <input type="radio" name="payment_mode2" value="cash"
+                                                                checked>
+                                                            <p>Cash</p>
+                                                        </label>
+                                                        <label class="flex gap-2 items-center">
+                                                            <input type="radio" name="payment_mode2" value="cheque">
+                                                            <p>Cheque</p>
+                                                        </label>
+                                                        <label class="flex gap-2 items-center">
+                                                            <input type="radio" name="payment_mode2" value="online">
+                                                            <p>Online Transfer</p>
+                                                        </label>
+                                                    </div>
+                                                    <label class="flex gap-2 items-center mt-3">
+                                                        <input type="radio" name="payment_mode2" value="saving">
+                                                        <p>Saving Account</p>
+                                                    </label>
+                                                </div>
                                                 <!-- Fields for Disburse Mode 2 -->
                                                 <div id="cheque_fields2" style="display:none; margin-top:10px;">
                                                     <select id="bank_id2" name="bank_id2"
-                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                        class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                                         <option value="">-- Select Bank --</option>
                                                         @foreach ($banks as $id => $name)
                                                             <option value="{{ $id }}">
@@ -753,7 +842,7 @@
                                                         <label class="block text-sm font-medium text-gray-700">Cheque
                                                             No.</label>
                                                         <input type="text" name="cheque_no2"
-                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
+                                                            class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
                                                             placeholder="Enter Cheque No">
                                                     </div>
 
@@ -761,9 +850,9 @@
                                                     <div class="mt-3">
                                                         <label class="block text-sm font-medium text-gray-700">Cheque
                                                             Date</label>
-                                                        <input type="date" id="cheque_date2" name="cheque_date2"
+                                                        <input type="text" id="cheque_date2" name="cheque_date2"
                                                             value="{{ old('cheque_date2', date('Y-m-d')) }}"
-                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                            class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                                     </div>
                                                 </div>
                                                 <!-- Fields for Online -->
@@ -772,9 +861,9 @@
                                                         <label class="block text-sm font-medium text-gray-700">
                                                             Transfer Date <span class="text-red-500">*</span>
                                                         </label>
-                                                        <input type="date" id="transfer_date2" name="transfer_date2"
+                                                        <input type="text" id="transfer_date2" name="transfer_date2"
                                                             value="{{ old('transfer_date2', date('Y-m-d')) }}"
-                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                            class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                                     </div>
                                                     <div>
                                                         <label class="block text-sm font-medium text-gray-700">
@@ -782,7 +871,7 @@
                                                         </label>
                                                         <input type="text" id="utr_no2" name="utr_no2"
                                                             placeholder="Enter Transaction No."
-                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                            class="w-full rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                                     </div>
                                                     <div>
                                                         <label class="block text-sm font-medium text-gray-700">
@@ -812,8 +901,13 @@
                                                         <label>Saving Account:</label>
                                                         <select id="saving2" name="saving2"
                                                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+
                                                             <option value="">-- Select Saving Acc. --</option>
-                                                            <option value="abcd">abcd</option>
+
+                                                            @foreach ($savingAccounts as $acc)
+                                                                <option value="{{ $acc }}">{{ $acc }}
+                                                                </option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
 
@@ -836,11 +930,11 @@
                                 <button class="btn-primary uppercase justify-center" type="submit" id="submitBtn">
                                     DISBURSE LOAN
                                 </button>
-                                <a href="{{ route('personal.disbursements.index') }}"
+                                <a href="{{ route('loanagainst.disbursements.index') }}"
                                     class="btn-outline uppercase justify-center">BACK</a>
                             </div>
                     </form>
-
+{{-- 
                     <!-- Script -->
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
@@ -876,7 +970,7 @@
                                 }
                             });
                         });
-                    </script>
+                    </script> --}}
 
 
 
@@ -903,85 +997,85 @@
                     <table class="w-full text-sm whitespace-nowrap text-gray-700 rounded-md">
                         <tbody>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2 w-1/3">Application Date</td>
+                                <td class="font-semibold uppercase px-3 py-2 w-1/3">Application Date</td>
                                 <td class="px-3 py-2">{{ $disbursement->application_date }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Application Status</td>
+                                <td class="font-semibold uppercase px-3 py-2">Application Status</td>
                                 <td class="px-3 py-2">Approved</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Application No</td>
+                                <td class="font-semibold uppercase px-3 py-2">Application No</td>
                                 <td class="px-3 py-2">{{ $disbursement->id }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Branch</td>
+                                <td class="font-semibold uppercase px-3 py-2">Branch</td>
                                 <td class="px-3 py-2">{{ $disbursement->branch->branch_name ?? 'N/A' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Member</td>
+                                <td class="font-semibold uppercase px-3 py-2">Member</td>
                                 <td class="px-3 py-2">{{ $disbursement->member->id ?? '' }} -
                                     {{ $disbursement->member->member_info_first_name ?? '' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">1st Co-Applicant Member</td>
+                                <td class="font-semibold uppercase px-3 py-2">1st Co-Applicant Member</td>
                                 <td class="px-3 py-2">{{ $disbursement->coApplicant1->id ?? '' }} -
                                     {{ $disbursement->coApplicant1->member_info_first_name ?? '' }}
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Requested</td>
+                                <td class="font-semibold uppercase px-3 py-2">Amount Requested</td>
                                 <td class="px-3 py-2">₹ {{ $disbursement->net_loan_amount ?? '' }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Approvable</td>
+                                <td class="font-semibold uppercase px-3 py-2">Amount Approvable</td>
                                 <td class="px-3 py-2">
                                     ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Amount Approved</td>
+                                <td class="font-semibold uppercase px-3 py-2">Amount Approved</td>
                                 <td class="px-3 py-2">
                                     ₹ {{ $disbursement->approved_loan_amount ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interst Type</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interst Type</td>
                                 <td class="px-3 py-2">
                                     {{ $disbursement->scheme->gold_loan_setting ?? '' }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Interest Amount</td>
+                                <td class="font-semibold uppercase px-3 py-2">Interest Amount</td>
                                 <td class="px-3 py-2">
                                     ₹ {{ number_format($totalInterest, 2) }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Annual Interest Rate</td>
+                                <td class="font-semibold uppercase px-3 py-2">Annual Interest Rate</td>
                                 <td class="px-3 py-2">
                                     {{ $disbursement->scheme->annual_interest_rate ?? '' }} %
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Credit Period</td>
+                                <td class="font-semibold uppercase px-3 py-2">Credit Period</td>
                                 <td class="px-3 py-2">
                                     {{ $disbursement->scheme->credit_period ?? '' }} Days
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Total Amount to Recover</td>
+                                <td class="font-semibold uppercase px-3 py-2">Total Amount to Recover</td>
                                 <td class="px-3 py-2">
                                     ₹ {{ number_format($totalRecover, 2) }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Tenure of Loan</td>
+                                <td class="font-semibold uppercase px-3 py-2">Tenure of Loan</td>
                                 <td class="px-3 py-2">
                                     {{ $disbursement->scheme->tenure ?? '' }} MONTHS
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Collect Principal Amount as EMI</td>
+                                <td class="font-semibold uppercase px-3 py-2">Collect Principal Amount as EMI</td>
                                 <td class="px-3 py-2">
                                     <span
                                         class="block w-28  rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
@@ -990,19 +1084,19 @@
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Processing Fee</td>
+                                <td class="font-semibold uppercase px-3 py-2">Processing Fee</td>
                                 <td class="px-3 py-2">
                                     {{ number_format($processingTotal, 2, '.', '') }} (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Stamp Duty Fee</td>
+                                <td class="font-semibold uppercase px-3 py-2">Stamp Duty Fee</td>
                                 <td class="px-3 py-2">
                                     ₹ {{ $disbursement->scheme->stamp_duty_charge ?? 0 }} (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 py-2">Insurance Fee</td>
+                                <td class="font-semibold uppercase px-3 py-2">Insurance Fee</td>
                                 <td class="px-3 py-2">
                                     {{ $disbursement->scheme->insurance_amount ?? 0 }} (Incl. 18.0 % GST)
                                 </td>
@@ -1019,7 +1113,7 @@
             <div class="box shadow-md dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
                 <div
                     class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer">
-                    <h3 class="text-lg font-semibold capitalize">EMI Chart</h3>
+                    <h3 class="text-lg font-semibold uppercase">EMI Chart</h3>
 
                     <button type="button" class="p-1 rounded transition" onclick="toggleSection(this)">
                         <span class="toggle-icon text-lg font-bold">−</span>
@@ -1208,35 +1302,51 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('cheque_date').value = today;
-            document.getElementById('transfer_date').value = today;
-            document.getElementById('cheque_date2').value = today;
-            document.getElementById('transfer_date2').value = today;
+
+            const d = new Date();
+            const today =
+                ("0" + d.getDate()).slice(-2) + "-" +
+                ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
+                d.getFullYear();
+
+            if (document.getElementById('cheque_date'))
+                document.getElementById('cheque_date').value = today;
+
+            if (document.getElementById('transfer_date'))
+                document.getElementById('transfer_date').value = today;
+
+            if (document.getElementById('cheque_date2'))
+                document.getElementById('cheque_date2').value = today;
+
+            if (document.getElementById('transfer_date2'))
+                document.getElementById('transfer_date2').value = today;
         });
     </script>
-    <script>
+<script>
         document.addEventListener("DOMContentLoaded", function() {
 
-            // ===== Processing Fee =====
-            document.querySelectorAll("input[name='processing_fee_mode']")
-                .forEach(radio => {
-                    radio.addEventListener("change", function() {
+            const processingModes = document.querySelectorAll("input[name='processing_fee_mode']");
+            const chequeFields = document.getElementById("p_cheque_fields");
+            const onlineFields = document.getElementById("p_online_fields");
 
-                        // Hide first
-                        document.getElementById("p_cheque_fields").style.display = "none";
-                        document.getElementById("p_online_fields").style.display = "none";
+            function hideAll() {
+                chequeFields.style.display = "none";
+                onlineFields.style.display = "none";
+            }
 
-                        // Show according to selection
-                        if (this.value === "cheque") {
-                            document.getElementById("p_cheque_fields").style.display = "block";
-                        }
+            processingModes.forEach(mode => {
+                mode.addEventListener("change", function() {
+                    hideAll();
 
-                        if (this.value === "online") {
-                            document.getElementById("p_online_fields").style.display = "block";
-                        }
-                    });
+                    if (this.value === "cheque") {
+                        chequeFields.style.display = "block";
+                    }
+
+                    if (this.value === "online") {
+                        onlineFields.style.display = "block";
+                    }
                 });
+            });
 
         });
     </script>
@@ -1283,4 +1393,5 @@
 
         });
     </script>
+
 @endsection
