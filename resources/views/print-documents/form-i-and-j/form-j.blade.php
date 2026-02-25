@@ -78,11 +78,11 @@
     <table style="width: 100%">
         <thead>
             <tr>
-                <th style="width:15%; font-size: 16px;">अनुक्रमांक</th>
-                <th style="width:22%; font-size: 16px;">सदस्याचे नाव</th>
+                <th style="width:6%; font-size: 16px;">अनुक्रमांक</th>
+                <th style="width:30%; font-size: 16px;">सदस्याचे नाव</th>
                 <th style="width:40%; font-size: 16px;">पत्ता</th>
-                <th style="width:18%; font-size: 16px;">सदस्याचा वर्ग</th>
-                <th style="width:13%; font-size: 16px;">शेरा</th>
+                <th style="width:12%; font-size: 16px;">सदस्याचा वर्ग</th>
+                <th style="width:10%; font-size: 16px;">शेरा</th>
             </tr>
         </thead>
         <tbody>
@@ -99,6 +99,7 @@
 
                 <td style="font-size: 16px;">
                     {{ $member->member_info_first_name }}
+                    {{ $member->member_info_middle_name }}
                     {{ $member->member_info_last_name }}
                 </td>
 
@@ -110,7 +111,7 @@
                     {{ $member->address->member_address_pincode ?? '' }},
                 </td>
 
-                <td style="font-size: 16px;">{{ $member->member_category }}</td>
+                <td style="font-size: 16px;">{{ $member->membership_type }}</td>
 
                 <td style="font-size: 16px;"></td>
             </tr>

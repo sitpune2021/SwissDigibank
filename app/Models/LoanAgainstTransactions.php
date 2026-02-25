@@ -27,8 +27,14 @@ class LoanAgainstTransactions extends Model
         'credited_to_company'
     ];
 
+
+public function loanAgainstApplication()
+{
+    return $this->belongsTo(LoanAgainstApplication::class, 'loan_id', 'id');
+}
     public function LoanAgainstTransactions()
     {
+        
         return $this->hasMany(LoanAgainstTransactions::class, 'loan_id', 'id');
     }
 

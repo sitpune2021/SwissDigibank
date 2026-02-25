@@ -53,7 +53,7 @@
         </h3>
 
     </div>
-    <div class="box mb-5 mt-5 ">
+    {{-- <div class="box mb-5 mt-5 ">
         <div class="flex justify-between" id="toggleBtn">
             <p class="font-semibold uppercase text-lg">
                 Search Box
@@ -121,16 +121,24 @@
                 </button>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <div class="col-span-12 box lg:col-span-12">
+        <x-searchbox />
         <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
-
+            
+<a href="{{ route('members.print') }}"
+   target="_blank"
+   class="btn-primary rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
+   <i class="las la-print"></i>
+   Print PDF
+</a>
             <a href="{{ route('promoter.members.download') }}" class="btn-error rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
                 <i class="las la-download "></i>
               Download CSV
             </a>
         </div>
+        
 
         <div class="pb-4 overflow-x-auto lg:pb-6">
 
@@ -187,7 +195,9 @@
                         <!-- Name -->
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 capitalize">
-                                {{ $member->member_info_first_name ?? '' }} {{ $member->member_info_last_name ?? '' }}
+                                {{ $member->member_info_first_name ?? '' }} 
+                                  {{ $member->member_info_middle_name ?? '' }} 
+                                {{ $member->member_info_last_name ?? '' }}
                             </div>
                         </td>
 
@@ -215,7 +225,7 @@
                         <!-- Active / Inactive -->
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                {{ $member->is_active ? 'Active' : 'Inactive' }}
+                                {{-- {{ $member->is_active ? 'Active' : 'Inactive' }} --}}
                             </div>
                         </td>
 

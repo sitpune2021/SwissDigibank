@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class CalculatorController extends Controller
 {
+
+
     private function roundToPrecision($number, $precision = 2)
     {
         return round($number, $precision);
@@ -21,6 +23,7 @@ class CalculatorController extends Controller
     {
         return view('fd_account.calculator.create');
     }
+
     public function store(Request $request)
     {
         
@@ -143,60 +146,63 @@ class CalculatorController extends Controller
             ->back()
             ->with('success', 'FD maturity calculated and saved successfully!');
     }
-// calculateInvestment (replace your existing function body with this)
 
+    // AJAX entry - sanitize inputs, call calc function and return JSON
+    public function calculateInvestmentAjax(Request $request)
+    {
+        // sanitize amount (remove commas/spaces) and cast
+        $principal = (float) str_replace([',', ' '], '', $request->input('amount', 0));
+        $rate      = (float) str_replace([',', ' '], '', $request->input('annual_interest_rate', 0));
 
-// AJAX entry - sanitize inputs, call calc function and return JSON
-public function calculateInvestmentAjax(Request $request)
-{
-    // sanitize amount (remove commas/spaces) and cast
-    $principal = (float) str_replace([',', ' '], '', $request->input('amount', 0));
-    $rate      = (float) str_replace([',', ' '], '', $request->input('annual_interest_rate', 0));
+        $tenureYears = (int) $request->input('tenure_year', 0);
+        $tenureMonth = (int) $request->input('tenure_month', 0);
+        $tenureDays  = (int) $request->input('tenure_day', 0);
 
-    $tenureYears = (int) $request->input('tenure_year', 0);
-    $tenureMonth = (int) $request->input('tenure_month', 0);
-    $tenureDays  = (int) $request->input('tenure_day', 0);
+        // convert total tenure to years as a float (e.g. 1y 6m => 1.5)
+        $tenureTotalYears = $tenureYears + ($tenureMonth / 12) + ($tenureDays / 365);
 
-    // convert total tenure to years as a float (e.g. 1y 6m => 1.5)
-    $tenureTotalYears = $tenureYears + ($tenureMonth / 12) + ($tenureDays / 365);
+        $startDate  = $request->input('open_date', Carbon::today()->toDateString());
+        $payoutType = strtoupper($request->input('interest_payout_type', 'CUMULATIVE_YEARLY'));
 
-    $startDate  = $request->input('open_date', Carbon::today()->toDateString());
-    $payoutType = strtoupper($request->input('interest_payout_type', 'CUMULATIVE_YEARLY'));
+        // call the calculation function (it returns a plain array)
+        $results = $this->calculateInvestment('FD', $principal, $rate, $tenureTotalYears, $startDate, $payoutType);
 
-    // call the calculation function (it returns a plain array)
-    $results = $this->calculateInvestment('FD', $principal, $rate, $tenureTotalYears, $startDate, $payoutType);
-
-    return response()->json([
-    'success' => true,
-    'results' => $results
-]);
-}
-
-
-public function getSchemes()
-{
-    // fd_schemes table से id और scheme_name लाकर dropdown के लिए भेज रहे हैं
-    $schemes = DB::table('fd_schemes')->select('id', 'scheme_name')->get();
-
-    return response()->json([
-        'success' => true,
-        'data' => $schemes
-    ]);
-}
-
-public function getSchemeDetails($id)
-{
-    $scheme = DB::table('fd_schemes')
-        ->select('id', 'scheme_name', 'scheme_code', 'min_amount', 'tenure', 'annual_interest_rate')
-        ->where('id', $id)
-        ->first();
-
-    if ($scheme) {
-        return response()->json(['success' => true, 'data' => $scheme]);
-    } else {
-        return response()->json(['success' => false, 'message' => 'Scheme not found']);
+        return response()->json([
+            'success' => true,
+            'results' => $results
+        ]);
     }
-}
+
+    public function getSchemes()
+    {
+        // fd_schemes table से id और scheme_name लाकर dropdown के लिए भेज रहे हैं
+        $schemes = DB::table('fd_schemes')->select('id', 'scheme_name')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $schemes
+        ]);
+    }
+
+    public function getSchemeDetails($id)
+    {
+        $scheme = DB::table('fd_schemes')
+            ->where('id', $id)
+            ->where('is_active', 1)
+            ->first();
+
+        if ($scheme) {
+            return response()->json([
+                'success' => true,
+                'data' => $scheme
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Scheme not found'
+        ]);
+    }
 
 // year wise tab show ad result
 public function calculateInvestment(
@@ -393,7 +399,6 @@ for ($i = 0; $i < $totalMonths; $i++) {
 }
 
 
-
 function processPeriod(
     $results,
     $periodStart,
@@ -469,8 +474,6 @@ function processPeriod(
 
     return [$results, $totalInterest, $principal];
 }
-
-
 
 
 }

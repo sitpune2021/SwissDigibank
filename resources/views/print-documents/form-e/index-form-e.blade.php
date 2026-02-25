@@ -45,22 +45,22 @@
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-3 min-w-[100px] cursor-pointer">
-                            <div class="flex text-center uppercase justify-start gap-1">
+                            <div class="">
                                 SR.NO.
                             </div>
                         </th>
                         <th class="text-start !py-5 px-3 min-w-[100px] cursor-pointer">
-                            <div class="flex text-center uppercase justify-start gap-1">
+                            <div class="">
                                 CUSTOMER NO
                             </div>
                         </th>
                         <th class="text-start !py-5 px-4 min-w-[100px] cursor-pointer">
-                            <div class="flex text-start   uppercase justify-start gap-1">
+                            <div class="">
                                 CUSTOMER NAME
                             </div>
                         </th>
                         <th class="text-start !py-5 px-4 min-w-[100px] cursor-pointer">
-                            <div class="flex text-start   uppercase justify-start gap-1">
+                            <div class="">
                                 Address
                             </div>
                         </th>

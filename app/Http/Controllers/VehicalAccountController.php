@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Account;
+use App\Models\VehicalLoanComment;
 
 class VehicalAccountController extends Controller
 {
@@ -68,6 +69,9 @@ class VehicalAccountController extends Controller
     // view page
     public function show(Request $request, $id)
     {
+        $comments = VehicalLoanComment::where('loan_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
 
         $savedStatuses = DB::table('vehical_loan_emi_status')
             ->where('loan_id', $id)
@@ -580,7 +584,8 @@ class VehicalAccountController extends Controller
             'hasDueEmi',
             'payRoute',
             'payButtonText',
-            'hasPendingApproval'
+            'hasPendingApproval',
+            'comments'
         ));
     }
 
@@ -1695,6 +1700,45 @@ class VehicalAccountController extends Controller
             ]);
 
             return back()->with('error', 'Something went wrong while clearing the due.');
+        }
+    }
+    public function addComment($loan_id)
+    {
+        $comments = VehicalLoanComment::where('loan_id', $loan_id)
+            ->orderBy('created_at', 'desc') // use created_at (safer)
+            ->paginate(5);
+
+        return view(
+            'cc_od.account.comments.addComments',
+            compact('comments', 'loan_id')
+        );
+    }
+
+    public function storeComment(Request $request)
+    {
+        Log::debug('Store Gold Loan Comment Data: ', $request->all());
+
+        $validated = $request->validate([
+            'comment' => 'required|string',
+            'loan_id' => 'required|exists:vehical_disbursements,id',
+        ]);
+
+        try {
+            VehicalLoanComment::create([
+                'loan_id' => $validated['loan_id'],
+                'date' => now(),
+                'comment' => $validated['comment'],
+                'commented_by' => auth()->user()->name ?? 'Admin',
+            ]);
+
+            return redirect()->route('vehical.addComment', $validated['loan_id'])
+                ->with('success', 'Comment added successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error storing gold loan comment', [
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->withErrors('There was an error storing your comment.');
         }
     }
 }

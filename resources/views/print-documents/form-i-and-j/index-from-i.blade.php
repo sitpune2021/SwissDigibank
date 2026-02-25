@@ -40,27 +40,27 @@
         </div>
         <div class="pb-4  lg:pb-6">
 
-            <table class="w-full  select-all-table" id="">
+            <table class="w-full overflow-auto select-all-table" id="">
 
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-3  cursor-pointer">
-                            <div class="flex text-start uppercase justify-start gap-1">
+                            <div class="">
                                 SR.NO.
                             </div>
                         </th>
                         <th class="text-start !py-5 px-3  cursor-pointer">
-                            <div class="flex text-start uppercase justify-start gap-1">
+                            <div class="">
                                 CUSTOMER NO
                             </div>
                         </th>
                         <th class="text-start !py-5 px-4 min-w-[100px] cursor-pointer">
-                            <div class="flex text-start   uppercase justify-start gap-1">
+                            <div class="">
                                 CUSTOMER NAME
                             </div>
                         </th>
-                        <th class="text-start !py-5 px-4 min-w-[100px] cursor-pointer">
-                            <div class="flex text-start   uppercase justify-start gap-1">
+                        <th class="text-start !py-5 px-4 min-w-[100px] cursor-pointer uppercase">
+                            <div class="">
                                 Address
                             </div>
                         </th>
@@ -81,6 +81,7 @@
                         </td>
                         <td class=" py-3 text-lg px-5 text-start">
                             {{ $member->member_info_first_name }}
+                            {{ $member->member_info_middle_name }}
                             {{ $member->member_info_last_name }}
                         </td>
                         <td class=" py-3 text-lg px-5 text-start">
