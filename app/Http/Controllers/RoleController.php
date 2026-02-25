@@ -49,53 +49,104 @@ class RoleController extends Controller
             ['title' => 'DAILY WEEKLY'],
             ['title' => 'APPROVALS'],
             //['title' => 'FIXED LOAN'],
-            ['title' => 'MACHINE COLLECTION'],
+            //['title' => 'MACHINE COLLECTION'],
             ['title' => 'PASSBOOKS'],
             ['title' => 'PRINT DOCUMENTS'],
             ['title' => 'ADVISORS'],
         ];
         $menuItems5 = [
-            ['title' => 'EXTRA SERVICES'],
-            ['title' => 'TRANSFER SETTING'],
-            ['title' => 'CASHFREE'],
-            ['title' => 'ICICI'],
-            ['title' => 'WITHIN BANK TRANSFER'],
+            //['title' => 'EXTRA SERVICES'],
+            // ['title' => 'TRANSFER SETTING'],
+            // ['title' => 'CASHFREE'],
+            // ['title' => 'ICICI'],
+            // ['title' => 'WITHIN BANK TRANSFER'],
         ];
         $menuItems6 = [
             ['title' => 'REPORTS'],
             ['title' => 'HR MANAGEMENT'],
             ['title' => 'SOFTWARE SETTINGS'],
-            ['title' => 'WEBSITE'],
+            //['title' => 'WEBSITE'],
             ['title' => 'ACCOUNTING'],
         ];
         $menuItems7 = [
-            ['title' => 'SMS SCHEDULER'],
-            ['title' => 'BUSINESS REPORTS'],
-            ['title' => 'DAILY COLLECTION'],
-            ['title' => 'AGENT APP'],
+            // ['title' => 'SMS SCHEDULER'],
+            // ['title' => 'BUSINESS REPORTS'],
+            // ['title' => 'DAILY COLLECTION'],
+            // ['title' => 'AGENT APP'],
             ['title' => 'LOCKERS'],
         ];
         $menuItems8 = [
-            ['title' => 'VERIFICATION SUITE'],
-            ['title' => 'CIBIL REPORT'],
-            ['title' => 'VIEW LEVEL FIELDS PERMISSIONS'],
-            ['title' => 'YESBANK'],
+            // ['title' => 'VERIFICATION SUITE'],
+            // ['title' => 'CIBIL REPORT'],
+            // ['title' => 'VIEW LEVEL FIELDS PERMISSIONS'],
+            // ['title' => 'YESBANK'],
             ['title' => 'NOTICE BOARD'],
         ];
         $menuItems9 = [
-            ['title' => 'DOWNLOAD REPORTS'],
-            ['title' => 'APPOINTMENTS'],
-            ['title' => 'INQUIRY'],
-            ['title' => 'ENACH'],
+            // ['title' => 'DOWNLOAD REPORTS'],
+            // ['title' => 'APPOINTMENTS'],
+            // ['title' => 'INQUIRY'],
+            // ['title' => 'ENACH'],
         ];
         $menuItems10 = [
-            ['title' => 'AXISBANK'],
+            //['title' => 'AXISBANK'],
             ['title' => 'PAYMENT COLLECTIONS'],
-            ['title' => 'PAYMENT PAYOUTS'],
-            ['title' => 'CKYC REPORTS'],
-            ['title' => 'PAYLOADS'],
+            // ['title' => 'PAYMENT PAYOUTS'],
+            // ['title' => 'CKYC REPORTS'],
+            // ['title' => 'PAYLOADS'],
 
         ];
+
+        // for add-role.blade.php file feature  add this url for add new tab
+        // <!---------------------FIXED LOAN------------------------>
+        //  <!-- @include('roles.checkboxes.fixed-loan') -->
+        //  <!---------------------PAYMENT PAYOUTS	------------------------>
+        //   <!-- @include('roles.checkboxes.payment-payout') -->
+        //  <!---------------------MACHINE COLLECTION------------------------>
+        //   <!-- @include('roles.checkboxes.machine-col') -->         
+        //  <!---------------------EXTRA SERVICES------------------------>
+        //  <!-- @include('roles.checkboxes.extra-services') -->
+        //  <!---------------------TRANSFER SETTING------------------------>
+        //  <!-- @include('roles.checkboxes.transfer-setting') -->
+        //  <!---------------------CASHFREE------------------------>
+        //  <!-- @include('roles.checkboxes.cashfree') -->
+        //  <!--------------------ICICI------------------------>
+        //    <!-- @include('roles.checkboxes.icici') -->
+        //  <!--------------------WITHIN BANK TRANSFER	------------------------>
+        //  <!-- @include('roles.checkboxes.within-bank-trans') -->                                   
+        //  <!--------------------WEBSITE------------------------>
+        //  <!-- @include('roles.checkboxes.website') -->                                   
+        //  <!--------------------	SMS SCHEDULER------------------------>
+        //   <!-- @include('roles.checkboxes.sms-scheduler') -->
+        //  <!--------------------	BUSINESS REPORTS------------------------>
+        //    <!-- @include('roles.checkboxes.bussiness-report') -->
+        //  <!--------------------DAILY COLLECTION------------------------>
+        //   <!-- @include('roles.checkboxes.daily-collection') -->
+        //  <!--------------------AGENT APP------------------------>
+        //    <!-- @include('roles.checkboxes.agent-app') -->                                   
+        //  <!--------------------VERIFICATION SUITE------------------------>
+        //   <!-- @include('roles.checkboxes.verification-suite') -->
+        //  <!--------------------CIBIL REPORT------------------------>
+        //    <!-- @include('roles.checkboxes.cbil-report') -->
+        //  <!--------------------VIEW LEVEL FIELDS PERMISSIONS------------------------>
+        //   <!-- @include('roles.checkboxes.view-lavel-field-per') -->
+        //  <!--------------------YESBANK------------------------>
+        //  <!-- @include('roles.checkboxes.yes-bank') -->                                   
+        //  <!--------------------DOWNLOAD REPORTS------------------------>
+        //  <!-- @include('roles.checkboxes.download-reports') -->
+        //  <!--------------------APPOINTMENTS------------------------>
+        //  <!-- @include('roles.checkboxes.appointment') -->
+        //  <!--------------------INQUIRY------------------------>
+        //    <!-- @include('roles.checkboxes.inquiry') -->
+        //  <!--------------------ENACH------------------------>
+        //   <!-- @include('roles.checkboxes.enach')  -->
+        //  <!--------------------AXISBANK------------------------>
+        //   <!-- @include('roles.checkboxes.axis-bank') -->
+        //  <!--------------------CKYC REPORTS------------------------>
+        //  <!-- @include('roles.checkboxes.ckyc') -->
+        //  <!--------------------	PAYLOADS------------------------>
+        //  <!-- @include('roles.checkboxes.payload') -->
+
 
         return view('roles.add-role', compact(
             'roles',

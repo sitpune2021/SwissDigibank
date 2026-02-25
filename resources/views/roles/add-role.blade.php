@@ -226,80 +226,38 @@
 
                                     @include('roles.checkboxes.approvals')
 
-                                    <!---------------------FIXED LOAN------------------------>
-
-                                    @include('roles.checkboxes.fixed-loan')
-
-                                    <!---------------------PAYMENT COLLECTIONS	------------------------>
-                                    @include('roles.checkboxes.payment-col')
-                                    <!---------------------PAYMENT PAYOUTS	------------------------>
-                                     @include('roles.checkboxes.payment-payout')
-                                    <!---------------------MACHINE COLLECTION------------------------>
-                                     @include('roles.checkboxes.machine-col')
                                     <!---------------------PASSBOOKS------------------------>
                                     @include('roles.checkboxes.passbook')
+
                                     <!---------------------PRINT DOCUMENTS------------------------>
                                     <div class="tab-panel hidden collection-center">
                                         @include('roles.checkboxes.print-documents')
                                     </div>
+
                                     <!---------------------ADVISORS------------------------>
                                     @include('roles.checkboxes.advisors')
-                                    <!---------------------EXTRA SERVICES------------------------>
-                                    @include('roles.checkboxes.extra-services')
-                                    <!---------------------TRANSFER SETTING------------------------>
-                                    @include('roles.checkboxes.transfer-setting')
-                                    <!---------------------CASHFREE------------------------>
-                                    @include('roles.checkboxes.cashfree')
 
-                                    <!--------------------ICICI------------------------>
-                                      @include('roles.checkboxes.icici')
-                                    <!--------------------WITHIN BANK TRANSFER	------------------------>
-                                   @include('roles.checkboxes.within-bank-trans')
                                     <!--------------------REPORTS------------------------>
-                                     @include('roles.checkboxes.reports')
+                                    @include('roles.checkboxes.reports')
+
                                     <!--------------------HR MANAGEMENT------------------------>
-                                   @include('roles.checkboxes.hr-management')
+                                    @include('roles.checkboxes.hr-management')
+
                                     <!--------------------SOFTWARE SETTINGS------------------------>
-                                   @include('roles.checkboxes.software-settings')
-                                    <!--------------------WEBSITE------------------------>
-                                    @include('roles.checkboxes.website')
+                                    @include('roles.checkboxes.software-settings')
+
                                     <!--------------------	ACCOUNTING------------------------>
                                     @include('roles.checkboxes.accounting')
-                                    <!--------------------	SMS SCHEDULER------------------------>
-                                     @include('roles.checkboxes.sms-scheduler')
-                                    <!--------------------	BUSINESS REPORTS------------------------>
-                                      @include('roles.checkboxes.bussiness-report')
-                                    <!--------------------DAILY COLLECTION------------------------>
-                                     @include('roles.checkboxes.daily-collection')
-                                    <!--------------------AGENT APP------------------------>
-                                      @include('roles.checkboxes.agent-app')
+
                                     <!--------------------LOCKERS------------------------>
                                     @include('roles.checkboxes.lockers')
-                                    <!--------------------VERIFICATION SUITE------------------------>
-                                     @include('roles.checkboxes.verification-suite')
-                                    <!--------------------CIBIL REPORT------------------------>
-                                      @include('roles.checkboxes.cbil-report')
-                                    <!--------------------VIEW LEVEL FIELDS PERMISSIONS------------------------>
-                                     @include('roles.checkboxes.view-lavel-field-per')
-                                    <!--------------------YESBANK------------------------>
-                                    @include('roles.checkboxes.yes-bank')
+
                                     <!--------------------	NOTICE BOARD------------------------>
                                     @include('roles.checkboxes.notice-board')
-                                    <!--------------------DOWNLOAD REPORTS------------------------>
-                                    @include('roles.checkboxes.download-reports')
-                                    <!--------------------APPOINTMENTS------------------------>
-                                    @include('roles.checkboxes.appointment')
-                                    <!--------------------INQUIRY------------------------>
-                                      @include('roles.checkboxes.inquiry')
-                                    <!--------------------ENACH------------------------>
-                                     @include('roles.checkboxes.enach')
                                     
-                                    <!--------------------AXISBANK------------------------>
-                                     @include('roles.checkboxes.axis-bank')
-                                    <!--------------------CKYC REPORTS------------------------>
-                                    @include('roles.checkboxes.ckyc')
-                                    <!--------------------	PAYLOADS------------------------>
-                               @include('roles.checkboxes.payload')
+                                    <!---------------------PAYMENT COLLECTIONS	------------------------>
+                                    @include('roles.checkboxes.payment-col')
+                                     
                                 </div>
                             </div>
                         </div>
