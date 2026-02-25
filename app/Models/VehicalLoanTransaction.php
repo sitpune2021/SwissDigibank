@@ -29,8 +29,13 @@ class VehicalLoanTransaction extends Model
         'credited_to_company'
     ];
 
+    public function vehicalapplication()
+{
+    return $this->belongsTo(VehicalApplication::class, 'loan_id', 'id');
+}
     public function VehicalLoanTransaction()
     {
+        
         return $this->hasMany(VehicalLoanTransaction::class, 'loan_id', 'id');
     }
 }

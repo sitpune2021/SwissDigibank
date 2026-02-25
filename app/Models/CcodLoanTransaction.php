@@ -29,8 +29,13 @@ class CcodLoanTransaction extends Model
         'credited_to_company'
     ];
 
+    public function ccOdloanApplication()
+{
+    return $this->belongsTo(CcOdLoanApplication::class, 'loan_id', 'id');
+}
     public function CcodLoanTransaction()
     {
+        
         return $this->hasMany(CcodLoanTransaction::class, 'loan_id', 'id');
     }
 }

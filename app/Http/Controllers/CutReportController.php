@@ -5,10 +5,20 @@ namespace App\Http\Controllers;
 use App\Helpers\AccountsTransactionsHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Account;
+use App\Models\BusinessLoanTransaction;
+use App\Models\CcodLoanTransaction;
 use App\Models\Company;
+use App\Models\DailyWeeklyLoanTransaction;
 use App\Models\DdsAccount;
+use App\Models\DdTransaction;
 use App\Models\FdAccount;
+use App\Models\FdTransaction;
+use App\Models\GoldLoanTransaction;
+use App\Models\LoanAgainstTransactions;
 use App\Models\Misaccount;
+use App\Models\MisTransaction;
+use App\Models\MortgageLoanTransaction;
+use App\Models\PersoalLoanTransaction;
 use App\Models\RdAccount;
 use App\Models\LoanApplication;
 use App\Models\MortgageLoanApplication;
@@ -16,8 +26,11 @@ use App\Models\LoanAgainstApplication;
 use App\Models\BusinessLoanApplication;
 use App\Models\PersonalLoanApplication;
 use App\Models\DailyWeeklyApplication;
+use App\Models\RdTransactions;
+use App\Models\Transaction;
 use App\Models\VehicalApplication;
 use App\Models\CcOdLoanApplication;
+use App\Models\VehicalLoanTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -2621,8 +2634,62 @@ class CutReportController extends Controller
     public function transactions_index(Request $request)
     {
 
+        $type = $request->type;
+        $transactions = collect(); // default empty
 
-        return view('cut-reports.report.transactions');
+        switch ($type) {
+
+            case 'saving':
+                $transactions = Transaction::with('account.branch')->latest()->get();
+                break;
+
+            case 'fd':
+                $transactions = FdTransaction::with('fdAccount.branch')->latest()->get();
+                break;
+
+            case 'mis':
+                $transactions = MisTransaction::with('misaccount.branch')->latest()->get();
+                break;
+
+            case 'rd':
+                $transactions = RdTransactions::with('rdaccount.branch')->latest()->get();
+                break;
+
+            case 'dd':
+                $transactions = DdTransaction::with('ddsAccount.branch')->latest()->get();
+                break;
+            case 'gold_loan':
+                $transactions = GoldLoanTransaction::with('goldApplication.branch')->latest()->get();
+                break;
+            case 'property_loan':
+                $transactions = MortgageLoanTransaction::with('mortgageloanApplication.branch')->latest()->get();
+                break;
+            case 'deposit_loan':
+                $transactions = LoanAgainstTransactions::with('loanAgainstApplication.branch')->latest()->get();
+                break;
+            case 'business_loan':
+                $transactions = BusinessLoanTransaction::with('businessloanApplication.branch')->latest()->get();
+                break;
+            case 'personal_loan':
+                $transactions = PersoalLoanTransaction::with('persoalLoanApplication.branch')->latest()->get();
+                break;
+
+            case 'vehicle_loan':
+                $transactions = VehicalLoanTransaction::with('vehicalapplication.branch')->latest()->get();
+                break;
+            case 'ccod_loan':
+                $transactions = CcodLoanTransaction::with('ccOdloanApplication.branch')->latest()->get();
+                break;
+          case 'daily_weekly':
+                $transactions = DailyWeeklyLoanTransaction::with('dailyWeeklyapplication.branch')->latest()->get();
+                break;
+
+        }
+
+
+
+
+        return view('cut-reports.report.transactions', compact('transactions', 'type'));
     }
 
     public function loan_emi_index(Request $request)
@@ -2638,41 +2705,41 @@ class CutReportController extends Controller
         return view('cut-reports.report.rd-installment');
     }
 
-    
+
     public function deposit_balance_index(Request $request)
     {
 
         return view('cut-reports.report.deposit-balance-report');
     }
-    
-     public function loan_balance_index(Request $request)
+
+    public function loan_balance_index(Request $request)
     {
 
         return view('cut-reports.report.loan-balance-report');
     }
-       public function loan_accrued_index(Request $request)
+    public function loan_accrued_index(Request $request)
     {
 
         return view('cut-reports.report.loan-accured-report');
     }
-        public function group_report_index(Request $request)
+    public function group_report_index(Request $request)
     {
 
         return view('cut-reports.report.group-report');
     }
 
-     public function tds_report_index(Request $request)
+    public function tds_report_index(Request $request)
     {
 
         return view('cut-reports.report.tds-report');
     }
-     public function attendance_report_index(Request $request)
+    public function attendance_report_index(Request $request)
     {
 
         return view('cut-reports.report.attendence-report');
     }
 
-         public function loan_portfolio_index(Request $request)
+    public function loan_portfolio_index(Request $request)
     {
 
         return view('cut-reports.report.loan-portfolio-report');

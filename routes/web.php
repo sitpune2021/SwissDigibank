@@ -2549,6 +2549,7 @@ Route::group(['prefix' => 'cut-report'], function () {
     // Transactions Cut Report
     Route::get('report/transactions', [CutReportController::class, 'transactions_index'])
         ->name('report.transactions');
+    
 
     // loan-emi Cut Report
     Route::get('report/loan-emi', [CutReportController::class, 'loan_emi_index'])
