@@ -225,28 +225,42 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
                 <label for="" class="block font-medium mb-2">
                     Membership Fee
                 </label>
-                <table>
-                    <tr>
-                        <td>Amount</td>
-                        <td>M. GST Rate (%)</td>
-                        <td>T. Amount</td>
-                    </tr>
-                    <tr>
-                        <td>
+              
+                      <div class="flex gap-3">
+                         <div class="w-full">
+                           <p  class="w-full text-start px-2 uppercase">
+                             Amount
+                           </p>
+                        </div>
+                        <div class="w-full">
+                            <p class="w-full text-start px-2 uppercase">
+                                M. GST Rate (%)
+                            </p>
+                        </div>
+                        <div class="w-full" >
+                            <p class=" w-full text-start px-2 uppercase">T. Amount</p>
+                        </div>
+                      </div> 
+                  
+                 
+                       <div class="flex gap-3 mt-3 w-full">
+                         <div >
                             <input type="number" id="" name="amount"
                                 value="{{ old('amount', $charge->amount ?? $membershipAmt ?? '') }}"
                                 class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" readonly>
-                        </td>
-                        <td><input type="number" id="" name="gst_rate"
+                        </div>
+                        <div>
+                            <input type="number" id="" name="gst_rate"
                                 value="{{ old('gst_rate', $charge->gst_rate ?? 0) }}"
                                 class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" readonly>
-                        </td>
-                        <td> <input type="number" id="membership_fee" name="membership_fee"
+                        </div>
+                        <div>
+                             <input type="number" id="membership_fee" name="membership_fee"
                                 value="{{ old('membership_fee', $charge->total_amount ?? $membershipAmt ?? '') }}"
-                                class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3"></td>
-                    </tr>
-
-                </table>
+                                class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
+                        </div>
+                       </div>
+                   
             </div>
             <div class="mb-4">
                 <label for="" class="block font-medium mb-2">Net Fee to Collect <span
