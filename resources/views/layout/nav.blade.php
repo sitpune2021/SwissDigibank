@@ -132,18 +132,23 @@
                             <i class="las la-user-secret"></i>
                             <a href="">Associate Report</a>
                         </li>
-                        <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                        {{-- <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                             <i class="las la-building"></i>
                             <a href="">Branch Report</a>
+                        </li> --}}
+                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
+                            <i class="las la-money-bill"></i>
+                            <a href="{{ route('reports.branch') }}"> Branch Report</a>
                         </li>
                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                             <i class="las la-balance-scale"></i>
-                            <a href="">Maturity Report</a>
+                            <a href="{{route('loan-report.maturity_index')}}">Maturity Report</a>
                         </li>
                         <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer uppercase">
                             <i class="las la-money-bill"></i>
                             <a href="{{ route('loan-report.index') }}"> Loan Report</a>
                         </li>
+                        
                     </ul>
                 </div>
                 <div id="dailycollectionMenu"

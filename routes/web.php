@@ -8,12 +8,9 @@ use App\Http\Controllers\GroupCommentController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\LogoImgUploadController;
 use App\Http\Controllers\MasterSettingController;
-use App\Http\Controllers\MasterSettingsController;
-use App\Http\Controllers\MortgageLoanPrintDocumentsController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\PrintDocumentsController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\SmsController;
 use App\Http\Controllers\SmsTemplateController;
 use App\Http\Controllers\SoftwareSettingsController;
 use App\Http\Controllers\UnencumberedDepositController;
@@ -46,9 +43,7 @@ use App\Http\Controllers\ShareTransferController;
 use App\Http\Controllers\WithdrawController;
 use App\Http\Controllers\DisbursementController;
 use App\Http\Controllers\OrnamentController;
-use App\Http\Controllers\KycDocumentsController;
 use App\Http\Controllers\CalculatorController;
-use App\Http\Controllers\FdCalculatorController;
 use App\Http\Controllers\RDCalculatorController;
 use App\Http\Controllers\DdsAccountsController;
 use App\Http\Controllers\FDController;
@@ -58,7 +53,6 @@ use App\Http\Controllers\PersonalDisbursementController;
 use App\Http\Controllers\PersonalAccountController;
 use App\Http\Controllers\MDSController;
 use App\Http\Controllers\MisaccountController;
-use App\Http\Controllers\MortgageLoneController;
 use App\Http\Controllers\RdAccountController;
 use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\RdschemesController;
@@ -162,7 +156,6 @@ Route::middleware('auth.user')->group(function () {
         //------------------------------18-12-2025------------------------------------------//
         Route::resource('unencumbered-deposits', UnencumberedDepositController::class);
         Route::resource('bank-account', BankAccountController::class);
-
     });
 
     Route::group(['prefix' => 'user'], function () {
@@ -920,14 +913,17 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::get(
         '/gold-loan-app/emi-receipt-view/{loan}/{emiNo}',
         [GoldLoanPrintDocument::class, 'emi_receipt_view']
-    )->name('loan.emi_receipt.view');
+    )->name('gold-loan.emi_receipt.view');
 
     Route::get(
         '/gold-loan-app/emi-receipt/{loan}/{emiNo}',
         [GoldLoanPrintDocument::class, 'emi_receipt_pdf']
-    )->name('loan.emi_receipt.pdf');
-    Route::get('/emi-receipt/{loan}/{emiNo}', [GoldLoanPrintDocument::class, 'emi_receipt_print'])
-        ->name('emi.receipt.print');
+    )->name('gold-loan.emi_receipt.pdf');
+
+    Route::get(
+        '/gold-loan-app/emi-receipt-print/{loan}/{emiNo}',
+        [GoldLoanPrintDocument::class, 'emi_receipt_print']
+    )->name('gold-loan.emi_receipt.print');
 });
 
 
@@ -1064,6 +1060,25 @@ Route::group(['prefix' => 'mortgage'], function () {
 
     Route::get('/undertaking-letter-view/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('mortgage_loan.undertaking_letter.view');
     Route::get('/undertaking-letter/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter'])->name('mortgage_loan.undertaking_letter.pdf');
+
+});
+
+Route::prefix('mortgage-loan-app')->group(function () {
+
+    Route::get(
+        '/emi-receipt-view/{loan}/{emiNo}',
+        [MortgageLoanPrintDocumentController::class, 'emi_receipt_view']
+    )->name('mortgage_loan.emi_receipt.view');
+
+    Route::get(
+        '/emi-receipt/{loan}/{emiNo}',
+        [MortgageLoanPrintDocumentController::class, 'emi_receipt_pdf']
+    )->name('mortgage_loan.emi_receipt.pdf');
+
+    Route::get(
+        '/emi-receipt-print/{loan}/{emiNo}',
+        [MortgageLoanPrintDocumentController::class, 'emi_receipt_print']
+    )->name('mortgage_emi.receipt.print');
 });
 
 
@@ -1423,6 +1438,17 @@ Route::group(['prefix' => 'business'], function () {
 
     Route::get('/undertaking-letter-view/{loan}', [BusinessLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('business_loan.undertaking_letter.view');
     Route::get('/undertaking-letter/{loan}', [BusinessLoanPrintDocumentController::class, 'undertaking_letter'])->name('business_loan.undertaking_letter.pdf');
+    Route::get(
+        '/business-loan-app/emi-receipt-view/{loan}/{emiNo}',
+        [BusinessLoanPrintDocumentController::class, 'emi_receipt_view']
+    )->name('loan.emi_receipt.view');
+
+    Route::get(
+        '/business-loan-app/emi-receipt/{loan}/{emiNo}',
+        [BusinessLoanPrintDocumentController::class, 'emi_receipt_pdf']
+    )->name('loan.emi_receipt.pdf');
+    Route::get('/emi-receipt/{loan}/{emiNo}', [BusinessLoanPrintDocumentController::class, 'emi_receipt_print'])
+        ->name('emi.receipt.print');
 });
 
 
@@ -2434,8 +2460,8 @@ Route::group(['prefix' => 'cut-report'], function () {
         ->name('accounts.export.csv');
     Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
 
-Route::get('/report/saving/print', [CutReportController::class, 'printSaving'])
-    ->name('reports.saving.print');
+    Route::get('/report/saving/print', [CutReportController::class, 'printSaving'])
+        ->name('reports.saving.print');
 
     Route::get('report/fd-account', [CutReportController::class, 'fdaccount_index'])
         ->name('report.fd-account');
@@ -2443,13 +2469,13 @@ Route::get('/report/saving/print', [CutReportController::class, 'printSaving'])
         ->name('fd-accounts.export.csv');
     Route::get('fd-accounts/report/saving', [CutReportController::class, 'FDIndex'])->name('fd-accounts.report.saving.index');
     Route::get('/report/fd/print', [CutReportController::class, 'printFd'])
-    ->name('reports.printFd.print');
+        ->name('reports.printFd.print');
 
     Route::get('report/mis-account', [CutReportController::class, 'misaccount_index'])
         ->name('report.mis-account');
     Route::get('report/mis', [CutReportController::class, 'misIndex'])->name('report.mis.index');
-     Route::get('/report/Mis/print', [CutReportController::class, 'printMis'])
-    ->name('reports.printmis.print');
+    Route::get('/report/Mis/print', [CutReportController::class, 'printMis'])
+        ->name('reports.printmis.print');
     Route::get('/mis-account/download-csv', [CutReportController::class, 'downloadMisCsv'])
         ->name('mis.account.csv');
 
@@ -2457,12 +2483,12 @@ Route::get('/report/saving/print', [CutReportController::class, 'printSaving'])
 
     Route::get('report/dd-accounts', [CutReportController::class, 'ddaccount_index'])
         ->name('report.dd-accounts');
-        Route::get('/report/dd/print', [CutReportController::class, 'printDD'])
-    ->name('reports.printdd.print');
+    Route::get('/report/dd/print', [CutReportController::class, 'printDD'])
+        ->name('reports.printdd.print');
     Route::get('report/rd-account', [CutReportController::class, 'rd_account_index'])
         ->name('report.rd-account');
-  Route::get('/report/Rd/print', [CutReportController::class, 'printRD'])
-    ->name('reports.printrd.print');
+    Route::get('/report/Rd/print', [CutReportController::class, 'printRD'])
+        ->name('reports.printrd.print');
 
     Route::get('report/dd', [CutReportController::class, 'ddIndex'])->name('report.dd.index');
     Route::get('/dd-accounts/download-csv', [CutReportController::class, 'ddAccountCsv'])
@@ -3058,6 +3084,7 @@ Route::get('software-settings/software-service-agreement', [SoftwareSettingsCont
 ///////////////////// Download REPORTs ///////////////////////////
 Route::get('loan-report/index', [ReportController::class, 'loan_report_index'])->name('loan-report.index');
 Route::get('maturity-indext/index', [ReportController::class, 'maturity_index'])->name('loan-report.maturity_index');
+Route::get('/reports/branch-report', [ReportController::class, 'branch_index'])->name('reports.branch');
 
 
 ////////////////////Download REPORTs Ends Here////////////////////////////

@@ -15,6 +15,7 @@
     </td>
 
     <td class="px-2  border">
+        @if(hasPermission('gold-loan.ornaments.update'))
         {{-- Update Form --}}
         <form action="{{ route('gold-loan.ornaments.update', $ornament->id) }}" method="POST">
             @csrf
@@ -29,8 +30,9 @@
              </td>
             <td class="px-2  border">
                <button type="submit" class="btn btn-sm rounded-10 text-sm uppercase btn-primary mt-1">Update</button></td>
-              </form>
-             </td>
+        </form>
+        @endif
+    </td>
 </tr>
 @empty
 <tr>

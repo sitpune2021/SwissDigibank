@@ -1,8 +1,9 @@
 <div class="tab-panel hidden">
+    
     <!----------------- Members -------------------->
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">Members</div>
+            <div class="uppercase font-semibold text-lg">CUSTOMER</div>
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="check_all_dashboard"
@@ -20,11 +21,10 @@
                     <input type="checkbox" id="members_list" name="permissions[members_list]" value=""
                         class="item-checkbox  form-checkbox h-5 w-5 text-primary">
                     <label for="members_list" class="text-base font-semibold cursor-pointer mb-0">
-                        Members List
+                        Customer List
                     </label>
                 </div>
             </div>
-
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
@@ -36,7 +36,7 @@
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="skip_mob_ver" name="permissions[skip_mob_ver]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -44,7 +44,7 @@
                         Allow Skip Mobile No Verification
                     </label>
                 </div>
-            </div>
+            </div> -->
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
@@ -56,7 +56,7 @@
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="mem_total_dep" name="permissions[mem_total_dep]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -74,7 +74,8 @@
                         Show Member Info - Total Loan Outstanding
                     </label>
                 </div>
-            </div>
+            </div> -->
+
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="edit_mem_info" name="permissions[edit_mem_info]" value=""
@@ -84,7 +85,8 @@
                     </label>
                 </div>
             </div>
-            <div class="col-span-2 md:col-span-1">
+
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="sms_enb_dsb" name="permissions[sms_enb_dsb]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -227,15 +229,14 @@
                         Member Aadhaar Verification without OTP
                     </label>
                 </div>
-            </div>
-
-
+            </div> -->
 
         </div>
     </div>
+
     <br>
     <!----------------- Members Login Credentials -------------------->
-    <div class="payload-section">
+    <!-- <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">Members Login Credentials</div>
             <div class="col-span-2 md:col-span-1">
@@ -283,7 +284,8 @@
 
 
         </div>
-    </div>
+    </div> -->
+
     <br>
     <!----------------- Minors -------------------->
     <div class="payload-section">
@@ -347,9 +349,10 @@
         </div>
 
     </div>
+
     <br>
     <!----------------- Auth Persons -------------------->
-    <div class="payload-section">
+    <!-- <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">Auth Persons</div>
             <div class="col-span-2 md:col-span-1">
@@ -376,10 +379,11 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
+
     <br>
     <!----------------- Member Transactions-------------------->
-    <div class="payload-section">
+    <!-- <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">Member Transactions</div>
             <div class="col-span-2 md:col-span-1">
@@ -463,7 +467,8 @@
             </div>
 
         </div>
-    </div>
+    </div> -->
+
     <br>
     <!-----------------Share Holdings-------------------->
     <div class="payload-section">
@@ -489,7 +494,7 @@
                     <input type="checkbox" id="com_mem_sha_lis" name="permissions[com_mem_sha_lis]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="com_mem_sha_lis" class="text-base font-semibold cursor-pointer mb-0">
-                        Company Member's Share Holdings List
+                        Company Customer's Share Holdings List
                     </label>
                 </div>
             </div>
@@ -499,7 +504,7 @@
                     <input type="checkbox" id="all_new_shar" name="permissions[all_new_shar]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="all_new_shar" class="text-base font-semibold cursor-pointer mb-0">
-                        Allocate/ Transfer New Shares to Members
+                        Allocate/ Transfer New Shares to Customer
                     </label>
                 </div>
             </div>
@@ -514,7 +519,7 @@
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-2">
+            <!-- <div class="col-span-2 md:col-span-2">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="rai_sha_trans_req" name="permissions[rai_sha_trans_req]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -540,7 +545,8 @@
                         Transfer Share - Directly Without Approval and Fill Share to Transfer
                     </label>
                 </div>
-            </div>
+            </div> -->
+
             <div class="col-span-2 md:col-span-2">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="del_rem_share_hol" name="permissions[del_rem_share_hol]" value=""
@@ -550,7 +556,8 @@
                     </label>
                 </div>
             </div>
-            <div class="col-span-2 md:col-span-2">
+
+            <!-- <div class="col-span-2 md:col-span-2">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="raise_share_sur_req" name="permissions[raise_share_sur_req]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -567,12 +574,14 @@
                         Raise Share Transfer Request from Member
                     </label>
                 </div>
-            </div>
+            </div> -->
+
         </div>
     </div>
+
     <br>
     <!-----------------Share Certificates-------------------->
-    <div class="payload-section">
+    <!-- <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">Share Certificates</div>
             <div class="col-span-2 md:col-span-1">
@@ -600,10 +609,11 @@
 
         </div>
 
-    </div>
+    </div> -->
+
     <br>
     <!-----------------Share Transfer History-------------------->
-    <div class="payload-section">
+    <!-- <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">Share Transfer History</div>
             <div class="col-span-2 md:col-span-1">
@@ -630,7 +640,8 @@
             </div>
 
         </div>
-    </div>
+    </div> -->
+
     <br>
     <!-----------------Form 15g-------------------->
     <div class="payload-section">
@@ -669,7 +680,7 @@
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-1">
+            <!-- <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="up_new_for_g_h" name="permissions[up_new_for_g_h]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
@@ -677,7 +688,7 @@
                         Upload New Form 15G/ 15H
                     </label>
                 </div>
-            </div>
+            </div> -->
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
@@ -697,7 +708,9 @@
                     </label>
                 </div>
             </div>
+
         </div>
 
     </div>
+
 </div>

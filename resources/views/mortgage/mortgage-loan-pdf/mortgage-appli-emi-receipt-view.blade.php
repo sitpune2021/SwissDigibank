@@ -3,7 +3,7 @@
 <div class="main-inner">
     <div class="mb-5 flex justify-center gap-2 flex-col md:flex-row lg:flex-row">
  
-        <a href="{{ route('emi.receipt.print', [$loan->id,$emiNo]) }}" class="btn-primary  px-6 py-2 flex justify-center  text-sm uppercase" onclick="printWindow(this.href); return false;">
+        <a href="{{ route('mortgage_emi.receipt.print', [$loan->id,$emiNo]) }}" class="btn-primary  px-6 py-2 flex justify-center  text-sm uppercase" onclick="printWindow(this.href); return false;">
           <i class="las la-print"></i>
             Print
         </a>
@@ -15,7 +15,7 @@
              };
           }
         </script>
-        <a href="{{ route('loan.emi_receipt.pdf', [$loan->id, $emiNo]) }}" target="_blank"
+        <a href="{{ route('mortgage_loan.emi_receipt.pdf', [$loan->id, $emiNo]) }}" target="_blank"
             class="btn-primary  px-6 py-2 flex justify-center  text-sm uppercase">
             <i class="las la-download"></i>
             download

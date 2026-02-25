@@ -1,4 +1,5 @@
 <div class="tab-panel hidden">
+
     <!---------------------------Roles---------------------------->
     <div class="mb-3 payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
@@ -86,7 +87,7 @@
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Users List</label>
                 </div>
             </div>
-            <div class="grid grid-cols-6 gap-2 xxl:gap-2">
+            <!-- <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
                         <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
@@ -95,7 +96,7 @@
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">User List
                         Download</label>
                 </div>
-            </div>
+            </div> -->
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
@@ -118,7 +119,7 @@
                         Info</label>
                 </div>
             </div>
-            <div class="grid grid-cols-6 gap-2 xxl:gap-2">
+            <!-- <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
                         <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
@@ -172,7 +173,8 @@
                         Photo
                     </label>
                 </div>
-            </div>
+            </div> -->
+            
         </div>
     </div>
 

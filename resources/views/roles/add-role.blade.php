@@ -166,7 +166,6 @@
 
                                     @include('roles.checkboxes.company')
 
-
                                     <!---------------------User Management------------------------>
 
                                     @include('roles.checkboxes.user')
@@ -175,33 +174,62 @@
 
                                     @include('roles.checkboxes.collection-center')
 
-
                                     <!---------------------MEMBER(customer) MANAGEMENT	------------------------>
 
-
                                     @include('roles.checkboxes.member-management')
+
                                     <!---------------------SAVING ACCOUNTS------------------------>
+
                                     @include('roles.checkboxes.saving-acc')
 
                                     <!---------------------FIXED DEPOSITS------------------------>
+
                                     @include('roles.checkboxes.fixed-deposit')
+
                                     <!---------------------RECURRING DEPOSITS------------------------>
+
                                     @include('roles.checkboxes.recuring')
+
                                     <!---------------------GOLD LOAN------------------------>
 
                                     @include('roles.checkboxes.gold-loan')
+
                                     <!---------------------PROPERTY LOAN------------------------>
 
                                     @include('roles.checkboxes.property-loan')
+
                                     <!---------------------DEPOSIT LOAN------------------------>
+
                                     @include('roles.checkboxes.deposit-loan')
+
                                     <!---------------------OTHER LOAN------------------------>
-                                    @include('roles.checkboxes.other-loan')
+
+                                    @include('roles.checkboxes.business-loan')
+                                    
+                                    <!--------------------CC LIMIT------------------------>
+                                      
+                                    @include('roles.checkboxes.cc-limit')
+
+                                    <!--------------------VEHICLE LOAN------------------------>
+                                    
+                                    @include('roles.checkboxes.vehicle-loan')
+                                    
+                                    <!--------------------PERSONAL LOAN------------------------>
+                                    
+                                    @include('roles.checkboxes.personal-loan')
+
+                                    <!--------------------DAILY WEEKLY LOAN------------------------>
+                                    
+                                    @include('roles.checkboxes.dailyweekly-loan')
+                                    
+                                    <!---------------------APPROVALS------------------------>
+
+                                    @include('roles.checkboxes.approvals')
+
                                     <!---------------------FIXED LOAN------------------------>
 
                                     @include('roles.checkboxes.fixed-loan')
-                                    <!---------------------APPROVALS------------------------>
-                                    @include('roles.checkboxes.approvals')
+
                                     <!---------------------PAYMENT COLLECTIONS	------------------------>
                                     @include('roles.checkboxes.payment-col')
                                     <!---------------------PAYMENT PAYOUTS	------------------------>
@@ -265,14 +293,9 @@
                                       @include('roles.checkboxes.inquiry')
                                     <!--------------------ENACH------------------------>
                                      @include('roles.checkboxes.enach')
-                                    <!--------------------CC LIMIT------------------------>
-                                      @include('roles.checkboxes.cc-limit')
+                                    
                                     <!--------------------AXISBANK------------------------>
                                      @include('roles.checkboxes.axis-bank')
-                                    <!--------------------VEHICLE LOAN------------------------>
-                                     @include('roles.checkboxes.vehicle-loan')
-                                    <!--------------------PERSONAL LOAN------------------------>
-                                    @include('roles.checkboxes.personal-loan')
                                     <!--------------------CKYC REPORTS------------------------>
                                     @include('roles.checkboxes.ckyc')
                                     <!--------------------	PAYLOADS------------------------>

@@ -90,7 +90,7 @@ class Promotor extends Model
     }
     public function shareholdings()
     {
-        return $this->hasMany(Shareholding::class, 'promotor_id');
+        return $this->hasMany(ShareHolding::class, 'promotor_id');
     }
     public function documents()
     {
@@ -98,7 +98,7 @@ class Promotor extends Model
     }
     public function latestShare()
     {
-        return $this->hasOne(Shareholding::class, 'promotor_id')->latest();
+        return $this->hasOne(ShareHolding::class, 'promotor_id')->latest();
     }
     public function membershipCharge()
 {

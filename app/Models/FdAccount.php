@@ -46,6 +46,8 @@ class FdAccount extends Model
         'link_status',
 
     ];
+
+    protected $dates = ['close_date'];
     public function member()
     {
         return $this->belongsTo(Member::class, 'member_id', 'id');

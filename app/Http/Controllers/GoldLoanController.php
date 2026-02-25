@@ -173,6 +173,9 @@ class GoldLoanController extends Controller
 
     public function view($id)
     {
+        if (!hasPermission('gold-loan.schemes.view')) {
+            abort(403);
+        }
         $scheme = GoldLoanScheme::findOrFail($id);
         return view("gold-loan.schemes.view", compact('scheme'));
     }
@@ -1185,7 +1188,6 @@ class GoldLoanController extends Controller
 
     public function storeLoanApplication(Request $request)
     {
-        //dd('ghf');
         Log::info('--- Loan Application Store Started ---', [
             'user_id' => Auth::id(),
             'input_data' => $request->all(),
@@ -1486,7 +1488,7 @@ class GoldLoanController extends Controller
 
     public function appedit($id)
     {
-        if (!hasPermission('gold-loan.applications.create')) {
+        if (!hasPermission('gold-loan.applications.edit')) {
             abort(403);
         }
         $application = LoanApplication::with(['member', 'scheme'])->findOrFail($id);
@@ -1874,8 +1876,23 @@ class GoldLoanController extends Controller
         $insuranceInc     = floatval($application->insurance_fee ?? 0);
         $fitnessInc       = floatval($application->fitness_fee ?? 0);
 
-        $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
-        $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
+        // $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
+        // $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
+        
+        /* PER EMI CHARGES FROM SCHEME */
+        $smsCharge        = floatval($application->scheme->sms_charge ?? 0);
+        $fuelCharge       = floatval($application->scheme->fuel_charge ?? 0);
+        $stationaryCharge = floatval($application->scheme->stationary_charge ?? 0);
+        $maintenanceCharge= floatval($application->scheme->maintenance_charge ?? 0);
+        $collectionCharge = floatval($application->scheme->collection ?? 0);
+
+        $chargesPerEmi = round(
+            $smsCharge +
+            $fuelCharge +
+            $stationaryCharge +
+            $maintenanceCharge +
+            $collectionCharge,
+        2);
 
         /* Interest Rate */
         $annualRate = floatval($application->scheme->annual_interest_rate ?? 0);
