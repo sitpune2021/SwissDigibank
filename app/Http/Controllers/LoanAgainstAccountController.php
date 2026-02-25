@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\LoanAgainsstComment;
 
 class LoanAgainstAccountController extends Controller
 {
@@ -68,7 +69,20 @@ class LoanAgainstAccountController extends Controller
     // view page
     public function show(Request $request, $id)
     {
+        // Find disbursement record using application id
+        $disbursement = DB::table('loanagainsst_disbursements')
+            ->where('loan_application_id', $id)
+            ->first();
 
+        $disbursementId = $disbursement->id ?? null;
+
+        $comments = collect();
+
+        if ($disbursementId) {
+            $comments = LoanAgainsstComment::where('loan_id', $disbursementId)
+                ->orderBy('created_at', 'desc')
+                ->paginate(5);
+        }
         $savedStatuses = DB::table('loan_against_emi_status')
             ->where('loan_id', $id)
             ->pluck('status', 'emi_no')
@@ -593,6 +607,7 @@ class LoanAgainstAccountController extends Controller
             'payRoute' => $payRoute,
             'payButtonText' => $payButtonText,
             'hasPendingApproval' => $hasPendingApproval,
+            'comments' => $comments
         ]);
     }
 
@@ -1910,6 +1925,72 @@ class LoanAgainstAccountController extends Controller
             ]);
 
             return back()->with('error', 'Something went wrong while clearing the due.');
+        }
+    }
+
+    public function addComment($applicationId)
+    {
+        // Find disbursement record using application id
+        $disbursement = DB::table('loanagainsst_disbursements')
+            ->where('loan_application_id', $applicationId)
+            ->first();
+
+        if (!$disbursement) {
+            return back()->with('error', 'Loan not disbursed yet.');
+        }
+
+        $loan_id = $disbursement->id;
+
+        $comments = LoanAgainsstComment::where('loan_id', $loan_id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+
+        return view(
+            'loanagainst.account.comments.addComments',
+            compact('comments', 'loan_id')
+        );
+    }
+
+    public function storeComment(Request $request)
+    {
+        Log::info('Loan Against Comment Store Attempt', [
+            'request_data' => $request->all(),
+            'user_id' => auth()->id(),
+        ]);
+
+        $validated = $request->validate([
+            'comment' => 'required|string',
+            'loan_id' => 'required|exists:loan_against_applications,id',
+        ]);
+
+        try {
+
+            $comment = LoanAgainsstComment::create([
+                'loan_id' => $validated['loan_id'],
+                'date' => now(),
+                'comment' => $validated['comment'],
+                'commented_by' => auth()->user()->name ?? 'Admin',
+            ]);
+
+            Log::info('Loan Against Comment Stored Successfully', [
+                'comment_id' => $comment->id,
+                'loan_id' => $validated['loan_id'],
+                'commented_by' => auth()->user()->name ?? 'Admin',
+            ]);
+
+            return redirect()
+                ->route('loanagainst.addComment', $validated['loan_id'])
+                ->with('success', 'Comment added successfully!');
+        } catch (\Exception $e) {
+
+            Log::error('Loan Against Comment Store Failed', [
+                'error_message' => $e->getMessage(),
+                'loan_id' => $validated['loan_id'] ?? null,
+                'user_id' => auth()->id(),
+                'stack_trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', 'Something went wrong while adding comment.');
         }
     }
 }

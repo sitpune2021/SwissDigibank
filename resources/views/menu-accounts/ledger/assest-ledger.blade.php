@@ -47,10 +47,12 @@
                             {{ $ledger->code }}
                         </td>
 
-                        <td class="px-5 py-3 ">
-                            <span class="px-1 ">
-                                {{ $ledger->group->display_name ?? '-' }}
-                            </span>
+                        <td class="px-5 py-3">
+                            <a href="{{ route('ledger-group.ledgers', $ledger->group_id) }}" class="text-primary">
+                                <span class="px-1">
+                                    {{ $ledger->group->display_name ?? '-' }}
+                                </span>
+                            </a>
                         </td>
 
                         <td class="px-5 py-3 ">
@@ -126,9 +128,9 @@
 
         </div>
 
-<div class="mt-5 text-lg uppercase font-semibold">
-    Transactions
-</div>
+        <div class="mt-5 text-lg uppercase font-semibold">
+            Transactions
+        </div>
         
          <div class="w-full  overflow-x-auto rounded-10 shadow mt-5 bg-white dark:bg-bg3">
 

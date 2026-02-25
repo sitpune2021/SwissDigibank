@@ -835,6 +835,12 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::post('/gold-loan/foreclose/{loan_id}', [GoldLoanAccountController::class, 'foreClose'])
         ->name('goldloan.foreclose');
 
+    // commnets and documents route
+    Route::get('gold-loan/{id}/add-comment', [GoldLoanAccountController::class, 'addComment'])
+        ->name('goldloan.addComment');
+
+    Route::post('gold-loan/store-comment', [GoldLoanAccountController::class, 'storeComment'])
+        ->name('goldloan.storeComment');
 
     // other pages url
     Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
@@ -965,6 +971,12 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::get('disbursements/disburse-loan/{id}', [MortgageDisbursementController::class, 'show'])->name('mortgage.disbursements.disburse-loan');
     Route::post('disbursements/store', [MortgageDisbursementController::class, 'store'])->name('mortgagedisbursements.store');
 
+    Route::get('mortgage-loan/{id}/add-comment', [MortgageAccountController::class, 'addComment'])
+        ->name('mortgageloan.addComment');
+
+    Route::post('mortgage-loan/store-comment', [MortgageAccountController::class, 'storeComment'])
+        ->name('mortgageloan.storeComment');
+
     // account section start
     Route::get('account/index', [MortgageAccountController::class, 'index'])->name('mortgage.account.index');
     Route::get('account/show/{id}', [MortgageAccountController::class, 'show'])
@@ -1060,7 +1072,6 @@ Route::group(['prefix' => 'mortgage'], function () {
 
     Route::get('/undertaking-letter-view/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('mortgage_loan.undertaking_letter.view');
     Route::get('/undertaking-letter/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter'])->name('mortgage_loan.undertaking_letter.pdf');
-
 });
 
 Route::prefix('mortgage-loan-app')->group(function () {
@@ -1164,6 +1175,16 @@ Route::group(['prefix' => 'loanagainst'], function () {
         ->name('loanagainst.disbursements.disburse-loan');
     Route::post('/loanagainst/disbursements/store', [LoanAgainstDisbursementController::class, 'store'])->name('disbursements.store');
 
+    //comments and documents 
+    Route::get(
+        'loan-against/{id}/add-comment',
+        [LoanAgainstAccountController::class, 'addComment']
+    )->name('loanagainst.addComment');
+
+    Route::post(
+        'loan-against/store-comment',
+        [LoanAgainstAccountController::class, 'storeComment']
+    )->name('loanagainst.storeComment');
 
     // account section start
 
@@ -1338,6 +1359,16 @@ Route::group(['prefix' => 'business'], function () {
         ->name('bussiness.disbursements.disburse-loan');
     Route::post('/bussiness/disbursements/store', [BusinessLoanDisburments::class, 'store'])->name('businessdisbursements.store');
 
+    //comments and documents 
+    Route::get(
+        'bussiness/{id}/add-comment',
+        [BusinessLoanAccount::class, 'addComment']
+    )->name('bussiness.addComment');
+
+    Route::post(
+        'bussiness/store-comment',
+        [BusinessLoanAccount::class, 'storeComment']
+    )->name('bussiness.storeComment');
 
     // account section start
 
@@ -1524,7 +1555,16 @@ Route::group(['prefix' => 'cc_od'], function () {
         ->name('cc_od.disbursements.disburse-loan');
     Route::post('/cc_od/disbursements/store', [CcOdLoanControllerDisburments::class, 'store'])->name('cc_od_disbursment.store');
 
+    //comments and documents 
+    Route::get(
+        'account/{id}/add-comment',
+        [CcOdLoanControllerAccount::class, 'addComment']
+    )->name('ccod.addComment');
 
+    Route::post(
+        'account/store-comment',
+        [CcOdLoanControllerAccount::class, 'storeComment']
+    )->name('ccod.storeComment');
     // account section start
 
     Route::get('account/index', [CcOdLoanControllerAccount::class, 'index'])->name('cc_od.account.index');
@@ -1680,7 +1720,16 @@ Route::group(['prefix' => 'daily_weekly'], function () {
         ->name('daily_weekly.disbursements.disburse-loan');
     Route::post('/daily_weekly/disbursements/store', [DailyWeeklyDisburments::class, 'store'])->name('daily_weekly_disbursment.store');
 
+    //comments and documents 
+    Route::get(
+        'account/{id}/add-comment',
+        [DailyWeeklyAccount::class, 'addComment']
+    )->name('dailyw.addComment');
 
+    Route::post(
+        'account/store-comment',
+        [DailyWeeklyAccount::class, 'storeComment']
+    )->name('dailyw.storeComment');
     // account section start
 
     Route::get('account/index', [DailyWeeklyAccount::class, 'index'])->name('daily_weekly.account.index');
@@ -1946,7 +1995,16 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::post('disbursements/cancel/{id}', [VehicalDisbursementController::class, 'cancelLoan'])->name('vehicaldisbursements.cancel');
     Route::get('disbursements/disburse-loan/{id}', [VehicalDisbursementController::class, 'show'])->name('vehical.disbursements.disburse-loan');
     Route::post('disbursements/store', [VehicalDisbursementController::class, 'store'])->name('vehicaldisbursements.store');
+    //comments and documents 
+    Route::get(
+        'account/{id}/add-comment',
+        [VehicalAccountController::class, 'addComment']
+    )->name('vehical.addComment');
 
+    Route::post(
+        'account/store-comment',
+        [DailyWeeklyAccount::class, 'storeComment']
+    )->name('vehical.storeComment');
 
     // account section start
 
@@ -2244,6 +2302,20 @@ Route::group(['prefix' => 'Agricultural_loan'], function () {
 
 
 /////////////////////////////////////   End Agricultural Loan   ////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////   CONSUMER DURABLE LOAN   ////////////////////////////////////////////////////////
+
+
+Route::group(['prefix' => 'consumer_loan'], function () {
+
+    // Agricultural loan Loan Scheme
+    Route::get('scheme/index', [AgriculturController::class, 'index'])
+        ->name(name: 'consumer_loan.schemes.index');
+});
+
+
+/////////////////////////////////////   End CONSUMER DURABLE LOAN   ////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////    START LOCKER    ///////////////////////////////////////////////

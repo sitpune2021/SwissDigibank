@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\CcOdLoanComment;
 
 class CcOdLoanControllerAccount extends Controller
 {
@@ -67,7 +68,9 @@ class CcOdLoanControllerAccount extends Controller
     // view page
     public function show(Request $request, $id)
     {
-
+        $comments = CcOdLoanComment::where('loan_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
         $savedStatuses = DB::table('cc_od_loan_emi_status')
             ->where('loan_id', $id)
             ->pluck('status', 'emi_no')
@@ -433,7 +436,8 @@ class CcOdLoanControllerAccount extends Controller
             'dueSummary',
             'totalDeposit',
             'currentDebt',
-            'hasPendingApproval'
+            'hasPendingApproval',
+            'comments'
         ));
     }
 
@@ -1541,6 +1545,45 @@ class CcOdLoanControllerAccount extends Controller
             ]);
 
             return back()->with('error', 'Something went wrong while clearing the due.');
+        }
+    }
+    public function addComment($loan_id)
+    {
+        $comments = CcOdLoanComment::where('loan_id', $loan_id)
+            ->orderBy('created_at', 'desc') // use created_at (safer)
+            ->paginate(5);
+
+        return view(
+            'cc_od.account.comments.addComments',
+            compact('comments', 'loan_id')
+        );
+    }
+
+    public function storeComment(Request $request)
+    {
+        Log::debug('Store Gold Loan Comment Data: ', $request->all());
+
+        $validated = $request->validate([
+            'comment' => 'required|string',
+            'loan_id' => 'required|exists:cc_od_loan_disbursments,id',
+        ]);
+
+        try {
+            CcOdLoanComment::create([
+                'loan_id' => $validated['loan_id'],
+                'date' => now(),
+                'comment' => $validated['comment'],
+                'commented_by' => auth()->user()->name ?? 'Admin',
+            ]);
+
+            return redirect()->route('ccod.addComment', $validated['loan_id'])
+                ->with('success', 'Comment added successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error storing gold loan comment', [
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->withErrors('There was an error storing your comment.');
         }
     }
 }

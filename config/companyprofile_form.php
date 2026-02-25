@@ -127,7 +127,7 @@ return [
         'heading' => 'LEGAL & INCORPORATION DETAILS',
         'fields' => [
             [
-                'label' => 'CIN NO.',
+                'label' => 'CIN / REGISTRATION NO.',
                 'name' => 'cin_no',
                 'id' => 'cin_no',
                 'type' => 'text',

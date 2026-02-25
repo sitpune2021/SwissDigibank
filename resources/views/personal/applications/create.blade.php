@@ -66,7 +66,7 @@
         @endif
 
         <div class="box">
-            <form method="POST"
+            <form method="POST" id="loadForm"
                 action="{{ isset($application) ? route('personal.applications.update', $application->id) : route('personal.store') }}"
                 enctype="multipart/form-data">
                 @csrf
@@ -700,7 +700,40 @@
                         </div>
                         <input type="hidden" name="ratio_enabled" id="ratio_enabled"
                             value="{{ old('ratio_enabled', $application->ratio_enabled ?? 'No') }}">
+<input type="hidden" name="ratio_first_emi" id="ratio_first_emi"
+                            value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}">
 
+                        <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage"
+                            value="{{ old('ratio_first_percentage', $application->ratio_first_percentage ?? '') }}">
+
+                        <input type="hidden" name="interest_as_emi" id="interest_as_emi"
+                            value="{{ old('interest_as_emi', $application->interest_as_emi ?? '') }}">
+
+                        <input type="hidden" name="interest_as_first" id="interest_as_first"
+                            value="{{ old('interest_as_first', $application->interest_as_first ?? '') }}">
+
+                        <div id="interestOptions" style="display:none; margin-top:10px;">
+                            <!-- Checkbox 1 -->
+                            <label class="flex gap-2" id="chk_emi_box">
+                                <input type="checkbox" name="option_interest_emi" id="option_interest_emi"
+                                    value="Yes"
+                                    {{ old('interest_as_emi', $application->interest_as_emi ?? '') == 'Yes' ? 'checked' : '' }}>
+                                <span id="chk_emi_text">Collect Interest as EMI & Principal after tenure</span>
+                            </label>
+
+                            <!-- Checkbox 2 -->
+                            <label class="flex gap-2 mt-2" id="chk_first_box">
+                                <input type="checkbox" name="option_interest_first" id="option_interest_first"
+                                    value="Yes"
+                                    {{ old('interest_as_first', $application->interest_as_first ?? '') == 'Yes' ? 'checked' : '' }}>
+                                <span id="chk_emi_text">Collect Interest as EMIs First & then after Principal as
+                                    EMIs</span>
+                            </label>
+
+                        </div>
+
+                        <input type="hidden" name="ratio_enabled" id="ratio_enabled"
+                            value="{{ old('ratio_enabled', $application->ratio_enabled ?? 'No') }}">
                         <input type="hidden" name="ratio_first_emi" id="ratio_first_emi"
                             value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}">
                         <!-- REDUCING EMI SPECIAL CHECKBOX -->
@@ -1409,159 +1442,212 @@
 
         });
     </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-
-            const ratioEnabled = document.getElementById('ratio_enabled').value;
-
-            if (ratioEnabled === 'Yes') {
-                document.getElementById('ratioFields').style.display = 'block';
-                document.getElementById('reduce_ratio_box').style.display = 'flex';
-                document.getElementById('divide_emi_ratio').checked = true;
-            }
-
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-
-            const divideCheckbox = document.getElementById("divide_emi_ratio");
-            const ratioFields = document.getElementById("ratioFields");
-            const emiRatio1 = document.getElementById("emi_ratio_1");
-            const emiRatio2 = document.getElementById("emi_ratio_2");
-            const amtRatio1 = document.getElementById("amt_ratio_1");
-            const amtRatio2 = document.getElementById("amt_ratio_2");
-
-            const hiddenRatioEnabled = document.getElementById("ratio_enabled");
-            const hiddenRatioFirstEmi = document.getElementById("ratio_first_emi");
-
-            const tenureValueInput = document.querySelector("input[name='tenure_value']");
-
-            function calculateRatio() {
-
-                let tenure = parseInt(tenureValueInput?.value) || 0;
-                let firstEmi = parseInt(emiRatio1?.value) || 0;
-
-                if (firstEmi > tenure) {
-                    document.getElementById("emiRatioError").classList.remove("hidden");
-                    emiRatio2.value = 0;
-                    return;
-                } else {
-                    document.getElementById("emiRatioError").classList.add("hidden");
-                }
-
-                emiRatio2.value = tenure - firstEmi;
-
-                let firstPercent = parseFloat(amtRatio1?.value) || 0;
-                amtRatio2.value = 100 - firstPercent;
-
-                hiddenRatioFirstEmi.value = firstEmi;
-            }
-
-            if (divideCheckbox) {
-                divideCheckbox.addEventListener("change", function() {
-                    if (this.checked) {
-                        ratioFields.style.display = "block";
-                        hiddenRatioEnabled.value = "Yes";
-                    } else {
-                        ratioFields.style.display = "none";
-                        hiddenRatioEnabled.value = "No";
-                    }
-                });
-            }
-
-            emiRatio1?.addEventListener("input", calculateRatio);
-            amtRatio1?.addEventListener("input", calculateRatio);
-
-        });
-    </script>
-    <script>
+<script>
         document.addEventListener("DOMContentLoaded", function() {
 
             const schemeSelect = document.getElementById("scheme_id");
 
+            const interestOptions = document.getElementById("interestOptions");
+            const chkEmiBox = document.getElementById("chk_emi_box");
+            const chkFirstBox = document.getElementById("chk_first_box");
+            const chkEmiText = document.getElementById("chk_emi_text");
+            // NEW: Checkbox variables
+            const optEmi = document.getElementById("option_interest_emi");
+            const optFirst = document.getElementById("option_interest_first");
+
             const reduceBox = document.getElementById("reduce_ratio_box");
             const ratioFields = document.getElementById("ratioFields");
-            const divideCheckbox = document.getElementById("divide_emi_ratio");
-            const hiddenRatioEnabled = document.getElementById("ratio_enabled");
 
-            function resetAll() {
+            const emi1 = document.getElementById("emi_ratio_1");
+            const emi2 = document.getElementById("emi_ratio_2");
+
+            const amt1 = document.getElementById("amt_ratio_1");
+            const amt2 = document.getElementById("amt_ratio_2");
+
+            const chkDivide = document.getElementById("divide_emi_ratio");
+            const emiTotalText = document.getElementById("emi_total_text");
+
+            // -----------------------------------------------
+            //  MANUAL ENTRY → INTEREST TYPE CHECKBOX LOGIC
+            // -----------------------------------------------
+            function applyManualCheckboxLogic() {
+
+                let selected = document.querySelector('input[name="interest_type"]:checked');
+                if (!selected) return;
+
+                let type = selected.value.toLowerCase();
+
+                // RESET
+                interestOptions.style.display = "none";
+                chkEmiBox.style.display = "none";
+                chkFirstBox.style.display = "none";
                 reduceBox.style.display = "none";
                 ratioFields.style.display = "none";
-                divideCheckbox.checked = false;
-                hiddenRatioEnabled.value = "No";
+                chkDivide.checked = false;
+
+                // FLAT EMI
+                if (type === "flat_emi") {
+                    interestOptions.style.display = "block";
+                    chkEmiText.innerText = "Collect Interest as EMI & Principal after tenure";
+                    chkEmiBox.style.display = "flex";
+                    chkFirstBox.style.display = "flex";
+                }
+
+                // FLAT ADVANCED
+                if (type === "flat_advanced" || type === "flat_advanced_interest") {
+                    interestOptions.style.display = "block";
+                    chkEmiText.innerText = "Collect Principal Amount as EMI";
+                    chkEmiBox.style.display = "flex";
+                    chkFirstBox.style.display = "none";
+                }
+
+                // REDUCING EMI
+                if (type === "reducing" || type === "reducing_emi") {
+                    reduceBox.style.display = "flex";
+                }
+
+                // NO EMI
+                if (type === "no_emi") {
+                    interestOptions.style.display = "none";
+                    chkEmiBox.style.display = "none";
+                    chkFirstBox.style.display = "none";
+                    reduceBox.style.display = "none";
+                }
             }
 
-            function applyInterestLogic(type) {
+            // Attach listener
+            document.querySelectorAll('input[name="interest_type"]').forEach(r => {
+                r.addEventListener("change", applyManualCheckboxLogic);
+            });
 
-                resetAll();
 
-                type = (type || "").toLowerCase();
+            let totalEmi = 0;
 
-                // ==========================
-                // 1️⃣ REDUCING EMI
-                // ==========================
+            function manualInterestTypeCheck() {
+                let selected = document.querySelector('input[name="interest_type"]:checked');
+                if (!selected) return;
+
+                if (selected.value === "no_emi") {
+                    interestOptions.style.display = "none";
+                }
+            }
+
+            document.querySelectorAll('input[name="interest_type"]')
+                .forEach(r => r.addEventListener("change", manualInterestTypeCheck));
+
+            manualInterestTypeCheck();
+
+            schemeSelect.addEventListener("change", function() {
+                let selected = this.options[this.selectedIndex];
+                let type = (selected.dataset.type || "").toLowerCase();
+
+                totalEmi = parseInt(selected.dataset.tenure || 0);
+                emiTotalText.innerText = `(Total EMI : ${totalEmi})`;
+
+                if (type === "flat_emi" || type === "flat_advanced_interest") {
+                    interestOptions.style.display = "block";
+
+                    if (type === "flat_advanced_interest") {
+                        chkEmiText.innerText = "Collect Principal Amount as EMI";
+                        chkEmiBox.style.display = "flex";
+                        chkFirstBox.style.display = "none";
+                    } else {
+                        chkEmiText.innerText = "Collect Interest as EMI & Principal after tenure";
+                        chkEmiBox.style.display = "flex";
+                        chkFirstBox.style.display = "flex";
+                    }
+                } else {
+                    interestOptions.style.display = "none";
+                    document.getElementById("option_interest_emi").checked = false;
+                    document.getElementById("option_interest_first").checked = false;
+                }
+
                 if (type === "reducing_emi") {
-
                     reduceBox.style.display = "flex";
+                } else {
+                    reduceBox.style.display = "none";
+                    ratioFields.style.display = "none";
+                    chkDivide.checked = false;
+                }
+            });
 
-                    if (hiddenRatioEnabled.value === "Yes") {
-                        divideCheckbox.checked = true;
-                        ratioFields.style.display = "block";
+            // NEW: Allow ONLY ONE checkbox at a time
+            optEmi.addEventListener("change", function() {
+                if (this.checked) optFirst.checked = false;
+            });
+
+            optFirst.addEventListener("change", function() {
+                if (this.checked) optEmi.checked = false;
+            });
+
+
+            chkDivide.addEventListener("change", function() {
+                ratioFields.style.display = this.checked ? "block" : "none";
+            });
+
+            emi1.addEventListener("input", function() {
+                let v = parseInt(this.value || 0);
+
+                if (v > totalEmi) {
+                    this.value = totalEmi;
+                    v = totalEmi;
+                }
+                emi2.value = totalEmi - v;
+            });
+
+            amt1.addEventListener("input", function() {
+                let v = parseInt(this.value || 0);
+                if (v > 100) {
+                    this.value = 100;
+                    v = 100;
+                }
+                amt2.value = 100 - v;
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const form = document.getElementById("loanForm");
+            const chkDivide = document.getElementById("divide_emi_ratio");
+            const emi1 = document.getElementById("emi_ratio_1");
+            const amt1 = document.getElementById("amt_ratio_1");
+            const tenureInput = document.getElementById("tenure_value");
+            const emi2 = document.getElementById("emi_ratio_2");
+            const errorBox = document.getElementById("emiRatioError");
+
+            form.addEventListener("submit", function(e) {
+
+                errorBox.classList.add("hidden");
+
+                if (chkDivide.checked) {
+                    const tenure = parseInt(tenureInput.value) || 0;
+                    const r1 = parseInt(emi1.value) || 0;
+                    const r2 = parseInt(emi2.value) || 0;
+
+                    if ((r1 + r2) !== tenure) {
+                        e.preventDefault();
+                        errorBox.classList.remove("hidden");
+                        errorBox.innerText =
+                            `EMI Ratio total (${r1 + r2}) must equal tenure (${tenure})`;
+                        return;
                     }
                 }
 
-                // ==========================
-                // 2️⃣ FLAT EMI
-                // ==========================
-                else if (type === "flat_emi") {
+                // 🔥 Set hidden values once only
+                document.getElementById("ratio_enabled").value =
+                    chkDivide.checked ? "Yes" : "No";
 
-                    // No ratio allowed
-                    reduceBox.style.display = "none";
-                    ratioFields.style.display = "none";
+                document.getElementById("ratio_first_emi").value =
+                    emi1.value || "";
 
-                    // Here you can show flat EMI related options if needed
-                    console.log("Flat EMI Selected");
-                }
-
-                // ==========================
-                // 3️⃣ FLAT ADVANCED INTEREST
-                // ==========================
-                else if (type === "flat_advanced_interest") {
-
-                    // No ratio allowed
-                    reduceBox.style.display = "none";
-                    ratioFields.style.display = "none";
-
-                    console.log("Flat Advanced Selected");
-                }
-
-            }
-
-            schemeSelect.addEventListener("change", function() {
-                const selected = this.options[this.selectedIndex];
-                const type = selected.getAttribute("data-type");
-
-                applyInterestLogic(type);
-            });
-
-            // Trigger on page load
-            if (schemeSelect.value) {
-                schemeSelect.dispatchEvent(new Event("change"));
-            }
-
-            // Ratio checkbox toggle
-            divideCheckbox.addEventListener("change", function() {
-                if (this.checked) {
-                    ratioFields.style.display = "block";
-                    hiddenRatioEnabled.value = "Yes";
-                } else {
-                    ratioFields.style.display = "none";
-                    hiddenRatioEnabled.value = "No";
-                }
+                document.getElementById("ratio_first_percentage").value =
+                    amt1.value || "";
             });
 
         });
     </script>
+
 
 @endsection
