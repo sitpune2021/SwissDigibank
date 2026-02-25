@@ -41,7 +41,7 @@ class CutReportController extends Controller
     public function promoterMemberIndex()
     {
         $members = Member::with(['promotor', 'branch'])->orderBy('id', 'desc')->paginate(10);
-    
+
         return view('cut-reports.report.promoter-member', compact('members'));
     }
 
@@ -125,7 +125,7 @@ class CutReportController extends Controller
     {
 
         $from = $request->from_date;
-        $to   = $request->to_date;
+        $to = $request->to_date;
 
         // Base query
         $promoters = Promotor::with(['latestShare'])
@@ -133,7 +133,7 @@ class CutReportController extends Controller
 
                 // Convert DD/MM/YYYY → YYYY-MM-DD
                 $fromDate = \Carbon\Carbon::createFromFormat('d-m-Y', $from)->format('Y-m-d');
-                $toDate   = \Carbon\Carbon::createFromFormat('d-m-Y', $to)->format('Y-m-d');
+                $toDate = \Carbon\Carbon::createFromFormat('d-m-Y', $to)->format('Y-m-d');
 
                 $query->whereHas('latestShare', function ($q) use ($fromDate, $toDate) {
                     $q->whereBetween('allotment_date', [$fromDate, $toDate]);
@@ -181,7 +181,7 @@ class CutReportController extends Controller
                     // MEMBER NAME
                     strtoupper($promoter->first_name . ' ' . $promoter->last_name),
 
-                    // SHARE RANGE
+                        // SHARE RANGE
                     ($share->first_share ?? '') . ' - ' . ($share->share_no ?? ''),
 
                     // TOTAL SHARES
@@ -195,13 +195,13 @@ class CutReportController extends Controller
 
                     // ALLOTMENT DATE → d-m-Y
                     $share && $share->allotment_date
-                        ? date('d-m-Y', strtotime($share->allotment_date))
-                        : '',
+                    ? date('d-m-Y', strtotime($share->allotment_date))
+                    : '',
 
                     // TRANSFER DATE (transaction_date) → d-m-Y
                     $share && $share->transaction_date
-                        ? date('d-m-Y', strtotime($share->transaction_date))
-                        : '',
+                    ? date('d-m-Y', strtotime($share->transaction_date))
+                    : '',
                 ]);
             }
 
@@ -218,7 +218,7 @@ class CutReportController extends Controller
         $shareTransfers = ShareTransfer::with(['promotor', 'members'])->paginate(10);
         return view('cut-reports.report.share-transfer-history', compact('shareTransfers'));
     }
-    
+
     public function downloadShareTransferHistoryCsv()
     {
         $shareTransfers = ShareTransfer::with(['promotor', 'members'])->get();
@@ -273,10 +273,10 @@ class CutReportController extends Controller
         ]);
 
         $from = $request->from_date;
-        $to   = $request->to_date;
+        $to = $request->to_date;
         // CONVERT FROM dd-mm-yyyy TO yyyy-mm-dd
         $fromDate = \Carbon\Carbon::createFromFormat('d-m-Y', $from)->format('Y-m-d');
-        $toDate   = \Carbon\Carbon::createFromFormat('d-m-Y', $to)->format('Y-m-d');
+        $toDate = \Carbon\Carbon::createFromFormat('d-m-Y', $to)->format('Y-m-d');
 
         // FETCH DATA
         $shareTransfers = ShareTransfer::with(['members', 'promotor'])
@@ -288,7 +288,7 @@ class CutReportController extends Controller
         return view('cut-reports.report.share-transfer-history', compact('shareTransfers'));
     }
 
-     private function getMarathiMpdf()
+    private function getMarathiMpdf()
     {
         $defaultConfig = (new \Mpdf\Config\ConfigVariables())->getDefaults();
         $fontDirs = $defaultConfig['fontDir'];
@@ -361,7 +361,7 @@ class CutReportController extends Controller
                 'name' => Company::first()->company_name ?? 'SBC GLOBAL'
             ],
             'associates' => $associates,
-            'totalAmount' =>  $totalAmount,
+            'totalAmount' => $totalAmount,
             'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
@@ -400,7 +400,7 @@ class CutReportController extends Controller
 
     public function printSaving()
     {
-        
+
         $associates = Account::select(
             'accounts.id',
             'accounts.account_no',
@@ -431,7 +431,7 @@ class CutReportController extends Controller
                 'name' => Company::first()->company_name ?? 'SBC GLOBAL'
             ],
             'associates' => $associates,
-            'totalAmount' =>  $totalAmount,
+            'totalAmount' => $totalAmount,
             'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
@@ -472,8 +472,8 @@ class CutReportController extends Controller
                     $row->members->full_name ?? '',
                     $row->branch->branch_name ?? '',
                     optional($row->members)->general_enrollment_date
-                        ? \Carbon\Carbon::parse($row->members->general_enrollment_date)->format('d-m-Y')
-                        : '',
+                    ? \Carbon\Carbon::parse($row->members->general_enrollment_date)->format('d-m-Y')
+                    : '',
                     $row->final_status ?? '',
                 ]);
             }
@@ -482,7 +482,7 @@ class CutReportController extends Controller
         };
 
         return response()->streamDownload($callback, $filename, [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename={$filename}",
         ]);
     }
@@ -528,7 +528,7 @@ class CutReportController extends Controller
                 'name' => Company::first()->company_name ?? 'SBC GLOBAL'
             ],
             'associates' => $associates,
-            'totalAmount' =>  $totalAmount,
+            'totalAmount' => $totalAmount,
             'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
@@ -564,9 +564,9 @@ class CutReportController extends Controller
             ->header('Content-Type', 'application/pdf');
     }
 
-     public function printFd()
+    public function printFd()
     {
-        
+
         $associates = FdAccount::select(
             'fd_accounts.id',
             'fd_accounts.fd_no',
@@ -597,17 +597,17 @@ class CutReportController extends Controller
                 'name' => Company::first()->company_name ?? 'SBC GLOBAL'
             ],
             'associates' => $associates,
-            'totalAmount' =>  $totalAmount,
+            'totalAmount' => $totalAmount,
             'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
         $html = view('cut-reports.pdf.cut-report-fd', $data)->render();
-      
+
         $mpdf = $this->getMarathiMpdf();
         $mpdf->SetJS('this.print();'); // auto open print dialog
         $mpdf->WriteHTML($html);
 
-       
+
         return response($mpdf->Output('cut-report-fd_account.pdf', 'I'))
             ->header('Content-Type', 'application/pdf');
     }
@@ -644,11 +644,11 @@ class CutReportController extends Controller
                     $row->interest_payout_type ?? '',
                     $row->fd_amount ?? '',
                     optional($row->maturity_date)
-                        ? \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y')
-                        : '',
+                    ? \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y')
+                    : '',
                     optional($row->open_date)
-                        ? \Carbon\Carbon::parse($row->open_date)->format('d-m-Y')
-                        : '',
+                    ? \Carbon\Carbon::parse($row->open_date)->format('d-m-Y')
+                    : '',
                     $row->final_status ?? '',
                 ]);
             }
@@ -657,7 +657,7 @@ class CutReportController extends Controller
         };
 
         return response()->streamDownload($callback, $filename, [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename={$filename}",
         ]);
     }
@@ -705,7 +705,7 @@ class CutReportController extends Controller
                 'name' => Company::first()->company_name ?? 'SBC GLOBAL'
             ],
             'associates' => $associates,
-            'totalAmount' =>  $totalAmount,
+            'totalAmount' => $totalAmount,
             'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
@@ -743,9 +743,9 @@ class CutReportController extends Controller
 
 
 
-     public function printMis()
+    public function printMis()
     {
-       
+
         $associates = Misaccount::select(
             'misaccounts.id',
             'misaccounts.mis_account_no',
@@ -776,17 +776,17 @@ class CutReportController extends Controller
                 'name' => Company::first()->company_name ?? 'SBC GLOBAL'
             ],
             'associates' => $associates,
-            'totalAmount' =>  $totalAmount,
+            'totalAmount' => $totalAmount,
             'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
         $html = view('cut-reports.pdf.cut-report-mis', $data)->render();
-    
+
         $mpdf = $this->getMarathiMpdf();
         $mpdf->SetJS('this.print();'); // auto open print dialog
         $mpdf->WriteHTML($html);
 
-       
+
         return response($mpdf->Output('cut-report-fd_account.pdf', 'I'))
             ->header('Content-Type', 'application/pdf');
     }
@@ -839,11 +839,11 @@ class CutReportController extends Controller
                     $row->interest_payout_type ?? '',
                     $row->mis_amount ?? '',
                     $row->open_date
-                        ? '="' . date('d-m-Y', strtotime($row->open_date)) . '"'
-                        : '',
+                    ? '="' . date('d-m-Y', strtotime($row->open_date)) . '"'
+                    : '',
                     $row->maturity_date
-                        ? '="' . date('d-m-Y', strtotime($row->maturity_date)) . '"'
-                        : '',
+                    ? '="' . date('d-m-Y', strtotime($row->maturity_date)) . '"'
+                    : '',
                     ucfirst($row->final_status ?? '')
                 ]);
             }
@@ -924,11 +924,11 @@ class CutReportController extends Controller
             ->header('Content-Type', 'application/pdf');
     }
 
-    
-     public function printDD()
+
+    public function printDD()
     {
-       
-        
+
+
         $associates = DdsAccount::with(['member', 'branch', 'scheme'])
             ->get()
             ->map(function ($item, $key) {
@@ -968,7 +968,7 @@ class CutReportController extends Controller
         $mpdf->SetJS('this.print();'); // auto open print dialog
         $mpdf->WriteHTML($html);
 
-       return response($mpdf->Output('cut-report-dd_account.pdf', 'I'))
+        return response($mpdf->Output('cut-report-dd_account.pdf', 'I'))
             ->header('Content-Type', 'application/pdf');
     }
 
@@ -981,11 +981,11 @@ class CutReportController extends Controller
         $filename = "dd_accounts_report_" . date('Y-m-d_H-i-s') . ".csv";
 
         $headers = [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
         ];
 
         $columns = [
@@ -1016,12 +1016,12 @@ class CutReportController extends Controller
                     ($row->scheme->scheme_name ?? '') . ' ' . ($row->scheme->scheme_code ?? ''),
                     $row->dd_amount,
                     $row->open_date
-                        ? "=\"" . \Carbon\Carbon::parse($row->open_date)->format('d-m-Y') . "\""
-                        : '',
+                    ? "=\"" . \Carbon\Carbon::parse($row->open_date)->format('d-m-Y') . "\""
+                    : '',
 
                     $row->maturity_date
-                        ? "=\"" . \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y') . "\""
-                        : '',
+                    ? "=\"" . \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y') . "\""
+                    : '',
                     $row->scheme->rr_dd_frequency ?? '',
                     $row->final_status,
                 ]);
@@ -1076,7 +1076,7 @@ class CutReportController extends Controller
                 'name' => Company::first()->company_name ?? 'SBC GLOBAL'
             ],
             'associates' => $associates,
-            'totalAmount' =>  $totalAmount,
+            'totalAmount' => $totalAmount,
             'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
@@ -1112,10 +1112,10 @@ class CutReportController extends Controller
             ->header('Content-Type', 'application/pdf');
     }
 
-      public function printRD()
+    public function printRD()
     {
-       
-        
+
+
         $associates = RdAccount::select(
             'rd_accounts.id',
             'rd_accounts.rd_no',
@@ -1146,7 +1146,7 @@ class CutReportController extends Controller
                 'name' => Company::first()->company_name ?? 'SBC GLOBAL'
             ],
             'associates' => $associates,
-            'totalAmount' =>  $totalAmount,
+            'totalAmount' => $totalAmount,
             'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
         ];
 
@@ -1156,7 +1156,7 @@ class CutReportController extends Controller
         $mpdf->SetJS('this.print();'); // auto open print dialog
         $mpdf->WriteHTML($html);
 
-       return response($mpdf->Output('cut-report-rd_account.pdf', 'I'))
+        return response($mpdf->Output('cut-report-rd_account.pdf', 'I'))
             ->header('Content-Type', 'application/pdf');
     }
 
@@ -1170,11 +1170,11 @@ class CutReportController extends Controller
         $filename = "rd_accounts_" . date('Y-m-d_H-i-s') . ".csv";
 
         $headers = [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
         ];
 
         $columns = [
@@ -1209,12 +1209,12 @@ class CutReportController extends Controller
 
                     // Prevent Excel auto-formatting
                     $row->open_date
-                        ? "=\"" . \Carbon\Carbon::parse($row->open_date)->format('d-m-Y') . "\""
-                        : '',
+                    ? "=\"" . \Carbon\Carbon::parse($row->open_date)->format('d-m-Y') . "\""
+                    : '',
 
                     $row->maturity_date
-                        ? "=\"" . \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y') . "\""
-                        : '',
+                    ? "=\"" . \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y') . "\""
+                    : '',
 
                     $row->scheme->rr_dd_frequency ?? '',
                     $row->final_status ?? '',
@@ -1338,7 +1338,8 @@ class CutReportController extends Controller
                 ->value('remaining_amount') ?? 0;
 
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -1381,7 +1382,8 @@ class CutReportController extends Controller
 
             // Final CURRENT DEBT Calculation
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -1415,8 +1417,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                        : '-',
+                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                    : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -1430,7 +1432,7 @@ class CutReportController extends Controller
         };
 
         return response()->streamDownload($callback, $filename, [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename={$filename}",
         ]);
     }
@@ -1502,7 +1504,8 @@ class CutReportController extends Controller
                 ->value('remaining_amount') ?? 0;
 
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -1545,7 +1548,8 @@ class CutReportController extends Controller
 
             // Final CURRENT DEBT Calculation
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -1579,8 +1583,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                        : '-',
+                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                    : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -1594,7 +1598,7 @@ class CutReportController extends Controller
         };
 
         return response()->streamDownload($callback, $filename, [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename={$filename}",
         ]);
     }
@@ -1666,7 +1670,8 @@ class CutReportController extends Controller
                 ->value('remaining_amount') ?? 0;
 
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -1709,7 +1714,8 @@ class CutReportController extends Controller
 
             // Final CURRENT DEBT Calculation
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -1743,8 +1749,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                        : '-',
+                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                    : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -1758,7 +1764,7 @@ class CutReportController extends Controller
         };
 
         return response()->streamDownload($callback, $filename, [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename={$filename}",
         ]);
     }
@@ -1830,7 +1836,8 @@ class CutReportController extends Controller
                 ->value('remaining_amount') ?? 0;
 
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -1873,7 +1880,8 @@ class CutReportController extends Controller
 
             // Final CURRENT DEBT Calculation
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -1907,8 +1915,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                        : '-',
+                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                    : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -1922,7 +1930,7 @@ class CutReportController extends Controller
         };
 
         return response()->streamDownload($callback, $filename, [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename={$filename}",
         ]);
     }
@@ -1994,7 +2002,8 @@ class CutReportController extends Controller
                 ->value('remaining_amount') ?? 0;
 
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -2037,7 +2046,8 @@ class CutReportController extends Controller
 
             // Final CURRENT DEBT Calculation
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -2071,8 +2081,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                        : '-',
+                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                    : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -2086,7 +2096,7 @@ class CutReportController extends Controller
         };
 
         return response()->streamDownload($callback, $filename, [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename={$filename}",
         ]);
     }
@@ -2158,7 +2168,8 @@ class CutReportController extends Controller
                 ->value('remaining_amount') ?? 0;
 
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -2201,7 +2212,8 @@ class CutReportController extends Controller
 
             // Final CURRENT DEBT Calculation
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -2235,8 +2247,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                        : '-',
+                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                    : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -2250,7 +2262,7 @@ class CutReportController extends Controller
         };
 
         return response()->streamDownload($callback, $filename, [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename={$filename}",
         ]);
     }
@@ -2322,7 +2334,8 @@ class CutReportController extends Controller
                 ->value('remaining_amount') ?? 0;
 
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -2365,7 +2378,8 @@ class CutReportController extends Controller
 
             // Final CURRENT DEBT Calculation
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -2399,8 +2413,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                        : '-',
+                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                    : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -2414,7 +2428,7 @@ class CutReportController extends Controller
         };
 
         return response()->streamDownload($callback, $filename, [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename={$filename}",
         ]);
     }
@@ -2486,7 +2500,8 @@ class CutReportController extends Controller
                 ->value('remaining_amount') ?? 0;
 
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -2529,7 +2544,8 @@ class CutReportController extends Controller
 
             // Final CURRENT DEBT Calculation
             $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
-            if ($currentDebt < 0) $currentDebt = 0;
+            if ($currentDebt < 0)
+                $currentDebt = 0;
 
             $loan->current_debt = $currentDebt;
         }
@@ -2563,8 +2579,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                        : '-',
+                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                    : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -2578,26 +2594,89 @@ class CutReportController extends Controller
         };
 
         return response()->streamDownload($callback, $filename, [
-            "Content-type"        => "text/csv",
+            "Content-type" => "text/csv",
             "Content-Disposition" => "attachment; filename={$filename}",
         ]);
     }
 
 
     public function printMembers()
-{
-      $members = Member::with([
-        'branch',
-        'kyc'
-    ])->get();
+    {
+        $members = Member::with([
+            'branch',
+            'kyc'
+        ])->get();
 
-    $pdf = Pdf::loadView(
-        'cut-reports.pdf.promoter-member-cut-report',
-        compact('members')
-    )->setPaper('A4','portrait');
+        $pdf = Pdf::loadView(
+            'cut-reports.pdf.promoter-member-cut-report',
+            compact('members')
+        )->setPaper('A4', 'portrait');
 
-    $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
 
-    return $pdf->stream('all-members.pdf');
-}
+        return $pdf->stream('all-members.pdf');
+    }
+
+
+    public function transactions_index(Request $request)
+    {
+
+
+        return view('cut-reports.report.transactions');
+    }
+
+    public function loan_emi_index(Request $request)
+    {
+
+
+        return view('cut-reports.report.loan-emi');
+    }
+
+    public function rd_installment_index(Request $request)
+    {
+
+        return view('cut-reports.report.rd-installment');
+    }
+
+    
+    public function deposit_balance_index(Request $request)
+    {
+
+        return view('cut-reports.report.deposit-balance-report');
+    }
+    
+     public function loan_balance_index(Request $request)
+    {
+
+        return view('cut-reports.report.loan-balance-report');
+    }
+       public function loan_accrued_index(Request $request)
+    {
+
+        return view('cut-reports.report.loan-accured-report');
+    }
+        public function group_report_index(Request $request)
+    {
+
+        return view('cut-reports.report.group-report');
+    }
+
+     public function tds_report_index(Request $request)
+    {
+
+        return view('cut-reports.report.tds-report');
+    }
+     public function attendance_report_index(Request $request)
+    {
+
+        return view('cut-reports.report.attendence-report');
+    }
+
+         public function loan_portfolio_index(Request $request)
+    {
+
+        return view('cut-reports.report.loan-portfolio-report');
+    }
+
+
 }

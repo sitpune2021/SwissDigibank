@@ -51,11 +51,11 @@
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h3 class=" flex text-lg   uppercase font-semibold">
-                Report - Deposit Loan Accounts
+               Report - Other Loan Accounts
             </h3>
         </div>
 
-        <div class="box mb-5 mt-5 ">
+        {{-- <div class="box mb-5 mt-5 ">
 
             <div class="flex justify-between" id="toggleBtn">
                 <p class="font-semibold uppercase text-lg">
@@ -133,7 +133,7 @@
                 </form>
             </div>
 
-        </div>
+        </div> --}}
 
         <div class="col-span-12 box lg:col-span-12">
 

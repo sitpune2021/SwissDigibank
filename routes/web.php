@@ -2435,8 +2435,8 @@ Route::group(['prefix' => 'cut-report'], function () {
     Route::get('report/promoter-member', [CutReportController::class, 'promoterMemberIndex'])
         ->name('report.promoter-member');
 
-      Route::get('/members/print', [CutReportController::class, 'printMembers'])
-    ->name('members.print');
+    Route::get('/members/print', [CutReportController::class, 'printMembers'])
+        ->name('members.print');
     Route::get('/promoter-members/download', [CutReportController::class, 'downloadPromoterMemberCsv'])->name('promoter.members.download');
 
 
@@ -2545,8 +2545,47 @@ Route::group(['prefix' => 'cut-report'], function () {
         ->name('report.cc_od-loan-account');
     Route::get('/accounts/cc_od-export/csv', [CutReportController::class, 'cc_od_exportCsv'])
         ->name('accounts.cc_od.export.csv');
-});
 
+    // Transactions Cut Report
+    Route::get('report/transactions', [CutReportController::class, 'transactions_index'])
+        ->name('report.transactions');
+
+    // loan-emi Cut Report
+    Route::get('report/loan-emi', [CutReportController::class, 'loan_emi_index'])
+        ->name('report.loan-emi');
+
+    // rd-installment Cut Report
+    Route::get('report/rd-installment', [CutReportController::class, 'rd_installment_index'])
+        ->name('report.rd-installment');
+
+    // Deposits Balance  Cut Report
+    Route::get('report/deposit-balance-report', [CutReportController::class, 'deposit_balance_index'])
+        ->name('report.deposit-balance-report');
+
+    // Loan Balance  Cut Report
+    Route::get('report/loan-balance-report', [CutReportController::class, 'loan_balance_index'])
+        ->name('report.loan-balance-report');
+
+    // Loan Accrued Interest  Cut Report
+    Route::get('report/loan-accrued-report', [CutReportController::class, 'loan_accrued_index'])
+        ->name('report.loan-accrued-report');
+
+    // Group  Cut Report
+    Route::get('report/group-report', [CutReportController::class, 'group_report_index'])
+        ->name('report.group-report');
+
+    // Interest & TDS Report
+    Route::get('report/tds-report', [CutReportController::class, 'tds_report_index'])
+        ->name('report.tds-report');
+
+    //Attendance Report
+    Route::get('report/attendance-report', [CutReportController::class, 'attendance_report_index'])
+        ->name('report.attendance-report');
+
+    //Loan Portfolio Report
+    Route::get('report/loan-portfolio-report', [CutReportController::class, 'loan_portfolio_index'])
+        ->name('report.loan-portfolio-report');
+});
 
 ////////////////////////////////////    END Cut Report     /////////////////////////////////////////////
 
@@ -2762,7 +2801,8 @@ Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
         ->name('profile-update-password');
 
     Route::post('/profile/photo', [SettingsController::class, 'updateProfilePhoto'])
-        ->name('profile-photo.update');;
+        ->name('profile-photo.update');
+    ;
 
     Route::get('/security', [SettingsController::class, 'security'])->name('security');
     Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');
