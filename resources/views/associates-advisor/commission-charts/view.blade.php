@@ -49,8 +49,8 @@
 @section('content')
     <div class="main-inner">
 
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-            <h3 class=" flex text-xl block  uppercase  font-bold">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-2 lg:mb-8">
+            <h3 class=" flex text-lg block  uppercase  font-semibold">
                 Commission Chart - {{ $chart->chart_name }}
             </h3>
         </div>
@@ -112,14 +112,14 @@
                 <!-- Tab 1 -->
                 <div id="tab1" class="tab-pane block">
                     <div class="overflow-x-auto rounded-lg shadow border border-gray-300">
-                        <table class="w-full border-collapse text-sm">
+                        <table class="w-full border-collapse border text-sm">
                             <thead class="bg-secondary/5 sticky top-0 z-10 border-b border-gray-300">
                                 <tr>
-                                    <th class="px-6 py-4 text-left font-semibold border-r border-gray-300">S. NO.</th>
-                                    <th class="px-6 py-4 text-left font-semibold border-r border-gray-300">RANK / MONTH</th>
+                                    <th class="px-3 py-4 text-start font-semibold border-r border-gray-300">S. NO.</th>
+                                    <th class="px-6 py-4 text-start font-semibold border-r border-gray-300">RANK / MONTH</th>
 
                                     @for($m=1; $m <= $chart->tenure_months; $m++)
-                                        <th class="px-6 py-4 text-left font-semibold border-r border-gray-300">{{ $m }} M</th>
+                                        <th class="px-5 py-4 text-start font-semibold border-r border-gray-300">{{ $m }} M</th>
                                     @endfor
                                 </tr>
                             </thead>
@@ -139,9 +139,9 @@
                                     @endphp
 
                                     <tr class="hover:bg-gray-50 transition border-b border-gray-200">
-                                        <td class="px-6 py-4 border-r border-gray-200">{{ $rankId }}</td>
+                                        <td class="px-6 py-4 border border-gray-200">{{ $rankId }}</td>
 
-                                        <td class="px-6 py-4 border-r border-gray-200 uppercase font-medium text-gray-700">
+                                        <td class="px-6 py-4 border border-gray-200 uppercase font-medium text-gray-700">
                                             {{ $rankName }}
                                         </td>
 
@@ -151,7 +151,7 @@
                                                 $autoTotals[$m] += $value;
                                             @endphp
 
-                                            <td class="px-6 py-4 border-r border-gray-200 text-gray-700">
+                                            <td class="px-6 py-4 border border-gray-200 text-gray-700">
                                                 {{ $rankEntry[$m] ?? '' }}
                                             </td>
                                         @endfor
@@ -161,11 +161,11 @@
 
                                 {{-- TOTAL ROW --}}
                                 <tr class="bg-gray-100 font-semibold border-t border-gray-300">
-                                    <td class="px-6 py-4 border-r border-gray-300">#</td>
-                                    <td class="px-6 py-4 border-r border-gray-300 uppercase">TOTAL</td>
+                                    <td class="px-6 py-4 border border-gray-300">#</td>
+                                    <td class="px-6 py-4 border border-gray-300 uppercase">TOTAL</td>
 
                                     @for($m = 1; $m <= $months; $m++)
-                                        <td class="px-6 py-4 border-r border-gray-300">
+                                        <td class="px-6 py-4 border border-gray-300">
                                             {{ $autoTotals[$m] }} {!! $commissionSymbol !!}
                                         </td>
                                     @endfor
@@ -179,11 +179,11 @@
                                     @endphp
 
                                     <tr class="bg-yellow-50 font-semibold border-t border-gray-300">
-                                        <td class="px-6 py-4 border-r border-gray-300">#</td>
-                                        <td class="px-6 py-4 border-r border-gray-300 uppercase">COLLECTION CHARGE</td>
+                                        <td class="px-6 py-4 border border-gray-300">#</td>
+                                        <td class="px-6 py-4 border border-gray-300 uppercase">COLLECTION CHARGE</td>
 
                                         @for($m = 1; $m <= $months; $m++)
-                                            <td class="px-6 py-4 border-r border-gray-300">
+                                            <td class="px-6 py-4 border border-gray-300">
                                                 {{ $collection[$m] ?? 0 }} {{ $commissionSymbol }}
                                             </td>
                                         @endfor
