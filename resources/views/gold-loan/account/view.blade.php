@@ -482,29 +482,7 @@
                     </div>
                 </div>
 
-                <!--COMMENTS-->
-                {{-- <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-                    <!-- Header -->
-                    <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                        <h3 class="text-lg font-semibold text-black  capitalize">
-                            COMMENTS
-                        </h3>
-                        <div class="">
-
-                            <button type="button" class="p-1 rounded transition"
-                                onclick="toggleSection(this, 'Comment')">
-                                <span class="toggle-icon text-lg font-bold">−</span>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Body -->
-                    <div class="p-4" id="Comment">
-                        <p class="capitalize">No Comment Found</p>
-                        <div class="overflow-x-auto mt-5 flex flex-col items-center ">
-                            <button class="btn-primary uppercase ">Add Comment</button>
-                        </div>
-                    </div>
-                </div> --}}
+               
                 <!-- COMMENTS -->
                 <div x-data="{ open: true }" class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
 
