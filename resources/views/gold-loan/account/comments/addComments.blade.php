@@ -55,7 +55,7 @@
                     @csrf
 
                     <!-- Hidden member_id (or select it dynamically) -->
-                    <input type="hidden" name="mortgage_loan_id" value="{{ $gold_loan_id }}">
+                    <input type="hidden" name="gold_loan_id" value="{{ $gold_loan_id }}">
                     <!-- Comment Field -->
                     <div class="flex flex-col">
                         <label for="comment_message" class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
