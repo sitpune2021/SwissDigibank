@@ -482,816 +482,865 @@
                 </div>
 
                 <!--COMMENTS-->
-                <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+                <div x-data="{ open: true }" class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+
                     <!-- Header -->
-                    <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                        <h3 class="text-lg font-semibold text-black  capitalize">
+                    <div class="border-b flex items-center justify-between px-4 py-3 
+                bg-secondary/5 rounded-10 text-lg cursor-pointer"
+                        @click="open = !open">
+
+                        <h3 class="text-lg font-semibold text-black uppercase">
                             COMMENTS
                         </h3>
-                        <div class="">
 
-                            <button type="button" class="p-1 rounded transition"
-                                onclick="toggleSection(this, 'Comment')">
-                                <span class="toggle-icon text-lg font-bold">−</span>
-                            </button>
-                        </div>
+                        <i :class="open ? 'las la-minus' : 'las la-plus'" class="text-xl"></i>
                     </div>
+
                     <!-- Body -->
-                    <div class="p-4" id="Comment">
-                        <p class="capitalize">No Comment Found</p>
-                        <div class="overflow-x-auto mt-5 flex flex-col items-center ">
-                            <button class="btn-primary uppercase ">Add Comment</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    <div x-show="open" x-transition class="p-4 bg-white dark:bg-bg3">
 
-            <!-- Right: Settings -->
-            <div class=" w-full overflow-x-auto  ">
-                <div class="flex flex-row gap-4 dark:bg-bg3      rounded-10">
-                    <div class="w-full box dark:bg-bg3 p-2 rounded-10 shadow-md border border-gray-200">
-                        <div
-                            class="flex justify-center gap-2  border-gray-200 px-4 py-3 bg-gray-50 rounded-t-2xl border-b">
-
-                            <h3 class="font-semibold uppercase text-center sm:text-lg">
-                                {{-- Rupee Symbol --}} &#x20B9; BALANCE REPORT
-                            </h3>
-                        </div>
-
-                        <div class="overflow-x-auto   ">
-                            <table class="w-full border-collapse">
-                                <tbody>
-                                    <tr class="border-b">
-                                        <td class="whitespace-nowrap font-semibold  text-sm px-4 py-2">C. DEBT</td>
-                                        <td class="px-4 py-2 ">
-                                            <span class="">{{ number_format($currentDebt, 2) }}</span>
-                                        </td>
-                                    </tr>
-                                    <tr class="border-b">
-                                        <td class="whitespace-nowrap font-semibold text-sm px-4 py-2">T. DEPOSIT</td>
-                                        <td class="px-4 py-2 ">
-                                            <span class="">{{ number_format($totalDeposit, 2) }}</span>
-                                        </td>
-                                    </tr>
-                                    <tr class="border-b">
-                                        <td class="whitespace-nowrap font-semibold text-sm px-4 py-2">T. DUE</td>
-                                        <td class="px-4 py-2 ">
-                                            <span class="">0.00</span>
-                                        </td>
-                                    </tr>
-                                    <tr class="border-b">
-                                        <td
-                                            class="whitespace-nowrap    font-semibold    text-sm px-4 py-2 flex items-start gap-2 ">
-                                            OC DUE
-
-                                        </td>
-                                        <td class="px-4 py-2 text-red-800">
-                                            <span class="">0.00</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="whitespace-nowrap font-semibold text-sm px-4 py-2">DUE DAYS</td>
-                                        <td class="px-4 py-2">
-                                            <span class="">0</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!--SMS SETTINGS-->
-                <div class="box dark:bg-bg3 mt-3 border-gray-200 shadow-md rounded-lg">
-                    <!-- Header -->
-                    <div class="px-4 py-3">
-                        <h3 class="text-lg border-b font-semibold text-black">SETTINGS</h3>
-                    </div>
-                    <div class="p-4 overflow-x-auto">
-                        <table class="min-w-full text-sm text-left">
-                            <tbody class="divide-y divide-gray-200">
-
-                                <!-- SMS Toggle -->
-                                <tr>
-                                    <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">SMS</td>
-                                    <td class="px-4 py-3">
-                                        <label class="inline-flex items-center cursor-pointer">
-                                            <input type="checkbox" id="smsToggle" class="sr-only slider-toggle">
-                                            <div class="relative">
-                                                <div
-                                                    class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
-                                                </div>
-                                                <div
-                                                    class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
-                                                </div>
-                                            </div>
-                                    </td>
-                                </tr>
-
-                                {{-- SMS REMINDER --}}
-                                <tr>
-                                    <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">SMS REMINDER </td>
-                                    <td class="px-4 py-3">
-                                        <label class="inline-flex items-center cursor-pointer">
-                                            <input type="checkbox" id="smsToggle" class="sr-only slider-toggle">
-                                            <div class="relative">
-                                                <div
-                                                    class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
-                                                </div>
-                                                <div
-                                                    class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
-                                                </div>
-                                            </div>
-                                    </td>
-                                </tr>
-                                {{-- ON HOLD --}}
-                                <tr>
-                                    <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">ON HOLD</td>
-                                    <td class="px-4 py-3">
-                                        <label class="inline-flex items-center cursor-pointer">
-                                            <input type="checkbox" id="smsToggle" class="sr-only slider-toggle">
-                                            <div class="relative">
-                                                <div
-                                                    class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
-                                                </div>
-                                                <div
-                                                    class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
-                                                </div>
-                                            </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-
-
-                <div class="bg-white dark:bg-bg3 shadow-md mt-4 p-2 rounded-xl border border-gray-200">
-                    <div class="px-4 py-3 m-4">
-                        <h3 class="text-lg border-b font-semibold text-black">PENALTY SETTING</h3>
-                    </div>
-                    <!--Old MIS No.-->
-                    <form action="" class="mt-3 p-3 border-b ">
-
-                        <label for="" class="block mb-2 font-semibold">Penalty Charges </label>
-                        <div class="col-sm-7">
-                            <div class="flex items-center gap-2">
-
-                                <!-- Left Select -->
-                                <select name="bonus_rate_type" id="bonus-rate-type round-10"
-                                    class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-2 md:py-3">
-                                    <option value="percentage">%</option>
-                                    <option value="fixed">FIXED</option>
-                                </select>
-
-                                <!-- Main Input -->
-                                <input type="number" id="bonus-rate" name="bonus_rate_value"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="Enter Penalty Value ">
-
-                                <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
-                            </div>
-
-                        </div>
-                    </form>
-
-                    <!--Branch-->
-                    <form action="" method="" class="mt-2 px-3">
-                        <label for="branch" class="block mb-2 font-semibold">Overdue Interest (%) </label>
-                        <div class="col-sm-7">
-                            <div class="flex items-center gap-2">
-
-                                <!-- Left Select -->
-                                <select name="bonus_rate_type" id="bonus-rate-type round-10"
-                                    class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-2 md:py-3">
-                                    <option value="percentage"> TYPE_2</option>
-                                    <option value="fixed">TYPE_1</option>
-                                </select>
-
-                                <!-- Main Input -->
-                                <input type="number" id="bonus-rate" name="bonus_rate_value"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    placeholder="0.0">
-
-                                <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
-                            </div>
-
-                        </div>
-                    </form>
-
-                </div>
-
-
-                <div class="box shadow-md dark:bg-bg3 mt-5 rounded-lg overflow-hidden">
-                    <div class="p-4" id="SecurityDeposits">
-                        <div class="overflow-x-auto text-center">
-                            <div class="w-full overflow-x-auto">
-                                <table class="w-full border-collapse whitespace-nowrap text-sm text-center">
-                                    <thead class="bg-gray-100">
-                                        <tr class="bg-secondary/5">
-                                            <th class="px-4 uppercase py-2"></th>
-                                            <th class="px-4 uppercase py-2">NET P.</th>
-                                            <th class="px-4 uppercase py-2">EMI P.</th>
-                                            <th class="px-4 uppercase py-2">EMI INT.</th>
-                                            <th class="px-4 uppercase py-2">EMI CHRGS.</th>
-                                            <th class="px-4 uppercase py-2">OVERDUE INT.</th>
-                                            <th class="px-4 uppercase py-2">OTHER CHRGS.</th>
-                                            <th class="px-4 uppercase py-2">ADV. AMOUNT</th>
-                                            <th class="px-4 uppercase py-2">DISCOUNT</th>
+                        @if ($comments->isEmpty())
+                            <p class="mb-4 text-sm text-gray-700 dark:text-gray-300">
+                                No Comment Found
+                            </p>
+                        @else
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse text-start mt-5 text-lg">
+                                    <thead>
+                                        <tr class="bg-secondary/5 text-black">
+                                            <th class="px-4 py-2 font-semibold text-start">DATE</th>
+                                            <th class="px-4 py-2 font-semibold text-start">COMMENT BY</th>
+                                            <th class="px-4 py-2 font-semibold text-start">COMMENT</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr class="text-primary border-b">
-                                            <th class="px-4 py-2 text-left">PAID</th>
-                                            <td class="px-4 py-2">{{ $paidSummary['net_p'] }}</td>
-                                            <td class="px-4 py-2">{{ $paidSummary['emi_p'] }}</td>
-                                            <td class="px-4 py-2">{{ $paidSummary['emi_int'] }}</td>
-                                            <td class="px-4 py-2">{{ $paidSummary['emi_charges'] }}</td>
-                                            <td class="px-4 py-2">{{ $paidSummary['overdue_int'] }}</td>
-                                            <td class="px-4 py-2">{{ $paidSummary['other_charges'] }}</td>
-                                            <td class="px-4 py-2">{{ $paidSummary['advance'] }}</td>
-                                            <td class="px-4 py-2">{{ $paidSummary['discount'] }}</td>
-                                        </tr>
-                                        <tr class="text-error">
-                                            <th class="px-4 py-2 text-left">DUE</th>
-                                            <td class="px-4 py-2">{{ $dueSummary['net_p'] }}</td>
-                                            <td class="px-4 py-2">{{ $dueSummary['emi_p'] }}</td>
-                                            <td class="px-4 py-2">{{ $dueSummary['emi_int'] }}</td>
-                                            <td class="px-4 py-2">{{ $dueSummary['emi_charges'] }}</td>
-                                            <td class="px-4 py-2">{{ $dueSummary['overdue_int'] }}</td>
-                                            <td class="px-4 py-2">{{ $dueSummary['other_charges'] }}</td>
-                                            <td class="px-4 py-2">{{ $dueSummary['advance'] }}</td>
-                                            <td class="px-4 py-2">{{ $dueSummary['discount'] }}</td>
-                                        </tr>
+                                        @foreach ($comments as $comment)
+                                            <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                                <td class="px-4 py-2 text-start">
+                                                    {{ \Carbon\Carbon::parse($comment->created_at)->format('d-m-Y') }}
+                                                </td>
+                                                <td class="px-4 py-2 text-start">
+                                                    {{ $comment->commented_by ?? '-' }}
+                                                </td>
+                                                <td class="px-4 py-2 text-start">
+                                                    {{ $comment->comment }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
+                        @endif
+
+                        <!-- Buttons -->
+                        <div class="w-full flex items-center justify-center gap-4 mt-4">
+
+                            <!-- Add Comment -->
+                            <a href="{{ route('bussiness.addComment', $goldLoan->id) }}"
+                                class="btn-primary rounded-10 py-2">
+                                ADD COMMENT
+                            </a>
+
+                            <!-- View All -->
+                            @if ($comments->isNotEmpty())
+                                <a class="btn-primary rounded-10 py-2"
+                                    href="{{ route('bussiness.addComment', $goldLoan->id) }}">
+                                    VIEW ALL
+                                </a>
+                            @endif
+
                         </div>
+
                     </div>
                 </div>
-
-
-                <!-- Gold Loan Scheme Info-->
-                <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-                    <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                        <h3 class="text-lg font-semibold text-black uppercase ">
-                            BUSINESS LOAN SCHEME INFO
-                        </h3>
-                        <div class="">
-                            <button type="button" class="p-1 rounded transition"
-                                onclick="toggleSection(this, 'goldLoanSchemeInfo')">
-                                <span class="toggle-icon text-lg font-bold">−</span>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Body -->
-                    <div class="overflow-x-auto mt-5 " id="goldLoanSchemeInfo">
-                        <table
-                            class="w-full border-collapse rounded-lg overflow-hidden whitespace-nowrap  bg-white dark:bg-bg3">
-                            <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2 w-1/2 md:w-1/3">
-                                        Scheme Name
-                                    </td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $goldLoan->scheme->scheme_name ?? '' }}
-                                    </td>
-                                </tr>
-
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">Scheme Code</td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $goldLoan->scheme->scheme_code ?? '' }}
-                                    </td>
-                                </tr>
-
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Maximum Loan Amount
-
-                                    </td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        ₹ {{ $goldLoan->scheme->max_loan_amount ?? '' }}
-                                    </td>
-                                </tr>
-
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Maximum Loan Limit
-
-                                    </td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $goldLoan->scheme->max_loan_limit ?? '' }} %
-                                    </td>
-                                </tr>
-
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">Interest Type</td>
-                                    <td class="px-4 py-2  text-right md:text-left">
-                                        {{ $settingLabel ?? '' }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Interest Rate
-                                    </td>
-                                    <td class="px-4 py-2  text-right md:text-left">
-                                        {{ $goldLoan->scheme->annual_interest_rate ?? '' }} %
-                                    </td>
-                                </tr>
-                                <tr class=" text-center">
-                                    <td class="font-semibold uppercase px-4 py-2" colspan="2">
-                                        Per EMI Charges
-                                    </td>
-
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        SMS Charges
-                                    </td>
-                                    <td class="px-4 py-2  text-right md:text-left">
-                                        {{ $goldLoan->scheme->sms_charge ?? '0.0' }} ₹
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Fuel Charges
-                                    </td>
-                                    <td class="px-4 py-2  text-right md:text-left">
-                                        {{ $goldLoan->scheme->fuel_charge ?? '0.0' }} ₹
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Stationary Charges
-                                    </td>
-                                    <td class="px-4 py-2  text-right md:text-left">
-                                        {{ $goldLoan->scheme->stationary_charge ?? '0.0' }} ₹
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Maintenance Charges
-                                    </td>
-                                    <td class="px-4 py-2  text-right md:text-left">
-                                        {{ $goldLoan->scheme->maintenance_charge ?? '0.0' }} ₹
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Collection Charges
-                                    </td>
-                                    <td class="px-4 py-2  text-right md:text-left">
-                                        {{ $goldLoan->scheme->collection ?? '0.0' }} ₹
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!--Update Branch/ Associate/ Guarantor-->
-                <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-                    <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                        <h3 class="text-lg font-semibold text-black  uppercase">
-                            Update Branch/ Associate/ Guarantor
-                        </h3>
-                        <div class="">
-                            <button type="button" class="p-1 rounded transition"
-                                onclick="toggleSection(this, 'Guarantor')">
-                                <span class="toggle-icon text-lg font-bold">−</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="overflow-x-auto mt-2 " id="Guarantor">
-                        <form action="" class="mt-1    ">
-                            <label for="" class="block mb-2 font-semibold">Branch</label>
-                            <div class="col-sm-7">
-                                <div class="flex items-center gap-2">
-                                    <select id="bonus-rate" name="bonus_rate_value"
-                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                        placeholder="Enter Penalty Value ">
-                                        <option value="">Select Branch</option>
-                                    </select>
-                                    <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
-                                </div>
-                            </div>
-                        </form>
-                        <form action="" class="mt-1  ">
-                            <label for="" class="block mb-2 font-semibold">Advisor/ Staff</label>
-                            <div class="col-sm-7">
-                                <div class="flex items-center gap-2">
-                                    <select id="bonus-rate" name="bonus_rate_value"
-                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                        placeholder="Enter Penalty Value ">
-                                        <option value="">Advisor/Staff</option>
-                                    </select>
-
-                                    <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
-                                </div>
-
-                            </div>
-                        </form>
-                        <form action="" class="mt-1   ">
-                            <label for="" class="block mb-2 font-semibold">Guarantor 1</label>
-                            <div class="col-sm-7">
-                                <div class="flex items-center gap-2">
-                                    <select id="bonus-rate" name="bonus_rate_value"
-                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                        placeholder="Enter Penalty Value ">
-                                        <option value="">Select Guarantor Nme</option>
-                                    </select>
-
-                                    <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
-                                </div>
-
-                            </div>
-                        </form>
-                        <form action="" class="mt-1 ">
-                            <label for="" class="block mb-2 font-semibold">Guarantor 2</label>
-                            <div class="col-sm-7">
-                                <div class="flex items-center gap-2">
-                                    <select id="bonus-rate" name="bonus_rate_value"
-                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                        placeholder="Enter Penalty Value ">
-                                        <option value="">Select Guarantor Nme</option>
-                                    </select>
-
-                                    <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
-                                </div>
-
-                            </div>
-                        </form>
-                        <form action="" class="mt-1 ">
-                            <label for="" class="block mb-2 font-semibold">Guarantor 3</label>
-                            <div class="col-sm-7">
-                                <div class="flex items-center gap-2">
-                                    <select id="bonus-rate" name="bonus_rate_value"
-                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                        placeholder="Enter Penalty Value ">
-                                        <option value="">Select Guarantor Nme</option>
-                                    </select>
-
-                                    <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
-                                </div>
-
-                            </div>
-                        </form>
-                        <form action="" class="mt-1 ">
-                            <label for="" class="block mb-2 font-semibold">Guarantor 4</label>
-                            <div class="col-sm-7">
-                                <div class="flex items-center gap-2">
-                                    <select id="bonus-rate" name="bonus_rate_value"
-                                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                        placeholder="Enter Penalty Value ">
-                                        <option value="">Select Guarantor Nme</option>
-                                    </select>
-
-                                    <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
-                                </div>
-
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-
-                {{-- Gold Loan Basic Details --}}
-                <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-
-                    <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                        <h3 class="text-lg font-semibold text-black uppercase ">
-                            BUSINESS LOAN BASIC DETAILS
-                        </h3>
-                        <div class="">
-                            <button type="button" class="p-1 rounded transition"
-                                onclick="toggleSection(this, 'goldLoanSchemeInfo')">
-                                <span class="toggle-icon text-lg font-bold">−</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto mt-5" id="goldLoanSchemeInfo">
-                        <table
-                            class="w-full border-collapse rounded-lg overflow-hidden whitespace-nowrap  bg-white dark:bg-bg3">
-                            <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2 w-1/2 md:w-1/3">
-                                        Branch
-                                    </td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $goldLoan->member->branch->branch_name ?? '' }}
-                                    </td>
-                                </tr>
-
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">Advisor/ Staff</td>
-                                    <td class="px-4 py-2 text-right md:text-left"></td>
-                                </tr>
-
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Loan Amount
-                                    </td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        ₹ {{ $goldLoan->loan_amount ?? '' }}
-                                    </td>
-                                </tr>
-
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Annual Interest Rate
-                                    </td>
-                                    <td class="px-4 py-2 text-right md:text-left">
-                                        {{ $goldLoan->scheme->annual_interest_rate ?? '' }} %
-                                    </td>
-                                </tr>
-
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">Credit Period</td>
-                                    <td class="px-4 py-2  text-right md:text-left">
-                                        {{ $goldLoan->credit_period ?? '' }} Days
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Interest Type
-                                    </td>
-
-                                    <td class="px-4 py-2 text-right md:text-left capitalize">
-                                        {{ $settingLabel ?? '' }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2" colspan="">
-                                        Per EMI Charges
-                                    </td>
-                                    <td class="px-4 py-2 ">
-                                        {{ $goldLoan->emi_collection ?? '' }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Tenure of Loan
-                                    </td>
-                                    <td class="px-4 py-2  text-right md:text-left">
-                                        {{ $goldLoan->tenure ?? '' }} MONTHS
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Processing Fee
-                                    </td>
-                                    <td class="px-4 py-2  text-right md:text-left">
-                                        ₹ {{ $goldLoan->processing_fee_value ?? '0.0' }}
-                                    </td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="font-semibold uppercase px-4 py-2">
-                                        Purpose of Loan
-                                    </td>
-                                    <td class="px-4 py-2  text-right md:text-left">
-                                        {{ $goldLoan->processing_fee_value ?? 'N/A' }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-
-
-            </div>
+            {{-- </div> --}}
 
         </div>
 
+        <!-- Right: Settings -->
+        <div class=" w-full overflow-x-auto  ">
+            <div class="flex flex-row gap-4 dark:bg-bg3      rounded-10">
+                <div class="w-full box dark:bg-bg3 p-2 rounded-10 shadow-md border border-gray-200">
+                    <div class="flex justify-center gap-2  border-gray-200 px-4 py-3 bg-gray-50 rounded-t-2xl border-b">
 
-        <!-- Tabs Wrapper -->
-        <div class="w-full box mt-5">
-            <!-- Tab Navigation -->
-            <ul class="flex border-b overflow-x-auto text-sm font-medium text-gray-600">
-                @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
-                    <li>
-                        <button class="tab-btn px-4 py-2 border-b-2 uppercase text-primary" data-tab="tab1">
-                            Repayment Schedule (Installments)
+                        <h3 class="font-semibold uppercase text-center sm:text-lg">
+                            {{-- Rupee Symbol --}} &#x20B9; BALANCE REPORT
+                        </h3>
+                    </div>
+
+                    <div class="overflow-x-auto   ">
+                        <table class="w-full border-collapse">
+                            <tbody>
+                                <tr class="border-b">
+                                    <td class="whitespace-nowrap font-semibold  text-sm px-4 py-2">C. DEBT</td>
+                                    <td class="px-4 py-2 ">
+                                        <span class="">{{ number_format($currentDebt, 2) }}</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="whitespace-nowrap font-semibold text-sm px-4 py-2">T. DEPOSIT</td>
+                                    <td class="px-4 py-2 ">
+                                        <span class="">{{ number_format($totalDeposit, 2) }}</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="whitespace-nowrap font-semibold text-sm px-4 py-2">T. DUE</td>
+                                    <td class="px-4 py-2 ">
+                                        <span class="">0.00</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td
+                                        class="whitespace-nowrap    font-semibold    text-sm px-4 py-2 flex items-start gap-2 ">
+                                        OC DUE
+
+                                    </td>
+                                    <td class="px-4 py-2 text-red-800">
+                                        <span class="">0.00</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="whitespace-nowrap font-semibold text-sm px-4 py-2">DUE DAYS</td>
+                                    <td class="px-4 py-2">
+                                        <span class="">0</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!--SMS SETTINGS-->
+            <div class="box dark:bg-bg3 mt-3 border-gray-200 shadow-md rounded-lg">
+                <!-- Header -->
+                <div class="px-4 py-3">
+                    <h3 class="text-lg border-b font-semibold text-black">SETTINGS</h3>
+                </div>
+                <div class="p-4 overflow-x-auto">
+                    <table class="min-w-full text-sm text-left">
+                        <tbody class="divide-y divide-gray-200">
+
+                            <!-- SMS Toggle -->
+                            <tr>
+                                <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">SMS</td>
+                                <td class="px-4 py-3">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="smsToggle" class="sr-only slider-toggle">
+                                        <div class="relative">
+                                            <div
+                                                class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
+                                            </div>
+                                            <div
+                                                class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                                            </div>
+                                        </div>
+                                </td>
+                            </tr>
+
+                            {{-- SMS REMINDER --}}
+                            <tr>
+                                <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">SMS REMINDER </td>
+                                <td class="px-4 py-3">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="smsToggle" class="sr-only slider-toggle">
+                                        <div class="relative">
+                                            <div
+                                                class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
+                                            </div>
+                                            <div
+                                                class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                                            </div>
+                                        </div>
+                                </td>
+                            </tr>
+                            {{-- ON HOLD --}}
+                            <tr>
+                                <td class="font-semibold text-center align-middle px-4 py-3 w-1/3">ON HOLD</td>
+                                <td class="px-4 py-3">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="smsToggle" class="sr-only slider-toggle">
+                                        <div class="relative">
+                                            <div
+                                                class="blocks w-14 h-8 bg-gray-500 rounded-full peer-checked:bg-primary transition-all">
+                                            </div>
+                                            <div
+                                                class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-6">
+                                            </div>
+                                        </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+
+            <div class="bg-white dark:bg-bg3 shadow-md mt-4 p-2 rounded-xl border border-gray-200">
+                <div class="px-4 py-3 m-4">
+                    <h3 class="text-lg border-b font-semibold text-black">PENALTY SETTING</h3>
+                </div>
+                <!--Old MIS No.-->
+                <form action="" class="mt-3 p-3 border-b ">
+
+                    <label for="" class="block mb-2 font-semibold">Penalty Charges </label>
+                    <div class="col-sm-7">
+                        <div class="flex items-center gap-2">
+
+                            <!-- Left Select -->
+                            <select name="bonus_rate_type" id="bonus-rate-type round-10"
+                                class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-2 md:py-3">
+                                <option value="percentage">%</option>
+                                <option value="fixed">FIXED</option>
+                            </select>
+
+                            <!-- Main Input -->
+                            <input type="number" id="bonus-rate" name="bonus_rate_value"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="Enter Penalty Value ">
+
+                            <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
+                        </div>
+
+                    </div>
+                </form>
+
+                <!--Branch-->
+                <form action="" method="" class="mt-2 px-3">
+                    <label for="branch" class="block mb-2 font-semibold">Overdue Interest (%) </label>
+                    <div class="col-sm-7">
+                        <div class="flex items-center gap-2">
+
+                            <!-- Left Select -->
+                            <select name="bonus_rate_type" id="bonus-rate-type round-10"
+                                class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-2 md:py-3">
+                                <option value="percentage"> TYPE_2</option>
+                                <option value="fixed">TYPE_1</option>
+                            </select>
+
+                            <!-- Main Input -->
+                            <input type="number" id="bonus-rate" name="bonus_rate_value"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="0.0">
+
+                            <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+
+
+            <div class="box shadow-md dark:bg-bg3 mt-5 rounded-lg overflow-hidden">
+                <div class="p-4" id="SecurityDeposits">
+                    <div class="overflow-x-auto text-center">
+                        <div class="w-full overflow-x-auto">
+                            <table class="w-full border-collapse whitespace-nowrap text-sm text-center">
+                                <thead class="bg-gray-100">
+                                    <tr class="bg-secondary/5">
+                                        <th class="px-4 uppercase py-2"></th>
+                                        <th class="px-4 uppercase py-2">NET P.</th>
+                                        <th class="px-4 uppercase py-2">EMI P.</th>
+                                        <th class="px-4 uppercase py-2">EMI INT.</th>
+                                        <th class="px-4 uppercase py-2">EMI CHRGS.</th>
+                                        <th class="px-4 uppercase py-2">OVERDUE INT.</th>
+                                        <th class="px-4 uppercase py-2">OTHER CHRGS.</th>
+                                        <th class="px-4 uppercase py-2">ADV. AMOUNT</th>
+                                        <th class="px-4 uppercase py-2">DISCOUNT</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="text-primary border-b">
+                                        <th class="px-4 py-2 text-left">PAID</th>
+                                        <td class="px-4 py-2">{{ $paidSummary['net_p'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['emi_p'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['emi_int'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['emi_charges'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['overdue_int'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['other_charges'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['advance'] }}</td>
+                                        <td class="px-4 py-2">{{ $paidSummary['discount'] }}</td>
+                                    </tr>
+                                    <tr class="text-error">
+                                        <th class="px-4 py-2 text-left">DUE</th>
+                                        <td class="px-4 py-2">{{ $dueSummary['net_p'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['emi_p'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['emi_int'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['emi_charges'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['overdue_int'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['other_charges'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['advance'] }}</td>
+                                        <td class="px-4 py-2">{{ $dueSummary['discount'] }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Gold Loan Scheme Info-->
+            <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black uppercase ">
+                        BUSINESS LOAN SCHEME INFO
+                    </h3>
+                    <div class="">
+                        <button type="button" class="p-1 rounded transition"
+                            onclick="toggleSection(this, 'goldLoanSchemeInfo')">
+                            <span class="toggle-icon text-lg font-bold">−</span>
                         </button>
-                    </li>
-                @endif
+                    </div>
+                </div>
+                <!-- Body -->
+                <div class="overflow-x-auto mt-5 " id="goldLoanSchemeInfo">
+                    <table
+                        class="w-full border-collapse rounded-lg overflow-hidden whitespace-nowrap  bg-white dark:bg-bg3">
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2 w-1/2 md:w-1/3">
+                                    Scheme Name
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $goldLoan->scheme->scheme_name ?? '' }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">Scheme Code</td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $goldLoan->scheme->scheme_code ?? '' }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Maximum Loan Amount
+
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $goldLoan->scheme->max_loan_amount ?? '' }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Maximum Loan Limit
+
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $goldLoan->scheme->max_loan_limit ?? '' }} %
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">Interest Type</td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    {{ $settingLabel ?? '' }}
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Interest Rate
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    {{ $goldLoan->scheme->annual_interest_rate ?? '' }} %
+                                </td>
+                            </tr>
+                            <tr class=" text-center">
+                                <td class="font-semibold uppercase px-4 py-2" colspan="2">
+                                    Per EMI Charges
+                                </td>
+
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    SMS Charges
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    {{ $goldLoan->scheme->sms_charge ?? '0.0' }} ₹
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Fuel Charges
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    {{ $goldLoan->scheme->fuel_charge ?? '0.0' }} ₹
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Stationary Charges
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    {{ $goldLoan->scheme->stationary_charge ?? '0.0' }} ₹
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Maintenance Charges
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    {{ $goldLoan->scheme->maintenance_charge ?? '0.0' }} ₹
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Collection Charges
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    {{ $goldLoan->scheme->collection ?? '0.0' }} ₹
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--Update Branch/ Associate/ Guarantor-->
+            <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black  uppercase">
+                        Update Branch/ Associate/ Guarantor
+                    </h3>
+                    <div class="">
+                        <button type="button" class="p-1 rounded transition" onclick="toggleSection(this, 'Guarantor')">
+                            <span class="toggle-icon text-lg font-bold">−</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Body -->
+                <div class="overflow-x-auto mt-2 " id="Guarantor">
+                    <form action="" class="mt-1    ">
+                        <label for="" class="block mb-2 font-semibold">Branch</label>
+                        <div class="col-sm-7">
+                            <div class="flex items-center gap-2">
+                                <select id="bonus-rate" name="bonus_rate_value"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Penalty Value ">
+                                    <option value="">Select Branch</option>
+                                </select>
+                                <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
+                            </div>
+                        </div>
+                    </form>
+                    <form action="" class="mt-1  ">
+                        <label for="" class="block mb-2 font-semibold">Advisor/ Staff</label>
+                        <div class="col-sm-7">
+                            <div class="flex items-center gap-2">
+                                <select id="bonus-rate" name="bonus_rate_value"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Penalty Value ">
+                                    <option value="">Advisor/Staff</option>
+                                </select>
+
+                                <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <form action="" class="mt-1   ">
+                        <label for="" class="block mb-2 font-semibold">Guarantor 1</label>
+                        <div class="col-sm-7">
+                            <div class="flex items-center gap-2">
+                                <select id="bonus-rate" name="bonus_rate_value"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Penalty Value ">
+                                    <option value="">Select Guarantor Nme</option>
+                                </select>
+
+                                <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <form action="" class="mt-1 ">
+                        <label for="" class="block mb-2 font-semibold">Guarantor 2</label>
+                        <div class="col-sm-7">
+                            <div class="flex items-center gap-2">
+                                <select id="bonus-rate" name="bonus_rate_value"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Penalty Value ">
+                                    <option value="">Select Guarantor Nme</option>
+                                </select>
+
+                                <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <form action="" class="mt-1 ">
+                        <label for="" class="block mb-2 font-semibold">Guarantor 3</label>
+                        <div class="col-sm-7">
+                            <div class="flex items-center gap-2">
+                                <select id="bonus-rate" name="bonus_rate_value"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Penalty Value ">
+                                    <option value="">Select Guarantor Nme</option>
+                                </select>
+
+                                <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
+                            </div>
+
+                        </div>
+                    </form>
+                    <form action="" class="mt-1 ">
+                        <label for="" class="block mb-2 font-semibold">Guarantor 4</label>
+                        <div class="col-sm-7">
+                            <div class="flex items-center gap-2">
+                                <select id="bonus-rate" name="bonus_rate_value"
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                    placeholder="Enter Penalty Value ">
+                                    <option value="">Select Guarantor Nme</option>
+                                </select>
+
+                                <button type="submit" class="block btn-primary uppercase rounded-10">Update</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            {{-- Gold Loan Basic Details --}}
+            <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+
+                <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
+                    <h3 class="text-lg font-semibold text-black uppercase ">
+                        BUSINESS LOAN BASIC DETAILS
+                    </h3>
+                    <div class="">
+                        <button type="button" class="p-1 rounded transition"
+                            onclick="toggleSection(this, 'goldLoanSchemeInfo')">
+                            <span class="toggle-icon text-lg font-bold">−</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto mt-5" id="goldLoanSchemeInfo">
+                    <table
+                        class="w-full border-collapse rounded-lg overflow-hidden whitespace-nowrap  bg-white dark:bg-bg3">
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2 w-1/2 md:w-1/3">
+                                    Branch
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $goldLoan->member->branch->branch_name ?? '' }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">Advisor/ Staff</td>
+                                <td class="px-4 py-2 text-right md:text-left"></td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Loan Amount
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    ₹ {{ $goldLoan->loan_amount ?? '' }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Annual Interest Rate
+                                </td>
+                                <td class="px-4 py-2 text-right md:text-left">
+                                    {{ $goldLoan->scheme->annual_interest_rate ?? '' }} %
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">Credit Period</td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    {{ $goldLoan->credit_period ?? '' }} Days
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Interest Type
+                                </td>
+
+                                <td class="px-4 py-2 text-right md:text-left capitalize">
+                                    {{ $settingLabel ?? '' }}
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2" colspan="">
+                                    Per EMI Charges
+                                </td>
+                                <td class="px-4 py-2 ">
+                                    {{ $goldLoan->emi_collection ?? '' }}
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Tenure of Loan
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    {{ $goldLoan->tenure ?? '' }} MONTHS
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Processing Fee
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    ₹ {{ $goldLoan->processing_fee_value ?? '0.0' }}
+                                </td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="font-semibold uppercase px-4 py-2">
+                                    Purpose of Loan
+                                </td>
+                                <td class="px-4 py-2  text-right md:text-left">
+                                    {{ $goldLoan->processing_fee_value ?? 'N/A' }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+        </div>
+
+    </div>
+
+
+    <!-- Tabs Wrapper -->
+    <div class="w-full box mt-5">
+        <!-- Tab Navigation -->
+        <ul class="flex border-b overflow-x-auto text-sm font-medium text-gray-600">
+            @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
+                <li>
+                    <button class="tab-btn px-4 py-2 border-b-2 uppercase text-primary" data-tab="tab1">
+                        Repayment Schedule (Installments)
+                    </button>
+                </li>
+            @endif
+            <li>
+                <button
+                    class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
+                    data-tab="tab2">
+                    Current Statement
+                </button>
+            </li>
+            @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi' &&
+                    strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest')
                 <li>
                     <button
                         class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
-                        data-tab="tab2">
-                        Current Statement
+                        data-tab="tab4">
+                        EIR Payout Chart
                     </button>
                 </li>
-                @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi' &&
-                        strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest')
-                    <li>
-                        <button
-                            class="tab-btn px-4 py-2 border-b-2 uppercase border-transparent hover:text-blue-600 hover:border-blue-500"
-                            data-tab="tab4">
-                            EIR Payout Chart
-                        </button>
-                    </li>
-                @endif
-            </ul>
+            @endif
+        </ul>
 
-            <div class="tab-content p-4">
-                @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
-                    <div id="tab1" class="tab-pane block">
-                        <div class="overflow-x-auto">
-                            <input type="hidden" id="loan_id" value="{{ $goldLoan->id }}">
-
-                            <table class="w-full border-collapse whitespace-nowrap  text-sm" id="emiTable">
-
-                                <thead class="bg-secondary/5">
-                                    <tr>
-                                        <th class="p-2 uppercase border">EMI No.</th>
-                                        <th class="p-2 uppercase border">EMI DATE</th>
-                                        <th class="p-2 uppercase border">EMI DUE DATE</th>
-                                        <th class="p-2 uppercase border">PRINCIPAL</th>
-                                        <th class="p-2 uppercase border">INTEREST</th>
-                                        <th class="p-2 uppercase border">OTHER CHRG.</th>
-                                        <th class="p-2 uppercase border">EMI</th>
-                                        <th class="p-2 uppercase border">BAL. PRINCIPAL</th>
-                                        <th class="p-2 uppercase border">REMAINING AMT</th>
-                                        <th class="p-2 uppercase border">PAID DATE</th>
-                                        <th class="p-2 uppercase border">STATUS</th>
-                                        <th class="p-2 uppercase border">PROCESSED</th>
-                                        <th class="p-2 uppercase border">ACTIONS</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    @foreach ($emiSchedule as $emi)
-                                        @php
-                                            static $processShown = false;
-                                            $rowStatus = $emi['status'];
-
-                                            // Show PROCESS button ONLY on first UNPAID EMI
-                                            $showProcessButton =
-                                                $rowStatus === 'UNPAID' && !$processShown && $emi['status'] !== 'DUE';
-
-                                            if ($showProcessButton) {
-                                                $processShown = true;
-                                            }
-                                        @endphp
-
-
-                                        <tr class="border-b {{ $emi['status'] == 'PAID' ? 'bg-green-50' : '' }}">
-                                            <td class="p-2 border">{{ $emi['emi_no'] }}</td>
-                                            <td class="p-2 border emi-date">{{ $emi['emi_date'] }}</td>
-                                            <td class="p-2 border emi-due-date">{{ $emi['emi_due_date'] }}</td>
-                                            <td class="p-2 border">{{ $emi['principal'] }}</td>
-                                            <td class="p-2 border">{{ $emi['interest'] }}</td>
-                                            <td class="p-2 border">{{ $emi['other_charges'] }}</td>
-                                            <td class="p-2 border">{{ $emi['emi_amount'] }}</td>
-                                            <td class="p-2 border">{{ $emi['balance_principal'] }}</td>
-                                            <td class="p-2 border">{{ $emi['remaining_amount'] }}</td>
-                                            <td class="p-2 border">{{ $emi['paid_date'] }}</td>
-
-                                            <!-- STATUS -->
-                                            <td class="p-2 border status">
-                                                <span
-                                                    class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
-                                                    {{ $emi['status'] }}
-                                                </span>
-                                            </td>
-
-                                            <!-- PROCESSED -->
-                                            <td class="p-2 border processed">
-                                                <span
-                                                    class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">
-                                                    {{ $emi['processed'] }}
-                                                </span>
-                                            </td>
-                                            <td class="p-2 border">
-                                                @if ($emi['status'] === 'PAID')
-                                                    <a href="{{ route('loan.emi_receipt.view', [$goldLoan->id, $emi['emi_no']]) }}"
-                                                        class="btn-primary text-white px-3 py-1 rounded ">
-                                                        Print
-                                                    </a>
-                                                @elseif ($showProcessButton)
-                                                    <button class="process-btn btn-primary px-3 py-1 rounded"
-                                                        data-emi="{{ $emi['emi_no'] }}">
-                                                        PROCESS
-                                                    </button>
-                                                @endif
-                                            </td>
-
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-
-                            </table>
-
-                        </div>
-                    </div>
-                @endif
-
-                <div id="tab2" class="tab-pane hidden">
+        <div class="tab-content p-4">
+            @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
+                <div id="tab1" class="tab-pane block">
                     <div class="overflow-x-auto">
-                        <table class="w-full border-collapse whitespace-nowrap  text-sm">
-                            <thead class="bg-gray-100">
-                                <tr class="bg-secondary/5">
-                                    <th class="text-start p-2 border">DATE</th>
-                                    <th class="text-start p-2 border">TYPE</th>
-                                    <th class="text-start p-2 border">PAYMENT MODE</th>
-                                    <th class="text-start p-2 border">AMOUNT</th>
-                                    <th class="text-start p-2 border">STATUS</th>
+                        <input type="hidden" id="loan_id" value="{{ $goldLoan->id }}">
+
+                        <table class="w-full border-collapse whitespace-nowrap  text-sm" id="emiTable">
+
+                            <thead class="bg-secondary/5">
+                                <tr>
+                                    <th class="p-2 uppercase border">EMI No.</th>
+                                    <th class="p-2 uppercase border">EMI DATE</th>
+                                    <th class="p-2 uppercase border">EMI DUE DATE</th>
+                                    <th class="p-2 uppercase border">PRINCIPAL</th>
+                                    <th class="p-2 uppercase border">INTEREST</th>
+                                    <th class="p-2 uppercase border">OTHER CHRG.</th>
+                                    <th class="p-2 uppercase border">EMI</th>
+                                    <th class="p-2 uppercase border">BAL. PRINCIPAL</th>
+                                    <th class="p-2 uppercase border">REMAINING AMT</th>
+                                    <th class="p-2 uppercase border">PAID DATE</th>
+                                    <th class="p-2 uppercase border">STATUS</th>
+                                    <th class="p-2 uppercase border">PROCESSED</th>
+                                    <th class="p-2 uppercase border">ACTIONS</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @forelse($currentStatement as $row)
-                                    <tr class="border-b">
-                                        <td class="p-2 text-start border">
-                                            {{ Carbon::parse($row->date)->format('d/m/Y h:i A') }}</td>
-                                        <td class="p-2 text-start border">{{ $row->type }}</td>
-                                        <td class="p-2 text-start border">-</td>
-                                        <td class="p-2 text-start border">₹ {{ number_format($row->amount, 2) }}</td>
 
-                                        {{-- Status Color --}}
-                                        <td class="p-2 text-start border">
+                            <tbody>
+                                @foreach ($emiSchedule as $emi)
+                                    @php
+                                        static $processShown = false;
+                                        $rowStatus = $emi['status'];
+
+                                        // Show PROCESS button ONLY on first UNPAID EMI
+                                        $showProcessButton =
+                                            $rowStatus === 'UNPAID' && !$processShown && $emi['status'] !== 'DUE';
+
+                                        if ($showProcessButton) {
+                                            $processShown = true;
+                                        }
+                                    @endphp
+
+
+                                    <tr class="border-b {{ $emi['status'] == 'PAID' ? 'bg-green-50' : '' }}">
+                                        <td class="p-2 border">{{ $emi['emi_no'] }}</td>
+                                        <td class="p-2 border emi-date">{{ $emi['emi_date'] }}</td>
+                                        <td class="p-2 border emi-due-date">{{ $emi['emi_due_date'] }}</td>
+                                        <td class="p-2 border">{{ $emi['principal'] }}</td>
+                                        <td class="p-2 border">{{ $emi['interest'] }}</td>
+                                        <td class="p-2 border">{{ $emi['other_charges'] }}</td>
+                                        <td class="p-2 border">{{ $emi['emi_amount'] }}</td>
+                                        <td class="p-2 border">{{ $emi['balance_principal'] }}</td>
+                                        <td class="p-2 border">{{ $emi['remaining_amount'] }}</td>
+                                        <td class="p-2 border">{{ $emi['paid_date'] }}</td>
+
+                                        <!-- STATUS -->
+                                        <td class="p-2 border status">
                                             <span
-                                                class="@if ($row->status == 'PAID') text-green-600 font-semibold @else text-red-600 font-semibold @endif">
-                                                {{ ucfirst($row->status) }}
+                                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary">
+                                                {{ $emi['status'] }}
                                             </span>
                                         </td>
+
+                                        <!-- PROCESSED -->
+                                        <td class="p-2 border processed">
+                                            <span
+                                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error">
+                                                {{ $emi['processed'] }}
+                                            </span>
+                                        </td>
+                                        <td class="p-2 border">
+                                            @if ($emi['status'] === 'PAID')
+                                                <a href="{{ route('loan.emi_receipt.view', [$goldLoan->id, $emi['emi_no']]) }}"
+                                                    class="btn-primary text-white px-3 py-1 rounded ">
+                                                    Print
+                                                </a>
+                                            @elseif ($showProcessButton)
+                                                <button class="process-btn btn-primary px-3 py-1 rounded"
+                                                    data-emi="{{ $emi['emi_no'] }}">
+                                                    PROCESS
+                                                </button>
+                                            @endif
+                                        </td>
+
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center text-gray-500 p-3">No Records Found</td>
-                                    </tr>
-                                @endforelse
+                                @endforeach
                             </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+            @endif
+
+            <div id="tab2" class="tab-pane hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse whitespace-nowrap  text-sm">
+                        <thead class="bg-gray-100">
+                            <tr class="bg-secondary/5">
+                                <th class="text-start p-2 border">DATE</th>
+                                <th class="text-start p-2 border">TYPE</th>
+                                <th class="text-start p-2 border">PAYMENT MODE</th>
+                                <th class="text-start p-2 border">AMOUNT</th>
+                                <th class="text-start p-2 border">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($currentStatement as $row)
+                                <tr class="border-b">
+                                    <td class="p-2 text-start border">
+                                        {{ Carbon::parse($row->date)->format('d/m/Y h:i A') }}</td>
+                                    <td class="p-2 text-start border">{{ $row->type }}</td>
+                                    <td class="p-2 text-start border">-</td>
+                                    <td class="p-2 text-start border">₹ {{ number_format($row->amount, 2) }}</td>
+
+                                    {{-- Status Color --}}
+                                    <td class="p-2 text-start border">
+                                        <span
+                                            class="@if ($row->status == 'PAID') text-green-600 font-semibold @else text-red-600 font-semibold @endif">
+                                            {{ ucfirst($row->status) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center text-gray-500 p-3">No Records Found</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi' &&
+                    strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest')
+                <div id="tab4" class="tab-pane hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse whitespace-nowrap text-sm">
+
+                            {{-- HEADER --}}
+                            <thead>
+                                <tr class="bg-gray-200 text-left">
+                                    <th class="p-2 border">EMI No.</th>
+                                    <th class="p-2 border">EMI DATE</th>
+                                    <th class="p-2 border">EMI DUE DATE</th>
+                                    <th class="p-2 border">EIR PRINCIPAL</th>
+                                    <th class="p-2 border">EIR INTEREST</th>
+                                    <th class="p-2 border">EIR OTHER CHRG.</th>
+                                    <th class="p-2 border">EIR EMI</th>
+                                    <th class="p-2 border">EIR BAL. PRINCIPAL</th>
+                                    <th class="p-2 border">REMAINING AMT</th>
+                                </tr>
+                            </thead>
+
+                            {{-- FIRST ROW — LOAN AMOUNT --}}
+                            <tr class="bg-yellow-100 font-semibold">
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td colspan="9" class="p-2 border text-left">
+                                    {{ number_format($goldLoan->loan_amount, 2) }}
+                                </td>
+                            </tr>
+
+                            {{-- EMI ROWS --}}
+                            <tbody>
+                                @foreach ($eirSchedule as $row)
+                                    <tr>
+                                        <td class="p-2 border">{{ $row['emi_no'] }}</td>
+                                        <td class="p-2 border">{{ $row['emi_date'] }}</td>
+                                        <td class="p-2 border">{{ $row['emi_due_date'] }}</td>
+                                        <td class="p-2 border">{{ $row['principal'] }}</td>
+                                        <td class="p-2 border">{{ $row['interest'] }}</td>
+                                        <td class="p-2 border">{{ $row['other_charges'] }}</td>
+                                        <td class="p-2 border">{{ $row['emi_amount'] }}</td>
+                                        <td class="p-2 border">{{ $row['balance_principal'] }}</td>
+                                        <td class="p-2 border">{{ $row['remaining_amount'] }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+
                         </table>
                     </div>
                 </div>
+            @endif
 
-                @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi' &&
-                        strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest')
-                    <div id="tab4" class="tab-pane hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full border-collapse whitespace-nowrap text-sm">
-
-                                {{-- HEADER --}}
-                                <thead>
-                                    <tr class="bg-gray-200 text-left">
-                                        <th class="p-2 border">EMI No.</th>
-                                        <th class="p-2 border">EMI DATE</th>
-                                        <th class="p-2 border">EMI DUE DATE</th>
-                                        <th class="p-2 border">EIR PRINCIPAL</th>
-                                        <th class="p-2 border">EIR INTEREST</th>
-                                        <th class="p-2 border">EIR OTHER CHRG.</th>
-                                        <th class="p-2 border">EIR EMI</th>
-                                        <th class="p-2 border">EIR BAL. PRINCIPAL</th>
-                                        <th class="p-2 border">REMAINING AMT</th>
-                                    </tr>
-                                </thead>
-
-                                {{-- FIRST ROW — LOAN AMOUNT --}}
-                                <tr class="bg-yellow-100 font-semibold">
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td colspan="9" class="p-2 border text-left">
-                                        {{ number_format($goldLoan->loan_amount, 2) }}
-                                    </td>
-                                </tr>
-
-                                {{-- EMI ROWS --}}
-                                <tbody>
-                                    @foreach ($eirSchedule as $row)
-                                        <tr>
-                                            <td class="p-2 border">{{ $row['emi_no'] }}</td>
-                                            <td class="p-2 border">{{ $row['emi_date'] }}</td>
-                                            <td class="p-2 border">{{ $row['emi_due_date'] }}</td>
-                                            <td class="p-2 border">{{ $row['principal'] }}</td>
-                                            <td class="p-2 border">{{ $row['interest'] }}</td>
-                                            <td class="p-2 border">{{ $row['other_charges'] }}</td>
-                                            <td class="p-2 border">{{ $row['emi_amount'] }}</td>
-                                            <td class="p-2 border">{{ $row['balance_principal'] }}</td>
-                                            <td class="p-2 border">{{ $row['remaining_amount'] }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-
-                            </table>
-                        </div>
-                    </div>
-                @endif
-
-            </div>
         </div>
+    </div>
     </div>
 
 

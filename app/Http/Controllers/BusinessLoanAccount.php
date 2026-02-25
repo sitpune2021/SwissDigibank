@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\BusinessLoanComment;
 
 class BusinessLoanAccount extends Controller
 {
@@ -68,6 +69,9 @@ class BusinessLoanAccount extends Controller
     // view page
     public function show(Request $request, $id)
     {
+        $comments = BusinessLoanComment::where('loan_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
 
         $savedStatuses = DB::table('business_loan_emi_status')
             ->where('loan_id', $id)
@@ -578,7 +582,8 @@ class BusinessLoanAccount extends Controller
             'hasDueEmi',
             'payRoute',
             'payButtonText',
-            'hasPendingApproval'
+            'hasPendingApproval',
+            'comments'
         ));
     }
 
@@ -1672,6 +1677,44 @@ class BusinessLoanAccount extends Controller
             ]);
 
             return back()->with('error', 'Something went wrong while clearing the due.');
+        }
+    }
+    public function addComment($id)
+    {
+        $comments = BusinessLoanComment::where('loan_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+
+        return view(
+            'bussiness.account.comments.addComments',
+            compact('comments')
+        )->with('loan_id', $id);
+    }
+    public function storeComment(Request $request)
+    {
+        Log::debug('Store Gold Loan Comment Data: ', $request->all());
+
+        $validated = $request->validate([
+            'comment' => 'required|string',
+            'loan_id' => 'required|exists:business_loan_disbursements,id',
+        ]);
+
+        try {
+            BusinessLoanComment::create([
+                'loan_id' => $validated['loan_id'],
+                'date' => now(),
+                'comment' => $validated['comment'],
+                'commented_by' => auth()->user()->name ?? 'Admin',
+            ]);
+
+            return redirect()->route('mortgageloan.addComment', $validated['mortgage_loan_id'])
+                ->with('success', 'Comment added successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error storing gold loan comment', [
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->withErrors('There was an error storing your comment.');
         }
     }
 }
