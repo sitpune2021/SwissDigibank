@@ -476,26 +476,75 @@
                 </div>
 
                 <!--COMMENTS-->
-                <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+             <div x-data="{ open: true }" class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+
                     <!-- Header -->
-                    <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                        <h3 class="text-lg font-semibold text-black  capitalize">
+                    <div class="border-b flex items-center justify-between px-4 py-3 
+                bg-secondary/5 rounded-10 text-lg cursor-pointer"
+                        @click="open = !open">
+
+                        <h3 class="text-lg font-semibold text-black uppercase">
                             COMMENTS
                         </h3>
-                        <div class="">
 
-                            <button type="button" class="p-1 rounded transition"
-                                onclick="toggleSection(this, 'Comment')">
-                                <span class="toggle-icon text-lg font-bold">−</span>
-                            </button>
-                        </div>
+                        <i :class="open ? 'las la-minus' : 'las la-plus'" class="text-xl"></i>
                     </div>
+
                     <!-- Body -->
-                    <div class="p-4" id="Comment">
-                        <p class="capitalize">No Comment Found</p>
-                        <div class="overflow-x-auto mt-5 flex flex-col items-center ">
-                            <button class="btn-primary  uppercase">Add Comment</button>
+                    <div x-show="open" x-transition class="p-4 bg-white dark:bg-bg3">
+
+                        @if ($comments->isEmpty())
+                            <p class="mb-4 text-sm text-gray-700 dark:text-gray-300">
+                                No Comment Found
+                            </p>
+                        @else
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse text-start mt-5 text-lg">
+                                    <thead>
+                                        <tr class="bg-secondary/5 text-black">
+                                            <th class="px-4 py-2 font-semibold text-start">DATE</th>
+                                            <th class="px-4 py-2 font-semibold text-start">COMMENT BY</th>
+                                            <th class="px-4 py-2 font-semibold text-start">COMMENT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($comments as $comment)
+                                            <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                                <td class="px-4 py-2 text-start">
+                                                    {{ \Carbon\Carbon::parse($comment->created_at)->format('d-m-Y') }}
+                                                </td>
+                                                <td class="px-4 py-2 text-start">
+                                                    {{ $comment->commented_by ?? '-' }}
+                                                </td>
+                                                <td class="px-4 py-2 text-start">
+                                                    {{ $comment->comment }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+
+                        <!-- Buttons -->
+                        <div class="w-full flex items-center justify-center gap-4 mt-4">
+
+                            <!-- Add Comment -->
+                            <a href="{{ route('mortgageloan.addComment', $goldLoan->id) }}"
+                                class="btn-primary rounded-10 py-2">
+                                ADD COMMENT
+                            </a>
+
+                            <!-- View All -->
+                            @if ($comments->isNotEmpty())
+                                <a class="btn-primary rounded-10 py-2"
+                                    href="{{ route('mortgageloan.addComment', $goldLoan->id) }}">
+                                    VIEW ALL
+                                </a>
+                            @endif
+
                         </div>
+
                     </div>
                 </div>
             </div>

@@ -1214,10 +1214,7 @@ class MortgageController extends Controller
                 'ratio_enabled' => $request->has('divide_emi_ratio') ? 'Yes' : 'No',
 
                 // EMI Ratio value
-                'ratio_first_emi' => $request->has('divide_emi_ratio')
-                    ? $request->emi_ratio_1
-                    : null,
-
+                'ratio_first_emi' => $request->ratio_first_emi,
                 // Loan % ratio
                 'ratio_first_percentage' => $request->has('divide_emi_ratio')
                     ? $request->ratio_first_percentage

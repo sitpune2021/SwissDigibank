@@ -835,6 +835,12 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::post('/gold-loan/foreclose/{loan_id}', [GoldLoanAccountController::class, 'foreClose'])
         ->name('goldloan.foreclose');
 
+    // commnets and documents route
+    Route::get('gold-loan/{id}/add-comment', [GoldLoanAccountController::class, 'addComment'])
+        ->name('goldloan.addComment');
+
+    Route::post('gold-loan/store-comment', [GoldLoanAccountController::class, 'storeComment'])
+        ->name('goldloan.storeComment');
 
     // other pages url
     Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
@@ -965,6 +971,12 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::get('disbursements/disburse-loan/{id}', [MortgageDisbursementController::class, 'show'])->name('mortgage.disbursements.disburse-loan');
     Route::post('disbursements/store', [MortgageDisbursementController::class, 'store'])->name('mortgagedisbursements.store');
 
+    Route::get('mortgage-loan/{id}/add-comment', [MortgageAccountController::class, 'addComment'])
+        ->name('mortgageloan.addComment');
+
+    Route::post('mortgage-loan/store-comment', [MortgageAccountController::class, 'storeComment'])
+        ->name('mortgageloan.storeComment');
+
     // account section start
     Route::get('account/index', [MortgageAccountController::class, 'index'])->name('mortgage.account.index');
     Route::get('account/show/{id}', [MortgageAccountController::class, 'show'])
@@ -1060,7 +1072,6 @@ Route::group(['prefix' => 'mortgage'], function () {
 
     Route::get('/undertaking-letter-view/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter_view'])->name('mortgage_loan.undertaking_letter.view');
     Route::get('/undertaking-letter/{loan}', [MortgageLoanPrintDocumentController::class, 'undertaking_letter'])->name('mortgage_loan.undertaking_letter.pdf');
-
 });
 
 Route::prefix('mortgage-loan-app')->group(function () {
@@ -1163,7 +1174,17 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::get('disbursements/disburse-loan/{id}', [LoanAgainstDisbursementController::class, 'show'])
         ->name('loanagainst.disbursements.disburse-loan');
     Route::post('/loanagainst/disbursements/store', [LoanAgainstDisbursementController::class, 'store'])->name('disbursements.store');
+   
+   //comments and documents 
+    Route::get(
+        'loan-against/{id}/add-comment',
+        [LoanAgainstAccountController::class, 'addComment']
+    )->name('loanagainst.addComment');
 
+    Route::post(
+        'loan-against/store-comment',
+        [LoanAgainstAccountController::class, 'storeComment']
+    )->name('loanagainst.storeComment');
 
     // account section start
 
