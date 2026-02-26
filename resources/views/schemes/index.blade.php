@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="main-inner">
-    <div class="mb-6 flex flex-wrap items-center justify-between gap-3 lg:mb-5">
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3 px-2 lg:mb-5">
         <h4 class="text-lg uppercase">SCHEMES</h4>
         <a class="btn-primary text-sm" href="{{ route('schemes.create') }}">
             ADD
@@ -30,19 +30,19 @@
                 <tbody>
                     @foreach ($schemes as $scheme)
                     <tr class="border-b dark:even:bg-bg3">
-                        <td class="py-5 px-6">
+                        <td class="py-5 px-3">
                             <a href="{{ $scheme?->id ? route('schemes.show', $scheme->id) : '#' }}" class="text-primary hover:underline">
                                 {{ $scheme->scheme_code }}
                             </a>
                         </td>
-                        <td class="py-5 px-6">{{ $scheme->scheme_name }}</td>
-                        <td class="py-5 px-6">{{ number_format($scheme->min_opening_balance, 2) }}</td>
-                        <td class="py-5 px-6">{{ number_format($scheme->min_monthly_avg_balance, 2) }}</td>
-                        <td class="py-5 px-6">{{ number_format($scheme->lock_in_amount, 2) }}</td>
-                        <td class="py-5 px-6">{{ $scheme->annual_int_rate }}</td>
-                        <td class="py-5 px-6">{{ $scheme->interest_pay_cycle }}</td>
+                        <td class="py-5 px-3">{{ $scheme->scheme_name }}</td>
+                        <td class="py-5 px-3">{{ number_format($scheme->min_opening_balance, 2) }}</td>
+                        <td class="py-5 px-3">{{ number_format($scheme->min_monthly_avg_balance, 2) }}</td>
+                        <td class="py-5 px-4">{{ number_format($scheme->lock_in_amount, 2) }}</td>
+                        <td class="py-5 px-4">{{ $scheme->annual_int_rate }}</td>
+                        <td class="py-5 px-4">{{ $scheme->interest_pay_cycle }}</td>
                         <!-- <td class="py-5 px-6">{{ $scheme->active }}</td> -->
-                        <td class="py-5 px-6">
+                        <td class="py-5 px-3">
                             @if($scheme->active == 1)
                             <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
                                 Yes
