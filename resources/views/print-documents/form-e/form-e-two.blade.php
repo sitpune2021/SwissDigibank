@@ -116,7 +116,9 @@ h2, h3 {
             </div>
         <h2>नमुना ई-2</h2>
         <h3>(नियम 5 (2) पहा)</h3>
-        <h3>{{ $companyName }} &nbsp; र. नं. 12345  &nbsp;  तालुका ______ जि._________</h3>
+        <h3>
+             {{ $company->company_name }}  &nbsp; र. नं.  {{ $company->cin_no }}  &nbsp;  तालुका ______ जि._________
+        </h3>
 
         <table class="main-table">
             <thead>
