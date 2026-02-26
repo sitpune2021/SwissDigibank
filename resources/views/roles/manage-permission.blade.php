@@ -72,9 +72,9 @@
                         </td>
 
                         <td class="px-6 py-4 text-center">
-                            <a href="#" class="text-blue-600">Edit</a>
+                            <a href="{{ route('roles.edit', $role->id) }}" class="text-blue-600">Edit</a>
                             |
-                            <a href="#" class="text-red-600">Delete</a>
+                            <a href="{{ route('roles.show', $role->id) }}" class="text-green-600">View</a>
                         </td>
                     </tr>
                 @empty

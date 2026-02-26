@@ -158,13 +158,42 @@ Route::middleware('auth.user')->group(function () {
         Route::resource('bank-account', BankAccountController::class);
     });
 
+    // Route::group(['prefix' => 'user'], function () {
+    //     Route::resource('roles', RoleController::class);
+    //     Route::resource('users', UserController::class);
+    // });
+
+    // Route::post('/role-permission-store', [RoleController::class, 'store'])->name('role_permission.store');
+
     Route::group(['prefix' => 'user'], function () {
-        Route::resource('roles', RoleController::class);
+
+        // ROLES ROUTES
+        Route::get('/roles', [RoleController::class, 'index'])
+            ->name('roles.index');
+
+        Route::get('/roles/create', [RoleController::class, 'create'])
+            ->name('roles.create');
+
+        Route::post('/roles', [RoleController::class, 'store'])
+            ->name('roles.store');
+
+            Route::get('/roles/{id}', [RoleController::class, 'show'])
+        ->name('roles.show');
+
+        Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])
+            ->name('roles.edit');
+
+        Route::put('/roles/{id}', [RoleController::class, 'update'])
+            ->name('roles.update');
+
+        Route::delete('/roles/{id}', [RoleController::class, 'destroy'])
+            ->name('roles.destroy');
+            
+
+        // USERS ROUTES
         Route::resource('users', UserController::class);
+
     });
-
-    Route::post('/role-permission-store', [RoleController::class, 'store'])->name('role_permission.store');
-
 
     Route::middleware('auth')->group(function () {
         Route::get('/calculator', [CalculatorController::class, 'create'])->name('calculator.index');
@@ -1921,6 +1950,16 @@ Route::group(['prefix' => 'personal'], function () {
     Route::get('/personal/{id}/clear-due', [PersonalAccountController::class, 'mortgageLoanClearDues'])
         ->name('personal.clear-due.form');
     Route::post('/personal/{loan_id}/other-charge', [PersonalAccountController::class, 'clearDue'])->name('personal.clear-due');
+    //comments and documents 
+    Route::get(
+        'account/{id}/add-comment',
+        [PersonalAccountController::class, 'addComment']
+    )->name('personal.addComment');
+
+    Route::post(
+        'account/store-comment',
+        [PersonalAccountController::class, 'storeComment']
+    )->name('personal.storeComment');
 
     // account section end
 
@@ -2920,8 +2959,7 @@ Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
         ->name('profile-update-password');
 
     Route::post('/profile/photo', [SettingsController::class, 'updateProfilePhoto'])
-        ->name('profile-photo.update');
-    ;
+        ->name('profile-photo.update');;
 
     Route::get('/security', [SettingsController::class, 'security'])->name('security');
     Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');

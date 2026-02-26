@@ -891,10 +891,10 @@
 
                             </div>
                         </div>
-                        <input type="hidden" name="ratio_enabled" id="ratio_enabled"
+                        {{-- <input type="hidden" name="ratio_enabled" id="ratio_enabled"
                             value="{{ old('ratio_enabled', $application->ratio_enabled ?? 'No') }}">
                         <input type="hidden" name="ratio_first_emi" id="ratio_first_emi"
-                            value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}">
+                            value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}"> --}}
 
                         <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage"
                             value="{{ old('ratio_first_percentage', $application->ratio_first_percentage ?? '') }}">
@@ -949,7 +949,7 @@
                             <label class="block mb-2 font-semibold">EMI Ratio <span id="emi_total_text"></span> </label>
 
                             <div class="flex gap-3">
-                                <input type="number" id="emi_ratio_1"
+                                <input type="number" id="emi_ratio_1" name="ratio_first_emi" 
                                     class="w-full rounded-10 bg-secondary/5 border p-2"
                                     value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}"
                                     min="1">

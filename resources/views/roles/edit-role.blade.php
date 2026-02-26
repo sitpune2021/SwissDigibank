@@ -2,7 +2,6 @@
 @section('page-title', '')
 
 @section('content')
-
     <style>
         input[type="radio"] {
             width: 24px;
@@ -18,6 +17,7 @@
         }
     </style>
 
+
     <div class="box col-span-12 lg:col-span-6">
         <div class="mb-6 pb-6 bb-dashed flex justify-between items-center">
             <h3 class="h3">ADD NEW ROLE / PERMISSION</h3>
@@ -26,8 +26,9 @@
             <hr class="my-2 border-gray-300" />
         </div>
 
-        <form action="{{ route('roles.store') }}" method="POST">
-            @csrf
+        <form action="{{ route('roles.update', $rolePermission->id) }}" method="POST">
+    @csrf
+    @method('PUT')
 
             <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
                 <div class="col-span-2 md:col-span-1">
@@ -38,12 +39,14 @@
                     <!-- <input type="text" name="role_id"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
                         placeholder="Select Role"> -->
-                        <select name="role_id" class="w-full border rounded px-3 py-2">
-                            <option value="">Select Role</option>
-                            @foreach($roles as $role)
-                                <option value="{{ $role->id }}">{{ $role->name }}</option>
-                            @endforeach
-                        </select>
+                       <select name="role_id" class="w-full border rounded px-3 py-2">
+    @foreach($roles as $role)
+        <option value="{{ $role->id }}"
+            {{ $rolePermission->role_id == $role->id ? 'selected' : '' }}>
+            {{ $role->name }}
+        </option>
+    @endforeach
+</select>
                         <!-- <option value="">Select Role</option>
                         @foreach($roles as $role)
                             <option value="{{ $role->id }}">{{ $role->name }}</option>
@@ -68,17 +71,17 @@
                     <div class="flex">
                         <label class="flex items-center gap-2 space-x-2 p-2">
                             <input type="radio" name="permission_type" value="admin"
-                                class="text-green-600 focus:ring-green-500">
+                                {{ $rolePermission->permission_type == 'admin' ? 'checked' : '' }}>
                             <span class="text-gray-70 capitalize">Admin Type</span>
                         </label>
                         <label class="flex items-center gap-2 space-x-2 p-2">
                             <input type="radio" name="permission_type" value="agent"
-                                class="text-green-600 focus:ring-green-500">
+                                class="text-green-600 focus:ring-green-500" {{ $rolePermission->permission_type == 'agent' ? 'checked' : '' }}>
                             <span class="text-gray-70 capitalize">Agent Type</span>
                         </label>
                         <label class="flex items-center gap-2 space-x-2 p-2">
                             <input type="radio" name="permission_type" value="both"
-                                class="text-green-600 focus:ring-green-500" checked>
+                                class="text-green-600 focus:ring-green-500" {{ $rolePermission->permission_type == 'both' ? 'checked' : '' }}>
                             <span class="text-gray-70 capitalize">Both Type</span>
                         </label>
                     </div>
@@ -91,18 +94,17 @@
                     </label>
                     <div class="flex">
                         <label class="flex items-center gap-2 space-x-2 p-2">
-                            <input type="radio" name="active" value="Yes" class="text-green-600 focus:ring-green-500"
-                                checked>
+                            <input type="radio" name="active" value="Yes"
+                                {{ $rolePermission->active == 'Yes' ? 'checked' : '' }}>
                             <span class="text-gray-70 capitalize">Yes</span>
                         </label>
                         <label class="flex items-center gap-2 space-x-2 p-2">
-                            <input type="radio" name="active" value="No" class="text-green-600 focus:ring-green-500">
+                            <input type="radio" name="active" value="No" class="text-green-600 focus:ring-green-500" {{ $rolePermission->active == 'No' ? 'checked' : '' }}>
                             <span class="text-gray-70 capitalize">No</span>
                         </label>
                     </div>
                 </div>
             </div>
-
             <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
                 <div class="col-span-2 md:col-span-6 md:grid-cols-2 lg:grid-cols-3  ">
                     <div class="main-inner ">
@@ -274,13 +276,12 @@
                     </button>
                 </div>
             </div>
-
         </form>
 
     </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     // Loop every section
     document.querySelectorAll(".payload-section").forEach(section => {

@@ -22,7 +22,6 @@ class BusinessLoanDisburments extends Controller
     {
         $disbursements = BusinessLoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', '1')
-            // ->whereNotIn('id', $disbursedIds)
             ->paginate(10);
 
         return view('bussiness.disbursements.index', compact('disbursements'));
@@ -47,206 +46,229 @@ class BusinessLoanDisburments extends Controller
 
     public function store(Request $request)
     {
+        // dd( $request->all());
+        Log::info('========== LOAN DISBURSEMENT STORE START ==========');
+
         try {
 
-            Log::info('========== Loan Disbursement Store Started ==========', [
+            /*
+        =========================================
+        STEP 1 : RAW REQUEST DATA
+        =========================================
+        */
+            Log::info('Incoming Request Data', [
                 'user_id' => Auth::id(),
-                'input'   => $request->all(),
+                'payload' => $request->all()
             ]);
-
-            // ✅ Validate input
-            $validated = $request->validate([
-                'loan_application_id' => 'required|exists:bussiness_loan_applications,id',
-                'disbursal_date'      => 'required|date_format:d-m-Y',
-                'emi_date'            => 'required|date_format:d-m-Y',
-                'loan_amount'         => 'required|numeric|min:1',
-                'final_amount'        => 'required|numeric|min:1',
-            ]);
-
-            // ✅ Convert dates
-            $disbursalDate = Carbon::createFromFormat('d-m-Y', $request->disbursal_date)->format('Y-m-d');
-            $emiDate       = Carbon::createFromFormat('d-m-Y', $request->emi_date)->format('Y-m-d');
-
-            DB::beginTransaction();
 
             /*
-        |--------------------------------------------------------------------------
-        | 1️⃣ CREATE DISBURSEMENT
-        |--------------------------------------------------------------------------
+        =========================================
+        STEP 2 : VALIDATION
+        =========================================
         */
-            $disbursement = BusinessLoanDisbursment::create([
-                'loan_application_id' => $request->loan_application_id,
-                'disbursal_date'      => $disbursalDate,
-                'emi_date'            => $emiDate,
-                'loan_amount'         => $request->loan_amount,
-                'processing_fee'      => $request->processing_fee ?? 0,
-                'gst_percent'         => $request->gst_percent ?? 0,
-                'sgst'                => $request->sgst ?? 0,
-                'cgst'                => $request->cgst ?? 0,
-                'igst'                => $request->igst ?? 0,
-                'processing_fee_total' => $request->processing_fee_total ?? 0,
-                'stamp_duty_fee'      => $request->stamp_duty_fee ?? 0,
-                'insurance_fee'       => $request->insurance_fee ?? 0,
-                'advance_interest'    => $request->advance_interest ?? 0,
-                'final_amount'        => $request->final_amount,
-
-                // Disburse Mode 1
-                'disburse_mode1' => $request->D_mode_1,
-                'payment_mode1'  => $request->payment_mode,
-                'bank_id1'       => $request->bank_id,
-                'cheque_no1'     => $request->cheque_no,
-                'cheque_date1'   => $request->cheque_date
-                    ? Carbon::parse($request->cheque_date)->format('Y-m-d') : null,
-                'transfer_date1' => $request->transfer_date
-                    ? Carbon::parse($request->transfer_date)->format('Y-m-d') : null,
-                'utr_no1'        => $request->utr_no,
-                'transfer_mode1' => $request->transfer_mode,
-                'saving_acc1'    => $request->saving,
-
-                // Disburse Mode 2
-                'disburse_mode2' => $request->D_mode_2,
-                'payment_mode2'  => $request->payment_mode2,
-                'bank_id2'       => $request->bank_id2,
-                'cheque_no2'     => $request->cheque_no2,
-                'cheque_date2'   => $request->cheque_date2
-                    ? Carbon::parse($request->cheque_date2)->format('Y-m-d') : null,
-                'transfer_date2' => $request->transfer_date2
-                    ? Carbon::parse($request->transfer_date2)->format('Y-m-d') : null,
-                'utr_no2'        => $request->utr_no2,
-                'transfer_mode2' => $request->transfer_mode2,
-                'saving_acc2'    => $request->saving2,
+            $validated = $request->validate([
+                'loan_application_id' => 'required|exists:bussiness_loan_applications,id',
+                'disbursal_date' => 'required|date_format:d-m-Y',
+                'emi_date' => 'required|date_format:d-m-Y',
+                'loan_amount' => 'required|numeric|min:0.01',
+                'final_amount' => 'required|numeric|min:0.01',
             ]);
+
+            Log::info('Validation Passed', $validated);
+
+            /*
+        =========================================
+        STEP 3 : CHECK DUPLICATE DISBURSEMENT
+        =========================================
+        */
+            $existing = BusinessLoanDisbursment::where(
+                'loan_application_id',
+                $request->loan_application_id
+            )->first();
+
+            if ($existing) {
+
+                Log::warning('Disbursement Already Exists', [
+                    'loan_application_id' => $request->loan_application_id,
+                    'existing_id' => $existing->id
+                ]);
+
+                return back()
+                    ->withInput()
+                    ->withErrors(['loan_application_id' => 'This loan is already disbursed.']);
+            }
+
+            /*
+        =========================================
+        STEP 4 : DATE CONVERSION
+        =========================================
+        */
+            $disbursalDate = Carbon::createFromFormat(
+                'd-m-Y',
+                $request->disbursal_date
+            )->format('Y-m-d');
+
+            $emiDate = Carbon::createFromFormat(
+                'd-m-Y',
+                $request->emi_date
+            )->format('Y-m-d');
+
+            Log::info('Date Converted Successfully', [
+                'disbursal_date' => $disbursalDate,
+                'emi_date' => $emiDate
+            ]);
+
+            DB::beginTransaction();
+            Log::info('Database Transaction Started');
+
+            /*
+        =========================================
+        STEP 5 : CREATE DISBURSEMENT RECORD
+        =========================================
+        */
+            $insertData = [
+                'loan_application_id' => $request->loan_application_id,
+                'disbursal_date' => $disbursalDate,
+                'emi_date' => $emiDate,
+                'loan_amount' => $request->loan_amount,
+                'final_amount' => $request->final_amount,
+
+                'processing_fee' => $request->processing_fee ?? 0,
+                'gst_percent' => $request->gst_percent ?? 0,
+                'sgst' => $request->sgst ?? 0,
+                'cgst' => $request->cgst ?? 0,
+                'igst' => $request->igst ?? 0,
+                'processing_fee_total' => $request->processing_fee_total ?? 0,
+
+                'stamp_duty_fee' => $request->stamp_duty_fee ?? 0,
+                'stamp_duty_total' => $request->stamp_duty_total ?? 0,
+
+                'insurance_fee' => $request->insurance_fee ?? 0,
+                'insurance_total' => $request->insurance_total ?? 0,
+
+                'advance_interest' => $request->advance_interest ?? 0,
+
+                'disburse_mode1' => $request->D_mode_1 ?? 0,
+                'payment_mode1'  => $request->payment_mode ?? 'cash',
+
+                'disburse_mode2' => $request->D_mode_2 ?? 0,
+                'payment_mode2'  => $request->payment_mode2 ?? 'cash',
+            ];
+
+            Log::info('Disbursement Insert Data Prepared', $insertData);
+
+            $disbursement = BusinessLoanDisbursment::create($insertData);
 
             Log::info('Disbursement Created Successfully', [
                 'disbursement_id' => $disbursement->id
             ]);
 
             /*
-        |--------------------------------------------------------------------------
-        | 2️⃣ UPDATE LOAN APPLICATION STATUS
-        |--------------------------------------------------------------------------
+        =========================================
+        STEP 6 : UPDATE LOAN STATUS
+        =========================================
         */
             DB::table('bussiness_loan_applications')
                 ->where('id', $request->loan_application_id)
                 ->update(['status' => 2]);
 
             Log::info('Loan Application Status Updated', [
-                'loan_application_id' => $request->loan_application_id
+                'loan_application_id' => $request->loan_application_id,
+                'new_status' => 2
             ]);
+            // STEP 6.5 : PROCESSING FEE INSERT
+            if ($request->has('collect_fee')) {
 
-            /*
-        |--------------------------------------------------------------------------
-        | 3️⃣ SAVE FEES IF CHECKED
-        |--------------------------------------------------------------------------
-        */
+                $feeData = [
+                    'loan_id' => $disbursement->id,
+                    'fee_type' => 'processing_fee',
+                    'payment_mode' => $request->processing_fee_mode,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
 
-            // 🔵 PROCESSING FEE
-            if ($request->collect_fee) {
+                // If Cheque
+                if ($request->processing_fee_mode === 'cheque') {
+                    $feeData['bank_id'] = $request->p_bank_id;
+                    $feeData['cheque_no'] = $request->p_cheque_no;
+                    $feeData['cheque_date'] = Carbon::createFromFormat(
+                        'd-m-Y',
+                        $request->p_cheque_date
+                    )->format('Y-m-d');
+                }
 
-                Log::info('Processing Fee Selected');
+                // If Online
+                if ($request->processing_fee_mode === 'online') {
+                    $feeData['transfer_date'] = Carbon::createFromFormat(
+                        'd-m-Y',
+                        $request->p_transfer_date
+                    )->format('Y-m-d');
+                    $feeData['utr_no'] = $request->p_utr_no;
+                    $feeData['transfer_mode'] = $request->p_transfer_mode;
+                    $feeData['credited_account'] = $request->processing_credited_account;
+                }
 
-                DB::table('business_loan_disbursement_fees')->insert([
-                    'loan_id'        => $disbursement->id,
-                    'fee_type'       => 'processing_fee',
-                    'payment_mode'   => $request->processing_fee_mode,
-                    'bank_id'        => $request->p_bank_id ?? null,
-                    'cheque_no'      => $request->p_cheque_no ?? null,
-                    'cheque_date'    => $request->p_cheque_date
-                        ? Carbon::createFromFormat('d-m-Y', $request->p_cheque_date)->format('Y-m-d') : null,
-                    'transfer_date'  => $request->p_transfer_date
-                        ? Carbon::createFromFormat('d-m-Y', $request->p_transfer_date)->format('Y-m-d') : null,
-                    'utr_no'         => $request->p_utr_no ?? null,
-                    'transfer_mode'  => $request->p_transfer_mode ?? null,
-                    'credited_account' => $request->processing_credited_account ?? null,
-                    'created_at'     => now(),
-                    'updated_at'     => now(),
-                ]);
-
-                Log::info('Processing Fee Saved');
+                DB::table('business_loan_disbursement_fees')->insert($feeData);
             }
+            // STEP 7 : STAMP DUTY INSERT
 
-            // 🟡 STAMP DUTY
-            if ($request->collect_stamp_duty) {
-
-                Log::info('Stamp Duty Selected');
+            if ($request->filled('stamp_payment_mode')) {
 
                 DB::table('business_loan_disbursement_fees')->insert([
-                    'loan_id'        => $disbursement->id,
-                    'fee_type'       => 'stamp_duty',
-                    'payment_mode'   => $request->stamp_payment_mode,
-                    'bank_id'        => $request->stamp_bank_id ?? null,
-                    'cheque_no'      => $request->stamp_cheque_no ?? null,
-                    'cheque_date'    => $request->stamp_cheque_date
-                        ? Carbon::createFromFormat('d-m-Y', $request->stamp_cheque_date)->format('Y-m-d') : null,
-                    'transfer_date'  => $request->stamp_transfer_date
-                        ? Carbon::createFromFormat('d-m-Y', $request->stamp_transfer_date)->format('Y-m-d') : null,
-                    'utr_no'         => $request->stamp_utr_no ?? null,
-                    'transfer_mode'  => $request->stamp_transfer_mode ?? null,
-                    'credited_account' => $request->stamp_credited_account ?? null,
-                    'created_at'     => now(),
-                    'updated_at'     => now(),
+                    'loan_id' => $disbursement->id,
+                    'fee_type' => 'stamp_duty',
+                    'payment_mode' => $request->stamp_payment_mode,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
 
-                Log::info('Stamp Duty Saved');
-            }
-
-            // 🟢 INSURANCE FEE
-            if ($request->collect_insurance_fee) {
-
-                Log::info('Insurance Fee Selected');
-
-                DB::table('business_loan_disbursement_fees')->insert([
-                    'loan_id'        => $disbursement->id,
-                    'fee_type'       => 'issuer_fee',
-                    'payment_mode'   => $request->insurance_payment_mode,
-                    'bank_id'        => $request->insurance_bank_id ?? null,
-                    'cheque_no'      => $request->insurance_cheque_no ?? null,
-                    'cheque_date'    => $request->insurance_cheque_date
-                        ? Carbon::createFromFormat('d-m-Y', $request->insurance_cheque_date)->format('Y-m-d') : null,
-                    'transfer_date'  => $request->insurance_transfer_date
-                        ? Carbon::createFromFormat('d-m-Y', $request->insurance_transfer_date)->format('Y-m-d') : null,
-                    'utr_no'         => $request->insurance_utr_no ?? null,
-                    'transfer_mode'  => $request->insurance_transfer_mode ?? null,
-                    'credited_account' => $request->insurance_credited_account ?? null,
-                    'created_at'     => now(),
-                    'updated_at'     => now(),
+                Log::info('Stamp Duty Fee Inserted', [
+                    'mode' => $request->stamp_payment_mode
                 ]);
-
-                Log::info('Insurance Fee Saved');
             }
 
             /*
-        |--------------------------------------------------------------------------
-        | 4️⃣ COMMIT
-        |--------------------------------------------------------------------------
+        =========================================
+        STEP 8 : INSURANCE INSERT
+        =========================================
         */
+            if ($request->filled('insurance_payment_mode')) {
+
+                DB::table('business_loan_disbursement_fees')->insert([
+                    'loan_id' => $disbursement->id,
+                    'fee_type' => 'issuer_fee',
+                    'payment_mode' => $request->insurance_payment_mode,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                Log::info('Insurance Fee Inserted', [
+                    'mode' => $request->insurance_payment_mode
+                ]);
+            }
+
             DB::commit();
+            Log::info('Database Transaction Committed Successfully');
 
-            Log::info('========== Loan Disbursement Completed Successfully ==========', [
-                'disbursement_id' => $disbursement->id
-            ]);
+            Log::info('========== LOAN DISBURSEMENT SUCCESS ==========');
 
             return redirect()
                 ->route('bussiness.account.index')
                 ->with('success', 'Loan Disbursement Created Successfully!');
-        } catch (ValidationException $e) {
-            Log::warning('Validation Failed', [
-                'errors' => $e->errors(),
-            ]);
-            throw $e;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             DB::rollBack();
 
-            Log::error('Loan Disbursement Error', [
-                'message' => $e->getMessage(),
-                'line'    => $e->getLine(),
-                'file'    => $e->getFile(),
+            Log::error('!!!!!!!! LOAN DISBURSEMENT FAILED !!!!!!!!', [
+                'error_message' => $e->getMessage(),
+                'error_line' => $e->getLine(),
+                'error_file' => $e->getFile(),
+                'request_data' => $request->all()
             ]);
 
             return back()
                 ->withInput()
-                ->with('error', 'Something went wrong while saving the disbursement.');
+                ->with('error', 'Something went wrong while saving.');
         }
     }
 
@@ -257,13 +279,11 @@ class BusinessLoanDisburments extends Controller
         $banks = Bank::pluck('name', 'id');
         $savingAccounts = Account::where('account_type', 'SAVING')->pluck('account_no');
 
-
         // Base scheme values
         $scheme = optional($disbursement->scheme);
         $processingFee = $scheme->processing_fee ?? 0;
         $stampDutyFee = $scheme->stamp_duty_charge ?? 0;
         $insuranceFee = $scheme->insurance_fee ?? 0;
-
         // Common GST percent
         $gstPercent = 18;
 
@@ -290,11 +310,25 @@ class BusinessLoanDisburments extends Controller
         $advanceInterest = ($maxLoanAmount * $annualInterestRate) / 100;
 
         // ===== Total deductions =====
-        $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
+        //$totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
+        // ===== Total deductions (based on scheme setting) =====
+        if ($scheme->gold_loan_setting === 'flat_advanced_interest') {
+            $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
+        } else {
+            $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal;
+        }
+
 
         // ===== Final amount to disburse =====
         $loanAmount = $disbursement->approved_loan_amount ?? 0;
-        $finalAmountToDisburse = $loanAmount - $totalDeductions;
+        //$finalAmountToDisburse = $loanAmount - $totalDeductions;
+        // ===== Final amount calculation =====
+        if ($scheme->gold_loan_setting === 'flat_advanced_interest') {
+            $finalAmountToDisburse = $loanAmount - $totalDeductions;
+        } else {
+            $finalAmountToDisburse = $loanAmount - ($processingTotal + $stampTotal + $insuranceTotal);
+        }
+
         if ($finalAmountToDisburse < 0) $finalAmountToDisburse = 0; // safety
 
         // Approved Loan Amount
@@ -326,6 +360,7 @@ class BusinessLoanDisburments extends Controller
         // Total Recover Amount
         $totalRecover = round($approvedLoan + $totalInterest, 2);
 
+        $isAdvanceInterest = ($scheme->gold_loan_setting === 'flat_advanced_interest');
 
         return view(
             "bussiness.disbursements.disburse-loan",
@@ -354,8 +389,8 @@ class BusinessLoanDisburments extends Controller
                 'totalInterest',
                 'totalRecover',
                 'emi',
-                'savingAccounts'
-
+                'savingAccounts',
+                'isAdvanceInterest'
             )
         );
     }

@@ -1,109 +1,130 @@
 @extends('layout.main')
-@section('page-title', '')
 
 @section('content')
 
-    <style>
-        input[type="radio"] {
-            width: 24px;
-            height: 24px;
-            accent-color: green;
-            /* Modern browsers */
-        }
+<style>
+    .tab-panel {
+        display: none;
+    }
 
-        input[type="checkbox"] {
+    .tab-panel.active {
+        display: block;
+    }
+</style>
 
-            accent-color: green;
-            /* Modern browsers */
-        }
-    </style>
+@php use Illuminate\Support\Str; @endphp
 
-    <div class="box col-span-12 lg:col-span-6">
+ <div class="box col-span-12 lg:col-span-6">
+
         <div class="mb-6 pb-6 bb-dashed flex justify-between items-center">
-            <h3 class="h3">ADD NEW ROLE / PERMISSION</h3>
+            <h3 class="h3">SHOW ROLE / PERMISSION</h3>
                 <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
                 </ol>
             <hr class="my-2 border-gray-300" />
         </div>
 
-        <form action="{{ route('roles.store') }}" method="POST">
-            @csrf
+        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
+            <div class="col-span-2 md:col-span-1">
+                <label for="name" class="mb-4 md:text-lg font-medium block">
+                    ROLE NAME
+                </label>
 
-            <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-                <div class="col-span-2 md:col-span-1">
-                    <label for="name" class="mb-4 md:text-lg font-medium block">
-                        ROLE NAME
+                <select name="role_id"
+                    class="w-full border rounded px-3 py-2"
+                    {{ ($readOnly ?? false) ? 'disabled' : '' }}>
+
+                    <option value="">Select Role</option>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->id }}"
+                            {{ ($rolePermission->role_id ?? '') == $role->id ? 'selected' : '' }}>
+                            {{ $role->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">
+                <label for="role_position" class="mb-4 md:text-lg font-medium block">
+                    ROLE POSITION/ WEIGHT-AGE
+                </label>
+                <input type="text"
+                    name="role_position"
+                    value="{{ $rolePermission->role_position ?? '' }}"
+                    class="w-full text-sm bg-secondary/5 border rounded px-3 py-2"
+                    {{ ($readOnly ?? false) ? 'readonly' : '' }}
+                />
+            </div>
+
+            <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">
+                <label for="permission_type" class="uppercase md:text-lg font-medium block mb-4">
+                    Permission Type
+                    <span class="text-error">*</span>
+                </label>
+                <div class="flex">
+                    <label class="flex items-center gap-2 space-x-2 p-2">
+                        <input type="radio"
+                            name="permission_type"
+                            value="admin"
+                            {{ ($rolePermission->permission_type ?? '') == 'admin' ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}
+                        >
+                        <span class="text-gray-70 capitalize">Admin Type</span>
                     </label>
-
-                    <!-- <input type="text" name="role_id"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
-                        placeholder="Select Role"> -->
-                        <select name="role_id" class="w-full border rounded px-3 py-2">
-                            <option value="">Select Role</option>
-                            @foreach($roles as $role)
-                                <option value="{{ $role->id }}">{{ $role->name }}</option>
-                            @endforeach
-                        </select>
-                        <!-- <option value="">Select Role</option>
-                        @foreach($roles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
-                        @endforeach
-                    </select> -->
+                    <label class="flex items-center gap-2 space-x-2 p-2">
+                        <input type="radio"
+                            name="permission_type"
+                            value="agent"
+                            {{ ($rolePermission->permission_type ?? '') == 'agent' ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}
+                        >
+                        <span class="text-gray-70 capitalize">Agent Type</span>
+                    </label>
+                    <label class="flex items-center gap-2 space-x-2 p-2">
+                        <input type="radio"
+                            name="permission_type"
+                            value="both"
+                            {{ ($rolePermission->permission_type ?? '') == 'both' ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}
+                        >
+                        <span class="text-gray-70 capitalize">Both Type</span>
+                    </label>
                 </div>
 
-                <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">
-                    <label for="role_position" class="mb-4 md:text-lg font-medium block">
-                        ROLE POSITION/ WEIGHT-AGE
-                    </label>
-                    <input type="text" name="role_position"
-                        class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                        placeholder="Enter Permission / Role Name" id="role_position" />
-                </div>
+            </div>
 
-                <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">
-                    <label for="permission_type" class="uppercase md:text-lg font-medium block mb-4">
-                        Permission Type
-                        <span class="text-error">*</span>
+            <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">
+                <label for="active" class="uppercase md:text-lg font-medium block mb-4">
+                    Active
+                    <span class="text-error">*</span>
+                </label>
+                <div class="flex">
+                    <label class="flex items-center gap-2 space-x-2 p-2">
+                        <input type="radio"
+                            name="active"
+                            value="Yes"
+                            {{ ($rolePermission->active ?? '') == 'Yes' ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}
+                        >
+                        <span class="text-gray-70 capitalize">Yes</span>
                     </label>
-                    <div class="flex">
-                        <label class="flex items-center gap-2 space-x-2 p-2">
-                            <input type="radio" name="permission_type" value="admin"
-                                class="text-green-600 focus:ring-green-500">
-                            <span class="text-gray-70 capitalize">Admin Type</span>
-                        </label>
-                        <label class="flex items-center gap-2 space-x-2 p-2">
-                            <input type="radio" name="permission_type" value="agent"
-                                class="text-green-600 focus:ring-green-500">
-                            <span class="text-gray-70 capitalize">Agent Type</span>
-                        </label>
-                        <label class="flex items-center gap-2 space-x-2 p-2">
-                            <input type="radio" name="permission_type" value="both"
-                                class="text-green-600 focus:ring-green-500" checked>
-                            <span class="text-gray-70 capitalize">Both Type</span>
-                        </label>
-                    </div>
-
-                </div>
-                <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">
-                    <label for="active" class="uppercase md:text-lg font-medium block mb-4">
-                        Active
-                        <span class="text-error">*</span>
+                    <label class="flex items-center gap-2 space-x-2 p-2">
+                        <input type="radio"
+                            name="active"
+                            value="No"
+                            {{ ($rolePermission->active ?? '') == 'No' ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}
+                        >
+                        <span class="text-gray-70 capitalize">No</span>
                     </label>
-                    <div class="flex">
-                        <label class="flex items-center gap-2 space-x-2 p-2">
-                            <input type="radio" name="active" value="Yes" class="text-green-600 focus:ring-green-500"
-                                checked>
-                            <span class="text-gray-70 capitalize">Yes</span>
-                        </label>
-                        <label class="flex items-center gap-2 space-x-2 p-2">
-                            <input type="radio" name="active" value="No" class="text-green-600 focus:ring-green-500">
-                            <span class="text-gray-70 capitalize">No</span>
-                        </label>
-                    </div>
                 </div>
             </div>
 
+        </div>
+
+            <h3>VIEW ROLE PERMISSION</h3>
+
             <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
+
                 <div class="col-span-2 md:col-span-6 md:grid-cols-2 lg:grid-cols-3  ">
                     <div class="main-inner ">
                         <button id="menuToggleBtn" type="button"
@@ -142,7 +163,7 @@
                                             <tr class="">
                                                 @foreach ($row as $item)
                                                     <td class="  text-start " style="padding: 5px 20px">
-                                                        <button class="tab-link active">
+                                                        <button type="button" class="tab-link" data-target="{{ $item['id'] ?? Str::slug($item['title']) }}">
                                                             {{ $item['title'] }}
                                                         </button>
                                                     </td>
@@ -153,17 +174,13 @@
                                 </div>
                             </div>
                             <div class="col-span-12 md:col-span-7 xl:col-span-8 box xl:p-8">
-                                <!-- <div class="flex justify-between items-center gap-2 bb-dashed pb-4 mb-4 lg:mb-6 lg:pb-6">
-                                                         @include('partials._horizontal-options')
-                                                       </div> -->
-                                <div class="bb-dashed border-secondary/20 mb-4 pb-4 lg:mb-6 lg:pb-6">
-                                    <div>
-                                        <!---------------------Dashboard------------------------>
+                                
+                                <div class="bb-dashed border-secondary/20 mb-4 pb-4 lg:mb-6 lg:pb-6">                    
+                                   
+                                    <!---------------------Dashboard------------------------>
 
-                                        @include('roles.checkboxes.dashboard')
-
-                                    </div>
-
+                                    @include('roles.checkboxes.dashboard')
+                                
                                     <!---------------------Company Profile------------------------>
 
                                     @include('roles.checkboxes.company')
@@ -259,57 +276,48 @@
                                     
                                     <!---------------------PAYMENT COLLECTIONS	------------------------>
                                     @include('roles.checkboxes.payment-col')
-                                     
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
-                    <button class="btn-primary" type="submit">
-                        Add Role
-                    </button>
-                    <button class="btn-outline" type="reset">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-
-        </form>
-
-    </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-    // Loop every section
-    document.querySelectorAll(".payload-section").forEach(section => {
+        const buttons = document.querySelectorAll(".tab-link");
+        const panels = document.querySelectorAll(".tab-panel");
 
-        // Find the check-all checkbox inside this section
-        const checkAll = section.querySelector(".check-all");
+        // Sab hide karo
+        panels.forEach(panel => panel.classList.remove("active"));
 
-        // If section has no check-all, skip
-        if (!checkAll) return;
+        // Default first show
+        if (buttons.length > 0) {
+            const firstTarget = buttons[0].dataset.target;
+            const firstPanel = document.getElementById(firstTarget);
+            if (firstPanel) {
+                firstPanel.classList.add("active");
+            }
+        }
 
-        // Find all child checkboxes (except check-all)
-        const items = section.querySelectorAll(".item-checkbox");
+        buttons.forEach(button => {
+            button.addEventListener("click", function () {
 
-        // When Check All is clicked
-        checkAll.addEventListener("change", () => {
-            items.forEach(cb => cb.checked = checkAll.checked);
-        });
+                const target = this.dataset.target;
 
-        // If any item is manually unchecked/checked → update Check All
-        items.forEach(cb => {
-            cb.addEventListener("change", () => {
-                const allChecked = Array.from(items).every(item => item.checked);
-                checkAll.checked = allChecked;
+                panels.forEach(panel => panel.classList.remove("active"));
+
+                const selected = document.getElementById(target);
+
+                if (selected) {
+                    selected.classList.add("active");
+                }
             });
         });
 
     });
-
-});
 </script>
+
 
 @endsection

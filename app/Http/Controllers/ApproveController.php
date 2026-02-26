@@ -491,7 +491,74 @@ class ApproveController extends Controller
                     'vehical_applications.branch_id'
                 )
                 ->where('vehical_loan_fore_closures.status', 0);
+            Log::info('Building Personal Loan Foreclosure Pending Query');
 
+            $personalForeclosureQuery = DB::table('personal_loan_fore_closures')
+                ->select(
+                    'personal_loan_fore_closures.id',
+                    DB::raw("'personal_loan_fore_closures' AS source_table"),
+                    'personal_loan_fore_closures.payment_mode AS payment_mode',
+                    'personal_loan_fore_closures.net_amount_k AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'personal_loan_fore_closures.status AS approve_status',
+                    'personal_loan_fore_closures.created_at',
+                    'branches.branch_name',
+                    'personal_loan_applications.id AS account_no',
+                    DB::raw("'Personal Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'personal_loan_applications.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'Foreclosure' AS transaction_type")
+                )
+                ->join(
+                    'personal_loan_applications',
+                    'personal_loan_applications.id',
+                    '=',
+                    'personal_loan_fore_closures.loan_id'
+                )
+                ->join(
+                    'branches',
+                    'branches.id',
+                    '=',
+                    'personal_loan_applications.branch_id'
+                )
+                ->where('personal_loan_fore_closures.status', '=', 0); // 0 = pending
+            Log::info('Building Personal Loan EMI Pending Query');
+
+            $personalLoanEmiQuery = DB::table('personal_loan_transactions')
+                ->select(
+                    'personal_loan_transactions.id',
+                    DB::raw("'personal_loan_transactions' AS source_table"),
+                    'personal_loan_transactions.fee_mode AS payment_mode',
+                    'personal_loan_transactions.amount_collected AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'personal_loan_transactions.status AS approve_status',
+                    'personal_loan_transactions.created_at',
+                    'branches.branch_name',
+                    'personal_loan_applications.id AS account_no',
+                    DB::raw("'Personal Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'personal_loan_applications.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'EMI Payment' AS transaction_type")
+                )
+                ->join(
+                    'personal_loan_applications',
+                    'personal_loan_applications.id',
+                    '=',
+                    'personal_loan_transactions.loan_id'
+                )
+                ->join(
+                    'branches',
+                    'branches.id',
+                    '=',
+                    'personal_loan_applications.branch_id'
+                )
+                ->where('personal_loan_transactions.status', '=', 'pending');
             // ️UNION ALL
 
             Log::info('Step 6: Combining All Queries Using UNION');
@@ -509,7 +576,10 @@ class ApproveController extends Controller
                 ->unionAll($dailyWeeklyEmiQuery)
                 ->unionAll($dailyWeeklyForeclosureQuery)
                 ->unionAll($vehicleEmiQuery)
-                ->unionAll($vehicleForeclosureQuery);
+
+                ->unionAll($vehicleForeclosureQuery)
+                ->unionAll($personalForeclosureQuery)
+                ->unionAll($personalLoanEmiQuery);
 
 
 
@@ -880,6 +950,67 @@ class ApproveController extends Controller
 
                     DB::commit();
                     return back()->with('success', 'Vehicle Loan Foreclosure approved successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'personal_loan_fore_closures') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $foreclosure = DB::table('personal_loan_fore_closures')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$foreclosure) {
+                        DB::rollBack();
+                        return back()->with('error', 'Foreclosure record not found.');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // 1️⃣ Update foreclosure status
+                        DB::table('personal_loan_fore_closures')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 1,
+                                'updated_at' => now()
+                            ]);
+
+                        // 2️⃣ Mark all EMI as PAID
+                        DB::table('personal_loan_emi_status')
+                            ->where('loan_id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 'PAID',
+                                'remaining_amount' => 0,
+                                'paid_date' => now(),
+                                'updated_at' => now()
+                            ]);
+
+                        // 3️⃣ Close loan
+                        DB::table('personal_loan_applications')
+                            ->where('id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 2, // Closed
+                                'updated_at' => now()
+                            ]);
+                    } elseif ($status === 'disapproved') {
+
+                        DB::table('personal_loan_fore_closures')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 0,
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'Personal Loan Foreclosure updated successfully.');
                 } catch (\Exception $e) {
 
                     DB::rollBack();
@@ -1633,6 +1764,80 @@ class ApproveController extends Controller
                     }
                 } catch (\Exception $e) {
 
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'personal_loan_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $emi = DB::table('personal_loan_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$emi) {
+                        DB::rollBack();
+                        return back()->with('error', 'Transaction not found');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // 1️⃣ Mark transaction paid
+                        DB::table('personal_loan_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'paid',
+                                'paid_date' => now(),
+                                'updated_at' => now()
+                            ]);
+
+                        // 2️⃣ Update EMI status
+                        $emiStatus = DB::table('personal_loan_emi_status')
+                            ->where('loan_id', $emi->loan_id)
+                            ->where('emi_no', $emi->emi_no)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if ($emiStatus) {
+
+                            $newRemaining = round(
+                                $emiStatus->remaining_amount - $emi->amount_collected,
+                                2
+                            );
+
+                            DB::table('personal_loan_emi_status')
+                                ->where('id', $emiStatus->id)
+                                ->update([
+                                    'status' => $newRemaining <= 0 ? 'PAID' : 'PARTIAL',
+                                    'remaining_amount' => $newRemaining <= 0 ? 0 : $newRemaining,
+                                    'paid_date' => now()->format('Y-m-d'),
+                                    'updated_at' => now()
+                                ]);
+                        }
+
+                        // 3️⃣ Close loan if no remaining
+                        $totalRemaining = DB::table('personal_loan_emi_status')
+                            ->where('loan_id', $emi->loan_id)
+                            ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
+                            ->sum('remaining_amount');
+
+                        if ($totalRemaining <= 0) {
+                            DB::table('personal_loan_applications')
+                                ->where('id', $emi->loan_id)
+                                ->update([
+                                    'status' => 2,
+                                    'updated_at' => now()
+                                ]);
+                        }
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'Personal Loan EMI approved successfully.');
+                } catch (\Exception $e) {
                     DB::rollBack();
                     return back()->with('error', $e->getMessage());
                 }
