@@ -52,7 +52,7 @@
    <div class="box mt-5">
      
     <div class="" style=" text-align:center; border:none; font-size: 18px;  font-weight: bold;">
-          {{ $companyName }}  &nbsp; र. नं. 12345 
+          {{ $company->company_name }}  &nbsp; र. नं.  {{ $company->cin_no }}
     </div>
     {{-- <table style="width:100%; font-size:20px; margin-bottom:10px; border:none;">
         <tr>

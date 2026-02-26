@@ -78,9 +78,9 @@
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 py-3">
                                 <option value="">ALL</option>
                                 @foreach($branches as $b)
-                                    <option value="{{ $b->id }}" {{ request('branch_id') == $b->id ? 'selected' : '' }}>
-                                        {{ $b->branch_name }}
-                                    </option>
+                                <option value="{{ $b->id }}" {{ request('branch_id')==$b->id ? 'selected' : '' }}>
+                                    {{ $b->branch_name }}
+                                </option>
                                 @endforeach
                             </select>
                         </div>
@@ -124,7 +124,7 @@
 
                     <div class="mt-5 flex justify-center gap-4">
                         <button class="btn-primary px-1 py-2 text-sm uppercase">
-                           <i class="las la-search"></i>
+                            <i class="las la-search"></i>
                             Search
                         </button>
                         <a href="{{ url()->current() }}" class="btn-warning px-1 py-2 text-sm uppercase">Clear</a>
@@ -138,17 +138,22 @@
         <div class="col-span-12 box lg:col-span-12">
 
             <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
-                <a href="{{ route('accounts.vehical.export.csv') }}" 
+                <a href="{{ route('vehicle.print', request()->all()) }}" target="_blank"
+                    class="btn-primary rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
+                    <i class="las la-print"></i>
+                    Print Report
+                </a>
+                <a href="{{ route('accounts.vehical.export.csv') }}"
                     class="btn-error rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
-                        <i class="las la-download"></i>
-                        Download CSV
+                    <i class="las la-download"></i>
+                    Download CSV
                 </a>
             </div>
 
             <div class="pb-4 overflow-x-auto lg:pb-6">
 
                 <table class="w-full whitespace-nowrap select-all-table" id="">
-                    
+
                     <thead>
                         <tr class="bg-secondary/5 dark:bg-bg3">
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -202,7 +207,7 @@
                     <tbody>
                         @forelse($goldLoan as $loan)
                             <tr class="border-b dark:border-bg3">
-                                
+
                                 <!-- BRANCH -->
                                 <td class="px-6 py-5 uppercase">
                                     {{ $loan->branch->branch_name ?? 'N/A' }}
@@ -211,18 +216,18 @@
                                 <!-- CUSTOMER -->
                                 <td class="text-start !py-5 px-6">
                                     <a href="{{ url('members/member/' . $loan->member_id) }}"
-                                    class="text-green-600 hover:underline">
+                                        class="text-green-600 hover:underline">
                                         {{ $loan->member->full_name ?? 'N/A' }} -
-                                        {{ $loan->member->member_no ?? '---' }}               
+                                        {{ $loan->member->member_no ?? '---' }}
                                     </a>
                                 </td>
 
                                 <!-- ACCOUNT NO -->
                                 <td class="px-6 py-5">
-                                    <a href="{{ route('vehical.account.show', $loan->id) }}" 
+                                    <a href="{{ route('vehical.account.show', $loan->id) }}"
                                         class="text-green-600 hover:underline">
                                         {{-- {{ $loan->id }} --}}
-                                         {{ str_pad($loan->id, 10, '0', STR_PAD_LEFT) }}
+                                        {{ str_pad($loan->id, 10, '0', STR_PAD_LEFT) }}
                                     </a>
                                     {{-- {{ $loan->id ?? 'N/A' }} --}}
                                 </td>
@@ -257,7 +262,7 @@
                                 <!-- CURRENT DEBT -->
                                 <td class="px-6 py-5">
                                     {{ number_format($loan->current_debt ?? 0, 2) }}
-                                </td>            
+                                </td>
 
                             </tr>
                         @empty
@@ -276,7 +281,7 @@
             <div class="mt-4">
                 <x-pagination :paginator="$goldLoan" />
             </div>
-            
+
         </div>
 
         <script>

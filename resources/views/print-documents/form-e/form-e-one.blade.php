@@ -82,7 +82,8 @@
         <h4 style=" padding-bottom: 5px;  margin:0; text-align: center;  font-size:18px; font-weight:bold;">
             <div class="title">नमुना ई-1</div>
         </h4>
-        <div class="sub-title">{{ $companyName }} &nbsp; र. नं. 12345  &nbsp;  तालुका ______ जि._________
+        <div class="sub-title">
+        {{ $company->company_name }}  &nbsp; र. नं.  {{ $company->cin_no }}  &nbsp;  तालुका ______ जि._________
         </div>
         <hr>
     </div>

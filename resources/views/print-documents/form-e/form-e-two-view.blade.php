@@ -129,9 +129,11 @@
                
             </div>
 
-        <h2 style="margin-top:70px; text-align: center;">नमुना ई-2</h2>
-        <h3 >(नियम 5 (2) पहा)</h3>
-        <h3 style="margin-bottom: 10px">{{ $companyName }} &nbsp; र. नं. 12345  &nbsp;  तालुका ______ जि._________</h3>
+        <h3 style="margin-top:40px; text-align: center;">नमुना ई-2</h3>
+        <h4 style="text-align: center;">(नियम 5 (2) पहा)</h4>
+        <h4 style="margin-bottom: 10px;text-align: center">
+            {{ $company->company_name }}  &nbsp; र. नं.  {{ $company->cin_no }}   तालुका ______ जि._________
+        </h4>
 
         <table class="main-table">
             <thead>
