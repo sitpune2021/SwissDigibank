@@ -14,10 +14,8 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Account;
 
-
 class PersonalDisbursementController extends Controller
 {
-
 
     public function index()
     {
@@ -233,7 +231,6 @@ class PersonalDisbursementController extends Controller
         }
     }
 
-
     public function show($id)
     {
         $disbursement = PersonalLoanApplication::with(['member', 'branch', 'scheme'])
@@ -245,24 +242,12 @@ class PersonalDisbursementController extends Controller
 
         $scheme = optional($disbursement->scheme);
 
-        /*
-    |--------------------------------------------------------------------------
-    | 1️⃣ FIXED LOAN AMOUNT LOGIC
-    |--------------------------------------------------------------------------
-    | If approved amount exists use it,
-    | otherwise fallback to original loan amount
-    */
         $loanAmount = $disbursement->approved_loan_amount > 0
             ? $disbursement->approved_loan_amount
             : $disbursement->loan_amount;
 
         $approvedLoan = (float) $loanAmount;
 
-        /*
-    |--------------------------------------------------------------------------
-    | 2️⃣ CHARGES
-    |--------------------------------------------------------------------------
-    */
         $processingFee = $scheme->processing_fee ?? 0;
         $stampDutyFee  = $scheme->stamp_duty_charge ?? 0;
         $insuranceFee  = $scheme->insurance_fee ?? 0;
@@ -278,20 +263,10 @@ class PersonalDisbursementController extends Controller
         $insuranceGst = ($insuranceFee * $gstPercent) / 100;
         $insuranceTotal = $insuranceFee + $insuranceGst;
 
-        /*
-    |--------------------------------------------------------------------------
-    | 3️⃣ ADVANCE INTEREST
-    |--------------------------------------------------------------------------
-    */
         $annualRate = (float) ($scheme->annual_interest_rate ?? 0);
 
         $advanceInterest = ($approvedLoan * $annualRate) / 100;
 
-        /*
-    |--------------------------------------------------------------------------
-    | 4️⃣ TOTAL DEDUCTIONS
-    |--------------------------------------------------------------------------
-    */
         $totalDeductions =
             $processingTotal +
             $stampTotal +
@@ -300,11 +275,7 @@ class PersonalDisbursementController extends Controller
 
         $finalAmountToDisburse = max($approvedLoan - $totalDeductions, 0);
 
-        /*
-    |--------------------------------------------------------------------------
-    | 5️⃣ EMI CALCULATION
-    |--------------------------------------------------------------------------
-    */
+
         $tenureMonths = (int) (
             $disbursement->tenure_value ??
             $scheme->tenure ??
@@ -328,11 +299,6 @@ class PersonalDisbursementController extends Controller
         $totalInterest = round(($emi * $tenureMonths) - $approvedLoan, 2);
         $totalRecover  = round($approvedLoan + $totalInterest, 2);
 
-        /*
-    |--------------------------------------------------------------------------
-    | 6️⃣ RETURN VIEW
-    |--------------------------------------------------------------------------
-    */
         return view(
             "personal.disbursements.disburse-loan",
             compact(
@@ -356,111 +322,4 @@ class PersonalDisbursementController extends Controller
             )
         );
     }
-    // public function show($id)
-    // {
-    //     // Load loan + scheme + member + branch
-    //     $disbursement = PersonalLoanApplication::with(['member', 'branch', 'scheme'])->findOrFail($id);
-    //     $banks = Bank::pluck('name', 'id');
-    //     // $savingAccounts = SavingAccount::pluck('account_number');
-    //     $savingAccounts = Account::select('id', 'account_no')->get();
-
-    //     // Base scheme values
-    //     $scheme = optional($disbursement->scheme);
-    //     $processingFee = $scheme->processing_fee ?? 0;
-    //     $stampDutyFee = $scheme->stamp_duty_charge ?? 0;
-    //     $insuranceFee = $scheme->insurance_fee ?? 0;
-
-    //     // Common GST percent
-    //     $gstPercent = 18;
-
-    //     // ===== Processing Fee Logic =====
-    //     $processingGst = ($processingFee * $gstPercent) / 100;
-    //     $processingTotal = $processingFee + $processingGst;
-
-    //     // ===== Stamp Duty Logic =====
-    //     $stampGst = ($stampDutyFee * $gstPercent) / 100;
-    //     $stampTotal = $stampDutyFee + $stampGst;
-
-    //     // ===== Insurance Fee Logic =====
-    //     $insuranceGst = ($insuranceFee * $gstPercent) / 100;
-    //     $insuranceTotal = $insuranceFee + $insuranceGst;
-
-    //     // ===== SGST / CGST / IGST fix 0 =====
-    //     $sgst = 0;
-    //     $cgst = 0;
-    //     $igst = 0;
-
-    //     // ===== Interest calculation =====
-    //     $maxLoanAmount = $scheme->max_loan_amount ?? 0;
-    //     $annualInterestRate = $scheme->annual_interest_rate ?? 0;
-    //     $advanceInterest = ($maxLoanAmount * $annualInterestRate) / 100;
-
-    //     // ===== Total deductions =====
-    //     $totalDeductions = $processingTotal + $stampTotal + $insuranceTotal + $advanceInterest;
-
-    //     // ===== Final amount to disburse =====
-    //     $loanAmount = $disbursement->net_loan_amount ?? 0;
-    //     $finalAmountToDisburse = $loanAmount - $totalDeductions;
-    //     if ($finalAmountToDisburse < 0) $finalAmountToDisburse = 0; // safety
-
-    //     // Approved Loan Amount
-    //     $approvedLoan = (float) ($disbursement->approved_loan_amount ?? 0);
-
-    //     // Annual interest rate
-    //     $annualRate = (float) ($scheme->annual_interest_rate ?? 0);
-
-    //     // Tenure months (default 12)
-    //     $tenureMonths = (int) ($disbursement->tenure_months ?? 12);
-
-    //     // Monthly Rate
-    //     $monthlyRate = $annualRate / 12 / 100;
-
-    //     // EMI Calculation (reducing)
-    //     if ($monthlyRate > 0) {
-    //         $emi = round(
-    //             ($approvedLoan * $monthlyRate * pow(1 + $monthlyRate, $tenureMonths)) /
-    //                 (pow(1 + $monthlyRate, $tenureMonths) - 1),
-    //             2
-    //         );
-    //     } else {
-    //         $emi = round($approvedLoan / $tenureMonths, 2);
-    //     }
-
-    //     // Total interest
-    //     $totalInterest = round(($emi * $tenureMonths) - $approvedLoan, 2);
-
-    //     // Total Recover Amount
-    //     $totalRecover = round($approvedLoan + $totalInterest, 2);
-
-    //     return view(
-    //         "personal.disbursements.disburse-loan",
-    //         compact(
-    //             'disbursement',
-    //             'banks',
-    //             'processingFee',
-    //             'processingGst',
-    //             'processingTotal',
-    //             'stampDutyFee',
-    //             'stampGst',
-    //             'stampTotal',
-    //             'insuranceFee',
-    //             'insuranceGst',
-    //             'insuranceTotal',
-    //             'gstPercent',
-    //             'sgst',
-    //             'cgst',
-    //             'igst',
-    //             'maxLoanAmount',
-    //             'annualInterestRate',
-    //             'advanceInterest',
-    //             'finalAmountToDisburse',
-    //             'loanAmount',
-    //             'totalDeductions',
-    //             'totalInterest',
-    //             'totalRecover',
-    //             'emi',
-    //             'savingAccounts'
-    //         )
-    //     );
-    // }
 }

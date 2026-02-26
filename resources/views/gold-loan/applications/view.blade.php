@@ -136,7 +136,7 @@
             @if ($application->status == 0 && !session('pending_request'))
                 <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn-primary">
+                    <button type="submit" class="btn-primary px-2 py-2 rounded-10 uppercase text-sm">
                         SUBMIT FOR APPROVAL
                     </button>
                 </form>

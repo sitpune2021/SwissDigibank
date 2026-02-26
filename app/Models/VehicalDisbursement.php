@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class VehicalDisbursement extends Model
 {
-    
+    protected $table = 'vehical_disbursements';   // 👈 ADD THIS
+
     protected $fillable = [
         'loan_application_id',
         'disbursal_date',
