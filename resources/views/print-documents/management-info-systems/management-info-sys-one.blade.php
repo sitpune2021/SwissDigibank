@@ -67,7 +67,7 @@
 
     <!-- Header -->
     <div class="header">
-       {{ $companyName }} यांची माहिती व्यवस्थापन प्रणाली
+      {{ $company->company_name }}  &nbsp; र. नं.  {{ $company->cin_no }}   यांची माहिती व्यवस्थापन प्रणाली
     </div>
     <div class="header">
         अहवाल माहे {{ $month ?? '____________' }} {{ $year ?? '_____' }} अखेर
@@ -199,7 +199,9 @@
 
     <!-- Signature -->
     <div class=" " style="text-align: right; padding:5px 20px;">
-        <h5 style="font-size: 16px;">{{ $companyName }}</h5>
+        <h5 style="font-size: 16px;">
+            {{ $company->company_name }}
+        </h5>
     </div>
 
 

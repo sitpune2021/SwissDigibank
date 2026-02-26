@@ -114,10 +114,12 @@
             <!-- Clear Float -->
             <div style="clear:both; "></div>
             <h4 style=" padding-bottom: 5px;  margin:0; text-align: center;  font-size:18px; font-weight:bold;">
-                <h2>नमुना ई-1</h2>
+                <h3>नमुना ई-1</h3>
             </h4>
 
-            <h3 style="margin-bottom: 10px">{{ $companyName }} &nbsp; र. नं. 12345  &nbsp;  तालुका ______ जि._________</h3>
+            <h4 style="margin-bottom: 10px; text-align: center ; margin-top: 10px;">
+                   {{ $company->company_name }}  &nbsp; र. नं.  {{ $company->cin_no }}  &nbsp;  तालुका ______ जि._________
+            </h4>
 
             <hr>
         </div>
