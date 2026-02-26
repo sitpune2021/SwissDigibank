@@ -2,6 +2,7 @@
 @section('page-title', '')
 
 @section('content')
+
     <style>
         input[type="radio"] {
             width: 24px;
@@ -17,7 +18,6 @@
         }
     </style>
 
-
     <div class="box col-span-12 lg:col-span-6">
         <div class="mb-6 pb-6 bb-dashed flex justify-between items-center">
             <h3 class="h3">ADD NEW ROLE / PERMISSION</h3>
@@ -26,8 +26,9 @@
             <hr class="my-2 border-gray-300" />
         </div>
 
-        <form action="{{ route('role_permission.store') }}" method="POST">
+        <form action="{{ route('roles.store') }}" method="POST">
             @csrf
+
             <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
                 <div class="col-span-2 md:col-span-1">
                     <label for="name" class="mb-4 md:text-lg font-medium block">
@@ -101,6 +102,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
                 <div class="col-span-2 md:col-span-6 md:grid-cols-2 lg:grid-cols-3  ">
                     <div class="main-inner ">
@@ -272,12 +274,13 @@
                     </button>
                 </div>
             </div>
+
         </form>
 
     </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
 
     // Loop every section
     document.querySelectorAll(".payload-section").forEach(section => {
