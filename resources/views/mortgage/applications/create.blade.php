@@ -662,17 +662,6 @@
 
                             </div>
                         </div>
-                        <input type="hidden" name="ratio_enabled" id="ratio_enabled"
-                            value="{{ old('ratio_enabled', $application->ratio_enabled ?? 'No') }}">
-
-                        <input type="hidden" name="ratio_first_emi" id="ratio_first_emi"
-                            value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}">
-
-                        <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage"
-                            value="{{ old('ratio_first_percentage', $application->ratio_first_percentage ?? '') }}">
-
-                        <input type="hidden" name="interest_as_emi" id="interest_as_emi"
-                            value="{{ old('interest_as_emi', $application->interest_as_emi ?? '') }}">
 
                         <input type="hidden" name="interest_as_first" id="interest_as_first"
                             value="{{ old('interest_as_first', $application->interest_as_first ?? '') }}">
@@ -722,7 +711,7 @@
                             <label class="block mb-2 font-semibold">EMI Ratio <span id="emi_total_text"></span> </label>
 
                             <div class="flex gap-3">
-                                <input type="number" id="emi_ratio_1"
+                                <input type="number" name="ratio_first_emi" id="emi_ratio_1"
                                     class="w-full rounded-10 bg-secondary/5 border p-2"
                                     value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}"
                                     min="1">
@@ -864,8 +853,7 @@
                                                 Plot</option>
                                             <option value="house"
                                                 {{ $prop->property_type == 'house' ? 'selected' : '' }}>House</option>
-                                            <option value="shop"
-                                                {{ $prop->property_type == 'shop' ? 'selected' : '' }}>
+                                            <option value="shop" {{ $prop->property_type == 'shop' ? 'selected' : '' }}>
                                                 Shop</option>
                                         </select>
                                     </div>
@@ -1106,27 +1094,6 @@
 
             const tenureValueInput = document.querySelector("input[name='tenure_value']");
 
-            function calculateRatio() {
-
-                let tenure = parseInt(tenureValueInput?.value) || 0;
-                let firstEmi = parseInt(emiRatio1?.value) || 0;
-
-                if (firstEmi > tenure) {
-                    document.getElementById("emiRatioError").classList.remove("hidden");
-                    emiRatio2.value = 0;
-                    return;
-                } else {
-                    document.getElementById("emiRatioError").classList.add("hidden");
-                }
-
-                emiRatio2.value = tenure - firstEmi;
-
-                let firstPercent = parseFloat(amtRatio1?.value) || 0;
-                amtRatio2.value = 100 - firstPercent;
-
-                hiddenRatioFirstEmi.value = firstEmi;
-            }
-
             if (divideCheckbox) {
                 divideCheckbox.addEventListener("change", function() {
                     if (this.checked) {
@@ -1138,9 +1105,6 @@
                     }
                 });
             }
-
-            emiRatio1?.addEventListener("input", calculateRatio);
-            amtRatio1?.addEventListener("input", calculateRatio);
 
         });
     </script>
@@ -1231,114 +1195,7 @@
             });
         });
     </script>
-    {{-- <script>
-        document.addEventListener("DOMContentLoaded", function() {
 
-            const schemeSelect = document.getElementById("scheme_id");
-
-            const reduceBox = document.getElementById("reduce_ratio_box");
-            const ratioFields = document.getElementById("ratioFields");
-            const divideCheckbox = document.getElementById("divide_emi_ratio");
-            const hiddenRatioEnabled = document.getElementById("ratio_enabled");
-
-            function resetAll() {
-                reduceBox.style.display = "none";
-                ratioFields.style.display = "none";
-                divideCheckbox.checked = false;
-                hiddenRatioEnabled.value = "No";
-            }
-
-            function applyInterestLogic(type) {
-
-                resetAll();
-
-                type = (type || "").toLowerCase();
-
-                // ==========================
-                // 1️⃣ REDUCING EMI
-                // ==========================
-                if (type === "reducing_emi") {
-
-                    reduceBox.style.display = "flex";
-
-                    if (hiddenRatioEnabled.value === "Yes") {
-                        divideCheckbox.checked = true;
-                        ratioFields.style.display = "block";
-                    }
-                }
-
-                // ==========================
-                // 2️⃣ FLAT EMI
-                // ==========================
-                else if (type === "flat_emi") {
-
-                    // No ratio allowed
-                    reduceBox.style.display = "none";
-                    ratioFields.style.display = "none";
-
-                    // Here you can show flat EMI related options if needed
-                    console.log("Flat EMI Selected");
-                }
-
-                // ==========================
-                // 3️⃣ FLAT ADVANCED INTEREST
-                // ==========================
-                else if (type === "flat_advanced_interest") {
-
-                    // No ratio allowed
-                    reduceBox.style.display = "none";
-                    ratioFields.style.display = "none";
-
-                    console.log("Flat Advanced Selected");
-                }
-
-            }
-
-            schemeSelect.addEventListener("change", function() {
-                const selected = this.options[this.selectedIndex];
-                const type = selected.getAttribute("data-type");
-
-                applyInterestLogic(type);
-            });
-
-            // Trigger on page load
-            if (schemeSelect.value) {
-                schemeSelect.dispatchEvent(new Event("change"));
-            }
-
-            // Ratio checkbox toggle
-            divideCheckbox.addEventListener("change", function() {
-                if (this.checked) {
-                    ratioFields.style.display = "block";
-                    hiddenRatioEnabled.value = "Yes";
-                } else {
-                    ratioFields.style.display = "none";
-                    hiddenRatioEnabled.value = "No";
-                }
-            });
-
-        });
-        const emiTotalText = document.getElementById("emi_total_text");
-
-        function updateEmiTotalText() {
-            let tenure = parseInt(tenureValueInput?.value) || 0;
-
-            if (tenure > 0) {
-                emiTotalText.innerText = `(TOTAL EMI : ${tenure})`;
-            } else {
-                emiTotalText.innerText = "";
-            }
-        }
-
-        // Tenure change pe update
-        tenureValueInput?.addEventListener("input", function() {
-            updateEmiTotalText();
-            calculateRatio(); // already existing function
-        });
-
-        // Page load pe bhi run karo
-        updateEmiTotalText();
-    </script> --}}
     <!-- checkbox show when scheme select -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {

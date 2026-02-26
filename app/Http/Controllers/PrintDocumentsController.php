@@ -139,11 +139,11 @@ class PrintDocumentsController extends Controller
             'bank_name' => $companyName,
             'address' => 'SBC GLOBAL TOWAR ,  SHEGAON Maharashtra - 444001  ',
         ];
-        return view('print-documents.letter-head.index',$data);
+        return view('print-documents.letter-head.index', $data);
     }
     public function print_letter_head()
     {
-         $companyName = Company::value('company_name');
+        $companyName = Company::value('company_name');
         $data = [
             'bank_name' => $companyName,
             'address' => 'SBC GLOBAL TOWAR ,  SHEGAON Maharashtra - 444001  ',
@@ -215,6 +215,9 @@ class PrintDocumentsController extends Controller
         ])
             ->orderBy('id', 'asc')
             ->get();
+
+
+
         return view('print-documents.form-i-and-j.index-from-i', compact('members'));
 
     }
@@ -252,17 +255,15 @@ class PrintDocumentsController extends Controller
 //   $members = Member::with('address')
 //         ->orderBy('id', 'asc')
 //         ->get();
- $companyName = Company::value('company_name');
+
+        $company = Company::select('company_name', 'cin_no')->first();
         $members = Member::with([
             'address.state'
         ])
             ->orderBy('id', 'asc')
             ->get();
 
-
-
-
-        return view('print-documents.form-i-and-j.form-j-view', compact('members','companyName'));
+        return view('print-documents.form-i-and-j.form-j-view', compact('members', 'company'));
     }
     public function generateFormJ()
     {
@@ -270,7 +271,7 @@ class PrintDocumentsController extends Controller
 //   $members = Member::with('address')
 //         ->orderBy('id', 'asc')
 //         ->get();
-$companyName = Company::value('company_name');
+       $company = Company::select('company_name', 'cin_no')->first();
         $members = Member::with([
             'address.state'
         ])
@@ -279,7 +280,7 @@ $companyName = Company::value('company_name');
 
         $html = view(
             'print-documents.form-i-and-j.form-j',
-            compact('members','companyName')
+            compact('members', 'company')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
@@ -290,10 +291,10 @@ $companyName = Company::value('company_name');
         )->header('Content-Type', 'application/pdf');
     }
 
-      public function generateFormJPrint()
-{
-    $companyName = Company::value('company_name');
-    $members = Member::with([
+    public function generateFormJPrint()
+    {
+         $company = Company::select('company_name', 'cin_no')->first();
+        $members = Member::with([
             'address.state'
         ])
             ->orderBy('id', 'asc')
@@ -301,41 +302,40 @@ $companyName = Company::value('company_name');
 
         $html = view(
             'print-documents.form-i-and-j.form-j',
-            compact('members','companyName')
+            compact('members', 'company')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
         $mpdf->WriteHTML($html);
 
 
-    $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->SetJS('this.print();'); // auto open print dialog
 
-    return response($mpdf->Output('Form_J.pdf', 'I'))
-        ->header('Content-Type', 'application/pdf');
-}
+        return response($mpdf->Output('Form_J.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+    }
 
 
     public function formiView()
     {
-         $companyName = Company::value('company_name');
+        $company = Company::select('company_name', 'cin_no')->first();
         $members = Member::with('address.state')
             ->orderBy('id', 'asc')
             ->get();
 
-
-
-        return view('print-documents.form-i-and-j.form-i-view', compact('members','companyName'));
+        return view('print-documents.form-i-and-j.form-i-view', compact('members', 'company'));
     }
     public function generateFormI()
     {
-        $companyName = Company::value('company_name');
+        // $companyName = Company::value('company_name');
+        $company = Company::select('company_name', 'cin_no')->first();
         $members = Member::with('address.state')
             ->orderBy('id', 'asc')
             ->get();
 
         $html = view(
             'print-documents.form-i-and-j.form-i',
-            compact('members','companyName')
+            compact('members', 'company')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
@@ -346,34 +346,34 @@ $companyName = Company::value('company_name');
         )->header('Content-Type', 'application/pdf');
     }
 
-       public function generateFormIPrint()
-{
-     $companyName = Company::value('company_name');
-    $members = Member::with('address.state')
+    public function generateFormIPrint()
+    {
+        $company = Company::select('company_name', 'cin_no')->first();
+        $members = Member::with('address.state')
             ->orderBy('id', 'asc')
             ->get();
 
         $html = view(
             'print-documents.form-i-and-j.form-i',
-            compact('members','companyName')
+            compact('members', 'company')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
         $mpdf->WriteHTML($html);
 
 
-    $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->SetJS('this.print();'); // auto open print dialog
 
-    return response($mpdf->Output('Form_I.pdf', 'I'))
-        ->header('Content-Type', 'application/pdf');
-}
+        return response($mpdf->Output('Form_I.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+    }
     public function procedingBookView()
     {
         // $members = Member::orderBy('id', 'asc')->get();
 //   $members = Member::with('address')
 //         ->orderBy('id', 'asc')
 //         ->get();
-$companyName = Company::value('company_name');
+       $company = Company::select('company_name', 'cin_no')->first();
         $members = Member::with([
             'address.state'
         ])
@@ -384,7 +384,7 @@ $companyName = Company::value('company_name');
 
         return view(
             'print-documents.form-i-and-j.proceding-book-view',
-            compact('members','companyName')
+            compact('members', 'company')
         );
     }
     public function procedingBook()
@@ -393,7 +393,7 @@ $companyName = Company::value('company_name');
 //   $members = Member::with('address')
 //         ->orderBy('id', 'asc')
 //         ->get();
-$companyName = Company::value('company_name');
+       $company = Company::select('company_name', 'cin_no')->first();
         $members = Member::with([
             'address.state'
         ])
@@ -402,7 +402,7 @@ $companyName = Company::value('company_name');
 
         $html = view(
             'print-documents.form-i-and-j.proceding-book',
-            compact('members','companyName')
+            compact('members', 'company')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
@@ -414,10 +414,10 @@ $companyName = Company::value('company_name');
         )->header('Content-Type', 'application/pdf');
     }
 
-       public function procedingBookPrint()
-{ 
-    $companyName = Company::value('company_name');
-    $members = Member::with([
+    public function procedingBookPrint()
+    {
+      $company = Company::select('company_name', 'cin_no')->first();
+        $members = Member::with([
             'address.state'
         ])
             ->orderBy('id', 'asc')
@@ -425,7 +425,7 @@ $companyName = Company::value('company_name');
 
         $html = view(
             'print-documents.form-i-and-j.proceding-book',
-            compact('members','companyName')
+            compact('members', 'company')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
@@ -434,11 +434,11 @@ $companyName = Company::value('company_name');
 
 
 
-    $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->SetJS('this.print();'); // auto open print dialog
 
-    return response($mpdf->Output('proceding-book.pdf', 'I'))
-        ->header('Content-Type', 'application/pdf');
-}
+        return response($mpdf->Output('proceding-book.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+    }
 
     public function index_forme()
     {
@@ -453,16 +453,16 @@ $companyName = Company::value('company_name');
     }
     public function letterheadView()
     {
-         $companyName = Company::value('company_name');
+        $company = Company::select('company_name', 'cin_no')->first();
         $members = Member::with('address.state')
             ->orderBy('id', 'asc')
             ->get();
 
-        return view('print-documents.form-e.letterhead', compact('members','companyName'));
+        return view('print-documents.form-e.letterhead', compact('members', 'company'));
     }
     public function letterhead()
     {
-        $companyName = Company::value('company_name');
+         $company = Company::select('company_name', 'cin_no')->first();
         $members = Member::with([
             'address.state'
         ])
@@ -471,7 +471,7 @@ $companyName = Company::value('company_name');
 
         $html = view(
             'print-documents.form-e.letterhead-download',
-            compact('members','companyName')
+            compact('members', 'company')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
@@ -484,9 +484,9 @@ $companyName = Company::value('company_name');
     }
 
     public function letterheadPrint()
-{
-    
- $companyName = Company::value('company_name');
+    {
+
+          $company = Company::select('company_name', 'cin_no')->first();
         $members = Member::with([
             'address.state'
         ])
@@ -495,29 +495,30 @@ $companyName = Company::value('company_name');
 
         $html = view(
             'print-documents.form-e.letterhead-download',
-            compact('members','companyName')
+            compact('members', 'company')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
         // $mpdf->AddPage('L');  
         $mpdf->WriteHTML($html);
 
-    $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->SetJS('this.print();'); // auto open print dialog
 
-    return response($mpdf->Output('letter_head_Book.pdf', 'I'))
-        ->header('Content-Type', 'application/pdf');
-}
+        return response($mpdf->Output('letter_head_Book.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+    }
     public function eOneView()
     {
         // $members = Member::orderBy('id', 'asc')->get();
-  $companyName = Company::value('company_name');
-        return view('print-documents.form-e.form-e-one-view',compact('companyName'));
+       $company = Company::select('company_name', 'cin_no')->first();
+        return view('print-documents.form-e.form-e-one-view', compact('company'));
 
     }
     public function eOneForm()
     {
         // $members = Member::orderBy('id', 'asc')->get();
-         $companyName = Company::value('company_name');
+        $company = Company::select('company_name', 'cin_no')->first();
+      
         $members = Member::with([
             'address.state'
         ])
@@ -525,7 +526,7 @@ $companyName = Company::value('company_name');
             ->get();
         $html = view(
             'print-documents.form-e.form-e-one',
-            compact('members','companyName')
+            compact('members', 'company')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
@@ -539,35 +540,38 @@ $companyName = Company::value('company_name');
     }
 
     public function eOnePrint()
-{
-    $companyName = Company::value('company_name');
-    $members = Member::with(['address.state'])
-        ->orderBy('id', 'asc')
-        ->get();
+    {
+       $company = Company::select('company_name', 'cin_no')->first();
+      
+        $members = Member::with(['address.state'])
+            ->orderBy('id', 'asc')
+            ->get();
 
-    $html = view('print-documents.form-e.form-e-one', compact('members','companyName'))->render();
+        $html = view('print-documents.form-e.form-e-one', compact('members', 'company'))->render();
 
-    $mpdf = $this->getMarathiMpdf();
-    $mpdf->WriteHTML($html);
+        $mpdf = $this->getMarathiMpdf();
+        $mpdf->WriteHTML($html);
 
-    $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->SetJS('this.print();'); // auto open print dialog
 
-    return response($mpdf->Output('Form_E1.pdf', 'I'))
-        ->header('Content-Type', 'application/pdf');
-}
+        return response($mpdf->Output('Form_E1.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+    }
 
     public function eTwoView()
     {
-         $companyName = Company::value('company_name');
+       $company = Company::select('company_name', 'cin_no')->first();
+      
         // $members = Member::orderBy('id', 'asc')->get();
 
-        return view('print-documents.form-e.form-e-two-view',compact('companyName'));
+        return view('print-documents.form-e.form-e-two-view', compact('company'));
 
     }
     public function eTwo()
     {
-         $companyName = Company::value('company_name');
-        // $members = Member::orderBy('id', 'asc')->get();
+        $company = Company::select('company_name', 'cin_no')->first();
+        
+            // $members = Member::orderBy('id', 'asc')->get();
         $members = Member::with([
             'address.state'
         ])
@@ -575,7 +579,7 @@ $companyName = Company::value('company_name');
             ->get();
         $html = view(
             'print-documents.form-e.form-e-two',
-            compact('members','companyName')
+            compact('members', 'company')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
@@ -588,49 +592,52 @@ $companyName = Company::value('company_name');
 
     }
 
-      public function eTwoPrint()
-{
-     $companyName = Company::value('company_name');
-     $members = Member::with([
+    public function eTwoPrint()
+    {
+       $company = Company::select('company_name', 'cin_no')->first();
+        $members = Member::with([
             'address.state'
         ])
             ->orderBy('id', 'asc')
             ->get();
         $html = view(
             'print-documents.form-e.form-e-two',
-            compact('members','companyName')
+            compact('members', 'company')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
         // $mpdf->AddPage('L');  
         $mpdf->WriteHTML($html);
 
-    $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->SetJS('this.print();'); // auto open print dialog
 
-    return response($mpdf->Output('Form_E2.pdf', 'I'))
-        ->header('Content-Type', 'application/pdf');
-}
-    public function mis_index(){
-      return view('print-documents.management-info-systems.index');
-   }
-
-
-
-     public function MisOneView()
+        return response($mpdf->Output('Form_E2.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+    }
+    public function mis_index()
     {
-       
-      $companyName = Company::value('company_name');
-        return view('print-documents.management-info-systems.management-info-one-view', compact('companyName'));
+        return view('print-documents.management-info-systems.index');
+    }
+
+
+
+    public function MisOneView()
+    {
+
+       $company = Company::select('company_name', 'cin_no')->first();
+        return view('print-documents.management-info-systems.management-info-one-view', compact('company'));
 
     }
-   
+
     public function MisOneForm(Request $request)
     {
-          $month = $request->month;
-          $year = $request->year;
-         $companyName = Company::value('company_name');
+        $month = $request->month;
+        $year = $request->year;
+        $company = Company::select('company_name', 'cin_no')->first();
+       
         $html = view(
-            'print-documents.management-info-systems.management-info-sys-one', compact('companyName','month','year')
+            'print-documents.management-info-systems.management-info-sys-one',
+            compact('company', 'month', 'year')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
@@ -644,70 +651,76 @@ $companyName = Company::value('company_name');
     public function MisOneFormPrint(Request $request)
     {
 
-         $month = $request->month;
-          $year = $request->year;
-     $companyName = Company::value('company_name');
+        $month = $request->month;
+        $year = $request->year;
+       $company = Company::select('company_name', 'cin_no')->first();
+       
         $html = view(
-            'print-documents.management-info-systems.management-info-sys-one', compact('companyName','month','year')
+            'print-documents.management-info-systems.management-info-sys-one',
+            compact('company', 'month', 'year')
         )->render();
 
         $mpdf = $this->getMarathiMpdf();
         // $mpdf->AddPage('L');  
         $mpdf->WriteHTML($html);
-    $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->SetJS('this.print();'); // auto open print dialog
 
-    return response($mpdf->Output('MIS.pdf', 'I'))
-        ->header('Content-Type', 'application/pdf');
-        
+        return response($mpdf->Output('MIS.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+
     }
- public function MisTwoView()
- { 
-    $companyName = Company::value('company_name');
-        return view('print-documents.management-info-systems.management-info-two-view', compact('companyName'));
+    public function MisTwoView()
+    {
+        $company = Company::select('company_name', 'cin_no')->first();
+        return view('print-documents.management-info-systems.management-info-two-view', compact('company'));
 
-}
+    }
 
-     public function MisTwo(Request $request)
-{
-     $month = $request->month;
-          $year = $request->year;
-    $companyName = Company::value('company_name');
-    $html = view(
-        'print-documents.management-info-systems.management-info-two'
-   , compact('companyName','month','year') )->render();
+    public function MisTwo(Request $request)
+    {
+        $month = $request->month;
+        $year = $request->year;
+          $company = Company::select('company_name', 'cin_no')->first();
+        $html = view(
+            'print-documents.management-info-systems.management-info-two'
+            ,
+            compact('company', 'month', 'year')
+        )->render();
 
-    $mpdf = $this->getMarathiMpdf();
+        $mpdf = $this->getMarathiMpdf();
 
-    // ADD LANDSCAPE PAGE
-    $mpdf->AddPage('L');   // L = Landscape, P = Portrait
+        // ADD LANDSCAPE PAGE
+        $mpdf->AddPage('L');   // L = Landscape, P = Portrait
 
-    $mpdf->WriteHTML($html);
+        $mpdf->WriteHTML($html);
 
-    return response(
-        $mpdf->Output('MIS-2.pdf', 'D')
-    )->header('Content-Type', 'application/pdf');
-}
-  public function MisTwoPrint(Request $request)
-{
-     $month = $request->month;
-          $year = $request->year;
-    $companyName = Company::value('company_name');
-    $html = view(
-        'print-documents.management-info-systems.management-info-two'
-   , compact('companyName','month','year') )->render();
+        return response(
+            $mpdf->Output('MIS-2.pdf', 'D')
+        )->header('Content-Type', 'application/pdf');
+    }
+    public function MisTwoPrint(Request $request)
+    {
+        $month = $request->month;
+        $year = $request->year;
+        $company = Company::select('company_name', 'cin_no')->first();
+        $html = view(
+            'print-documents.management-info-systems.management-info-two'
+            ,
+            compact('company', 'month', 'year')
+        )->render();
 
-    $mpdf = $this->getMarathiMpdf();
+        $mpdf = $this->getMarathiMpdf();
 
-    // ADD LANDSCAPE PAGE
-    $mpdf->AddPage('L');   // L = Landscape, P = Portrait
+        // ADD LANDSCAPE PAGE
+        $mpdf->AddPage('L');   // L = Landscape, P = Portrait
 
-    $mpdf->WriteHTML($html);
+        $mpdf->WriteHTML($html);
 
 
-    $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->SetJS('this.print();'); // auto open print dialog
 
-    return response($mpdf->Output('MIS-2.pdf', 'I'))
-        ->header('Content-Type', 'application/pdf');
-}
-    
+        return response($mpdf->Output('MIS-2.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+    }
+
 }

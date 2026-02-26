@@ -47,21 +47,25 @@
                         <div class="col-span-2 md:col-span-1">
                             <label for="pan_no" class="block mb-1 font-semibold text-gray-700 uppercase">Customer's PAN
                                 No</label>
-                            <div  class="w-full text-sm mt-3 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 w-fit">Yes
+                            <div
+                                class="w-full text-sm mt-3 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 w-fit">
+                                Yes
                             </div>
                         </div>
-                       
+
 
                         <div class="col-span-2 md:col-span-1">
                             <label class="block mb-1 font-semibold text-gray-700 uppercase">Customer's Sign</label>
-                            <div class="w-full text-sm mt-3 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 ">
+                            <div
+                                class="w-full text-sm mt-3 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 ">
                                 No Signature Present<br>(Upload in Customer Documents)
                             </div>
                         </div>
 
                         <div class="col-span-2 md:col-span-1">
                             <label class="block mb-1 font-semibold text-gray-700 uppercase">Customer's Photo</label>
-                            <div class="w-full text-sm mt-3 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 ">
+                            <div
+                                class="w-full text-sm mt-3 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 ">
                                 No Photo Present<br>(Upload in Customer Documents)
                             </div>
                         </div>
@@ -88,12 +92,12 @@
                                 Date <span class="text-red-500">*</span></label>
 
                             <div class="relative">
-                                <input name="transaction_date" id="date2" type="text" placeholder="DD/MM/YYYY"
-                                    value=""
+                                <input name="transaction_date" id="date2" type="text" placeholder="DD/MM/YYYY" value=""
                                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                     autocomplete="off">
                                 {{-- <i
-                                    class="las la-calendar absolute ltr:right-4 rtl:left-4 top-1/2 -translate-y-1/2 cursor-pointer"></i> --}}
+                                    class="las la-calendar absolute ltr:right-4 rtl:left-4 top-1/2 -translate-y-1/2 cursor-pointer"></i>
+                                --}}
 
                             </div>
 
@@ -127,7 +131,7 @@
                             <div>
                                 <!-- <label class="block mb-1 font-semibold text-gray-700">Transfer Date <span class="text-red-500">*</span></label> -->
                                 <!-- <input type="text" name="transfer_date" id="date2"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"> -->
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"> -->
 
                                 <div class="col-span-2 md:col-span-1">
                                     <x-datepicker-disabled label="TRANSFER DATE" name="transfer_date"
@@ -135,7 +139,7 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="block mb-1 font-semibold text-gray-700 uppercase">UTR/ Transaction No <span
+                                <label class="block mb-5 font-semibold  uppercase">UTR/ Transaction No <span
                                         class="text-red-500">*</span></label>
                                 <input type="text" name="utr_no"
                                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -179,26 +183,36 @@
                         <div class="grid grid-cols-2 col-span-2 gap-6 p-4 border rounded-lg bg-green-50"
                             x-show="payMode === 'cheque'">
                             <div>
-                                <label class="block mb-1 font-semibold text-gray-700 uppercase">Bank Name <span
+                                <label class="block  mb-5 font-semibold text-gray-700 uppercase">Bank Name <span
                                         class="text-red-500">*</span></label>
 
                                 <!-- <select name="bank_name"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                                    <option value="">Select Bank</option>
-                                    <option value="SBI">State Bank of India (SBI)</option>
-                                    <option value="HDFC">HDFC Bank</option>
-                                    <option value="ICICI">ICICI Bank</option>
-                                    <option value="BOB">Bank of Baroda</option>
-                                    <option value="PNB">Punjab National Bank</option>
-                                </select> -->
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                                        <option value="">Select Bank</option>
+                                        <option value="SBI">State Bank of India (SBI)</option>
+                                        <option value="HDFC">HDFC Bank</option>
+                                        <option value="ICICI">ICICI Bank</option>
+                                        <option value="BOB">Bank of Baroda</option>
+                                        <option value="PNB">Punjab National Bank</option>
+                                    </select> -->
 
-                                <x-searchable-dropdown :items="$banks" label="Select Bank" name="bank_name"
-                                    display-field="name" value-field="id" event="Bank-selected" :selected="null" />
+                                {{-- <x-searchable-dropdown :items="$banks" label="Select Bank" name="bank_name"
+                                    display-field="name" value-field="id" event="Bank-selected" :selected="null" /> --}}
+                                <select id="bank_id" name="bank_name"
+                                    class="w-full rounded-10 border px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3">
+                                    <option value="">-- Select Bank --</option>
+                                    @foreach($banks as $id => $name)
+                                    <option value="{{ $id }}" {{ old('bank_id', $application->bank_id ?? '') == $id ?
+                                        'selected' : '' }}>
+                                                                    {{ $name }}
+                                    </option>
+                                    @endforeach
+                                </select>
 
                             </div>
 
                             <div>
-                                <label class="block mb-1 font-semibold text-gray-700 uppercase">Cheque Number <span
+                                <label class="block mb-5 font-semibold text-gray-700 uppercase">Cheque Number <span
                                         class="text-red-500">*</span></label>
                                 <input type="text" name="cheque_number" placeholder="Enter Cheque No"
                                     class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -209,11 +223,15 @@
 
                             <div>
                                 <!-- <label class="block mb-1 font-semibold text-gray-700">Cheque Date <span class="text-red-500">*</span></label>
-                                <input type="date2" name="cheque_date"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"> -->
+                                    <input type="date2" name="cheque_date"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"> -->
                                 <div class="col-span-2 md:col-span-1">
-                                    <x-datepicker-disabled label="CHEQUE DATE" name="cheque_date"
-                                        value="{{ old('cheque_date') }}" inputId="cheque_date" />
+                                    {{-- <x-datepicker-disabled label="CHEQUE DATE" name="cheque_date"
+                                        value="{{ old('cheque_date') }}" inputId="cheque_date" /> --}}
+                                        <label class="block mb-5 font-semibold text-gray-700 uppercase">CHEQUE DATE <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" name="cheque_date" placeholder="DD/MM/YYYY" id="date"
+                                    class="w-full text-sm  bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                 </div>
                             </div>
                         </div>
@@ -222,7 +240,7 @@
                         <div class="flex gap-4">
                             <button type="submit" class="btn-primary uppercase">Deposit</button>
                             <button type="button" class="btn-outline uppercase"
-                                onclick="window.location.href='{{ route('accounts.show', base64_encode($id)) }}'">
+                                onclick="window.location.href='{{ route('accounts.show', base64_encode($member->id)) }}'">
                                 Back
                             </button>
                         </div>
@@ -239,7 +257,7 @@
                     <div style=""
                         class="flex items-center bg-secondary/5 rounded-10 justify-between px-4 py-3 font-bold cursor-pointer"
                         @click="open = !open">
-                        <span class="uppercase">Saving Account Info</span>
+                        <span class="uppercase font-semibold">Saving Account Info</span>
                         <span x-text="open ? '-' : '+'" class="text-lg font-bold"></span>
                     </div>
 
@@ -248,7 +266,7 @@
                         <ul class="space-y-2">
                             <li class="flex justify-between"><strong class="uppercase">Customer</strong><span>
                                     {{ $member->accounts?->members?->member_no ??
-                                        ($member->accounts->members->id ? str_pad($member->accounts->members->id, 6, '0', STR_PAD_LEFT) : 'NA') }}-{{ $member->accounts->members->member_info_first_name ?? 'NA' }}</span>
+        ($member->accounts->members->id ? str_pad($member->accounts->members->id, 6, '0', STR_PAD_LEFT) : 'NA') }}-{{ $member->accounts->members->member_info_first_name ?? 'NA' }}</span>
                             </li>
                             <hr class="my-2 border-gray-300">
                             <li class="flex justify-between"><strong class="uppercase">PAN

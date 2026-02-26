@@ -68,7 +68,7 @@
     <div class="subtitle" style="font-size:14px;  ">नियम ३२ (कलम ३९ अन्वये)</div>
 
     <div class="header" style="font-size: 20px;">
-         {{$companyName}} र. नं. 12345
+          {{ $company->company_name }}  &nbsp; र. नं.  {{ $company->cin_no }}
     </div>
 
     <div style="text-align:center; font-weight:bold;font-size: 20px;    ">

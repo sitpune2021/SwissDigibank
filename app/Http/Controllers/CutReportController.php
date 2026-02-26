@@ -15,6 +15,7 @@ use App\Models\FdAccount;
 use App\Models\FdTransaction;
 use App\Models\GoldLoanTransaction;
 use App\Models\LoanAgainstTransactions;
+use App\Models\logo_letterhead_img_uploads;
 use App\Models\Misaccount;
 use App\Models\MisTransaction;
 use App\Models\MortgageLoanTransaction;
@@ -28,6 +29,7 @@ use App\Models\PersonalLoanApplication;
 use App\Models\DailyWeeklyApplication;
 use App\Models\RdTransactions;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Models\VehicalApplication;
 use App\Models\CcOdLoanApplication;
 use App\Models\VehicalLoanTransaction;
@@ -134,6 +136,36 @@ class CutReportController extends Controller
         return view('cut-reports.report.share-holding', compact('promoters'));
     }
 
+    public function shareHoldingPrint()
+    {
+        $promoters = Promotor::with('latestShare')
+            ->orderBy('id', 'desc')
+            ->get(); // use get() instead of paginate()
+        $logoPath = public_path('assets/images/SBC_Logo.png');
+
+        $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
+
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'logo')
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+
+            if ($logo && file_exists(storage_path('app/public/' . $logo->image_path))) {
+                $logoPath = storage_path('app/public/' . $logo->image_path);
+            }
+        }
+
+
+        $pdf = Pdf::loadView(
+            'cut-reports.report.share-holding-print',
+            compact('promoters', 'logoPath')
+        )->setPaper('A4', 'portrait');
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+
+
+        return $pdf->stream('share-holding-report.pdf');
+    }
     public function shareAllotmentSearchBox(Request $request)
     {
 
@@ -230,6 +262,38 @@ class CutReportController extends Controller
     {
         $shareTransfers = ShareTransfer::with(['promotor', 'members'])->paginate(10);
         return view('cut-reports.report.share-transfer-history', compact('shareTransfers'));
+    }
+
+    public function shareTransferHistoryPrint()
+    {
+        $shareTransfers = ShareTransfer::with(['promotor', 'members'])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        // default logo
+        $logoPath = public_path('assets/images/SBC_Logo.png');
+
+        // fetch super admin logo
+        $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
+
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'logo')
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+
+            if ($logo && file_exists(storage_path('app/public/' . $logo->image_path))) {
+                $logoPath = storage_path('app/public/' . $logo->image_path);
+            }
+        }
+
+        $pdf = Pdf::loadView(
+            'cut-reports.report.share-transfer-history-print',
+            compact('shareTransfers', 'logoPath')
+        )->setPaper('A4', 'portrait');
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+
+        return $pdf->stream('share-transfer-history.pdf');
     }
 
     public function downloadShareTransferHistoryCsv()
@@ -503,6 +567,8 @@ class CutReportController extends Controller
 
 
     // FD Account Cut Reports Start here
+
+
     public function fdaccount_index()
     {
         $account = FdAccount::with(['member', 'branch', 'fdscheme.fdslabs'])->orderBy('id', 'desc')->paginate(10);
@@ -1363,6 +1429,88 @@ class CutReportController extends Controller
         return view('cut-reports.report.loan_report.gold-loan-report', compact('goldLoan', 'branches'));
     }
 
+    public function goldLoanPrint(Request $request)
+    {
+        $query = LoanApplication::with(['member', 'branch', 'scheme'])
+            ->where('status', 2);
+
+        if ($request->branch_id) {
+            $query->where('branch_id', $request->branch_id);
+        }
+
+        if ($request->customer_no) {
+            $query->whereHas('member', function ($q) use ($request) {
+                $q->where('member_no', 'LIKE', "%{$request->customer_no}%");
+            });
+        }
+
+        if ($request->first_name) {
+            $query->whereHas('member', function ($q) use ($request) {
+                $q->where('first_name', 'LIKE', "%{$request->first_name}%");
+            });
+        }
+
+        if ($request->last_name) {
+            $query->whereHas('member', function ($q) use ($request) {
+                $q->where('last_name', 'LIKE', "%{$request->last_name}%");
+            });
+        }
+
+        if ($request->account_no) {
+            $query->where('id', $request->account_no);
+        }
+
+        if ($request->mobile_no) {
+            $query->whereHas('member', function ($q) use ($request) {
+                $q->where('mobile', 'LIKE', "%{$request->mobile_no}%");
+            });
+        }
+
+        $goldLoan = $query->orderBy('id', 'desc')->get();
+
+        foreach ($goldLoan as $loan) {
+
+            $loanAmount = $loan->loan_amount;
+
+            $collectedAmount = DB::table('gold_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $otherCharges = DB::table('gold_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            $remainingAmount = DB::table('gold_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            $currentDebt = $loanAmount - $collectedAmount - $otherCharges - $remainingAmount;
+
+            $loan->current_debt = max($currentDebt, 0);
+        }
+        // default logo
+        $logoPath = public_path('assets/images/SBC_Logo.png');
+
+        // fetch super admin logo
+        $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
+
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'logo')
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+
+            if ($logo && file_exists(storage_path('app/public/' . $logo->image_path))) {
+                $logoPath = storage_path('app/public/' . $logo->image_path);
+            }
+        }
+        $pdf = Pdf::loadView('cut-reports.report.loan_report.gold-loan-print', compact('goldLoan', 'logoPath'))->setPaper('A4', 'portrait');
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+
+
+        return $pdf->stream('gold-loan-print.pdf');
+    }
+
     // CSV Downloan Gold Loan Function
 
     public function gold_loan_exportCsv()
@@ -1527,6 +1675,85 @@ class CutReportController extends Controller
         $branches = Branch::orderBy('branch_name')->get();
 
         return view('cut-reports.report.loan_report.property-loan', compact('goldLoan', 'branches'));
+    }
+
+    public function mortgage_print(Request $request)
+    {
+        $query = MortgageLoanApplication::with(['member', 'branch', 'scheme'])
+            ->where('status', 2);
+
+        if ($request->branch_id) {
+            $query->where('branch_id', $request->branch_id);
+        }
+
+        if ($request->customer_no) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
+        }
+
+        if ($request->first_name) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
+        }
+
+        if ($request->last_name) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
+        }
+
+        if ($request->account_no) {
+            $query->where('id', $request->account_no);
+        }
+
+        if ($request->mobile_no) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
+        }
+
+        $loans = $query->orderBy('id', 'desc')->get();
+
+        foreach ($loans as $loan) {
+
+            $collected = DB::table('mortgage_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $charges = DB::table('mortgage_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            $remaining = DB::table('mortgage_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            $loan->current_debt = max(
+                $loan->loan_amount - $collected - $charges - $remaining,
+                0
+            );
+        }
+        // default logo
+        $logoPath = public_path('assets/images/SBC_Logo.png');
+
+        // fetch super admin logo
+        $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
+
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'logo')
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+
+            if ($logo && file_exists(storage_path('app/public/' . $logo->image_path))) {
+                $logoPath = storage_path('app/public/' . $logo->image_path);
+            }
+        }
+        $pdf = Pdf::loadView('cut-reports.report.loan_report.print-property-loan', compact('loans', 'logoPath'))->setPaper('A4', 'portrait');
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+
+
+        return $pdf->stream('print-property-loan.pdf');
+
+        // return view('cut-reports.report.loan_report.print-property-loan', compact('loans'));
     }
 
     // CSV Downloan Mortgage Loan
@@ -1696,7 +1923,85 @@ class CutReportController extends Controller
     }
 
     // CSV Downloan Loanagainst
+    public function loanagainst_pdf(Request $request)
+    {
+        $query = LoanAgainstApplication::with(['member', 'branch', 'scheme'])
+            ->where('status', 2);
 
+        if ($request->branch_id) {
+            $query->where('branch_id', $request->branch_id);
+        }
+
+        if ($request->customer_no) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
+        }
+
+        if ($request->first_name) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
+        }
+
+        if ($request->last_name) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
+        }
+
+        if ($request->account_no) {
+            $query->where('id', $request->account_no);
+        }
+
+        if ($request->mobile_no) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
+        }
+
+        $loans = $query->orderBy('id', 'desc')->get();
+
+        foreach ($loans as $loan) {
+
+            $collected = DB::table('loan_against_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $charges = DB::table('loan_against_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            $remaining = DB::table('loan_against_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            $loan->current_debt = max(
+                $loan->loan_amount - $collected - $charges - $remaining,
+                0
+            );
+        }
+        // default logo
+        $logoPath = public_path('assets/images/SBC_Logo.png');
+
+        // fetch super admin logo
+        $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
+
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'logo')
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+
+            if ($logo && file_exists(storage_path('app/public/' . $logo->image_path))) {
+                $logoPath = storage_path('app/public/' . $logo->image_path);
+            }
+        }
+
+        $pdf = Pdf::loadView(
+            'cut-reports.report.loan_report.pdf-deposit-loan',
+            compact('loans', 'logoPath')
+        )->setPaper('a4', 'portrait');
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+
+        return $pdf->stream('LoanAgainstReport.pdf');
+    }
     public function loanagainst_exportCsv()
     {
         $loans = LoanAgainstApplication::with(['member', 'branch', 'scheme'])
@@ -1861,6 +2166,85 @@ class CutReportController extends Controller
         return view('cut-reports.report.loan_report.business-loan', compact('goldLoan', 'branches'));
     }
 
+    public function business_print(Request $request)
+    {
+        $query = BusinessLoanApplication::with(['member', 'branch', 'scheme'])
+            ->where('status', 2);
+
+        if ($request->branch_id) {
+            $query->where('branch_id', $request->branch_id);
+        }
+
+        if ($request->customer_no) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
+        }
+
+        if ($request->first_name) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
+        }
+
+        if ($request->last_name) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
+        }
+
+        if ($request->account_no) {
+            $query->where('id', $request->account_no);
+        }
+
+        if ($request->mobile_no) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
+        }
+
+        $loans = $query->orderBy('id', 'desc')->get();
+
+        foreach ($loans as $loan) {
+
+            $collected = DB::table('business_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $charges = DB::table('business_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            $remaining = DB::table('business_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            $loan->current_debt = max(
+                $loan->loan_amount - $collected - $charges - $remaining,
+                0
+            );
+        }
+        $logoPath = public_path('assets/images/SBC_Logo.png');
+
+        // fetch super admin logo
+        $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
+
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'logo')
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+
+            if ($logo && file_exists(storage_path('app/public/' . $logo->image_path))) {
+                $logoPath = storage_path('app/public/' . $logo->image_path);
+            }
+        }
+
+        $pdf = Pdf::loadView(
+            'cut-reports.report.loan_report.print-business-loan',
+            compact('loans', 'logoPath')
+        )->setPaper('a4', 'portrait');
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+
+        return $pdf->stream('LoanAgainstReport.pdf');
+
+    }
     // CSV Downloan Business
 
     public function business_exportCsv()
@@ -2025,6 +2409,86 @@ class CutReportController extends Controller
         $branches = Branch::orderBy('branch_name')->get();
 
         return view('cut-reports.report.loan_report.personal-loan', compact('goldLoan', 'branches'));
+    }
+
+    public function personal_print(Request $request)
+    {
+        $query = PersonalLoanApplication::with(['member', 'branch', 'scheme'])
+            ->where('status', 2);
+
+        if ($request->branch_id) {
+            $query->where('branch_id', $request->branch_id);
+        }
+
+        if ($request->customer_no) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
+        }
+
+        if ($request->first_name) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
+        }
+
+        if ($request->last_name) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
+        }
+
+        if ($request->account_no) {
+            $query->where('id', $request->account_no);
+        }
+
+        if ($request->mobile_no) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
+        }
+
+        $loans = $query->orderBy('id', 'desc')->get();
+
+        foreach ($loans as $loan) {
+
+            $collected = DB::table('personal_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $charges = DB::table('personal_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            $remaining = DB::table('personal_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            $loan->current_debt = max(
+                $loan->loan_amount - $collected - $charges - $remaining,
+                0
+            );
+        }
+
+        $logoPath = public_path('assets/images/SBC_Logo.png');
+
+        // fetch super admin logo
+        $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
+
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'logo')
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+
+            if ($logo && file_exists(storage_path('app/public/' . $logo->image_path))) {
+                $logoPath = storage_path('app/public/' . $logo->image_path);
+            }
+        }
+
+        $pdf = Pdf::loadView(
+            'cut-reports.report.loan_report.print-personal-loan',
+            compact('loans', 'logoPath')
+        )->setPaper('a4', 'portrait');
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+
+        return $pdf->stream('print-personal-loan.pdf');
     }
 
     // CSV Downloan Personal
@@ -2193,6 +2657,86 @@ class CutReportController extends Controller
         return view('cut-reports.report.loan_report.daily-weekly-loan', compact('goldLoan', 'branches'));
     }
 
+    public function daily_weekly_print(Request $request)
+    {
+        $query = DailyWeeklyApplication::with(['member', 'branch', 'scheme'])
+            ->where('status', 2);
+
+        if ($request->branch_id) {
+            $query->where('branch_id', $request->branch_id);
+        }
+
+        if ($request->customer_no) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
+        }
+
+        if ($request->first_name) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
+        }
+
+        if ($request->last_name) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
+        }
+
+        if ($request->account_no) {
+            $query->where('id', $request->account_no);
+        }
+
+        if ($request->mobile_no) {
+            $query->whereHas('member', fn($q) =>
+                $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
+        }
+
+        $loans = $query->orderBy('id', 'desc')->get();
+
+        foreach ($loans as $loan) {
+
+            $collected = DB::table('daily_weekly_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
+
+            $charges = DB::table('daily_weekly_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
+
+            $remaining = DB::table('daily_weekly_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
+
+            $loan->current_debt = max(
+                $loan->loan_amount - $collected - $charges - $remaining,
+                0
+            );
+        }
+
+         $logoPath = public_path('assets/images/SBC_Logo.png');
+
+        // fetch super admin logo
+        $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
+
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'logo')
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+
+            if ($logo && file_exists(storage_path('app/public/' . $logo->image_path))) {
+                $logoPath = storage_path('app/public/' . $logo->image_path);
+            }
+        }
+
+          $pdf = Pdf::loadView(
+            'cut-reports.report.loan_report.print-daily-weekly-loan',
+            compact('loans', 'logoPath')
+        )->setPaper('a4', 'portrait');
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+
+        return $pdf->stream('print-personal-loan.pdf');
+
+    }
     // CSV Downloan daily_weekly
 
     public function dailyweekly_exportCsv()
@@ -2359,6 +2903,86 @@ class CutReportController extends Controller
         return view('cut-reports.report.loan_report.vehicle-loan', compact('goldLoan', 'branches'));
     }
 
+    public function vehicle_print(Request $request)
+{
+    $query = VehicalApplication::with(['member','branch','scheme'])
+        ->where('status',2);
+
+    if ($request->branch_id) {
+        $query->where('branch_id',$request->branch_id);
+    }
+
+    if ($request->customer_no) {
+        $query->whereHas('member', fn($q)=>
+            $q->where('member_no','LIKE',"%{$request->customer_no}%"));
+    }
+
+    if ($request->first_name) {
+        $query->whereHas('member', fn($q)=>
+            $q->where('first_name','LIKE',"%{$request->first_name}%"));
+    }
+
+    if ($request->last_name) {
+        $query->whereHas('member', fn($q)=>
+            $q->where('last_name','LIKE',"%{$request->last_name}%"));
+    }
+
+    if ($request->account_no) {
+        $query->where('id',$request->account_no);
+    }
+
+    if ($request->mobile_no) {
+        $query->whereHas('member', fn($q)=>
+            $q->where('mobile','LIKE',"%{$request->mobile_no}%"));
+    }
+
+    $loans = $query->orderBy('id','desc')->get();
+
+    foreach ($loans as $loan) {
+
+        $collected = DB::table('vehical_loan_transactions')
+            ->where('loan_id',$loan->id)
+            ->sum('amount_collected');
+
+        $charges = DB::table('vehical_loan_other_charges')
+            ->where('loan_id',$loan->id)
+            ->sum('amount');
+
+        $remaining = DB::table('vehical_loan_fore_closures')
+            ->where('loan_id',$loan->id)
+            ->value('remaining_amount') ?? 0;
+
+        $loan->current_debt = max(
+            $loan->loan_amount - $collected - $charges - $remaining,
+            0
+        );
+    }
+
+    $logoPath = public_path('assets/images/SBC_Logo.png');
+
+        // fetch super admin logo
+        $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
+
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'logo')
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+
+            if ($logo && file_exists(storage_path('app/public/' . $logo->image_path))) {
+                $logoPath = storage_path('app/public/' . $logo->image_path);
+            }
+        }
+
+          $pdf = Pdf::loadView(
+            'cut-reports.report.loan_report.print-vehicle-loan',
+            compact('loans', 'logoPath')
+        )->setPaper('a4', 'portrait');
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+
+        return $pdf->stream('print-personal-loan.pdf');
+    
+}
     // CSV Downloan vehical
 
     public function vehical_exportCsv()
@@ -2525,6 +3149,86 @@ class CutReportController extends Controller
         return view('cut-reports.report.loan_report.cc-od-limit', compact('goldLoan', 'branches'));
     }
 
+    public function cc_od_print(Request $request)
+{
+    $query = CcOdLoanApplication::with(['member','branch','scheme'])
+        ->where('status',2);
+
+    if ($request->branch_id) {
+        $query->where('branch_id',$request->branch_id);
+    }
+
+    if ($request->customer_no) {
+        $query->whereHas('member', fn($q)=>
+            $q->where('member_no','LIKE',"%{$request->customer_no}%"));
+    }
+
+    if ($request->first_name) {
+        $query->whereHas('member', fn($q)=>
+            $q->where('first_name','LIKE',"%{$request->first_name}%"));
+    }
+
+    if ($request->last_name) {
+        $query->whereHas('member', fn($q)=>
+            $q->where('last_name','LIKE',"%{$request->last_name}%"));
+    }
+
+    if ($request->account_no) {
+        $query->where('id',$request->account_no);
+    }
+
+    if ($request->mobile_no) {
+        $query->whereHas('member', fn($q)=>
+            $q->where('mobile','LIKE',"%{$request->mobile_no}%"));
+    }
+
+    $loans = $query->orderBy('id','desc')->get();
+
+    foreach ($loans as $loan) {
+
+        $collected = DB::table('cc_od_loan_transactions')
+            ->where('loan_id',$loan->id)
+            ->sum('amount_collected');
+
+        $charges = DB::table('cc_od_loan_other_charges')
+            ->where('loan_id',$loan->id)
+            ->sum('amount');
+
+        $remaining = DB::table('cc_od_loan_fore_closures')
+            ->where('loan_id',$loan->id)
+            ->value('remaining_amount') ?? 0;
+
+        $loan->current_debt = max(
+            $loan->loan_amount - $collected - $charges - $remaining,
+            0
+        );
+    }
+
+      $logoPath = public_path('assets/images/SBC_Logo.png');
+
+        // fetch super admin logo
+        $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
+
+        if ($superAdmin) {
+            $logo = logo_letterhead_img_uploads::where('type', 'logo')
+                ->where('uploaded_by', $superAdmin->id)
+                ->latest()
+                ->first();
+
+            if ($logo && file_exists(storage_path('app/public/' . $logo->image_path))) {
+                $logoPath = storage_path('app/public/' . $logo->image_path);
+            }
+        }
+
+          $pdf = Pdf::loadView(
+            'cut-reports.report.loan_report.print-ccod-loan',
+            compact('loans', 'logoPath')
+        )->setPaper('a4', 'portrait');
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+
+        return $pdf->stream('print-personal-loan.pdf');
+   
+}
     // CSV Downloan CC OD
 
     public function cc_od_exportCsv()
@@ -2680,7 +3384,7 @@ class CutReportController extends Controller
             case 'ccod_loan':
                 $transactions = CcodLoanTransaction::with('ccOdloanApplication.branch')->latest()->get();
                 break;
-          case 'daily_weekly':
+            case 'daily_weekly':
                 $transactions = DailyWeeklyLoanTransaction::with('dailyWeeklyapplication.branch')->latest()->get();
                 break;
 

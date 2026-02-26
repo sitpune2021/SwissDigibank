@@ -137,6 +137,12 @@
         <div class="col-span-12 box lg:col-span-12">
 
             <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
+                 <a href="{{ route('gold.loan.print', request()->query()) }}"
+   target="_blank"
+                    class="btn-primary rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
+                        <i class="las la-print"></i>
+                       Print Report
+                </a>
                 <a href="{{ route('accounts.export.csv') }}" 
                     class="btn-error rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
                         <i class="las la-download"></i>

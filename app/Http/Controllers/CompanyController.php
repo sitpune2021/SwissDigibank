@@ -91,7 +91,7 @@ class CompanyController extends Controller
                 'contact_email' => 'nullable|email|max:255|regex:/^[A-Za-z0-9._]+@[^@\s]+\.[A-Za-z]{2,}$/',
 
                 // LEGAL INFO
-                'cin_no' => 'nullable|regex:/^[LU]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/',
+                'cin_no' => 'nullable',
                 'cin_certificate_path' => 'nullable|file',
 
                 'pan_no' => 'nullable|regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/',

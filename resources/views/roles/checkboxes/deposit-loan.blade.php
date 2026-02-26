@@ -19,7 +19,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="dep_lon_sch_lis" name="permissions[]" value="loanagainst.schemes.index"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.schemes.index', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="dep_lon_sch_lis" class="text-base font-semibold cursor-pointer mb-0">
                         Deposit Loan Schemes List
                     </label>
@@ -29,7 +31,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="add_new_dep_lon_sch" name="permissions[]" value="loanagainst.schemes.create"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.schemes.create', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="add_new_dep_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
                         Add New Deposit Loan Scheme
                     </label>
@@ -39,7 +43,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="shw_dep_lon_sch" name="permissions[]" value="loanagainst.schemes.show"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.schemes.show', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="shw_dep_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
                         Show Deposit Loan Scheme
                     </label>
@@ -49,7 +55,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="edit_dep_lon_sch" name="permissions[]" value="loanagainst.schemes.edit"
-                        class="item-checkbox  form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox  form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.schemes.edit', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="edit_dep_lon_sch" class="text-base font-semibold cursor-pointer mb-0">
                         Edit Deposit Loan Scheme
                     </label>
@@ -79,7 +87,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="dep_lon_calc" name="permissions[]" value="loanagainst.calculator.index"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.calculator.index', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="dep_lon_calc" class="text-base font-semibold cursor-pointer mb-0">
                         Deposit Loan Calculator
                     </label>
@@ -113,7 +123,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="dep_lon_app_lis" name="permissions[]" value="loanagainst.applications.index"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.applications.index', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="dep_lon_app_lis" class="text-base font-semibold cursor-pointer mb-0">
                         Deposit Loan Application List
                     </label>
@@ -123,7 +135,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="op_new_dep_lon_app" name="permissions[]" value="loanagainst.applications.create"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.applications.create', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="op_new_dep_lon_app" class="text-base font-semibold cursor-pointer mb-0">
                         Open New Deposit Loan Application
                     </label>
@@ -133,7 +147,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="shw_dep_app_inf" name="permissions[]" value="loanagainst.applications.view"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.applications.view', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="shw_dep_app_inf" class="text-base font-semibold cursor-pointer mb-0">
                         Show Deposit Loan Application Info
                     </label>
@@ -143,7 +159,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="edi_dep_lon_app_apr" name="permissions[]" value="loanagainst.applications.edit"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.applications.edit', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="edi_dep_lon_app_apr" class="text-base font-semibold cursor-pointer mb-0">
                         Edit Deposit Loan Application Info before Application is 'APPROVED'
                     </label>
@@ -152,7 +170,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="rem_dep_lon_app" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('mortgage.account.index', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="rem_dep_lon_app" class="text-base font-semibold cursor-pointer mb-0">
                         Remove Deposit Loan Application
                     </label>
@@ -183,7 +203,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="dep_lien_rep" name="permissions[]" value="loanagainst.lineproperty.index"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.lineproperty.index', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="dep_lien_rep" class="text-base font-semibold cursor-pointer mb-0">
                         Lien Accounts Report
                     </label>
@@ -216,7 +238,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="dep_lon_dis_lis" name="permissions[]" value="loanagainst.disbursements.index"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.disbursements.index', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="dep_lon_dis_lis" class="text-base font-semibold cursor-pointer mb-0">
                         Deposit Loan Disbursement List
                     </label>
@@ -226,7 +250,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="dis_rel_dep_lon" name="permissions[]" value="loanagainst.disbursements.disburse-loan"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.disbursements.disburse-loan', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="dis_rel_dep_lon" class="text-base font-semibold cursor-pointer mb-0">
                         Disburse / Release Deposit Loan
                     </label>
@@ -236,7 +262,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="can_dep_lon_dis" name="permissions[]" value="disbursements.cancel"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('disbursements.cancel', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="can_dep_lon_dis" class="text-base font-semibold cursor-pointer mb-0">
                         Cancel Deposit Loan
                     </label>
@@ -266,7 +294,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="dep_lon_acc_lis" name="permissions[]" value="loanagainst.account.index"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.account.index', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="dep_lon_acc_lis" class="text-base font-semibold cursor-pointer mb-0">
                         Deposit Loan Accounts List
                     </label>
@@ -276,7 +306,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="shw_dep_lon_acc" name="permissions[]" value="loanagainst.account.show"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.account.show', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="shw_dep_lon_acc" class="text-base font-semibold cursor-pointer mb-0">
                         Show Deposit Loan Account
                     </label>
@@ -286,7 +318,9 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="rm_dep_lon_acc" name="permissions[]" value="loanagainst.remove"
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                        class="item-checkbox form-checkbox h-5 w-5 text-primary"
+                        {{ in_array('loanagainst.remove', $selectedPermissions ?? []) ? 'checked' : '' }}
+                            {{ ($readOnly ?? false) ? 'disabled' : '' }}>
                     <label for="rm_dep_lon_acc" class="text-base font-semibold cursor-pointer mb-0">
                         Remove Deposit Loan Account
                     </label>

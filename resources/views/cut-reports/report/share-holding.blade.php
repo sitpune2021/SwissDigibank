@@ -47,14 +47,14 @@
 </style>
 <div class="main-inner">
 
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-2 lg:mb-8">
         <h3 class=" flex text-lg block  uppercase font-semibold">
             Report - Share Holdings
         </h3>
 
     </div>
     <!-- custom date picker -->
-    <div class="box  ">
+    <div class="box">
         <p class="border-b uppercase text-lg font-semibold">Share Allotment Date <span class="text-error">*</span></p>
         <form action="
         {{-- {{ route('share-transfer.report') }} --}}
@@ -100,6 +100,10 @@
     <div class="col-span-12 box lg:col-span-12 mt-5">
         <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
 
+             <a href="{{ route('share.holding.print') }}" target="_blank" class="btn-primary rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
+                <i class="las la-print"></i>
+                Print Report
+            </a>
             <a href="{{ route('promoter.report.csv', request()->all()) }}" class="btn-error rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
                 <i class="las la-download"></i>
                 Request for Report
