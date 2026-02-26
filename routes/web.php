@@ -1950,6 +1950,16 @@ Route::group(['prefix' => 'personal'], function () {
     Route::get('/personal/{id}/clear-due', [PersonalAccountController::class, 'mortgageLoanClearDues'])
         ->name('personal.clear-due.form');
     Route::post('/personal/{loan_id}/other-charge', [PersonalAccountController::class, 'clearDue'])->name('personal.clear-due');
+    //comments and documents 
+    Route::get(
+        'account/{id}/add-comment',
+        [PersonalAccountController::class, 'addComment']
+    )->name('personal.addComment');
+
+    Route::post(
+        'account/store-comment',
+        [PersonalAccountController::class, 'storeComment']
+    )->name('personal.storeComment');
 
     // account section end
 
@@ -2949,8 +2959,7 @@ Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
         ->name('profile-update-password');
 
     Route::post('/profile/photo', [SettingsController::class, 'updateProfilePhoto'])
-        ->name('profile-photo.update');
-    ;
+        ->name('profile-photo.update');;
 
     Route::get('/security', [SettingsController::class, 'security'])->name('security');
     Route::get('/social-network', [SettingsController::class, 'socialNetwork'])->name('social.network');
