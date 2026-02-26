@@ -158,13 +158,42 @@ Route::middleware('auth.user')->group(function () {
         Route::resource('bank-account', BankAccountController::class);
     });
 
-    Route::group(['prefix' => 'user'], function () {
-        Route::resource('roles', RoleController::class);
-        Route::resource('users', UserController::class);
-    });
+    // Route::group(['prefix' => 'user'], function () {
+    //     Route::resource('roles', RoleController::class);
+    //     Route::resource('users', UserController::class);
+    // });
 
-    Route::post('/role-permission-store', [RoleController::class, 'store'])->name('role_permission.store');
+    // Route::post('/role-permission-store', [RoleController::class, 'store'])->name('role_permission.store');
 
+ Route::group(['prefix' => 'user'], function () {
+
+    // ROLES ROUTES
+    Route::get('/roles', [RoleController::class, 'index'])
+        ->name('roles.index');
+
+    Route::get('/roles/create', [RoleController::class, 'create'])
+        ->name('roles.create');
+
+    Route::post('/roles', [RoleController::class, 'store'])
+        ->name('roles.store');
+
+        Route::get('/roles/{id}', [RoleController::class, 'show'])
+    ->name('roles.show');
+
+    Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])
+        ->name('roles.edit');
+
+    Route::put('/roles/{id}', [RoleController::class, 'update'])
+        ->name('roles.update');
+
+    Route::delete('/roles/{id}', [RoleController::class, 'destroy'])
+        ->name('roles.destroy');
+        
+
+    // USERS ROUTES
+    Route::resource('users', UserController::class);
+
+});
 
     Route::middleware('auth')->group(function () {
         Route::get('/calculator', [CalculatorController::class, 'create'])->name('calculator.index');
