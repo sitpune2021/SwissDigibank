@@ -268,6 +268,9 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
                 <input type="number" id="net_fee" name="net_fee"
                     value="{{ old('net_fee', $charge->net_fee ?? $membershipAmt ?? '') }}"
                     class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" readonly>
+                    @error('net_fee')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
             </div>
             <div class="mb-4">
                 <label for="" class="block font-medium mb-2">

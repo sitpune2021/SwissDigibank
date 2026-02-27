@@ -3,31 +3,31 @@
 <div class="main-inner">
 
 
-        <style>
-            input[type="radio"] {
-                width: 24px;
-                height: 24px;
-                accent-color: green;
-            }
+    <style>
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+        }
 
-            input[type="checkbox"] {
-                width: 28px;
-                height: 28px;
-                accent-color: green;
-                /* For modern browsers */
-            }
+        input[type="checkbox"] {
+            width: 28px;
+            height: 28px;
+            accent-color: green;
+            /* For modern browsers */
+        }
 
-            /* Fallback for browsers without accent-color support */
-            input[type="checkbox"]:checked {
-                background-color: green;
-                border: none;
-            }
-        </style>
+        /* Fallback for browsers without accent-color support */
+        input[type="checkbox"]:checked {
+            background-color: green;
+            border: none;
+        }
+    </style>
 
     <div class="mb-4 flex flex-wrap items-center justify-between gap-4 lg:mb-4">
         <div class="flex items-start flex-col gap-2">
             <div class="flex items-center gap-2">
-                <h3 class="uppercase text-lg font-semibold">MIS Account - 1707 - Fore Close</h3>
+                <h3 class="uppercase text-lg font-semibold">MIS Account - {{$misaccount->mis_account_no}} - Fore Close</h3>
                 <p class="text-gray-500 text-xs">Pay Due EMIs</p>
             </div>
             {{-- <p class="text-gray-500">
@@ -39,8 +39,8 @@
     </div>
     <div class="rounded-lg border-l-4 bg-error text-white p-2">
 
-            <i class="las la-ban"> Alert</i>
-            <p>You are about to fore close FD before the minimum lock-in period. So proceed accordingly.</p>
+        <i class="las la-ban"> Alert</i>
+        <p>You are about to fore close MIS before the minimum lock-in period. So proceed accordingly.</p>
 
     </div>
 
@@ -68,6 +68,7 @@
                         </label>
 
                         <input type="text" id="currentBalance"
+                            value="₹ {{ number_format($currentBalance,2) }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" readonly>
 
@@ -80,18 +81,20 @@
                         </label>
 
                         <input type="text" id="interestLeftPaid"
+                            value="₹ {{ number_format($interestTillDate,2) }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0">
 
                     </div>
 
-                     <div class="col-span-2 md:col-span-1 mb-4">
+                    <div class="col-span-2 md:col-span-1 mb-4">
                         <label for="" class="md:text-lg uppercase font-medium block mb-4">
                             TDS to be Deducted (C)
                             <span class="text-red-500">*</span>
                         </label>
 
                         <input type="text" id="tdsDeducated"
+                            value="₹ {{ number_format($tds,2) }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0">
 
@@ -113,7 +116,7 @@
                                 </tr>
 
                                 <!-- Input Row -->
-                                <tr >
+                                <tr>
                                     <td class="px-2 py-2 ">
                                         <input type="text" name="" id="" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
@@ -132,7 +135,7 @@
 
                     </div>
 
-                     <div class="col-span-2 md:col-span-1 mb-4">
+                    <div class="col-span-2 md:col-span-1 mb-4">
                         <label for="" class="md:text-lg uppercase font-medium block mb-4">
                             Premature Interest
                             <span class="text-red-500">*</span>
@@ -148,7 +151,7 @@
                                 </tr>
 
                                 <!-- Input Row -->
-                                <tr >
+                                <tr>
                                     <td class="px-2 py-2 ">
                                         <input type="text" name="" id="" placeholder="0"
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
@@ -204,7 +207,7 @@
 
                     <div class="col-span-2 md:col-span-1 mb-4">
                         <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                           Reverse Interest Amount
+                            Reverse Interest Amount
                             (F = D - E)
                             <span class="text-red-500">*</span>
                         </label>
@@ -217,7 +220,7 @@
 
                     <div class="col-span-2 md:col-span-1 mb-4">
                         <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Penal Interest Rate (%) 
+                            Penal Interest Rate (%)
                             <span class="text-red-500">*</span>
                         </label>
 
@@ -245,7 +248,7 @@
                                 <!-- Input Row -->
                                 <tr>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" 
+                                        <input type="text" name="" id="" placeholder="0"
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
@@ -261,7 +264,7 @@
                         </table>
                     </div>
 
-                    
+
                     <div class="col-span-2 md:col-span-1 mb-4">
                         <label for="" class="md:text-lg uppercase font-medium block mb-4">
                             Cancellation Charges (H)
@@ -279,7 +282,7 @@
                                 <!-- Input Row -->
                                 <tr>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" 
+                                        <input type="text" name="" id="" placeholder="0"
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
@@ -303,6 +306,7 @@
                         </label>
 
                         <input type="text" id="totalAccount"
+                            value="₹ {{ number_format($totalSettlement,2) }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0">
                     </div>
@@ -310,7 +314,7 @@
 
                     <div class="col-span-2 md:col-span-1 mb-4">
                         <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Rounding Off (J) 
+                            Rounding Off (J)
                             <span class="text-red-500">*</span>
                         </label>
 
@@ -322,7 +326,7 @@
                     <div class="col-span-2 md:col-span-1 mb-4">
                         <label for="" class="md:text-lg uppercase font-medium block mb-4">
                             Final Amount To Release
-                            (I - J) (if any) 
+                            (I - J) (if any)
                             <span class="text-red-500">*</span>
                         </label>
 
@@ -330,7 +334,7 @@
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" readonly>
                     </div>
-                   
+
 
                     <!-- Buttons -->
                     <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
@@ -348,7 +352,7 @@
 
         <!-- Left: Details -->
         <div class=" w-full  overflow-hidden">
-          
+
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
@@ -367,19 +371,21 @@
                         <tbody>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2 w-1/3">Customer</td>
-                                <td class="px-3 py-2"> DEMO-04351 - Sinmay Khilar</td>
+                                <td class="px-3 py-2">{{ $misaccount->member->member_no }} -
+                                    {{ $misaccount->member->member_info_first_name }}
+                                </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Open Date</td>
-                                <td class="px-3 py-2">31/07/2024</td>
+                                <td class="px-3 py-2">{{ \Carbon\Carbon::parse($misaccount->open_date)->format('d/m/Y') }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Maturity Date</td>
-                                <td class="px-3 py-2"> 31/11/2027</td>
+                                <td class="px-3 py-2"> {{ \Carbon\Carbon::parse($misaccount->maturity_date)->format('d/m/Y') }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Status</td>
-                                <td class="px-3 py-2"> Active</td>
+                                <td class="px-3 py-2"> {{ $misaccount->status == 1 ? 'Active' : 'Closed' }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -406,31 +412,32 @@
                         <tbody>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2 w-1/3">Scheme</td>
-                                <td class="px-3 py-2"> Regular Fix Income</td>
+                                <td class="px-3 py-2">{{ $misaccount->fdScheme->scheme_name }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Tenure</td>
-                                <td class="px-3 py-2">40 MONTHS</td>
+                                <td class="px-3 py-2">{{ ($misaccount->tenure_year * 12) + $misaccount->tenure_month }}
+MONTHS</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="uppercase font-semibold px-3 py-2">FD Lock In Period</td>
-                                <td class="px-3 py-2"> 39 Months</td>
+                                <td class="uppercase font-semibold px-3 py-2">MIs Lock In Period</td>
+                                <td class="px-3 py-2">{{ $misaccount->fdScheme->lock_in_period }} Months</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Annual Interest Rate</td>
-                                <td class="px-3 py-2"> 60.0 %</td>
+                                <td class="px-3 py-2">{{ $rate }} %</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Interest Lock In Period</td>
-                                <td class="px-3 py-2"> 39 Months</td>
+                                <td class="px-3 py-2"> {{ $misaccount->fdScheme->interest_in_period }}</td>
                             </tr>
-                             <tr class="border-b border-gray-200">
+                            <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Penal Charges</td>
-                                <td class="px-3 py-2"> 0.0 %</td>
+                                <td class="px-3 py-2">{{ $misaccount->fdScheme->penal_charge ?? 0 }}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Fore Closure Charges</td>
-                                <td class="px-3 py-2">	₹</td>
+                                <td class="px-3 py-2"> ₹ static</td>
                             </tr>
                         </tbody>
                     </table>
@@ -441,7 +448,7 @@
             <div class="box bg-white dark:bg-bg3 border mt-5 shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black uppercase font-semibold text-lg">Interest info till date : 30/10/2025</h3>
+                    <h3 class="text-black uppercase font-semibold text-lg">Interest info till date : 30/10/2025 static</h3>
 
                     <!-- Toggle Button -->
                     <button class="p-1 rounded transition" onclick="toggleSection(this)">
@@ -456,20 +463,20 @@
                         <tbody>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2 w-1/3">
-Interest Credited</td>
-                                <td class="px-3 py-2"> ₹ (590,500.00)</td>
+                                    Interest Credited</td>
+                                <td class="px-3 py-2"> ₹ (590,500.00) static</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Interest Released</td>
-                                <td class="px-3 py-2">₹ 13,500.00</td>
+                                <td class="px-3 py-2">₹ 13,500.00 static</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">TDS Deducted</td>
-                                <td class="px-3 py-2"> ₹ 1,500.00</td>
+                                <td class="px-3 py-2"> ₹ 1,500.00 static</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Interest Available to Release</td>
-                                <td class="px-3 py-2"> ₹ (605,500.00)</td>
+                                <td class="px-3 py-2"> ₹ (605,500.00) static</td>
                             </tr>
                         </tbody>
                     </table>

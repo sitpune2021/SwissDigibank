@@ -793,7 +793,7 @@ class LedgerService
         return [$loans->count(), $totalInterest];
     }
 
-    public function calculateGroupBalance($groupId)
+    public function calculateGroupBalance($groupId, $branchId = null)
     {
         $ledgers = Ledger::where('group_id', $groupId)->get();
 
@@ -805,8 +805,10 @@ class LedgerService
 
         foreach ($ledgers as $ledger) {
 
-            // Only balance add karo
-            [, $balance] = $this->calculateLedgerBalance($ledger->code);
+            // Only balance filter branch wise
+            //[, $balance] = $this->calculateLedgerBalance($ledger->code);
+            [, $balance] = $this->calculateLedgerBalance($ledger->code, $branchId);
+
 
             $totalBalance += $balance;
         }

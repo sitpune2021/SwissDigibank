@@ -47,8 +47,8 @@ class RoleController extends Controller
         $menuItems4 = [
             ['title' => 'PERSONAL LOAN'],
             ['title' => 'DAILY WEEKLY'],
+            ['title' => 'FIXED LOAN'],
             ['title' => 'APPROVALS'],
-            //['title' => 'FIXED LOAN'],
             //['title' => 'MACHINE COLLECTION'],
             ['title' => 'PASSBOOKS'],
             ['title' => 'PRINT DOCUMENTS'],
@@ -287,6 +287,7 @@ class RoleController extends Controller
         $menuItems4 = [
             ['title' => 'PERSONAL LOAN'],
             ['title' => 'DAILY WEEKLY'],
+            ['title' => 'FIXED LOAN'],
             ['title' => 'APPROVALS'],
             ['title' => 'PASSBOOKS'],
             ['title' => 'PRINT DOCUMENTS'],

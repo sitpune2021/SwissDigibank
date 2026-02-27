@@ -24,33 +24,29 @@ class LedgergroupController extends Controller
         $this->ledgerService = $ledgerService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        $branchId = $request->branch_id; // branch capture
+
         $all = LedgerGroup::orderBy('weightage')->get();
 
-        /*
-        |---------------------------------
-        | Attach accounts + balance dynamically
-        |---------------------------------
-        */
         foreach ($all as $group) {
 
-            [$accounts, $balance] = $this->ledgerService->calculateGroupBalance($group->id);
+            // branch id pass in service 
+            [$accounts, $balance] = $this->ledgerService
+                ->calculateGroupBalance($group->id, $branchId);
 
             $group->accounts = $accounts;
             $group->balance  = $balance;
         }
 
-        /*
-        |---------------------------------
-        | Type filters
-        |---------------------------------
-        */
         $assets      = $all->where('type', 'Asset');
         $liabilities = $all->where('type', 'Liability');
         $equity      = $all->where('type', 'Equity');
         $expenses    = $all->where('type', 'Expense');
         $revenue     = $all->where('type', 'Revenue');
+
+        $branches = Branch::all();
 
         return view('menu-accounts.ledger-group.index', compact(
             'all',
@@ -58,7 +54,9 @@ class LedgergroupController extends Controller
             'liabilities',
             'equity',
             'expenses',
-            'revenue'
+            'branches',
+            'revenue',
+            'branchId'
         ));
     }
 
@@ -166,18 +164,28 @@ class LedgergroupController extends Controller
 ////////////////////////////////    Only Lead Tab      ////////////////////////////////////////////
    
 
-    public function led_index()
+    public function led_index(Request $request)
     {
+        $branchId = $request->branch_id;
+
         $ledgers = Ledger::with('group')->latest()->get();
 
         foreach ($ledgers as $ledger) {
-            [$accounts, $balance] =
-                $this->ledgerService->calculateLedgerBalance($ledger->code);
+            // [$accounts, $balance] =
+            //     $this->ledgerService->calculateLedgerBalance($ledger->code);
 
-            $ledger->balance = $balance ?: $ledger->opening_balance;
+            // $ledger->balance = $balance ?: $ledger->opening_balance;
+            // 🔥 branch id passed
+            [$accounts, $balance] =
+                $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId);
+
+            // if branch selected then opening balance ignore
+            $ledger->balance = $balance;
         }
 
-        return view('menu-accounts.ledger.index', compact('ledgers'));
+        $branches = Branch::all();
+
+        return view('menu-accounts.ledger.index', compact('ledgers','branches'));
     }
 
     public function add_leg()

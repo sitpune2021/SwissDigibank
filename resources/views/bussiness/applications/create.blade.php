@@ -487,12 +487,12 @@
                                 </table>
                             </div>
 
-                            <div class="mt-3">
+                            {{-- <div class="mt-3">
                                 <button type="button" id="addRow"
                                     class="btn-primary uppercase text-sm rounded-10 px-4 py-2">
                                     + Add New Score
                                 </button>
-                            </div>
+                            </div> --}}
 
                             {{-- calculator checkbox- --}}
                             <!-- <x-checkbox-calculator id="manualEntry" name="manual_entry" label="Collect Principal Amount as EMI"
@@ -1467,10 +1467,10 @@
         `;
             }
 
-            // Add new row
-            addRowBtn.addEventListener("click", () => {
-                cibilBody.insertAdjacentHTML("beforeend", newRow());
-            });
+            // // Add new row
+            // addRowBtn.addEventListener("click", () => {
+            //     cibilBody.insertAdjacentHTML("beforeend", newRow());
+            // });
 
             // Remove row (event delegation)
             cibilBody.addEventListener("click", function(e) {

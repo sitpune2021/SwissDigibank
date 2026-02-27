@@ -509,11 +509,11 @@
                                 </table>
                             </div>
 
-                            <div class="mt-3">
+                            {{-- <div class="mt-3">
                                 <button type="button" id="addRow" class="btn-primary rounded-10 px-4 py-2 uppercase">
                                     + Add New Score
                                 </button>
-                            </div>
+                            </div> --}}
 
                         </div>
 
@@ -1853,12 +1853,12 @@
             }
 
 
-            // Add row
-            addRowBtn.addEventListener("click", () => {
+            // // Add row
+            // addRowBtn.addEventListener("click", () => {
 
 
-                cibilBody.insertAdjacentHTML("beforeend", newRow());
-            });
+            //     cibilBody.insertAdjacentHTML("beforeend", newRow());
+            // });
 
             // Remove row (event delegation)
             cibilBody.addEventListener("click", function(e) {

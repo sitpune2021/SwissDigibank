@@ -95,7 +95,7 @@
     </style>
 
     <div class="main-inner">
-     	  @if (session('pending_request') && $application->status == 0)
+        @if (session('pending_request') && $application->status == 0)
             <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
                 <h4 style="margin:0;">PENDING REQUEST</h4>
                 <p style="margin:5px 0;">
@@ -108,7 +108,7 @@
                 </p>
             </div>
         @endif
-		
+
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
 
             <div class="flex items-start flex-col gap-2">
@@ -116,12 +116,10 @@
             </div>
         </div>
         @if (session('success'))
-
             {{-- //alert msg --}}
             <div class="w-44 mb-5 flex justify-end">
                 <x-alert />
             </div>
-
         @endif
 
 
@@ -141,15 +139,15 @@
                     </button>
                 </form>
             @endif
-			
+
             @if ($application->status != 1 && $application->status != 2)
                 <a href="{{ route('gold-loan.applications.view-buttons.col_process_fee', $application->id) }}"
                     class="btn-warning uppercase px-2 py-2 rounded-10  text-sm">
                     Collect Processing Fee
                 </a>
                 <!-- <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-                                                SUBMIT FOR APPROVAL
-                                            </a> -->
+                                                    SUBMIT FOR APPROVAL
+                                                </a> -->
             @endif
 
             {{-- Status != DISBURSEMENT (2) --}}
@@ -265,10 +263,10 @@
             <div class=" w-full  overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <div class="text-end p-3">
-                        @if(hasPermission('gold-loan.applications.edit') && $application->status != 2)
-                        <a href="{{ route('gold-loan.applications.edit', $application->id) }}" class="p-2 btn-primary">
-                            <i class="las la-pencil-alt"></i>
-                        </a>
+                        @if (hasPermission('gold-loan.applications.edit') && $application->status != 2)
+                            <a href="{{ route('gold-loan.applications.edit', $application->id) }}" class="p-2 btn-primary">
+                                <i class="las la-pencil-alt"></i>
+                            </a>
                         @endif
                         <a href="#" class=" p-2 btn-error">
                             <i class="las la-trash-alt"></i>
@@ -373,7 +371,7 @@
 
                         </tbody>
                     </table>
-                    
+
                 </div>
 
 
@@ -657,9 +655,12 @@
                             </h3>
                         </div>
 
-                        <div class="flex justify-center items-center px-4 py-6 mt-3 text-2xl sm:text-3xl font-semibold ">
+                        <div class="flex justify-center items-center px-4 py-6 mt-3 text-2xl sm:text-3xl font-semibold  text-red-500 ">
                             <label class="cursor-pointer">
-                                <h3>0.0</h3>
+                                <h3>
+                                    ₹
+                                    {{ number_format($application->processing_fee_total ?? ($application->processing_fee_value ?? 0), 2) }}
+                                </h3>
                             </label>
                         </div>
                     </div>
