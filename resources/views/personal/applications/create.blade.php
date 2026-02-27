@@ -700,7 +700,7 @@
                         </div>
                         <input type="hidden" name="ratio_enabled" id="ratio_enabled"
                             value="{{ old('ratio_enabled', $application->ratio_enabled ?? 'No') }}">
-<input type="hidden" name="ratio_first_emi" id="ratio_first_emi"
+                        <input type="hidden" name="ratio_first_emi" id="ratio_first_emi"
                             value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}">
 
                         <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage"
@@ -1167,18 +1167,25 @@
                     netLoanAmount = maxLoan;
                 }
 
+                let approvedAmount = Math.min(netLoanAmount, maxLoan);
+
+                // 🔹 Update display
                 document.getElementById("net-loan-amt").textContent = netLoanAmount.toFixed(2);
                 document.getElementById("m-approval-amt").textContent = maxLoan.toFixed(2);
-                document.getElementById("approval-amt").textContent = Math.min(netLoanAmount, maxLoan).toFixed(2);
+                document.getElementById("approval-amt").textContent = approvedAmount.toFixed(2);
+
+                // 🔥 IMPORTANT: Set hidden fields for DB
+                document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
+                document.getElementById("inputLimit").value = maxLoan.toFixed(2);
+                document.getElementById("inputApprovable").value = approvedAmount.toFixed(2);
+                document.getElementById("inputApproved").value = approvedAmount.toFixed(2);
 
                 calcBox.classList.remove("hidden");
 
-                // Button ko submit mode me convert
                 calcBtn.textContent = "Submit Application";
                 calcBtn.type = "submit";
                 mode = "submit";
             }
-
             // MAIN BUTTON CLICK
             calcBtn.addEventListener("click", function(e) {
                 if (mode === "calculate") {
@@ -1442,7 +1449,7 @@
 
         });
     </script>
-<script>
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
 
             const schemeSelect = document.getElementById("scheme_id");

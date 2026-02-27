@@ -232,6 +232,12 @@ class DailyWeeklyController extends Controller
         $transferDate = $request->transfer_date
             ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
             : null;
+        $scheme = DailyWeeklyScheme::find($request->scheme_id);
+
+        $maxLoan = $scheme->max_loan_amount ?? 0;
+        $loanAmount = $request->loan_amount ?? 0;
+
+        $approved = min($loanAmount, $maxLoan);
         try {
             // Create record (Security fields removed, null sent instead)
             $loanApplication = DailyWeeklyApplication::create([
@@ -263,9 +269,9 @@ class DailyWeeklyController extends Controller
                 'credited' => ($request->credited === 'yes' || $request->credited == 1) ? 1 : 0,
                 'collect_principal_as_emi' => $request->collect_principal_as_emi ?? 0,
                 'collect_advance_processing_fee' => $request->collect_advance_processing_fee ?? 0,
-                'max_loan_amount' => $request->max_loan_amount ?? 0,
-                'maximum_approvable_amount' => $request->maximum_approvable_amount ?? 0,
-                'approved_loan_amount' => $request->approved_loan_amount ?? 0,
+                'max_loan_amount' => $maxLoan,
+                'maximum_approvable_amount' => $approved,
+                'approved_loan_amount' => $approved,
                 'security_type' => null,
                 'security_amount' => null,
                 'tenure_value' => $request->tenure_value,
@@ -606,16 +612,17 @@ class DailyWeeklyController extends Controller
         $smsCharge        = floatval($application->scheme->sms_charge ?? 0);
         $fuelCharge       = floatval($application->scheme->fuel_charge ?? 0);
         $stationaryCharge = floatval($application->scheme->stationary_charge ?? 0);
-        $maintenanceCharge= floatval($application->scheme->maintenance_charge ?? 0);
+        $maintenanceCharge = floatval($application->scheme->maintenance_charge ?? 0);
         $collectionCharge = floatval($application->scheme->collection ?? 0);
 
         $chargesPerEmi = round(
             $smsCharge +
-            $fuelCharge +
-            $stationaryCharge +
-            $maintenanceCharge +
-            $collectionCharge,
-        2);
+                $fuelCharge +
+                $stationaryCharge +
+                $maintenanceCharge +
+                $collectionCharge,
+            2
+        );
 
 
         // Interest rate (annual) & periodic rate
