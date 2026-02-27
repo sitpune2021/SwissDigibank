@@ -2067,7 +2067,6 @@ class BusinessLoan extends Controller
 
     public function storeLoanApplication(Request $request)
     {
-        // dd($request->all());
         Log::info('--- Business Loan Application Store Started ---', [
             'user_id' => Auth::id(),
             'input_data' => $request->all(),
@@ -2157,7 +2156,7 @@ class BusinessLoan extends Controller
         // 🔹 Fetch selected scheme
         $scheme = BusinessLoanScheme::find($request->scheme_id);
 
-        $loanAmount = $request->approved_loan_amount ?? $request->loan_amount ?? 0;
+        $loanAmount = $request->loan_amount ?? 0;
         $processingPercent = $scheme->processing_fee ?? 0;
 
         // 🔹 Calculate processing fee
