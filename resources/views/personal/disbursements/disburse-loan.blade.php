@@ -596,72 +596,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mb-4">
-                                <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                                    <tbody>
-                                        <tr>
-                                            <th class="text-center uppercase px-3 py-2 ">Value</th>
-                                            <th class="text-center uppercase px-3 py-2 ">GST (%)</th>
-                                            <th class="text-center uppercase px-3 py-2 ">SGST</th>
-                                            <th class="text-center uppercase px-3 py-2 ">CGST</th>
-                                            <th class="text-center uppercase px-3 py-2 ">IGST</th>
-                                            <th class="text-center uppercase px-3 py-2 ">Total</th>
-                                        </tr>
-
-                                        <tr>
-                                            <!-- Value -->
-                                            <td class="px-2 py-2 ">
-                                                <input type="text" name="processing_fee" id="processing_fee"
-                                                    value="{{ number_format($processingFee, 2, '.', '') }}" readonly
-                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                            </td>
-
-                                            <!-- GST (%) -->
-                                            <td class="px-2 py-2 ">
-                                                <input type="text" name="gst_percent" id="gst_percent"
-                                                    value="{{ $gstPercent }}" readonly
-                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                            </td>
-
-                                            <!-- SGST -->
-                                            <td class="px-2 py-2 ">
-                                                <input type="text" name="sgst" id="sgst" value="0"
-                                                    readonly
-                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                            </td>
-
-                                            <!-- CGST -->
-                                            <td class="px-2 py-2 ">
-                                                <input type="text" name="cgst" id="cgst" value="0"
-                                                    readonly
-                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                            </td>
-
-                                            <!-- IGST -->
-                                            <td class="px-2 py-2 ">
-                                                <input type="text" name="igst" id="igst" value="0"
-                                                    readonly
-                                                    class="w-full px-2 py-2 text-center bg-secondary/10 border rounded-10 text-sm md:text-base" />
-                                            </td>
-
-                                            <!-- Total -->
-                                            <td class="px-2 py-2">
-                                                <input type="number" name="processing_fee_total"
-                                                    id="processing_fee_total"
-                                                    value="{{ number_format($processingTotal, 2, '.', '') }}" readonly
-                                                    class="w-full px-2 py-2 text-center border  rounded-10 text-sm md:text-base" />
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                                <div id="paymodeWrapper" class="mt-3 hidden">
-                                    <!-- pass processing fee to your paymode component -->
-                                    <x-paymode :amount="$processingFee" :showSaving="false" id="processing_fee2" :readonly="false"
-                                        :amountClass="true" :bgColor="false" :hiddenheading="true" :checkedDefault="'cash'"
-                                        groupName="processing_fee2" />
-                                </div>
-                            </div>
+                        
                         @endif
 
                         <!-- Final Amount -->

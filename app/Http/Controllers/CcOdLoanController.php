@@ -209,7 +209,21 @@ class CcOdLoanController extends Controller
             'd-m-Y',
             $request->application_date
         )->format('Y-m-d');
+        // 🔹 Fetch scheme
+        $scheme = CcOdLoanScheme::find($request->scheme_id);
 
+        $loanAmount = $request->approved_loan_amount ?? $request->net_loan_amount ?? 0;
+        $percent = $scheme->processing_fee ?? 0;
+
+        $fee = ($loanAmount * $percent) / 100;
+        $gst = ($fee * 18) / 100;
+        $total = $fee + $gst;
+
+        $request->merge([
+            'processing_fee_value' => round($fee, 2),
+            'processing_fee_gst'   => round($gst, 2),
+            'processing_fee_total' => round($total, 2),
+        ]);
         try {
             // Create record (Security fields removed, null sent instead)
             $loanApplication = CcOdLoanApplication::create([
@@ -249,6 +263,9 @@ class CcOdLoanController extends Controller
                 'approved_loan_amount' => $request->approved_loan_amount ?? 0,
                 'security_type' => null,
                 'security_amount' => null,
+                'processing_fee_value' => $request->processing_fee_value,
+                'processing_fee_gst'   => $request->processing_fee_gst,
+                'processing_fee_total' => $request->processing_fee_total,
             ]);
 
 

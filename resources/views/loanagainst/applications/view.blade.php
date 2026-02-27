@@ -265,11 +265,11 @@
                             @endif
 
                             <!-- <tr class="border-b">
-                                                <td class="font-semibold uppercase px-4 py-2">Guarantor 1 Member</td>
-                                                <td class="px-4 py-2 capitalize text-primary">
-                                                    {{ optional($application->guarantor1)->member_no }} - {{ optional($application->guarantor1)->member_info_first_name }}
-                                                </td>
-                                            </tr> -->
+                                                    <td class="font-semibold uppercase px-4 py-2">Guarantor 1 Member</td>
+                                                    <td class="px-4 py-2 capitalize text-primary">
+                                                        {{ optional($application->guarantor1)->member_no }} - {{ optional($application->guarantor1)->member_info_first_name }}
+                                                    </td>
+                                                </tr> -->
 
                             <tr class="border-b">
                                 <td class="font-semibold uppercase px-4 py-2">Application No.</td>
@@ -395,8 +395,8 @@
                                                 <td class="px-4 py-2">
                                                     @if (!empty($score->report_file_path))
                                                         <!-- <a href="javascript:void(0);"
-                                                                        onclick="showImage('{{ asset($score->report_file_path) }}')"
-                                                                        class="text-blue-600 hover:underline">View Report</a> -->
+                                                                            onclick="showImage('{{ asset($score->report_file_path) }}')"
+                                                                            class="text-blue-600 hover:underline">View Report</a> -->
                                                         <a href="{{ asset('storage/' . $score->report_file_path) }}"
                                                             target="_blank" class="text-blue-500 underline text-sm">View
                                                             File</a>
@@ -521,9 +521,11 @@
                             </h3>
                         </div>
 
-                        <div class="flex justify-center items-center px-4 py-6 mt-3 text-2xl sm:text-3xl font-semibold ">
+                        <div class="flex justify-center items-center mt-3 px-4 py-6 mt-3 text-2xl sm:text-3xl font-semibold text-red-500">
                             <label class="cursor-pointer">
-                                <h3>0.0</h3>
+                                <h3>
+                                    ₹ {{ number_format($application->processing_fee_total ?? 0, 2) }}
+                                </h3>
                             </label>
                         </div>
                     </div>

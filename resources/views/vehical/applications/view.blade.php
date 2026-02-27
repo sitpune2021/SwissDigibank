@@ -443,8 +443,8 @@
                         </h3>
                         <div class="">
                             <!-- <a href="{{ route('gold-loan.applications.upload_documents') }}" class="btn-primary p-1 pointer">
-                                    <i class="las la-upload y"></i>
-                                </a> -->
+                                        <i class="las la-upload y"></i>
+                                    </a> -->
 
                             <button type="button" class="p-1 rounded transition"
                                 onclick="toggleSection(this, 'Documents')">
@@ -502,7 +502,9 @@
 
                         <div class="flex justify-center items-center px-4 py-6 mt-3 text-2xl sm:text-3xl font-semibold ">
                             <label class="cursor-pointer">
-                                <h3>0.0</h3>
+                                <h3>
+                                    ₹ {{ number_format($application->processing_fee_total ?? 0, 2) }}
+                                </h3>
                             </label>
                         </div>
                     </div>
