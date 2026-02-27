@@ -500,7 +500,7 @@
 
                         <div class="flex justify-center items-center px-4 py-6 mt-3 text-2xl sm:text-3xl font-semibold ">
                             <label class="cursor-pointer">
-                                <h3> ₹ {{ number_format($application->processing_fee_value ?? 0, 2) }}
+                                <h3> ₹ {{ number_format($application->processing_fee_total  ?? 0, 2) }}
                                 </h3>
                             </label>
                         </div>

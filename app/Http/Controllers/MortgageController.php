@@ -1332,7 +1332,7 @@ class MortgageController extends Controller
                     try {
                         $reportDate = null;
                         if (!empty($request->report_date[$index])) {
-                            $reportDate = Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d');
+                            $reportDate = Carbon::createFromFormat('d-m-Y', $request->report_date[$index])->format('Y-m-d');
                         }
 
                         $filePath = null;

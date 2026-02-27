@@ -1357,15 +1357,30 @@ class LoanAgainstController extends Controller
         $loanAmount = $request->approved_loan_amount ?? $request->loan_amount ?? 0;
         $processingPercent = $scheme->processing_fee ?? 0;
 
-        // 🔹 Calculate processing fee
+        // 🔹 Calculate base processing fee
         $processingFee = ($loanAmount * $processingPercent) / 100;
+
+        // 🔹 Calculate GST (18%)
+        $gst = ($processingFee * 18) / 100;
+
+        // 🔹 Final total
+        $totalProcessingFee = $processingFee + $gst;
 
         // 🔹 Merge into request
         $request->merge([
-            'processing_fee_value' => $processingFee,
-            'processing_fee_total' => $processingFee
+            'processing_fee_value' => round($processingFee, 2),
+            'processing_fee_gst'   => round($gst, 2),
+            'processing_fee_total' => round($totalProcessingFee, 2),
         ]);
 
+        Log::info('Processing Fee Calculated', [
+            'loan_amount' => $loanAmount,
+            'percent' => $processingPercent,
+            'base_fee' => $processingFee,
+            'gst' => $gst,
+            'total' => $totalProcessingFee,
+        ]);
+     
         Log::info('Processing Fee Calculated', [
             'loan_amount' => $loanAmount,
             'percent' => $processingPercent,
