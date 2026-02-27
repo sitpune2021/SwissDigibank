@@ -95,7 +95,7 @@
        <div class="mb-3">
                 <label for="" class="form-label  flex items-center gap-3 font-medium mb-2 uppercase">
                                    
-                <input type="checkbox" id="" class="form-select w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 ">
+                <input type="checkbox" id="manual_entry_toggle" class="form-select w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 ">
                 <span class="block">Enter Values Manually</span>
                 </label>
             </div>
@@ -301,6 +301,52 @@
 
 @push('script')
 <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const manualToggle = document.getElementById("manual_entry_toggle");
+    const schemeDropdown = document.getElementById("scheme_id");
+
+    const formFields = [
+        "open_date",
+        "amount",
+        "interest_payout_type",
+        "annual_interest_rate",
+        "tenure_year",
+        "tenure_month",
+        "tenure_day",
+        "bonus_type",
+        "bonus"
+    ];
+
+    function toggleManualMode() {
+
+        if (manualToggle.checked) {
+            // Manual mode ON
+            schemeDropdown.disabled = true;
+
+            formFields.forEach(id => {
+                document.getElementById(id).disabled = false;
+            });
+
+        } else {
+            // Manual mode OFF
+            schemeDropdown.disabled = false;
+
+            formFields.forEach(id => {
+                document.getElementById(id).disabled = true;
+            });
+        }
+    }
+
+    // Default state: manual OFF
+    manualToggle.checked = false;
+    toggleManualMode();
+
+    manualToggle.addEventListener("change", toggleManualMode);
+});
+
+
 document.addEventListener("DOMContentLoaded", function () {
     fetch("{{ route('fd.schemes.fetch') }}")
         .then(response => response.json())
