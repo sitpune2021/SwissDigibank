@@ -88,41 +88,41 @@
   <div class="form-container">
 
     <div class="header">
-     <div style="width:100%; font-family: dejavusans; border-bottom: 1px solid #000 ; padding: 5px;">
+      <div style="width:100%; font-family: dejavusans; border-bottom: 1px solid #000 ; padding: 5px;">
 
-            <!-- Logo -->
+        <!-- Logo -->
 
-            <div style="float:left; width:30%; text-align:left;  margin-top: 0 !important;">
-               <img src="{{public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo"
-                                style=" width:auto; height:50px;">
-                {{-- @if($logo) --}}
-                     
-                    {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
-                    {{-- @else --}}
-                    {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
-                        style="max-width:90px; max-height:90px;"> --}}
-                    {{-- @endif --}}
-                {{-- <img src="{{ public_path('assets/images/SBC_Logo.jpg') }}" alt="Company Logo"
-                    style="width:130px; height:130px;"> --}}
-            </div>
+        <div style="float:left; width:30%; text-align:left;  margin-top: 0 !important;">
+          <img src="{{public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="logo" style=" width:auto; height:50px;">
+          {{-- @if($logo) --}}
 
-            <!-- Title Section -->
-            {{-- <div style="float:left; width:70%; text-align:center;">
-                <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; "> --}}
-                    {{-- SBC Global --}}
-                {{-- </div> --}}
-
-                {{-- <div style="height:10px; margin-top: 40px;">&nbsp;</div> --}}
-
-              
-            {{-- </div> --}}
- 
-            <!-- Clear Float -->
-            <div style="clear:both; "></div>
-           <h4 style=" text-align: center; font-size:18px; margin: 0 !important; font-weight:bold;">
-               Account Opening Form For Saving
-                </h4>
+          {{-- <img src="{{ public_path($logo->image_path) }}" alt="logo" style="max-width:90px; max-height:90px;"> --}}
+          {{-- @else --}}
+          {{-- <img src="{{ public_path('assets/images/Loan_Management_Logo.png') }}" alt="default logo"
+            style="max-width:90px; max-height:90px;"> --}}
+          {{-- @endif --}}
+          {{-- <img src="{{ public_path('assets/images/SBC_Logo.jpg') }}" alt="Company Logo"
+            style="width:130px; height:130px;"> --}}
         </div>
+
+        <!-- Title Section -->
+        {{-- <div style="float:left; width:70%; text-align:center;">
+          <div style="  font-size:30px; font-weight: 800;  text-transform:uppercase; "> --}}
+            {{-- SBC Global --}}
+            {{-- </div> --}}
+
+          {{-- <div style="height:10px; margin-top: 40px;">&nbsp;</div> --}}
+
+
+          {{--
+        </div> --}}
+
+        <!-- Clear Float -->
+        <div style="clear:both; "></div>
+        <h4 style=" text-align: center; font-size:18px; margin: 0 !important; font-weight:bold;">
+          Account Opening Form For Saving
+        </h4>
+      </div>
       {{--
       <hr style="border-top: 3px solid black; background: transparent; margin:5px 0;"> --}}
     </div>
@@ -136,7 +136,7 @@
         </td>
         <td colspan="2"></td>
         <td>Account No : </td>
-        <td style=" border: 1px solid #000; vertical-align: top;">{{$account->account_no??''}}</td>
+        <td style=" border: 1px solid #000; vertical-align: top;">{{$account->account_no ?? ''}}</td>
       </tr>
     </table>
     <table style="margin-top: 5px;">
@@ -156,12 +156,12 @@
     <table style="margin-top: 5px;">
       <tr>
         <td>Scheme Name :</td>
-        <td style=" border: 1px solid #000;vertical-align: top; ">{{$account->scheme->scheme_name??''}} </td>
+        <td style=" border: 1px solid #000;vertical-align: top; ">{{$account->scheme->scheme_name ?? ''}} </td>
         <td style="text-align: right;">Interest Rate : </td>
-        <td style=" border: 1px solid #000;vertical-align: top; ">{{$account->scheme->annual_int_rate??''}}</td>
+        <td style=" border: 1px solid #000;vertical-align: top; ">{{$account->scheme->annual_int_rate ?? ''}}</td>
         <td style="text-align: right;">Date:</td>
         <td style=" border: 1px solid #000;vertical-align: top; "> {{
-          \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') }}
+  \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') }}
 
         </td>
       </tr>
@@ -204,13 +204,17 @@
 
     <table style="margin-top: 10px">
       <td>PAN No: :</td>
-      <td style=" border: 1px solid #000;vertical-align: top; ">{{$account->members->kyc->member_kyc_pan_no??''}}</td>
+      <td style=" border: 1px solid #000;vertical-align: top; ">{{$account->members->kyc->member_kyc_pan_no ?? ''}}</td>
       <td colspan="2"></td>
       <td>Aadhar No :</td>
       <td style=" border: 1px solid #000;vertical-align: top; ">
-        {{ $account->members->kyc->member_kyc_aadhaar_no
+        @php
+          $aadhaar = optional(optional($account->members)->kyc)->member_kyc_aadhaar_no;
+        @endphp
+        {{ $aadhaar ? 'XXXX-XXXX-' . substr($aadhaar, -4) : '' }}
+        {{-- {{ $account->members->kyc->member_kyc_aadhaar_no
         ? 'XXXX-XXXX-' . substr($account->members->kyc->member_kyc_aadhaar_no, -4)
-        : '' }}
+        : '' }} --}}
       </td>
       </tr>
     </table>
@@ -218,22 +222,22 @@
     <table>
       <tr>
         <td> City:</td>
-        <td>{{$account->members->address->member_address_city_district??''}}</td>
+        <td>{{$account->members->address->member_address_city_district ?? ''}}</td>
         <td style="text-align: right;">Pin Code :</td>
-        <td>{{$account->members->address->member_address_pincode??''}}</td>
+        <td>{{$account->members->address->member_address_pincode ?? ''}}</td>
         <td style="text-align: right;">State :</td>
-        <td>{{$account->members->address->state->name??''}}</td>
+        <td>{{$account->members->address->state->name ?? ''}}</td>
       </tr>
     </table>
     <p style="margin-top: 10px;font-weight: 600;">Permanent Address </p>
     <table>
       <tr>
         <td>City:</td>
-        <td>{{$account->members->address->member_perm_address_city??''}}</td>
+        <td>{{$account->members->address->member_perm_address_city ?? ''}}</td>
         <td style="text-align: right;">Pin Code :</td>
-        <td>{{$account->members->address->member_address_pincode??''}}</td>
+        <td>{{$account->members->address->member_address_pincode ?? ''}}</td>
         <td style="text-align: right;">State :</td>
-        <td>{{$account->members->address->state->name??''}}</td>
+        <td>{{$account->members->address->state->name ?? ''}}</td>
       </tr>
     </table>
 
@@ -244,7 +248,7 @@
         <td width="33.33%">
           <div style="float:left; width:20px;">
             <input type="checkbox" style="width:18px; height:18px;" {{ $account->account_holder_type == 'single' ?
-            'checked' : '' }}>
+  'checked' : '' }}>
           </div>
           <div style="float:left; margin-left:6px; margin-top: 5px;">
             : Self
@@ -256,7 +260,7 @@
         <td width="33.33%">
           <div style="float:left; width:20px;">
             <input type="checkbox" style="width:18px; height:18px;" {{ $account->account_holder_type == 'joint' ?
-            'checked' : '' }}>
+  'checked' : '' }}>
           </div>
           <div style="float:left; margin-left:6px ;  margin-top: 5px;">
             : Jointly
@@ -268,7 +272,7 @@
         <td width="33.33%">
           <div style="float:left; width:20px;">
             <input type="checkbox" style="width:18px; height:18px;" {{ $account->account_holder_type == 'either' ?
-            'checked' : '' }}>
+  'checked' : '' }}>
           </div>
           <div style="float:left; margin-left:6px;  margin-top: 5px;">
             : Either of Survivor
@@ -288,7 +292,7 @@
         <td width="20%">
           <div style="float:left; width:20px;">
             <input type="checkbox" style="width:18px; height:18px;" {{ $account->interest_pay_cycle == 'Monthly' ?
-            'checked' : '' }}>
+  'checked' : '' }}>
           </div>
           <div style="float:left; margin-left:6px; margin-top: 5px;">
             : Monthly
@@ -300,7 +304,7 @@
         <td width="20%">
           <div style="float:left; width:20px;">
             <input type="checkbox" style="width:18px; height:18px;" {{ $account->interest_pay_cycle == 'Quarterly' ?
-            'checked' : '' }}>
+  'checked' : '' }}>
           </div>
           <div style="float:left; margin-left:6px; margin-top: 5px;">
             : Quarterly
@@ -312,7 +316,7 @@
         <td width="20%">
           <div style="float:left; width:20px;">
             <input type="checkbox" style="width:18px; height:18px;" {{ $account->interest_pay_cycle == 'Half Yearly' ?
-            'checked' : '' }}>
+  'checked' : '' }}>
           </div>
           <div style="float:left; margin-left:6px;  margin-top: 5px;">
             : Half Yearly
@@ -324,7 +328,7 @@
         <td width="20%">
           <div style="float:left; width:20px;">
             <input type="checkbox" style="width:18px; height:18px;" {{ $account->interest_pay_cycle == 'Yearly' ?
-            'checked' : '' }}>
+  'checked' : '' }}>
           </div>
           <div style="float:left; margin-left:6px;  margin-top: 5px;">
             : Yearly
@@ -335,8 +339,10 @@
         <!-- End of Term -->
         <td width="20%">
           <div style="float:left; width:20px;">
-            <input type="checkbox" style="width:18px; height:18px;" {{ !in_array($account->interest_pay_cycle,
-            ['Monthly', 'Quarterly', 'Half Yearly', 'Yearly']) ? 'checked' : '' }}>
+            <input type="checkbox" style="width:18px; height:18px;" {{ !in_array(
+  $account->interest_pay_cycle,
+  ['Monthly', 'Quarterly', 'Half Yearly', 'Yearly']
+) ? 'checked' : '' }}>
           </div>
           <div style="float:left; margin-left:6px;  margin-top: 5px;">
             : End of Term
@@ -388,7 +394,7 @@
 
     <div class="declaration" style="line-height: 2; margin-top: 10px;">
       I/We {{ strtoupper(($account->members->member_info_first_name ?? '') . ' ' .
-      ($account->members->member_info_middle_name ?? '') . ' ' . ($account->members->member_info_last_name ?? '')) }}
+  ($account->members->member_info_middle_name ?? '') . ' ' . ($account->members->member_info_last_name ?? '')) }}
       are opening an account under
       {{-- SHRI SAMARTH NAGRI SAHKARI PAT SANSTHA --}}
       {{-- bank name here --}}
