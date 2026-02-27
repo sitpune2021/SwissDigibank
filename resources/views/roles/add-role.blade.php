@@ -223,6 +223,10 @@
                                     <!--------------------DAILY WEEKLY LOAN------------------------>
                                     
                                     @include('roles.checkboxes.dailyweekly-loan')
+
+                                    <!---------------------FIXED LOAN------------------------>
+                                     
+                                    @include('roles.checkboxes.fixed-loan')
                                     
                                     <!---------------------APPROVALS------------------------>
 

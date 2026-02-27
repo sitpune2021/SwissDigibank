@@ -64,9 +64,14 @@
             <form>
                 <div class="flex justify-center box gap-3">
                     <div class="">
-                        <select id="" name=""
-                            class="w-64 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                            <option selected>ALL</option>
+                        <select name="branch_id" class="w-64 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                            <option value="">ALL BRANCH</option>
+                            @foreach($branches as $branch)
+                                <option value="{{ $branch->id }}"
+                                    {{ request('branch_id') == $branch->id ? 'selected' : '' }}>
+                                    {{ $branch->branch_name }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -995,37 +1000,37 @@
         </div>
 
 
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const tabs = document.querySelectorAll('.tab-link');
-                const tabPanes = document.querySelectorAll('.tab-pane');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-link');
+            const tabPanes = document.querySelectorAll('.tab-pane');
 
-                // ✅ Set the first tab active by default
-                if (tabs.length > 0 && tabPanes.length > 0) {
+            // ✅ Set the first tab active by default
+            if (tabs.length > 0 && tabPanes.length > 0) {
+                tabs.forEach(t => t.classList.remove('active', 'text-primary', 'border-primary'));
+                tabPanes.forEach(p => p.classList.add('hidden'));
+
+                tabs[0].classList.add('active', 'text-primary', 'border-primary');
+                tabPanes[0].classList.remove('hidden');
+            }
+
+            // ✅ Tab switching logic
+            tabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    // Remove active state from all tabs & hide all panes
                     tabs.forEach(t => t.classList.remove('active', 'text-primary', 'border-primary'));
                     tabPanes.forEach(p => p.classList.add('hidden'));
 
-                    tabs[0].classList.add('active', 'text-primary', 'border-primary');
-                    tabPanes[0].classList.remove('hidden');
-                }
-
-                // ✅ Tab switching logic
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', (e) => {
-                        e.preventDefault();
-
-                        // Remove active state from all tabs & hide all panes
-                        tabs.forEach(t => t.classList.remove('active', 'text-primary', 'border-primary'));
-                        tabPanes.forEach(p => p.classList.add('hidden'));
-
-                        // Activate clicked tab and show its pane
-                        tab.classList.add('active', 'text-primary', 'border-primary');
-                        const targetPane = document.getElementById(tab.dataset.tab);
-                        if (targetPane) targetPane.classList.remove('hidden');
-                    });
+                    // Activate clicked tab and show its pane
+                    tab.classList.add('active', 'text-primary', 'border-primary');
+                    const targetPane = document.getElementById(tab.dataset.tab);
+                    if (targetPane) targetPane.classList.remove('hidden');
                 });
             });
-        </script>
+        });
+    </script>
 
 
 @endsection

@@ -607,9 +607,11 @@
                                     value="{{ number_format($finalAmount, 2, '.', '') }}">
                                 <x-number-to-word for="D_mode_1" />
                                 <div class="mt-3">
-
                                     <label>
-                                        <input type="radio" name="payment_mode" value="cheque" checked> Cheque
+                                        <input type="radio" name="payment_mode" value="cash" checked> Cash
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="payment_mode" value="cheque"> Cheque
                                     </label>
 
                                     <label>
@@ -620,7 +622,7 @@
                                     </label>
 
                                     <!-- Fields for Cheque -->
-                                    <div id="cheque_fields" style="display:block; margin-top:10px;">
+                                    <div id="cheque_fields" style="display:none; margin-top:10px;">
                                         <label for="bank_id" class="block mb-2 text-sm font-medium">Select Bank</label>
                                         <select id="bank_id" name="bank_id"
                                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
@@ -713,7 +715,11 @@
 
                                             <div class="mt-3">
                                                 <label>
-                                                    <input type="radio" name="payment_mode2" value="cheque" checked>
+                                                    <input type="radio" name="payment_mode2" value="cash" checked>
+                                                    Cash
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="payment_mode2" value="cheque">
                                                     Cheque
                                                 </label>
                                                 <label>
@@ -725,7 +731,7 @@
                                                     Account
                                                 </label>
                                                 <!-- Fields for Disburse Mode 2 -->
-                                                <div id="cheque_fields2" style="display:block; margin-top:10px;">
+                                                <div id="cheque_fields2" style="display:none; margin-top:10px;">
                                                     <select id="bank_id2" name="bank_id2"
                                                         class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                                         <option value="">-- Select Bank --</option>
@@ -1001,15 +1007,16 @@
 
     <script>
         document.querySelectorAll('input[name="payment_mode"]').forEach((elem) => {
-            elem.addEventListener("change", function(event) {
-                let value = event.target.value;
+            elem.addEventListener("change", function() {
 
-                // hide all first
+                let value = this.value;
+
+                // Hide all
                 document.getElementById("cheque_fields").style.display = "none";
                 document.getElementById("online_fields").style.display = "none";
                 document.getElementById("saving_fields").style.display = "none";
 
-                // show according to selection
+                // Show only selected
                 if (value === "cheque") {
                     document.getElementById("cheque_fields").style.display = "block";
                 } else if (value === "online") {
@@ -1017,20 +1024,20 @@
                 } else if (value === "saving") {
                     document.getElementById("saving_fields").style.display = "block";
                 }
+                // CASH → nothing shows
             });
         });
 
         // Disburse Mode 2
         document.querySelectorAll('input[name="payment_mode2"]').forEach((elem) => {
-            elem.addEventListener("change", function(event) {
-                let value = event.target.value;
+            elem.addEventListener("change", function() {
 
-                // hide all first
+                let value = this.value;
+
                 document.getElementById("cheque_fields2").style.display = "none";
                 document.getElementById("online_fields2").style.display = "none";
                 document.getElementById("saving_fields2").style.display = "none";
 
-                // show according to selection
                 if (value === "cheque") {
                     document.getElementById("cheque_fields2").style.display = "block";
                 } else if (value === "online") {
@@ -1038,6 +1045,7 @@
                 } else if (value === "saving") {
                     document.getElementById("saving_fields2").style.display = "block";
                 }
+                // CASH → nothing shows
             });
         });
     </script>

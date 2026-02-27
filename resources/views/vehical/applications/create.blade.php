@@ -464,13 +464,13 @@
                                         </tbody>
                                     </table>
 
-                                    <!-- Add Row Button -->
+                                    {{-- <!-- Add Row Button -->
                                     <div class="mt-3 text-right">
                                         <button type="button" id="addRow"
                                             class="btn-primary px-4 py-2 text-sm rounded-md">
                                             + Add Row
                                         </button>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
 
@@ -1366,10 +1366,10 @@
                 window.defaultCibilRowAdded = true;
             }
 
-            // Add new row when "Add Row" button is clicked
-            addRowBtn.addEventListener("click", function() {
-                cibilBody.insertAdjacentHTML("beforeend", newRow());
-            });
+            // // Add new row when "Add Row" button is clicked
+            // addRowBtn.addEventListener("click", function() {
+            //     cibilBody.insertAdjacentHTML("beforeend", newRow());
+            // });
 
             // Remove row when X is clicked
             cibilBody.addEventListener("click", function(e) {

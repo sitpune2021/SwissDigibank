@@ -26,7 +26,7 @@ class GoldLoanController extends Controller
 
     public function index()
     {
-        
+
         if (!hasPermission('gold-loan.schemes.index')) {
             abort(403);
         }
@@ -1308,7 +1308,21 @@ class GoldLoanController extends Controller
             // if ($request->has('interest_as_emi') && $request->has('interest_as_first')) {
             //     return back()->with('error', 'You cannot select both interest options.');
             // }
+            // FIXED processing fee (not percentage)
+            $processingFee = round($scheme->processing_fee ?? 0, 2);
 
+            // GST 18%
+            $gst = round(($processingFee * 18) / 100, 2);
+
+            // Final total
+            $totalProcessingFee = round($processingFee + $gst, 2);
+
+            // Merge into request
+            $request->merge([
+                'processing_fee_value' => $processingFee,
+                'processing_fee_gst'   => $gst,
+                'processing_fee_total' => $totalProcessingFee,
+            ]);
             // Loan Application Save
             $loanApplication = LoanApplication::create($request->only([
                 'application_date',
@@ -1479,7 +1493,7 @@ class GoldLoanController extends Controller
 
         return view("gold-loan.applications.view", compact('application', 'emiChart'));
     }
-    
+
     public function submitForApproval($id)
     {
         return redirect()->back()
@@ -1678,7 +1692,7 @@ class GoldLoanController extends Controller
         }
     }
 
-    
+
     ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -1701,7 +1715,7 @@ class GoldLoanController extends Controller
         $annualInterest = $application->scheme->annual_interest_rate;
 
         if (empty($months) || $months <= 0) {
-            $months = 1; 
+            $months = 1;
         }
 
         $monthlyInterestRate = ($annualInterest / 12) / 100;
@@ -1878,21 +1892,22 @@ class GoldLoanController extends Controller
 
         // $totalChargesInc = $processingFeeInc + $stampDutyInc + $insuranceInc + $fitnessInc;
         // $chargesPerEmi = $tenure ? round($totalChargesInc / $tenure, 2) : 0;
-        
+
         /* PER EMI CHARGES FROM SCHEME */
         $smsCharge        = floatval($application->scheme->sms_charge ?? 0);
         $fuelCharge       = floatval($application->scheme->fuel_charge ?? 0);
         $stationaryCharge = floatval($application->scheme->stationary_charge ?? 0);
-        $maintenanceCharge= floatval($application->scheme->maintenance_charge ?? 0);
+        $maintenanceCharge = floatval($application->scheme->maintenance_charge ?? 0);
         $collectionCharge = floatval($application->scheme->collection ?? 0);
 
         $chargesPerEmi = round(
             $smsCharge +
-            $fuelCharge +
-            $stationaryCharge +
-            $maintenanceCharge +
-            $collectionCharge,
-        2);
+                $fuelCharge +
+                $stationaryCharge +
+                $maintenanceCharge +
+                $collectionCharge,
+            2
+        );
 
         /* Interest Rate */
         $annualRate = floatval($application->scheme->annual_interest_rate ?? 0);
@@ -2082,6 +2097,4 @@ class GoldLoanController extends Controller
 
         return view("gold-loan.applications.view-buttons.disburse-setting", compact('application'));
     }
-
-
 }

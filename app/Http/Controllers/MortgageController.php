@@ -1262,7 +1262,28 @@ class MortgageController extends Controller
                     }
                 }
             }
+            $scheme = MortgageScheme::find($request->scheme_id);
 
+            // FIXED processing fee
+            $processingFee = round($scheme->processing_fee ?? 0, 2);
+
+            // GST 18%
+            $gst = round(($processingFee * 18) / 100, 2);
+
+            // Total
+            $totalProcessingFee = round($processingFee + $gst, 2);
+
+            // Merge into request
+            $request->merge([
+                'processing_fee_value' => $processingFee,
+                'processing_fee_gst'   => $gst,
+                'processing_fee_total' => $totalProcessingFee,
+            ]);
+
+            // Merge into request
+            $request->merge([
+                'processing_fee_value' => $processingFee,
+            ]);
             // Step 4: Create main loan application
             $loanApplication = MortgageLoanApplication::create([
                 'application_date' => $request->application_date,
@@ -1292,6 +1313,9 @@ class MortgageController extends Controller
                 'ratio_enabled' => $request->ratio_enabled ?? 'No',
                 'ratio_first_emi' => $request->ratio_first_emi,
                 'ratio_first_percentage' => $request->ratio_first_percentage,
+                'processing_fee_value' => $request->processing_fee_value,
+                'processing_fee_gst'   => $request->processing_fee_gst,
+                'processing_fee_total' => $request->processing_fee_total,
                 'created_by' => Auth::id(),
             ]);
 
@@ -1308,7 +1332,7 @@ class MortgageController extends Controller
                     try {
                         $reportDate = null;
                         if (!empty($request->report_date[$index])) {
-                            $reportDate = Carbon::createFromFormat('d/m/Y', $request->report_date[$index])->format('Y-m-d');
+                            $reportDate = Carbon::createFromFormat('d-m-Y', $request->report_date[$index])->format('Y-m-d');
                         }
 
                         $filePath = null;
