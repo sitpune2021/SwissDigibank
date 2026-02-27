@@ -180,6 +180,41 @@ class DisbursementController extends Controller
 
             Log::info('Step 6: Loan Application Status Updated to Disbursed');
 
+
+            // STEP 6.5 : PROCESSING FEE INSERT
+            if ($request->has('collect_fee')) {
+
+                $feeData = [
+                    'disbursement_id' => $disbursement->id,
+                    'fee_type' => 'processing_fee',
+                    'payment_mode' => $request->processing_fee_mode,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+
+                // If Cheque
+                if ($request->processing_fee_mode === 'cheque') {
+                    $feeData['bank_id'] = $request->p_bank_id;
+                    $feeData['cheque_no'] = $request->p_cheque_no;
+                    $feeData['cheque_date'] = Carbon::createFromFormat(
+                        'd-m-Y',
+                        $request->p_cheque_date
+                    )->format('Y-m-d');
+                }
+
+                // If Online
+                if ($request->processing_fee_mode === 'online') {
+                    $feeData['transfer_date'] = Carbon::createFromFormat(
+                        'd-m-Y',
+                        $request->p_transfer_date
+                    )->format('Y-m-d');
+                    $feeData['utr_no'] = $request->p_utr_no;
+                    $feeData['transfer_mode'] = $request->p_transfer_mode;
+                    $feeData['credited_account'] = $request->processing_credited_account;
+                }
+
+                DB::table('gold_loan_disbursement_fee_modes')->insert($feeData);
+            }
             /*
         =========================
         STAMP DUTY INSERT
@@ -373,6 +408,4 @@ class DisbursementController extends Controller
             )
         );
     }
-
-
 }

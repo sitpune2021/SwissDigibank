@@ -524,7 +524,7 @@
 
                             {{-- calculator checkbox- --}}
                             <!-- <x-checkbox-calculator id="manualEntry" name="manual_entry" label="Collect Principal Amount as EMI"
-                                                        sublabel="(Check this if you want to collect principal amount as EMIs.)" /> -->
+                                                                sublabel="(Check this if you want to collect principal amount as EMIs.)" /> -->
                         </div>
 
                         <!-- Collect Advance Processing Fee -->
@@ -718,9 +718,29 @@
 
                             </div>
                         </div>
+
+                        <div id="interestOptions" style="display:none; margin-top:10px;">
+                            <!-- Checkbox 1 -->
+                            <label class="flex gap-2" id="chk_emi_box">
+                                <input type="checkbox" name="option_interest_emi" id="option_interest_emi"
+                                    value="Yes"
+                                    {{ old('interest_as_emi', $application->interest_as_emi ?? '') == 'Yes' ? 'checked' : '' }}>
+                                <span id="chk_emi_text">Collect Interest as EMI & Principal after tenure</span>
+                            </label>
+
+                            <!-- Checkbox 2 -->
+                            <label class="flex gap-2 mt-2" id="chk_first_box">
+                                <input type="checkbox" name="option_interest_first" id="option_interest_first"
+                                    value="Yes"
+                                    {{ old('interest_as_first', $application->interest_as_first ?? '') == 'Yes' ? 'checked' : '' }}>
+                                <span id="chk_emi_text">Collect Interest as EMIs First & then after Principal as
+                                    EMIs</span>
+                            </label>
+
+                        </div>
+
                         <input type="hidden" name="ratio_enabled" id="ratio_enabled"
                             value="{{ old('ratio_enabled', $application->ratio_enabled ?? 'No') }}">
-
 
                         <input type="hidden" name="ratio_first_emi" id="ratio_first_emi"
                             value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}">
@@ -754,10 +774,7 @@
 
                         </div>
 
-                        <input type="hidden" name="ratio_enabled" id="ratio_enabled"
-                            value="{{ old('ratio_enabled', $application->ratio_enabled ?? 'No') }}">
-                        <input type="hidden" name="ratio_first_emi" id="ratio_first_emi"
-                            value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}">
+
                         <!-- REDUCING EMI SPECIAL CHECKBOX -->
                         <div class="flex gap-2" id="reduce_ratio_box" style="display:none;">
                             <label class="flex gap-2 items-center">
@@ -778,7 +795,7 @@
                             <label class="block mb-2 font-semibold">EMI Ratio <span id="emi_total_text"></span> </label>
 
                             <div class="flex gap-3">
-                                <input type="number" id="emi_ratio_1  "
+                                <input type="number" id="emi_ratio_1"
                                     class="w-full rounded-10 bg-secondary/5 border p-2"
                                     value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}"
                                     min="1">
@@ -1041,7 +1058,22 @@
         });
     </script>
 
+    {{-- ratio button --}}
+    <!-- for check box while in edit mode  Ratio button -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
 
+            const ratioEnabled = document.getElementById('ratio_enabled').value;
+
+            if (ratioEnabled === 'Yes') {
+                document.getElementById('ratioFields').style.display = 'block';
+                document.getElementById('reduce_ratio_box').style.display = 'flex';
+                document.getElementById('divide_emi_ratio').checked = true;
+            }
+
+        });
+    </script>
+    <!-- checkbox show when scheme select  Ratio button-->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
@@ -1205,7 +1237,7 @@
             });
         });
     </script>
-
+    {{-- ratio button --}}
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
@@ -1248,6 +1280,7 @@
 
         });
     </script>
+
 
     <!-- pay Mode -->
     <script>

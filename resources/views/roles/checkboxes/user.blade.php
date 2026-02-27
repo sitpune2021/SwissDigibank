@@ -20,7 +20,7 @@
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
+                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value="roles.manage-permission"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Permission/ Role
@@ -30,7 +30,7 @@
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
+                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value="roles.add-role"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Add New
@@ -81,26 +81,27 @@
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
+                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value="users.manage-user"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Users List</label>
                 </div>
             </div>
-            <!-- <div class="grid grid-cols-6 gap-2 xxl:gap-2">
-                <div class="flex items-center gap-2 col-span-6">
-                    <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                            class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">User List
-                        Download</label>
-                </div>
-            </div> -->
+
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
+                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value="users.add-user"
+                            class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    </div>
+                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Add Users</label>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-6 gap-2 xxl:gap-2">
+                <div class="flex items-center gap-2 col-span-6">
+                    <div class="">
+                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value="users.add-user"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">
@@ -112,68 +113,13 @@
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
+                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value="users.add-user"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Edit User
                         Info</label>
                 </div>
             </div>
-            <!-- <div class="grid grid-cols-6 gap-2 xxl:gap-2">
-                <div class="flex items-center gap-2 col-span-6">
-                    <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                            class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Remove User & all
-                        details</label>
-                </div>
-            </div>
-            <div class="grid grid-cols-6 gap-2 xxl:gap-2">
-                <div class="flex items-start gap-2 col-span-6">
-                    <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                            class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Reset User Login
-                        Password</label>
-                </div>
-            </div>
-            <div class="grid grid-cols-6 gap-2 xxl:gap-2">
-                <div class="flex items-center gap-2 col-span-6">
-                    <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                            class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Lock/ Unlock User
-                        Account</label>
-                </div>
-            </div>
-            <div class="grid grid-cols-6 gap-2 xxl:gap-2">
-                <div class="flex items-center  gap-2 col-span-6">
-                    <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                            class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    </div>
-                    <label for="show_sms_balance" 
-                        class="text-base font-semibold cursor-pointer mb-0">
-                        Reset & Send User
-                        Login Credentials via SMS
-                    </label>
-                </div>
-            </div>
-            <div class="grid grid-cols-6 gap-2 xxl:gap-2">
-                <div class="flex items-center gap-2 col-span-6">
-                    <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                            class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">
-                        Upload User
-                        Photo
-                    </label>
-                </div>
-            </div> -->
             
         </div>
     </div>

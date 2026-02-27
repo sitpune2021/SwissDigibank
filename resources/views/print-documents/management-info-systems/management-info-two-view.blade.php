@@ -128,7 +128,7 @@
    <div class="box mt-5">
 
     <div class="header" style="font-size: 14px;">
-      {{ $companyName }} &nbsp;  र. नं. 12345
+        {{ $company->company_name }}  &nbsp; र. नं.  {{ $company->cin_no }} 
     </div>
     <div class="header" style="margin-top: 20px; font-size: 14px;">
         प्रगती (एम आय एस) अहवाल माहे <span id="monthPreview" style=" font-size: 14px;">____________</span> <span id="yearPreview" style="font-size:14px;">____</span> अखेर
@@ -245,7 +245,7 @@
     <!-- SIGNATURE -->
     
 <div class=" " style="text-align: right; padding:80px 30px;">
-        <h5>{{ $companyName }}</h5>
+        <h5>{{ $company->company_name }}</h5>
     </div>
 </div>
 

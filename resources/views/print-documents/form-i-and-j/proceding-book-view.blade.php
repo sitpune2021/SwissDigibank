@@ -85,7 +85,9 @@
    <div class="box mt-5">
   
 
-    <div class="title" style="font-size:24px;  ">{{$companyName}} र. नं. 12345</div>
+    <div class="title" style="font-size:24px;  ">
+       {{ $company->company_name }}  &nbsp; र. नं.  {{ $company->cin_no }}
+    </div>
     <div class="subtitle" style="font-size:18px; font-weight: bold; ">मासिक / वार्षिक प्रोसिडींग बुक</div>
 
    

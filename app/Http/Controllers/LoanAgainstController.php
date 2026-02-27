@@ -1254,22 +1254,25 @@ class LoanAgainstController extends Controller
                 'credit_period.required' => 'Please enter Credit Period.',
             ]);
 
-            // Ratio + Interest checkbox merge
             $request->merge([
+
+                // Interest collection options
+                'interest_as_emi'   => $request->has('interest_as_emi') ? 'Yes' : null,
+                'interest_as_first' => $request->has('interest_as_first') ? 'Yes' : null,
 
                 // Ratio checkbox
                 'ratio_enabled' => $request->has('divide_emi_ratio') ? 'Yes' : 'No',
 
-                // EMI Ratio value
+                // Ratio values
                 'ratio_first_emi' => $request->has('divide_emi_ratio')
                     ? $request->ratio_first_emi
                     : null,
 
-                // Loan % ratio
                 'ratio_first_percentage' => $request->has('divide_emi_ratio')
                     ? $request->ratio_first_percentage
                     : null,
             ]);
+
             // Validate CIBIL scores (each must be 3 digits between 300–900)
             if ($request->has('cibil_score')) {
                 foreach ($request->cibil_score as $index => $score) {
