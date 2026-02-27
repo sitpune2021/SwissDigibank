@@ -1351,7 +1351,26 @@ class LoanAgainstController extends Controller
             ]);
             throw $e; // rethrow to show validation errors in UI
         }
+        // 🔹 Fetch selected scheme
+        $scheme = LoanAgainstScheme::find($request->scheme_id);
 
+        $loanAmount = $request->approved_loan_amount ?? $request->loan_amount ?? 0;
+        $processingPercent = $scheme->processing_fee ?? 0;
+
+        // 🔹 Calculate processing fee
+        $processingFee = ($loanAmount * $processingPercent) / 100;
+
+        // 🔹 Merge into request
+        $request->merge([
+            'processing_fee_value' => $processingFee,
+            'processing_fee_total' => $processingFee
+        ]);
+
+        Log::info('Processing Fee Calculated', [
+            'loan_amount' => $loanAmount,
+            'percent' => $processingPercent,
+            'processing_fee' => $processingFee,
+        ]);
         // Step 3: Store data
         try {
 

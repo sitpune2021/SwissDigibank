@@ -2130,7 +2130,7 @@ class BusinessLoan extends Controller
                     ? $request->ratio_first_percentage
                     : null,
             ]);
-            
+
             Log::info('Validation passed successfully.');
         } catch (ValidationException $e) {
             Log::error('Validation failed', [
@@ -2154,7 +2154,34 @@ class BusinessLoan extends Controller
         $transferDate = $request->transfer_date
             ? Carbon::createFromFormat('d-m-Y', $request->transfer_date)->format('Y-m-d')
             : null;
+        // 🔹 Fetch selected scheme
+        $scheme = BusinessLoanScheme::find($request->scheme_id);
 
+        $loanAmount = $request->approved_loan_amount ?? $request->loan_amount ?? 0;
+        $processingPercent = $scheme->processing_fee ?? 0;
+
+        // 🔹 Calculate processing fee
+        $processingFee = ($loanAmount * $processingPercent) / 100;
+
+        // 🔹 Optional GST (if needed 18%)
+        $gstPercent = 18;
+        $gstAmount = ($processingFee * $gstPercent) / 100;
+        $totalProcessingFee = $processingFee + $gstAmount;
+
+        // 🔹 Merge values into request
+        $request->merge([
+            'processing_fee_value' => $processingFee,
+            'processing_fee_gst'   => $gstAmount,
+            'processing_fee_total' => $totalProcessingFee,
+        ]);
+
+        Log::info('Processing Fee Calculated', [
+            'loan_amount' => $loanAmount,
+            'percent' => $processingPercent,
+            'processing_fee' => $processingFee,
+            'gst' => $gstAmount,
+            'total' => $totalProcessingFee,
+        ]);
         try {
             // Create record (Security fields removed, null sent instead)
             $loanApplication = BusinessLoanApplication::create([
