@@ -127,7 +127,10 @@ class CutReportController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    // Promoters/Members Cut Reports start here
+    // Customer List start here
+    public function customerListIndex(){
+        return view('cut-reports.report.customer-list');
+    }
 
     // shareHoldingIndex Cut Reports start here
     public function shareHoldingIndex()
