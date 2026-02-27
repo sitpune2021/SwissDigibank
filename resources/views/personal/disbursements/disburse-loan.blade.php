@@ -29,7 +29,7 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h3 class="uppercase text-lg font-semibold">BUSINESS LOAN DISBURSMETS</h3>
+                <h3 class="uppercase text-lg font-semibold">Personal LOAN DISBURSMETS</h3>
             </div>
         </div>
 
@@ -918,7 +918,7 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold text-lg">BUSINESS LOAN APLICATION INFO</h3>
+                    <h3 class="text-black font-semibold uppercase text-lg">Personal  LOAN APLICATION INFO</h3>
 
                     <!-- Toggle Button -->
                     <button class="p-1 rounded transition" onclick="toggleSection(this)">
