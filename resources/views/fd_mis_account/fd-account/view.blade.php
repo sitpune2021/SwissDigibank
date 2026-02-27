@@ -124,6 +124,14 @@
                         <a href="{{ route('fd.add.nominee', ['type' => 'fd', 'id' => base64_encode($fdAccount->id)]) }}"
                             class="block px-4 py-2 uppercase   text-black border-b hover:bg-gray-100">Add Nominee</a>
                     </li>
+                    <li>
+                        <a href=""
+                            class="block px-4 py-2 uppercase   text-black border-b hover:bg-gray-100">Fore Close</a>
+                    </li>
+                    <li>
+                        <a href=""
+                            class="block px-4 py-2 uppercase   text-black border-b hover:bg-gray-100">Remove Account</a>
+                    </li>
                 </ul>
             </div>
         </div>

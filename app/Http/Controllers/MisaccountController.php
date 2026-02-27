@@ -1069,11 +1069,71 @@ class MisaccountController extends Controller
     }
 
     public function foreClose($id)
-    {
-        $misaccount = Misaccount::with('member')->findOrFail($id);
-        return view('fd_mis_account.misaccount.account-details.foreclose', compact('misaccount'));
+{
+    $misaccount = Misaccount::with(['member', 'fdScheme'])
+        ->findOrFail($id);
+
+    // ✅ Current Balance (approved only)
+    $balances = self::getAccountBalance($id);
+    $currentBalance = $balances[$id] ?? 0;
+
+    // ✅ Today closure date (default)
+    $closureDate = Carbon::today();
+
+    $openDate = Carbon::parse($misaccount->open_date);
+
+    // ✅ Total days till closure
+    $totalDays = $openDate->diffInDays($closureDate);
+
+    // ✅ Annual Rate
+    $rate = $misaccount->interest_rate ?? 0;
+    $annualRate = $rate / 100;
+
+    // ✅ Interest calculation till today
+    $interestTillDate = ($misaccount->mis_amount * $annualRate * $totalDays) / 365;
+
+    $interestTillDate = round($interestTillDate, 2);
+
+    // ✅ TDS (if enabled)
+    $tds = 0;
+    if ($misaccount->tds_deduction === 'yes') {
+        if ($interestTillDate > 40000) {
+            $tds = round($interestTillDate * 0.10, 2);
+        }
     }
 
+    // ✅ Penal Charges (if foreclosed before lock-in)
+    $lockInMonths = $misaccount->fdScheme->lock_in_period ?? 0;
+    $completedMonths = $openDate->diffInMonths($closureDate);
+
+    $penalCharges = 0;
+    if ($completedMonths < $lockInMonths) {
+        $penalRate = $misaccount->fdScheme->penal_charge ?? 0;
+        $penalCharges = round(($misaccount->mis_amount * $penalRate) / 100, 2);
+    }
+
+    // ✅ Final Settlement
+    $totalSettlement =
+        $currentBalance
+        + $interestTillDate
+        - $tds
+        - $penalCharges;
+
+    return view(
+        'fd_mis_account.misaccount.account-details.foreclose',
+        compact(
+            'misaccount',
+            'currentBalance',
+            'interestTillDate',
+            'tds',
+            'penalCharges',
+            'totalSettlement',
+            'closureDate',
+            'totalDays',
+            'rate'
+        )
+    );
+}
     public function removeAccount($id)
     {
         $misaccount = Misaccount::findOrFail($id);
