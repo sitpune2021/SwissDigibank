@@ -155,7 +155,7 @@ class PromotorController extends Controller
                 'amount' => 'nullable|numeric',
                 'gst_rate' => 'nullable|numeric',
                 'membership_fee' => 'nullable|numeric',
-                'net_fee' => 'nullable|numeric',
+                'net_fee' => 'required|numeric',
                 'remarks' => 'nullable|string|max:255',
 
                 'pay_mode' => 'required|in:cash,cheque,online',

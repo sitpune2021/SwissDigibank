@@ -93,7 +93,7 @@ return [
         'label' => 'CONTACT NO.',
         'name' => 'mobile_no',
         'id' => 'mobile_no',
-        'type' => 'number',
+        'type' => 'text',
         'maxlength' => '10',
         'minlength' => '10',
         'pattern' => '[0-9]{10}',
