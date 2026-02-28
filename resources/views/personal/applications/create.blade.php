@@ -66,7 +66,7 @@
         @endif
 
         <div class="box">
-            <form method="POST" id="loadForm"
+            <form method="POST" id="loanForm"
                 action="{{ isset($application) ? route('personal.applications.update', $application->id) : route('personal.store') }}"
                 enctype="multipart/form-data">
                 @csrf
@@ -698,10 +698,10 @@
 
                             </div>
                         </div> --}}
-                        <input type="hidden" name="ratio_enabled" id="ratio_enabled"
+                        {{-- <input type="hidden" name="ratio_enabled" id="ratio_enabled"
                             value="{{ old('ratio_enabled', $application->ratio_enabled ?? 'No') }}">
                         <input type="hidden" name="ratio_first_emi" id="ratio_first_emi"
-                            value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}">
+                            value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}"> --}}
 
                         <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage"
                             value="{{ old('ratio_first_percentage', $application->ratio_first_percentage ?? '') }}">
@@ -1611,30 +1611,41 @@
                 errorBox.classList.add("hidden");
 
                 if (chkDivide.checked) {
+
                     const tenure = parseInt(tenureInput.value) || 0;
                     const r1 = parseInt(emi1.value) || 0;
-                    const r2 = parseInt(emi2.value) || 0;
 
-                    if ((r1 + r2) !== tenure) {
+                    if (!r1 || r1 <= 0) {
                         e.preventDefault();
                         errorBox.classList.remove("hidden");
-                        errorBox.innerText =
-                            `EMI Ratio total (${r1 + r2}) must equal tenure (${tenure})`;
+                        errorBox.innerText = "Please enter EMI Ratio.";
                         return;
                     }
+
+                    if (r1 > tenure) {
+                        e.preventDefault();
+                        errorBox.classList.remove("hidden");
+                        errorBox.innerText = "EMI Ratio cannot exceed tenure.";
+                        return;
+                    }
+
+                    const r2 = tenure - r1;
+
+                    // 🔥 FORCE correct values
+                    emi2.value = r2;
+
+                    document.getElementById("ratio_enabled").value = "Yes";
+                    document.getElementById("ratio_first_emi").value = r1;
+                    document.getElementById("ratio_first_percentage").value =
+                        amt1.value || 0;
+
+                } else {
+
+                    document.getElementById("ratio_enabled").value = "No";
+                    document.getElementById("ratio_first_emi").value = null;
+                    document.getElementById("ratio_first_percentage").value = null;
                 }
-
-                // 🔥 Set hidden values once only
-                document.getElementById("ratio_enabled").value =
-                    chkDivide.checked ? "Yes" : "No";
-
-                document.getElementById("ratio_first_emi").value =
-                    emi1.value || "";
-
-                document.getElementById("ratio_first_percentage").value =
-                    amt1.value || "";
             });
-
         });
     </script>
 
