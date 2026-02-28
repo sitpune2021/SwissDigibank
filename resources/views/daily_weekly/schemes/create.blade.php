@@ -315,16 +315,6 @@
             </div>
 
 
-<<<<<<< HEAD
-                    <div class="flex items-center gap-2 w-full mt-2">
-                        <select name="" id=""
-                            class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2 md:py-3">
-                            <option class="uppercase" value="">Fixed</option>
-                        </select>
-                        <input type="number" name="sms_charge" value="{{ old('sms_charge', $scheme->sms_charge ?? '') }}" id="sms_charge"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="Enter SMS Charges">
-=======
 
 
             {{-- Charges Per EMI Inputs --}}
@@ -358,7 +348,6 @@
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="Enter SMS Charges">
                         </div>
->>>>>>> 5823b9144e04f8b5050f5599018f6406ed40497b
                     </div>
 
                     <!-- Fuel Charges Block -->
@@ -384,15 +373,7 @@
                 </div>
 
 
-<<<<<<< HEAD
-                    <div class="flex items-center gap-2 w-full mt-2">
-                        <select name="" id=""
-                            class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2 md:py-3">
-                            <option class="uppercase" value="">Fixed</option>
-                        </select>
-=======
                 <div class="  md:gap-5 gap-4 w-full  grid grid-cols-2 gap-4 mt-6 xl:mt-8 xxxxxl:gap-6">
->>>>>>> 5823b9144e04f8b5050f5599018f6406ed40497b
 
                     <!-- Stationary Charges (if any)Block -->
                     <div class="col-span-2 md:col-span-1">
@@ -520,19 +501,8 @@
                             placeholder="Enter Collection Charges">
                     </div>
                 </div>
-            <!-- Buttons -->
-            <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
-                <button type="submit" class="btn-primary uppercase justify-center">
-                    {{ isset($scheme) ? 'Update Scheme' : 'Create Scheme' }}
-                </button>
-
-                <button class="btn-outline uppercase justify-center" type="reset">
-                    <a href="{{ route('daily_weekly.schemes.index') }}"> BAck</a>
-                </button>
-            </div>
-
+           
         </div>
-
 
         <!-- Buttons -->
         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
