@@ -95,7 +95,7 @@
                     <div class="mb-3">
                         <label for="" class="form-label  flex items-center gap-3 font-medium mb-2 uppercase">
 
-                            <input type="checkbox" id="" class="form-select w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 ">
+                            <input type="checkbox" id="manual_entry_toggle" class="form-select w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 ">
                             <span class="block">Enter Values Manually</span>
                         </label>
                     </div>
@@ -148,15 +148,22 @@
 
                     {{-- Tenure --}}
                     <div>
-                        <label class="font-medium uppercase mb-2 block">Tenure Period *</label>
-                        <div class="flex gap-3">
-                            <input type="number" id="tenure_year" placeholder="Year"
-                                class="w-full border rounded-10 px-3 py-3 text-sm">
-                            <input type="number" id="tenure_month" placeholder="Month"
-                                class="w-full border rounded-10 px-3 py-3 text-sm">
-                            <input type="number" id="tenure_day" placeholder="Days"
-                                class="w-full border rounded-10 px-3 py-3 text-sm">
+                        <label class="font-medium uppercase mb-2 block">Tenure Type *</label>
+                        <div class="flex gap-4 mb-3">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="tenure_type" value="days">
+                                <span>Days</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="tenure_type" value="months" checked>
+                                <span>Months</span>
+                            </label>
                         </div>
+
+                        <label class="font-medium uppercase mb-2 block">Tenure of FD / MIS *</label>
+                        <input type="number" id="tenure_value"
+                            placeholder="Enter Tenure"
+                            class="w-full border rounded-10 px-3 py-3 text-sm">
                     </div>
 
                     {{-- Bonus --}}
@@ -339,6 +346,53 @@
 @push('script')
 
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const manualToggle = document.getElementById("manual_entry_toggle");
+        const schemeDropdown = document.getElementById("scheme_id");
+
+        const manualFields = [
+            "amount",
+            "interest_payout_type",
+            "annual_interest_rate",
+            "tenure_year",
+            "tenure_month",
+            "tenure_day",
+            "bonus_type",
+            "bonus"
+        ];
+
+        function toggleMode() {
+
+            if (manualToggle.checked) {
+                // Manual Mode ON
+                schemeDropdown.disabled = true;
+
+                manualFields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.disabled = false;
+                });
+
+            } else {
+                // Scheme Mode ON
+                schemeDropdown.disabled = false;
+
+                manualFields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.disabled = true;
+                });
+            }
+        }
+
+        // Default state
+        manualToggle.checked = false;
+        toggleMode();
+
+        manualToggle.addEventListener("change", toggleMode);
+
+    });
+
+    // *************************************************************************
     //console.log(summary);
     function openTab(evt, tabId) {
         var i, tabcontent, tablinks;
@@ -362,17 +416,30 @@
 
 
     function calculateFD() {
+        let tenureValue = parseFloat($("#tenure_value").val()) || 0;
+
+        let tenureType = $("input[name='tenure_type']:checked").val();
+
+        let tenure_year = 0;
+        let tenure_month = 0;
+        let tenure_day = 0;
+
+        if (tenureType === "months") {
+            tenure_month = tenureValue;
+        } else {
+            tenure_day = tenureValue;
+        }
 
         let formData = {
-            amount: $("#amount").val(),
+            amount: $("#amount").val() || 0,
             open_date: $("#open_date").val(),
-            annual_interest_rate: $("#annual_interest_rate").val(),
+            annual_interest_rate: $("#annual_interest_rate").val() || 0,
             interest_payout_type: $("#interest_payout_type").val(),
-            tenure_year: $("#tenure_year").val(),
-            tenure_month: $("#tenure_month").val(),
-            tenure_day: $("#tenure_day").val(),
-            bonus: $("#bonus").val(),
-            bonus_type: $("#bonus_type").val(),
+            tenure_year: tenure_year,
+            tenure_month: tenure_month,
+            tenure_day: tenure_day,
+            bonus: $("#bonus").val() || 0,
+            bonus_type: $("#bonus_type").val() || 0,
             tds_deduction: $("input[name='tds_deduction']:checked").val(),
             _token: $('meta[name="csrf-token"]').attr('content')
         };
@@ -618,68 +685,71 @@
             .catch(err => console.error(err));
     });
 
-    document.getElementById("scheme_id").addEventListener("change", function() {
+    let currentSlabs = [];
 
-    let schemeId = this.value;
+    function detectSlab(slabs, totalDays) {
+        for (let i = 0; i < slabs.length; i++) {
+            if (totalDays >= slabs[i].day_from &&
+                totalDays <= slabs[i].day_to) {
+                return slabs[i];
+            }
+        }
+        return null;
+    }
 
-    if (schemeId) {
+    document.addEventListener("DOMContentLoaded", function() {
+        // Scheme Change
+        document.getElementById("scheme_id").addEventListener("change", function() {
 
-        fetch("{{ route('fd.scheme.details', ':id') }}".replace(':id', schemeId))
-        .then(response => response.json())
-        .then(result => {
-
-            if (result.success) {
-
-                let s = result.data;
-
-                // Basic Details
-                document.getElementById("d_scheme_code").textContent = s.scheme_code ?? '-';
-                document.getElementById("d_scheme_name").textContent = s.scheme_name ?? '-';
-                document.getElementById("d_tenure").textContent = (s.tenure ?? 0) + " MONTHS";
-                document.getElementById("d_min_amount").textContent = parseFloat(s.min_amount ?? 0).toFixed(2) + " INR";
-                document.getElementById("d_interest_rate").textContent = (s.annual_interest_rate ?? 0) + " %";
-
-                // Lock In
-                document.getElementById("d_lock_in").textContent = (s.lock_in_period ?? 0) + " Months";
-                document.getElementById("d_interest_lock").textContent = (s.interest_lock_in ?? 0) + " Months";
-
-                // Bonus
-                if (s.bonus_rate) {
-                    document.getElementById("d_bonus").textContent =
-                        s.bonus_rate + " " + (s.bonus_type ?? '');
-                } else {
-                    document.getElementById("d_bonus").textContent = "0";
-                }
-
-                // Penal
-                document.getElementById("d_penal").textContent =
-                    (s.penal_charge ?? 0) + " %";
-
-                // Cancellation
-                if (s.cancellation_charge) {
-                    document.getElementById("d_cancel").textContent =
-                        s.cancellation_charge + " " + (s.cancellation_type ?? '');
-                } else {
-                    document.getElementById("d_cancel").textContent =
-                        s.cancellation_type ?? "N/A";
-                }
-
-                document.getElementById("scheme-details").style.display = "block";
-
-                // -------- AUTO FILL CALCULATOR --------
-                document.getElementById("annual_interest_rate").value = s.annual_interest_rate ?? '';
-                document.getElementById("tenure_month").value = s.tenure ?? '';
-                document.getElementById("amount").value = s.min_amount ?? '';
-
-            } else {
+            let schemeId = this.value;
+            if (!schemeId) {
                 document.getElementById("scheme-details").style.display = "none";
+                currentSlabs = [];
+                return;
+            }
+
+            fetch("{{ route('fd.scheme.details', ':id') }}".replace(':id', schemeId))
+                .then(response => response.json())
+                .then(result => {
+
+                    if (!result.success) return;
+
+                    let scheme = result.scheme;
+                    currentSlabs = result.slabs ?? [];
+
+                    document.getElementById("d_scheme_code").textContent = scheme.scheme_code ?? '-';
+                    document.getElementById("d_scheme_name").textContent = scheme.scheme_name ?? '-';
+                    document.getElementById("d_min_amount").textContent =
+                        parseFloat(scheme.min_amount ?? 0).toFixed(2) + " INR";
+
+                    document.getElementById("scheme-details").style.display = "block";
+
+                    document.getElementById("amount").value = scheme.min_amount ?? '';
+                });
+        });
+
+        // Tenure Input Listener (Only Once)
+        document.getElementById("tenure_value").addEventListener("input", function() {
+        if (!currentSlabs.length) return;
+
+            let tenureValue = parseInt(this.value) || 0;
+            let tenureType = document.querySelector("input[name='tenure_type']:checked").value;
+
+            let totalDays = tenureType === "months" ?
+                tenureValue * 30 :
+                tenureValue;
+
+            let slab = detectSlab(currentSlabs, totalDays);
+
+            if (slab) {
+                document.getElementById("annual_interest_rate").value = slab.interest_rate;
+                document.getElementById("d_interest_rate").textContent = slab.interest_rate + " %";
+            } else {
+                document.getElementById("annual_interest_rate").value = "";
+                document.getElementById("d_interest_rate").textContent = "N/A";
             }
         });
 
-    } else {
-        document.getElementById("scheme-details").style.display = "none";
-    }
-});
-
+    });
 </script>
 @endpush

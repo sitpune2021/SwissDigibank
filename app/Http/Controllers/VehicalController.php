@@ -1331,7 +1331,7 @@ class VehicalController extends Controller
             }
 
             return redirect()->route('vehical.applications.view', $loanApplication->id)
-                ->with('success', 'vehical Loan, Credit Score details saved successfully.');
+                ->with('success', 'Loan Application saved successfully.');
         } catch (Exception $e) {
             Log::error('Error while storing Loan Application', [
                 'error_message' => $e->getMessage(),

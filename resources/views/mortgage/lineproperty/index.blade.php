@@ -6,8 +6,8 @@
     <div class="box overflow-x-auto">
         <div class="flex justify-end">
             <a href="{{ route('mortgage.lineproperty.export') }}" class="btn-primary rounded-10 text-sm  py-2 px-2  mb-3 uppercase">
-                        <i class="las la-download"></i>
-                        Download XLS
+                <i class="las la-download"></i>
+                Download XLS
              </a>
         </div>
         <div class="">
@@ -53,7 +53,9 @@
             <td class="p-2 text-start">
                 {{ $application->properties->pluck('property_type')->implode(', ') ?: '-' }}
             </td>
-            <td class="p-2 text-start">₹ </td>
+            <td class="p-2 text-start">
+                ₹ {{ $application->properties->pluck('expected_value')->implode(', ') ?: '-' }}
+            </td>
             <td class="p-2 text-start">
                 <span
                     class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">

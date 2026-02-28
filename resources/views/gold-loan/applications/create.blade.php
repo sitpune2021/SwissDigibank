@@ -495,10 +495,10 @@
                                                     </td>
 
                                                     <td class="px-2 py-2 md:px-4 md:py-2 text-center">
-                                                        <button type="button"
+                                                        {{-- <button type="button"
                                                             class="removeRow text-red-500 hover:text-red-700">
                                                             <i class="las la-times" aria-hidden="true"></i>
-                                                        </button>
+                                                        </button> --}}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -518,7 +518,7 @@
                         </div>
 
                         <!-- Collect Advance Processing Fee -->
-                        <div class="col-span-12  lg:col-span-12 mb-4 ">
+                        {{-- <div class="col-span-12  lg:col-span-12 mb-4 ">
                             <hr>
                             <label for="" class="md:text-lg font-medium block mt-3 mb-4 uppercase">
                                 Collect Advance Processing Fee
@@ -706,8 +706,8 @@
                                 </p>
 
                             </div>
-                        </div>
-
+                        </div> --}}
+                        {{-- hide mode --}}
                         <input type="hidden" name="ratio_enabled" id="ratio_enabled"
                             value="{{ old('ratio_enabled', $application->ratio_enabled ?? 'No') }}">
 
@@ -1843,11 +1843,7 @@
                                         </td>
 
                                         <!-- Remove button -->
-                                        <td class="px-2 py-2 md:px-4 md:py-2 text-center">
-                                            <button type="button" class="removeRow text-red-500 hover:text-red-700">
-                                                <i class="las la-times" aria-hidden="true"></i>
-                                            </button>
-                                        </td>
+                                        
                                     </tr>
                                 `;
             }

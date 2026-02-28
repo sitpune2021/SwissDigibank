@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Exception;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Account;
 
 
 class DailyWeeklyDisburments extends Controller
@@ -223,7 +224,8 @@ class DailyWeeklyDisburments extends Controller
             ->findOrFail($id);
 
         $banks = Bank::pluck('name', 'id');
-
+   $savingAccounts = Account::where('member_id', $disbursement->member_id)
+    ->pluck('account_no', 'id');
         $loanAmount = $disbursement->loan_amount ?? 0;
 
         // Processing
@@ -261,7 +263,8 @@ class DailyWeeklyDisburments extends Controller
                 'insuranceFee',
                 'insuranceTotal',
                 'advanceInterest',
-                'finalAmount'
+                'finalAmount',
+                'savingAccounts'
             )
         );
     }

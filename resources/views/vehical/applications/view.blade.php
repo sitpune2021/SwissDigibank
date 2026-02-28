@@ -113,7 +113,12 @@
                 <h1 class="text-2xl uppercase font-semibold">VEHICAL LOAN APPLICATION</h1>
             </div>
         </div>
-
+        @if (session('success'))
+            {{-- //alert msg --}}
+            <div class="w-44 mb-5 flex justify-end">
+                <x-alert />
+            </div>
+        @endif
         <div class="flex flex-wrap gap-3">
 
             <a href="{{ route('vehical.applications.view-buttons.show-emi-chart', $application->id) }}" target="_blank"
@@ -443,8 +448,8 @@
                         </h3>
                         <div class="">
                             <!-- <a href="{{ route('gold-loan.applications.upload_documents') }}" class="btn-primary p-1 pointer">
-                                        <i class="las la-upload y"></i>
-                                    </a> -->
+                                            <i class="las la-upload y"></i>
+                                        </a> -->
 
                             <button type="button" class="p-1 rounded transition"
                                 onclick="toggleSection(this, 'Documents')">

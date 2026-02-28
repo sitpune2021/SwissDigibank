@@ -390,12 +390,12 @@
                         <a href="{{ asset('storage/'.$score->report_file_path) }}" target="_blank" class="text-blue-500 underline text-sm">View File</a>
                     @endif
                 </td>
-
+{{-- 
                 <td class="px-2 py-2 text-center">
                     <button type="button" class="removeRow text-red-500 hover:text-red-700">
                         <i class="las la-times"></i>
                     </button>
-                </td>
+                </td> --}}
             </tr>
         @endforeach
     @endif
@@ -416,7 +416,7 @@
                 </div>
 
                         <!-- Collect Advance Processing Fee -->
-                <div class="col-span-12  lg:col-span-12 ">
+                {{-- <div class="col-span-12  lg:col-span-12 ">
                     <hr>
                     <label for="" class="md:text-lg font-medium block mt-3 mb-4">
                         Collect Advance Processing Fee
@@ -591,7 +591,7 @@
                         </p>
 
                     </div>
-                </div>
+                </div> --}}
             </div>
 
             <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
@@ -933,11 +933,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </td>
 
                 <!-- Remove button -->
-                <td class="px-2 py-2 text-center">
-                    <button type="button" class="removeRow text-red-500 hover:text-red-700">
-                        <i class="las la-times"></i>
-                    </button>
-                </td>
+              
             </tr>
         `;
     }

@@ -392,7 +392,7 @@
                                                 <th class="border border-gray-300 px-2 py-2 text-center">Score</th>
                                                 <th class="border border-gray-300 px-2 py-2 text-center">Report Date</th>
                                                 <th class="border border-gray-300 px-2 py-2 text-center">File</th>
-                                                <th class="border border-gray-300 px-2 py-2 text-center">Action</th>
+                                                <!-- <th class="border border-gray-300 px-2 py-2 text-center">Action</th> -->
                                             </tr>
                                         </thead>
 
@@ -450,12 +450,12 @@
                                                         </td>
 
                                                         <!-- Remove -->
-                                                        <td class="px-2 py-2 border border-gray-300 text-center">
+                                                        {{-- <td class="px-2 py-2 border border-gray-300 text-center">
                                                             <button type="button"
                                                                 class="removeRow text-red-500 hover:text-red-700">
                                                                 <i class="las la-times"></i>
                                                             </button>
-                                                        </td>
+                                                        </td> --}}
                                                     </tr>
                                                 @endforeach
                                             @else
@@ -702,7 +702,7 @@
 
 
                         <!-- Collect Advance Processing Fee -->
-                        <div class="col-span-12  lg:col-span-12 ">
+                        {{-- <div class="col-span-12  lg:col-span-12 ">
                             <hr>
                             <label for="" class="md:text-lg font-medium block mt-3 mb-4">
                                 Collect Advance Processing Fee
@@ -890,12 +890,8 @@
                                 </p>
 
                             </div>
-                        </div>
-                        {{-- <input type="hidden" name="ratio_enabled" id="ratio_enabled"
-                            value="{{ old('ratio_enabled', $application->ratio_enabled ?? 'No') }}">
-                        <input type="hidden" name="ratio_first_emi" id="ratio_first_emi"
-                            value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}"> --}}
-
+                        </div> --}}
+                
                         <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage"
                             value="{{ old('ratio_first_percentage', $application->ratio_first_percentage ?? '') }}">
 
@@ -1039,10 +1035,6 @@
                                                 <td class="font-semibold py-2 pr-4">Maximum Loan Limit Against Security
                                                 </td>
                                                 <td class="py-2" id="schemeLimit">-</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="font-semibold py-2 pr-4">Minimum Loan Amount</td>
-                                                <td class="py-2" id="schemeMin">-</td>
                                             </tr>
                                             <tr>
                                                 <td class="font-semibold py-2 pr-4">Annual Interest Rate</td>
@@ -1277,7 +1269,6 @@
             const schemeTenure = document.getElementById("schemeTenure");
             const schemeMax = document.getElementById("schemeMax");
             const schemeLimit = document.getElementById("schemeLimit");
-            const schemeMin = document.getElementById("schemeMin");
             const schemeInterest = document.getElementById("schemeInterest");
             const schemeType = document.getElementById("schemeType");
 
@@ -1294,7 +1285,6 @@
                     schemeTenure.textContent = selectedOption.getAttribute("data-tenure") || "-";
                     schemeMax.textContent = selectedOption.getAttribute("data-max") || "-";
                     schemeLimit.textContent = selectedOption.getAttribute("data-limit") || "-";
-                    schemeMin.textContent = selectedOption.getAttribute("data-min") || "-";
                     schemeInterest.textContent = selectedOption.getAttribute("data-interest") || "-";
                     schemeType.textContent = selectedOption.getAttribute("data-type") || "-";
 
@@ -1352,11 +1342,7 @@
             </td>
 
             <!-- Remove button -->
-            <td class="px-2 py-2 md:px-4 md:py-2 border border-gray-300 text-center">
-                <button type="button" class="removeRow text-red-500 hover:text-red-700">
-                    <i class="las la-times" aria-hidden="true"></i>
-                </button>
-            </td>
+           
         </tr>`;
             }
 

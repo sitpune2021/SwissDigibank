@@ -113,7 +113,12 @@
                 <h1 class="text-2xl uppercase font-semibold">PERSONAL LOAN</h1>
             </div>
         </div>
-
+        @if (session('success'))
+            {{-- //alert msg --}}
+            <div class="w-44 mb-5 flex justify-end">
+                <x-alert />
+            </div>
+        @endif
         <div class="flex flex-wrap gap-3">
 
             <a href="{{ route('personal.applications.view-buttons.show-emi-chart', $application->id) }}" target="_blank"
@@ -358,8 +363,8 @@
                                                 <td class="px-4 py-2">
                                                     @if (!empty($score->report_file_path))
                                                         <!-- <a href="javascript:void(0);"
-                                                                onclick="showImage('{{ asset($score->report_file_path) }}')"
-                                                                class="text-blue-600 hover:underline">View Report</a> -->
+                                                                    onclick="showImage('{{ asset($score->report_file_path) }}')"
+                                                                    class="text-blue-600 hover:underline">View Report</a> -->
                                                         <a href="{{ asset('storage/' . $score->report_file_path) }}"
                                                             target="_blank" class="text-blue-500 underline text-sm">View
                                                             File</a>

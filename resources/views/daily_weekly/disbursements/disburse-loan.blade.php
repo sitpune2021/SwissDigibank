@@ -53,7 +53,7 @@
                             <label class="md:text-lg font-medium block mb-2">
                                 Loan Disbursement Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="disbursal_date" class="form-input" value="{{ date('d-m-Y') }}"
+                            <input type="text" name="disbursal_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4" value="{{ date('d-m-Y') }}"
                                 required>
                         </div>
 
@@ -62,14 +62,14 @@
                             <label class="md:text-lg font-medium block mb-2">
                                 First EMI Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="emi_date" class="form-input"
+                            <input type="text" name="emi_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
                                 value="{{ \Carbon\Carbon::now()->addMonth()->format('d-m-Y') }}" required>
                         </div>
 
                         <!-- Loan Amount -->
                         <div class="mb-4">
                             <label class="md:text-lg font-medium block mb-2">Loan Amount</label>
-                            <input type="number" name="loan_amount" class="form-input"
+                            <input type="number" name="loan_amount" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
                                 value="{{ $disbursement->loan_amount ?? '' }}" readonly>
                         </div>
 
@@ -590,7 +590,7 @@
                             <label class="md:text-lg font-medium block mb-2">
                                 Final Amount To Disburse <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" name="final_amount" id="finalAmount" class="form-input"
+                            <input type="number" name="final_amount" id="finalAmount" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
                                 value="{{ number_format($finalAmount, 2, '.', '') }}" readonly>
                         </div>
 
@@ -692,13 +692,19 @@
                                     <!-- Fields for Saving Account -->
                                     <div id="saving_fields" style="display:none; margin-top:10px;">
                                         <label>Saving Account:</label>
-                                        <select id="saving" name="saving"
+                                        <select id="saving1" name="saving1"
                                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+
                                             <option value="">-- Select Saving Acc. --</option>
-                                            <option value="abcd">abcd</option>
+
+                                            @foreach ($savingAccounts as $id => $accountNo)
+                                                <option value="{{ $id }}">
+                                                    {{ $accountNo }}
+                                                </option>
+                                            @endforeach
+
                                         </select>
                                     </div>
-
 
 
 
@@ -730,91 +736,56 @@
                                                     <input type="radio" name="payment_mode2" value="saving"> Saving
                                                     Account
                                                 </label>
-                                                <!-- Fields for Disburse Mode 2 -->
+                                                <!-- ================= DISBURSE MODE 2 ================= -->
+
+                                                <!-- Cheque Fields 2 -->
                                                 <div id="cheque_fields2" style="display:none; margin-top:10px;">
-                                                    <select id="bank_id2" name="bank_id2"
-                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                    <label>Select Bank</label>
+                                                    <select name="bank_id2"
+                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5">
                                                         <option value="">-- Select Bank --</option>
                                                         @foreach ($banks as $id => $name)
-                                                            <option value="{{ $id }}">
-                                                                {{ $name }}
+                                                            <option value="{{ $id }}">{{ $name }}
                                                             </option>
                                                         @endforeach
                                                     </select>
-                                                    <!-- Cheque No -->
-                                                    <div class="mt-3">
-                                                        <label class="block text-sm font-medium text-gray-700">Cheque
-                                                            No.</label>
-                                                        <input type="text" name="cheque_no2"
-                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
-                                                            placeholder="Enter Cheque No">
-                                                    </div>
 
-                                                    <!-- Cheque Date -->
                                                     <div class="mt-3">
-                                                        <label class="block text-sm font-medium text-gray-700">Cheque
-                                                            Date</label>
-                                                        <input type="date" id="cheque_date2" name="cheque_date2"
-                                                            value="{{ old('cheque_date2', date('Y-m-d')) }}"
-                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+                                                        <label>Cheque No</label>
+                                                        <input type="text" name="cheque_no2"
+                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5">
                                                     </div>
                                                 </div>
-                                                <!-- Fields for Online -->
+
+                                                <!-- Online Fields 2 -->
                                                 <div id="online_fields2" style="display:none; margin-top:10px;">
                                                     <div class="mt-3">
-                                                        <label class="block text-sm font-medium text-gray-700">
-                                                            Transfer Date <span class="text-red-500">*</span>
-                                                        </label>
-                                                        <input type="date" id="transfer_date2" name="transfer_date2"
-                                                            value="{{ old('transfer_date2', date('Y-m-d')) }}"
-                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                                    </div>
-                                                    <div>
-                                                        <label class="block text-sm font-medium text-gray-700">
-                                                            UTR / Transaction No. <span class="text-red-500">*</span>
-                                                        </label>
-                                                        <input type="text" id="utr_no2" name="utr_no2"
-                                                            placeholder="Enter Transaction No."
-                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                                    </div>
-                                                    <div>
-                                                        <label class="block text-sm font-medium text-gray-700">
-                                                            Transfer Mode <span class="text-red-500">*</span>
-                                                        </label>
-                                                        <div class="flex gap-4 mt-2">
-                                                            <label class="flex items-center gap-2">
-                                                                <input type="radio" name="transfer_mode2"
-                                                                    value="imps">
-                                                                <span>IMPS</span>
-                                                            </label>
-                                                            <label class="flex items-center gap-2">
-                                                                <input type="radio" name="transfer_mode2"
-                                                                    value="vpa">
-                                                                <span>VPA</span>
-                                                            </label>
-                                                            <label class="flex items-center gap-2">
-                                                                <input type="radio" name="transfer_mode2"
-                                                                    value="neft_rtgs">
-                                                                <span>NEFT/RTGS</span>
-                                                            </label>
-                                                        </div>
+                                                        <label>Transfer Date</label>
+                                                        <input type="date" name="transfer_date2"
+                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5">
                                                     </div>
 
-                                                    <!-- Fields for Saving Account -->
-                                                    <div id="saving_fields2" style="display:none; margin-top:10px;">
-                                                        <label>Saving Account:</label>
-                                                        <select id="saving2" name="saving2"
-                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-                                                            <option value="">-- Select Saving Acc. --</option>
-                                                            <option value="abcd">abcd</option>
-                                                        </select>
+                                                    <div class="mt-3">
+                                                        <label>UTR No</label>
+                                                        <input type="text" name="utr_no2"
+                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5">
                                                     </div>
+                                                </div>
 
+                                                <!-- Saving Fields 2 -->
+                                                <div id="saving_fields2" style="display:none; margin-top:10px;">
+                                                    <label>Saving Account</label>
+                                                    <select name="saving2"
+                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5">
+                                                        <option value="">-- Select Saving Acc. --</option>
+                                                        @foreach ($savingAccounts as $id => $accountNo)
+                                                            <option value="{{ $id }}">{{ $accountNo }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
 
                                             </div>
-
-
                                         </div>
                                     </div>
 
@@ -835,41 +806,7 @@
                     </form>
 
                     <!-- Script -->
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const form = document.getElementById('disbursementForm');
-                            const paymentMode = document.getElementById('payment_mode');
-                            const extraFields = document.getElementById('extraFields');
 
-                            paymentMode.addEventListener('change', function() {
-                                const mode = this.value;
-                                extraFields.innerHTML = ''; // clear previous
-
-                                if (mode === 'cheque') {
-                                    extraFields.innerHTML = `
-                <label>Bank Name</label>
-                <input type="text" name="bank_name" class="form-input" required>
-                <label>Cheque No</label>
-                <input type="text" name="cheque_no" class="form-input" required>
-                <label>Cheque Date</label>
-                <input type="date" name="cheque_date" class="form-input" required>
-            `;
-                                } else if (mode === 'online') {
-                                    extraFields.innerHTML = `
-                <label>UTR / Transaction No</label>
-                <input type="text" name="utr_no" class="form-input" required>
-                <label>Transfer Date</label>
-                <input type="date" name="transfer_date" class="form-input" required>
-            `;
-                                } else if (mode === 'saving') {
-                                    extraFields.innerHTML = `
-                <label>Saving Account No</label>
-                <input type="text" name="saving_acc_no" class="form-input" required>
-            `;
-                                }
-                            });
-                        });
-                    </script>
 
 
 
@@ -1032,23 +969,25 @@
         document.querySelectorAll('input[name="payment_mode2"]').forEach((elem) => {
             elem.addEventListener("change", function() {
 
-                let value = this.value;
+                const cheque = document.getElementById("cheque_fields2");
+                const online = document.getElementById("online_fields2");
+                const saving = document.getElementById("saving_fields2");
 
-                document.getElementById("cheque_fields2").style.display = "none";
-                document.getElementById("online_fields2").style.display = "none";
-                document.getElementById("saving_fields2").style.display = "none";
+                if (cheque) cheque.style.display = "none";
+                if (online) online.style.display = "none";
+                if (saving) saving.style.display = "none";
 
-                if (value === "cheque") {
-                    document.getElementById("cheque_fields2").style.display = "block";
-                } else if (value === "online") {
-                    document.getElementById("online_fields2").style.display = "block";
-                } else if (value === "saving") {
-                    document.getElementById("saving_fields2").style.display = "block";
+                if (this.value === "cheque" && cheque) {
+                    cheque.style.display = "block";
+                } else if (this.value === "online" && online) {
+                    online.style.display = "block";
+                } else if (this.value === "saving" && saving) {
+                    saving.style.display = "block";
                 }
-                // CASH → nothing shows
             });
         });
     </script>
+
 
 
     <script>

@@ -61,7 +61,7 @@ class ShareHoldingController extends Controller
             $isAdd = true;
             $nominal_value = 10.00; $formFieldsConfig = config('share_form');
             // $banks = Bank::select('id', 'name')->get();
-$banks = Bank::pluck('name', 'id');
+            $banks = Bank::pluck('name', 'id');
 
             $formFields = [];
 
@@ -77,7 +77,7 @@ $banks = Bank::pluck('name', 'id');
             }
             $dynamicOptions = [
                 'promoter' => Promotor::pluck('first_name', 'id'),
-                'savingAccounts' => Account::pluck('account_no', 'id'), // ✅ key=id, value=account_no
+                'savingAccounts' => Account::pluck('account_no', 'id'), // key=id, value=account_no
 
 
             ];
@@ -94,6 +94,7 @@ $banks = Bank::pluck('name', 'id');
         try {
             // 1️⃣ Validation
             $validated = $request->validate([
+                // 'member_id'       => 'required|exists:members,id',
                 'promotor_id'       => 'required|exists:promotors,id',
                 'allotment_date'    => 'required',
                 'first_share' => 'required|numeric|min:1|max:50000',

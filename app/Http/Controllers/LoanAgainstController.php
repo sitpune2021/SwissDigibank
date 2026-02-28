@@ -1354,39 +1354,17 @@ class LoanAgainstController extends Controller
         // 🔹 Fetch selected scheme
         $scheme = LoanAgainstScheme::find($request->scheme_id);
 
-        $loanAmount = $request->approved_loan_amount ?? $request->loan_amount ?? 0;
-        $processingPercent = $scheme->processing_fee ?? 0;
+        $processingFee = $scheme->processing_fee ?? 0;
 
-        // 🔹 Calculate base processing fee
-        $processingFee = ($loanAmount * $processingPercent) / 100;
-
-        // 🔹 Calculate GST (18%)
         $gst = ($processingFee * 18) / 100;
 
-        // 🔹 Final total
         $totalProcessingFee = $processingFee + $gst;
 
-        // 🔹 Merge into request
         $request->merge([
             'processing_fee_value' => round($processingFee, 2),
             'processing_fee_gst'   => round($gst, 2),
             'processing_fee_total' => round($totalProcessingFee, 2),
         ]);
-
-        Log::info('Processing Fee Calculated', [
-            'loan_amount' => $loanAmount,
-            'percent' => $processingPercent,
-            'base_fee' => $processingFee,
-            'gst' => $gst,
-            'total' => $totalProcessingFee,
-        ]);
-     
-        Log::info('Processing Fee Calculated', [
-            'loan_amount' => $loanAmount,
-            'percent' => $processingPercent,
-            'processing_fee' => $processingFee,
-        ]);
-        // Step 3: Store data
         try {
 
             $data = $request->only([
@@ -1488,7 +1466,7 @@ class LoanAgainstController extends Controller
             }
 
             return redirect()->route('loanagainst.applications.view', $loanApplication->id)
-                ->with('success', 'Loan Against Deposit Create successfully!');
+                ->with('success', 'Loan Application saved successfully.');
         } catch (Exception $e) {
             Log::error('Error while storing Loan Against Deposit', [
                 'error_message' => $e->getMessage(),
