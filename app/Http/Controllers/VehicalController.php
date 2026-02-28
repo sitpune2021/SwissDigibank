@@ -1211,6 +1211,17 @@ class VehicalController extends Controller
                     ? $request->ratio_first_percentage
                     : null,
             ]);
+            // 🔹 Fetch selected scheme
+            $scheme = VehicalScheme::find($request->scheme_id);
+
+            // FIXED processing fee (NOT percentage)
+            $processingFee = round($scheme->processing_fee ?? 0, 2);
+
+            // GST 18%
+            $gst = round(($processingFee * 18) / 100, 2);
+
+            // Final total
+            $totalProcessingFee = round($processingFee + $gst, 2);
             // Step 3: Create Loan Application
             $loanApplication = VehicalApplication::create([
                 'application_date' => $request->application_date,
@@ -1271,6 +1282,9 @@ class VehicalController extends Controller
                 'ratio_enabled' => $request->ratio_enabled ?? 'No',
                 'ratio_first_emi' => $request->ratio_first_emi,
                 'ratio_first_percentage' => $request->ratio_first_percentage,
+                'processing_fee_value' => round($processingFee, 2),
+                'processing_fee_gst'   => round($gst, 2),
+                'processing_fee_total' => round($totalProcessingFee, 2),
                 'created_by'               => Auth::id(),
             ]);
 

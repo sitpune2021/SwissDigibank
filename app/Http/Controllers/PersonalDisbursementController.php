@@ -265,8 +265,7 @@ class PersonalDisbursementController extends Controller
 
         $annualRate = (float) ($scheme->annual_interest_rate ?? 0);
 
-        $advanceInterest = ($approvedLoan * $annualRate) / 100;
-
+        $advanceInterest = 0; // for reducing EMI loans
         $totalDeductions =
             $processingTotal +
             $stampTotal +

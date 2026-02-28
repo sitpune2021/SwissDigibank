@@ -1183,6 +1183,19 @@ class PersonalController extends Controller
             $securityAmount = $request->filled('total_security_amount')
                 ? $request->total_security_amount
                 : ($request->security_amount ?? 0);
+            // 🔹 Fetch selected scheme
+            $scheme = PersonalScheme::find($request->scheme_id);
+
+            // Decide which amount to apply fee on
+            $loanAmount = $request->approved_loan_amount ?? $request->loan_amount ?? 0;
+            $loanAmount = $request->approved_loan_amount ?? $request->loan_amount ?? 0;
+
+            $loanAmount = $request->approved_loan_amount ?? $request->loan_amount ?? 0;
+
+            $processingFee = round($scheme->processing_fee ?? 0, 2);
+            $gst = round(($processingFee * 18) / 100, 2);
+            $total = round($processingFee + $gst, 2);
+
 
             // Step 4: Create main loan application
             $loanApplication = PersonalLoanApplication::create([
@@ -1214,6 +1227,9 @@ class PersonalController extends Controller
                 'ratio_enabled' => $request->ratio_enabled ?? 'No',
                 'ratio_first_emi' => $request->ratio_first_emi,
                 'ratio_first_percentage' => $request->ratio_first_percentage,
+                'processing_fee_value' => round($processingFee, 2),
+                'processing_fee_gst'   => round($gst, 2),
+                'processing_fee_total' => round($total, 2),
                 'created_by'                  => Auth::id(),
             ]);
 

@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Storage;
 
 class BranchController extends Controller
 {
+
+
     public function index(Request $request)
     {
         try {
@@ -116,7 +118,7 @@ class BranchController extends Controller
                 'pincode'          => 'required|numeric|digits:6',
                 'country'          => 'required|string|max:10|in:India',
                 'contact_email'    => 'nullable|email|max:255|regex:/^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/',
-                'mobile_no'        => 'nullable|digits:10|regex:/^[6-9]\d{9}$/',
+                'mobile_no'        => 'required|regex:/^[6-9]\d{9}$/',
                 'landline_no'      => 'nullable|string|max:10',
                 'gst_no'           => 'nullable|regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/',
                 'disable_recharge' => 'required|in:yes,no',
@@ -299,7 +301,6 @@ class BranchController extends Controller
         }
     }
 
-
     public function destroy($id)
     {
         try {
@@ -336,20 +337,16 @@ class BranchController extends Controller
             ];
         }));
     }
-
-
  
+    public function toggleStatus(Request $request)
+    {
+        $branch = Branch::findOrFail($request->id);
 
-public function toggleStatus(Request $request)
-{
-    $branch = Branch::findOrFail($request->id);
+        $branch->active = $branch->active === 'Yes' ? 'No' : 'Yes';
+        $branch->save();
 
-    $branch->active = $branch->active === 'Yes' ? 'No' : 'Yes';
-    $branch->save();
-
-    return response()->json(['success' => true]);
-}
-
+        return response()->json(['success' => true]);
+    }
 
 
 }
