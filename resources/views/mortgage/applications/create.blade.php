@@ -388,8 +388,8 @@
                                                     Date</th>
                                                 <th class="border border-gray-300 px-2 py-2 uppercase text-center">File
                                                 </th>
-                                                <th class="border border-gray-300 px-2 py-2 uppercase text-center">Action
-                                                </th>
+                                                <!-- <th class="border border-gray-300 px-2 py-2 uppercase text-center">Action
+                                                </th> -->
                                             </tr>
                                         </thead>
 
@@ -850,6 +850,9 @@
                                             <option value="shop" {{ $prop->property_type == 'shop' ? 'selected' : '' }}>
                                                 Shop</option>
                                         </select>
+                                        @error("properties.$index.property_type")
+                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                        @enderror
                                     </div>
 
                                     <div class="w-1/2 mb-3">
@@ -953,6 +956,9 @@
                                         <input type="number" name="properties[{{ $index }}][expected_value]"
                                             value="{{ $prop->expected_value }}"
                                             class="expectedValue w-full border rounded-10 px-3 py-2">
+                                            @error("properties.$index.expected_value")
+                                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                            @enderror
                                     </div>
 
 
