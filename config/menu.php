@@ -316,6 +316,8 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'PROMOTERS/CUSTOMERS', 'route' => 'report.promoter-member'],
+            ['title' => 'CUSTOMERS LIST', 'route' => 'report.customer-list'],
+             ['title' => 'PROMOTER LIST', 'route' => 'report.promoter-list'],
             ['title' => 'SHARE HOLDINGS', 'route' => 'report.share-holdings'],
             ['title' => 'SHARE TRANSFER HISTORY', 'route' => 'report.share-transfer-history'],
             ['title' => 'SAVING ACCOUNTS', 'route' => 'report.saving-account'],

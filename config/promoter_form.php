@@ -56,6 +56,13 @@ return [
             'minlength' => '10',
             'pattern' => '[0-9]{10}',
         ],
+        [
+            'label' => 'Designation',
+            'name' => 'designation',
+            'id' => 'designation',
+            'type' => 'text',
+            'required' => false,
+        ],
     ],
     // Step 3: KYC Info
     'KYC' => [
