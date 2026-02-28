@@ -225,7 +225,7 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
 
-                            <option value="">%</option>
+                            {{-- <option value="">%</option> --}}
                             <option class="uppercase" value="">Fixed</option>
                         </select>
 
@@ -248,7 +248,7 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
 
-                            <option value="">%</option>
+                            {{-- <option value="">%</option> --}}
                             <option class="uppercase" value="">Fixed</option>
                         </select>
 
@@ -269,7 +269,7 @@
                         <!-- Left Select -->
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                            <option value="">%</option>
+                            {{-- <option value="">%</option> --}}
                             <option class="uppercase" value="">Fixed</option>
                         </select>
 
@@ -291,7 +291,7 @@
                         <!-- Left Select -->
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                            <option value="">%</option>
+                            {{-- <option value="">%</option> --}}
                             <option class="uppercase" value="">Fixed</option>
                         </select>
 
@@ -314,7 +314,7 @@
                             <!-- Left Select -->
                             <select name="" id=""
                                 class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                                <option value="">%</option>
+                                {{-- <option value="">%</option> --}}
                                 <option class="uppercase" value="">Fixed</option>
                             </select>
 
