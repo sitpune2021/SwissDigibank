@@ -2271,7 +2271,7 @@ class BusinessLoan extends Controller
             }
 
             return redirect()->route('bussiness.applications.view', $loanApplication->id)
-                ->with('success', 'Business Loan Application + Credit Scores saved successfully!');
+                ->with('success', 'Loan Application saved successfully.');
         } catch (Exception $e) {
             Log::error('❌ Error while storing Business Loan Application', [
                 'error_message' => $e->getMessage(),

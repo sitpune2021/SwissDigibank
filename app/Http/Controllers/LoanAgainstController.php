@@ -1488,7 +1488,7 @@ class LoanAgainstController extends Controller
             }
 
             return redirect()->route('loanagainst.applications.view', $loanApplication->id)
-                ->with('success', 'Loan Against Deposit Create successfully!');
+                ->with('success', 'Loan Application saved successfully.');
         } catch (Exception $e) {
             Log::error('Error while storing Loan Against Deposit', [
                 'error_message' => $e->getMessage(),

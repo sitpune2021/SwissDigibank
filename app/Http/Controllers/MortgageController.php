@@ -1448,7 +1448,7 @@ class MortgageController extends Controller
             ]);
 
             return redirect()->route('mortgage.applications.view', $loanApplication->id)
-                ->with('success', 'Mortgage Loan, Credit Score details saved successfully.');
+                ->with('success', 'Loan Application saved successfully.');
         } catch (Exception $e) {
             Log::error('Error while storing Loan Application', [
                 'error_message' => $e->getMessage(),

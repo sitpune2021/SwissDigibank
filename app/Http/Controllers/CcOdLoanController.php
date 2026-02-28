@@ -306,7 +306,7 @@ class CcOdLoanController extends Controller
             }
 
             return redirect()->route('cc_od.applications.view', $loanApplication->id)
-                ->with('success', 'cc / od Loan Application + Credit Scores saved successfully!');
+                ->with('success', 'Loan Application saved successfully');
         } catch (Exception $e) {
             Log::error('❌ Error while storing Business Loan Application', [
                 'error_message' => $e->getMessage(),

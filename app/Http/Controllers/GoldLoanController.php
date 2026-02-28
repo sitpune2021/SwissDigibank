@@ -1444,7 +1444,7 @@ class GoldLoanController extends Controller
                 'gold-loan.applications.view',
                 $loanApplication->id
             )
-                ->with('success', 'Loan Application + Credit Scores + Ornaments saved successfully!');
+                ->with('success', 'Loan Application saved successfully!');
         } catch (Exception $e) {
             Log::error('Error while storing Loan Application', [
                 'error_message' => $e->getMessage(),
