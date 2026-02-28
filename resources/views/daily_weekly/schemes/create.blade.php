@@ -25,8 +25,10 @@
 
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
-            <div class="flex items-start flex-col  gap-2">
-                <h1 class="text-xl font-semibold">New DAILY WEEKLY LOAN SCHEME</h1>
+            <div class="flex items-start flex-col gap-2">
+                <h1 class="text-xl font-semibold">
+                    {{ isset($scheme) ? 'UPDATE DAILY WEEKLY LOAN SCHEME' : 'NEW DAILY WEEKLY LOAN SCHEME' }}
+                </h1>
             </div>
         </div>
 
