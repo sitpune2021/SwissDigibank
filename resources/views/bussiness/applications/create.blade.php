@@ -47,7 +47,7 @@
         </div>
 
         <div class="box">
-            <form method="POST" id="loadForm"
+            <form method="POST" id="loanForm"
                 action="{{ isset($application) ? route('bussiness.applications.update', $application->id) : route('businessloan.store') }}"
                 enctype="multipart/form-data">
                 @csrf
@@ -691,10 +691,7 @@
 
                             </div>
                         </div> --}}
-                        <input type="hidden" name="ratio_enabled" id="ratio_enabled"
-                            value="{{ old('ratio_enabled', $application->ratio_enabled ?? 'No') }}">
-                        <input type="hidden" name="ratio_first_emi" id="ratio_first_emi"
-                            value="{{ old('ratio_first_emi', $application->ratio_first_emi ?? '') }}">
+                        
 
                         <input type="hidden" name="ratio_first_percentage" id="ratio_first_percentage"
                             value="{{ old('ratio_first_percentage', $application->ratio_first_percentage ?? '') }}">

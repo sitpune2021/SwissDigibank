@@ -501,7 +501,7 @@
                                                                 class="text-blue-500 underline text-sm">View File</a>
                                                         @endif
                                                     </td>
-{{-- 
+                                                    {{-- 
                                                     <td class="px-2 py-2 text-center">
                                                         <button type="button"
                                                             class="removeRow text-red-500 hover:text-red-700">
@@ -515,7 +515,7 @@
 
                                 </table>
                             </div>
-{{-- 
+                            {{-- 
                             <div class="mt-3">
                                 <button type="button" id="addRow" class="btn-primary uppercase rounded-10 px-4 py-2">
                                     + Add New Score
@@ -524,7 +524,7 @@
 
                             {{-- calculator checkbox- --}}
                             <!-- <x-checkbox-calculator id="manualEntry" name="manual_entry" label="Collect Principal Amount as EMI"
-                                                                sublabel="(Check this if you want to collect principal amount as EMIs.)" /> -->
+                                                                            sublabel="(Check this if you want to collect principal amount as EMIs.)" /> -->
                         </div>
 
                         <!-- Collect Advance Processing Fee -->
@@ -1253,10 +1253,21 @@
 
                 errorBox.classList.add("hidden");
 
+                const tenure = parseInt(tenureInput.value) || 0;
+                const r1 = parseInt(emi1.value) || 0;
+                const r2 = parseInt(emi2.value) || 0;
+
+                // -----------------------------
+                // 1️⃣ Validate Ratio Only If Checked
+                // -----------------------------
                 if (chkDivide.checked) {
-                    const tenure = parseInt(tenureInput.value) || 0;
-                    const r1 = parseInt(emi1.value) || 0;
-                    const r2 = parseInt(emi2.value) || 0;
+
+                    if (tenure === 0) {
+                        e.preventDefault();
+                        errorBox.classList.remove("hidden");
+                        errorBox.innerText = "Please enter tenure first.";
+                        return;
+                    }
 
                     if ((r1 + r2) !== tenure) {
                         e.preventDefault();
@@ -1267,17 +1278,20 @@
                     }
                 }
 
-                // 🔥 Set hidden values once only
+                // -----------------------------
+                // 2️⃣ Always Set Hidden Fields
+                // -----------------------------
+
                 document.getElementById("ratio_enabled").value =
                     chkDivide.checked ? "Yes" : "No";
 
                 document.getElementById("ratio_first_emi").value =
-                    emi1.value || "";
+                    chkDivide.checked ? r1 : "";
 
                 document.getElementById("ratio_first_percentage").value =
-                    amt1.value || "";
-            });
+                    chkDivide.checked ? (amt1.value || "") : "";
 
+            });
         });
     </script>
 
@@ -1416,7 +1430,7 @@
                     return;
                 }
 
-                form.submit();
+                form.requestSubmit();
             });
         });
     </script>
