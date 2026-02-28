@@ -132,6 +132,7 @@ class PromotorController extends Controller
                 'email' => 'required|email|unique:promotors,email',
                 'mobile' => 'required|digits:10|unique:promotors,mobile',
                 'sms' => 'boolean',
+                'designation' => 'nullable|string|max:255',
 
                 'aadhaar_no' => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:promotor_k_y_c_s,aadhaar_no',
                 'voter_id_no' => 'nullable|regex:/^[A-Z]{3}[0-9]{7}$/|unique:promotor_k_y_c_s,voter_id_no',
@@ -192,6 +193,7 @@ class PromotorController extends Controller
                     'husband_wife_name' => $validated['husband_wife_name'] ?? null,
                     'email' => $validated['email'],
                     'mobile' => $validated['mobile'],
+                    'designation' => $validated['designation'] ?? null,
                     'sms' => $validated['sms'] ?? 0,
                     'active' => $validated['active'] ?? 'No',
                     'form15g' => $validated['form15g'] ?? 'No',
@@ -424,6 +426,7 @@ class PromotorController extends Controller
                 'email' => "required|email|unique:promotors,email,{$id}",
                 'mobile' => "required|digits:10|unique:promotors,mobile,{$id}",
                 'sms' => 'boolean',
+                'designation' => 'nullable|string|max:255',
 
                 // KYC fields
                 // 'aadhaar_no' => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/',
@@ -515,6 +518,7 @@ class PromotorController extends Controller
                     'husband_wife_name' => $validated['husband_wife_name'] ?? null,
                     'email' => $validated['email'],
                     'mobile' => $validated['mobile'],
+                    'designation' => $validated['designation'] ?? $promotor->designation,
                     'sms' => $validated['sms'] ?? 0,
                     'active' => $validated['active'] ?? $promotor->active,
                     'form15g' => $validated['form15g'] ?? $promotor->form15g,

@@ -2548,6 +2548,15 @@ Route::group(['prefix' => 'cut-report'], function () {
 
     Route::get('report/customer-list', [CutReportController::class, 'customerListIndex'])
         ->name('report.customer-list');
+    Route::get('/reports/customer-list/print', [CutReportController::class, 'customerListPrint'])
+        ->name('reports.customer.print');
+
+    
+    Route::get('report/promoter-list', [CutReportController::class, 'promoterListIndex'])
+        ->name('report.promoter-list');
+    Route::get('/reports/promoter-list/print', [CutReportController::class, 'promoterListPrint'])
+        ->name('reports.promoter.print');
+    
 
     Route::get('/members/print', [CutReportController::class, 'printMembers'])
         ->name('members.print');

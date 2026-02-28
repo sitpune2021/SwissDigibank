@@ -49,7 +49,7 @@
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
         <h3 class=" flex text-lg   uppercase font-semibold">
-            Report - Customer List
+            Report - Promoter List
         </h3>
 
     </div>
@@ -57,7 +57,7 @@
     <div class="col-span-12 box lg:col-span-12">
         <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
 
-            <a href="{{ route('reports.customer.print') }}" target="_blank"
+            <a href="{{ route('reports.promoter.print') }}" target="_blank"
                 class="btn-primary rounded-10 px-2 py-2 flex justify-center  text-sm uppercase">
                 <i class="las la-print"></i>
                 Print Cut Report
@@ -84,12 +84,12 @@
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Account No
+                                Designation
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Name
+                                promoter Name
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
@@ -115,7 +115,7 @@
 
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 capitalize">
-                                {{ optional($row->accounts->first())->account_no ?? '-' }}
+                                {{ optional($row->promotor->first())->designation ?? '-' }}
                             </div>
                         </td>
 
@@ -127,13 +127,13 @@
 
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                            -
+                                -
                             </div>
                         </td>
 
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                {{ number_format($row->shareTransfers->sum('total_consideration'), 2) }}
+                                {{ number_format(optional($row->promotor->first()?->shareHoldings)->sum('amount') ?? 0, 2) }}
                             </div>
                         </td>
 

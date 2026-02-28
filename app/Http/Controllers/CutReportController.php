@@ -128,10 +128,79 @@ class CutReportController extends Controller
     }
 
     // Customer List start here
-    public function customerListIndex(){
-        return view('cut-reports.report.customer-list');
+    public function customerListIndex()
+    {
+
+        $account = Member::with(['shareTransfers', 'accounts'])
+            ->whereDoesntHave('promotor')
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+        return view('cut-reports.report.customer-list', compact('account'));
+    }
+    public function customerListPrint()
+    {
+        // Fetch NON-PROMOTER members
+        $members = Member::with(['shareTransfers', 'accounts'])
+            ->orderBy('id', 'desc')
+            ->whereDoesntHave('promotor')
+            ->get();
+
+        $data = [
+            'company' => [
+                'name' => Company::first()->company_name ?? ' ',
+                'address_line1'=>Company::first()->address_line1 ?? '',
+                'address_line2' => company::first()->address_line2 ?? '',
+                'cin_no' =>company ::first()->cin_no ?? '',
+                'city' =>Company::first()->city ?? '',
+
+            ],
+            'members' => $members,
+                    ];
+
+        $html = view('cut-reports.pdf.customer-list-print', $data)->render();
+
+        $mpdf = $this->getMarathiMpdf();
+        $mpdf->SetJS('this.print();');
+        $mpdf->WriteHTML($html);
+
+        return response($mpdf->Output('customer-list-cut-report.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
     }
 
+    // Promoter List
+     public function promoterListIndex()
+    {
+        $account = Member::whereHas('promotor')
+            ->with(['promotor','promotor.shareHoldings', 'accounts'])
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+        return view('cut-reports.report.promoter-list', compact('account'));
+    }
+
+    public function promoterListPrint()
+{
+    $company = Company::first();
+
+    $promoters =  Member::whereHas('promotor')
+            ->with(['promotor','promotor.shareHoldings', 'accounts'])
+    ->get();
+
+
+    $html = view('cut-reports.pdf.promoter-list-print', compact(
+        'company',
+        'promoters',
+        
+    ))->render();
+
+    $mpdf = $this->getMarathiMpdf();
+    $mpdf->SetJS('this.print();');
+    $mpdf->WriteHTML($html);
+
+    return response($mpdf->Output('promoter-list-report.pdf', 'I'))
+        ->header('Content-Type', 'application/pdf');
+}
+   
+   
     // shareHoldingIndex Cut Reports start here
     public function shareHoldingIndex()
     {
@@ -229,7 +298,7 @@ class CutReportController extends Controller
                     // MEMBER NAME
                     strtoupper($promoter->first_name . ' ' . $promoter->last_name),
 
-                        // SHARE RANGE
+                    // SHARE RANGE
                     ($share->first_share ?? '') . ' - ' . ($share->share_no ?? ''),
 
                     // TOTAL SHARES
@@ -243,13 +312,13 @@ class CutReportController extends Controller
 
                     // ALLOTMENT DATE → d-m-Y
                     $share && $share->allotment_date
-                    ? date('d-m-Y', strtotime($share->allotment_date))
-                    : '',
+                        ? date('d-m-Y', strtotime($share->allotment_date))
+                        : '',
 
                     // TRANSFER DATE (transaction_date) → d-m-Y
                     $share && $share->transaction_date
-                    ? date('d-m-Y', strtotime($share->transaction_date))
-                    : '',
+                        ? date('d-m-Y', strtotime($share->transaction_date))
+                        : '',
                 ]);
             }
 
@@ -552,8 +621,8 @@ class CutReportController extends Controller
                     $row->members->full_name ?? '',
                     $row->branch->branch_name ?? '',
                     optional($row->members)->general_enrollment_date
-                    ? \Carbon\Carbon::parse($row->members->general_enrollment_date)->format('d-m-Y')
-                    : '',
+                        ? \Carbon\Carbon::parse($row->members->general_enrollment_date)->format('d-m-Y')
+                        : '',
                     $row->final_status ?? '',
                 ]);
             }
@@ -726,11 +795,11 @@ class CutReportController extends Controller
                     $row->interest_payout_type ?? '',
                     $row->fd_amount ?? '',
                     optional($row->maturity_date)
-                    ? \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y')
-                    : '',
+                        ? \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y')
+                        : '',
                     optional($row->open_date)
-                    ? \Carbon\Carbon::parse($row->open_date)->format('d-m-Y')
-                    : '',
+                        ? \Carbon\Carbon::parse($row->open_date)->format('d-m-Y')
+                        : '',
                     $row->final_status ?? '',
                 ]);
             }
@@ -921,11 +990,11 @@ class CutReportController extends Controller
                     $row->interest_payout_type ?? '',
                     $row->mis_amount ?? '',
                     $row->open_date
-                    ? '="' . date('d-m-Y', strtotime($row->open_date)) . '"'
-                    : '',
+                        ? '="' . date('d-m-Y', strtotime($row->open_date)) . '"'
+                        : '',
                     $row->maturity_date
-                    ? '="' . date('d-m-Y', strtotime($row->maturity_date)) . '"'
-                    : '',
+                        ? '="' . date('d-m-Y', strtotime($row->maturity_date)) . '"'
+                        : '',
                     ucfirst($row->final_status ?? '')
                 ]);
             }
@@ -1098,12 +1167,12 @@ class CutReportController extends Controller
                     ($row->scheme->scheme_name ?? '') . ' ' . ($row->scheme->scheme_code ?? ''),
                     $row->dd_amount,
                     $row->open_date
-                    ? "=\"" . \Carbon\Carbon::parse($row->open_date)->format('d-m-Y') . "\""
-                    : '',
+                        ? "=\"" . \Carbon\Carbon::parse($row->open_date)->format('d-m-Y') . "\""
+                        : '',
 
                     $row->maturity_date
-                    ? "=\"" . \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y') . "\""
-                    : '',
+                        ? "=\"" . \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y') . "\""
+                        : '',
                     $row->scheme->rr_dd_frequency ?? '',
                     $row->final_status,
                 ]);
@@ -1291,12 +1360,12 @@ class CutReportController extends Controller
 
                     // Prevent Excel auto-formatting
                     $row->open_date
-                    ? "=\"" . \Carbon\Carbon::parse($row->open_date)->format('d-m-Y') . "\""
-                    : '',
+                        ? "=\"" . \Carbon\Carbon::parse($row->open_date)->format('d-m-Y') . "\""
+                        : '',
 
                     $row->maturity_date
-                    ? "=\"" . \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y') . "\""
-                    : '',
+                        ? "=\"" . \Carbon\Carbon::parse($row->maturity_date)->format('d-m-Y') . "\""
+                        : '',
 
                     $row->scheme->rr_dd_frequency ?? '',
                     $row->final_status ?? '',
@@ -1581,8 +1650,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                    : '-',
+                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                        : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -1691,17 +1760,17 @@ class CutReportController extends Controller
 
         if ($request->customer_no) {
             $query->whereHas('member', fn($q) =>
-                $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
+            $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
         }
 
         if ($request->first_name) {
             $query->whereHas('member', fn($q) =>
-                $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
+            $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
         }
 
         if ($request->last_name) {
             $query->whereHas('member', fn($q) =>
-                $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
+            $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
         }
 
         if ($request->account_no) {
@@ -1710,7 +1779,7 @@ class CutReportController extends Controller
 
         if ($request->mobile_no) {
             $query->whereHas('member', fn($q) =>
-                $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
+            $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
         }
 
         $loans = $query->orderBy('id', 'desc')->get();
@@ -1826,8 +1895,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                    : '-',
+                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                        : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -1937,17 +2006,17 @@ class CutReportController extends Controller
 
         if ($request->customer_no) {
             $query->whereHas('member', fn($q) =>
-                $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
+            $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
         }
 
         if ($request->first_name) {
             $query->whereHas('member', fn($q) =>
-                $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
+            $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
         }
 
         if ($request->last_name) {
             $query->whereHas('member', fn($q) =>
-                $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
+            $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
         }
 
         if ($request->account_no) {
@@ -1956,7 +2025,7 @@ class CutReportController extends Controller
 
         if ($request->mobile_no) {
             $query->whereHas('member', fn($q) =>
-                $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
+            $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
         }
 
         $loans = $query->orderBy('id', 'desc')->get();
@@ -2070,8 +2139,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                    : '-',
+                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                        : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -2180,17 +2249,17 @@ class CutReportController extends Controller
 
         if ($request->customer_no) {
             $query->whereHas('member', fn($q) =>
-                $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
+            $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
         }
 
         if ($request->first_name) {
             $query->whereHas('member', fn($q) =>
-                $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
+            $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
         }
 
         if ($request->last_name) {
             $query->whereHas('member', fn($q) =>
-                $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
+            $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
         }
 
         if ($request->account_no) {
@@ -2199,7 +2268,7 @@ class CutReportController extends Controller
 
         if ($request->mobile_no) {
             $query->whereHas('member', fn($q) =>
-                $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
+            $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
         }
 
         $loans = $query->orderBy('id', 'desc')->get();
@@ -2246,7 +2315,6 @@ class CutReportController extends Controller
         $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
 
         return $pdf->stream('LoanAgainstReport.pdf');
-
     }
     // CSV Downloan Business
 
@@ -2315,8 +2383,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                    : '-',
+                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                        : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -2425,17 +2493,17 @@ class CutReportController extends Controller
 
         if ($request->customer_no) {
             $query->whereHas('member', fn($q) =>
-                $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
+            $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
         }
 
         if ($request->first_name) {
             $query->whereHas('member', fn($q) =>
-                $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
+            $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
         }
 
         if ($request->last_name) {
             $query->whereHas('member', fn($q) =>
-                $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
+            $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
         }
 
         if ($request->account_no) {
@@ -2444,7 +2512,7 @@ class CutReportController extends Controller
 
         if ($request->mobile_no) {
             $query->whereHas('member', fn($q) =>
-                $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
+            $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
         }
 
         $loans = $query->orderBy('id', 'desc')->get();
@@ -2561,8 +2629,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                    : '-',
+                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                        : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -2671,17 +2739,17 @@ class CutReportController extends Controller
 
         if ($request->customer_no) {
             $query->whereHas('member', fn($q) =>
-                $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
+            $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
         }
 
         if ($request->first_name) {
             $query->whereHas('member', fn($q) =>
-                $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
+            $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
         }
 
         if ($request->last_name) {
             $query->whereHas('member', fn($q) =>
-                $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
+            $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
         }
 
         if ($request->account_no) {
@@ -2690,7 +2758,7 @@ class CutReportController extends Controller
 
         if ($request->mobile_no) {
             $query->whereHas('member', fn($q) =>
-                $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
+            $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
         }
 
         $loans = $query->orderBy('id', 'desc')->get();
@@ -2715,7 +2783,7 @@ class CutReportController extends Controller
             );
         }
 
-         $logoPath = public_path('assets/images/SBC_Logo.png');
+        $logoPath = public_path('assets/images/SBC_Logo.png');
 
         // fetch super admin logo
         $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
@@ -2731,14 +2799,13 @@ class CutReportController extends Controller
             }
         }
 
-          $pdf = Pdf::loadView(
+        $pdf = Pdf::loadView(
             'cut-reports.report.loan_report.print-daily-weekly-loan',
             compact('loans', 'logoPath')
         )->setPaper('a4', 'portrait');
         $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
 
         return $pdf->stream('print-personal-loan.pdf');
-
     }
     // CSV Downloan daily_weekly
 
@@ -2807,8 +2874,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                    : '-',
+                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                        : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -2907,61 +2974,61 @@ class CutReportController extends Controller
     }
 
     public function vehicle_print(Request $request)
-{
-    $query = VehicalApplication::with(['member','branch','scheme'])
-        ->where('status',2);
+    {
+        $query = VehicalApplication::with(['member', 'branch', 'scheme'])
+            ->where('status', 2);
 
-    if ($request->branch_id) {
-        $query->where('branch_id',$request->branch_id);
-    }
+        if ($request->branch_id) {
+            $query->where('branch_id', $request->branch_id);
+        }
 
-    if ($request->customer_no) {
-        $query->whereHas('member', fn($q)=>
-            $q->where('member_no','LIKE',"%{$request->customer_no}%"));
-    }
+        if ($request->customer_no) {
+            $query->whereHas('member', fn($q) =>
+            $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
+        }
 
-    if ($request->first_name) {
-        $query->whereHas('member', fn($q)=>
-            $q->where('first_name','LIKE',"%{$request->first_name}%"));
-    }
+        if ($request->first_name) {
+            $query->whereHas('member', fn($q) =>
+            $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
+        }
 
-    if ($request->last_name) {
-        $query->whereHas('member', fn($q)=>
-            $q->where('last_name','LIKE',"%{$request->last_name}%"));
-    }
+        if ($request->last_name) {
+            $query->whereHas('member', fn($q) =>
+            $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
+        }
 
-    if ($request->account_no) {
-        $query->where('id',$request->account_no);
-    }
+        if ($request->account_no) {
+            $query->where('id', $request->account_no);
+        }
 
-    if ($request->mobile_no) {
-        $query->whereHas('member', fn($q)=>
-            $q->where('mobile','LIKE',"%{$request->mobile_no}%"));
-    }
+        if ($request->mobile_no) {
+            $query->whereHas('member', fn($q) =>
+            $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
+        }
 
-    $loans = $query->orderBy('id','desc')->get();
+        $loans = $query->orderBy('id', 'desc')->get();
 
-    foreach ($loans as $loan) {
+        foreach ($loans as $loan) {
 
-        $collected = DB::table('vehical_loan_transactions')
-            ->where('loan_id',$loan->id)
-            ->sum('amount_collected');
+            $collected = DB::table('vehical_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
 
-        $charges = DB::table('vehical_loan_other_charges')
-            ->where('loan_id',$loan->id)
-            ->sum('amount');
+            $charges = DB::table('vehical_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
 
-        $remaining = DB::table('vehical_loan_fore_closures')
-            ->where('loan_id',$loan->id)
-            ->value('remaining_amount') ?? 0;
+            $remaining = DB::table('vehical_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
 
-        $loan->current_debt = max(
-            $loan->loan_amount - $collected - $charges - $remaining,
-            0
-        );
-    }
+            $loan->current_debt = max(
+                $loan->loan_amount - $collected - $charges - $remaining,
+                0
+            );
+        }
 
-    $logoPath = public_path('assets/images/SBC_Logo.png');
+        $logoPath = public_path('assets/images/SBC_Logo.png');
 
         // fetch super admin logo
         $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
@@ -2977,15 +3044,14 @@ class CutReportController extends Controller
             }
         }
 
-          $pdf = Pdf::loadView(
+        $pdf = Pdf::loadView(
             'cut-reports.report.loan_report.print-vehicle-loan',
             compact('loans', 'logoPath')
         )->setPaper('a4', 'portrait');
         $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
 
         return $pdf->stream('print-personal-loan.pdf');
-    
-}
+    }
     // CSV Downloan vehical
 
     public function vehical_exportCsv()
@@ -3053,8 +3119,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                    : '-',
+                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                        : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -3153,61 +3219,61 @@ class CutReportController extends Controller
     }
 
     public function cc_od_print(Request $request)
-{
-    $query = CcOdLoanApplication::with(['member','branch','scheme'])
-        ->where('status',2);
+    {
+        $query = CcOdLoanApplication::with(['member', 'branch', 'scheme'])
+            ->where('status', 2);
 
-    if ($request->branch_id) {
-        $query->where('branch_id',$request->branch_id);
-    }
+        if ($request->branch_id) {
+            $query->where('branch_id', $request->branch_id);
+        }
 
-    if ($request->customer_no) {
-        $query->whereHas('member', fn($q)=>
-            $q->where('member_no','LIKE',"%{$request->customer_no}%"));
-    }
+        if ($request->customer_no) {
+            $query->whereHas('member', fn($q) =>
+            $q->where('member_no', 'LIKE', "%{$request->customer_no}%"));
+        }
 
-    if ($request->first_name) {
-        $query->whereHas('member', fn($q)=>
-            $q->where('first_name','LIKE',"%{$request->first_name}%"));
-    }
+        if ($request->first_name) {
+            $query->whereHas('member', fn($q) =>
+            $q->where('first_name', 'LIKE', "%{$request->first_name}%"));
+        }
 
-    if ($request->last_name) {
-        $query->whereHas('member', fn($q)=>
-            $q->where('last_name','LIKE',"%{$request->last_name}%"));
-    }
+        if ($request->last_name) {
+            $query->whereHas('member', fn($q) =>
+            $q->where('last_name', 'LIKE', "%{$request->last_name}%"));
+        }
 
-    if ($request->account_no) {
-        $query->where('id',$request->account_no);
-    }
+        if ($request->account_no) {
+            $query->where('id', $request->account_no);
+        }
 
-    if ($request->mobile_no) {
-        $query->whereHas('member', fn($q)=>
-            $q->where('mobile','LIKE',"%{$request->mobile_no}%"));
-    }
+        if ($request->mobile_no) {
+            $query->whereHas('member', fn($q) =>
+            $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
+        }
 
-    $loans = $query->orderBy('id','desc')->get();
+        $loans = $query->orderBy('id', 'desc')->get();
 
-    foreach ($loans as $loan) {
+        foreach ($loans as $loan) {
 
-        $collected = DB::table('cc_od_loan_transactions')
-            ->where('loan_id',$loan->id)
-            ->sum('amount_collected');
+            $collected = DB::table('cc_od_loan_transactions')
+                ->where('loan_id', $loan->id)
+                ->sum('amount_collected');
 
-        $charges = DB::table('cc_od_loan_other_charges')
-            ->where('loan_id',$loan->id)
-            ->sum('amount');
+            $charges = DB::table('cc_od_loan_other_charges')
+                ->where('loan_id', $loan->id)
+                ->sum('amount');
 
-        $remaining = DB::table('cc_od_loan_fore_closures')
-            ->where('loan_id',$loan->id)
-            ->value('remaining_amount') ?? 0;
+            $remaining = DB::table('cc_od_loan_fore_closures')
+                ->where('loan_id', $loan->id)
+                ->value('remaining_amount') ?? 0;
 
-        $loan->current_debt = max(
-            $loan->loan_amount - $collected - $charges - $remaining,
-            0
-        );
-    }
+            $loan->current_debt = max(
+                $loan->loan_amount - $collected - $charges - $remaining,
+                0
+            );
+        }
 
-      $logoPath = public_path('assets/images/SBC_Logo.png');
+        $logoPath = public_path('assets/images/SBC_Logo.png');
 
         // fetch super admin logo
         $superAdmin = User::whereHas('role', fn($q) => $q->where('id', 1))->first();
@@ -3223,15 +3289,14 @@ class CutReportController extends Controller
             }
         }
 
-          $pdf = Pdf::loadView(
+        $pdf = Pdf::loadView(
             'cut-reports.report.loan_report.print-ccod-loan',
             compact('loans', 'logoPath')
         )->setPaper('a4', 'portrait');
         $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
 
         return $pdf->stream('print-personal-loan.pdf');
-   
-}
+    }
     // CSV Downloan CC OD
 
     public function cc_od_exportCsv()
@@ -3299,8 +3364,8 @@ class CutReportController extends Controller
                     $loan->scheme->scheme_name ?? 'N/A',
 
                     $loan->application_date
-                    ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
-                    : '-',
+                        ? \Carbon\Carbon::parse($loan->application_date)->format('d-m-Y')
+                        : '-',
 
                     $loan->status == 2 ? 'Active' : 'Closed',
 
@@ -3390,7 +3455,6 @@ class CutReportController extends Controller
             case 'daily_weekly':
                 $transactions = DailyWeeklyLoanTransaction::with('dailyWeeklyapplication.branch')->latest()->get();
                 break;
-
         }
 
 
@@ -3451,6 +3515,4 @@ class CutReportController extends Controller
 
         return view('cut-reports.report.loan-portfolio-report');
     }
-
-
 }
