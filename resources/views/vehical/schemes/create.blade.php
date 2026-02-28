@@ -385,7 +385,6 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2 md:py-3">
                             <option class="uppercase" value="">Fixed</option>
-                            <option value="">%</option>
                         </select>
                         <input type="number" name="sms_charge" value="{{ old('sms_charge', $scheme->sms_charge ?? '') }}" id="sms_charge"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -403,7 +402,6 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2 md:py-3">
                             <option class="uppercase" value="">Fixed</option>
-                            <option value="">%</option>
                         </select>
 
                         <input type="number" name="fuel_charge" value="{{ old('fuel_charge', $scheme->fuel_charge ?? '') }}" id="fuel_charge"
@@ -427,7 +425,6 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2 md:py-3">
                             <option class="uppercase" value="">Fixed</option>
-                            <option value="">%</option>
                         </select>
                         <input type="number" name="stationary_charge" value="{{ old('stationary_charge', $scheme->stationary_charge ?? '') }}" id="stationary_charge"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -445,7 +442,6 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2 md:py-3">
                             <option class="uppercase" value="">Fixed</option>
-                            <option value="">%</option>
                         </select>
 
                         <input type="number" name="maintenance_charge" value="{{ old('maintenance_charge', $scheme->maintenance_charge ?? '') }}" id="maintenance_charge"
@@ -468,7 +464,6 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2 md:py-3">
                             <option class="uppercase" value="">Fixed</option>
-                            <option value="">%</option>
                         </select>
                         <input type="number" name="collection" value="{{ old('collection', $scheme->collection ?? '') }}" id="collection"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
@@ -494,7 +489,7 @@
         </button>
 
             <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{ route('vehical.schemes.index') }}"> BAck</a>
+                <a href="{{ route('vehical.schemes.index') }}">BACK</a>
             </button>
         </div>
     </div>
