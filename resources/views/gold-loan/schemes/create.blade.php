@@ -225,7 +225,7 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
 
-                            <option value="">%</option>
+                            {{-- <option value="">%</option> --}}
                             <option class="uppercase" value="">Fixed</option>
                         </select>
 
@@ -248,7 +248,7 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
 
-                            <option value="">%</option>
+                            {{-- <option value="">%</option> --}}
                             <option class="uppercase" value="">Fixed</option>
                         </select>
 
@@ -269,7 +269,7 @@
                         <!-- Left Select -->
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                            <option value="">%</option>
+                            {{-- <option value="">%</option> --}}
                             <option class="uppercase" value="">Fixed</option>
                         </select>
 
@@ -291,7 +291,7 @@
                         <!-- Left Select -->
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                            <option value="">%</option>
+                            {{-- <option value="">%</option> --}}
                             <option class="uppercase" value="">Fixed</option>
                         </select>
 
@@ -314,7 +314,7 @@
                             <!-- Left Select -->
                             <select name="" id=""
                                 class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-6 py-3 md:py-3">
-                                <option value="">%</option>
+                                {{-- <option value="">%</option> --}}
                                 <option class="uppercase" value="">Fixed</option>
                             </select>
 
@@ -448,8 +448,8 @@
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2 md:py-3">
                             <option value="fixed" {{ old('sms_charge_type', $scheme->sms_charge_type ?? '') == 'fixed' ?
                                 'selected' : '' }}>Fixed</option>
-                            <option value="percent" {{ old('sms_charge_type', $scheme->sms_charge_type ?? '') ==
-                                'percent' ? 'selected' : '' }}>%</option>
+                            <!-- <option value="percent" {{ old('sms_charge_type', $scheme->sms_charge_type ?? '') ==
+                                'percent' ? 'selected' : '' }}>%</option> -->
                         </select>
 
                         <!--  Keep this input same (it’s fine) -->
@@ -470,7 +470,7 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2 md:py-3">
                             <option class="uppercase" value="">Fixed</option>
-                            <option value="">%</option>
+                            <!-- <option value="">%</option> -->
                         </select>
 
                         <input type="number" name="fuel_charge"
@@ -494,7 +494,7 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2 md:py-3">
                             <option class="uppercase" value="">Fixed</option>
-                            <option value="">%</option>
+                            <!-- <option value="">%</option> -->
                         </select>
                         <input type="number" name="stationary_charge"
                             value="{{ old('stationary_charge', $scheme->stationary_charge ?? '') }}"
@@ -514,7 +514,7 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2 md:py-3">
                             <option class="uppercase" value="">Fixed</option>
-                            <option value="">%</option>
+                            <!-- <option value="">%</option> -->
                         </select>
 
                         <input type="number" name="maintenance_charge"
@@ -539,7 +539,7 @@
                         <select name="" id=""
                             class="w-24 text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-4 py-2 md:py-3">
                             <option class="uppercase" value="">Fixed</option>
-                            <option value="">%</option>
+                            <!-- <option value="">%</option> -->
                         </select>
                         <input type="number" name="collection"
                             value="{{ old('collection', $scheme->collection ?? '') }}" id="collection"

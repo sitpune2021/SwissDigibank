@@ -329,7 +329,7 @@ class DailyWeeklyController extends Controller
             }
 
             return redirect()->route('daily_weekly.applications.view', $loanApplication->id)
-                ->with('success', 'daily_weekly Loan Application + Credit Scores saved successfully!');
+                ->with('success', 'Loan Application saved successfully');
         } catch (Exception $e) {
             Log::error('Error while storing Business Loan Application', [
                 'error_message' => $e->getMessage(),

@@ -177,8 +177,8 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/roles', [RoleController::class, 'store'])
             ->name('roles.store');
 
-            Route::get('/roles/{id}', [RoleController::class, 'show'])
-        ->name('roles.show');
+        Route::get('/roles/{id}', [RoleController::class, 'show'])
+            ->name('roles.show');
 
         Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])
             ->name('roles.edit');
@@ -188,11 +188,10 @@ Route::middleware('auth.user')->group(function () {
 
         Route::delete('/roles/{id}', [RoleController::class, 'destroy'])
             ->name('roles.destroy');
-            
+
 
         // USERS ROUTES
         Route::resource('users', UserController::class);
-
     });
 
     Route::middleware('auth')->group(function () {
@@ -202,7 +201,8 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/calculator/calculate', [CalculatorController::class, 'calculateInvestment'])->name('calculator.calculate');
         Route::post('/calculate-investment', [CalculatorController::class, 'calculateInvestmentAjax'])->name('calculate.investment');
         Route::get('/fetch-schemes', [CalculatorController::class, 'getSchemes'])->name('fd.schemes.fetch');
-        Route::get('/fetch-scheme/{id}', [CalculatorController::class, 'getSchemeDetails'])->name('fd.scheme.details');
+        Route::get('/fd-scheme-details/{id}', [CalculatorController::class, 'getSchemeDetails'])
+            ->name('fd.scheme.details');
     });
 
 
@@ -2545,6 +2545,18 @@ Route::group(['prefix' => 'cut-report'], function () {
     //reports
     Route::get('report/promoter-member', [CutReportController::class, 'promoterMemberIndex'])
         ->name('report.promoter-member');
+
+    Route::get('report/customer-list', [CutReportController::class, 'customerListIndex'])
+        ->name('report.customer-list');
+    Route::get('/reports/customer-list/print', [CutReportController::class, 'customerListPrint'])
+        ->name('reports.customer.print');
+
+    
+    Route::get('report/promoter-list', [CutReportController::class, 'promoterListIndex'])
+        ->name('report.promoter-list');
+    Route::get('/reports/promoter-list/print', [CutReportController::class, 'promoterListPrint'])
+        ->name('reports.promoter.print');
+    
 
     Route::get('/members/print', [CutReportController::class, 'printMembers'])
         ->name('members.print');

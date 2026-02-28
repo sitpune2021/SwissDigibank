@@ -115,10 +115,10 @@ class Member extends Model
         );
     }
 
-    public function promotor()
-    {
-        return $this->belongsTo(Promotor::class);
-    }
+  public function promotor()
+{
+    return $this->hasMany(Promotor::class, 'member_id');
+}
     public function shareHoldings()
     {
         return $this->hasMany(ShareHolding::class, 'promotor_id');

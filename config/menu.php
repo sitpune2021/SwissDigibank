@@ -194,10 +194,10 @@ return [
         'submenu' => [
             ['title' => 'SCHEMES', 'route' => 'vehical.schemes.index'],
             ['title' => 'CALCULATOR', 'route' => 'vehical.calculator.index'],
+            ['title' => 'DISTRIBUTORS', 'route' => 'vehical.distributors.index'],
             ['title' => 'APPLICATIONS', 'route' => 'vehical.applications.index'],
             ['title' => 'DISBURSEMENTS', 'route' => 'vehical.disbursements.index'],
             ['title' => 'ACCOUNTS', 'route' => 'vehical.account.index'],
-            ['title' => 'DISTRIBUTORS', 'route' => 'vehical.distributors.index'],
         ],
     ],
     [
@@ -316,6 +316,8 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'PROMOTERS/CUSTOMERS', 'route' => 'report.promoter-member'],
+            ['title' => 'CUSTOMERS LIST', 'route' => 'report.customer-list'],
+             ['title' => 'PROMOTER LIST', 'route' => 'report.promoter-list'],
             ['title' => 'SHARE HOLDINGS', 'route' => 'report.share-holdings'],
             ['title' => 'SHARE TRANSFER HISTORY', 'route' => 'report.share-transfer-history'],
             ['title' => 'SAVING ACCOUNTS', 'route' => 'report.saving-account'],

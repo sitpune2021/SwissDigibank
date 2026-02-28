@@ -210,19 +210,30 @@ class CcOdLoanController extends Controller
             $request->application_date
         )->format('Y-m-d');
         // 🔹 Fetch scheme
+        // 🔹 Fetch scheme
         $scheme = CcOdLoanScheme::find($request->scheme_id);
 
-        $loanAmount = $request->approved_loan_amount ?? $request->net_loan_amount ?? 0;
-        $percent = $scheme->processing_fee ?? 0;
+        // 🔹 Processing fee is FIXED amount from scheme
+        $fee = $scheme->processing_fee ?? 0;
 
-        $fee = ($loanAmount * $percent) / 100;
+        // 🔹 GST 18%
         $gst = ($fee * 18) / 100;
+
+        // 🔹 Final total
         $total = $fee + $gst;
 
+        // 🔹 Merge into request
         $request->merge([
             'processing_fee_value' => round($fee, 2),
             'processing_fee_gst'   => round($gst, 2),
             'processing_fee_total' => round($total, 2),
+        ]);
+
+        Log::info('Processing Fee Calculated (CC/OD Flat)', [
+            'scheme_id' => $scheme->id,
+            'processing_fee' => $fee,
+            'gst' => $gst,
+            'total' => $total,
         ]);
         try {
             // Create record (Security fields removed, null sent instead)
@@ -238,7 +249,8 @@ class CcOdLoanController extends Controller
                 'guarantor_3_id' => $request->guarantor_3_id,
                 'guarantor_4_id' => $request->guarantor_4_id,
                 'scheme_id' => $request->scheme_id,
-                'tenure_value'     => $request->tenure_value, // ✅ REQUIRED
+                'tenure_value'     => $request->tenure_value,
+                'emi_collection' => $request->emi_collection, 
                 'net_loan_amount' => $request->net_loan_amount,
                 'purpose_of_loan' => $request->purpose_of_loan,
                 'credit_period' => $request->credit_period,
@@ -306,7 +318,7 @@ class CcOdLoanController extends Controller
             }
 
             return redirect()->route('cc_od.applications.view', $loanApplication->id)
-                ->with('success', 'cc / od Loan Application + Credit Scores saved successfully!');
+                ->with('success', 'Loan Application saved successfully');
         } catch (Exception $e) {
             Log::error('❌ Error while storing Business Loan Application', [
                 'error_message' => $e->getMessage(),

@@ -492,12 +492,12 @@
                                                         @endif
                                                     </td>
 
-                                                    <td class="px-2 py-2 text-center">
+                                                    {{-- <td class="px-2 py-2 text-center">
                                                         <button type="button"
                                                             class="removeRow text-red-500 hover:text-red-700">
                                                             <i class="las la-times"></i>
                                                         </button>
-                                                    </td>
+                                                    </td> --}}
                                                 </tr>
                                             @endforeach
                                         @endif
@@ -518,7 +518,7 @@
                         </div>
 
                         <!-- Collect Advance Processing Fee -->
-                        <div class="col-span-12  lg:col-span-12 ">
+                        {{-- <div class="col-span-12  lg:col-span-12 ">
                             <hr>
                             <label for="" class="md:text-lg font-medium block mt-3 mb-4">
                                 Collect Advance Processing Fee
@@ -708,7 +708,7 @@
                                 </p>
 
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
 
                     <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
@@ -837,14 +837,7 @@
                                                 <td class="font-semibold py-2 pr-4 uppercase">Penalty Charge</td>
                                                 <td class="py-2" id="schemePenalty">-</td>
                                             </tr>
-                                            <tr>
-                                                <td class="font-semibold py-2 pr-4 uppercase">Created At</td>
-                                                <td class="py-2" id="schemeCreated">-</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="font-semibold py-2 pr-4 uppercase">Updated At</td>
-                                                <td class="py-2" id="schemeUpdated">-</td>
-                                            </tr>
+                                           
 
                                         </tbody>
                                     </table>
@@ -986,8 +979,7 @@
             const schemeStationary = document.getElementById("schemeStationary");
             const schemeMaintenance = document.getElementById("schemeMaintenance");
             const schemeCollection = document.getElementById("schemeCollection");
-            const schemeCreated = document.getElementById("schemeCreated");
-            const schemeUpdated = document.getElementById("schemeUpdated");
+           
 
             const schemePeriod = document.getElementById("schemePeriod");
             const schemeProcessing = document.getElementById("schemeProcessing");
@@ -1046,10 +1038,6 @@
                 schemeStamp.textContent = "₹ " + selected.getAttribute("data-stamp");
                 schemeInsurance.textContent = "₹ " + selected.getAttribute("data-insurance");
                 schemePenalty.textContent = selected.getAttribute("data-penalty") + " %";
-
-                schemeCreated.textContent = formatDate(selected.getAttribute("data-created"));
-                schemeUpdated.textContent = formatDate(selected.getAttribute("data-updated"));
-
                 tenureValue.value = selected.getAttribute("data-emi") || "";
                 loanAmount.setAttribute("max", selected.getAttribute("data-max"));
                 loanAmount.value = selected.getAttribute("data-max");
@@ -1232,11 +1220,7 @@
                 </td>
 
                 <!-- Remove button -->
-                <td class="px-2 py-2 text-center">
-                    <button type="button" class="removeRow text-red-500 hover:text-red-700">
-                        <i class="las la-times"></i>
-                    </button>
-                </td>
+              
             </tr>
         `;
             }

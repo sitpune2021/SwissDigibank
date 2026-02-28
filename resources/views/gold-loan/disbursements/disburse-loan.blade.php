@@ -991,19 +991,19 @@
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Processing Fee</td>
                                 <td class="px-3 py-2">
-                                    {{ number_format($processingTotal, 2, '.', '') }} (Incl. 18.0 % GST)
+                                    ₹ {{ number_format($processingTotal, 2, '.', '') }} (Incl. 18.0 % GST)
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Stamp Duty Fee</td>
                                 <td class="px-3 py-2">
-                                    ₹ {{ $disbursement->scheme->stamp_duty_charge ?? 0 }} (Incl. 18.0 % GST)
+                                    ₹ {{ $disbursement->scheme->stamp_duty_charge ?? 0 }}
                                 </td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Insurance Fee</td>
                                 <td class="px-3 py-2">
-                                    {{ $disbursement->insurance_amount ?? 0 }} (Incl. 18.0 % GST)
+                                    ₹ {{ $disbursement->scheme->insurance_fee ?? 0 }}
                                 </td>
                             </tr>
 

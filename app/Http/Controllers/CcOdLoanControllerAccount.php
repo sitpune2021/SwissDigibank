@@ -23,7 +23,7 @@ class CcOdLoanControllerAccount extends Controller
     public function index(Request $request)
     {
         $goldLoan = CcOdLoanApplication::with(['member', 'branch', 'scheme', 'CcodLoanTransaction'])
-            ->where('status', [2])
+            ->where('status', [1])
             ->orderBy('id', 'desc')
             ->paginate(10);
 

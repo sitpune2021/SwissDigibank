@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FdSchemeSlab;
 use Illuminate\Http\Request;
 use App\Models\FdMaturityStatement;
 use Carbon\Carbon;
@@ -175,7 +176,6 @@ class CalculatorController extends Controller
 
     public function getSchemes()
     {
-        // fd_schemes table से id और scheme_name लाकर dropdown के लिए भेज रहे हैं
         $schemes = DB::table('fd_schemes')->select('id', 'scheme_name')->get();
 
         return response()->json([
@@ -183,27 +183,31 @@ class CalculatorController extends Controller
             'data' => $schemes
         ]);
     }
+public function getSchemeDetails($id)
+{
+    $scheme = DB::table('fd_schemes')
+        ->where('id', $id)
+        ->where('is_active', 1)
+        ->first();
 
-    public function getSchemeDetails($id)
-    {
-        $scheme = DB::table('fd_schemes')
-            ->where('id', $id)
-            ->where('is_active', 1)
-            ->first();
-
-        if ($scheme) {
-            return response()->json([
-                'success' => true,
-                'data' => $scheme
-            ]);
-        }
-
+    if (!$scheme) {
         return response()->json([
             'success' => false,
             'message' => 'Scheme not found'
         ]);
     }
 
+    $slabs = FdSchemeSlab::where('fd_scheme_id', $id)
+        ->orderBy('day_from')
+        ->get();
+
+
+    return response()->json([
+        'success' => true,
+        'scheme'  => $scheme,
+        'slabs'   => $slabs
+    ]);
+}
 // year wise tab show ad result
 public function calculateInvestment(
     $type = null,
