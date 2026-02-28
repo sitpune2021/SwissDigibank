@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CcOdLoanApplication extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'application_date',
         'member_id',
@@ -39,6 +39,7 @@ class CcOdLoanApplication extends Model
         'utr_no',
         'transfer_mode',
         'credited',
+        'emi_collection',
         'collect_principal_as_emi',
         'collect_advance_processing_fee',
         'max_loan_amount',
@@ -47,51 +48,51 @@ class CcOdLoanApplication extends Model
     ];
 
 
-   
-public function creditScores()
-{
-    return $this->hasMany(CcOdLoanCreditScore::class, 'loan_application_id', 'id');
-}
 
-public function member()
-{
-    return $this->belongsTo(Member::class, 'member_id');
-}
+    public function creditScores()
+    {
+        return $this->hasMany(CcOdLoanCreditScore::class, 'loan_application_id', 'id');
+    }
 
-public function coApplicant1()
-{
-    return $this->belongsTo(Member::class, 'co_applicant_1_id');
-}
+    public function member()
+    {
+        return $this->belongsTo(Member::class, 'member_id');
+    }
 
-public function guarantor1()
-{
-    return $this->belongsTo(Member::class, 'guarantor_1_id');
-}
+    public function coApplicant1()
+    {
+        return $this->belongsTo(Member::class, 'co_applicant_1_id');
+    }
 
-public function guarantor2()
-{
-    return $this->belongsTo(Member::class, 'guarantor_2_id');
-}
+    public function guarantor1()
+    {
+        return $this->belongsTo(Member::class, 'guarantor_1_id');
+    }
 
-public function guarantor3()
-{
-    return $this->belongsTo(Member::class, 'guarantor_3_id');
-}
+    public function guarantor2()
+    {
+        return $this->belongsTo(Member::class, 'guarantor_2_id');
+    }
 
-public function guarantor4()
-{
-    return $this->belongsTo(Member::class, 'guarantor_4_id');
-}
+    public function guarantor3()
+    {
+        return $this->belongsTo(Member::class, 'guarantor_3_id');
+    }
 
-public function branch()
-{
-    return $this->belongsTo(Branch::class, 'branch_id');
-}
+    public function guarantor4()
+    {
+        return $this->belongsTo(Member::class, 'guarantor_4_id');
+    }
 
-public function scheme()
-{
-    return $this->belongsTo(CcOdLoanScheme::class, 'scheme_id');
-}
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
+
+    public function scheme()
+    {
+        return $this->belongsTo(CcOdLoanScheme::class, 'scheme_id');
+    }
 
     public function CcodLoanTransaction()
     {
@@ -102,6 +103,4 @@ public function scheme()
     {
         return $this->hasMany(CcodLoanTransaction::class, 'loan_id', 'id');
     }
-
-
 }

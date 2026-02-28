@@ -23,7 +23,6 @@ class CcOdLoanControllerDisburments extends Controller
             ->where('status', '1')
             ->orderBy('id', 'desc')
             ->paginate(10);
-
         return view('cc_od.disbursements.index', compact('disbursements'));
     }
 
@@ -35,7 +34,6 @@ class CcOdLoanControllerDisburments extends Controller
             return redirect()->back()->with('error', 'Loan not found.');
         }
 
-        // Update status to 0 (cancelled )
         $loan->status = 3;
         $loan->save();
 
@@ -74,7 +72,7 @@ class CcOdLoanControllerDisburments extends Controller
             // Update loan application status → 2
             DB::table('cc_od_loan_applications')
                 ->where('id', $request->loan_application_id)
-                ->update(['status' => 2]);
+                ->update(['status' => 1]);
 
             DB::commit();
 

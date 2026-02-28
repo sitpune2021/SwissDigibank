@@ -2139,8 +2139,6 @@ class BusinessLoan extends Controller
             return back()->withErrors($e->errors())->withInput();
         }
 
-
-
         $applicationDate = Carbon::createFromFormat(
             'd-m-Y',
             $request->application_date
