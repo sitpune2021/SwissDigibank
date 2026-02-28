@@ -210,19 +210,30 @@ class CcOdLoanController extends Controller
             $request->application_date
         )->format('Y-m-d');
         // 🔹 Fetch scheme
+        // 🔹 Fetch scheme
         $scheme = CcOdLoanScheme::find($request->scheme_id);
 
-        $loanAmount = $request->approved_loan_amount ?? $request->net_loan_amount ?? 0;
-        $percent = $scheme->processing_fee ?? 0;
+        // 🔹 Processing fee is FIXED amount from scheme
+        $fee = $scheme->processing_fee ?? 0;
 
-        $fee = ($loanAmount * $percent) / 100;
+        // 🔹 GST 18%
         $gst = ($fee * 18) / 100;
+
+        // 🔹 Final total
         $total = $fee + $gst;
 
+        // 🔹 Merge into request
         $request->merge([
             'processing_fee_value' => round($fee, 2),
             'processing_fee_gst'   => round($gst, 2),
             'processing_fee_total' => round($total, 2),
+        ]);
+
+        Log::info('Processing Fee Calculated (CC/OD Flat)', [
+            'scheme_id' => $scheme->id,
+            'processing_fee' => $fee,
+            'gst' => $gst,
+            'total' => $total,
         ]);
         try {
             // Create record (Security fields removed, null sent instead)

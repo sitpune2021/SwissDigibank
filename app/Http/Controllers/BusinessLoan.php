@@ -2156,27 +2156,28 @@ class BusinessLoan extends Controller
         // 🔹 Fetch selected scheme
         $scheme = BusinessLoanScheme::find($request->scheme_id);
 
-        $loanAmount = $request->loan_amount ?? 0;
-        $processingPercent = $scheme->processing_fee ?? 0;
+        // 🔹 Fetch selected scheme
+        $scheme = BusinessLoanScheme::find($request->scheme_id);
 
-        // 🔹 Calculate processing fee
-        $processingFee = ($loanAmount * $processingPercent) / 100;
+        // 🔹 Processing fee is FIXED amount from scheme
+        $processingFee = $scheme->processing_fee ?? 0;
 
-        // 🔹 Optional GST (if needed 18%)
+        // 🔹 GST 18%
         $gstPercent = 18;
         $gstAmount = ($processingFee * $gstPercent) / 100;
+
+        // 🔹 Final total
         $totalProcessingFee = $processingFee + $gstAmount;
 
-        // 🔹 Merge values into request
+        // 🔹 Merge values
         $request->merge([
-            'processing_fee_value' => $processingFee,
-            'processing_fee_gst'   => $gstAmount,
-            'processing_fee_total' => $totalProcessingFee,
+            'processing_fee_value' => round($processingFee, 2),
+            'processing_fee_gst'   => round($gstAmount, 2),
+            'processing_fee_total' => round($totalProcessingFee, 2),
         ]);
 
-        Log::info('Processing Fee Calculated', [
-            'loan_amount' => $loanAmount,
-            'percent' => $processingPercent,
+        Log::info('Processing Fee Calculated (Flat)', [
+            'scheme_id' => $scheme->id,
             'processing_fee' => $processingFee,
             'gst' => $gstAmount,
             'total' => $totalProcessingFee,
