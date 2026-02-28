@@ -392,7 +392,7 @@
                                                 <th class="border border-gray-300 px-2 py-2 text-center">Score</th>
                                                 <th class="border border-gray-300 px-2 py-2 text-center">Report Date</th>
                                                 <th class="border border-gray-300 px-2 py-2 text-center">File</th>
-                                                <th class="border border-gray-300 px-2 py-2 text-center">Action</th>
+                                                <!-- <th class="border border-gray-300 px-2 py-2 text-center">Action</th> -->
                                             </tr>
                                         </thead>
 
@@ -1037,10 +1037,6 @@
                                                 <td class="py-2" id="schemeLimit">-</td>
                                             </tr>
                                             <tr>
-                                                <td class="font-semibold py-2 pr-4">Minimum Loan Amount</td>
-                                                <td class="py-2" id="schemeMin">-</td>
-                                            </tr>
-                                            <tr>
                                                 <td class="font-semibold py-2 pr-4">Annual Interest Rate</td>
                                                 <td class="py-2" id="schemeInterest">-</td>
                                             </tr>
@@ -1273,7 +1269,6 @@
             const schemeTenure = document.getElementById("schemeTenure");
             const schemeMax = document.getElementById("schemeMax");
             const schemeLimit = document.getElementById("schemeLimit");
-            const schemeMin = document.getElementById("schemeMin");
             const schemeInterest = document.getElementById("schemeInterest");
             const schemeType = document.getElementById("schemeType");
 
@@ -1290,7 +1285,6 @@
                     schemeTenure.textContent = selectedOption.getAttribute("data-tenure") || "-";
                     schemeMax.textContent = selectedOption.getAttribute("data-max") || "-";
                     schemeLimit.textContent = selectedOption.getAttribute("data-limit") || "-";
-                    schemeMin.textContent = selectedOption.getAttribute("data-min") || "-";
                     schemeInterest.textContent = selectedOption.getAttribute("data-interest") || "-";
                     schemeType.textContent = selectedOption.getAttribute("data-type") || "-";
 

@@ -194,10 +194,10 @@ return [
         'submenu' => [
             ['title' => 'SCHEMES', 'route' => 'vehical.schemes.index'],
             ['title' => 'CALCULATOR', 'route' => 'vehical.calculator.index'],
+            ['title' => 'DISTRIBUTORS', 'route' => 'vehical.distributors.index'],
             ['title' => 'APPLICATIONS', 'route' => 'vehical.applications.index'],
             ['title' => 'DISBURSEMENTS', 'route' => 'vehical.disbursements.index'],
             ['title' => 'ACCOUNTS', 'route' => 'vehical.account.index'],
-            ['title' => 'DISTRIBUTORS', 'route' => 'vehical.distributors.index'],
         ],
     ],
     [

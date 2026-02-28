@@ -53,7 +53,7 @@
                             <label class="md:text-lg font-medium block mb-2">
                                 Loan Disbursement Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="disbursal_date" class="form-input" value="{{ date('d-m-Y') }}"
+                            <input type="text" name="disbursal_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4" value="{{ date('d-m-Y') }}"
                                 required>
                         </div>
 
@@ -62,14 +62,14 @@
                             <label class="md:text-lg font-medium block mb-2">
                                 First EMI Date <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="emi_date" class="form-input"
+                            <input type="text" name="emi_date" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
                                 value="{{ \Carbon\Carbon::now()->addMonth()->format('d-m-Y') }}" required>
                         </div>
 
                         <!-- Loan Amount -->
                         <div class="mb-4">
                             <label class="md:text-lg font-medium block mb-2">Loan Amount</label>
-                            <input type="number" name="loan_amount" class="form-input"
+                            <input type="number" name="loan_amount" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
                                 value="{{ $disbursement->loan_amount ?? '' }}" readonly>
                         </div>
 
@@ -590,7 +590,7 @@
                             <label class="md:text-lg font-medium block mb-2">
                                 Final Amount To Disburse <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" name="final_amount" id="finalAmount" class="form-input"
+                            <input type="number" name="final_amount" id="finalAmount" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
                                 value="{{ number_format($finalAmount, 2, '.', '') }}" readonly>
                         </div>
 
