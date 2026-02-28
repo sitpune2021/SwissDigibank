@@ -837,14 +837,7 @@
                                                 <td class="font-semibold py-2 pr-4 uppercase">Penalty Charge</td>
                                                 <td class="py-2" id="schemePenalty">-</td>
                                             </tr>
-                                            <tr>
-                                                <td class="font-semibold py-2 pr-4 uppercase">Created At</td>
-                                                <td class="py-2" id="schemeCreated">-</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="font-semibold py-2 pr-4 uppercase">Updated At</td>
-                                                <td class="py-2" id="schemeUpdated">-</td>
-                                            </tr>
+                                           
 
                                         </tbody>
                                     </table>
@@ -986,8 +979,7 @@
             const schemeStationary = document.getElementById("schemeStationary");
             const schemeMaintenance = document.getElementById("schemeMaintenance");
             const schemeCollection = document.getElementById("schemeCollection");
-            const schemeCreated = document.getElementById("schemeCreated");
-            const schemeUpdated = document.getElementById("schemeUpdated");
+           
 
             const schemePeriod = document.getElementById("schemePeriod");
             const schemeProcessing = document.getElementById("schemeProcessing");
@@ -1046,10 +1038,6 @@
                 schemeStamp.textContent = "₹ " + selected.getAttribute("data-stamp");
                 schemeInsurance.textContent = "₹ " + selected.getAttribute("data-insurance");
                 schemePenalty.textContent = selected.getAttribute("data-penalty") + " %";
-
-                schemeCreated.textContent = formatDate(selected.getAttribute("data-created"));
-                schemeUpdated.textContent = formatDate(selected.getAttribute("data-updated"));
-
                 tenureValue.value = selected.getAttribute("data-emi") || "";
                 loanAmount.setAttribute("max", selected.getAttribute("data-max"));
                 loanAmount.value = selected.getAttribute("data-max");
