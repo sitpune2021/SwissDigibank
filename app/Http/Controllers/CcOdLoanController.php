@@ -249,7 +249,8 @@ class CcOdLoanController extends Controller
                 'guarantor_3_id' => $request->guarantor_3_id,
                 'guarantor_4_id' => $request->guarantor_4_id,
                 'scheme_id' => $request->scheme_id,
-                'tenure_value'     => $request->tenure_value, // ✅ REQUIRED
+                'tenure_value'     => $request->tenure_value,
+                'emi_collection' => $request->emi_collection, 
                 'net_loan_amount' => $request->net_loan_amount,
                 'purpose_of_loan' => $request->purpose_of_loan,
                 'credit_period' => $request->credit_period,
