@@ -641,9 +641,7 @@
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 mb-4"
                                 readonly>
                             <hr>
-
                             <hr>
-
 
                             <h3 class="text-lg uppercase mt-3">Disbursement Amount </h3>
                             <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
@@ -769,7 +767,6 @@
                                 </div>
 
                             </div>
-
 
                             <div class="w-1/2 bg-secondary/10 rounded-10 px-4 py-4 mt-4 mb-4">
                                 <div class="col-span-1 md:col-span-1 mb-4">
@@ -937,8 +934,6 @@
                         });
                     </script>
 
-
-
                 </div>
             </div>
         </div>
@@ -1014,12 +1009,12 @@
                                     {{ $disbursement->scheme->credit_period ?? '' }} Days
                                 </td>
                             </tr>
-                            <tr class="border-b border-gray-200">
+                            <!-- <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Total Amount to Recover</td>
                                 <td class="px-3 py-2">
                                 <td class="px-3 py-2">₹ {{ number_format($totalRecover, 2) }}</td>
                                 </td>
-                            </tr>
+                            </tr> -->
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Tenure of Loan</td>
                                 <td class="px-3 py-2">
@@ -1171,7 +1166,6 @@
         });
     </script>
 
-
     <script>
         function calculateTotal() {
             let insurance = parseFloat(document.getElementById("insurance").value) || 0;
@@ -1273,6 +1267,7 @@
                 document.getElementById('transfer_date2').value = today;
         });
     </script>
+
     {{-- processing fee mode --}}
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -1304,7 +1299,6 @@
 
         });
     </script>
-
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -1348,4 +1342,5 @@
 
         });
     </script>
+
 @endsection
