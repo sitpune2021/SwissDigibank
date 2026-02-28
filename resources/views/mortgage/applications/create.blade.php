@@ -446,12 +446,12 @@
                                                         </td>
 
                                                         <!-- Remove -->
-                                                        <td class="px-2 py-2 border border-gray-300 text-center">
+                                                        {{-- <td class="px-2 py-2 border border-gray-300 text-center">
                                                             <button type="button"
                                                                 class="removeRow text-red-500 hover:text-red-700">
                                                                 <i class="las la-times"></i>
                                                             </button>
-                                                        </td>
+                                                        </td> --}}
                                                     </tr>
                                                 @endforeach
                                             @else
@@ -467,7 +467,7 @@
                         </div>
 
                         <!-- Collect Advance Processing Fee -->
-                        <div class="col-span-12  lg:col-span-12 ">
+                        {{-- <div class="col-span-12  lg:col-span-12 ">
                             <hr>
                             <label for="" class="md:text-lg font-medium block mt-3 mb-4">
                                 Collect Advance Processing Fee
@@ -655,7 +655,7 @@
                                 </p>
 
                             </div>
-                        </div>
+                        </div> --}}
 
                         <input type="hidden" name="interest_as_first" id="interest_as_first"
                             value="{{ old('interest_as_first', $application->interest_as_first ?? '') }}">
@@ -1437,11 +1437,7 @@
             </td>
 
             <!-- Remove button -->
-            <td class="px-2 py-2 md:px-4 md:py-2 border border-gray-300 text-center">
-                <button type="button" class="removeRow text-red-500 hover:text-red-700">
-                    <i class="las la-times" aria-hidden="true"></i>
-                </button>
-            </td>
+          
         </tr>`;
             }
 

@@ -501,13 +501,13 @@
                                                                 class="text-blue-500 underline text-sm">View File</a>
                                                         @endif
                                                     </td>
-
+{{-- 
                                                     <td class="px-2 py-2 text-center">
                                                         <button type="button"
                                                             class="removeRow text-red-500 hover:text-red-700">
                                                             <i class="las la-times"></i>
                                                         </button>
-                                                    </td>
+                                                    </td> --}}
                                                 </tr>
                                             @endforeach
                                         @endif
@@ -515,12 +515,12 @@
 
                                 </table>
                             </div>
-
+{{-- 
                             <div class="mt-3">
                                 <button type="button" id="addRow" class="btn-primary uppercase rounded-10 px-4 py-2">
                                     + Add New Score
                                 </button>
-                            </div>
+                            </div> --}}
 
                             {{-- calculator checkbox- --}}
                             <!-- <x-checkbox-calculator id="manualEntry" name="manual_entry" label="Collect Principal Amount as EMI"
@@ -528,7 +528,7 @@
                         </div>
 
                         <!-- Collect Advance Processing Fee -->
-                        <div class="col-span-12  lg:col-span-12 ">
+                        {{-- <div class="col-span-12  lg:col-span-12 ">
                             <hr>
                             <label for="" class="md:text-lg font-medium block mt-3 mb-4">
                                 Collect Advance Processing Fee
@@ -717,7 +717,7 @@
                                 </p>
 
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div id="interestOptions" style="display:none; margin-top:10px;">
                             <!-- Checkbox 1 -->
@@ -1554,19 +1554,15 @@
                 </td>
 
                 <!-- Remove button -->
-                <td class="px-2 py-2 text-center">
-                    <button type="button" class="removeRow text-red-500 hover:text-red-700">
-                        <i class="las la-times"></i>
-                    </button>
-                </td>
+             
             </tr>
         `;
             }
 
             // Add new row
-            addRowBtn.addEventListener("click", () => {
-                cibilBody.insertAdjacentHTML("beforeend", newRow());
-            });
+            // addRowBtn.addEventListener("click", () => {
+            //     cibilBody.insertAdjacentHTML("beforeend", newRow());
+            // });
 
             // Remove row (event delegation)
             cibilBody.addEventListener("click", function(e) {
