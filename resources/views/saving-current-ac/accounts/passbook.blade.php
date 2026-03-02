@@ -557,7 +557,7 @@
               <td style="font-weight: bold; padding: 1px 4px; font-size:14px; vertical-align: top;">BRANCH EMAIL</td>
               <td style="text-align: center; padding: 1px 4px; font-size:14px; vertical-align: top;">:</td>
               <td style="padding: 1px 4px; font-size:14px; vertical-align: top;">
-
+                ${accountData.branch?.contact_email ?? '-'}
                 </td>
             </tr>
             <tr>

@@ -369,10 +369,7 @@
                                 </label>
                                 <input type="number" id="fitness_fee" name="fitness_fee"
                                     value="{{ old('fitness_fee', $application->fitness_fee ?? '') }}"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                                @error('fitness_fee')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
+                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">      
                             </div>
 
                             <div class="col-span-2 md:col-span-1">

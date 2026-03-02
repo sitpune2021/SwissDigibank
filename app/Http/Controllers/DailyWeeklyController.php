@@ -184,7 +184,7 @@ class DailyWeeklyController extends Controller
                 'emi_amount' => 'required|numeric|min:1',
                 'processing_fee' => 'required|numeric|min:0',
                 'stamp_duty' => 'required|numeric|min:0',
-                'fitness_fee' => 'required|numeric|min:0',
+                //'fitness_fee' => 'required|numeric|min:0',
                 'insurance_fee' => 'required|numeric|min:0',
                 'charges_per_emi' => 'required|numeric|min:0',
                 'net_emi_with_charges' => 'required|numeric|min:0',

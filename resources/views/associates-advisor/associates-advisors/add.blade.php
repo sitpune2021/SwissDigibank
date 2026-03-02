@@ -480,19 +480,33 @@
                         <div class="flex items-center gap-2">
                             <select id="nominee_relation" name="nominee_relation"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 ">
+                                
                                 <option value="">Select Relation</option>
-                                <option value="father" {{ $isEdit && $associate->nominee_relation == 'father' ?
-                                    'selected' : '' }}>Father</option>
-                                <option value="mother" {{ $isEdit && $associate->nominee_relation == 'mother' ?
-                                    'selected' : '' }}>Mother</option>
-                                <option value="wife" {{ $isEdit && $associate->nominee_relation == 'wife' ? 'selected' :
-                                    '' }}>Wife</option>
-                                <option value="husband" {{ $isEdit && $associate->nominee_relation == 'husband' ?
-                                    'selected' : '' }}>Husband</option>
-                                <option value="son" {{ $isEdit && $associate->nominee_relation == 'son' ? 'selected' :
-                                    '' }}>Son</option>
-                                <option value="daughter" {{ $isEdit && $associate->nominee_relation == 'daughter' ?
-                                    'selected' : '' }}>Daughter</option>
+
+                                <option value="father" {{ $isEdit && $associate->nominee_relation == 'father' ? 'selected' : '' }}>Father</option>
+                                <option value="mother" {{ $isEdit && $associate->nominee_relation == 'mother' ? 'selected' : '' }}>Mother</option>
+                                <option value="husband" {{ $isEdit && $associate->nominee_relation == 'husband' ? 'selected' : '' }}>Husband</option>
+                                <option value="wife" {{ $isEdit && $associate->nominee_relation == 'wife' ? 'selected' : '' }}>Wife</option>
+                                <option value="son" {{ $isEdit && $associate->nominee_relation == 'son' ? 'selected' : '' }}>Son</option>
+                                <option value="daughter" {{ $isEdit && $associate->nominee_relation == 'daughter' ? 'selected' : '' }}>Daughter</option>
+                                <option value="brother" {{ $isEdit && $associate->nominee_relation == 'brother' ? 'selected' : '' }}>Brother</option>
+                                <option value="sister" {{ $isEdit && $associate->nominee_relation == 'sister' ? 'selected' : '' }}>Sister</option>
+                                <option value="grandfather" {{ $isEdit && $associate->nominee_relation == 'grandfather' ? 'selected' : '' }}>Grandfather</option>
+                                <option value="grandmother" {{ $isEdit && $associate->nominee_relation == 'grandmother' ? 'selected' : '' }}>Grandmother</option>
+                                <option value="grandson" {{ $isEdit && $associate->nominee_relation == 'grandson' ? 'selected' : '' }}>Grandson</option>
+                                <option value="granddaughter" {{ $isEdit && $associate->nominee_relation == 'granddaughter' ? 'selected' : '' }}>Granddaughter</option>
+                                <option value="uncle" {{ $isEdit && $associate->nominee_relation == 'uncle' ? 'selected' : '' }}>Uncle</option>
+                                <option value="aunt" {{ $isEdit && $associate->nominee_relation == 'aunt' ? 'selected' : '' }}>Aunt</option>
+                                <option value="nephew" {{ $isEdit && $associate->nominee_relation == 'nephew' ? 'selected' : '' }}>Nephew</option>
+                                <option value="niece" {{ $isEdit && $associate->nominee_relation == 'niece' ? 'selected' : '' }}>Niece</option>
+                                <option value="father_in_law" {{ $isEdit && $associate->nominee_relation == 'father_in_law' ? 'selected' : '' }}>Father-in-law</option>
+                                <option value="mother_in_law" {{ $isEdit && $associate->nominee_relation == 'mother_in_law' ? 'selected' : '' }}>Mother-in-law</option>
+                                <option value="brother_in_law" {{ $isEdit && $associate->nominee_relation == 'brother_in_law' ? 'selected' : '' }}>Brother-in-law</option>
+                                <option value="sister_in_law" {{ $isEdit && $associate->nominee_relation == 'sister_in_law' ? 'selected' : '' }}>Sister-in-law</option>
+                                <option value="legal_heir" {{ $isEdit && $associate->nominee_relation == 'legal_heir' ? 'selected' : '' }}>Legal Heir</option>
+                                <option value="guardian" {{ $isEdit && $associate->nominee_relation == 'guardian' ? 'selected' : '' }}>Guardian</option>
+                                <option value="other" {{ $isEdit && $associate->nominee_relation == 'other' ? 'selected' : '' }}>Other</option>
+
                             </select>
                         </div>
                     </div>

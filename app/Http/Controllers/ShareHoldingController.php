@@ -75,11 +75,16 @@ class ShareHoldingController extends Controller
                     }
                 }
             }
+            // $dynamicOptions = [
+            //     'promoter' => Promotor::pluck('first_name', 'id'),
+            //     'savingAccounts' => Account::pluck('account_no', 'id'), // key=id, value=account_no
+            // ];
             $dynamicOptions = [
-                'promoter' => Promotor::pluck('first_name', 'id'),
-                'savingAccounts' => Account::pluck('account_no', 'id'), // key=id, value=account_no
+                'promoter' => Promotor::select('id','first_name','middle_name','last_name')
+                    ->get()
+                    ->pluck('full_name', 'id'),
 
-
+                'savingAccounts' => Account::pluck('account_no', 'id'),
             ];
             return view('company.share-holdings.add-shares', compact('shareholding', 'route', 'method', 'isAdd', 'nominal_value', 'formFields', 'banks', 'dynamicOptions', 'formFields'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
