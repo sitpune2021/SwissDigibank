@@ -569,9 +569,15 @@ class CcOdLoanController extends Controller
         return redirect()->route('cc_od.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
 
-    public function submitForApproval($id)
+     public function submitForApproval($id)
     {
-        return redirect()->back()
-            ->with('pending_request', true);
+        $application = CcOdLoanApplication::findOrFail($id);
+
+        if ($application->status == 0) {
+            $application->status = 3; // Pending
+            $application->save();
+        }
+
+        return redirect()->route('bussiness.applications.view', $id);
     }
 }

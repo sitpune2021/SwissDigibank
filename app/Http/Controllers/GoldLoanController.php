@@ -1323,6 +1323,9 @@ class GoldLoanController extends Controller
                 'processing_fee_gst'   => $gst,
                 'processing_fee_total' => $totalProcessingFee,
             ]);
+            $request->merge([
+                'status' => 0 // Default Draft
+            ]);
             // Loan Application Save
             $loanApplication = LoanApplication::create($request->only([
                 'application_date',
@@ -1496,8 +1499,14 @@ class GoldLoanController extends Controller
 
     public function submitForApproval($id)
     {
-        return redirect()->back()
-            ->with('pending_request', true);
+        $application = LoanApplication::findOrFail($id);
+
+        if ($application->status == 0) {   // Only Draft
+            $application->status = 3;      // 3 = Pending
+            $application->save();
+        }
+
+        return redirect()->route('gold-loan.applications.view', $id);
     }
 
     public function appedit($id)

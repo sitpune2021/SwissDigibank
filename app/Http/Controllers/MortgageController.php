@@ -1999,8 +1999,14 @@ class MortgageController extends Controller
 
     public function submitForApproval($id)
     {
-        return redirect()->back()
-            ->with('pending_request', true);
+        $application = MortgageLoanApplication::findOrFail($id);
+
+        if ($application->status == 0) {
+            $application->status = 3; // Pending
+            $application->save();
+        }
+
+        return redirect()->route('mortgage.applications.view', $id);
     }
     public function audit(Request $request)
     {

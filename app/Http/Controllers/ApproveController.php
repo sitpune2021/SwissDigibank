@@ -46,11 +46,6 @@ class ApproveController extends Controller
                 'requested_at' => now()
             ]);
 
-            /*
-        |--------------------------------------------------------------------------
-        | 1️⃣ TRANSACTION QUERY
-        |--------------------------------------------------------------------------
-        */
 
             Log::info('Step 2: Building Saving Transaction Query');
 
@@ -79,12 +74,6 @@ class ApproveController extends Controller
                 ->whereNull('transactions.deleted_at');
 
             Log::info('Saving Transaction Query Built Successfully');
-
-            /*
-        |--------------------------------------------------------------------------
-        | 2️⃣ MEMBERSHIP QUERY
-        |--------------------------------------------------------------------------
-        */
 
             Log::info('Step 3: Building Membership Charges Query');
 
@@ -116,11 +105,7 @@ class ApproveController extends Controller
 
             Log::info('Membership Query Built Successfully');
 
-            /*
-        |--------------------------------------------------------------------------
-        | 3️⃣ FORECLOSURE QUERY
-        |--------------------------------------------------------------------------
-        */
+
 
             Log::info('Step 4: Building Foreclosure Pending Query');
 
@@ -2510,7 +2495,7 @@ class ApproveController extends Controller
     {
         // Normal Loan Applications
         $loanApplications = LoanApplication::with(['creditScores', 'branch', 'member'])
-            ->whereNotIn('status', [1, 2, 3])
+            ->where('status', 3)
             ->latest()
             ->get()
             ->map(function ($item) {
@@ -2520,7 +2505,8 @@ class ApproveController extends Controller
 
         // Mortgage Loan Applications
         $mortgageLoans = MortgageLoanApplication::with(['branch', 'member'])
-            ->whereNotIn('status', [1, 2, 3])
+            // ->whereNotIn('status', [1, 2, 3])
+            ->where('status', 3)
             ->latest()
             ->get()
             ->map(function ($item) {
@@ -2530,7 +2516,7 @@ class ApproveController extends Controller
 
         // Loan Against Applications
         $loanAgainst = LoanAgainstApplication::with(['branch', 'member'])
-            ->whereNotIn('status', [1, 2, 3])
+            ->where('status', 3)
             ->latest()
             ->get()
             ->map(function ($item) {
@@ -2540,7 +2526,7 @@ class ApproveController extends Controller
 
         // Business Loan Applications
         $businessLoans = BusinessLoanApplication::with(['branch', 'member'])
-            ->whereNotIn('status', [1, 2, 3])
+            ->where('status', 3)
             ->latest()
             ->get()
             ->map(function ($item) {
@@ -2550,7 +2536,7 @@ class ApproveController extends Controller
 
         // cc od Loan Applications
         $cc_od = CcOdLoanApplication::with(['branch', 'member'])
-            ->whereNotIn('status', [1, 2, 3])
+            ->where('status', 3)
             ->latest()
             ->get()
             ->map(function ($item) {
@@ -2560,7 +2546,7 @@ class ApproveController extends Controller
 
         // Daily Weekly Loan Applications
         $daily_weekly = DailyWeeklyApplication::with(['branch', 'member'])
-            ->whereNotIn('status', [1, 2, 3])
+            ->where('status', 3)
             ->latest()
             ->get()
             ->map(function ($item) {
@@ -2570,7 +2556,7 @@ class ApproveController extends Controller
 
         // Personal Loan Applications
         $personal = PersonalLoanApplication::with(['branch', 'member'])
-            ->whereNotIn('status', [1, 2, 3])
+            ->where('status', 3)
             ->latest()
             ->get()
             ->map(function ($item) {
@@ -2580,7 +2566,7 @@ class ApproveController extends Controller
 
         // Vehical Loan Applications
         $vehical = VehicalApplication::with(['branch', 'member'])
-            ->whereNotIn('status', [1, 2, 3])
+            ->where('status', 3)
             ->latest()
             ->get()
             ->map(function ($item) {
