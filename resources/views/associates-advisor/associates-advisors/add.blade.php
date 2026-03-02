@@ -348,14 +348,13 @@
 
                                 <option value="">Select Branch</option>
 
-                                @forelse($employees as $emp)
-                                
-                                 <option value="{{ $emp->id }}" 
-                                        {{ $isEdit && $associate->branch_id == $emp->id ? 'selected' : '' }}>
-                                        {{ $emp->branch_name }}
-                                    </option>   
+                                @forelse($branches as $branch)
+                                    <option value="{{ $branch->id }}" 
+                                        {{ old('branch_id', $associate->branch_id ?? '') == $branch->id ? 'selected' : '' }}>
+                                        {{ $branch->branch_name }}
+                                    </option>
                                 @empty
-                                <option value="">No branches available</option>
+                                    <option value="">No branches available</option>
                                 @endforelse
 
                             </select>

@@ -35,42 +35,32 @@ class AdvisorController extends Controller
 
         public function store_new_rank(Request $request)
         {
+            // VALIDATION (OUTSIDE TRY-CATCH)
+            $data = $request->validate([
+                'name' => 'required|string|max:191|unique:ranks,name',
+                'display_position' => 'nullable|integer|min:1',
+                'working_position' => 'nullable|integer|min:1',
+                'collection_commission' => 'required|in:1,0',
+            ], [
+                'name.required' => 'Rank Name is required.',
+                'name.unique' => 'This rank name already exists.',
+                'collection_commission.required' => 'Please choose collection commission option.',
+            ]);
+
             try {
 
-                // VALIDATION
-                $data = $request->validate([
-                    'name' => 'required|string|max:191|unique:ranks,name',
-                    'display_position' => 'nullable|integer|min:1',
-                    'working_position' => 'nullable|integer|min:1',
-                    'collection_commission' => 'required|in:1,0',
-                ], [
-                    'name.required' => 'Rank Name is required.',
-                    'name.unique' => 'This rank name already exists.',
-                    'collection_commission.required' => 'Please choose collection commission option.',
-                ]);
-
-                // NORMALIZE DATA
                 $data['display_position'] = $data['display_position'] ?? null;
                 $data['working_position'] = $data['working_position'] ?? null;
                 $data['collection_commission'] = (int) $data['collection_commission'];
                 $data['created_by'] = Auth::id() ?? null;
 
-                // CREATE RANK
                 $rank = Rank::create($data);
-
-                // SUCCESS LOG
-                Log::info('Rank created successfully.', [
-                    'rank_id' => $rank->id,
-                    'created_by' => Auth::id(),
-                    'payload' => $data
-                ]);
 
                 return redirect()->route('associates-advisor.rank-structure.index')
                     ->with('success', 'Rank created successfully.');
 
             } catch (\Throwable $e) {
 
-                // ERROR LOG (stores full error trace)
                 Log::error('Error while creating rank.', [
                     'error_message' => $e->getMessage(),
                     'line' => $e->getLine(),

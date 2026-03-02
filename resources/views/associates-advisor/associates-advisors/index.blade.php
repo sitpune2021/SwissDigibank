@@ -58,10 +58,17 @@
                     ADD
                 </a>
             </div>
-
         </div>
-        <div class="col-span-12 box lg:col-span-12">
 
+         @if (session('success'))
+            {{-- //alert msg --}}
+            <div class="w-44 mb-5 flex justify-end">
+                <x-alert />
+            </div>
+        @endif
+
+
+        <div class="col-span-12 box lg:col-span-12">
 
             <div class="tab-content p-4">
                 <!-- Tab 1 -->
