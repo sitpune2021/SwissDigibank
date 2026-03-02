@@ -539,7 +539,11 @@ class BusinessLoanAccount extends Controller
         // end DYNAMIC SUMMARY CHART VALUES 
 
         $currentDebt = max($goldLoan->loan_amount - $totalDeposit, 0);
-
+        // ⭐ TOTAL DUE (Only UNPAID / PARTIAL / DUE EMI Remaining)
+        $totalRemainingEmiAmount = DB::table('business_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
+            ->sum('remaining_amount');
         // ⭐ CHECK IF ANY EMI IS DUE
         $hasDueEmi = DB::table('business_loan_emi_status')
             ->where('loan_id', $id)
@@ -583,7 +587,8 @@ class BusinessLoanAccount extends Controller
             'payRoute',
             'payButtonText',
             'hasPendingApproval',
-            'comments'
+            'comments',
+            'totalRemainingEmiAmount'
         ));
     }
 

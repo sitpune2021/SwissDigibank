@@ -405,12 +405,20 @@ class GoldLoanAccountController extends Controller
         $tDueAmount = 0;
 
 
+        $today = Carbon::today();
+
         foreach ($emiSchedule as $emi) {
 
-            if (in_array($emi['status'], ['UNPAID', 'PARTIAL', 'DUE'])) {
+            $emiDueDate = Carbon::createFromFormat('d-m-Y', $emi['emi_due_date']);
 
-                $tDueAmount = floatval(str_replace(',', '', $emi['remaining_amount']));
-                break; // 🔥 only first pending EMI
+            $remaining = floatval(str_replace(',', '', $emi['remaining_amount']));
+
+            if (
+                in_array($emi['status'], ['UNPAID', 'PARTIAL', 'DUE']) &&
+                $remaining > 0 &&
+                $emiDueDate->lt($today)
+            ) {
+                $tDueAmount += $remaining;
             }
         }
 
