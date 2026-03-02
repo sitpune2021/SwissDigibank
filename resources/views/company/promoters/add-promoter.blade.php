@@ -106,6 +106,11 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
 @include('fields.errormessage')
 
 <div class="box mb-4 xxxl:mb-6">
+    @if($errors->has('limit'))
+    <div class="text-red-600 text-sm mb-3">
+        {{ $errors->first('limit') }}
+    </div>
+    @endif
     <form id="companyForm" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
         @csrf
         @if ($method == 'PUT')
@@ -207,19 +212,16 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
         @endforeach
         @endforeach
 
-
-
-
         <div class="col-span-2 md:col-span-1">
             <div class="mb-4">
                 <label for="" class="block font-medium mb-2">Transaction Date <span
                         class="text-red-500">*</span></label>
                 <input type="text" id="date" name="transaction_date"
                     class="w-full border rounded-10 px-3 py-3 text-sm bg-secondary/5 dark:bg-bg3" value="{{ old('transaction_date',
-    optional($charge)->transaction_date
-        ? \Carbon\Carbon::parse($charge->transaction_date)->format('d-m-Y')
-        : ''
-) }}">
+                        optional($charge)->transaction_date
+                            ? \Carbon\Carbon::parse($charge->transaction_date)->format('d-m-Y')
+                            : ''
+                    ) }}">
             </div>
             <div class="mb-4">
                 <label for="" class="block font-medium mb-2">

@@ -58,10 +58,16 @@
                     ADD
                 </a>
             </div>
-
         </div>
-        <div class="col-span-12 box lg:col-span-12">
 
+         @if (session('success'))
+            {{-- //alert msg --}}
+            <div class="w-44 mb-5 flex justify-end">
+                <x-alert />
+            </div>
+        @endif
+
+        <div class="col-span-12 box lg:col-span-12">
 
             <div class="tab-content p-4">
                 <!-- Tab 1 -->
@@ -139,7 +145,7 @@
 
                                     {{-- ADVISOR CODE (employee_id) --}}
                                     <td class="text-start !py-5 px-6">
-                                        <a href="" class="text-primary">
+                                        <a href="{{ route('associates-advisor.associates-advisors.view', $a->id) }}" class="text-primary">
                                             {{ $a->employee_id }}
                                         </a>
                                     </td>

@@ -321,7 +321,30 @@ class MortgageAccountController extends Controller
         }
 
         $eirSchedule = [];
+        // ⭐ CALCULATE TOTAL DUE (Only Overdue EMIs)
+        $tDueAmount = 0;
+        $dueDays = 0;
+        $today = Carbon::today();
 
+        foreach ($emiSchedule as $emi) {
+
+            $emiDueDate = Carbon::createFromFormat('d-m-Y', $emi['emi_due_date']);
+            $remaining = floatval(str_replace(',', '', $emi['remaining_amount']));
+
+            if (
+                in_array($emi['status'], ['UNPAID', 'PARTIAL']) &&
+                $remaining > 0 &&
+                $emiDueDate->lt($today)
+            ) {
+                $tDueAmount += $remaining;
+
+                // calculate due days (max overdue EMI)
+                $days = $emiDueDate->diffInDays($today);
+                if ($days > $dueDays) {
+                    $dueDays = $days;
+                }
+            }
+        }
         // EIR should run for both flat_emi AND reducing_emi
         if (in_array($interestType, ['flat_emi', 'reducing_emi'])) {
 
@@ -574,7 +597,9 @@ class MortgageAccountController extends Controller
             'payRoute',
             'payButtonText',
             'hasPendingApproval',
-            'comments'
+            'comments',
+            'tDueAmount',
+            'dueDays',
 
         ));
     }

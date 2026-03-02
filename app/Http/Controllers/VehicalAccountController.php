@@ -335,7 +335,23 @@ class VehicalAccountController extends Controller
         }
 
         $eirSchedule = [];
+        // ⭐ TOTAL OVERDUE EMI ONLY
+        $totalRemainingEmiAmount = 0;
+        $today = now()->format('Y-m-d');
 
+        foreach ($emiSchedule as $emi) {
+
+            $dueDate = Carbon::createFromFormat('d-m-Y', $emi['emi_due_date'])->format('Y-m-d');
+            $remaining = floatval(str_replace(',', '', $emi['remaining_amount']));
+
+            if (
+                $dueDate < $today &&
+                in_array($emi['status'], ['UNPAID', 'PARTIAL', 'DUE']) &&
+                $remaining > 0
+            ) {
+                $totalRemainingEmiAmount += $remaining;
+            }
+        }
         // EIR should run for both flat_emi AND reducing_emi
         if (in_array($interestType, ['flat_emi', 'reducing_emi'])) {
 
@@ -585,7 +601,8 @@ class VehicalAccountController extends Controller
             'payRoute',
             'payButtonText',
             'hasPendingApproval',
-            'comments'
+            'comments',
+            'totalRemainingEmiAmount'
         ));
     }
 

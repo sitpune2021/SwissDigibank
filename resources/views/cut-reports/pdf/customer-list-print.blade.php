@@ -65,15 +65,15 @@
     </div>
 
     <div class="sub-header">
-       वसूल भाग भांडवल शिल्लक अहवाल - {{ date('d-m-Y') }}
+       सभासद यादी - {{ date('d-m-Y') }}
     </div>
     <hr>
         <!-- Data Table -->
         <table>
             <tr>
                 <th style="color: #c60707; font-size: 14px;">अनु.क्र.</th>
-                <th style="color: #c60707; font-size: 14px;">खाते क्र.</th>
-                <th style="color: #c60707; font-size: 14px;">खातेदाराचे नाव</th>
+                <th style="color: #c60707; font-size: 14px;">सभासद क्रमांक</th>
+                <th style="color: #c60707; font-size: 14px;">सभासदाचे नाव</th>
                 <th style="color: #c60707; font-size: 14px;">ले.पा.नं. </th>
                 <th style="color: #c60707; font-size: 14px;">शिल्लक</th>
             </tr>
@@ -94,7 +94,7 @@
                 <td>{{ $key + 1 }}</td>
 
                 <td>
-                    {{ optional($member->accounts->first())->account_no ?? '-' }}
+                    {{ $member->member_no ?? '-'}}
                 </td>
 
                 <td>

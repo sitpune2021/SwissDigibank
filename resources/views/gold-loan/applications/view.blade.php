@@ -95,7 +95,7 @@
     </style>
 
     <div class="main-inner">
-        @if (session('pending_request') && $application->status == 0)
+        @if ($application->status == 3)
             <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
                 <h4 style="margin:0;">PENDING REQUEST</h4>
                 <p style="margin:5px 0;">
@@ -131,8 +131,8 @@
                 Show EMI Chart
             </a>
             {{-- Submit button only when Draft --}}
-            @if ($application->status == 0 && !session('pending_request'))
-                <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST">
+            @if ($application->status == 0)
+                <form action="{{ route('gold-loan.submit.approval', $application->id) }}" method="POST">
                     @csrf
                     <button type="submit" class="btn-primary px-2 py-2 rounded-10 uppercase text-sm">
                         SUBMIT FOR APPROVAL
@@ -146,8 +146,8 @@
                     Collect Processing Fee
                 </a>
                 <!-- <a href="{{ route('loans') }}" class="btn-primary uppercase px-2 py-2 rounded-10 ">
-                                                    SUBMIT FOR APPROVAL
-                                                </a> -->
+                                                                        SUBMIT FOR APPROVAL
+                                                                    </a> -->
             @endif
 
             {{-- Status != DISBURSEMENT (2) --}}
@@ -655,7 +655,8 @@
                             </h3>
                         </div>
 
-                        <div class="flex justify-center items-center px-4 py-6 mt-3 text-2xl sm:text-3xl font-semibold  text-red-500 ">
+                        <div
+                            class="flex justify-center items-center px-4 py-6 mt-3 text-2xl sm:text-3xl font-semibold  text-red-500 ">
                             <label class="cursor-pointer">
                                 <h3>
                                     ₹
@@ -777,7 +778,7 @@
                                     <tr class="border-b">
                                         <td class="font-semibold px-4 py-2 uppercase">SMS Charges</td>
                                         <td class="px-4 py-2 text-right md:text-left">
-                                            ₹ {{ $application->scheme->sms_charge ?? 0 }} 
+                                            ₹ {{ $application->scheme->sms_charge ?? 0 }}
                                         </td>
                                     </tr>
                                 @endif
@@ -786,7 +787,7 @@
                                     <tr class="border-b">
                                         <td class="font-semibold px-4 py-2 uppercase">Fuel Charges</td>
                                         <td class="px-4 py-2 text-right md:text-left">
-                                            ₹ {{ $application->scheme->fuel_charge ?? 0 }} 
+                                            ₹ {{ $application->scheme->fuel_charge ?? 0 }}
                                         </td>
                                     </tr>
                                 @endif
@@ -795,7 +796,7 @@
                                     <tr class="border-b">
                                         <td class="font-semibold px-4 py-2 uppercase">Stationary Charges</td>
                                         <td class="px-4 py-2 text-right md:text-left">
-                                            ₹ {{ $application->scheme->stationary_charge ?? 0 }} 
+                                            ₹ {{ $application->scheme->stationary_charge ?? 0 }}
                                         </td>
                                     </tr>
                                 @endif
@@ -804,7 +805,7 @@
                                     <tr class="border-b">
                                         <td class="font-semibold px-4 py-2 uppercase">Maintenance Charges</td>
                                         <td class="px-4 py-2 text-right md:text-left">
-                                           ₹ {{ $application->scheme->maintenance_charge ?? 0 }} 
+                                            ₹ {{ $application->scheme->maintenance_charge ?? 0 }}
                                         </td>
                                     </tr>
                                 @endif
@@ -813,7 +814,7 @@
                                     <tr class="border-b">
                                         <td class="font-semibold px-4 py-2 uppercase">Collection Charges</td>
                                         <td class="px-4 py-2 text-right md:text-left">
-                                            ₹ {{ $application->scheme->collection ?? 0 }} 
+                                            ₹ {{ $application->scheme->collection ?? 0 }}
                                         </td>
                                     </tr>
                                 @endif

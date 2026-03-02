@@ -84,7 +84,7 @@
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                Account No
+                                Customer No
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -115,7 +115,7 @@
 
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 capitalize">
-                                {{ optional($row->accounts->first())->account_no ?? '-' }}
+                                {{ $row->member_no ?? '-' }}
                             </div>
                         </td>
 

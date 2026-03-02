@@ -20,6 +20,11 @@ class UnencumberedDeposit extends Model
         'fd_from_deposit_money'
     ];
 
+    protected $casts = [
+        'open_date' => 'date',
+        'maturity_date' => 'date',
+    ];
+
     public function bank()
     {
         return $this->belongsTo(Bank::class);

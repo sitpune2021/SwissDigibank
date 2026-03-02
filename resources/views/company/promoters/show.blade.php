@@ -641,28 +641,48 @@
                 </div>
             </div>
 
+           <style>
+            @keyframes blink-red {
+                0%   { opacity: 1; }
+                50%  { opacity: 0.4; }
+                100% { opacity: 1; }
+            }
+
+            .animate-blink-red {
+                animation: blink-red 3s ease-in-out infinite;
+            }
+            </style>
+
             <!-- KYC Status Section -->
             <div class="mt-4 overflow-hidden box border rounded shadow">
 
+                @if($promoter->kyc?->kyc_status === 'pending')
+                    <div class="mt-4 p-4 rounded bg-red-100 border-l-4 border-red-500 shadow">
+                        <p class="text-red-600 font-semibold text-sm uppercase tracking-wide animate-blink-red">
+                            ⚠ KYC Pending – Please complete the KYC process.
+                        </p>
+                    </div>
+                @endif
+
                 <div class="flex items-center justify-between px-4 py-2 border-b">
-                    <span class="font-semibold text-gray-700 uppercase">Current KYC Status (static)</span>
+                    <span class="font-semibold text-gray-700 uppercase">Current KYC Status</span>
                     <span class="px-2 py-2 text-xs font-bold rounded
-    @if($promoter->kyc?->kyc_status === 'pending') bg-warning text-white
-    @elseif($promoter->kyc?->kyc_status === 'in_progress') bg-primary text-white
-    @elseif($promoter->kyc?->kyc_status === 'completed') bg-primary text-white
-    @elseif($promoter->kyc?->kyc_status === 'rejected') bg-error text-white
-    @else bg-gray-100 text-gray-600
-    @endif
-">
+                        @if($promoter->kyc?->kyc_status === 'pending') bg-warning text-white
+                        @elseif($promoter->kyc?->kyc_status === 'in_progress') bg-primary text-white
+                        @elseif($promoter->kyc?->kyc_status === 'completed') bg-primary text-white
+                        @elseif($promoter->kyc?->kyc_status === 'rejected') bg-error text-white
+                        @else bg-gray-100 text-gray-600
+                        @endif
+                    ">
                         {{ strtoupper(str_replace('_', ' ', $promoter->kyc?->kyc_status ?? 'not submitted')) }}
                     </span>
-
                 </div>
+
                 <div class=" flex items-center justify-between p-4">
                     <form 
-                   {{--  action="
+                   action="
                     {{ route('promotor-kyc.updateStatus', $promoter->id) }} 
-                     " method="POST"--}}
+                     " method="POST"
                      >
                         @csrf
 
@@ -702,6 +722,7 @@
 
             </div>
         </div>
+
         <!-- Settings Section -->
         <div class="mt-4 overflow-hidden box rounded shadow">
             {{-- <div class="h-1 bg-red-500"></div> --}}

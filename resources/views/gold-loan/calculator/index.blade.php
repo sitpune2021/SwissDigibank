@@ -133,7 +133,7 @@
               </label>
               <div class="grid grid-cols-2 gap-2 ">
                 <label>
-                    <input type="radio" name="interest_type" value="flat_emi"> Flat EMI
+                    <input type="radio" name="interest_type" value="flat_emi" required> Flat EMI
                 </label>
 
                 <label>
@@ -265,12 +265,11 @@
             <div class="mb-2">
               <label id="tenureLabel" class="font-medium text-gray-700 uppercase">
                 Tenure ( MONTHS )
-               
               </label>
               <span class="text-error">*</span>
             </div>
             <div class="flex flex-wrap gap-4">
-              <input type="number" name="tenure_months" id="tenure_months" class="w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5            dark:bg-bg3 " placeholder="Please Enter Tenure">
+              <input type="number" name="tenure_months" id="tenure_months" class="w-full border rounded-10 px-3 py-3  text-sm bg-secondary/5 dark:bg-bg3 " placeholder="Please Enter Tenure" required>
             </div>
           </div>
 

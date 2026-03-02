@@ -115,13 +115,15 @@
 
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 capitalize">
-                                {{ optional($row->promotor->first())->designation ?? '-' }}
+                                {{ $row->promotor?->occupation ?? '-' }}
                             </div>
                         </td>
 
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                {{ $row->full_name ?: '-' }}
+                                {{ $row->promotor?->first_name }} 
+                                {{ $row->promotor?->middle_name }} 
+                                {{ $row->promotor?->last_name }}
                             </div>
                         </td>
 
@@ -133,7 +135,7 @@
 
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                {{ number_format(optional($row->promotor->first()?->shareHoldings)->sum('amount') ?? 0, 2) }}
+                                {{ number_format($row->promotor->first()?->shareHoldings?->sum('amount') ?? 0, 2) }}
                             </div>
                         </td>
 

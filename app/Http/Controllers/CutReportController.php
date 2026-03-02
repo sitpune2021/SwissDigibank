@@ -168,7 +168,7 @@ class CutReportController extends Controller
     }
 
     // Promoter List
-     public function promoterListIndex()
+    public function promoterListIndex()
     {
         $account = Member::whereHas('promotor')
             ->with(['promotor','promotor.shareHoldings', 'accounts'])

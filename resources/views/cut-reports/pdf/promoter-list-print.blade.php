@@ -66,13 +66,14 @@
         </div>
 
         <div class="sub-header">
-            वसूल भाग भांडवल शिल्लक अहवाल - {{ date('d-m-Y') }}
+            संचालक यादी - {{ date('d-m-Y') }}
         </div>
         <hr>
         <!-- Data Table -->
         <table>
             <tr>
                 <th style="color: #c60707; font-size: 14px;">अनु.क्र.</th>
+                <th style="color: #c60707; font-size: 14px;">संचालक क्रमांक</th>
                 <th style="color: #c60707; font-size: 14px;">पद</th>
                 <th style="color: #c60707; font-size: 14px;">संचालकांचे नाव</th>
                 <th style="color: #c60707; font-size: 14px;">ले.पा.नं. </th>
@@ -97,18 +98,24 @@
             <tr>
                 <td>{{ $key + 1 }}</td>
 
-                <td>
-                    {{ optional($member->promotor->first())->designation ?? '-' }}
+                 <td>
+                    {{ $member->member_no ?? '-' }}
                 </td>
 
                 <td>
-                    {{ $member->full_name ?? '-' }}
+                    {{ $member->promotor?->occupation ?? '-' }}
+                </td>
+
+                <td>
+                
+                    {{ $member->promotor?->first_name }} 
+                    {{ $member->promotor?->middle_name }} 
+                    {{ $member->promotor?->last_name }}
                 </td>
 
                 <td>
                     -
                 </td>
-
 
                 <td style="text-align:right;">
                     {{ number_format($shareAmount, 2) }} जमा

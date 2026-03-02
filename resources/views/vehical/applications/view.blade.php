@@ -94,7 +94,7 @@
     </style>
 
     <div class="main-inner">
-        @if (session('pending_request') && $application->status == 0)
+            @if ($application->status == 3)
             <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
                 <h4 style="margin:0;">PENDING REQUEST</h4>
                 <p style="margin:5px 0;">
@@ -126,8 +126,8 @@
                 Show EMI Chart
             </a>
             {{-- Submit button only when Draft --}}
-            @if ($application->status == 0 && !session('pending_request'))
-                <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST">
+            @if ($application->status == 0)
+                <form action="{{ route('vehical.submitForApproval', $application->id) }}" method="POST">
                     @csrf
                     <button type="submit" class="btn-primary">
                         SUBMIT FOR APPROVAL

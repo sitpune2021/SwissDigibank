@@ -50,37 +50,6 @@
                     @enderror
                 </div> <br>
 
-                {{-- <div class="col-span-2 md:col-span-1">
-                    <label for="promoterDropdown" class="md:text-lg font-medium block mb-4">
-                        CUSTOMER<span class="text-red-500">*</span>
-                    </label>
-
-                    <input type="hidden" id="selectedId" name="selected_member_id"
-                        value="{{ $selectedMember ? $selectedMember->id : '' }}">
-
-                    <select name="member_id" id="promoterDropdown"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        <option value="">Select Customer</option>
-                        @foreach ($members as $key => $mem)
-                            <option value="{{ $key }}"
-                                {{ $selectedMember && $selectedMember->id == $key ? 'selected' : '' }}>
-                                {{ $mem }}
-                            </option>
-                        @endforeach
-                    </select>
-
-                    @error('promoter')
-                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                    @enderror
-
-                    <div id="memberSharesInfo" class="mt-2 text-sm">
-                        @if (isset($selectedMemberShares))
-                            This member currently has <strong>{{ $selectedMemberShares }}</strong> shares.
-                        @endif
-                    </div>
-
-                    <a href="{{ route('member.create') }}" style="color: blue; font-size: 13px;">Add New Customer</a>
-                </div> --}}
                 <div class="col-span-2 md:col-span-1">
                     <label for="promoterDropdown" class="md:text-lg font-medium block mb-4">
                         CUSTOMER<span class="text-red-500">*</span>
@@ -89,8 +58,8 @@
                     @if ($selectedMember)
 
                         <input type="text" disabled
-    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-    value="{{ $members[$selectedMember->id] ?? '' }}">
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            value="{{ $members[$selectedMember->id] ?? '' }}">
 
                         <input type="hidden" name="member_id" value="{{ $selectedMember->id }}">
                     @else
@@ -118,7 +87,6 @@
 
                     <a href="{{ route('member.create') }}"  class="text-primary" style=" font-size: 13px;">Add New Customer</a>
                 </div>
-
 
                 <div class="col-span-2 md:col-span-1">
                     <label for="business_type" class="md:text-lg font-medium block mb-4">BUSINESS TYPE<span
