@@ -487,7 +487,8 @@
                                     <div class="flex grid col-span-1">
                                         <div class="flex gap-3">
                                             <label class="flex gap-2">
-                                                <input type="radio" name="insurance_payment_mode" value="cash" checked>
+                                                <input type="radio" name="insurance_payment_mode" value="cash"
+                                                    checked>
                                                 <p>Cash</p>
                                             </label>
                                             <label class="flex gap-2">
@@ -543,7 +544,8 @@
                                             <label class="block text-sm font-medium">
                                                 UTR / Transaction No. <span class="text-red-500">*</span>
                                             </label>
-                                            <input type="text" name="insurance_utr_no" placeholder="Enter Transaction No."
+                                            <input type="text" name="insurance_utr_no"
+                                                placeholder="Enter Transaction No."
                                                 class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                                         </div>
 
@@ -561,7 +563,8 @@
                                                     <span>VPA</span>
                                                 </label>
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="insurance_transfer_mode" value="neft_rtgs">
+                                                    <input type="radio" name="insurance_transfer_mode"
+                                                        value="neft_rtgs">
                                                     <span>NEFT/RTGS</span>
                                                 </label>
                                             </div>
@@ -572,11 +575,13 @@
                                             </label>
                                             <div class="flex gap-4 mt-2">
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="insurance_credited_account" value="yes">
+                                                    <input type="radio" name="insurance_credited_account"
+                                                        value="yes">
                                                     <span>yes</span>
                                                 </label>
                                                 <label class="flex items-center gap-2">
-                                                    <input type="radio" name="insurance_credited_account" value="no">
+                                                    <input type="radio" name="insurance_credited_account"
+                                                        value="no">
                                                     <span>no</span>
                                                 </label>
 
@@ -850,22 +855,22 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Fields for Saving Account -->
-                                            <div id="saving_fields2" style="display:none; margin-top:10px;">
-                                                <label>Saving Account:</label>
-                                                <select id="saving2" name="saving2"
-                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
-
-                                                    <option value="">-- Select Saving Acc. --</option>
-
-                                                    @foreach ($savingAccounts as $acc)
-                                                        <option value="{{ $acc }}">{{ $acc }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
 
                                         </div>
 
+                                        <!-- Fields for Saving Account -->
+                                        <div id="saving_fields2" style="display:none; margin-top:10px;">
+                                            <label>Saving Account:</label>
+                                            <select id="saving2" name="saving2"
+                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
+
+                                                <option value="">-- Select Saving Acc. --</option>
+
+                                                @foreach ($savingAccounts as $acc)
+                                                    <option value="{{ $acc }}">{{ $acc }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
 
                                 </div>

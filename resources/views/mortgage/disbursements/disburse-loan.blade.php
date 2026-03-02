@@ -862,22 +862,22 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Fields for Saving Account -->
-                                            <div id="saving_fields2" style="display:none; margin-top:10px;">
-                                                <label>Saving Account:</label>
-                                                <select id="saving2" name="saving2"
-                                                    class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
 
-                                                    <option value="">-- Select Saving Acc. --</option>
-
-                                                    @foreach ($savingAccounts as $acc)
-                                                        <option value="{{ $acc }}">{{ $acc }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
 
                                         </div>
+                                        <!-- Fields for Saving Account -->
+                                        <div id="saving_fields2" style="display:none; margin-top:10px;">
+                                            <label>Saving Account:</label>
+                                            <select id="saving2" name="saving2"
+                                                class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
 
+                                                <option value="">-- Select Saving Acc. --</option>
+
+                                                @foreach ($savingAccounts as $acc)
+                                                    <option value="{{ $acc }}">{{ $acc }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -1010,11 +1010,11 @@
                                 </td>
                             </tr>
                             <!-- <tr class="border-b border-gray-200">
-                                <td class="font-semibold px-3 uppercase py-2">Total Amount to Recover</td>
-                                <td class="px-3 py-2">
-                                <td class="px-3 py-2">₹ {{ number_format($totalRecover, 2) }}</td>
-                                </td>
-                            </tr> -->
+                                    <td class="font-semibold px-3 uppercase py-2">Total Amount to Recover</td>
+                                    <td class="px-3 py-2">
+                                    <td class="px-3 py-2">₹ {{ number_format($totalRecover, 2) }}</td>
+                                    </td>
+                                </tr> -->
                             <tr class="border-b border-gray-200">
                                 <td class="font-semibold px-3 uppercase py-2">Tenure of Loan</td>
                                 <td class="px-3 py-2">

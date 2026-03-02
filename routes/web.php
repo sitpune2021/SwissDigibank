@@ -1080,9 +1080,10 @@ Route::group(['prefix' => 'mortgage'], function () {
         ->name('mortgage.applications.view-buttons.col_process_fee');
     Route::post('col-process-fee/store/{id}', [MortgageController::class, 'mortgagestoreProcessFee'])
         ->name('mortgage.col_process_fee.store');
-    Route::post('applications/{id}/submit-for-approval', [MortgageController::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
-
+    Route::post(
+        'mortgage/applications/{id}/submit-for-approval',
+        [MortgageController::class, 'submitForApproval']
+    )->name('mortgage.submitForApproval');
     //print documents view page  
     Route::get('/payout-chart-view/{loan}', [MortgageLoanPrintDocumentController::class, 'payout_chart_mortgage_appli_view'])->name('mortgage_loan.payout_chart_loan_application_view');
     Route::get('/payout-chart/{loan}', [MortgageLoanPrintDocumentController::class, 'payout_chart_mortgage_appli'])->name('mortgage_loan.payout_chart_loan_application.pdf');
@@ -1302,7 +1303,7 @@ Route::group(['prefix' => 'loanagainst'], function () {
         ->name('loanagainst.col_process_fee.store');
 
     Route::post('applications/{id}/submit-for-approval', [LoanAgainstController::class, 'submitForApproval'])
-        ->name('applications.submitForApproval');
+        ->name('loanagainst.submitForApproval');
 });
 
 
@@ -1477,8 +1478,8 @@ Route::group(['prefix' => 'business'], function () {
     Route::post('col-process-fee/store/{id}', [BusinessLoan::class, 'bussinessstoreProcessFee'])
         ->name('bussiness.col_process_fee.store');
 
-    // Route::post('applications/{id}/submit-for-approval', [BusinessLoan::class, 'submitForApproval'])
-    //     ->name('applications.submitForApproval');
+    Route::post('applications/{id}/submit-for-approval', [BusinessLoan::class, 'submitForApproval'])
+        ->name('business.submitForApproval');
 
     //print documents view page  
     Route::get('/payout-chart-view/{loan}', [BusinessLoanPrintDocumentController::class, 'payout_chart_business_appli_view'])->name('business_loan.payout_chart_business_loan_application_view');
@@ -1671,8 +1672,8 @@ Route::group(['prefix' => 'cc_od'], function () {
     Route::post('cc-od/col-process-fee/store/{id}', [CcOdLoanController::class, 'storeProcessFee'])
         ->name('ccod.col_process_fee.store');
 
-    // Route::post('applications/{id}/submit-for-approval', [CcOdLoanController::class, 'submitForApproval'])
-    //     ->name('applications.submitForApproval');
+    Route::post('applications/{id}/submit-for-approval', [CcOdLoanController::class, 'submitForApproval'])
+        ->name('cc_od.submitForApproval');
 });
 
 
@@ -1844,8 +1845,8 @@ Route::group(['prefix' => 'daily_weekly'], function () {
     Route::get('daily_weekly/{id}/disbursment', [DailyWeeklyController::class, 'disbursment'])
         ->name('daily_weekly.applications.view-buttons.disburse-setting');
 
-    // Route::post('applications/{id}/submit-for-approval', [DailyWeeklyController::class, 'submitForApproval'])
-    //     ->name('applications.submitForApproval');
+    Route::post('applications/{id}/submit-for-approval', [DailyWeeklyController::class, 'submitForApproval'])
+        ->name('daily_weekly.submitForApproval');
 });
 
 
@@ -1972,8 +1973,8 @@ Route::group(['prefix' => 'personal'], function () {
     Route::post('col-process-fee/store/{id}', [PersonalController::class, 'personalstoreProcessFee'])
         ->name('personal.col_process_fee.store');
 
-    // Route::post('applications/{id}/submit-for-approval', [PersonalController::class, 'submitForApproval'])
-    //     ->name('applications.submitForApproval');
+    Route::post('applications/{id}/submit-for-approval', [PersonalController::class, 'submitForApproval'])
+        ->name('personal.submitForApproval');
 
     //print documents view page  
     Route::get('/payout-chart-view/{loan}', [PersonalLoanPrintDocumentController::class, 'payout_chart_personal_appli_view'])->name('personal_loan.payout_chart_personal_loan_application_view');
@@ -2132,8 +2133,8 @@ Route::group(['prefix' => 'vehical'], function () {
     Route::post('col-process-fee/store/{id}', [VehicalController::class, 'VehicalstoreProcessFee'])
         ->name('vehical.col_process_fee.store');
 
-    // Route::post('applications/{id}/submit-for-approval', [VehicalController::class, 'submitForApproval'])
-    //     ->name('applications.submitForApproval');
+    Route::post('applications/{id}/submit-for-approval', [VehicalController::class, 'submitForApproval'])
+        ->name('vehical.submitForApproval');
 
 
     //print documents view page  
@@ -2551,12 +2552,12 @@ Route::group(['prefix' => 'cut-report'], function () {
     Route::get('/reports/customer-list/print', [CutReportController::class, 'customerListPrint'])
         ->name('reports.customer.print');
 
-    
+
     Route::get('report/promoter-list', [CutReportController::class, 'promoterListIndex'])
         ->name('report.promoter-list');
     Route::get('/reports/promoter-list/print', [CutReportController::class, 'promoterListPrint'])
         ->name('reports.promoter.print');
-    
+
 
     Route::get('/members/print', [CutReportController::class, 'printMembers'])
         ->name('members.print');

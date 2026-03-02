@@ -739,10 +739,15 @@ class DailyWeeklyController extends Controller
 
         return view("daily_weekly.applications.view-buttons.disburse-setting", compact('application'));
     }
-
     public function submitForApproval($id)
     {
-        return redirect()->back()
-            ->with('pending_request', true);
+        $application = DailyWeeklyApplication::findOrFail($id);
+
+        if ($application->status == 0) {
+            $application->status = 3; // Pending
+            $application->save();
+        }
+
+        return redirect()->route('daily_weekly.applications.view', $id);
     }
 }
