@@ -184,7 +184,7 @@ class DailyWeeklyController extends Controller
                 'emi_amount' => 'required|numeric|min:1',
                 'processing_fee' => 'required|numeric|min:0',
                 'stamp_duty' => 'required|numeric|min:0',
-                'fitness_fee' => 'required|numeric|min:0',
+                //'fitness_fee' => 'required|numeric|min:0',
                 'insurance_fee' => 'required|numeric|min:0',
                 'charges_per_emi' => 'required|numeric|min:0',
                 'net_emi_with_charges' => 'required|numeric|min:0',
@@ -739,10 +739,15 @@ class DailyWeeklyController extends Controller
 
         return view("daily_weekly.applications.view-buttons.disburse-setting", compact('application'));
     }
-
     public function submitForApproval($id)
     {
-        return redirect()->back()
-            ->with('pending_request', true);
+        $application = DailyWeeklyApplication::findOrFail($id);
+
+        if ($application->status == 0) {
+            $application->status = 3; // Pending
+            $application->save();
+        }
+
+        return redirect()->route('daily_weekly.applications.view', $id);
     }
 }

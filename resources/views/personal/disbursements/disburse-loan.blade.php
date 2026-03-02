@@ -75,7 +75,7 @@
                             <label class="md:text-lg font-medium block mb-2">Loan Amount</label>
                             <input type="number" name="loan_amount"
                                 class="form-input w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                value="{{ number_format($loanAmount,2,'.','') }}" readonly>
+                                value="{{ number_format($loanAmount, 2, '.', '') }}" readonly>
                         </div>
                         @if (!empty($processingFee) && $processingFee > 0)
                             <hr>
@@ -596,7 +596,6 @@
                                     </div>
                                 </div>
                             </div>
-                        
                         @endif
 
                         <!-- Final Amount -->
@@ -606,7 +605,7 @@
                             </label>
                             <input type="number" name="final_amount" id="finalAmount"
                                 class="form-input w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                value="{{ number_format($finalAmountToDisburse,2,'.','') }}" readonly>
+                                value="{{ number_format($finalAmountToDisburse, 2, '.', '') }}" readonly>
                         </div>
 
                         <h3>Disbursement Amount :</h3>
@@ -619,7 +618,7 @@
 
                                 <input type="text" id="D_mode_1" name="D_mode_1"
                                     class="w-full text-sm dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                                    value="{{ number_format($finalAmountToDisburse,2,'.','') }}">
+                                    value="{{ number_format($finalAmountToDisburse, 2, '.', '') }}">
                                 <x-number-to-word for="D_mode_1" />
                                 <div class="mt-3">
                                     <div class="">
@@ -831,21 +830,21 @@
                                                         </div>
                                                     </div>
 
-                                                    <!-- Fields for Saving Account -->
-                                                    <div id="saving_fields2" style="display:none; margin-top:10px;">
-                                                        <label>Saving Account:</label>
-                                                        <select id="saving2" name="saving2"
-                                                            class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
 
-                                                            <option value="">-- Select Saving Acc. --</option>
+                                                </div>
+                                                <!-- Fields for Saving Account -->
+                                                <div id="saving_fields2" style="display:none; margin-top:10px;">
+                                                    <label>Saving Account:</label>
+                                                    <select id="saving2" name="saving2"
+                                                        class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
 
-                                                            @foreach ($savingAccounts as $acc)
-                                                                <option value="{{ $acc }}">{{ $acc }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+                                                        <option value="">-- Select Saving Acc. --</option>
 
+                                                        @foreach ($savingAccounts as $acc)
+                                                            <option value="{{ $acc }}">{{ $acc }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
 
                                             </div>
@@ -869,7 +868,7 @@
                                     class="btn-outline uppercase justify-center">BACK</a>
                             </div>
                     </form>
-{{-- 
+                    {{-- 
                     <!-- Script -->
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
@@ -918,7 +917,7 @@
             <div class="box bg-white dark:bg-bg3 border shadow-md rounded-lg">
                 <!-- Header -->
                 <div class="flex justify-between items-center px-4 py-2 bg-secondary/5 text-black rounded-10">
-                    <h3 class="text-black font-semibold uppercase text-lg">Personal  LOAN APLICATION INFO</h3>
+                    <h3 class="text-black font-semibold uppercase text-lg">Personal LOAN APLICATION INFO</h3>
 
                     <!-- Toggle Button -->
                     <button class="p-1 rounded transition" onclick="toggleSection(this)">
@@ -1257,7 +1256,7 @@
                 document.getElementById('transfer_date2').value = today;
         });
     </script>
-<script>
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
 
             const processingModes = document.querySelectorAll("input[name='processing_fee_mode']");

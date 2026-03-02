@@ -171,6 +171,16 @@ class PromotorController extends Controller
                 'credited' => 'nullable|in:yes,no',
 
             ]);
+            // ✅ Count only active (non-deleted) promotors
+            $promotorCount = Promotor::count(); // soft deleted automatically excluded
+
+            if ($promotorCount >= 11) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors([
+                        'error' => 'Already 11 promotors are added. You cannot add more than 11 promotors.'
+                    ]);
+            }
             try {
                 DB::beginTransaction();
 
@@ -629,6 +639,7 @@ class PromotorController extends Controller
             abort(404);
         }
     }
+
     public function getMariatalStatuses()
     {
         try {
@@ -850,7 +861,6 @@ class PromotorController extends Controller
         }
     }
 
-
     public function editNominee($id)
     {
         if (str_starts_with($id, 'new-')) {
@@ -974,45 +984,43 @@ class PromotorController extends Controller
         return view('company.promoters.view-transactions', compact('id'));
     }
 
-
-
     //need to complete it when roles and permissions done full kyc status updation
-//     public function updateStatus(Request $request, $id)
-// {
+    public function updateStatus(Request $request, $id)
+    {
 
-    //     //need to complete it when roles and permissions done full kyc status updation
-//     $request->validate([
-//         'kyc_status' => 'required|in:pending,in_progress,completed,rejected',
-//     ]);
+            //need to complete it when roles and permissions done full kyc status updation
+        $request->validate([
+            'kyc_status' => 'required|in:pending,in_progress,completed,rejected',
+        ]);
 
-    //     $kyc = PromotorKyc::firstOrCreate(
-//         ['promotor_id' => $id],
-//         ['kyc_status' => 'pending']
-//     );
+            $kyc = PromotorKyc::firstOrCreate(
+            ['promotor_id' => $id],
+            ['kyc_status' => 'pending']
+        );
 
-    //     $oldStatus = $kyc->kyc_status;
-//     $newStatus = $request->kyc_status;
+            $oldStatus = $kyc->kyc_status;
+        $newStatus = $request->kyc_status;
 
-    //     Log::info('KYC status update requested', [
-//         'kyc_id' => $kyc->id,
-//         'promoter_id' => $id,
-//         'old_status' => $oldStatus,
-//         'new_status' => $newStatus,
-//         'updated_by' => auth()->id(),
-//     ]);
+            Log::info('KYC status update requested', [
+            'kyc_id' => $kyc->id,
+            'promoter_id' => $id,
+            'old_status' => $oldStatus,
+            'new_status' => $newStatus,
+            'updated_by' => auth()->id(),
+        ]);
 
-    //     $kyc->update([
-//         'kyc_status' => $newStatus
-//     ]);
+            $kyc->update([
+            'kyc_status' => $newStatus
+        ]);
 
-    //     Log::notice('KYC status updated successfully', [
-//         'kyc_id' => $kyc->id,
-//         'final_status' => $newStatus,
-//         'updated_by' => auth()->id(),
-//     ]);
+            Log::notice('KYC status updated successfully', [
+            'kyc_id' => $kyc->id,
+            'final_status' => $newStatus,
+            'updated_by' => auth()->id(),
+        ]);
 
-    //     return back()->with('success', 'KYC status updated successfully.');
-// }
+            return back()->with('success', 'KYC status updated successfully.');
+    }
 
 
 }

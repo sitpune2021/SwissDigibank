@@ -647,13 +647,13 @@ use Illuminate\Support\Facades\Storage;
     </div>
    --}}
 
-
 </div>
-    <div class="grid grid-cols-12 gap-4 xxl:gap-6 mt-5">
 
-        
+
+    <div class="grid grid-cols-12 gap-4 xxl:gap-6 mt-5">   
     
     <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
+        <a href="{{ route('payments-to-collect.index') }}">
         <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
             <span class="font-medium">PAYMENT TO COLLECT</span>
             @include('partials._horizontal-options')
@@ -667,6 +667,7 @@ use Illuminate\Support\Facades\Storage;
             </div>
             <div class="progress-chart1" data-percent="{{ $dashboardData['duePercent'] }}"></div>
         </div>
+        </a>
     </div>
 
     <style>
@@ -696,28 +697,27 @@ use Illuminate\Support\Facades\Storage;
             });
     </script>
 
-    <!-- Statistics -->
-    
+
     <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
         <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
-            <span class="font-medium">TOTAL SPENDING</span>
+            <span class="font-medium">PAYMENT TO RELEASE</span>
             @include('partials._horizontal-options')
 
         </div>
         <div class="flex items-center justify-between">
             <div>
                 <h4 class="mb-4 h4">&#8377; 00</h4>
-                <span class="flex items-center gap-1 whitespace-nowrap text-primary">
-                    <i class="text-lg las la-arrow-up"></i> 35.7 AVG
-                </span>
             </div>
-            <div
+            <!-- <div
                 class="-my-3 shrink-0 ltr:translate-x-3 xl:ltr:translate-x-7 xxxl:ltr:translate-x-2 4xl:ltr:translate-x-9 rtl:-translate-x-3 xl:rtl:-translate-x-7 xxxl:rtl:-translate-x-2 4xl:rtl:-translate-x-9">
                 <div class="progress-chart"></div>
-            </div>
+            </div> -->
         </div>
     </div>
-    <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
+
+    <!-- Statistics -->
+    
+    <!-- <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
         <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
             <span class="font-medium">SPENDING GOAL</span>
             @include('partials._horizontal-options')
@@ -754,7 +754,7 @@ use Illuminate\Support\Facades\Storage;
                 <div class="progress-chart"></div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- Assetchart -->
     <!-- <div class="col-span-12 overflow-x-hidden box">
                         <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 bb-dashed">
@@ -784,8 +784,6 @@ use Illuminate\Support\Facades\Storage;
                         </div>
                         <div id="asset-chart"></div>
                     </div> -->
-
-
     <!-- Latest Transactions -->
     {{-- <div class="col-span-12 box lg:col-span-6">
         <div class="flex flex-wrap items-center justify-between gap-4 pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
@@ -1011,5 +1009,7 @@ use Illuminate\Support\Facades\Storage;
             <i class="duration-300 las la-arrow-right group-hover:pl-2"></i>
         </a>
     </div> --}}
+
+
 </div>
 @endsection

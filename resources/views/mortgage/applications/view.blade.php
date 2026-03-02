@@ -95,7 +95,7 @@
 
     <div class="main-inner">
         {{-- Submit button only when Draft --}}
-        @if (session('pending_request') && $application->status == 0)
+        @if ($application->status == 3)
             <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
                 <h4 style="margin:0;">PENDING REQUEST</h4>
                 <p style="margin:5px 0;">
@@ -127,8 +127,8 @@
                 SHOW EMI CHART
             </a>
             {{-- Submit button only when Draft --}}
-            @if ($application->status == 0 && !session('pending_request'))
-                <form action="{{ route('applications.submitForApproval', $application->id) }}" method="POST">
+            @if ($application->status == 0)
+                <form action="{{ route('mortgage.submitForApproval', $application->id) }}" method="POST">
                     @csrf
                     <button type="submit" class="btn-primary">
                         SUBMIT FOR APPROVAL
@@ -446,8 +446,8 @@
                         </h3>
                         <div class="">
                             <!-- <a href="{{ route('gold-loan.applications.upload_documents') }}" class="btn-primary p-1 pointer">
-                                                            <i class="las la-upload y"></i>
-                                                        </a> -->
+                                                                    <i class="las la-upload y"></i>
+                                                                </a> -->
 
                             <button type="button" class="p-1 rounded transition"
                                 onclick="toggleSection(this, 'Documents')">

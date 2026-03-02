@@ -409,7 +409,17 @@ class CcOdLoanControllerAccount extends Controller
         // end DYNAMIC SUMMARY CHART VALUES 
 
         $currentDebt = max($goldLoan->loan_amount - $totalDeposit, 0);
+        // ⭐ TOTAL DUE = Sum of Remaining UNPAID / PARTIAL EMI
+        $totalRemainingEmiAmount = 0;
 
+        foreach ($emiSchedule as $emi) {
+
+            $remaining = floatval(str_replace(',', '', $emi['remaining_amount']));
+
+            if (in_array($emi['status'], ['UNPAID', 'PARTIAL', 'DUE']) && $remaining > 0) {
+                $totalRemainingEmiAmount += $remaining;
+            }
+        }
         // 🔶 CHECK IF ANY TRANSACTION / FORECLOSURE IS PENDING APPROVAL
         $hasPendingApproval =
             DB::table('cc_od_loan_transactions')
@@ -437,7 +447,8 @@ class CcOdLoanControllerAccount extends Controller
             'totalDeposit',
             'currentDebt',
             'hasPendingApproval',
-            'comments'
+            'comments',
+            'totalRemainingEmiAmount'
         ));
     }
 

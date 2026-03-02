@@ -583,7 +583,9 @@
                                     <tr class="border-b">
                                         <td class="whitespace-nowrap text-sm px-4 py-2">T. DUE</td>
                                         <td class="px-4 py-2 ">
-                                            <span class="font-bold">0.00</span>
+                                            <span class="text-red-700 font-semibold">
+                                                {{ number_format($totalRemainingEmiAmount ?? 0, 2) }}
+                                            </span>
                                         </td>
                                     </tr>
                                     <tr class="border-b">

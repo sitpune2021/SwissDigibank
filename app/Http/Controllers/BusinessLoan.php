@@ -2729,10 +2729,17 @@ class BusinessLoan extends Controller
         ));
     }
 
+  
     public function submitForApproval($id)
     {
-        return redirect()->back()
-            ->with('pending_request', true);
+        $application = BusinessLoanApplication::findOrFail($id);
+
+        if ($application->status == 0) {
+            $application->status = 3; // Pending
+            $application->save();
+        }
+
+        return redirect()->route('bussiness.applications.view', $id);
     }
 
     public function bussiness_process_fee($id)

@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 
 class Form15Gor15HController extends Controller
 {
+
+
     public function index(Request $request)
     {
         try {
@@ -60,10 +62,6 @@ class Form15Gor15HController extends Controller
             $route = route('form15g15h.store');
             $method = 'POST';
 
-
-
-
-
             return view('members.form15g15h.create', compact(
                 'sections',
                 'route',
@@ -77,48 +75,6 @@ class Form15Gor15HController extends Controller
         }
     }
 
-    // public function store(Request $request)
-    // {
-    //     try {
-    //         $type = $request->type;
-
-    //         $validator = Validator::make($request->all(), [
-    //             'financial_year' => 'required|string|max:20',
-    //             'form_15_upload' => 'required|file|mimes:pdf,jpg,png|max:2048',
-    //             'member_id' => $type === 'member' ? 'required|exists:members,id' : 'nullable',
-    //             'promotor_id' => $type === 'promoter' ? 'required|exists:promotors,id' : 'nullable',
-    //         ]);
-
-    //         if ($validator->fails()) {
-    //             return back()->withErrors($validator)->withInput();
-    //         }
-
-    //         $validated = $validator->validated();
-
-    //         // Fixing data fields
-    //         $validated['member_id'] = $type === 'member' ? $request->member_id : null;
-    //         $validated['promotor_id'] = $type === 'promoter' ? $request->promotor_id : null;
-
-    //         // File upload
-    //         if ($request->hasFile('form_15_upload')) {
-    //             $path = $request->file('form_15_upload')->store('uploads', 'public');
-    //             $validated['form_15_upload'] = $path;
-    //         }
-
-    //         Form15G15H::create($validated);
-
-    //         // Conditional redirect
-    //         if ($type === 'member') {
-    //             return redirect()->route('member.show', $validated['member_id'])
-    //                 ->with('success', 'Form 15G/15H submitted successfully.');
-    //         } else {
-    //             return redirect()->route('promotor.show', base64_encode($validated['promotor_id']))
-    //                 ->with('success', 'Form 15G/15H submitted successfully.');
-    //         }
-    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //         abort(404);
-    //     }
-    // }
     public function store(Request $request)
     {
         try {
@@ -222,7 +178,6 @@ class Form15Gor15HController extends Controller
         }
     }
 
-
     public function update(Request $request, string $id)
     {
         try {
@@ -301,8 +256,6 @@ class Form15Gor15HController extends Controller
         }
     }
 
-
-
     public function destroy(string $id)
     {
         $form = Form15G15H::findOrFail($id);
@@ -369,4 +322,6 @@ class Form15Gor15HController extends Controller
 
         return redirect()->back()->with('error', 'File not found.');
     }
+
+    
 }

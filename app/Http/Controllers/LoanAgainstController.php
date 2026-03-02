@@ -2051,20 +2051,17 @@ class LoanAgainstController extends Controller
         return redirect()->route('loanagainst.applications.view', $id)
             ->with('success', 'Processing Fee Collected Successfully!');
     }
+   
     public function submitForApproval($id)
     {
-        return redirect()->back()
-            ->with('pending_request', true);
+        $application = LoanAgainstApplication::findOrFail($id);
+
+        if ($application->status == 0) {
+            $application->status = 3; // Pending
+            $application->save();
+        }
+
+        return redirect()->route('loanagainst.applications.view', $id);
     }
-
-    // public function submitForApproval($id)
-    // {
-    //     $application = LoanAgainstApplication::findOrFail($id);
-
-    //     $application->status = 1;
-    //     $application->save();
-
-    //     return redirect()->back()
-    //         ->with('success', 'Submitted for approval.');
-    // }
+ 
 }

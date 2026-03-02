@@ -53,7 +53,6 @@
                             </div>
                         </div>
 
-
                         <div class="col-span-2 md:col-span-1">
                             <label class="block mb-1 font-semibold text-gray-700 uppercase">Customer's Sign</label>
                             <div
@@ -76,6 +75,9 @@
                             <input type="number" id="amount" name="amount"
                                 class="w-full text-sm mt-3 bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3 "
                                 placeholder="Enter Amount">
+                                 @error('amount')
+                                <span class="text-red-500 text-xs">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <div class="col-span-2">
