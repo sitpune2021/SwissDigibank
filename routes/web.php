@@ -140,8 +140,8 @@ Route::middleware('auth.user')->group(function () {
             ->name('nominee.edit');
 
         //kyc status
-        // Route::post('/promotor-kyc/{id}/status', [PromotorController::class, 'updateStatus'])
-        //     ->name('promotor-kyc.updateStatus');
+        Route::post('/promotor-kyc/{id}/status', [PromotorController::class, 'updateStatus'])
+            ->name('promotor-kyc.updateStatus');
 
         // Save updated nominee
         Route::put('/promotor/{id}/nominee', [PromotorController::class, 'updateNominee'])

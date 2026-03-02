@@ -28,9 +28,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 use App\Models\Transaction;
+use App\Models\Group;
 
 class MemberController extends Controller
 {
+
+
     public function index(Request $request)
     {
         try {
@@ -95,7 +98,9 @@ class MemberController extends Controller
                 'states'   => State::pluck('name', 'id'),
                 'branch'   => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id'),
+                'groups'   => Group::where('is_active', 1)->pluck('group_name', 'id'),
             ];
+            
             // $banks = Bank::all();
              $banks = Bank::pluck('name', 'id');
             $sections = config('member_form');
@@ -347,7 +352,6 @@ class MemberController extends Controller
         }
     }
 
-
     public function show(string $id)
     {
         // $member = Member::findOrFail($id);
@@ -471,7 +475,8 @@ class MemberController extends Controller
             $dynamicOptions = [
                 'states'   => State::pluck('name', 'id'),
                 'branch'   => Branch::pluck('branch_name', 'id'),
-                'religion' => Religion::pluck('name', 'id')
+                'religion' => Religion::pluck('name', 'id'),
+                'groups'   => Group::where('is_active', 1)->pluck('group_name', 'id')
             ];
 
             $method = 'PUT';
@@ -544,7 +549,6 @@ class MemberController extends Controller
             abort(404);
         }
     }
-
 
     public function update(Request $request, string $id)
     {
@@ -825,6 +829,7 @@ class MemberController extends Controller
             return back()->with('error', 'An error occurred while fetching shareholding data.');
         }
     }
+
     public function viewShareholding($id)
     {
         try {
@@ -836,6 +841,7 @@ class MemberController extends Controller
             return back()->with('error', 'An error occurred while fetching shareholding details.');
         }
     }
+
     public function addressedit(string $id)
     {
         try {

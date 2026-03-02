@@ -11,9 +11,8 @@ use Carbon\Carbon;
 
 class DirectorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
+
     public function index(Request $request)
     {
         try {
@@ -51,9 +50,6 @@ class DirectorController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         try {
@@ -71,9 +67,6 @@ class DirectorController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         try {
@@ -81,8 +74,9 @@ class DirectorController extends Controller
                 'designation' => 'nullable|string|max:255',
                 'member_id' => 'nullable|string|max:255',
                 'director_name' => 'required|string|max:255|regex:/^[A-Za-z\s]+$/',
-                'din_no' => 'required|string|max:50|regex:/^[A-Za-z0-9\- ]+$/',
-                'appointment_date' => 'required|date|before_or_equal:today',
+                //'din_no' => 'required|string|max:50|regex:/^[A-Za-z0-9\- ]+$/',
+                'din_no' => 'required|digits:8',
+                'appointment_date' => 'required|date|after_or_equal:today',
                 'resignation_date' => 'nullable|after_or_equal:appointment_date',
                 'signature' => 'nullable',  // add file validation
                 'authorized_signatory' => 'required|in:Yes,No',
@@ -122,7 +116,6 @@ class DirectorController extends Controller
         }
     }
 
-
     public function edit(string $id)
     {
         try {
@@ -140,7 +133,6 @@ class DirectorController extends Controller
             abort(404);
         }
     }
-
 
     public function update(Request $request, $id)
     {
@@ -178,9 +170,10 @@ class DirectorController extends Controller
         }
     }
 
-
     public function destroy(string $id)
     {
         //
     }
+
+
 }
