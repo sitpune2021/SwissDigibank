@@ -205,7 +205,6 @@ Route::middleware('auth.user')->group(function () {
             ->name('fd.scheme.details');
     });
 
-
     Route::middleware('auth')->group(function () {
         Route::get('/dds-accounts', [DdsAccountsController::class, 'index'])->name('dds-accounts.index');
         Route::get('/dds-accounts/create', [DdsAccountsController::class, 'create'])->name('dds-accounts.create');
@@ -294,7 +293,6 @@ Route::middleware('auth.user')->group(function () {
         Route::get('ddsaccounts/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
             ->name('dd.bond.form');
 
-
         Route::get('ddsaccounts/opening-form-view/{id}', [DdsAccountsController::class, 'ddOpeningFormView'])
             ->name('dd.opening-view');
         Route::get('ddsaccounts/opening-form/{id}', [DdsAccountsController::class, 'ddOpeningForm'])
@@ -305,7 +303,6 @@ Route::middleware('auth.user')->group(function () {
         Route::get('ddsaccounts/closing-form/{id}', [DdsAccountsController::class, 'ddClosingForm'])
             ->name('dd.closing.form');
     });
-
 
     // RD route 
     Route::resource('rd-calculator', RDCalculatorController::class)

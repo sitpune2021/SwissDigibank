@@ -68,7 +68,7 @@
                         </label>
 
                         <input type="text" id="currentBalance"
-                            value="₹ {{ number_format($currentBalance,2) }}"
+                            value=" {{ number_format($currentBalance,2) }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" readonly>
 
@@ -81,7 +81,7 @@
                         </label>
 
                         <input type="text" id="interestLeftPaid"
-                            value="₹ {{ number_format($interestTillDate,2) }}"
+                            value=" {{ number_format($interestLeftToPay,2) }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0">
 
@@ -94,7 +94,7 @@
                         </label>
 
                         <input type="text" id="tdsDeducated"
-                            value="₹ {{ number_format($tds,2) }}"
+                            value=" {{ number_format($tds,2) }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0">
 
@@ -118,15 +118,15 @@
                                 <!-- Input Row -->
                                 <tr>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" readonly
+                                        <input type="text" value="{{ $rate }}" name="" id="" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" readonly
+                                        <input type="text" value="{{ $totalDays }}" name="" id="" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" readonly
+                                        <input type="text" value=" {{ number_format($interestTillDate,2) }}" name="" id="" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>
@@ -153,15 +153,15 @@
                                 <!-- Input Row -->
                                 <tr>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0"
+                                        <input type="text" value="{{ number_format($prematureRate,2) }}"  name="" id="" placeholder="0"
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" readonly
+                                        <input type="text" value="{{ $totalDays }}" name="" id="" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" readonly
+                                        <input type="text" value=" {{ number_format($prematureInterest,2) }}" name="" id="" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>
@@ -192,7 +192,7 @@
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" readonly
+                                        <input type="text" value="{{ $gstRate }}" name="" id="" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
@@ -212,7 +212,8 @@
                             <span class="text-red-500">*</span>
                         </label>
 
-                        <input type="text" id="reverseInterestAmount"
+                        <input type="text"
+                            value=" {{ number_format($reverseInterest,2) }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" readonly>
 
@@ -224,7 +225,7 @@
                             <span class="text-red-500">*</span>
                         </label>
 
-                        <input type="text" id="penalInterestRate"
+                        <input type="text"  value="{{ number_format($penalRate, 2) }}" id="penalInterestRate"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" readonly>
                     </div>
@@ -248,15 +249,15 @@
                                 <!-- Input Row -->
                                 <tr>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0"
+                                        <input type="text" value="{{ number_format($penalCharges,2) }}" name="" id="" placeholder="0"
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" readonly
+                                        <input type="text" value="{{ $gstRate }}" name="" id="" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" readonly
+                                        <input type="text" value=" {{ number_format($penalChargesWithGst, 2) }}" name="" id="" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>
@@ -282,15 +283,15 @@
                                 <!-- Input Row -->
                                 <tr>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0"
+                                        <input type="text" value=" {{ number_format($cancellationCharge,2) }}" name="" id="" placeholder="0"
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" readonly
+                                        <input type="text" value=" {{ $gstRate }} " name="" id="" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                     <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" readonly
+                                        <input type="text" value=" {{ number_format($cancellationTotal,2) }}" name="" id="" placeholder="0" readonly
                                             class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
                                     </td>
                                 </tr>
@@ -304,9 +305,8 @@
                             Total Account
                             (I = A + B - C - F - G - H)
                         </label>
-
                         <input type="text" id="totalAccount"
-                            value="₹ {{ number_format($totalSettlement,2) }}"
+                            value=" {{ number_format($totalSettlement,2) }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0">
                     </div>
@@ -318,7 +318,7 @@
                             <span class="text-red-500">*</span>
                         </label>
 
-                        <input type="text" id="netAmountCollect"
+                        <input type="text" value="{{ round($totalSettlement) }}" id="netAmountCollect"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="0.0" readonly>
                     </div>
@@ -417,7 +417,7 @@
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Tenure</td>
                                 <td class="px-3 py-2">{{ ($misaccount->tenure_year * 12) + $misaccount->tenure_month }}
-MONTHS</td>
+                                    MONTHS</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">MIs Lock In Period</td>
@@ -437,7 +437,7 @@ MONTHS</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Fore Closure Charges</td>
-                                <td class="px-3 py-2"> ₹ static</td>
+                                <td class="px-3 py-2">  static</td>
                             </tr>
                         </tbody>
                     </table>
@@ -464,19 +464,19 @@ MONTHS</td>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2 w-1/3">
                                     Interest Credited</td>
-                                <td class="px-3 py-2"> ₹ (590,500.00) static</td>
+                                <td class="px-3 py-2">  (590,500.00) static</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Interest Released</td>
-                                <td class="px-3 py-2">₹ 13,500.00 static</td>
+                                <td class="px-3 py-2"> 13,500.00 static</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">TDS Deducted</td>
-                                <td class="px-3 py-2"> ₹ 1,500.00 static</td>
+                                <td class="px-3 py-2">  1,500.00 static</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Interest Available to Release</td>
-                                <td class="px-3 py-2"> ₹ (605,500.00) static</td>
+                                <td class="px-3 py-2">  (605,500.00) static</td>
                             </tr>
                         </tbody>
                     </table>
