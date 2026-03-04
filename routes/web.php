@@ -92,6 +92,7 @@ use App\Http\Controllers\EmployeeAkash;
 use App\Http\Controllers\GoldLoanPrintDocument;
 use App\Http\Controllers\FixedLoanController;
 use App\Http\Controllers\AgriculturController;
+use App\Http\Controllers\ConsumerController;
 use App\Http\Controllers\MortgageLoanPrintDocumentController;
 use App\Http\Controllers\PersonalLoanPrintDocumentController;
 use App\Http\Controllers\VehicleLoanPrintDocumentController;
@@ -2350,7 +2351,7 @@ Route::group(['prefix' => 'Agricultural_loan'], function () {
 Route::group(['prefix' => 'consumer_loan'], function () {
 
     // Agricultural loan Loan Scheme
-    Route::get('scheme/index', [AgriculturController::class, 'index'])
+    Route::get('scheme/index', [ConsumerController::class, 'index'])
         ->name(name: 'consumer_loan.schemes.index');
 });
 

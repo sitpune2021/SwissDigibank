@@ -19,6 +19,7 @@
     <h4 class="flex flex-wrap items-center text-lg justify-between gap-4 mb-6 lg:mb-8">RD / DD CALCULATOR</h4>
 
     <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mt-5 min-h-screen">
+        
         <!-- Calculator Section -->
         <div class="col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6">
 
@@ -160,7 +161,6 @@
             </div>
         </div>
 
-
         <div id="schemeInfo" class=" box hidden col-span-2 md:col-span-1 dark:bg-bg3 rounded-10">
             <div class="mt-6">
                 <!-- Header -->
@@ -233,7 +233,6 @@
                                     </td>
                                 </tr>
                             </tbody>
-
                         </table>
                     </div>
                 </div>
@@ -283,9 +282,6 @@
                         }
                         els.toggleButton.addEventListener('click', toggleSchemeInfo);
 
-
-
-
                         // ----- scheme info fetch -----
                         els.scheme.addEventListener('change', function() {
                             const schemeCode = this.value;
@@ -320,31 +316,29 @@
                                                     }
                                                 }
                                             }
-                                            //document.querySelector('#tenure_of_rd').textContent = s.tenure_of_rd + ' Months';
-                                            // RD/DD frequency (table me show karne ke liye)
-                                            document.querySelector('#tenure_of_rd').textContent = s.tenure_of_rd;
 
-                                            // --- tenure input fields auto-fill ---
-                                            if (s.tenure_of_rd) {
-                                                // Example: "365 Days" OR "12 Months"
-                                                const parts = s.tenure_of_rd.trim().split(" ");
-                                                const numberPart = parts[0] || '';
-                                                const unitPart = (parts[1] || '').toUpperCase();
+                                            document.querySelector('#tenure_of_rd').textContent =
+                                            s.tenure_of_rd_dd_value + " " + s.tenure_of_rd_dd_type;
 
-                                                els.tenureNumber.value = numberPart;
+                                            // Tenure Auto Fill (Correct Way)
+                                            if (s.tenure_of_rd_dd_value && s.tenure_of_rd_dd_type) {
 
-                                                // Map units safely
-                                                if (unitPart.startsWith("DAY")) {
+                                                els.tenureNumber.value = s.tenure_of_rd_dd_value;
+
+                                                const type = s.tenure_of_rd_dd_type.trim().toUpperCase();
+
+                                                if (type.startsWith("DAY")) {
                                                     els.tenureType.value = "DAYS";
-                                                } else if (unitPart.startsWith("MONTH")) {
+                                                } else if (type.startsWith("MONTH")) {
                                                     els.tenureType.value = "MONTHS";
-                                                } else if (unitPart.startsWith("WEEK")) {
+                                                } else if (type.startsWith("WEEK")) {
                                                     els.tenureType.value = "WEEKS";
-                                                } else if (unitPart.startsWith("YEAR")) {
+                                                } else if (type.startsWith("YEAR")) {
                                                     els.tenureType.value = "YEARS";
                                                 } else {
-                                                    els.tenureType.value = unitPart; // fallback
+                                                    els.tenureType.value = type;
                                                 }
+
                                             }
 
                                             document.querySelector('#cancellation_charges_value').textContent = s.cancellation_charges_value + ' %';
