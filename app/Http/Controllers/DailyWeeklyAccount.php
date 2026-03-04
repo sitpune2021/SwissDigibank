@@ -449,6 +449,13 @@ class DailyWeeklyAccount extends Controller
 
         $currentDebt = max($goldLoan->loan_amount - $totalDeposit, 0);
 
+        $today = Carbon::today();
+
+        $hasOverdueEmi = DB::table('daily_weekly_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
+            ->whereDate('emi_due_date', '<', $today)
+            ->exists();
         $hasDueEmi = DB::table('daily_weekly_loan_emi_status')
             ->where('loan_id', $id)
             ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
@@ -462,6 +469,13 @@ class DailyWeeklyAccount extends Controller
             $payButtonText = 'Pay';
         }
 
+        if ($hasOverdueEmi) {
+            $payButtonText = 'Pay Overdue EMI';
+        } elseif ($hasDueEmi) {
+            $payButtonText = 'Pay EMI';
+        } else {
+            $payButtonText = 'Pay';
+        }
 
         return view('daily_weekly.account.view', compact(
             'goldLoan',
@@ -494,7 +508,18 @@ class DailyWeeklyAccount extends Controller
             'status'           => 'required|string',
             'remaining_amount' => 'required|numeric'
         ]);
+        // EMI due date calculate automatically
+        $loan = DailyWeeklyApplication::findOrFail($request->loan_id);
 
+        $applicationDate = Carbon::parse($loan->application_date);
+
+        $emiNo = (int) $request->emi_no;
+
+        $emiDueDate = $applicationDate
+            ->copy()
+            ->addMonthsNoOverflow($emiNo)
+            ->addDay()
+            ->format('Y-m-d');
         DB::table('daily_weekly_loan_emi_status')->updateOrInsert(
             [
                 'loan_id' => $request->loan_id,
@@ -502,6 +527,8 @@ class DailyWeeklyAccount extends Controller
             ],
             [
                 'status'           => $request->status,
+                'emi_due_date' => $emiDueDate,
+
                 'remaining_amount' => $request->remaining_amount,
                 'paid_date'        => now()->format('d-m-Y')
             ]

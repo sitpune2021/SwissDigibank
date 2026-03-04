@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 class CollectionCenterController extends Controller
 {
+    
 
     public function index()
     {
@@ -25,7 +26,6 @@ class CollectionCenterController extends Controller
         ])->orderBy('created_at', 'desc')->get();
         return view('collection-centers.index', compact('collectionCenters'));
     }
-
 
     public function create()
     {
@@ -114,41 +114,6 @@ class CollectionCenterController extends Controller
             ->with('success', 'Collection Center created successfully');
     }
 
-
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //     'branch_id' => 'required|exists:branches,id',
-    //     'center_no' => 'required|string|max:50',
-    //     'center_name' => 'required|string|max:255',
-
-    //     'center_head_member_id' => 'nullable|exists:members,id',
-    //     'center_head_employee_id' => 'nullable|exists:employees,id',
-
-    //     'center_cashier_member_id' => 'nullable|exists:members,id',
-    //     'center_cashier_employee_id' => 'nullable|exists:employees,id',
-
-    //     'collection_day' => 'nullable|string',
-    //     'collection_time' => 'nullable|string',
-
-    //     'is_active' => 'required|boolean',
-
-    //     'latitude' => 'nullable|string',
-    //     'longitude' => 'nullable|string',
-
-    //     'group_id' => 'nullable|integer',
-    // ]);
-
-    // CollectionCenter::create($request->all());
-
-    // return redirect()
-    //     ->route('collection-centers.index')
-    //     ->with('success', 'Collection Center created successfully');
-    // }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $encodedId)
     {
         $id = base64_decode($encodedId); // decode the Base64 ID
@@ -163,8 +128,7 @@ class CollectionCenterController extends Controller
 
         return view('collection-centers.show', compact('center'));
     }
-
-    
+ 
     public function edit(string $id)
     {
         $decodedId = base64_decode($id);
@@ -180,9 +144,6 @@ class CollectionCenterController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $decodedId = base64_decode($id);
@@ -259,11 +220,4 @@ class CollectionCenterController extends Controller
     }
 
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

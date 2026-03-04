@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use App\Models\LoginLog;
 
 class AuthenticationController extends Controller
 {
+
+
     public function index()
     {
         // if (!auth()->user()->hasRole('admin')) {
@@ -18,6 +21,7 @@ class AuthenticationController extends Controller
 
         // return view('admin.dashboard');
     }
+
     public function signUp()
     {
         return view('authentication.singup');
@@ -59,35 +63,6 @@ class AuthenticationController extends Controller
 
         // return redirect()->route('/')->with('success', 'Registration successful!');
     }
-    // public function login(Request $request)
-    // {
-    //     try {
-    //           $credentials = $request->validate(
-    //             [
-    //                 'email' => 'required|email|exists:users,email',
-    //                 'password' => 'required|min:6',
-    //             ],
-    //             [
-    //                 'email.required' => 'Email is required.',
-    //                 'email.email' => 'Please enter a valid email address.',
-    //                 'email.exists' => 'This email is not registered.',
-    //                 'password.required' => 'Password is required.',
-    //                 'password.min' => 'Password must be at least 6 characters.',
-    //             ]
-    //         );
-
-    //         if (Auth::attempt($credentials)) {
-    //             $request->session()->regenerate();
-
-    //             return redirect()->intended('dashboard')->with('success', 'Login successful!');
-    //         }
-
-    //         // Invalid credentials
-    //         return redirect()->back()->with('error', 'Invalid email or password.')->withInput();
-    //     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-    //         abort(404);
-    //     }
-    // }
 
     public function login(Request $request)
     {
@@ -119,6 +94,13 @@ class AuthenticationController extends Controller
 
             Auth::login($user);
             $request->session()->regenerate();
+            // Save login log
+            LoginLog::create([
+                'user_id' => $user->id,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'login_at' => now(),
+            ]);
 
             return redirect()->intended('dashboard')->with('success', 'Login successful');
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -181,4 +163,6 @@ class AuthenticationController extends Controller
     {
         return view('authentication.error');
     }
+
+    
 }

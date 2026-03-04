@@ -666,7 +666,6 @@
     }
 </script>
 
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         fetch("{{ route('fd.schemes.fetch') }}")
@@ -716,6 +715,7 @@
 
                     let scheme = result.scheme;
                     currentSlabs = result.slabs ?? [];
+                    console.log("Loaded Slabs:", currentSlabs);
 
                     document.getElementById("d_scheme_code").textContent = scheme.scheme_code ?? '-';
                     document.getElementById("d_scheme_name").textContent = scheme.scheme_name ?? '-';
@@ -725,6 +725,87 @@
                     document.getElementById("scheme-details").style.display = "block";
 
                     document.getElementById("amount").value = scheme.min_amount ?? '';
+
+                    // Default tenure set if scheme has fixed tenure
+                    if (scheme.tenure) {
+                        document.getElementById("tenure_value").value = scheme.tenure;
+                    }
+
+                    // If no fixed tenure (As per slab), set first slab max days as default
+                    if (!scheme.tenure && currentSlabs.length > 0) {
+
+                        let firstSlab = currentSlabs[0];
+
+                        // convert slab days to months approx
+                        let months = Math.round(firstSlab.day_to / 30.44);
+
+                        document.getElementById("tenure_value").value = months;
+                    }
+
+                // Trigger slab detection automatically
+                setTimeout(function() {
+
+                    let tenureValue = parseInt(document.getElementById("tenure_value").value) || 0;
+                    let tenureType = document.querySelector("input[name='tenure_type']:checked").value;
+
+                    let totalDays;
+
+                    if (tenureType === "months") {
+                        totalDays = Math.round(tenureValue * 30.44);
+                    } else {
+                        totalDays = tenureValue;
+                    }
+
+                    let slab = detectSlab(currentSlabs, totalDays);
+
+                        if (slab) {
+
+                            document.getElementById("annual_interest_rate").value = slab.interest_rate;
+                            document.getElementById("d_interest_rate").textContent = slab.interest_rate + " %";
+
+                            if (slab.payout_type) {
+
+                                let payoutSelect = document.getElementById("interest_payout_type");
+
+                                let payout = slab.payout_type
+                                    .toString()
+                                    .trim()
+                                    .replace(/\s+/g, '_')
+                                    .toUpperCase();
+
+                                console.log("DB payout:", slab.payout_type);
+                                console.log("Converted payout:", payout);
+
+                                payoutSelect.value = payout;
+                            }
+
+                        }
+
+                    }, 200);
+
+                    // Tenure
+                    document.getElementById("d_tenure").textContent =
+                        scheme.tenure ? scheme.tenure + " Months" : "As per Slab";
+
+                    // Lock In
+                    document.getElementById("d_lock_in").textContent =
+                        scheme.lock_in_period ? scheme.lock_in_period + " Months" : "-";
+
+                    // Interest Lock
+                    document.getElementById("d_interest_lock").textContent =
+                        scheme.interest_lock_in ? scheme.interest_lock_in + " Months" : "-";
+
+                    // Bonus
+                    document.getElementById("d_bonus").textContent =
+                        scheme.bonus_rate ? scheme.bonus_rate + " " + scheme.bonus_type : "-";
+
+                    // Penal Charge
+                    document.getElementById("d_penal").textContent =
+                        scheme.penal_charge ? scheme.penal_charge + " %" : "-";
+
+                    // Cancellation Charge
+                    document.getElementById("d_cancel").textContent =
+                        scheme.cancellation_charge ? scheme.cancellation_charge + " " + scheme.cancellation_type : "-";
                 });
         });
 
@@ -735,16 +816,37 @@
             let tenureValue = parseInt(this.value) || 0;
             let tenureType = document.querySelector("input[name='tenure_type']:checked").value;
 
-            let totalDays = tenureType === "months" ?
-                tenureValue * 30 :
-                tenureValue;
+            let totalDays;
+
+            if (tenureType === "months") {
+                totalDays = Math.round(tenureValue * 30.44);
+            } else {
+                totalDays = tenureValue;
+            }
 
             let slab = detectSlab(currentSlabs, totalDays);
 
             if (slab) {
+
+                // Interest Rate Fill
                 document.getElementById("annual_interest_rate").value = slab.interest_rate;
                 document.getElementById("d_interest_rate").textContent = slab.interest_rate + " %";
+
+                if (slab.payout_type) {
+
+                    let payoutSelect = document.getElementById("interest_payout_type");
+
+                    let payout = slab.payout_type
+                        .toString()
+                        .trim()
+                        .replace(/\s+/g, '_')
+                        .toUpperCase();
+
+                    payoutSelect.value = payout;
+                }
+
             } else {
+
                 document.getElementById("annual_interest_rate").value = "";
                 document.getElementById("d_interest_rate").textContent = "N/A";
             }
@@ -752,4 +854,5 @@
 
     });
 </script>
+
 @endpush

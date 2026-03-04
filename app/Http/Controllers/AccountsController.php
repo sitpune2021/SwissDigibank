@@ -35,9 +35,7 @@ use Illuminate\Validation\ValidationException;
 
 class AccountsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
 
     public function index(Request $request)
     {
@@ -53,11 +51,6 @@ class AccountsController extends Controller
             abort(404, 'Data not found.');
         }
     }
-
-    /**
-     * Show the form for creating a new resource.
-     * Created by: Deepak
-     */
 
     public function create()
     {
@@ -104,10 +97,6 @@ class AccountsController extends Controller
             abort(404);
         }
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
 
     public function store(Request $request)
     {
@@ -271,11 +260,6 @@ class AccountsController extends Controller
         }
     }
 
-
-    /**
-     * Display the specified resource.
-     */
-
     public function getBalance(Request $request)
     {
         try {
@@ -293,6 +277,7 @@ class AccountsController extends Controller
             abort(404);
         }
     }
+
     public function show(string $id)
     {
 
@@ -310,6 +295,7 @@ class AccountsController extends Controller
             abort(404);
         }
     }
+
     public function edit(string $id)
     {
     }
@@ -317,7 +303,6 @@ class AccountsController extends Controller
     public function update(Request $request, string $id)
     {
     }
-
 
     public function destroy(string $id)
     {
@@ -790,7 +775,6 @@ class AccountsController extends Controller
         }
     }
 
-
     public function closeAccount($id)
     {
         $account_id = base64_decode($id);
@@ -834,15 +818,6 @@ class AccountsController extends Controller
         return round(($balance * $rate * $days) / (365 * 100), 2);
     }
 
-    // public function accountOpenForm($id)
-    // {
-
-    //     $account_id = base64_decode($id);
-    //     $account = Account::with(['transaction', 'members.kyc', 'members.address.state', 'scheme', 'savingOtherCharges'])->where('id', $account_id)->first();
-    //     return view('saving-current-ac.accounts.saving-account-application-form', compact('account'));
-    // }
-
-
     public function accountOpenFormPreview($id)
     {
         $account_id = base64_decode($id);
@@ -884,32 +859,29 @@ class AccountsController extends Controller
         return $pdf->download('saving-account-opening-form.pdf');
     }
 
+    public function printForm($id)
+    {
+        $account_id = base64_decode($id);
 
-public function printForm($id)
-{
-    $account_id = base64_decode($id);
+        $account = Account::with([
+            'transaction',
+            'members.kyc',
+            'members.address.state',
+            'scheme',
+            'savingOtherCharges'
+        ])->findOrFail($account_id);
 
-    $account = Account::with([
-        'transaction',
-        'members.kyc',
-        'members.address.state',
-        'scheme',
-        'savingOtherCharges'
-    ])->findOrFail($account_id);
+        $pdf = Pdf::loadView(
+            'saving-current-ac.accounts.saving-account-appli-download',
+            compact('account')
+        )->setPaper('A4','portrait');
 
-    $pdf = Pdf::loadView(
-        'saving-current-ac.accounts.saving-account-appli-download',
-        compact('account')
-    )->setPaper('A4','portrait');
+        // trigger print dialog automatically
+        $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
 
-    // trigger print dialog automatically
-    $pdf->getDomPDF()->getCanvas()->get_cpdf()->addJavascript("print(true);");
+        return $pdf->stream('saving-account.pdf');
+    }
 
-    return $pdf->stream('saving-account.pdf');
-}
-
-
-    
 
 }
 
