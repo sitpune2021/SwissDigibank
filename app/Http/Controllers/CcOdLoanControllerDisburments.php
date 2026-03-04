@@ -72,7 +72,7 @@ class CcOdLoanControllerDisburments extends Controller
             // Update loan application status → 2
             DB::table('cc_od_loan_applications')
                 ->where('id', $request->loan_application_id)
-                ->update(['status' => 1]);
+                ->update(['status' => 2]);
 
             DB::commit();
 

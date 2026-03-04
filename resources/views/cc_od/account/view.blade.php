@@ -156,11 +156,13 @@
                 class="btn-secondary uppercase text-sm px-2 py-2 rounded-10 ">
                 View Transaction
             </a>
+
             @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
                 <a href="{{ route('cc_od.account.pay-emi', $goldLoan->id) }}"
-                    class="btn-primary  text-sm uppercase px-2 py-2 rounded-10 ">
-                    Pay Emi
+                    class="btn-primary uppercase px-2 py-2 rounded-10 text-sm">
+                    {{ $payButtonText }}
                 </a>
+
                 @if (strtolower($goldLoan->scheme->gold_loan_setting) == 'flat_advanced_interest')
                     <a href="{{ route('cc_od.account.extension', $goldLoan->id) }}"
                         class="btn-error text-sm uppercase px-2 py-2 rounded-10 ">
@@ -178,14 +180,6 @@
             @if (in_array(strtolower($goldLoan->scheme->gold_loan_setting), ['flat_emi', 'reducing_emi']))
                 <a href="" class="btn-primary text-sm uppercase px-2 py-2 rounded-10">
                     RE-SCHEDULE EMIs
-                </a>
-            @endif
-
-            @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest' &&
-                    strtolower($goldLoan->scheme->gold_loan_setting) != 'reducing_emi')
-                <a href="{{ route('cc_od.account.pay', $goldLoan->id) }}"
-                    class="btn-primary uppercase text-sm px-2 py-2 rounded-10">
-                    Pay
                 </a>
             @endif
 

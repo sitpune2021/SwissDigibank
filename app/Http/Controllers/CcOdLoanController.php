@@ -583,6 +583,6 @@ class CcOdLoanController extends Controller
             $application->save();
         }
 
-        return redirect()->route('bussiness.applications.view', $id);
+        return redirect()->route('cc_od.applications.view', $id);
     }
 }

@@ -559,6 +559,13 @@ class VehicalAccountController extends Controller
 
 
         // pay emi and pay button logic here 
+        $today = Carbon::today();
+
+        $hasOverdueEmi = DB::table('vehical_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
+            ->whereDate('emi_due_date', '<', $today)
+            ->exists();
         $hasDueEmi = DB::table('vehical_loan_emi_status')
             ->where('loan_id', $id)
             ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
@@ -569,6 +576,13 @@ class VehicalAccountController extends Controller
             $payButtonText = 'Pay EMI';
         } else {
             $payRoute = route('vehical.account.pay', $goldLoan->id);
+            $payButtonText = 'Pay';
+        }
+        if ($hasOverdueEmi) {
+            $payButtonText = 'Pay Overdue EMI';
+        } elseif ($hasDueEmi) {
+            $payButtonText = 'Pay EMI';
+        } else {
             $payButtonText = 'Pay';
         }
         $hasPendingApproval =
@@ -615,7 +629,18 @@ class VehicalAccountController extends Controller
             'status'           => 'required|string',
             'remaining_amount' => 'required|numeric'
         ]);
+        // EMI due date calculate automatically
+        $loan = VehicalApplication::findOrFail($request->loan_id);
 
+        $applicationDate = Carbon::parse($loan->application_date);
+
+        $emiNo = (int) $request->emi_no;
+
+        $emiDueDate = $applicationDate
+            ->copy()
+            ->addMonthsNoOverflow($emiNo)
+            ->addDay()
+            ->format('Y-m-d');
         DB::table('vehical_loan_emi_status')->updateOrInsert(
             [
                 'loan_id' => $request->loan_id,
@@ -623,6 +648,8 @@ class VehicalAccountController extends Controller
             ],
             [
                 'status'           => $request->status,
+                'emi_due_date' => $emiDueDate,
+
                 'remaining_amount' => $request->remaining_amount,
                 'paid_date'        => now()->format('d-m-Y')
             ]

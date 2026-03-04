@@ -559,6 +559,14 @@ class PersonalAccountController extends Controller
         $currentDebt = max($goldLoan->loan_amount - $totalDeposit, 0);
 
         // pay emi and pay button logic here 
+
+        $today = Carbon::today();
+
+        $hasOverdueEmi = DB::table('personal_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
+            ->whereDate('emi_due_date', '<', $today)
+            ->exists();
         $hasDueEmi = DB::table('personal_loan_emi_status')
             ->where('loan_id', $id)
             ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
@@ -571,6 +579,15 @@ class PersonalAccountController extends Controller
             $payRoute = route('personal.account.pay', $goldLoan->id);
             $payButtonText = 'Pay';
         }
+
+        if ($hasOverdueEmi) {
+            $payButtonText = 'Pay Overdue EMI';
+        } elseif ($hasDueEmi) {
+            $payButtonText = 'Pay EMI';
+        } else {
+            $payButtonText = 'Pay';
+        }
+
         $hasPendingApproval =
             DB::table('personal_loan_transactions')
             ->where('loan_id', $id)
@@ -615,6 +632,18 @@ class PersonalAccountController extends Controller
             'status'           => 'required|string',
             'remaining_amount' => 'required|numeric'
         ]);
+        // EMI due date calculate automatically
+        $loan = PersonalLoanApplication::findOrFail($request->loan_id);
+
+        $applicationDate = Carbon::parse($loan->application_date);
+
+        $emiNo = (int) $request->emi_no;
+
+        $emiDueDate = $applicationDate
+            ->copy()
+            ->addMonthsNoOverflow($emiNo)
+            ->addDay()
+            ->format('Y-m-d');
 
         DB::table('personal_loan_emi_status')->updateOrInsert(
             [
@@ -623,6 +652,8 @@ class PersonalAccountController extends Controller
             ],
             [
                 'status'           => $request->status,
+                'emi_due_date' => $emiDueDate,
+
                 'remaining_amount' => $request->remaining_amount,
                 'paid_date'        => now()->format('d-m-Y')
             ]
