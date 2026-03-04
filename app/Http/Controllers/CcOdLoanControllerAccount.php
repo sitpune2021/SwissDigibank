@@ -23,7 +23,7 @@ class CcOdLoanControllerAccount extends Controller
     public function index(Request $request)
     {
         $goldLoan = CcOdLoanApplication::with(['member', 'branch', 'scheme', 'CcodLoanTransaction'])
-            ->where('status', [1])
+            ->where('status', [2])
             ->orderBy('id', 'desc')
             ->paginate(10);
 
@@ -420,6 +420,37 @@ class CcOdLoanControllerAccount extends Controller
                 $totalRemainingEmiAmount += $remaining;
             }
         }
+        // 🔥 Check if any EMI is due
+
+        $today = Carbon::today();
+
+        $hasOverdueEmi = DB::table('mortgage_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
+            ->whereDate('emi_due_date', '<', $today)
+            ->exists();
+
+        $hasDueEmi = DB::table('mortgage_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
+            ->exists();
+
+        // ⭐ Decide Button
+        if ($hasDueEmi) {
+            $payRoute = route('mortgage.account.pay-emi', $goldLoan->id);
+            $payButtonText = 'Pay EMI';
+        } else {
+            $payRoute = route('mortgage.account.pay', $goldLoan->id);
+            $payButtonText = 'Pay';
+        }
+
+        if ($hasOverdueEmi) {
+            $payButtonText = 'Pay Overdue EMI';
+        } elseif ($hasDueEmi) {
+            $payButtonText = 'Pay EMI';
+        } else {
+            $payButtonText = 'Pay';
+        }
         // 🔶 CHECK IF ANY TRANSACTION / FORECLOSURE IS PENDING APPROVAL
         $hasPendingApproval =
             DB::table('cc_od_loan_transactions')
@@ -448,7 +479,9 @@ class CcOdLoanControllerAccount extends Controller
             'currentDebt',
             'hasPendingApproval',
             'comments',
-            'totalRemainingEmiAmount'
+            'totalRemainingEmiAmount',
+            'payButtonText',
+            
         ));
     }
 

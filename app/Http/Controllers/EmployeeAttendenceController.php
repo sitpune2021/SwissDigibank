@@ -10,35 +10,35 @@ use Carbon\Carbon;
 class EmployeeAttendenceController extends Controller
 {
 
-public function index(Request $request)
-{
-    // Get selected date from GET, default to today
-    $selectedDate = $request->query('date', now()->format('d-m-Y'));
 
-    // Convert to Y-m-d for DB
-    try {
-        $dbDate = Carbon::createFromFormat('d-m-Y', $selectedDate)->format('Y-m-d');
-    } catch (\Exception $e) {
-        $dbDate = now()->format('Y-m-d');
-        $selectedDate = now()->format('d-m-Y');
+    public function index(Request $request)
+    {
+        // Get selected date from GET, default to today
+        $selectedDate = $request->query('date', now()->format('d-m-Y'));
+
+        // Convert to Y-m-d for DB
+        try {
+            $dbDate = Carbon::createFromFormat('d-m-Y', $selectedDate)->format('Y-m-d');
+        } catch (\Exception $e) {
+            $dbDate = now()->format('Y-m-d');
+            $selectedDate = now()->format('d-m-Y');
+        }
+
+        // Fetch all employees
+        $employees = Employee::all();
+
+        // Fetch attendance for the selected date
+        $attendances = EmployeeAttendence::where('attendance_date', $dbDate)
+                            ->get()
+                            ->keyBy('employee_id');
+
+        return view('hr-management.attendance.index', compact('employees', 'attendances', 'selectedDate'));
     }
 
-    // Fetch all employees
-    $employees = Employee::all();
-
-    // Fetch attendance for the selected date
-    $attendances = EmployeeAttendence::where('attendance_date', $dbDate)
-                        ->get()
-                        ->keyBy('employee_id');
-
-    return view('hr-management.attendance.index', compact('employees', 'attendances', 'selectedDate'));
-}
     public function store(Request $request)
     {
         // 🔍 Log full incoming request
         Log::info('Attendance Store Request', $request->all());
-
-     
 
             $request->validate([
                 'employee_id' => 'required|integer',
@@ -135,5 +135,6 @@ public function index(Request $request)
     return view('hr-management.attendance.calender', compact('employee', 'attendanceData'));
 
     }
+
 
 }

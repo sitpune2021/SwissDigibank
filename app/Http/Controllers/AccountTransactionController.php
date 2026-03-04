@@ -15,11 +15,7 @@ use Illuminate\Support\Facades\Log;
 
 class AccountTransactionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-
-    // view transaction
+    
 
     public function index($id = null)
     {
@@ -204,27 +200,6 @@ class AccountTransactionController extends Controller
         return CsvExportHelper::downloadCsv($headers, $data, 'transactions.csv');
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-
     public function show(string $id)
     {
         try {
@@ -236,26 +211,7 @@ class AccountTransactionController extends Controller
             abort(404);
         }
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
+ 
     public function destroy($id)
     {
         $id = base64_decode($id);
@@ -305,4 +261,6 @@ class AccountTransactionController extends Controller
 
         return $pdf->stream('saving-current-ac.accounts.print');
     }
+
+    
 }

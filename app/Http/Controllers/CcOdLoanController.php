@@ -280,6 +280,11 @@ class CcOdLoanController extends Controller
                 'processing_fee_total' => $request->processing_fee_total,
             ]);
 
+            $this->saveActivity(
+                'CC / OD Loan Application',
+                'Create',
+               'Created CC/OD Application ID: ' . $loanApplication->id
+            );
 
             Log::info('cc / od Loan Application created successfully', [
                 'loan_application_id' => $loanApplication->id,
@@ -438,6 +443,11 @@ class CcOdLoanController extends Controller
 
             $updated = $application->update($inputData);
 
+            $this->saveActivity(
+                'CC / OD Loan Application',
+                'Update',
+               'Created CC/OD Application ID: ' . $application->id
+            );
 
             if (!$updated) {
                 Log::error('Loan Application update failed', [
@@ -578,6 +588,6 @@ class CcOdLoanController extends Controller
             $application->save();
         }
 
-        return redirect()->route('bussiness.applications.view', $id);
+        return redirect()->route('cc_od.applications.view', $id);
     }
 }

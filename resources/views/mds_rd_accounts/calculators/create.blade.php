@@ -19,6 +19,7 @@
     <h4 class="flex flex-wrap items-center text-lg justify-between gap-4 mb-6 lg:mb-8">RD / DD CALCULATOR</h4>
 
     <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mt-5 min-h-screen">
+
         <!-- Calculator Section -->
         <div class="col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6">
 
@@ -38,7 +39,6 @@
                         @endforeach
                     </select>
                 </div>
-
 
                 <!-- Enter Values Manually -->
                 <div class="flex items-center gap-2">
@@ -83,11 +83,13 @@
                             class="text-red-500">*</span></label>
                     <select id="compInterval"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                        <option>Select Intervel Compounding</option>
-                        <option>MONTHLY</option>
-                        <option>QUARTERLY</option>
-                        <option>HALF-YEARLY</option>
-                        <option>YEARLY</option>
+
+                        <option value="">Select Intervel Compounding</option>
+                        <option value="MONTHLY">MONTHLY</option>
+                        <option value="QUARTERLY">QUARTERLY</option>
+                        <option value="HALF-YEARLY">HALF-YEARLY</option>
+                        <option value="YEARLY">YEARLY</option>
+
                     </select>
                 </div>
 
@@ -115,7 +117,7 @@
 
                 <!-- Bonus -->
                 <div>
-                    <label class="font-medium block mb-2 uppercase">Bonus<span class="text-red-500">*</span></label>
+                    <label class="font-medium block mb-2 uppercase">Bonus</label>
                     <div class="flex gap-2">
                         <select id="bonusSelect" required
                             class="w-auto text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -160,7 +162,6 @@
             </div>
         </div>
 
-
         <div id="schemeInfo" class=" box hidden col-span-2 md:col-span-1 dark:bg-bg3 rounded-10">
             <div class="mt-6">
                 <!-- Header -->
@@ -186,18 +187,18 @@
                                     <td class="font-medium px-4 py-2 border-b uppercase">Scheme Name</td>
                                     <td id="sc_name" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <td class="font-medium px-4 py-2 border-b uppercase">Deposit Frequency</td>
                                     <td id="deposit_frequency" class="text-gray-700 px-4 py-2 border-b"></td>
-                                </tr>
+                                </tr> -->
                                 <tr>
                                     <td class="font-medium px-4 py-2 border-b uppercase">Min. Amount</td>
                                     <td id="min_rd_dd_amount" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <td class="font-medium px-4 py-2 border-b uppercase">Minimum Lock in Period</td>
                                     <td id="lock_in_period" class="text-gray-700 px-4 py-2 border-b"></td>
-                                </tr>
+                                </tr> -->
                                 <tr>
                                     <td class="font-medium px-4 py-2 border-b uppercase">Interest (%)</td>
                                     <td id="anuual_interest_rate" class="text-gray-700 px-4 py-2 border-b"></td>
@@ -226,14 +227,13 @@
                                     <td class="font-medium px-4 py-2 border-b uppercase">Penalty Charges (After Grace Period)</td>
                                     <td id="penalty_charges_value" class="text-gray-700 px-4 py-2 border-b"></td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <td class="font-medium px-4 py-2 border-b uppercase">Active</td>
                                     <td class="px-4 py-2 border-b">
                                         <span id="is_active" class="px-3 py-1  rounded-full"></span>
                                     </td>
-                                </tr>
+                                </tr> -->
                             </tbody>
-
                         </table>
                     </div>
                 </div>
@@ -268,6 +268,34 @@
                             tenureType: document.getElementById('tenure_type'),
                         };
 
+                        function setFieldsReadonly(isManualMode) {
+
+                            const fields = [
+                                els.frequency,
+                                els.compInterval,
+                                els.interestRate,
+                                els.tenureNumber,
+                                els.bonusSelect,
+                                els.bonusInput
+                            ];
+
+                            fields.forEach(field => {
+                                if (!field) return;
+
+                                if (isManualMode) {
+                                    field.removeAttribute('readonly');
+                                    field.disabled = false;
+                                } else {
+                                    field.setAttribute('readonly', true);
+                                    field.disabled = true;
+                                }
+                            });
+
+                            // 🔥 IMPORTANT: Amount field editable
+                            els.amount.removeAttribute('readonly');
+                            els.amount.disabled = false;
+                        }
+
                         // ----- scheme info -----
                         let isOpen = true;
 
@@ -282,9 +310,6 @@
                             isOpen = !isOpen;
                         }
                         els.toggleButton.addEventListener('click', toggleSchemeInfo);
-
-
-
 
                         // ----- scheme info fetch -----
                         els.scheme.addEventListener('change', function() {
@@ -302,12 +327,12 @@
                                             // Table values
                                             document.querySelector('#sc_code').textContent = s.scheme_code;
                                             document.querySelector('#sc_name').textContent = s.scheme_name;
-                                            document.querySelector('#deposit_frequency').textContent = s.deposit_frequency;
+                                            //document.querySelector('#deposit_frequency').textContent = s.deposit_frequency;
                                             document.querySelector('#min_rd_dd_amount').textContent = s.min_rd_dd_amount;
-                                            document.querySelector('#lock_in_period').textContent = s.lock_in_period;
+                                            //document.querySelector('#lock_in_period').textContent = s.lock_in_period;
                                             document.querySelector('#anuual_interest_rate').textContent = s.anuual_interest_rate + ' %';
                                             document.querySelector('#interest_compounding_interval').textContent = s.interest_compounding_interval;
-                                            //  YAHAN PE ADD KARNA HAI
+                                            
                                             if (s.rd_dd_frequency) {
                                                 const freq = s.rd_dd_frequency.trim().toUpperCase();
                                                 const freqDropdown = document.querySelector('#frequency');
@@ -320,31 +345,29 @@
                                                     }
                                                 }
                                             }
-                                            //document.querySelector('#tenure_of_rd').textContent = s.tenure_of_rd + ' Months';
-                                            // RD/DD frequency (table me show karne ke liye)
-                                            document.querySelector('#tenure_of_rd').textContent = s.tenure_of_rd;
 
-                                            // --- tenure input fields auto-fill ---
-                                            if (s.tenure_of_rd) {
-                                                // Example: "365 Days" OR "12 Months"
-                                                const parts = s.tenure_of_rd.trim().split(" ");
-                                                const numberPart = parts[0] || '';
-                                                const unitPart = (parts[1] || '').toUpperCase();
+                                            document.querySelector('#tenure_of_rd').textContent =
+                                            s.tenure_of_rd_dd_value + " " + s.tenure_of_rd_dd_type;
 
-                                                els.tenureNumber.value = numberPart;
+                                            // Tenure Auto Fill (Correct Way)
+                                            if (s.tenure_of_rd_dd_value && s.tenure_of_rd_dd_type) {
 
-                                                // Map units safely
-                                                if (unitPart.startsWith("DAY")) {
+                                                els.tenureNumber.value = s.tenure_of_rd_dd_value;
+
+                                                const type = s.tenure_of_rd_dd_type.trim().toUpperCase();
+
+                                                if (type.startsWith("DAY")) {
                                                     els.tenureType.value = "DAYS";
-                                                } else if (unitPart.startsWith("MONTH")) {
+                                                } else if (type.startsWith("MONTH")) {
                                                     els.tenureType.value = "MONTHS";
-                                                } else if (unitPart.startsWith("WEEK")) {
+                                                } else if (type.startsWith("WEEK")) {
                                                     els.tenureType.value = "WEEKS";
-                                                } else if (unitPart.startsWith("YEAR")) {
+                                                } else if (type.startsWith("YEAR")) {
                                                     els.tenureType.value = "YEARS";
                                                 } else {
-                                                    els.tenureType.value = unitPart; // fallback
+                                                    els.tenureType.value = type;
                                                 }
+
                                             }
 
                                             document.querySelector('#cancellation_charges_value').textContent = s.cancellation_charges_value + ' %';
@@ -353,28 +376,26 @@
                                             document.querySelector('#penalty_charges_value').textContent = s.penalty_charges_value + ' %';
 
                                             // Active badge
-                                            const activeEl = document.querySelector('#is_active');
-                                            if (s.is_active) {
-                                                activeEl.textContent = 'Yes';
-                                                activeEl.classList.add('block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 ');
-                                                activeEl.classList.remove('block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16');
-                                            } else {
-                                                activeEl.textContent = 'No';
-                                                activeEl.classList.add('text-black');
-                                                activeEl.classList.remove('text-black');
-                                            }
+                                            // const activeEl = document.querySelector('#is_active');
+                                            // if (s.is_active) {
+                                            //     activeEl.textContent = 'Yes';
+                                            //     activeEl.classList.add('block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 ');
+                                            //     activeEl.classList.remove('block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16');
+                                            // } else {
+                                            //     activeEl.textContent = 'No';
+                                            //     activeEl.classList.add('text-black');
+                                            //     activeEl.classList.remove('text-black');
+                                            // }
 
                                             //  Input fields auto-fill
                                             els.interestRate.value = s.anuual_interest_rate || '';
 
-                                            // Dropdown me value set karte waqt case mismatch avoid karo
+                                            // In Dropdown value when set that time mismatch avoid
                                             els.compInterval.value = (s.interest_compounding_interval || 'MONTHLY').trim().toUpperCase();
                                             // -------- FIX: auto-enable inputs when scheme is selected --------
-                                            [
-                                                els.frequency, els.compInterval, els.interestRate,
-                                                els.tenureText, els.tenureNumber,
-                                                els.bonusSelect, els.bonusInput
-                                            ].forEach(el => el.disabled = false);
+                                            // Scheme select → manual mode OFF
+                                            els.manualCheckbox.checked = false;
+                                            setFieldsReadonly(false);
 
                                         }
                                     });
@@ -394,19 +415,19 @@
                             }
                         });
 
-
-
-
-
                         // ----- manual toggle -----
-                        els.manualCheckbox.addEventListener('change', () => {
-                            const disabled = !els.manualCheckbox.checked;
-                            [
-                                els.scheme, els.frequency, els.compInterval,
-                                els.interestRate, els.tenureText, els.tenureNumber,
-                                els.bonusSelect, els.bonusInput
-                            ].forEach(el => el.disabled = disabled && el !== els.scheme);
+                        els.manualCheckbox.addEventListener('change', function () {
+
+                            if (this.checked) {
+                                // Manual Mode ON
+                                setFieldsReadonly(true);
+                            } else {
+                                // Manual Mode OFF
+                                setFieldsReadonly(false);
+                            }
+
                         });
+
                         els.manualCheckbox.dispatchEvent(new Event('change'));
 
                         // ----- auto change tenure_type based on frequency -----
@@ -537,5 +558,6 @@
 
 
                     });
+                    setFieldsReadonly(false);
                 </script>
                 @endpush

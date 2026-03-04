@@ -572,7 +572,7 @@ use Illuminate\Support\Facades\Storage;
 
     <!-- Consumer durable loan LOAN  -->
     <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('vehical.account.index') }}">
+        <a href="{{ route('consumer_loan.schemes.index') }}">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
                 <span class="font-medium">CONSUMER DURABLE LOAN</span><span aria-expanded="false"><svg
                         xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -597,7 +597,7 @@ use Illuminate\Support\Facades\Storage;
 
     <!-- Agricultural LOAN  -->
     <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('vehical.account.index') }}">
+        <a href="{{ route('agricultural_loan.schemes.index') }}">
             <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
                 <span class="font-medium">AGRICULTURAL LOAN</span><span aria-expanded="false"><svg
                         xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"

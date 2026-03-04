@@ -52,6 +52,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class CutReportController extends Controller
 {
 
+
     // Promoters/Members Cut Reports start here
     public function promoterMemberIndex()
     {
@@ -137,6 +138,7 @@ class CutReportController extends Controller
             ->paginate(10);
         return view('cut-reports.report.customer-list', compact('account'));
     }
+
     public function customerListPrint()
     {
         // Fetch NON-PROMOTER members
@@ -178,28 +180,27 @@ class CutReportController extends Controller
     }
 
     public function promoterListPrint()
-{
-    $company = Company::first();
+    {
+        $company = Company::first();
 
-    $promoters =  Member::whereHas('promotor')
-            ->with(['promotor','promotor.shareHoldings', 'accounts'])
-    ->get();
+        $promoters =  Member::whereHas('promotor')
+                ->with(['promotor','promotor.shareHoldings', 'accounts'])
+        ->get();
 
 
-    $html = view('cut-reports.pdf.promoter-list-print', compact(
-        'company',
-        'promoters',
-        
-    ))->render();
+        $html = view('cut-reports.pdf.promoter-list-print', compact(
+            'company',
+            'promoters',
+            
+        ))->render();
 
-    $mpdf = $this->getMarathiMpdf();
-    $mpdf->SetJS('this.print();');
-    $mpdf->WriteHTML($html);
+        $mpdf = $this->getMarathiMpdf();
+        $mpdf->SetJS('this.print();');
+        $mpdf->WriteHTML($html);
 
-    return response($mpdf->Output('promoter-list-report.pdf', 'I'))
-        ->header('Content-Type', 'application/pdf');
-}
-   
+        return response($mpdf->Output('promoter-list-report.pdf', 'I'))
+            ->header('Content-Type', 'application/pdf');
+    }
    
     // shareHoldingIndex Cut Reports start here
     public function shareHoldingIndex()
@@ -238,6 +239,7 @@ class CutReportController extends Controller
 
         return $pdf->stream('share-holding-report.pdf');
     }
+
     public function shareAllotmentSearchBox(Request $request)
     {
 
@@ -327,8 +329,7 @@ class CutReportController extends Controller
 
         return Response::stream($callback, 200, $headers);
     }
-    // shareHoldingIndex Cut Reports start here
-
+   
     // shareHoldingIndex Cut Reports start here
     public function shareTransferHistoryIndex()
     {
@@ -640,7 +641,6 @@ class CutReportController extends Controller
 
     // FD Account Cut Reports Start here
 
-
     public function fdaccount_index()
     {
         $account = FdAccount::with(['member', 'branch', 'fdscheme.fdslabs'])->orderBy('id', 'desc')->paginate(10);
@@ -762,6 +762,7 @@ class CutReportController extends Controller
         return response($mpdf->Output('cut-report-fd_account.pdf', 'I'))
             ->header('Content-Type', 'application/pdf');
     }
+
     public function fdExportCsv()
     {
         $accounts = FdAccount::with(['member', 'branch', 'fdscheme.fdslabs'])->get();
@@ -891,8 +892,6 @@ class CutReportController extends Controller
         return response($mpdf->Output('cut-report-mis_account.pdf', 'D'))
             ->header('Content-Type', 'application/pdf');
     }
-
-
 
     public function printMis()
     {
@@ -1075,7 +1074,6 @@ class CutReportController extends Controller
             ->header('Content-Type', 'application/pdf');
     }
 
-
     public function printDD()
     {
 
@@ -1194,6 +1192,7 @@ class CutReportController extends Controller
         $account = RdAccount::with(['member', 'branch', 'scheme'])->orderBy('id', 'desc')->paginate(10);
         return view('cut-reports.report.rd-account', compact('account'));
     }
+
     //  Download Pdf
     public function rdIndex()
     {
@@ -1915,7 +1914,6 @@ class CutReportController extends Controller
         ]);
     }
 
-
     // Index Page Loanagainst Loan
 
     public function loanagainst_index(Request $request)
@@ -2074,6 +2072,7 @@ class CutReportController extends Controller
 
         return $pdf->stream('LoanAgainstReport.pdf');
     }
+
     public function loanagainst_exportCsv()
     {
         $loans = LoanAgainstApplication::with(['member', 'branch', 'scheme'])

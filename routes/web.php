@@ -77,7 +77,6 @@ use App\Http\Controllers\DailyWeeklyController;
 use App\Http\Controllers\DailyWeeklyDisburments;
 use App\Http\Controllers\DailyWeeklyAccount;
 use App\Http\Controllers\FixedLoanAccount;
-use App\Http\Controllers\DaybookController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LedgergroupController;
 use App\Http\Controllers\LockerController;
@@ -92,6 +91,7 @@ use App\Http\Controllers\EmployeeAkash;
 use App\Http\Controllers\GoldLoanPrintDocument;
 use App\Http\Controllers\FixedLoanController;
 use App\Http\Controllers\AgriculturController;
+use App\Http\Controllers\ConsumerController;
 use App\Http\Controllers\MortgageLoanPrintDocumentController;
 use App\Http\Controllers\PersonalLoanPrintDocumentController;
 use App\Http\Controllers\VehicleLoanPrintDocumentController;
@@ -205,7 +205,6 @@ Route::middleware('auth.user')->group(function () {
             ->name('fd.scheme.details');
     });
 
-
     Route::middleware('auth')->group(function () {
         Route::get('/dds-accounts', [DdsAccountsController::class, 'index'])->name('dds-accounts.index');
         Route::get('/dds-accounts/create', [DdsAccountsController::class, 'create'])->name('dds-accounts.create');
@@ -294,7 +293,6 @@ Route::middleware('auth.user')->group(function () {
         Route::get('ddsaccounts/bond/{id}', [DdsAccountsController::class, 'ddBondForm'])
             ->name('dd.bond.form');
 
-
         Route::get('ddsaccounts/opening-form-view/{id}', [DdsAccountsController::class, 'ddOpeningFormView'])
             ->name('dd.opening-view');
         Route::get('ddsaccounts/opening-form/{id}', [DdsAccountsController::class, 'ddOpeningForm'])
@@ -305,7 +303,6 @@ Route::middleware('auth.user')->group(function () {
         Route::get('ddsaccounts/closing-form/{id}', [DdsAccountsController::class, 'ddClosingForm'])
             ->name('dd.closing.form');
     });
-
 
     // RD route 
     Route::resource('rd-calculator', RDCalculatorController::class)
@@ -2350,7 +2347,7 @@ Route::group(['prefix' => 'Agricultural_loan'], function () {
 Route::group(['prefix' => 'consumer_loan'], function () {
 
     // Agricultural loan Loan Scheme
-    Route::get('scheme/index', [AgriculturController::class, 'index'])
+    Route::get('scheme/index', [ConsumerController::class, 'index'])
         ->name(name: 'consumer_loan.schemes.index');
 });
 
@@ -2891,7 +2888,6 @@ Route::get(
     [EmployeeAttendenceController::class, 'calendar']
 )->name('hr-management.attendance.calender');
 
-/////////Akash//////////
 
 Route::get('salary-disbursement/disbursement-index', [EmployeeAkash::class, 'disbursement_index'])
     ->name('hr-management.salary-disbursement.index');
@@ -2912,7 +2908,6 @@ Route::get('salary-disbursement/monthly-salary', [EmployeeAkash::class, 'monthly
     ->name('hr-management.salary-disbursement.monthly-salary');
 
 
-
 // vendors
 Route::group(['prefix' => 'vendor'], function () {
     Route::get('vendor/index', [VendorController::class, 'vendor_index'])
@@ -2929,29 +2924,6 @@ Route::group(['prefix' => 'vendor'], function () {
         ->name('vendors.edit-ledger');
 });
 
-// Day Book
-Route::group(['prefix' => 'day-book'], function () {
-    Route::get('daybook/day-book', [DaybookController::class, 'day_book'])
-        ->name('day-book.day-book');
-
-    Route::get('daybook/cash-book', [DaybookController::class, 'cash_book'])
-        ->name('day-book.cash-book');
-
-    Route::get('daybook/bank-book', [DaybookController::class, 'bank_book'])
-        ->name('day-book.bank-book');
-
-
-    Route::get('daybook/wallet-book', [DaybookController::class, 'wallet_book'])
-        ->name('day-book.wallet-book');
-
-    Route::get('daybook/edit-ledger', [DaybookController::class, 'edit_ledger'])
-        ->name('day-book.edit-ledger');
-
-    Route::get('daybook/journal-entry', [DaybookController::class, 'journal_entry'])
-        ->name('day-book.journal-entry');
-    Route::get('daybook/ledger-book', [DaybookController::class, 'ledger_book'])
-        ->name('day-book.ledger-book');
-});
 
 // Payments & payment collections
 

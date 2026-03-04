@@ -61,15 +61,15 @@
         <h3 class=" flex text-lg  uppercase font-semibold">
             LOGIN ACTIVITY
         </h3>
+    </div>
 
-    </div>
     @if(session('success'))
-    <div class="">
-        <div class="w-44 mb-5 flex justify-end">
-            <x-alert />
+        <div class="">
+            <div class="w-44 mb-5 flex justify-end">
+                <x-alert />
+            </div>
+            {{-- {{ session('success') }} --}}
         </div>
-        {{-- {{ session('success') }} --}}
-    </div>
     @endif
 
     <div class="col-span-12 box lg:col-span-12">
@@ -78,8 +78,11 @@
                 Download xls
             </a>
         </div> --}}
+
         <div class="pb-4 mt-4 overflow-x-auto lg:pb-6">
+
             <table class="w-full whitespace-nowrap select-all-table" id="">
+
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer ">
@@ -121,44 +124,64 @@
                     </tr>
                 </thead>
 
-
                 <tbody>
-                    <tr class="border-b ">
-                        <td class="px-6 py-4">
-                           demo-nidhi@hubco.in (static)
-                        </td>
-                        <td class="px-6 py-4">
-                         Test Test (static)
-                        </td>
-                         <td class="px-6 py-4">
-                          https://nidhi.hubco.in/login   (static)
-                        </td>
-                        <td class="px-6 py-4"> 
-                          (static)
-                        </td>
-                         <td class="px-6 py-4"> 
-                           49.37.45.89 (static)
-                        </td>
-                          <td class="px-6 py-4"> 
-                           <div class="flex items-center gap-1">
-                                    <span
-                                class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                Yes
-                            </span>
-                             <span
-                                class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                                No
-                            </span>
-                                </div>
-                                 (static)
-                        </td>
+                    @forelse($logs as $log)
+                    <tr class="border-b">
                         
-                          <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                          15-01-2026 10:13 (static)
+                        <!-- IDENTITY (Email) -->
+                        <td class="px-6 py-4">
+                            {{ $log->user->email ?? 'N/A' }}
+                        </td>
+
+                        <!-- USER NAME -->
+                        <td class="px-6 py-4">
+                            {{ $log->user->name ?? 'N/A' }}
+                        </td>
+
+                        <!-- REFERRER -->
+                        <td class="px-6 py-4">
+                            {{ request()->headers->get('referer') ?? '-' }}
+                        </td>
+
+                        <!-- FAILURE REASON -->
+                        <td class="px-6 py-4">
+                            {{ $log->failure_reason ?? '-' }}
+                        </td>
+
+                        <!-- IP ADDRESS -->
+                        <td class="px-6 py-4">
+                            {{ $log->ip_address }}
+                        </td>
+
+                        <!-- SUCCESS -->
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-1">
+                                @if($log->success)
+                                    <span class="block w-20 rounded-[30px] border border-green-300 bg-green-100 py-2 text-center text-xs text-green-600">
+                                        Yes
+                                    </span>
+                                @else
+                                    <span class="block w-20 rounded-[30px] border border-red-300 bg-red-100 py-2 text-center text-xs text-red-600">
+                                        No
+                                    </span>
+                                @endif
+                            </div>
+                        </td>
+
+                        <!-- LOGIN TIME -->
+                        <td class="px-6 py-4">
+                            {{ \Carbon\Carbon::parse($log->login_at)->format('d-m-Y H:i') }}
+                        </td>
+
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-gray-500">
+                            No login activity found
                         </td>
                     </tr>
+                    @endforelse
                 </tbody>
-
 
             </table>
 

@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Hash;
 
 class CompanyController extends Controller
 {
+
+
     public function index()
     {
         try {
@@ -172,4 +174,6 @@ class CompanyController extends Controller
             abort(404);
         }
     }
+
+    
 }

@@ -552,7 +552,16 @@ class MortgageAccountController extends Controller
 
         $currentDebt = max($goldLoan->loan_amount - $totalDeposit, 0);
 
-        // ⭐ CHECK IF ANY EMI IS DUE
+        // 🔥 Check if any EMI is due
+
+        $today = Carbon::today();
+
+        $hasOverdueEmi = DB::table('mortgage_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
+            ->whereDate('emi_due_date', '<', $today)
+            ->exists();
+
         $hasDueEmi = DB::table('mortgage_loan_emi_status')
             ->where('loan_id', $id)
             ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
@@ -566,6 +575,15 @@ class MortgageAccountController extends Controller
             $payRoute = route('mortgage.account.pay', $goldLoan->id);
             $payButtonText = 'Pay';
         }
+
+        if ($hasOverdueEmi) {
+            $payButtonText = 'Pay Overdue EMI';
+        } elseif ($hasDueEmi) {
+            $payButtonText = 'Pay EMI';
+        } else {
+            $payButtonText = 'Pay';
+        }
+
         // ⭐ CHECK PENDING EMI / FULL PAYMENT
         $hasPendingTransaction = DB::table('mortgage_loan_transactions')
             ->where('loan_id', $id)
@@ -612,7 +630,17 @@ class MortgageAccountController extends Controller
             'emi_no' => 'required',
             'remaining_amount' => 'required'
         ]);
+        $loan = MortgageLoanApplication::findOrFail($request->loan_id);
 
+        $applicationDate = Carbon::parse($loan->application_date);
+
+        $emiNo = (int) $request->emi_no;
+
+        $emiDueDate = $applicationDate
+            ->copy()
+            ->addMonthsNoOverflow($emiNo)
+            ->addDay()
+            ->format('Y-m-d');
         DB::table('mortgage_loan_emi_status')->updateOrInsert(
             [
                 'loan_id' => $request->loan_id,
@@ -622,6 +650,8 @@ class MortgageAccountController extends Controller
                 'status' => 'DUE', // ⭐ ALWAYS DUE on process
                 'remaining_amount' => $request->remaining_amount,
                 'paid_date' => null,
+                'emi_due_date' => $emiDueDate,
+
                 'updated_at' => now(),
                 'created_at' => now()
             ]
@@ -629,7 +659,6 @@ class MortgageAccountController extends Controller
 
         return response()->json(['success' => true]);
     }
-
 
     // pay emi tab page   
     public function mortgagePayEmi($id)
