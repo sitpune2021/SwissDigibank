@@ -31,9 +31,9 @@ class RDCalculatorController extends Controller
                 'data'   => [
                     'scheme_code'                => $scheme->scheme_code,
                     'scheme_name'                => $scheme->scheme_name,
-                    'deposit_frequency'  => $scheme->rd_dd_frequency,
+                    //'deposit_frequency'          => $scheme->deposit_frequency,
                     'min_rd_dd_amount'           => $scheme->min_rd_dd_amount,
-                    'lock_in_period'     => $scheme->rd_dd_lock_in_period,
+                   // 'lock_in_period'             => $scheme->lock_in_period,
                     'anuual_interest_rate'       => $scheme->anuual_interest_rate,
                     'interest_compounding_interval' => $scheme->interest_compounding_interval,
                     'rd_dd_frequency'            => $scheme->rd_dd_frequency,
@@ -43,7 +43,7 @@ class RDCalculatorController extends Controller
                     'penal_charges'              => $scheme->penal_charges,
                     'bonus_rate'                 => $scheme->bonus_rate,
                     'penalty_charges_value'      => $scheme->penalty_charges_value,
-                    'is_active'                  => $scheme->active,
+                   // 'is_active'                  => $scheme->is_active,
                 ]
             ]);
         }
