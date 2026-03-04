@@ -1456,8 +1456,6 @@ public function misClosingFormPreview($id)
         return $pdf->download('mis-closing-form-' . $misaccount->mis_account_no . '.pdf');
     }
 
-
-
     public function uploadDocuments($id)
     {
         $misaccount = Misaccount::with('member')->findOrFail($id);

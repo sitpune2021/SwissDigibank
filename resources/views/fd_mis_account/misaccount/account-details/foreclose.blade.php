@@ -38,7 +38,7 @@
         </div>
     </div>
     <div class="rounded-lg border-l-4 bg-error text-white p-2">
-
+    
         <i class="las la-ban"> Alert</i>
         <p>You are about to fore close MIS before the minimum lock-in period. So proceed accordingly.</p>
 
