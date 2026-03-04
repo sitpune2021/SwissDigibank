@@ -39,7 +39,7 @@ class MisaccountController extends Controller
         $minors         = Minor::all();
         $branches       = Branch::all();
         // $banks          = Bank::all();
-         $banks = Bank::pluck('name', 'id');
+        $banks = Bank::pluck('name', 'id');
         $savingAccounts = Account::where('account_type', 'SAVING')->get();
         $schemes        = FDScheme::all(); // fetch all FD schemes
 
@@ -752,7 +752,7 @@ class MisaccountController extends Controller
         $minors         = Minor::all();
         $branches       = Branch::all();
         // $banks          = Bank::all();
-          $banks = Bank::pluck('name', 'id');
+        $banks = Bank::pluck('name', 'id');
         $savingAccounts = Account::where('account_type', 'SAVING')->get();
         $schemes        = FdScheme::all();
         $misaccount->load(['transactions', 'nominees']);
@@ -1067,73 +1067,191 @@ class MisaccountController extends Controller
         return redirect()->route('misaccount.show', $id)
             ->with('success', 'Nominee details updated successfully!');
     }
-
     public function foreClose($id)
-{
-    $misaccount = Misaccount::with(['member', 'fdScheme'])
-        ->findOrFail($id);
+    {
+        $misaccount = Misaccount::with(['member', 'fdScheme.fdslabs'])
+            ->findOrFail($id);
 
-    // ✅ Current Balance (approved only)
-    $balances = self::getAccountBalance($id);
-    $currentBalance = $balances[$id] ?? 0;
+        $balances = self::getAccountBalance($id);
+        $currentBalance = $balances[$id] ?? 0;
 
-    // ✅ Today closure date (default)
-    $closureDate = Carbon::today();
+        $closureDate = Carbon::today();
+        $openDate = Carbon::parse($misaccount->open_date);
 
-    $openDate = Carbon::parse($misaccount->open_date);
+        $totalDays = $openDate->diffInDays($closureDate);
 
-    // ✅ Total days till closure
-    $totalDays = $openDate->diffInDays($closureDate);
+        /*
+    |---------------------------------------------
+    | Find slab based on days
+    |---------------------------------------------
+    */
 
-    // ✅ Annual Rate
-    $rate = $misaccount->interest_rate ?? 0;
-    $annualRate = $rate / 100;
+        $slab = $misaccount->fdScheme->fdslabs
+            ->where('day_from', '<=', $totalDays)
+            ->where('day_to', '>=', $totalDays)
+            ->first();
 
-    // ✅ Interest calculation till today
-    $interestTillDate = ($misaccount->mis_amount * $annualRate * $totalDays) / 365;
+        if (!$slab) {
+            abort(500, 'No slab found for this tenure');
+        }
 
-    $interestTillDate = round($interestTillDate, 2);
+        $rate = $slab->interest_rate;
 
-    // ✅ TDS (if enabled)
-    $tds = 0;
-    if ($misaccount->tds_deduction === 'yes') {
-        if ($interestTillDate > 40000) {
+        /*
+    |---------------------------------------------
+    | Interest Calculation
+    |---------------------------------------------
+    */
+
+        $annualRate = $rate / 100;
+
+        $interestTillDate =
+            ($misaccount->mis_amount * $annualRate * $totalDays) / 365;
+
+        $interestTillDate = round($interestTillDate, 2);
+
+
+
+        /*
+    |---------------------------------------------
+    | TDS
+    |---------------------------------------------
+    */
+
+        $tds = 0;
+
+        if ($misaccount->tds_deduction === 'yes' && $interestTillDate > 40000) {
             $tds = round($interestTillDate * 0.10, 2);
         }
+
+        /*
+    |---------------------------------------------
+    | Penal Charges  prematureRate
+    |---------------------------------------------
+    */
+
+
+        $lockInMonths = $misaccount->fdScheme->lock_in_period ?? 0;
+
+        $completedMonths = $openDate->diffInMonths($closureDate);
+
+        $penalCharges = 0;
+        $penalRate = 0;
+        $penalChargesWithGst = 0;
+        $gstRate = 18;
+
+        if ($completedMonths < $lockInMonths) {
+
+            $penalRate = $misaccount->fdScheme->penal_charge ?? 0;
+
+            // Penal amount
+            $penalCharges = round(($misaccount->mis_amount * $penalRate) / 100, 2);
+
+            // GST 18%
+            $gst = round($penalCharges * ($gstRate / 100), 2);
+
+            // Penal + GST
+            $penalChargesWithGst = $penalCharges + $gst;
+        }
+
+        $prematureRate = $rate - $penalRate;
+
+        if ($prematureRate < 0) {
+            $prematureRate = 0;
+        }
+
+        $prematureInterest =
+            ($misaccount->mis_amount * ($prematureRate / 100) * $totalDays) / 365;
+
+        $prematureInterest = round($prematureInterest, 2);
+
+        // $totalInterest = 0;
+        $totalInterest = $misaccount->total_interest ?? 0;
+
+        // Interest already paid
+        $interestPaid = MisTransaction::where('misaccount_id', $misaccount->id)
+            ->where('transaction_type', 'credit')
+            ->where('approve_status', 'approved')
+            ->sum('net_interest');
+
+        // Interest left to pay
+        $interestLeftToPay =  $totalInterest - $interestPaid;
+
+        if ($interestLeftToPay < 0) {
+            $interestLeftToPay = 0;
+        }
+
+        // Reverse interest
+        if ($interestPaid > $prematureInterest) {
+            $reverseInterest = $interestPaid - $prematureInterest;
+        }
+        /*---------------------------------------------
+        / cancaleation carges 
+        / ------------------------------------*/
+
+        $cancellationCharge = 0;
+
+        $type = $misaccount->fdScheme->cancellation_type;
+        $value = $misaccount->fdScheme->cancellation_charge;
+
+        if ($type == 'percent') {
+
+            $cancellationCharge =
+                round(($misaccount->mis_amount * $value) / 100, 2);
+        } else {
+
+            $cancellationCharge = $value;
+        }
+
+        $cancellationGst =
+            round($cancellationCharge * ($gstRate / 100), 2);
+
+        $cancellationTotal =
+            $cancellationCharge + $cancellationGst;
+
+
+        /*
+    |---------------------------------------------
+    | Final Settlement
+    |---------------------------------------------
+    */
+
+        $totalSettlement =
+            $currentBalance +
+            $interestLeftToPay -
+            $tds -
+            $reverseInterest -
+            $penalChargesWithGst -
+            $cancellationTotal;
+// dd($currentBalance, $interestLeftToPay, $tds, $reverseInterest, $penalChargesWithGst, $cancellationTotal);
+        $totalSettlement = round($totalSettlement, 2);
+
+        return view(
+            'fd_mis_account.misaccount.account-details.foreclose',
+            compact(
+                'misaccount',
+                'currentBalance',
+                'interestTillDate',
+                'tds',
+                'gstRate',
+                'penalCharges',
+                'penalChargesWithGst',
+                'penalRate',
+                'totalSettlement',
+                'closureDate',
+                'totalDays',
+                'rate',
+                'slab',
+                'prematureRate',
+                'reverseInterest',
+                'interestPaid',
+                'prematureInterest',
+                'cancellationCharge',
+                'interestLeftToPay',
+                'cancellationTotal'
+            )
+        );
     }
-
-    // ✅ Penal Charges (if foreclosed before lock-in)
-    $lockInMonths = $misaccount->fdScheme->lock_in_period ?? 0;
-    $completedMonths = $openDate->diffInMonths($closureDate);
-
-    $penalCharges = 0;
-    if ($completedMonths < $lockInMonths) {
-        $penalRate = $misaccount->fdScheme->penal_charge ?? 0;
-        $penalCharges = round(($misaccount->mis_amount * $penalRate) / 100, 2);
-    }
-
-    // ✅ Final Settlement
-    $totalSettlement =
-        $currentBalance
-        + $interestTillDate
-        - $tds
-        - $penalCharges;
-
-    return view(
-        'fd_mis_account.misaccount.account-details.foreclose',
-        compact(
-            'misaccount',
-            'currentBalance',
-            'interestTillDate',
-            'tds',
-            'penalCharges',
-            'totalSettlement',
-            'closureDate',
-            'totalDays',
-            'rate'
-        )
-    );
-}
     public function removeAccount($id)
     {
         $misaccount = Misaccount::findOrFail($id);
@@ -1223,23 +1341,23 @@ class MisaccountController extends Controller
         return view('fd_mis_account.misaccount.interest-tds.deduct_reverse_tds', compact('misaccount', 'balance'));
     }
 
-public function misBondPreview($id)
-{
-    $misaccount = Misaccount::with(['member','nominee','fdScheme.fdslabs'])
-        ->findOrFail($id);
+    public function misBondPreview($id)
+    {
+        $misaccount = Misaccount::with(['member', 'nominee', 'fdScheme.fdslabs'])
+            ->findOrFail($id);
 
-    $amountWords = $this->numToWords((int) round($misaccount->maturity_amount)) . ' Only';
+        $amountWords = $this->numToWords((int) round($misaccount->maturity_amount)) . ' Only';
 
-    return view('fd_mis_account.misaccount.print-documents.mis-bond-view', [
-        'misaccount'     => $misaccount,
-        'amount_words'   => $amountWords,
-        'date'           => now()->format('d-m-Y'),
-    ]);
-}
+        return view('fd_mis_account.misaccount.print-documents.mis-bond-view', [
+            'misaccount'     => $misaccount,
+            'amount_words'   => $amountWords,
+            'date'           => now()->format('d-m-Y'),
+        ]);
+    }
 
     public function misBondForm($id)
     {
-        $misaccount = Misaccount::with(['member','nominee' ,'fdScheme.fdslabs'])->findOrFail($id);
+        $misaccount = Misaccount::with(['member', 'nominee', 'fdScheme.fdslabs'])->findOrFail($id);
         // Calculate amount in words
         $amountWords = $this->numToWords((int) round($misaccount->maturity_amount)) . ' Only';
 
@@ -1261,34 +1379,34 @@ public function misBondPreview($id)
 
         // return $pdf->stream('mis-bond-' . $deposit->id . '.pdf');
     }
-   
-public function misBondPrint($id)
-{
-    $misaccount = Misaccount::with(['member','nominee','fdScheme.fdslabs'])->findOrFail($id);
 
-    $amountWords = $this->numToWords((int) round($misaccount->maturity_amount)) . ' Only';
+    public function misBondPrint($id)
+    {
+        $misaccount = Misaccount::with(['member', 'nominee', 'fdScheme.fdslabs'])->findOrFail($id);
 
-    $data = [
-        'misaccount' => $misaccount,
-        'amount_words' => $amountWords,
-        'company_address' => 'HEAD OFFICE',
-        'date' => now()->format('d-m-Y'),
-        'company_reg_no' => 'Reg. No. 969/03-04',
-    ];
+        $amountWords = $this->numToWords((int) round($misaccount->maturity_amount)) . ' Only';
 
-    $pdf = app('dompdf.wrapper')
-        ->loadView('fd_mis_account.misaccount.print-documents.misbond', $data)
-        ->setPaper('a4', 'portrait');
+        $data = [
+            'misaccount' => $misaccount,
+            'amount_words' => $amountWords,
+            'company_address' => 'HEAD OFFICE',
+            'date' => now()->format('d-m-Y'),
+            'company_reg_no' => 'Reg. No. 969/03-04',
+        ];
 
-    return $pdf->stream('mis-bond-'.$misaccount->id.'.pdf'); // OPEN in browser
-}
+        $pdf = app('dompdf.wrapper')
+            ->loadView('fd_mis_account.misaccount.print-documents.misbond', $data)
+            ->setPaper('a4', 'portrait');
 
-public function misBondPrintView($id)
-{
-    $pdfUrl = route('misBondPrint', $id);
+        return $pdf->stream('mis-bond-' . $misaccount->id . '.pdf'); // OPEN in browser
+    }
 
-    return view('fd_mis_account.misaccount.print-documents.mis-bond-print', compact('pdfUrl'));
-}
+    public function misBondPrintView($id)
+    {
+        $pdfUrl = route('misBondPrint', $id);
+
+        return view('fd_mis_account.misaccount.print-documents.mis-bond-print', compact('pdfUrl'));
+    }
     protected function numToWords($number)
     {
         $words = [
@@ -1356,27 +1474,27 @@ public function misBondPrintView($id)
     }
 
     public function misOpeningFormPreview($id)
-{
-    $account = Misaccount::with([
-        'member.kyc',
-        'member.address.state',
-        'member.branch',
-        'fdScheme.fdslabs'
-    ])->findOrFail($id);
+    {
+        $account = Misaccount::with([
+            'member.kyc',
+            'member.address.state',
+            'member.branch',
+            'fdScheme.fdslabs'
+        ])->findOrFail($id);
 
-    $slab = $account->fdscheme->fdslabs
-        ->where('from_month', '<=', $account->tenure)
-        ->where('to_month', '>=', $account->tenure)
-        ->first();
+        $slab = $account->fdscheme->fdslabs
+            ->where('from_month', '<=', $account->tenure)
+            ->where('to_month', '>=', $account->tenure)
+            ->first();
 
-    $interestRate = $slab->interest_rate ?? $account->rate_of_interest;
-    $member = $account->member;
+        $interestRate = $slab->interest_rate ?? $account->rate_of_interest;
+        $member = $account->member;
 
-    return view(
-        'fd_mis_account.misaccount.print-documents.accountopeningformview',
-        compact('account', 'member', 'interestRate')
-    );
-}
+        return view(
+            'fd_mis_account.misaccount.print-documents.accountopeningformview',
+            compact('account', 'member', 'interestRate')
+        );
+    }
 
     public function misOpeningForm($id)
     {
@@ -1399,7 +1517,7 @@ public function misBondPrintView($id)
         $member = $account->member;
 
 
-          $pdf = app('dompdf.wrapper')->loadView('fd_mis_account.misaccount.print-documents.accountopeningform', compact('account', 'member', 'interestRate'))
+        $pdf = app('dompdf.wrapper')->loadView('fd_mis_account.misaccount.print-documents.accountopeningform', compact('account', 'member', 'interestRate'))
             ->setPaper('a4', 'portrait');
 
         return $pdf->download('mis-oping-' . $id . '.pdf');
@@ -1408,31 +1526,31 @@ public function misBondPrintView($id)
         // return view('fd_mis_account.misaccount.print-documents.accountopeningform', compact('account', 'member', 'interestRate'));
     }
 
-public function misClosingFormPreview($id)
-{
-    $misaccount = Misaccount::with(['member.branch'])->findOrFail($id);
+    public function misClosingFormPreview($id)
+    {
+        $misaccount = Misaccount::with(['member.branch'])->findOrFail($id);
 
-    $data = [
-        'name'            => $misaccount->member->member_info_first_name . ' ' .
-                             $misaccount->member->member_info_last_name,
-        'date'            => now()->format('d-m-Y'),
-        'agreement_no'    => $misaccount->mis_no 
-                             ?? 'MIS' . str_pad($misaccount->id, 10, '0', STR_PAD_LEFT),
-        'holder_name'     => strtoupper(
-                                $misaccount->member->member_info_first_name . ' ' .
-                                $misaccount->member->member_info_last_name
-                             ),
-        'expiry_date'     => \Carbon\Carbon::parse($misaccount->maturity_date)->format('d-m-Y'),
-        'branch_name'     => $misaccount->member->branch->branch_name ?? ' ',
-        'branch_address'  => $misaccount->member->branch->branch_address ?? ' ',
-        'misaccount'      => $misaccount,
-    ];
+        $data = [
+            'name'            => $misaccount->member->member_info_first_name . ' ' .
+                $misaccount->member->member_info_last_name,
+            'date'            => now()->format('d-m-Y'),
+            'agreement_no'    => $misaccount->mis_no
+                ?? 'MIS' . str_pad($misaccount->id, 10, '0', STR_PAD_LEFT),
+            'holder_name'     => strtoupper(
+                $misaccount->member->member_info_first_name . ' ' .
+                    $misaccount->member->member_info_last_name
+            ),
+            'expiry_date'     => \Carbon\Carbon::parse($misaccount->maturity_date)->format('d-m-Y'),
+            'branch_name'     => $misaccount->member->branch->branch_name ?? ' ',
+            'branch_address'  => $misaccount->member->branch->branch_address ?? ' ',
+            'misaccount'      => $misaccount,
+        ];
 
-    return view(
-        'fd_mis_account.misaccount.print-documents.closingformview',
-        $data
-    );
-}
+        return view(
+            'fd_mis_account.misaccount.print-documents.closingformview',
+            $data
+        );
+    }
 
     public function misClosingForm($id)
     {
@@ -1554,6 +1672,4 @@ public function misClosingFormPreview($id)
 
         return back()->with('success', 'Document deleted successfully.');
     }
-
-    
 }
