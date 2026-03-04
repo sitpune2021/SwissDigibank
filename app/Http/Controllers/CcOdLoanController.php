@@ -280,6 +280,11 @@ class CcOdLoanController extends Controller
                 'processing_fee_total' => $request->processing_fee_total,
             ]);
 
+            $this->saveActivity(
+                'CC / OD Loan Application',
+                'Create',
+               'Created CC/OD Application ID: ' . $loanApplication->id
+            );
 
             Log::info('cc / od Loan Application created successfully', [
                 'loan_application_id' => $loanApplication->id,

@@ -55,31 +55,34 @@
 </style>
 
 @section('content')
+
 <div class="main-inner">
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
         <h3 class=" flex text-lg  uppercase font-semibold">
            USER ACTIVITY TRACKING
-
         </h3>
+    </div>
 
-    </div>
     @if(session('success'))
-    <div class="">
-        <div class="w-44 mb-5 flex justify-end">
-            <x-alert />
+        <div class="">
+            <div class="w-44 mb-5 flex justify-end">
+                <x-alert />
+            </div>
+            {{-- {{ session('success') }} --}}
         </div>
-        {{-- {{ session('success') }} --}}
-    </div>
     @endif
 
     <div class="col-span-12 box lg:col-span-12">
+        
         <div class="text-end">
             <a href="#" class="btn-error uppercase text-sm rounded-10 px-2">
                 Download xls
             </a>
         </div>
+
         <div class="pb-4 mt-4 overflow-x-auto lg:pb-6">
+
             <table class="w-full whitespace-nowrap select-all-table" id="">
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
@@ -113,29 +116,44 @@
                     </tr>
                 </thead>
 
-
                 <tbody>
-                    <tr class="border-b ">
-                        <td class="px-6 py-4">
-                           RM RM (static)
-                        </td>
-                        <td class="px-6 py-4">
-                            (static)
-                        </td>
-                         <td class="px-6 py-4">
-                         admin_settings_zro_balance   (static)
-                        </td>
-                        <td class="px-6 py-4"> 
-                             117.98.48.16   (static)
-                        </td>
-                         <td class="px-6 py-4"> 
-                         12-12-2025  (static)
-                        </td>
-                        
-                        
-                    </tr>
-                </tbody>
+                    @forelse($activities as $activity)
+                    <tr class="border-b">
 
+                        <!-- USER NAME -->
+                        <td class="px-6 py-4">
+                            {{ $activity->user->name ?? 'N/A' }}
+                        </td>
+
+                        <!-- ACTIVITY NAME -->
+                        <td class="px-6 py-4">
+                            {{ $activity->activity_name }}
+                        </td>
+
+                        <!-- ACTIVITY ACTION -->
+                        <td class="px-6 py-4">
+                            {{ $activity->activity_action }}
+                        </td>
+
+                        <!-- IP ADDRESS -->
+                        <td class="px-6 py-4">
+                            {{ $activity->ip_address }}
+                        </td>
+
+                        <!-- CREATED AT -->
+                        <td class="px-6 py-4">
+                            {{ $activity->created_at->format('d-m-Y H:i') }}
+                        </td>
+
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-gray-500">
+                            No activity found
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
 
             </table>
 

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use App\Models\LoginLog;
 
 class AuthenticationController extends Controller
 {
@@ -93,6 +94,13 @@ class AuthenticationController extends Controller
 
             Auth::login($user);
             $request->session()->regenerate();
+            // Save login log
+            LoginLog::create([
+                'user_id' => $user->id,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'login_at' => now(),
+            ]);
 
             return redirect()->intended('dashboard')->with('success', 'Login successful');
         } catch (\Illuminate\Validation\ValidationException $e) {
