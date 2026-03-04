@@ -627,11 +627,20 @@ class GoldLoanAccountController extends Controller
         ];
 
         // 🔥 Check if any EMI is due
+      
+        $today = Carbon::today();
+
+        $hasOverdueEmi = DB::table('gold_loan_emi_status')
+            ->where('loan_id', $id)
+            ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
+            ->whereDate('emi_due_date', '<', $today)
+            ->exists();
+
         $hasDueEmi = DB::table('gold_loan_emi_status')
             ->where('loan_id', $id)
             ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
             ->exists();
-
+            
         // 🔥 Total Remaining EMI Amount
         $totalRemainingEmiAmount = DB::table('gold_loan_emi_status')
             ->where('loan_id', $id)
@@ -647,9 +656,13 @@ class GoldLoanAccountController extends Controller
             $payButtonText = 'Pay';
         }
 
-
-
-        $payButtonText = $hasDueEmi ? 'Pay Emi' : 'Pay';
+        if ($hasOverdueEmi) {
+            $payButtonText = 'Pay Overdue EMI';
+        } elseif ($hasDueEmi) {
+            $payButtonText = 'Pay EMI';
+        } else {
+            $payButtonText = 'Pay';
+        }
 
         $emiSchedule = collect($emiSchedule)
             ->sortBy('emi_no')
@@ -693,29 +706,47 @@ class GoldLoanAccountController extends Controller
 
         ));
     }
-
     public function saveEmiStatus(Request $request)
     {
+        Log::info('EMI STATUS SAVE REQUEST', $request->all());
+
         $request->validate([
-            'loan_id'          => 'required|integer',
-            'emi_no'           => 'required|integer',
-            'status'           => 'required|string',
+            'loan_id' => 'required|integer',
+            'emi_no' => 'required|integer',
             'remaining_amount' => 'required|numeric'
         ]);
+
+        // EMI due date calculate automatically
+        $loan = LoanApplication::findOrFail($request->loan_id);
+
+        $applicationDate = Carbon::parse($loan->application_date);
+
+        $emiNo = (int) $request->emi_no;
+
+        $emiDueDate = $applicationDate
+            ->copy()
+            ->addMonthsNoOverflow($emiNo)
+            ->addDay()
+            ->format('Y-m-d');
 
         DB::table('gold_loan_emi_status')->updateOrInsert(
             [
                 'loan_id' => $request->loan_id,
-                'emi_no'  => $request->emi_no
+                'emi_no'  => $emiNo
             ],
             [
-                'status'           => $request->status,
+                'status' => $request->status ?? 'DUE',
                 'remaining_amount' => $request->remaining_amount,
-                'paid_date'        => now()->format('d-m-Y')
+                'emi_due_date' => $emiDueDate,
+                'created_at' => now(),
+                'updated_at' => now()
             ]
         );
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'message' => 'EMI marked as DUE'
+        ]);
     }
 
     public function goldLoanTransaction(Request $request, $id)
