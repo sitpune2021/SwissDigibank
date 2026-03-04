@@ -13,14 +13,8 @@ use Illuminate\Validation\Rule;
 
 class DepositController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index() {}
+    
 
-    /**
-     * Saving Account Deposit - create function
-     */
     public function create($encodedId)
     {
         try {
@@ -34,10 +28,6 @@ class DepositController extends Controller
             abort(404);
         }
     }
-
-    /**
-     * Saving Account Deposit - store function
-     */
 
     public function store(Request $request, $encodedId)
     {
@@ -141,35 +131,4 @@ class DepositController extends Controller
     }
 
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

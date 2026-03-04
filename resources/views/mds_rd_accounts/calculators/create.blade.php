@@ -291,7 +291,7 @@
                                 }
                             });
 
-                            // 🔥 IMPORTANT: Amount field hamesha editable rahega
+                            // 🔥 IMPORTANT: Amount field editable
                             els.amount.removeAttribute('readonly');
                             els.amount.disabled = false;
                         }
@@ -332,7 +332,7 @@
                                             //document.querySelector('#lock_in_period').textContent = s.lock_in_period;
                                             document.querySelector('#anuual_interest_rate').textContent = s.anuual_interest_rate + ' %';
                                             document.querySelector('#interest_compounding_interval').textContent = s.interest_compounding_interval;
-                                            //  YAHAN PE ADD KARNA HAI
+                                            
                                             if (s.rd_dd_frequency) {
                                                 const freq = s.rd_dd_frequency.trim().toUpperCase();
                                                 const freqDropdown = document.querySelector('#frequency');
@@ -390,10 +390,10 @@
                                             //  Input fields auto-fill
                                             els.interestRate.value = s.anuual_interest_rate || '';
 
-                                            // Dropdown me value set karte waqt case mismatch avoid karo
+                                            // In Dropdown value when set that time mismatch avoid
                                             els.compInterval.value = (s.interest_compounding_interval || 'MONTHLY').trim().toUpperCase();
                                             // -------- FIX: auto-enable inputs when scheme is selected --------
-                                            // Scheme select hua → manual mode OFF
+                                            // Scheme select → manual mode OFF
                                             els.manualCheckbox.checked = false;
                                             setFieldsReadonly(false);
 
