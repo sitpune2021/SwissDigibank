@@ -443,6 +443,11 @@ class CcOdLoanController extends Controller
 
             $updated = $application->update($inputData);
 
+            $this->saveActivity(
+                'CC / OD Loan Application',
+                'Update',
+               'Created CC/OD Application ID: ' . $application->id
+            );
 
             if (!$updated) {
                 Log::error('Loan Application update failed', [
