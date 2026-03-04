@@ -12,6 +12,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Services\LedgerService;
+use Illuminate\Support\Facades\Storage;
+
 
 class LedgergroupController extends Controller
 {
@@ -1343,37 +1345,57 @@ class LedgergroupController extends Controller
     public function dayBook(Request $request)
     {
         $date      = $request->date ?? now()->format('Y-m-d');
-        $branchId  = $request->branch_id; // 🔥 NEW
+        $branchId  = $request->branch_id;
+
+        /*
+            |--------------------------------------------------------------------------
+            | LOGO HANDLING (NO MODEL REQUIRED)
+            |--------------------------------------------------------------------------
+        */
+
+        // Default logo (public folder)
+        $logoUrl = asset('assets/images/SBC_Logo.png');
+
+        // If custom logo exists in storage/app/public/logo.png
+        $customLogoPath = 'logo.png'; // change if different filename
+
+        if (Storage::disk('public')->exists($customLogoPath)) {
+            $logoUrl = Storage::url($customLogoPath);
+        }
 
         $ledgers = Ledger::where('show_in_day', 1)->get();
 
         $openingData = [];
         $closingData = [];
         $dayTxnData  = [];
+        $dayBookData = []; 
 
         foreach ($ledgers as $ledger) {
 
             $opening = 0;
             $closing = 0;
             $dayTxn  = 0;
+            $debit   = 0;
+            $credit  = 0;
 
             // CASH BOOK
             if ($ledger->code === 'CASH_BOOK') {
 
                 $rows = $this->ledgerService->buildCashLedger($branchId);
 
-                $previousRows = collect($rows)
-                    ->where('date', '<', $date);
+                $previousRows = collect($rows)->where('date', '<', $date);
 
-                $todayRows = collect($rows)
-                    ->whereBetween('date', [
-                        $date.' 00:00:00',
-                        $date.' 23:59:59'
-                    ]);
+                $todayRows = collect($rows)->whereBetween('date', [
+                    $date.' 00:00:00',
+                    $date.' 23:59:59'
+                ]);
 
                 $opening = $previousRows->last()['closing'] ?? 0;
                 $closing = collect($rows)->last()['closing'] ?? 0;
-                $dayTxn  = $todayRows->sum('debit') - $todayRows->sum('credit');
+
+                $debit  = $todayRows->sum('debit');
+                $credit = $todayRows->sum('credit');
+                $dayTxn = $debit - $credit;
             }
 
             // BANK BOOK
@@ -1381,20 +1403,22 @@ class LedgergroupController extends Controller
 
                 $rows = $this->ledgerService->buildOnlineLedger($branchId);
 
-                $previousRows = collect($rows)
-                    ->where('date', '<', $date);
+                $previousRows = collect($rows)->where('date', '<', $date);
 
-                $todayRows = collect($rows)
-                    ->whereBetween('date', [
-                        $date.' 00:00:00',
-                        $date.' 23:59:59'
-                    ]);
+                $todayRows = collect($rows)->whereBetween('date', [
+                    $date.' 00:00:00',
+                    $date.' 23:59:59'
+                ]);
 
                 $opening = $previousRows->last()['closing'] ?? 0;
                 $closing = collect($rows)->last()['closing'] ?? 0;
-                $dayTxn  = $todayRows->sum('debit') - $todayRows->sum('credit');
+
+                $debit  = $todayRows->sum('debit');
+                $credit = $todayRows->sum('credit');
+                $dayTxn = $debit - $credit;
             }
 
+            // UI Cards
             $openingData[] = [
                 'name'   => $ledger->display_name,
                 'amount' => $opening
@@ -1409,9 +1433,19 @@ class LedgergroupController extends Controller
                 'name'   => $ledger->display_name,
                 'amount' => $dayTxn
             ];
+
+            // TABLE DATA FOR PRINT
+            $dayBookData[] = [
+                'name'    => $ledger->display_name,
+                'type' => $ledger->group->type ?? $ledger->type ?? 'Ledger',
+                'opening' => $opening,
+                'debit'   => $debit,
+                'credit'  => $credit,
+                'closing' => $closing,
+            ];
         }
 
-        $branches = \App\Models\Branch::all(); // 🔥 dropdown ke liye
+        $branches = Branch::all();
 
         return view('menu-accounts.day-book.index', compact(
             'date',
@@ -1419,7 +1453,9 @@ class LedgergroupController extends Controller
             'branches',
             'openingData',
             'closingData',
-            'dayTxnData'
+            'dayTxnData',
+            'dayBookData',
+            'logoUrl' 
         ));
     }
 
