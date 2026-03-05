@@ -2538,7 +2538,11 @@ Route::post('/loan/save-comment', [PaymentsToCollectController::class, 'saveComm
 
 Route::get('/loan/comments/{type}/{loan_id}', [PaymentsToCollectController::class, 'getComments'])
     ->name('loan.get.comments');
+Route::get('/payments-to-collect/print', [PaymentsToCollectController::class, 'print'])->name('payments.collect.print');
 
+Route::get('/payments-to-collect/export-csv', [PaymentsToCollectController::class, 'exportCsv'])->name('payments.collect.csv');
+
+Route::get('/payments-to-collect/export-dat', [PaymentsToCollectController::class, 'exportDat'])->name('payments.collect.dat');
 
 
 ////////////////////////////////////    END payment to collect     /////////////////////////////////////////////
