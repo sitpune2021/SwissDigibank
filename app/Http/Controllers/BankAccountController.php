@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 class BankAccountController extends Controller
 {
 
+
     public function index()
     {
         $bankAcc = BankAccount::with('bank')->paginate(25);

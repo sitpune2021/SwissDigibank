@@ -8,6 +8,8 @@ use App\Models\Rdscheme;
 
 class RDCalculatorController extends Controller
 {
+
+
     public function index()
     {
         // return view('rd_account.calculator.index');
@@ -29,18 +31,19 @@ class RDCalculatorController extends Controller
                 'data'   => [
                     'scheme_code'                => $scheme->scheme_code,
                     'scheme_name'                => $scheme->scheme_name,
-                    'deposit_frequency'          => $scheme->deposit_frequency,
+                    //'deposit_frequency'          => $scheme->deposit_frequency,
                     'min_rd_dd_amount'           => $scheme->min_rd_dd_amount,
-                    'lock_in_period'             => $scheme->lock_in_period,
+                   // 'lock_in_period'             => $scheme->lock_in_period,
                     'anuual_interest_rate'       => $scheme->anuual_interest_rate,
                     'interest_compounding_interval' => $scheme->interest_compounding_interval,
                     'rd_dd_frequency'            => $scheme->rd_dd_frequency,
-                    'tenure_of_rd'            => $scheme->tenure_of_rd,
+                    'tenure_of_rd_dd_type'  => $scheme->tenure_of_rd_dd_type,
+                    'tenure_of_rd_dd_value' => $scheme->tenure_of_rd_dd_value,
                     'cancellation_charges_value' => $scheme->cancellation_charges_value,
                     'penal_charges'              => $scheme->penal_charges,
                     'bonus_rate'                 => $scheme->bonus_rate,
                     'penalty_charges_value'      => $scheme->penalty_charges_value,
-                    'is_active'                  => $scheme->is_active,
+                   // 'is_active'                  => $scheme->is_active,
                 ]
             ]);
         }
@@ -50,7 +53,6 @@ class RDCalculatorController extends Controller
             'message' => 'Scheme not found'
         ]);
     }
-
 
     public function store(Request $request)
     {
@@ -154,4 +156,6 @@ class RDCalculatorController extends Controller
             'maturityDate'   => $maturityDate,
         ]);
     }
+
+
 }

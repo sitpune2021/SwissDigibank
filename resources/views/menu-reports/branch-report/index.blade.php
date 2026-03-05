@@ -125,7 +125,7 @@
 
             <input type="date" name="to_date" value="{{ request('to_date') }}" class="border px-3 py-2 rounded">
 
-            <button class="bg-orange-500 text-white px-4 py-2 rounded">
+            <button class="px-4 py-2 rounded text-primary">
                 SEARCH
             </button>
         </form>

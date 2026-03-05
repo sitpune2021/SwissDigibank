@@ -13,6 +13,8 @@ use Carbon\Carbon;
 
 class ReportController extends Controller
 {
+
+
     public function assoc_index()
     {
         return view("associate-report.index");
@@ -31,6 +33,7 @@ class ReportController extends Controller
 
         return view("menu-reports.branch-report.index", compact('branches', 'from', 'to', 'mode'));
     }
+
     public function maturity_index(Request $request)
     {
         $from = $request->from_date ?? '2000-01-01';
@@ -209,4 +212,6 @@ class ReportController extends Controller
 
         return view('menu-reports.loan-report.index', compact('loans'));
     }
+
+    
 }

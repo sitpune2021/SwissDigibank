@@ -131,7 +131,7 @@
                             <option value="CUMULATIVE_HALF_YEARLY">Cumulative Half Yearly</option>
                             <option value="CUMULATIVE_QUARTERLY">Cumulative Quarterly</option>
                             <option value="CUMULATIVE_MONTHLY">Cumulative Monthly</option>
-                            <option value="Monthly">Monthly</option>
+                            <option value="MONTHLY">Monthly</option>
                             <option value="QUARTERLY">Quarterly</option>
                             <option value="HALF_YEARLY">Half Yearly</option>
                             <option value="YEARLY">Yearly</option>
