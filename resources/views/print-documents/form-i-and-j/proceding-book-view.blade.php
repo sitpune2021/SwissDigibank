@@ -86,7 +86,8 @@
   
 
     <div class="title" style="font-size:24px;  ">
-       {{ $company->company_name }}  &nbsp; र. नं.  {{ $company->cin_no }}
+       {{ $company->company_name }}  &nbsp; <!--र. नं.  {{ $company->cin_no }}-->
+       र. नं. १५३
     </div>
     <div class="subtitle" style="font-size:18px; font-weight: bold; ">मासिक / वार्षिक प्रोसिडींग बुक</div>
 

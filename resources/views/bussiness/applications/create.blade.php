@@ -875,7 +875,6 @@
                 </div>
 
 
-
                 <!-- Calculation Result Box -->
                 <!-- Hidden fields for backend -->
                 <input type="hidden" id="inputNetLoan" name="max_loan_amount">
@@ -901,8 +900,6 @@
                         </tbody>
                     </table>
                 </div>
-
-
 
                 <!-- Buttons -->
                 <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
@@ -931,6 +928,7 @@
             document.getElementById('memberBox').classList.remove('hidden');
         });
     </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
@@ -1220,6 +1218,7 @@
             });
         });
     </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
@@ -1353,8 +1352,95 @@
         });
     </script>
 
-
+    <!-- Recalculation logic with submit form -->
     <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        let isCalculated = false;
+        const calcBtn = document.getElementById("calculateBtn");
+        const form = calcBtn.closest("form");
+
+        // AUTO UPDATE NET LOAN
+        function updateNetLoanAmount() {
+            const loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
+            const insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
+            const netLoan = loanAmount + insurance;
+
+            document.getElementById("netLoanAmount").value = netLoan.toFixed(2);
+        }
+
+        document.getElementById("loanAmount").addEventListener("input", updateNetLoanAmount);
+        document.getElementById("insuranceAmount").addEventListener("input", updateNetLoanAmount);
+
+        // RESET CALCULATION IF USER CHANGES VALUES
+        document.addEventListener("input", function (e) {
+
+            if (
+                e.target.id === "loanAmount" ||
+                e.target.id === "insuranceAmount" ||
+                e.target.id === "scheme_id"
+            ) {
+
+                isCalculated = false;
+
+                calcBtn.textContent = "Calculate";
+
+                document.getElementById("calculationBox").classList.add("hidden");
+            }
+
+        });
+
+        // CALCULATE BUTTON CLICK
+        calcBtn.addEventListener("click", function (e) {
+
+            e.preventDefault();
+
+            // If already calculated → SUBMIT
+            if (isCalculated) {
+                form.submit();
+                return;
+            }
+
+            const loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
+            const insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
+            const netLoan = loanAmount + insurance;
+
+            const scheme = document.getElementById("scheme_id");
+            const selected = scheme.options[scheme.selectedIndex];
+            const maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
+
+            // Validation
+            if (netLoan > maxLoan) {
+                alert("Net Loan Amount (" + netLoan + ") cannot exceed Max Loan Amount (" + maxLoan + ")");
+                return;
+            }
+
+            const approvable = Math.min(netLoan, maxLoan);
+
+            // DISPLAY RESULTS
+            document.getElementById("resNetLoan").textContent = netLoan.toFixed(2);
+            document.getElementById("resMaxLoan").textContent = maxLoan.toFixed(2);
+            document.getElementById("resApprovable").textContent = approvable.toFixed(2);
+
+            // HIDDEN INPUTS
+            document.getElementById("inputNetLoan").value = netLoan.toFixed(2);
+            document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
+            document.getElementById("inputApprovable").value = approvable.toFixed(2);
+
+            document.getElementById("calculationBox").classList.remove("hidden");
+
+            // CHANGE BUTTON
+            calcBtn.textContent = "Submit Application";
+
+            isCalculated = true;
+
+        });
+
+    });
+    </script>
+
+    <!-- old submit script -->
+    <!-- <script>
         let isCalculated = false;
 
         // Auto update Net Loan when user types
@@ -1407,8 +1493,7 @@
                 isCalculated = true;
             }
         });
-    </script>
-
+    </script> -->
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

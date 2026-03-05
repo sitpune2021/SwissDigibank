@@ -1084,7 +1084,7 @@
         </div>
     </div>
 
-    <!-- calculation submit buttons -->
+    <!-- Re-Calculate calculation submit buttons -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
@@ -1189,8 +1189,6 @@
         });
     </script>
 
-
-
     <script>
         //No Duplicate Customer In Droupown
         document.addEventListener("DOMContentLoaded", function() {
@@ -1249,6 +1247,7 @@
 
         });
     </script>
+
     <!-- for check box while in edit mode  Ratio button -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -1263,6 +1262,7 @@
 
         });
     </script>
+
     <!-- checkbox show when scheme select  Ratio button-->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -1427,6 +1427,7 @@
             });
         });
     </script>
+
     {{-- ratio button --}}
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -1470,7 +1471,6 @@
 
         });
     </script>
-
 
     <!-- Calculation & Submit Button  -->
     <!-- <script>
@@ -1667,7 +1667,7 @@
     <!-- Final wight Ornaments calculation -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            //  Step 1: Form को पहले select करो (form id = loanForm)
+            //  Step 1: (form id = loanForm)
             const form = document.getElementById("loanForm");
 
             //  Step 2: Calculate button click listener
@@ -1702,13 +1702,13 @@
                     totalSecurity += totalValue;
                 });
 
-                // Loan amount aur insurance ke input se values lo
+                // Loan amount aur insurance value
                 let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
                 let insurance = parseFloat(document.getElementById("insuranceAmount")?.value) || 0;
                 let netLoan = loanAmount + insurance;
                 document.getElementById("netLoanAmount").value = netLoan;
 
-                // Scheme ka data
+                // Scheme data
                 let scheme = document.getElementById("scheme_id");
                 let selected = scheme.options[scheme.selectedIndex];
                 let maxLoan = selected.getAttribute("data-max") || "0"; //  CHANGED from "-" to "0"
@@ -1725,28 +1725,13 @@
                 document.getElementById("resApprovable").textContent = approvable.toFixed(2);
                 //document.getElementById("resApproved").textContent = approvable.toFixed(2);
 
-                //  Step 3: Hidden inputs me assign karo
+                //  Step 3: Hidden inputs 
                 document.getElementById("security_value").value = totalSecurity.toFixed(2);
                 document.getElementById("max_loan_amount").value = maxLoan;
                 document.getElementById("max_loan_limit").value = limit;
                 document.getElementById("maximum_approvable_amount").value = approvable.toFixed(2);
-                //document.getElementById("approved_loan_amount").value = approvable.toFixed(2);
-                // Ornament value must cover Net Loan
-                // if (totalSecurity < netLoan) {
-                //     alert("Total Ornament Security Value must be greater than or equal to Net Loan Amount!");
-
-                //     isValidOrnament = false;
-
-                //     // Submit Button disable + back to Calculate
-                //     const btn = document.getElementById("calculateBtn");
-                //     btn.type = "button";
-                //     btn.textContent = "Re-Calculate";
-                //     btn.disabled = false;
-
-                //     return;
-                // }
-
-                // Agar yahan pohonch gaye means no error
+                
+                
                 isValidOrnament = true;
 
                 // Change button back to Submit if now valid

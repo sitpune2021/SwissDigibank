@@ -547,8 +547,11 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
         ->name('misaccount.update-branch');
 
     Route::get('/misaccount/foreclose/{id}', [MisaccountController::class, 'foreclose'])->name('misaccount.foreclose');
+    Route::post('/misaccount/{id}/foreclose', [MisaccountController::class, 'raiseForecloseRequest'])->name('misaccount.raiseForecloseRequest');
+    
     Route::get('/misaccount/{id}/remove-account', [MisaccountController::class, 'removeAccount'])->name('misaccount.removeAccount');
-
+    Route::delete('/mis_account/{id}', [MisaccountController::class, 'confirmRemoveAccount'])
+    ->name('misaccount.delete');
     Route::get('/misaccount/make-lien/{id}', [MisaccountController::class, 'makeLien'])->name('misaccount.makelien');
 
     Route::get('/misaccount/credit-debit-interest/{id}', [MisaccountController::class, 'creditDebitInterest'])->name('misaccount.creditDebitInterest');
@@ -2530,7 +2533,16 @@ Route::get(
     'loan/mark-done/{type}/{loan_id}/{emi_no}/{amount}',
     [PaymentsToCollectController::class, 'markDone']
 )->name('loan.mark.done');
+Route::post('/loan/save-comment', [PaymentsToCollectController::class, 'saveComment'])
+    ->name('loan.save.comment');
 
+Route::get('/loan/comments/{type}/{loan_id}', [PaymentsToCollectController::class, 'getComments'])
+    ->name('loan.get.comments');
+Route::get('/payments-to-collect/print', [PaymentsToCollectController::class, 'print'])->name('payments.collect.print');
+
+Route::get('/payments-to-collect/export-csv', [PaymentsToCollectController::class, 'exportCsv'])->name('payments.collect.csv');
+
+Route::get('/payments-to-collect/export-dat', [PaymentsToCollectController::class, 'exportDat'])->name('payments.collect.dat');
 
 
 ////////////////////////////////////    END payment to collect     /////////////////////////////////////////////
@@ -2817,6 +2829,9 @@ Route::group(['prefix' => 'profit-loss'], function () {
 Route::get('/balance-sheet', [LedgergroupController::class, 'balance_sheet'])
     ->name('balance.sheet');
 
+Route::get('/balance-sheet/print', [LedgergroupController::class, 'printBalanceSheet'])
+->name('balance.sheet.print');
+
 Route::get(
     '/trial-balance',
     [LedgergroupController::class, 'trial_balance']
@@ -2830,6 +2845,12 @@ Route::get('/accounting-tree', [LedgergroupController::class, 'accountingTree'])
 
 Route::get('/income-statement', [LedgergroupController::class, 'incomeStatement'])
     ->name('income.statement');
+
+Route::get('/income-statement/print', [LedgergroupController::class, 'printIncomeStatement'])
+    ->name('income.statement.print');
+
+Route::get('/income-statement/export', [LedgergroupController::class, 'exportIncomeStatement'])
+    ->name('income.statement.export');
 
 
 ////////////////////////////////////    Account Section tab End     /////////////////////////////////////////////
@@ -3265,6 +3286,8 @@ Route::get('software-settings/software-service-agreement', [SoftwareSettingsCont
 
 ///////////////////// Download REPORTs ///////////////////////////
 Route::get('loan-report/index', [ReportController::class, 'loan_report_index'])->name('loan-report.index');
+Route::get('/loan-report/print', [ReportController::class,'loan_report_print'])
+->name('loan.report.print');
 Route::get('maturity-indext/index', [ReportController::class, 'maturity_index'])->name('loan-report.maturity_index');
 Route::get('/reports/branch-report', [ReportController::class, 'branch_index'])->name('reports.branch');
 

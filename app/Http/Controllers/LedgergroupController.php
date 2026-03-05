@@ -1306,6 +1306,88 @@ class LedgergroupController extends Controller
         ));
     }
 
+    public function printBalanceSheet(Request $request)
+    {
+        $today = Carbon::today();
+        $branchId = $request->branch_id;
+
+        $ledgers = Ledger::with('group')->get();
+
+        $assets = [];
+        $liabilities = [];
+        $equities = [];
+
+        $totalAssets = 0;
+        $totalLiabilities = 0;
+        $totalEquity = 0;
+
+        
+        // Default logo (public folder)
+        $logoUrl = asset('assets/images/SBC_Logo.png');
+
+        // If custom logo exists in storage/app/public/logo.png
+        $customLogoPath = 'logo.png'; // change if different filename
+
+        if (Storage::disk('public')->exists($customLogoPath)) {
+            $logoUrl = Storage::url($customLogoPath);
+        }
+
+        foreach ($ledgers as $ledger) {
+
+            [$acc, $balance] =
+            $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId);
+
+            $balance = $balance ?: 0;
+
+            if ($ledger->type == 'Asset') {
+
+                $assets[] = [
+                    'name' => $ledger->display_name,
+                    'amount' => $balance
+                ];
+
+                $totalAssets += $balance;
+            }
+
+            if ($ledger->type == 'Liability') {
+
+                $liabilities[] = [
+                    'name' => $ledger->display_name,
+                    'amount' => $balance
+                ];
+
+                $totalLiabilities += $balance;
+            }
+
+            if ($ledger->type == 'Equity') {
+
+                $equities[] = [
+                    'name' => $ledger->display_name,
+                    'amount' => $balance
+                ];
+
+                $totalEquity += $balance;
+            }
+        }
+
+        [$profitAcc, $netProfit] =
+        $this->ledgerService->calculateNetProfit($branchId);
+
+        $totalEquity += $netProfit;
+
+        return view('menu-accounts.balance-sheet.print', compact(
+            'assets',
+            'liabilities',
+            'equities',
+            'totalAssets',
+            'totalLiabilities',
+            'totalEquity',
+            'netProfit',
+            'today',
+            'logoUrl'
+        ));
+    }
+
     public function trial_balance(Request $request)
     {
         $from = $request->from ?? now()->startOfMonth();
@@ -1557,6 +1639,109 @@ class LedgergroupController extends Controller
             'branchId'
         ));
     }
+
+    public function printIncomeStatement(Request $request)
+    {
+        $branchId = $request->branch_id;
+
+        $ledgers = Ledger::all();
+
+        $revenues = [];
+        $expenses = [];
+
+        $totalRevenue = 0;
+        $totalExpense = 0;
+
+        // Default logo (public folder)
+        $logoUrl = asset('assets/images/SBC_Logo.png');
+
+        // If custom logo exists in storage/app/public/logo.png
+        $customLogoPath = 'logo.png'; // change if different filename
+
+        if (Storage::disk('public')->exists($customLogoPath)) {
+            $logoUrl = Storage::url($customLogoPath);
+        }
+
+        foreach ($ledgers as $ledger) {
+
+            [$acc, $balance] = $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId);
+
+            $balance = $balance ?: 0;
+
+            if (strtoupper($ledger->type) === 'REVENUE') {
+
+                $revenues[] = [
+                    'name'   => $ledger->display_name,
+                    'amount' => $balance
+                ];
+
+                $totalRevenue += $balance;
+            }
+
+            if (strtoupper($ledger->type) === 'EXPENSE') {
+
+                $expenses[] = [
+                    'name'   => $ledger->display_name,
+                    'amount' => $balance
+                ];
+
+                $totalExpense += $balance;
+            }
+        }
+
+        $netProfit = $totalRevenue - $totalExpense;
+
+        return view('menu-accounts.income-statement.print', compact(
+            'revenues',
+            'expenses',
+            'totalRevenue',
+            'totalExpense',
+            'netProfit',
+            'logoUrl'
+        ));
+    }
+
+    public function exportIncomeStatement(Request $request)
+    {
+        $branchId = $request->branch_id;
+
+        $ledgers = Ledger::all();
+
+        $fileName = "income_statement.csv";
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+        ];
+
+        $callback = function () use ($ledgers, $branchId) {
+
+            $file = fopen('php://output', 'w');
+
+            fputcsv($file, ['TYPE', 'NAME', 'AMOUNT']);
+
+            foreach ($ledgers as $ledger) {
+
+                [$acc, $balance] = app(LedgerService::class)
+                    ->calculateLedgerBalance($ledger->code, $branchId);
+
+                $balance = $balance ?: 0;
+
+                if (in_array(strtoupper($ledger->type), ['REVENUE','EXPENSE'])) {
+
+                    fputcsv($file, [
+                        $ledger->type,
+                        $ledger->display_name,
+                        $balance
+                    ]);
+                }
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }   
 
 
 }
