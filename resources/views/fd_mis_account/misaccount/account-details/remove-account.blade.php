@@ -17,12 +17,12 @@
     <div class="box dark:bg-bg3 shadow-md rounded-xl p-6 border border-gray-200 dark:border-gray-700">
         <!-- Title -->
         <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
-            Remove FD and it's details and transactions.
+            Remove MIS and it's details and transactions.
         </h2>
 
         <!-- Content -->
         <ul class="list-disc pl-6 text-sm leading-relaxed text-gray-700 dark:text-gray-300 space-y-2">
-            <li>Remove FD and all its transactions.</li>
+            <li>Remove MIS and all its transactions.</li>
             <li>Remove transactions from accounting module.</li>
             <li>Remove all the tracking if any.</li>
             <li>Sequence numbers will get unused in future.</li>
@@ -32,12 +32,21 @@
 
         <!-- Buttons -->
         <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
-            <button class="btn-error uppercase justify-center" type="submit" name="save_scheme">
-                REMOVE ACCOUNT
-            </button>
+            <form action="{{ route('misaccount.delete', $misaccount->id) }}" method="POST"
+                onsubmit="return confirm('Are you sure you want to remove this account? This action cannot be undone.')">
+
+                @csrf
+                @method('DELETE')
+
+                <button type="submit"
+                    class="btn-error uppercase px-6 py-2 rounded text-white bg-red-600 hover:bg-red-700">
+                    REMOVE ACCOUNT
+                </button>
+
+            </form>
 
             <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="#"> BACK</a>
+                <a href="{{ route('misaccount.show', $misaccount->id) }}"> BACK</a>
             </button>
         </div>
     </div>

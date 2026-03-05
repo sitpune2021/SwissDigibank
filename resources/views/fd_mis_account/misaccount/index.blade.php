@@ -127,8 +127,11 @@
                                 Approved
                             </span>
                             @elseif ($mis->status == 2)
-                            <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-error text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                            <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-error text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
                                 Rejected
+                            </span>@elseif ($mis->status == 3)
+                            <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-error text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                Foreclosed
                             </span>
                             @endif
                         </td>
