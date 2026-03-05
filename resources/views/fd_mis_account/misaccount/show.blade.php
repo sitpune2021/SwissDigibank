@@ -341,7 +341,7 @@
 
               <tr class="border-b">
                 <td class="font-semibold uppercase px-4 py-2">Address</td>
-                <td class="px-4 py-2">{{ $misaccount->member_address ?? 'N/A' }}</td>
+                <td class="px-4 py-2">{{ $misaccount->member->full_address ?? 'N/A' }}</td>
               </tr>
 
             </tbody>
@@ -746,7 +746,7 @@
         </form>
 
         <div class=" px-6 flex py-4 flex-row items-center gap-6">
-          <p class="w-full text-lg uppercase font-semibold">Current Chart</p>
+          <p class="w-full  uppercase font-semibold">Current Chart</p>
           <a href="#" class="text-primary w-full">MISVVPAT</a>
         </div>
 
