@@ -144,37 +144,46 @@
                     <table class="w-full">
                         <tr class="border-b py-2">
                             <td class="py-2 uppercase font-semibold">Member No :</td>
-                            <td><a href="" class="text-primary"> DEMO-03307 - SANGEETHA KM SANGEETHA</a></td>
-                        </tr>
-                        <tr class="border-b ">
-                            <td class="py-2 uppercase font-semibold">Account Type :</td>
-                            <td>DD</td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="py-2 uppercase font-semibold">Account No : </td>
                             <td>
                                 <a href="" class="text-primary">
-                                    DDA01304
+                                    <span id="modalMember"></span>
                                 </a>
                             </td>
                         </tr>
+
                         <tr class="border-b">
-                            <td class="py-2 uppercase font-semibold">Inst Due :</td>
-                            <td>220</td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="py-2 uppercase font-semibold">Due Date : </td>
-                            <td>21-12-2024</td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="py-2 uppercase font-semibold">Saving Bal :</td>
-                            <td></td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="py-2 uppercase font-semibold">Amt to Collect :</td>
-                            <td>220,000.00</td>
+                            <td class="py-2 uppercase font-semibold">Account Type :</td>
+                            <td><span id="modalLoanType"></span></td>
                         </tr>
 
+                        <tr class="border-b">
+                            <td class="py-2 uppercase font-semibold">Account No :</td>
+                            <td>
+                                <a href="" class="text-primary">
+                                    <span id="modalLoanId"></span>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr class="border-b">
+                            <td class="py-2 uppercase font-semibold">Inst Due :</td>
+                            <td><span id="modalInstDue"></span></td>
+                        </tr>
+
+                        <tr class="border-b">
+                            <td class="py-2 uppercase font-semibold">Due Date :</td>
+                            <td><span id="modalDueDate"></span></td>
+                        </tr>
+
+                        <tr class="border-b">
+                            <td class="py-2 uppercase font-semibold">Saving Bal :</td>
+                            <td>-</td>
+                        </tr>
+
+                        <tr class="border-b">
+                            <td class="py-2 uppercase font-semibold">Amt to Collect :</td>
+                            <td><span id="modalAmount"></span></td>
+                        </tr>
                     </table>
                     <div class="text-center uppercase mt-6 font-semibold">
                         Last Credit Transaction Info
@@ -206,13 +215,16 @@
 
                     </div>
                 </div>
-                <form action="">
+                <form method="POST" action="{{ route('loan.save.comment') }}">
+                    @csrf
+                    <input type="hidden" name="loan_id" value="{{ $loan_id ?? '' }}">
+                    <input type="hidden" name="loan_type" value="{{ $loan_type ?? '' }}">
                     <div class="col-span-2 md:col-span-1 mt-5 mb-3">
                         <label for="" class="md:text-lg font-medium block mb-2 uppercase">
                             Add New Comment
                             <span class="text-red-500">*</span>
                         </label>
-                        <textarea placeholder="Write Your Comment Here..."
+                        <textarea name="comment" placeholder="Write Your Comment Here..."
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"></textarea>
                     </div>
 
@@ -228,6 +240,30 @@
 
                     </div>
                 </form>
+                @if (isset($comments) && count($comments) > 0)
+                    <div class="mt-8">
+                        <div class="text-center uppercase font-semibold mb-3">
+                            Comment History
+                        </div>
+
+                        <table class="w-full text-sm">
+                            <tr class="bg-gray-50 border-b">
+                                <td class="py-2 px-3 uppercase font-semibold">Comment</td>
+                                <td class="py-2 px-3 uppercase font-semibold">Comment By</td>
+                                <td class="py-2 px-3 uppercase font-semibold">Date</td>
+                            </tr>
+
+                            @foreach ($comments as $c)
+                                <tr class="border-b">
+                                    <td class="py-2 px-3">{{ $c->comment }}</td>
+                                    <td class="py-2 px-3">{{ $c->comment_by }}</td>
+                                    <td class="py-2 px-3">{{ date('d-m-Y H:i', strtotime($c->created_at)) }}</td>
+                                </tr>
+                            @endforeach
+
+                        </table>
+                    </div>
+                @endif
             </div>
 
             <!-- Right: Settings -->
@@ -290,8 +326,7 @@
                 } else if (radio.value === "online") {
                     onlineFields.classList.remove("hidden");
                     bankFields.classList.add("hidden");
-                }
-                else if (radio.value === "saving") {
+                } else if (radio.value === "saving") {
                     savingAc.classList.remove("hidden");
                     bankFields.classList.add("hidden");
                 } else {
@@ -335,26 +370,47 @@
     <!-- Datepicker JS -->
     <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll('.datepicker-field').forEach(function (dateInput) {
-                const picker = new Datepicker(dateInput, {
-                    autohide: true,
-                    format: 'dd-mm-yyyy',
-                    maxDate: new Date(),
+       function openLoanModal(memberNo, memberName, loanType, loanId, instDue, dueDate, amount) {
+
+    document.getElementById('loanModal').classList.remove('hidden');
+
+    document.getElementById('modalMember').innerHTML = memberNo + " - " + memberName;
+    document.getElementById('modalLoanType').innerHTML = loanType;
+    document.getElementById('modalLoanId').innerHTML = loanId;
+    document.getElementById('modalInstDue').innerHTML = instDue;
+    document.getElementById('modalDueDate').innerHTML = dueDate;
+    document.getElementById('modalAmount').innerHTML = amount;
+
+    document.getElementById('modalLoanIdInput').value = loanId;
+    document.getElementById('modalLoanTypeInput').value = loanType;
+
+    fetch('/loan/comments/' + loanType + '/' + loanId)
+        .then(res => res.json())
+        .then(data => {
+
+            let html = '';
+
+            if (data.length === 0) {
+                html = '<tr><td colspan="3" class="text-center">No Comments</td></tr>';
+            } else {
+
+                data.forEach(c => {
+
+                    html += `
+                    <tr>
+                        <td class="py-2 px-3">${c.comment}</td>
+                        <td class="py-2 px-3">${c.comment_by ?? '-'}</td>
+                        <td class="py-2 px-3">${new Date(c.created_at).toLocaleString()}</td>
+                    </tr>
+                    `;
+
                 });
 
-                if (!dateInput.value) {
-                    const today = new Date();
-                    const formattedDate = today.toLocaleDateString('en-GB').split('/').join('-');
-                    dateInput.value = formattedDate;
-                }
+            }
 
-                const calendarIcon = dateInput.parentElement.querySelector('.la-calendar');
-                if (calendarIcon) {
-                    calendarIcon.addEventListener('click', () => picker.show());
-                }
-            });
+            document.getElementById('commentHistory').innerHTML = html;
+
         });
+}
     </script>
-
 @endsection
