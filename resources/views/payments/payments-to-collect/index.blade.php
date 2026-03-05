@@ -241,17 +241,17 @@
 
                                 {{-- EMI --}}
                                 <td class="text-start !py-5 px-6 min-w-[100px]">
-                                    -
+                                    {{ $app->weightage ?? 1 }}
                                 </td>
 
                                 {{-- Pending EMI --}}
                                 <td class="text-start !py-5 px-6 min-w-[100px]">
-                                    -
+                                    {{ $app->inst_due ?? 0 }}
                                 </td>
 
                                 {{-- Total Paid EMI --}}
                                 <td class="text-start !py-5 px-6 min-w-[100px]">
-                                    -
+                                    {{ $app->inst_overdue ?? 0 }}
                                 </td>
 
                                 {{-- Loan Date --}}
@@ -531,14 +531,14 @@
 
         </div>
 
+    </div>
+    <script>
+        function openLoanModal() {
+            document.getElementById('loanModal').classList.remove('hidden');
+        }
 
-        <script>
-            function openLoanModal() {
-                document.getElementById('loanModal').classList.remove('hidden');
-            }
-
-            function closeLoanModal() {
-                document.getElementById('loanModal').classList.add('hidden');
-            }
-        </script>
-    @endsection
+        function closeLoanModal() {
+            document.getElementById('loanModal').classList.add('hidden');
+        }
+    </script>
+@endsection
