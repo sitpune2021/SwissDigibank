@@ -23,7 +23,6 @@
                         </option>
                     @endforeach
                 </select>
-
                 <button class="btn btn-primary rounded-10 text-sm">GET</button>
             </form>
         </div>
@@ -31,18 +30,20 @@
 
     <div class="card shadow box mt-5">
         <div class="flex justify-end gap-4">
-            <a href="" class="btn-primary uppercase rounded-10 text-sm py-2">
+            <a href="{{ route('income.statement.print',['branch_id'=>$branchId]) }}" class="btn-primary uppercase rounded-10 text-sm py-2" target="_blank">
                 <i class="las la-print"></i>
                 Print
             </a>
-            <a href="" class="btn-error uppercase rounded-10 text-sm py-2">
+            <a href="{{ route('income.statement.export',['branch_id'=>$branchId]) }}" class="btn-error uppercase rounded-10 text-sm py-2">
                 <i class="las la-download"></i>
                 download xls
             </a>
         </div>
 
         <div class="card-body mt-5">
+
             <div class="flex justify-start gap-5">
+
                 <div class=" w-full">
 
                     {{-- REVENUES --}}
@@ -61,8 +62,6 @@
                     </div>
                 </div>
 
-
-
                 {{-- EXPENSES --}}
                 <div class="text-start w-full">
                     <h5 class="text-lg uppercase bg-secondary/5 py-2 px-2 rounded-10">Expenses</h5>
@@ -80,8 +79,8 @@
                     </div>
 
                 </div>
-            </div>
 
+            </div>
 
             <div class=" w-full flex  justify-between">
                 {{-- NET PROFIT / LOSS --}}
@@ -98,6 +97,7 @@
             </div>
 
         </div>
+        
     </div>
 
     </div>

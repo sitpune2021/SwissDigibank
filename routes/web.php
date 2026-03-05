@@ -2822,6 +2822,9 @@ Route::group(['prefix' => 'profit-loss'], function () {
 Route::get('/balance-sheet', [LedgergroupController::class, 'balance_sheet'])
     ->name('balance.sheet');
 
+Route::get('/balance-sheet/print', [LedgergroupController::class, 'printBalanceSheet'])
+->name('balance.sheet.print');
+
 Route::get(
     '/trial-balance',
     [LedgergroupController::class, 'trial_balance']
@@ -2835,6 +2838,12 @@ Route::get('/accounting-tree', [LedgergroupController::class, 'accountingTree'])
 
 Route::get('/income-statement', [LedgergroupController::class, 'incomeStatement'])
     ->name('income.statement');
+
+Route::get('/income-statement/print', [LedgergroupController::class, 'printIncomeStatement'])
+    ->name('income.statement.print');
+
+Route::get('/income-statement/export', [LedgergroupController::class, 'exportIncomeStatement'])
+    ->name('income.statement.export');
 
 
 ////////////////////////////////////    Account Section tab End     /////////////////////////////////////////////
@@ -3270,6 +3279,8 @@ Route::get('software-settings/software-service-agreement', [SoftwareSettingsCont
 
 ///////////////////// Download REPORTs ///////////////////////////
 Route::get('loan-report/index', [ReportController::class, 'loan_report_index'])->name('loan-report.index');
+Route::get('/loan-report/print', [ReportController::class,'loan_report_print'])
+->name('loan.report.print');
 Route::get('maturity-indext/index', [ReportController::class, 'maturity_index'])->name('loan-report.maturity_index');
 Route::get('/reports/branch-report', [ReportController::class, 'branch_index'])->name('reports.branch');
 

@@ -10,6 +10,7 @@ use App\Models\VehicalApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
@@ -179,28 +180,7 @@ class ReportController extends Controller
             $query->where('status', $statusMap[$status]);
         }
 
-        //     if ($query instanceof \Illuminate\Database\Eloquent\Builder && $status) {
-
-        //     if ($status === 'fore_closed') {
-
-        //         // only loans that exist in foreclosure table
-        //         $query->whereHas('foreclosure');
-
-        //     } else {
-
-        //         $statusMap = [
-        //             'active' => 2,
-        //             // 'closed' => 3,
-        //         ];
-
-        //         if (isset($statusMap[$status])) {
-        //             $query->where('status', $statusMap[$status]);
-        //         }
-        //     }
-        // }
-
-
-        /*
+    /*
     |--------------------------------------------------------------------------
     | RESULT
     |--------------------------------------------------------------------------
@@ -213,5 +193,81 @@ class ReportController extends Controller
         return view('menu-reports.loan-report.index', compact('loans'));
     }
 
+    public function loan_report_print(Request $request)
+    {
+
+        $loanType = $request->loan_type;
+        $status   = $request->status;
+
+        $query = null;
+
+        // Default logo (public folder)
+            $logoUrl = asset('assets/images/SBC_Logo.png');
+
+            // If custom logo exists in storage/app/public/logo.png
+            $customLogoPath = 'logo.png'; // change if different filename
+
+            if (Storage::disk('public')->exists($customLogoPath)) {
+                $logoUrl = Storage::url($customLogoPath);
+            }
+
+        switch ($loanType) {
+
+            case 'gold_loan':
+                $query = \App\Models\LoanApplication::with(['member','scheme','branch','emiPayments','disbursement']);
+                break;
+
+            case 'mortgage_loan':
+                $query = \App\Models\MortgageLoanApplication::with(['member','scheme','branch','emiPayments','disbursement']);
+                break;
+
+            case 'loan_against':
+                $query = \App\Models\LoanAgainstApplication::with(['member','scheme','branch','emiPayments']);
+                break;
+
+            case 'cc_od':
+                $query = \App\Models\CcOdLoanApplication::with(['member','scheme','branch','emiPayments']);
+                break;
+
+            case 'daily_weekly':
+                $query = \App\Models\DailyWeeklyApplication::with(['member','scheme','branch','emiPayments']);
+                break;
+
+            case 'fixed_loan':
+                $query = \App\Models\FixedLoanApplication::with(['member','scheme','branch','emiPayments']);
+                break;
+
+            case 'other_loan':
+                $query = \App\Models\BusinessLoanApplication::with(['member','scheme','branch','emiPayments','disbursement']);
+                break;
+
+            case 'personal_loan':
+                $query = \App\Models\PersonalLoanApplication::with(['member','scheme','branch','emiPayments']);
+                break;
+
+            case 'vehicle_loan':
+                $query = \App\Models\VehicalApplication::with(['member','scheme','branch','emiPayments','disbursement']);
+                break;
+
+            default:
+                $query = collect();
+        }
+
+        $statusMap = [
+            'active' => 2,
+            'closed' => 3,
+        ];
+
+        if ($query instanceof \Illuminate\Database\Eloquent\Builder && $status && isset($statusMap[$status])) {
+            $query->where('status',$statusMap[$status]);
+        }
+
+        $loans = $query instanceof \Illuminate\Database\Eloquent\Builder
+            ? $query->latest()->get()
+            : collect();
+
+        return view('menu-reports.loan-report.print',compact('loans','logoUrl'));
+    }
     
+
 }
