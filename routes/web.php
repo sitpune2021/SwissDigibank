@@ -547,6 +547,8 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
         ->name('misaccount.update-branch');
 
     Route::get('/misaccount/foreclose/{id}', [MisaccountController::class, 'foreclose'])->name('misaccount.foreclose');
+    Route::post('/misaccount/{id}/foreclose', [MisaccountController::class, 'raiseForecloseRequest'])->name('misaccount.raiseForecloseRequest');
+    
     Route::get('/misaccount/{id}/remove-account', [MisaccountController::class, 'removeAccount'])->name('misaccount.removeAccount');
 
     Route::get('/misaccount/make-lien/{id}', [MisaccountController::class, 'makeLien'])->name('misaccount.makelien');

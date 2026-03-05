@@ -1223,7 +1223,7 @@ class MisaccountController extends Controller
             $reverseInterest -
             $penalChargesWithGst -
             $cancellationTotal;
-// dd($currentBalance, $interestLeftToPay, $tds, $reverseInterest, $penalChargesWithGst, $cancellationTotal);
+        // dd($currentBalance, $interestLeftToPay, $tds, $reverseInterest, $penalChargesWithGst, $cancellationTotal);
         $totalSettlement = round($totalSettlement, 2);
 
         return view(
@@ -1251,6 +1251,42 @@ class MisaccountController extends Controller
                 'cancellationTotal'
             )
         );
+    }
+
+    public function raiseForecloseRequest(Request $request, $id)
+    {
+        $misaccount = Misaccount::findOrFail($id);
+
+        // Validate input
+        $request->validate([
+            'reason' => 'required|string|max:255',
+        ]);
+
+        $misaccount->update([
+
+            'foreclose_request_date' => now(),
+
+            'foreclose_interest_left' => $request->interest_left_paid ?? 0,
+            'foreclose_tds' => $request->tds ?? 0,
+
+            'foreclose_reverse_interest' => $request->reverse_interest ?? 0,
+
+            'foreclose_penal_charges' => $request->penal_charges ?? 0,
+            'foreclose_cancellation_charges' => $request->cancellation_charge ?? 0,
+
+            'foreclose_total_amount' => $request->total_account ?? 0,
+
+            'foreclose_rounding' => $request->rounding_off ?? 0,
+
+            'foreclose_final_amount' => $request->final_amount ?? 0,
+
+            'foreclose_status' => 1, // Request Raised
+            'remarks' => $request->reason
+        ]);
+
+        return redirect()
+            ->route('misaccount.show', $id)
+            ->with('success', 'Foreclosure request raised successfully!');
     }
     public function removeAccount($id)
     {

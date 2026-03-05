@@ -46,310 +46,321 @@
 
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
         <!-- Left: Details -->
-        <div class=" w-full">
-            <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
-                <form action="">
-                    <!-- Header -->
-                    <div class="px-2 py-3 ">
-                        <h3 class="text-lg  border-b mb-4 font-semibold text-black">ACCOUNT DETAILS</h3>
-                    </div>
-                    <!-- Body -->
-
-                    <div class="col-span-2 md:col-span-1">
-                        <div class="col-span-2 md:col-span-1 mt-4 mb-4">
-                            <x-datepicker-disabled label="closure Date" name="closure_date" />
+        <form action="{{ route('misaccount.raiseForecloseRequest',$misaccount->id) }}" method="POST">
+            @csrf
+            <div class=" w-full">
+                <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
+                    <form action="">
+                        <!-- Header -->
+                        <div class="px-2 py-3 ">
+                            <h3 class="text-lg  border-b mb-4 font-semibold text-black">ACCOUNT DETAILS</h3>
                         </div>
-                    </div>
+                        <!-- Body -->
 
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Current Balance (A)
-                            <span class="text-red-500">*</span>
-                        </label>
+                        <div class="col-span-2 md:col-span-1">
+                            <div class="col-span-2 md:col-span-1 mt-4 mb-4">
+                                <x-datepicker-disabled label="closure Date" name="closure_date" />
+                            </div>
+                        </div>
 
-                        <input type="text" id="currentBalance"
-                            value=" {{ number_format($currentBalance,2) }}"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="0.0" readonly>
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                Current Balance (A)
+                                <span class="text-red-500">*</span>
+                            </label>
 
-                    </div>
+                            <input type="text" id="currentBalance"
+                                value=" {{ number_format($currentBalance,2) }}"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="0.0" readonly>
 
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Interest Left to Paid (B)
-                            <span class="text-red-500">*</span>
-                        </label>
+                        </div>
 
-                        <input type="text" id="interestLeftPaid"
-                            value=" {{ number_format($interestLeftToPay,2) }}"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="0.0">
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                Interest Left to Paid (B)
+                                <span class="text-red-500">*</span>
+                            </label>
 
-                    </div>
+                            <input type="text" id="interestLeftPaid"
+                                value=" {{ number_format($interestLeftToPay,2) }}"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="0.0">
 
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            TDS to be Deducted (C)
-                            <span class="text-red-500">*</span>
-                        </label>
+                        </div>
 
-                        <input type="text" id="tdsDeducated"
-                            value=" {{ number_format($tds,2) }}"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="0.0">
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                TDS to be Deducted (C)
+                                <span class="text-red-500">*</span>
+                            </label>
 
-                    </div>
+                            <input type="text" id="tdsDeducated"
+                                value=" {{ number_format($tds,2) }}"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="0.0">
 
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Interest
-                            <span class="text-red-500">*</span>
-                        </label>
-                        <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                            <tbody>
-                                <!-- Column Labels -->
-                                <tr class="">
-                                    <th class="text-center px-3 py-1 ">Rate (%)</th>
-                                    <th class="text-center px-3 py-1 ">Days</th>
-                                    <th class="text-center px-3 py-1 ">Amount</th>
+                        </div>
 
-                                </tr>
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                Interest
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                <tbody>
+                                    <!-- Column Labels -->
+                                    <tr class="">
+                                        <th class="text-center px-3 py-1 ">Rate (%)</th>
+                                        <th class="text-center px-3 py-1 ">Days</th>
+                                        <th class="text-center px-3 py-1 ">Amount</th>
 
-                                <!-- Input Row -->
-                                <tr>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value="{{ $rate }}" name="" id="" placeholder="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value="{{ $totalDays }}" name="" id="" placeholder="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value=" {{ number_format($interestTillDate,2) }}" name="" id="" placeholder="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    </tr>
 
-                    </div>
+                                    <!-- Input Row -->
+                                    <tr>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value="{{ $rate }}" name="" id="" placeholder="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value="{{ $totalDays }}" name="" id="" placeholder="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value=" {{ number_format($interestTillDate,2) }}" name="" id="" placeholder="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Premature Interest
-                            <span class="text-red-500">*</span>
-                        </label>
-                        <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                            <tbody>
-                                <!-- Column Labels -->
-                                <tr class="">
-                                    <th class="text-center px-3 py-1 ">Rate (%)</th>
-                                    <th class="text-center px-3 py-1 ">Days</th>
-                                    <th class="text-center px-3 py-1 ">Amount</th>
+                        </div>
 
-                                </tr>
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                Premature Interest
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                <tbody>
+                                    <!-- Column Labels -->
+                                    <tr class="">
+                                        <th class="text-center px-3 py-1 ">Rate (%)</th>
+                                        <th class="text-center px-3 py-1 ">Days</th>
+                                        <th class="text-center px-3 py-1 ">Amount</th>
 
-                                <!-- Input Row -->
-                                <tr>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value="{{ number_format($prematureRate,2) }}"  name="" id="" placeholder="0"
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value="{{ $totalDays }}" name="" id="" placeholder="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value=" {{ number_format($prematureInterest,2) }}" name="" id="" placeholder="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    </tr>
 
-                    </div>
+                                    <!-- Input Row -->
+                                    <tr>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value="{{ number_format($prematureRate,2) }}" name="" id="" placeholder="0"
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value="{{ $totalDays }}" name="" id="" placeholder="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value=" {{ number_format($prematureInterest,2) }}" name="" id="" placeholder="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Notice Charges (D)
-                            <span class="text-red-500">*</span>
-                        </label>
-                        <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                            <tbody>
-                                <!-- Column Labels -->
-                                <tr class="">
-                                    <th class="text-center uppercase px-3 py-1 ">Amount</th>
-                                    <th class="text-center uppercase px-3 py-1 ">GST Rate (%) </th>
-                                    <th class="text-center uppercase px-3 py-1 ">Total Amount</th>
+                        </div>
 
-                                </tr>
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                Notice Charges (D)
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                <tbody>
+                                    <!-- Column Labels -->
+                                    <tr class="">
+                                        <th class="text-center uppercase px-3 py-1 ">Amount</th>
+                                        <th class="text-center uppercase px-3 py-1 ">GST Rate (%) </th>
+                                        <th class="text-center uppercase px-3 py-1 ">Total Amount</th>
 
-                                <!-- Input Row -->
-                                <tr>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value="{{ $gstRate }}" name="" id="" placeholder="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" name="" id="" placeholder="0"
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    </tr>
 
-                    </div>
+                                    <!-- Input Row -->
+                                    <tr>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" name="" id="" placeholder="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value="{{ $gstRate }}" name="" id="" placeholder="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" name="" id="" placeholder="0"
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Reverse Interest Amount
-                            (F = D - E)
-                            <span class="text-red-500">*</span>
-                        </label>
+                        </div>
 
-                        <input type="text"
-                            value=" {{ number_format($reverseInterest,2) }}"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="0.0" readonly>
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                Reverse Interest Amount
+                                (F = D - E)
+                                <span class="text-red-500">*</span>
+                            </label>
 
-                    </div>
+                            <input type="text"
+                                value=" {{ number_format($reverseInterest,2) }}"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="0.0" readonly>
 
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Penal Interest Rate (%)
-                            <span class="text-red-500">*</span>
-                        </label>
+                        </div>
 
-                        <input type="text"  value="{{ number_format($penalRate, 2) }}" id="penalInterestRate"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="0.0" readonly>
-                    </div>
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                Penal Interest Rate (%)
+                                <span class="text-red-500">*</span>
+                            </label>
 
-
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Penal Charges (G)
-                            <span class="text-red-500">*</span>
-                        </label>
-                        <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                            <tbody>
-                                <!-- Column Labels -->
-                                <tr class="">
-                                    <th class="text-center uppercase px-3 py-1 ">Amount</th>
-                                    <th class="text-center uppercase px-3 py-1 ">GST Rate (%) </th>
-                                    <th class="text-center uppercase px-3 py-1 ">T. Amount</th>
-
-                                </tr>
-
-                                <!-- Input Row -->
-                                <tr>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value="{{ number_format($penalCharges,2) }}" name="" id="" placeholder="0"
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value="{{ $gstRate }}" name="" id="" placeholder="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value=" {{ number_format($penalChargesWithGst, 2) }}" name="" id="" placeholder="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            <input type="text" value="{{ number_format($penalRate, 2) }}" id="penalInterestRate"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="0.0" readonly>
+                        </div>
 
 
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Cancellation Charges (H)
-                        </label>
-                        <table class="min-w-full text-sm md:text-base whitespace-nowrap">
-                            <tbody>
-                                <!-- Column Labels -->
-                                <tr class="">
-                                    <th class="text-center uppercase px-3 py-1 ">Amount</th>
-                                    <th class="text-center uppercase px-3 py-1 ">GST Rate (%) </th>
-                                    <th class="text-center uppercase px-3 py-1 ">T. Amount</th>
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                Penal Charges (G)
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                <tbody>
+                                    <!-- Column Labels -->
+                                    <tr class="">
+                                        <th class="text-center uppercase px-3 py-1 ">Amount</th>
+                                        <th class="text-center uppercase px-3 py-1 ">GST Rate (%) </th>
+                                        <th class="text-center uppercase px-3 py-1 ">T. Amount</th>
 
-                                </tr>
+                                    </tr>
 
-                                <!-- Input Row -->
-                                <tr>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value=" {{ number_format($cancellationCharge,2) }}" name="" id="" placeholder="0"
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value=" {{ $gstRate }} " name="" id="" placeholder="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                    <td class="px-2 py-2 ">
-                                        <input type="text" value=" {{ number_format($cancellationTotal,2) }}" name="" id="" placeholder="0" readonly
-                                            class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Total Account
-                            (I = A + B - C - F - G - H)
-                        </label>
-                        <input type="text" id="totalAccount"
-                            value=" {{ number_format($totalSettlement,2) }}"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="0.0">
-                    </div>
-                    <hr>
-
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Rounding Off (J)
-                            <span class="text-red-500">*</span>
-                        </label>
-
-                        <input type="text" value="{{ round($totalSettlement) }}" id="netAmountCollect"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="0.0" readonly>
-                    </div>
-
-                    <div class="col-span-2 md:col-span-1 mb-4">
-                        <label for="" class="md:text-lg uppercase font-medium block mb-4">
-                            Final Amount To Release
-                            (I - J) (if any)
-                            <span class="text-red-500">*</span>
-                        </label>
-
-                        <input type="text" id="netAmountCollect"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="0.0" readonly>
-                    </div>
+                                    <!-- Input Row -->
+                                    <tr>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value="{{ number_format($penalCharges,2) }}" name="" id="" placeholder="0"
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value="{{ $gstRate }}" name="" id="" placeholder="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value=" {{ number_format($penalChargesWithGst, 2) }}" name="" id="" placeholder="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
 
-                    <!-- Buttons -->
-                    <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
-                        <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
-                            Raise Request
-                        </button>
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                Cancellation Charges (H)
+                            </label>
+                            <table class="min-w-full text-sm md:text-base whitespace-nowrap">
+                                <tbody>
+                                    <!-- Column Labels -->
+                                    <tr class="">
+                                        <th class="text-center uppercase px-3 py-1 ">Amount</th>
+                                        <th class="text-center uppercase px-3 py-1 ">GST Rate (%) </th>
+                                        <th class="text-center uppercase px-3 py-1 ">T. Amount</th>
 
-                        <button class="btn-outline uppercase justify-center" type="reset">
-                            <a href="#"> BACK</a>
-                        </button>
-                    </div>
-                </form>
+                                    </tr>
+
+                                    <!-- Input Row -->
+                                    <tr>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value=" {{ number_format($cancellationCharge,2) }}" name="" id="" placeholder="0"
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value=" {{ $gstRate }} " name="" id="" placeholder="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                        <td class="px-2 py-2 ">
+                                            <input type="text" value=" {{ number_format($cancellationTotal,2) }}" name="" id="" placeholder="0" readonly
+                                                class="w-full px-2 py-2 text-center bg-secondary/5 border  rounded-10 text-sm md:text-base" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                Total Account
+                                (I = A + B - C - F - G - H)
+                            </label>
+                            <input type="text" id="totalAccount"
+                                value=" {{ number_format($totalSettlement,2) }}"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="0.0">
+                        </div>
+                        <hr>
+
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                Rounding Off (J)
+                                <span class="text-red-500">*</span>
+                            </label>
+
+                            <input type="text" value="{{ round($totalSettlement) }}" id="netAmountCollect"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="0.0" readonly>
+                        </div>
+
+                        <div class="col-span-2 md:col-span-1 mb-4">
+                            <label for="" class="md:text-lg uppercase font-medium block mb-4">
+                                Final Amount To Release
+                                (I - J) (if any)
+                                <span class="text-red-500">*</span>
+                            </label>
+
+                            <input type="text" id="netAmountCollect"
+                                class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                                placeholder="0.0" readonly>
+                        </div>
+
+                        <input type="hidden" name="interest_left_paid" value="{{ $interestLeftToPay }}">
+                        <input type="hidden" name="tds" value="{{ $tds }}">
+                        <input type="hidden" name="reverse_interest" value="{{ $reverseInterest }}">
+                        <input type="hidden" name="penal_charges" value="{{ $penalCharges }}">
+                        <input type="hidden" name="cancellation_charge" value="{{ $cancellationCharge }}">
+                        <input type="hidden" name="total_account" value="{{ $totalSettlement }}">
+                        <input type="hidden" name="rounding_off" value="{{ $roundingOff }}">
+                        <input type="hidden" name="final_amount" value="{{ $finalAmount }}">
+
+
+                        <!-- Buttons -->
+                        <div class="flex flex-col min-w-10 sm:flex-row justify-center gap-3 mt-5">
+                            <button class="btn-primary uppercase justify-center" type="submit" name="save_scheme">
+                                Raise Request
+                            </button>
+
+                            <button class="btn-outline uppercase justify-center" type="reset">
+                                <a href="#"> BACK</a>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
-
+        </form>
         <!-- Left: Details -->
         <div class=" w-full  overflow-hidden">
 
@@ -437,7 +448,7 @@
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Fore Closure Charges</td>
-                                <td class="px-3 py-2">  static</td>
+                                <td class="px-3 py-2"> static</td>
                             </tr>
                         </tbody>
                     </table>
@@ -464,7 +475,7 @@
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2 w-1/3">
                                     Interest Credited</td>
-                                <td class="px-3 py-2">  (590,500.00) static</td>
+                                <td class="px-3 py-2"> (590,500.00) static</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Interest Released</td>
@@ -472,11 +483,11 @@
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">TDS Deducted</td>
-                                <td class="px-3 py-2">  1,500.00 static</td>
+                                <td class="px-3 py-2"> 1,500.00 static</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="uppercase font-semibold px-3 py-2">Interest Available to Release</td>
-                                <td class="px-3 py-2">  (605,500.00) static</td>
+                                <td class="px-3 py-2"> (605,500.00) static</td>
                             </tr>
                         </tbody>
                     </table>
