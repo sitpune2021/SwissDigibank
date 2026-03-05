@@ -4,10 +4,7 @@
 
 <div class="container">
 
-
-   
-
-     <div class="mt-5">
+        <div class="mt-5">
             <form>
                 <div class="flex justify-center box gap-3">
                     <div class="">
@@ -32,15 +29,18 @@
         </div>
 
 
-   <div class="box mt-5">
-     <div class="text-end  mb-3 no-print">
-        <button onclick="printBalanceSheet()" class="btn btn-dark  btn-primary text-sm rounded-10 px-4 py-2 uppercase">
-            <i class="las la-print"></i> Print
-        </button>
-    </div>
-     <h3 class="mb-4 text-center text-lg uppercase mt-5">
-        Balance Sheet as on {{ $today->format('d-m-Y') }}
-    </h3>
+    <div class="box mt-5">
+        <div class="text-end  mb-3 no-print">
+            <a href="{{ route('balance.sheet.print',['branch_id'=>$branchId]) }}" 
+                target="_blank"
+                class="btn btn-dark btn-primary text-sm rounded-10 px-4 py-2 uppercase">
+                <i class="las la-print"></i> Print
+            </a>
+        </div>
+
+        <h3 class="mb-4 text-center text-lg uppercase mt-5">
+            Balance Sheet as on {{ $today->format('d-m-Y') }}
+        </h3>
 
     <div class="card ">
         <div class="card-body p-0">
@@ -149,20 +149,6 @@
    </div>
 
 
-<script>
-function printBalanceSheet() {
-
-    var printContents = document.getElementById('printArea').innerHTML;
-    var originalContents = document.body.innerHTML;
-
-    document.body.innerHTML = printContents;
-
-    window.print();
-
-    document.body.innerHTML = originalContents;
-    location.reload();
-}
-</script>
 
 
 @endsection

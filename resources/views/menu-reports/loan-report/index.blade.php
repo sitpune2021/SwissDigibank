@@ -56,12 +56,7 @@
 
 @section('content')
 <div class="main-inner">
-
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
-        <h3 class=" flex text-lg  uppercase font-semibold">
-            DOWNLOAD LOAN REPORT
-        </h3>
-    </div>
+   
     @if(session('success'))
     <div class="">
         <div class="w-44 mb-5 flex justify-end">
@@ -75,7 +70,6 @@
         <div class="col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6">
 
             <form method="GET" action="{{ route('loan-report.index') }}">
-
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -145,13 +139,14 @@
 
     <div class="col-span-12 box lg:col-span-12 mt-5">
 
-        <div class="flex  justify-end">
-
-            <button class="btn-error uppercase rounded-10 py-2 text-sm">
-                <i class="las la-download"></i>
-                Download Reports
-            </button>
+        <div class="text-end  mb-3 no-print">
+            <a href="{{ route('loan.report.print',['loan_type'=>request('loan_type'),'status'=>request('status')]) }}" 
+                target="_blank"
+                class="btn btn-dark btn-primary text-sm rounded-10 px-4 py-2 uppercase">
+                <i class="las la-print"></i> Print
+            </a>
         </div>
+
         <div class="pb-4 overflow-x-auto lg:pb-6 mt-5">
 
             <table class="w-full whitespace-nowrap select-all-table" id="">

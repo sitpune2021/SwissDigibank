@@ -55,15 +55,16 @@
 
         <div class="col-span-12 box lg:col-span-12">
             <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
-                <a href="" class="btn-primary rounded-10 px-1 py-2  uppercase">
+                <a href="{{ route('payments.collect.print') }}" target="_blank"
+                    class="btn-primary rounded-10 px-1 py-2 uppercase">
                     <i class="las la-print"></i>
                     print
                 </a>
-                <a href="" class="btn-error rounded-10 px-1 py-2  uppercase">
+                <a href="{{ route('payments.collect.csv') }}" class="btn-error rounded-10 px-1 py-2 uppercase">
                     <i class="las la-download"></i>
                     download csv
                 </a>
-                <a href="" class="btn-error rounded-10 px-1 py-2  uppercase">
+                <a href="{{ route('payments.collect.dat') }}" class="btn-error rounded-10 px-1 py-2 uppercase">
                     <i class="las la-download"></i>
                     download machine dat
                 </a>
@@ -241,17 +242,17 @@
 
                                 {{-- EMI --}}
                                 <td class="text-start !py-5 px-6 min-w-[100px]">
-                                    -
+                                    {{ $app->weightage ?? 1 }}
                                 </td>
 
                                 {{-- Pending EMI --}}
                                 <td class="text-start !py-5 px-6 min-w-[100px]">
-                                    -
+                                    {{ $app->inst_due ?? 0 }}
                                 </td>
 
                                 {{-- Total Paid EMI --}}
                                 <td class="text-start !py-5 px-6 min-w-[100px]">
-                                    -
+                                    {{ $app->inst_overdue ?? 0 }}
                                 </td>
 
                                 {{-- Loan Date --}}
@@ -351,7 +352,20 @@
                                                     </a>
                                                 </li>
 
-                                                <li><button class="single-option">COMMENTS</button></li>
+                                                <li>
+                                                    <button class="single-option"
+                                                        onclick="openLoanModal(
+                                                                                    '{{ $app->member_no }}',
+                                                                                    '{{ $app->member_info_first_name }}',
+                                                                                    '{{ $app->loan_type }}',
+                                                                                    '{{ $app->loan_id }}',
+                                                                                    '{{ $app->inst_due ?? 0 }}',
+                                                                                    '{{ $app->due_date }}',
+                                                                                    '{{ $app->remaining_amount }}'
+                                                                                    )">
+                                                        COMMENTS
+                                                    </button>
+                                                </li>
                                                 @if (!empty($app->emi_no) && !empty($app->remaining_amount))
                                                     <li>
                                                         <a href="{{ route('loan.mark.done', [$app->loan_type, $app->loan_id, $app->emi_no, $app->remaining_amount]) }}"
@@ -404,8 +418,6 @@
 
                     <!-- BODY -->
                     <div class="p-4 sm:p-6 space-y-6">
-
-                        <!-- Loan info table -->
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-sm">
                                 <tbody class="divide-y divide-gray-200">
@@ -413,41 +425,52 @@
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2 pr-4">Member No :</td>
                                         <td colspan="3" class="py-2 underline">
-                                            <a href="" class="text-primary">
-                                                DEMO-03253 - LAVANYA K
+                                            <a href="#" class="text-primary">
+                                                <span id="modalMember"></span>
                                             </a>
                                         </td>
                                     </tr>
 
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2 pr-4">Account Type :</td>
-                                        <td class="py-2 pr-4">DD</td>
+                                        <td class="py-2 pr-4">
+                                            <span id="modalLoanType"></span>
+                                        </td>
+
                                         <td class="font-semibold uppercase py-2 pr-4">Account No :</td>
                                         <td class="py-2 underline">
-                                            <a href="" class="text-primary">
-                                                DDA01450
+                                            <a href="#" class="text-primary">
+                                                <span id="modalLoanId"></span>
                                             </a>
                                         </td>
                                     </tr>
 
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2 pr-4">Inst Due :</td>
-                                        <td class="py-2 pr-4">188</td>
+                                        <td class="py-2 pr-4">
+                                            <span id="modalInstDue"></span>
+                                        </td>
+
                                         <td class="font-semibold uppercase py-2 pr-4">Due Date :</td>
-                                        <td class="py-2">17/01/2023</td>
+                                        <td class="py-2">
+                                            <span id="modalDueDate"></span>
+                                        </td>
                                     </tr>
 
                                     <tr class="border-b">
                                         <td class="font-semibold uppercase py-2 pr-4">Saving Bal :</td>
-                                        <td class="py-2 pr-4"></td>
+                                        <td class="py-2 pr-4">-</td>
+
                                         <td class="font-semibold uppercase py-2 pr-4">Amt to Collect :</td>
-                                        <td class="py-2">282,000.00</td>
+                                        <td class="py-2">
+                                            <span id="modalAmount"></span>
+                                        </td>
                                     </tr>
 
                                 </tbody>
                             </table>
                         </div>
-
+                        {{-- 
                         <!-- Last credit table -->
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-sm">
@@ -499,16 +522,41 @@
 
                                 </tbody>
                             </table>
-                        </div>
+                        </div> --}}
 
                         <hr />
 
                         <!-- Comment Form -->
-                        <form class="space-y-4 mt-4">
-                            <label class="text-lg uppercase font-medium">Add New Comment <span
+                        <form method="POST" action="{{ route('loan.save.comment') }}" class="space-y-4 mt-4">
+                            @csrf
+                            <div class="mt-6">
+                                <div class="text-center uppercase font-semibold mb-3">
+                                    Comment History
+                                </div>
+
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="bg-gray-50 border-b">
+                                            <td class="py-2 px-3 uppercase font-semibold">Comment</td>
+                                            <td class="py-2 px-3 uppercase font-semibold">Comment By</td>
+                                            <td class="py-2 px-3 uppercase font-semibold">Date</td>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="commentHistory">
+                                        <tr>
+                                            <td colspan="3" class="text-center">No Comments</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <input type="hidden" name="loan_id" id="modalLoanIdInput">
+                            <input type="hidden" name="loan_type" id="modalLoanTypeInput"> <label
+                                class="text-lg uppercase font-medium">Add New Comment <span
                                     class="text-red-500">*</span></label>
 
-                            <textarea class="w-full bg-secondary/5 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500"
+                            <textarea name="comment"
+                                class="w-full bg-secondary/5 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500"
                                 rows="3" placeholder="Write Your Comment Here..."></textarea>
 
                             <div class="flex items-center justify-center gap-3 pt-2">
@@ -531,14 +579,49 @@
 
         </div>
 
+    </div>
+    <script>
+        function openLoanModal(memberNo, memberName, loanType, loanId, instDue, dueDate, amount) {
 
-        <script>
-            function openLoanModal() {
-                document.getElementById('loanModal').classList.remove('hidden');
-            }
+            document.getElementById('loanModal').classList.remove('hidden');
 
-            function closeLoanModal() {
-                document.getElementById('loanModal').classList.add('hidden');
-            }
-        </script>
-    @endsection
+            document.getElementById('modalMember').innerHTML = memberNo + " - " + memberName;
+            document.getElementById('modalLoanType').innerHTML = loanType;
+            document.getElementById('modalLoanId').innerHTML = loanId;
+            document.getElementById('modalInstDue').innerHTML = instDue;
+            document.getElementById('modalDueDate').innerHTML = dueDate;
+            document.getElementById('modalAmount').innerHTML = amount;
+
+            document.getElementById('modalLoanIdInput').value = loanId;
+            document.getElementById('modalLoanTypeInput').value = loanType;
+
+            fetch('/loan/comments/' + loanType + '/' + loanId)
+                .then(res => res.json())
+                .then(data => {
+
+                    let html = '';
+
+                    if (data.length === 0) {
+                        html = '<tr><td colspan="3" class="text-center">No Comments</td></tr>';
+                    } else {
+
+                        data.forEach(c => {
+
+                            html += `
+                    <tr>
+                        <td class="py-2 px-3">${c.comment}</td>
+                        <td class="py-2 px-3">${c.comment_by ?? '-'}</td>
+                        <td class="py-2 px-3">${new Date(c.created_at).toLocaleString()}</td>
+                    </tr>
+                    `;
+
+                        });
+
+                    }
+
+                    document.getElementById('commentHistory').innerHTML = html;
+
+                });
+        }
+    </script>
+@endsection

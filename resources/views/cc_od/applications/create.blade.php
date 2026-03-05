@@ -846,8 +846,84 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-
+<!-- Recalculation with submit form -->
 <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    let isCalculated = false;
+    const calcBtn = document.getElementById("calculateBtn");
+    const form = calcBtn.closest("form");
+
+    // RESET CALCULATION IF USER CHANGES VALUES
+    document.addEventListener("input", function (e) {
+
+        if (
+            e.target.id === "netLoanAmount" ||
+            e.target.id === "scheme_id"
+        ) {
+
+            isCalculated = false;
+
+            calcBtn.textContent = "Calculate";
+
+            document.getElementById("calculationBox").classList.add("hidden");
+        }
+
+    });
+
+    // CALCULATE BUTTON
+    calcBtn.addEventListener("click", function (e) {
+
+        e.preventDefault();
+
+        // If already calculated → SUBMIT
+        if (isCalculated) {
+            form.submit();
+            return;
+        }
+
+        // Step 1: Get Net Loan
+        const netLoan = parseFloat(document.getElementById("netLoanAmount")?.value) || 0;
+
+        // Step 2: Get Scheme
+        const scheme = document.getElementById("scheme_id");
+        const selected = scheme.options[scheme.selectedIndex];
+        const maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
+
+        // Step 3: Validation
+        if (netLoan > maxLoan) {
+            alert("Requested Limit (" + netLoan + ") cannot exceed Max Limit (" + maxLoan + ")");
+            return;
+        }
+
+        // Step 4: Approvable
+        const approvable = Math.min(netLoan, maxLoan);
+
+        // Step 5: Display Results
+        document.getElementById("resNetLoan").textContent = netLoan.toFixed(2);
+        document.getElementById("resMaxLoan").textContent = maxLoan.toFixed(2);
+        document.getElementById("resApprovable").textContent = approvable.toFixed(2);
+
+        // Step 6: Hidden Inputs
+        document.getElementById("inputNetLoan").value = netLoan.toFixed(2);
+        document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
+        document.getElementById("inputApprovable").value = approvable.toFixed(2);
+
+        // Step 7: Show Calculation Box
+        document.getElementById("calculationBox").classList.remove("hidden");
+
+        // Step 8: Convert Button
+        calcBtn.textContent = "Submit Application";
+
+        isCalculated = true;
+
+    });
+
+});
+</script>
+
+<!-- Old submit form -->
+<!-- <script>
     let isCalculated = false;
 
     document.getElementById("calculateBtn").addEventListener("click", function (e) {
@@ -885,75 +961,75 @@ document.addEventListener("DOMContentLoaded", () => {
             isCalculated = true;
         }
     });
-</script>
+</script> -->
 
 
- <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const cibilBody = document.getElementById("cibilBody");
-    const addRowBtn = document.getElementById("addRow");
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+const cibilBody = document.getElementById("cibilBody");
+const addRowBtn = document.getElementById("addRow");
 
-    // Template for new row
-    function newRow() {
-        const today = new Date();
-        const day = String(today.getDate()).padStart(2, '0');
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const year = today.getFullYear();
-        const formattedDate = `${day}-${month}-${year}`;
+// Template for new row
+function newRow() {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    const formattedDate = `${day}-${month}-${year}`;
 
-        return `
-            <tr class="nested-fields border-b">
-                <!-- Cibil Type -->
-                <td class="px-2 py-2" style="width:230px;">
-                    <select name="cibil_type[]" required
-                        class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
-                        <option value="transunion">TransUnion</option>
-                        <option value="equifax">Equifax</option>
-                        <option value="experian">Experian</option>
-                        <option value="crif_highmark">Crif Highmark</option>
-                    </select>
-                </td>
+    return `
+        <tr class="nested-fields border-b">
+            <!-- Cibil Type -->
+            <td class="px-2 py-2" style="width:230px;">
+                <select name="cibil_type[]" required
+                    class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
+                    <option value="transunion">TransUnion</option>
+                    <option value="equifax">Equifax</option>
+                    <option value="experian">Experian</option>
+                    <option value="crif_highmark">Crif Highmark</option>
+                </select>
+            </td>
 
-                <!-- Cibil Score -->
-                <td class="px-2 py-2">
-                    <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
-                        class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
-                </td>
+            <!-- Cibil Score -->
+            <td class="px-2 py-2">
+                <input type="number" name="cibil_score[]" placeholder="Enter CIBIL Score"
+                    class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5">
+            </td>
 
-                <!-- Report Date -->
-                <td class="px-2 py-2 relative">
-                    <input type="text" name="report_date[]" value="${formattedDate}"
-                        class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
-                </td>
+            <!-- Report Date -->
+            <td class="px-2 py-2 relative">
+                <input type="text" name="report_date[]" value="${formattedDate}"
+                    class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5" required/>
+            </td>
 
-                <!-- Upload File -->
-                <td class="px-2 py-2">
-                    <input type="file" name="report_file[]"
-                        class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
-                </td>
+            <!-- Upload File -->
+            <td class="px-2 py-2">
+                <input type="file" name="report_file[]"
+                    class="w-full text-center dark:bg-bg3 rounded-10 px-2 py-2 text-sm md:text-base border bg-secondary/5"/>
+            </td>
 
-                <!-- Remove button -->
-              
-            </tr>
-        `;
+            <!-- Remove button -->
+            
+        </tr>
+    `;
+}
+
+// // Add new row
+// addRowBtn.addEventListener("click", () => {
+//     cibilBody.insertAdjacentHTML("beforeend", newRow());
+// });
+
+// Remove row (event delegation)
+cibilBody.addEventListener("click", function (e) {
+    if (e.target.closest(".removeRow")) {
+        e.target.closest("tr").remove();
     }
+});
 
-    // // Add new row
-    // addRowBtn.addEventListener("click", () => {
-    //     cibilBody.insertAdjacentHTML("beforeend", newRow());
-    // });
-
-    // Remove row (event delegation)
-    cibilBody.addEventListener("click", function (e) {
-        if (e.target.closest(".removeRow")) {
-            e.target.closest("tr").remove();
-        }
-    });
-
-    // ✅ Only add a new row if there are NO existing rows (i.e. new application)
-    if (cibilBody.children.length === 0) {
-        cibilBody.insertAdjacentHTML("beforeend", newRow());
-    }
+// ✅ Only add a new row if there are NO existing rows (i.e. new application)
+if (cibilBody.children.length === 0) {
+    cibilBody.insertAdjacentHTML("beforeend", newRow());
+}
 });
 </script>
 
@@ -977,41 +1053,41 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <!-- Max Tenure & tenure vaule Validation -->
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const schemeSelect = document.getElementById("scheme_id");
-        const tenureInput = document.getElementById("tenure_value");
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const schemeSelect = document.getElementById("scheme_id");
+    const tenureInput = document.getElementById("tenure_value");
 
-        function validateTenure() {
-            const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
-            const maxTenure = parseInt(selectedOption?.getAttribute("data-tenure")) || 0;
-            const val = parseInt(tenureInput.value) || 0;
+    function validateTenure() {
+        const selectedOption = schemeSelect.options[schemeSelect.selectedIndex];
+        const maxTenure = parseInt(selectedOption?.getAttribute("data-tenure")) || 0;
+        const val = parseInt(tenureInput.value) || 0;
 
-            // If maxTenure not defined, skip
-            if (!maxTenure) return;
+        // If maxTenure not defined, skip
+        if (!maxTenure) return;
 
-            // Validate
-            if (val > maxTenure) {
-                tenureInput.classList.add("border-red-500");
-                document.getElementById("tenureError")?.remove();
+        // Validate
+        if (val > maxTenure) {
+            tenureInput.classList.add("border-red-500");
+            document.getElementById("tenureError")?.remove();
 
-                const errorMsg = document.createElement("p");
-                errorMsg.id = "tenureError";
-                errorMsg.className = "text-error text-sm mt-1";
-                errorMsg.textContent = `Tenure cannot exceed ${maxTenure} months for this scheme.`;
-                tenureInput.insertAdjacentElement("afterend", errorMsg);
+            const errorMsg = document.createElement("p");
+            errorMsg.id = "tenureError";
+            errorMsg.className = "text-error text-sm mt-1";
+            errorMsg.textContent = `Tenure cannot exceed ${maxTenure} months for this scheme.`;
+            tenureInput.insertAdjacentElement("afterend", errorMsg);
 
-                tenureInput.value = maxTenure; // optional cap
-            } else {
-                tenureInput.classList.remove("border-red-500");
-                document.getElementById("tenureError")?.remove();
-            }
+            tenureInput.value = maxTenure; // optional cap
+        } else {
+            tenureInput.classList.remove("border-red-500");
+            document.getElementById("tenureError")?.remove();
         }
+    }
 
-        schemeSelect.addEventListener("change", validateTenure);
-        tenureInput.addEventListener("input", validateTenure);
-    });
-    </script>
+    schemeSelect.addEventListener("change", validateTenure);
+    tenureInput.addEventListener("input", validateTenure);
+});
+</script>
 
 <!-- sub text massage show -->
 <script>

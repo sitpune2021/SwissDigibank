@@ -134,6 +134,29 @@ class ApproveController extends Controller
 
             Log::info('Foreclosure Query Built Successfully');
 
+
+            $misForeclosureQuery = DB::table('misaccounts')
+                ->select(
+                    'misaccounts.id',
+                    DB::raw("'misaccounts' AS source_table"),
+                    DB::raw("'Cash' AS payment_mode"),
+                    'misaccounts.foreclose_final_amount AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'misaccounts.status AS approve_status',
+                    DB::raw("COALESCE(misaccounts.foreclose_request_date, misaccounts.created_at) AS created_at"),
+                    'branches.branch_name',
+                    'misaccounts.mis_account_no AS account_no',
+                    DB::raw("'MIS' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'misaccounts.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'Foreclosure' AS transaction_type")
+                )
+                ->join('branches', 'branches.id', '=', 'misaccounts.branch_id')
+                ->where('misaccounts.status', '=', 1)
+                ->where('misaccounts.foreclose_status', '=', 1); // request raised
             /*
         |--------------------------------------------------------------------------
         | 4️⃣ GOLD LOAN EMI QUERY
@@ -551,6 +574,7 @@ class ApproveController extends Controller
             $unionQuery = $transactionQuery
                 ->unionAll($membershipQuery)
                 ->unionAll($foreclosureQuery)
+                ->unionAll($misForeclosureQuery)
                 ->unionAll($goldLoanEmiQuery)
                 ->unionAll($mortgageEmiQuery)
                 ->unionAll($loanAgainstEmiQuery)
@@ -765,6 +789,53 @@ class ApproveController extends Controller
                     DB::commit();
 
                     return back()->with('success', 'Loan Against Foreclosure approved successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'misaccounts') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $mis = DB::table('misaccounts')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$mis) {
+                        DB::rollBack();
+                        return back()->with('error', 'MIS account not found.');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // 1️⃣ Approve foreclosure request
+                        DB::table('misaccounts')
+                            ->where('id', $id)
+                            ->update([
+                                'foreclose_status' => 2, // approved
+                                'status' => 3, // closed
+                                'closing_date' =>now(),
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    if ($status === 'disapproved') {
+
+                        DB::table('misaccounts')
+                            ->where('id', $id)
+                            ->update([
+                                'foreclose_status' => 3, // rejected
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'MIS Foreclosure updated successfully.');
                 } catch (\Exception $e) {
 
                     DB::rollBack();

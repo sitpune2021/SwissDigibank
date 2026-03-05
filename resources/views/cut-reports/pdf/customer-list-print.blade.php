@@ -90,6 +90,7 @@
             @php
             $shareAmount = optional($member->shareTransfers)->sum('total_consideration') ?? 0;
             $totalShare += $shareAmount;
+            $totalBalance += $shareAmount;
             @endphp
 
             <tr>
