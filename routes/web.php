@@ -2530,6 +2530,11 @@ Route::get(
     'loan/mark-done/{type}/{loan_id}/{emi_no}/{amount}',
     [PaymentsToCollectController::class, 'markDone']
 )->name('loan.mark.done');
+Route::post('/loan/save-comment', [PaymentsToCollectController::class, 'saveComment'])
+    ->name('loan.save.comment');
+
+Route::get('/loan/comments/{type}/{loan_id}', [PaymentsToCollectController::class, 'getComments'])
+    ->name('loan.get.comments');
 
 
 
