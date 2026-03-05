@@ -102,51 +102,40 @@
                         </th>
                     </tr>
                 </thead>
-                @php $totalBalance = 0; @endphp
-                <tbody>
+               <tbody>
+                    @php $totalBalance = 0; @endphp
+
                     @foreach ($account as $key => $row)
+
+                    @php
+                    $balance = $row->shareTransfers->sum('total_consideration');
+                    $totalBalance += $balance;
+                    @endphp
+
                     <tr class="border-b dark:border-bg3">
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 uppercase">
-                                {{ $account->firstItem() + $key }}
-                            </div>
-                        </td>
 
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 capitalize">
-                                {{ $row->member_no ?? '-' }}
-                            </div>
-                        </td>
+                    <td class="px-6 py-4">
+                    {{ $account->firstItem() + $key }}
+                    </td>
 
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                {{ $row->full_name ?: '-' }}
-                            </div>
-                        </td>
+                    <td class="px-6 py-4">
+                    {{ $row->member_no ?? '-' }}
+                    </td>
 
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                            -
-                            </div>
-                        </td>
+                    <td class="px-6 py-4">
+                    {{ $row->full_name ?? '-' }}
+                    </td>
 
-                        @php 
-                        $balance = $row->shareTransfers->sum('total_consideration');
-                        $totalBalance += $balance;
-                        @endphp
+                    <td class="px-6 py-4">
+                    -
+                    </td>
 
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            @php 
-                                $balance = $row->shareTransfers->sum('total_consideration');
-                                $totalBalance += $balance;
-                            @endphp
-
-                            <div class="flex items-center gap-1">
-                                {{ number_format($balance, 2) }}
-                            </div>
-                        </td>
+                    <td class="px-6 py-4">
+                    {{ number_format($balance,2) }}
+                    </td>
 
                     </tr>
+
                     @endforeach
                    <tr class="bg-gray-100 font-semibold">
                         <td colspan="2" class="px-6 py-4 text-start">
