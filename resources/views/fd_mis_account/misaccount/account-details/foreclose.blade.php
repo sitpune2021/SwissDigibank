@@ -2,6 +2,17 @@
 @section('content')
 <div class="main-inner">
 
+@if(session('success'))
+<div class="mb-4 p-3 rounded bg-primary text-green-700 border border-green-300">
+    {{ session('success') }}
+</div>
+@endif
+
+@if(session('error'))
+<div class="mb-4 p-3 rounded bg-red-100 text-red-700 border border-red-300">
+    {{ session('error') }}
+</div>
+@endif
 
     <style>
         input[type="radio"] {
@@ -46,11 +57,11 @@
 
     <div class="flex flex-col dark:bg-bg3 lg:flex-row justify-between mt-7 gap-5">
         <!-- Left: Details -->
-        <form action="{{ route('misaccount.raiseForecloseRequest',$misaccount->id) }}" method="POST">
-            @csrf
+        
             <div class=" w-full">
                 <div class="box dark:bg-bg3 border mb-4 border-gray-200 shadow-md rounded-lg">
-                    <form action="">
+                   <form action="{{ route('misaccount.raiseForecloseRequest',$misaccount->id) }}" method="POST">
+            @csrf
                         <!-- Header -->
                         <div class="px-2 py-3 ">
                             <h3 class="text-lg  border-b mb-4 font-semibold text-black">ACCOUNT DETAILS</h3>
@@ -320,7 +331,7 @@
                                 <span class="text-red-500">*</span>
                             </label>
 
-                            <input type="text" value="{{ round($totalSettlement) }}" id="netAmountCollect"
+                            <input type="text" value="0" id="netAmountCollect"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="0.0" readonly>
                         </div>
@@ -332,7 +343,7 @@
                                 <span class="text-red-500">*</span>
                             </label>
 
-                            <input type="text" id="netAmountCollect"
+                            <input type="text" value="{{ round($totalSettlement) }}" id="netAmountCollect"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                                 placeholder="0.0" readonly>
                         </div>
@@ -340,11 +351,11 @@
                         <input type="hidden" name="interest_left_paid" value="{{ $interestLeftToPay }}">
                         <input type="hidden" name="tds" value="{{ $tds }}">
                         <input type="hidden" name="reverse_interest" value="{{ $reverseInterest }}">
-                        <input type="hidden" name="penal_charges" value="{{ $penalCharges }}">
-                        <input type="hidden" name="cancellation_charge" value="{{ $cancellationCharge }}">
+                        <input type="hidden" name="penal_charges" value="{{ $penalChargesWithGst }}">
+                        <input type="hidden" name="cancellation_charge" value="{{ $cancellationTotal }}">
                         <input type="hidden" name="total_account" value="{{ $totalSettlement }}">
-                        <input type="hidden" name="rounding_off" value="{{ $roundingOff }}">
-                        <input type="hidden" name="final_amount" value="{{ $finalAmount }}">
+                        {{-- <input type="hidden" name="rounding_off" value="{{ round($totalSettlement) }}"> --}}
+                        <input type="hidden" name="final_amount" value="{{ round($totalSettlement) }}">
 
 
                         <!-- Buttons -->
@@ -360,7 +371,7 @@
                     </form>
                 </div>
             </div>
-        </form>
+       
         <!-- Left: Details -->
         <div class=" w-full  overflow-hidden">
 

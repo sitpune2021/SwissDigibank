@@ -921,32 +921,67 @@ class MisaccountController extends Controller
         return $pdf->stream('payment-receipt-' . $id . '.pdf');
     }
 
+public function show($id)
+{
+    $misaccount = MisAccount::with(['member', 'transactions', 'fdScheme.fdslabs'])
+        ->where('id', $id)
+        ->firstOrFail();
 
-    public function show($id)
-    {
-        $misaccount = MisAccount::with(['member', 'transactions', 'fdScheme.fdslabs'])->where('id', $id)->first();
+    $branches = Branch::all();
 
-        $branches = Branch::all();
-        $documents = Document::where('mis_id', $misaccount->id)->get();
-        $passbooks = Passbook::where('account_type', 'MIS Accounts')
-            ->where('account_no', $misaccount->id)
-            ->get();
-        $transactions = MisTransaction::with(['misaccount', 'bank', 'savingAccount'])
-            ->whereHas('misaccount', function ($q) use ($misaccount) {
-                $q->where('member_id', $misaccount->member_id);
-            })
-            ->get();
+    $documents = Document::where('mis_id', $misaccount->id)->get();
 
-        $balances = self::getAccountBalance($id);
-        $balance  = $balances[$id] ?? 0;
+    $passbooks = Passbook::where('account_type', 'MIS Accounts')
+        ->where('account_no', $misaccount->id)
+        ->get();
 
-        $savingAccounts = Account::where('member_id', $misaccount->member_id)
-            ->where('account_type', 'SAVING')
-            ->get();
+    $transactions = MisTransaction::with(['misaccount', 'bank', 'savingAccount'])
+        ->whereHas('misaccount', function ($q) use ($misaccount) {
+            $q->where('member_id', $misaccount->member_id);
+        })
+        ->get();
 
-        return view('fd_mis_account.misaccount.show', compact('misaccount', 'passbooks', 'savingAccounts', 'branches', 'balance', 'documents', 'transactions'));
-    }
+    $balances = self::getAccountBalance($id);
+    $balance  = $balances[$id] ?? 0;
 
+    $savingAccounts = Account::where('member_id', $misaccount->member_id)
+        ->where('account_type', 'SAVING')
+        ->get();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Slab Interest Calculation
+    |--------------------------------------------------------------------------
+    */
+
+    $openDate = \Carbon\Carbon::parse($misaccount->open_date);
+    $today = \Carbon\Carbon::today();
+
+    $totalDays = $openDate->diffInDays($today);
+
+    $slab = $misaccount->fdScheme->fdslabs
+        ->where('day_from', '<=', $totalDays)
+        ->where('day_to', '>=', $totalDays)
+        ->first();
+
+    $rate = $slab ? $slab->interest_rate : 0;
+
+    return view(
+        'fd_mis_account.misaccount.show',
+        compact(
+            'misaccount',
+            'passbooks',
+            'savingAccounts',
+            'branches',
+            'balance',
+            'documents',
+            'transactions',
+            'rate',
+            'slab',
+            'totalDays'
+        )
+    );
+}
     // edit editBranch
     public function updateBranch(Request $request, $misaccountId)
     {
@@ -1176,10 +1211,12 @@ class MisaccountController extends Controller
 
         // Interest left to pay
         $interestLeftToPay =  $totalInterest - $interestPaid;
+        $reverseInterest = 0;
 
         if ($interestLeftToPay < 0) {
             $interestLeftToPay = 0;
         }
+
 
         // Reverse interest
         if ($interestPaid > $prematureInterest) {
@@ -1257,44 +1294,60 @@ class MisaccountController extends Controller
     {
         $misaccount = Misaccount::findOrFail($id);
 
-        // Validate input
+        // Prevent duplicate request
+        if ($misaccount->foreclose_status == 1) {
+            return back()->with('error', 'Foreclosure request already raised.
+            Check the Approves');
+        }
+
+        if ($misaccount->foreclose_status == 2) {
+            return back()->with('error', 'Account already foreclosed.');
+        }
+
+        // Validation
         $request->validate([
-            'reason' => 'required|string|max:255',
+            'interest_left_paid' => 'nullable|numeric',
+            'tds' => 'nullable|numeric',
+            'reverse_interest' => 'nullable|numeric',
+            'penal_charges' => 'nullable|numeric',
+            'cancellation_charge' => 'nullable|numeric',
+            'total_account' => 'nullable|numeric',
+            'rounding_off' => 'nullable|numeric',
+            'final_amount' => 'nullable|numeric',
         ]);
 
+        // Update MIS Account
         $misaccount->update([
-
             'foreclose_request_date' => now(),
 
-            'foreclose_interest_left' => $request->interest_left_paid ?? 0,
-            'foreclose_tds' => $request->tds ?? 0,
+            'foreclose_interest_left' => round($request->interest_left_paid ?? 0, 2),
+            'foreclose_tds' => round($request->tds ?? 0, 2),
+            'foreclose_reverse_interest' => round($request->reverse_interest ?? 0, 2),
 
-            'foreclose_reverse_interest' => $request->reverse_interest ?? 0,
+            'foreclose_penal_charges' => round($request->penal_charges ?? 0, 2),
+            'foreclose_cancellation_charges' => round($request->cancellation_charge ?? 0, 2),
 
-            'foreclose_penal_charges' => $request->penal_charges ?? 0,
-            'foreclose_cancellation_charges' => $request->cancellation_charge ?? 0,
+            'foreclose_total_amount' => round($request->total_account ?? 0, 2),
 
-            'foreclose_total_amount' => $request->total_account ?? 0,
+            'foreclose_rounding' => round($request->rounding_off ?? 0, 2),
+            'foreclose_final_amount' => round($request->final_amount ?? 0, 2),
 
-            'foreclose_rounding' => $request->rounding_off ?? 0,
+            // 'foreclose_status' => 1, // Request Raised
 
-            'foreclose_final_amount' => $request->final_amount ?? 0,
-
-            'foreclose_status' => 1, // Request Raised
-            'remarks' => $request->reason
         ]);
 
         return redirect()
-            ->route('misaccount.show', $id)
-            ->with('success', 'Foreclosure request raised successfully!');
+            ->route('misaccount.show', $misaccount->id)
+            ->with('success', 'Foreclosure request raised successfully.');
     }
+
     public function removeAccount($id)
     {
         $misaccount = Misaccount::findOrFail($id);
         return view('fd_mis_account.misaccount.account-details.remove-account', compact('misaccount'));
     }
 
-    public function conformRemoveAccount(Request $request, $id)
+    public function confirmRemoveAccount(Request $request, $id)
     {
         $misaccount = Misaccount::findOrFail($id);
 

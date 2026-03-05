@@ -122,6 +122,7 @@
       </div> -->
 
       <div id="accountMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded-md shadow-lg z-50">
+        @if($misaccount->status == 1)
         <a href="{{ route('misaccount.changeAccountInfo', $misaccount->id) }}"
           class="block px-4 py-2 uppercase hover:bg-warning">
           Change Account Info
@@ -134,6 +135,7 @@
           class="block px-4 py-2 uppercase hover:bg-warning">
           Fore Close
         </a>
+        @endif
         <a href="{{ route('misaccount.removeAccount', $misaccount->id) }}"
           class="block px-4 py-2 uppercase hover:bg-warning">
           Remove Account
@@ -143,7 +145,9 @@
 
     </div>
 
+
     <!--   RELEASE INTEREStT-->
+    @if($misaccount->status == 1)
     <a class="btn-primary text-sm px-2 py-2  rounded-10 ">
       RELEASE INTEREST
     </a>
@@ -170,9 +174,9 @@
 
       </div>
     </div>
+    @endif
 
-
-     <div class="relative inline-block text-left">
+    <div class="relative inline-block text-left">
       <a id="dropdownButton" class="flex cursor-pointer items-center text-sm px-2 py-2  rounded-10 btn-secondary text-white">
         <i class="las la-print mr-2"></i>
         PRINT DOCUMENTS
@@ -246,16 +250,17 @@
               <td class="font-semibold px-4 py-2 uppercase">Maturity Date</td>
               <td class="px-4 py-2">
                 {{ \Carbon\Carbon::parse($misaccount->maturity_date)->format('d-m-Y') }}
-
               </td>
             </tr>
             <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Close Date</td>
-              <td class="px-4 py-2">—</td>
+              <td class="px-4 py-2">{{ \Carbon\Carbon::parse($misaccount->closing_date)->format('d-m-Y') }}</td>
             </tr>
             <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Annual Interest Rate (%)</td>
-              <td class="px-4 py-2">-</td>
+              <td class="px-4 py-2">
+                {{ $rate }} %
+              </td>
             </tr>
             <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Balance Available</td>
@@ -263,7 +268,15 @@
             </tr>
             <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">Status</td>
-              <td class="px-4 py-2">-</td>
+              @if($misaccount->status == 0)
+              <td class="px-4 py-2">Pending</td>
+              @elseif($misaccount->status == 1)
+              <td class="px-4 py-2">Active</td>
+              @elseif($misaccount->status == 2)
+              <td class="px-4 py-2">Rejected</td>
+              @elseif($misaccount->status == 3)
+              <td class="px-4 py-2">Foreclosed</td>
+              @endif
             </tr>
             <tr class="border-b">
               <td class="font-semibold px-4 py-2 uppercase">TDS Deduction</td>
@@ -756,6 +769,7 @@
       </div>
 
       <!-- Fore Close  -->
+      @if($misaccount->status == 3)
       <div class="bg-white shadow-md box mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
         <!-- Header -->
         <div class="border-b px-4 py-3 bg-secondary/5 rounded-10">
@@ -764,53 +778,74 @@
 
         <!-- Body -->
         <div class="p-4 overflow-x-auto whitespace-nowrap">
-          <table class="w-full  overflow-x-auto whitespace-nowrap text-sm text-left">
+          <table class="w-full overflow-x-auto whitespace-nowrap text-sm text-left">
             <tbody class="divide-y divide-gray-200">
 
               <tr class="border-b">
                 <td class="font-semibold px-4 py-2 w-1/3 uppercase">Fore Close Date</td>
-                <td class="px-4 py-2">02-04-2025</td>
+                <td class="px-4 py-2">
+                  {{ $misaccount->foreclose_request_date 
+                    ? \Carbon\Carbon::parse($misaccount->foreclose_request_date)->format('d-m-Y') 
+                    : '-' }}
+                </td>
               </tr>
 
               <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Principal Amount</td>
-                <td class="px-4 py-2">₹ 500,000.00</td>
+                <td class="px-4 py-2">
+                  ₹ {{ number_format($misaccount->mis_amount ?? 0, 2) }}
+                </td>
               </tr>
 
               <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Current Balance (A)</td>
-                <td class="px-4 py-2">₹ 500,000.00</td>
+                <td class="px-4 py-2">
+                  ₹ {{ number_format($balance ?? 0, 2) }}
+                </td>
               </tr>
 
               <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Balance Interest to Credit (B)</td>
-                <td class="px-4 py-2">₹ 48,750.00</td>
+                <td class="px-4 py-2">
+                  ₹ {{ number_format($misaccount->foreclose_interest_left ?? 0, 2) }}
+                </td>
               </tr>
 
               <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">TDS on Balance Interest to Credit (C)</td>
-                <td class="px-4 py-2">₹ 0.00</td>
+                <td class="px-4 py-2">
+                  ₹ {{ number_format($misaccount->foreclose_tds ?? 0, 2) }}
+                </td>
               </tr>
 
               <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Penal Charges to Deduct (D)</td>
-                <td class="px-4 py-2">₹ 0.00</td>
+                <td class="px-4 py-2">
+                  ₹ {{ number_format($misaccount->foreclose_penal_charges ?? 0, 2) }}
+                </td>
               </tr>
 
               <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Fore Closure Charges (E)</td>
-                <td class="px-4 py-2">₹ 0.00</td>
+                <td class="px-4 py-2">
+                  ₹ {{ number_format($misaccount->foreclose_cancellation_charges ?? 0, 2) }}
+                </td>
               </tr>
 
-              <tr class="border-b">
-                <td class="font-semibold px-4 py-2 uppercase">Final Payable Amount (A + B - C - D - E)</td>
-                <td class="px-4 py-2">₹ 548,750.00</td>
+              <tr class="border-b bg-gray-50 font-semibold">
+                <td class="px-4 py-2 uppercase">
+                  Final Payable Amount (A + B - C - D - E)
+                </td>
+                <td class="px-4 py-2 text-green-700">
+                  ₹ {{ number_format($misaccount->foreclose_final_amount ?? 0, 2) }}
+                </td>
               </tr>
+
             </tbody>
           </table>
         </div>
       </div>
-
+      @endif
 
       <!--Scheme Info-->
       <div class="bg-white shadow-md box dark:bg-bg3  mt-5 rounded-lg overflow-hidden">
@@ -920,7 +955,7 @@
 
               <tr class="border-b">
                 <td class="font-semibold px-4 py-2 uppercase">Total TDS Deducted (C)</td>
-                <td class="px-4 py-2 text-right md:text-left">{{$misaccount->tds_deduction ?? ''}}</td>
+                <td class="px-4 py-2 text-right md:text-left">₹ {{$misaccount->tds ?? ''}}</td>
               </tr>
 
               <tr class="border-b">
@@ -933,11 +968,23 @@
                 <td class="px-4 py-2 text-right md:text-left">₹ {{$misaccount->maturity_amount ?? ''}}</td>
               </tr>
 
-              <tr class="border-b">
-                <td class="font-semibold px-4 py-2 uppercase">Net Maturity Amount (A + B + D - C)</td>
-                <td class="px-4 py-2 text-right md:text-left">₹ 725,000.00 </td>
-              </tr>
+              @php
+              $principal = $misaccount->mis_amount ?? 0;
+              $interest = $misaccount->total_interest ?? 0;
+              $bonus = 0; // change if you have bonus column
+              $tds = $misaccount->forclose_tds ?? 0;
 
+              $netMaturityAmount = $principal + $interest + $bonus - $tds;
+              @endphp
+
+              <tr class="border-b">
+                <td class="font-semibold px-4 py-2 uppercase">
+                  Net Maturity Amount (A + B + D - C)
+                </td>
+                <td class="px-4 py-2 text-right md:text-left">
+                  ₹ {{ number_format($netMaturityAmount, 2) }}
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -1137,7 +1184,7 @@
     tdsToggle: 'tds',
     holdToggle: 'hold'
   };
-  
+
   const updateUrl = "{{ route('mis.updateSetting', $misaccount->id) }}";
 
   document.querySelectorAll('.slider-toggle').forEach(toggle => {

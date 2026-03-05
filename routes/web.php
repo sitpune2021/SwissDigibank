@@ -550,7 +550,8 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::post('/misaccount/{id}/foreclose', [MisaccountController::class, 'raiseForecloseRequest'])->name('misaccount.raiseForecloseRequest');
     
     Route::get('/misaccount/{id}/remove-account', [MisaccountController::class, 'removeAccount'])->name('misaccount.removeAccount');
-
+    Route::delete('/mis_account/{id}', [MisaccountController::class, 'confirmRemoveAccount'])
+    ->name('misaccount.delete');
     Route::get('/misaccount/make-lien/{id}', [MisaccountController::class, 'makeLien'])->name('misaccount.makelien');
 
     Route::get('/misaccount/credit-debit-interest/{id}', [MisaccountController::class, 'creditDebitInterest'])->name('misaccount.creditDebitInterest');

@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Misaccount extends Model
 {
+
+ use SoftDeletes;
     protected $fillable = [
         'member_id',
         'mis_account_no',
@@ -34,6 +37,20 @@ class Misaccount extends Model
         'total_interest',
         'maturity_amount',
         'maturity_date',
+
+        'foreclose_request_date',
+        'foreclose_interest_left',
+        'foreclose_tds',
+        'foreclose_reverse_interest',
+
+        'foreclose_penal_charges',
+        'foreclose_cancellation_charges',
+
+        'foreclose_total_amount',
+        'foreclose_rounding',
+        'foreclose_final_amount',
+
+        'foreclose_status',
 
     ];
 
