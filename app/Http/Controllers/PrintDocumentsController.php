@@ -252,9 +252,9 @@ class PrintDocumentsController extends Controller
     public function generateFormJview()
     {
         // $members = Member::orderBy('id', 'asc')->get();
-//   $members = Member::with('address')
-//         ->orderBy('id', 'asc')
-//         ->get();
+        //   $members = Member::with('address')
+        //         ->orderBy('id', 'asc')
+        //         ->get();
 
         $company = Company::select('company_name', 'cin_no')->first();
         $members = Member::with([
@@ -265,12 +265,13 @@ class PrintDocumentsController extends Controller
 
         return view('print-documents.form-i-and-j.form-j-view', compact('members', 'company'));
     }
+    
     public function generateFormJ()
     {
         // $members = Member::orderBy('id', 'asc')->get();
-//   $members = Member::with('address')
-//         ->orderBy('id', 'asc')
-//         ->get();
+        //   $members = Member::with('address')
+        //         ->orderBy('id', 'asc')
+        //         ->get();
        $company = Company::select('company_name', 'cin_no')->first();
         $members = Member::with([
             'address.state'
