@@ -146,33 +146,30 @@
                             <td class="py-2 uppercase font-semibold">Member No :</td>
                             <td>
                                 <a href="" class="text-primary">
-                                    <span id="modalMember"></span>
-                                </a>
+                                    {{ $loan->member_no ?? '' }} - {{ $loan->member_info_first_name ?? '' }} </a>
                             </td>
                         </tr>
 
                         <tr class="border-b">
                             <td class="py-2 uppercase font-semibold">Account Type :</td>
-                            <td><span id="modalLoanType"></span></td>
+                            <td>{{ $loan_type }}</td>
                         </tr>
 
                         <tr class="border-b">
                             <td class="py-2 uppercase font-semibold">Account No :</td>
-                            <td>
-                                <a href="" class="text-primary">
-                                    <span id="modalLoanId"></span>
-                                </a>
-                            </td>
+                            <td>{{ $loan_id }}</td>
                         </tr>
 
                         <tr class="border-b">
                             <td class="py-2 uppercase font-semibold">Inst Due :</td>
-                            <td><span id="modalInstDue"></span></td>
+                            <td>{{ $emi->emi_no ?? '-' }}</td>
                         </tr>
 
                         <tr class="border-b">
                             <td class="py-2 uppercase font-semibold">Due Date :</td>
-                            <td><span id="modalDueDate"></span></td>
+                            <td>
+                                {{ isset($emi->emi_due_date) ? date('d-m-Y', strtotime($emi->emi_due_date)) : '-' }}
+                            </td>
                         </tr>
 
                         <tr class="border-b">
@@ -182,12 +179,12 @@
 
                         <tr class="border-b">
                             <td class="py-2 uppercase font-semibold">Amt to Collect :</td>
-                            <td><span id="modalAmount"></span></td>
+                            <td>{{ number_format($emi->remaining_amount ?? 0, 2) }}</td>
                         </tr>
                     </table>
-                    <div class="text-center uppercase mt-6 font-semibold">
+                    {{-- <div class="text-center uppercase mt-6 font-semibold">
                         Last Credit Transaction Info
-                    </div>
+                    </div> --}}
                     <div class="">
                         <table class="w-full   text-sm">
                             <tbody>
@@ -234,10 +231,10 @@
                             Save
                         </button>
 
-                        <button class="btn-outline uppercase justify-center" type="reset">
-                            <a href="#"> BACK</a>
+                        <button type="button" onclick="window.location='{{ route('payments-to-collect.index') }}'"
+                            class="btn-outline uppercase justify-center">
+                            BACK
                         </button>
-
                     </div>
                 </form>
                 @if (isset($comments) && count($comments) > 0)
@@ -370,33 +367,33 @@
     <!-- Datepicker JS -->
     <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker-full.min.js"></script>
     <script>
-       function openLoanModal(memberNo, memberName, loanType, loanId, instDue, dueDate, amount) {
+        function openLoanModal(memberNo, memberName, loanType, loanId, instDue, dueDate, amount) {
 
-    document.getElementById('loanModal').classList.remove('hidden');
+            document.getElementById('loanModal').classList.remove('hidden');
 
-    document.getElementById('modalMember').innerHTML = memberNo + " - " + memberName;
-    document.getElementById('modalLoanType').innerHTML = loanType;
-    document.getElementById('modalLoanId').innerHTML = loanId;
-    document.getElementById('modalInstDue').innerHTML = instDue;
-    document.getElementById('modalDueDate').innerHTML = dueDate;
-    document.getElementById('modalAmount').innerHTML = amount;
+            document.getElementById('modalMember').innerHTML = memberNo + " - " + memberName;
+            document.getElementById('modalLoanType').innerHTML = loanType;
+            document.getElementById('modalLoanId').innerHTML = loanId;
+            document.getElementById('modalInstDue').innerHTML = instDue;
+            document.getElementById('modalDueDate').innerHTML = dueDate;
+            document.getElementById('modalAmount').innerHTML = amount;
 
-    document.getElementById('modalLoanIdInput').value = loanId;
-    document.getElementById('modalLoanTypeInput').value = loanType;
+            document.getElementById('modalLoanIdInput').value = loanId;
+            document.getElementById('modalLoanTypeInput').value = loanType;
 
-    fetch('/loan/comments/' + loanType + '/' + loanId)
-        .then(res => res.json())
-        .then(data => {
+            fetch('/loan/comments/' + loanType + '/' + loanId)
+                .then(res => res.json())
+                .then(data => {
 
-            let html = '';
+                    let html = '';
 
-            if (data.length === 0) {
-                html = '<tr><td colspan="3" class="text-center">No Comments</td></tr>';
-            } else {
+                    if (data.length === 0) {
+                        html = '<tr><td colspan="3" class="text-center">No Comments</td></tr>';
+                    } else {
 
-                data.forEach(c => {
+                        data.forEach(c => {
 
-                    html += `
+                            html += `
                     <tr>
                         <td class="py-2 px-3">${c.comment}</td>
                         <td class="py-2 px-3">${c.comment_by ?? '-'}</td>
@@ -404,13 +401,13 @@
                     </tr>
                     `;
 
+                        });
+
+                    }
+
+                    document.getElementById('commentHistory').innerHTML = html;
+
                 });
-
-            }
-
-            document.getElementById('commentHistory').innerHTML = html;
-
-        });
-}
+        }
     </script>
 @endsection

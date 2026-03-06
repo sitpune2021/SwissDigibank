@@ -295,7 +295,7 @@ return [
             'id' => 'country',
             'type' => 'text',
             'required' => true,
-            'default' => 'India',
+            'default' => 'BHARAT',
 
         ],
 
@@ -614,6 +614,7 @@ return [
             'id' => 'membership_fee',
             'type' => 'number',
             'required' => false,
+            'default' => 10,
         ],
         [
             'label' => 'NET FEE TO COLLECT',
@@ -624,11 +625,12 @@ return [
             'default' => 10, // Default value set to 100
         ],
         [
-            'label' => 'REMARKS(IF ANY) ',
+            'label' => 'REMARKS(IF ANY)',
             'name' => 'charges_remarks',
             'id' => 'remarks',
             'type' => 'text',
             'required' => false,
+            'default' => 'ENTRANCE FEE',
         ],
         [
             'label' => 'PAYMENT MODE',
@@ -647,7 +649,7 @@ return [
 
     'online Tr' => [
         [
-            'label' => 'TRANSFER DATE ',
+            'label' => 'TRANSFER DATE',
             'name' => 'online_transfer_date',
             'id' => 'date4',
             'type' => 'text',

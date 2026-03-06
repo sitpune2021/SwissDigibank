@@ -250,13 +250,16 @@ class CcOdLoanController extends Controller
                 'guarantor_4_id' => $request->guarantor_4_id,
                 'scheme_id' => $request->scheme_id,
                 'tenure_value'     => $request->tenure_value,
-                'emi_collection' => $request->emi_collection, 
+                'emi_collection' => $request->emi_collection,
+                // ✅ ADD THESE
+                'loan_amount' => $request->net_loan_amount,
                 'net_loan_amount' => $request->net_loan_amount,
                 'purpose_of_loan' => $request->purpose_of_loan,
                 'credit_period' => $request->credit_period,
                 'charge_per_emi' => $request->charge_per_emi,
                 'processing_fee_gst' => $request->processing_fee_gst,
                 'processing_fee_sgst' => $request->processing_fee_sgst,
+                'ratio_enabled' => $request->ratio_enabled,
                 'processing_fee_cgst' => $request->processing_fee_cgst,
                 'processing_fee_igst' => $request->processing_fee_igst,
                 'processing_fee_total' => $request->processing_fee_total,
@@ -283,7 +286,7 @@ class CcOdLoanController extends Controller
             $this->saveActivity(
                 'CC / OD Loan Application',
                 'Create',
-               'Created CC/OD Application ID: ' . $loanApplication->id
+                'Created CC/OD Application ID: ' . $loanApplication->id
             );
 
             Log::info('cc / od Loan Application created successfully', [
@@ -446,7 +449,7 @@ class CcOdLoanController extends Controller
             $this->saveActivity(
                 'CC / OD Loan Application',
                 'Update',
-               'Created CC/OD Application ID: ' . $application->id
+                'Created CC/OD Application ID: ' . $application->id
             );
 
             if (!$updated) {
@@ -579,7 +582,7 @@ class CcOdLoanController extends Controller
         return redirect()->route('cc_od.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
 
-     public function submitForApproval($id)
+    public function submitForApproval($id)
     {
         $application = CcOdLoanApplication::findOrFail($id);
 

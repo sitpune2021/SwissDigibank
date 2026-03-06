@@ -136,6 +136,7 @@
             </div>
         </div>
 
+        @if($fdAccount->status == 1)
         <button class="btn-primary px-4 py-2  text-sm rounded-10 ">
             RELEASE INTEREST
         </button>
@@ -166,7 +167,7 @@
 
             </div>
         </div>
-
+@endif
         <!-- Print Documents -->
         <div x-data="{ open: false }" class="relative inline-block">
 

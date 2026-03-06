@@ -157,6 +157,29 @@ class ApproveController extends Controller
                 ->join('branches', 'branches.id', '=', 'misaccounts.branch_id')
                 ->where('misaccounts.status', '=', 1)
                 ->where('misaccounts.foreclose_status', '=', 1); // request raised
+            $ccOdForeclosureQuery = DB::table('cc_od_loan_fore_closures')
+                ->select(
+                    'cc_od_loan_fore_closures.id',
+                    DB::raw("'cc_od_loan_fore_closures' AS source_table"),
+                    'cc_od_loan_fore_closures.payment_mode AS payment_mode',
+                    'cc_od_loan_fore_closures.net_amount_k AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'cc_od_loan_fore_closures.status AS approve_status',
+                    'cc_od_loan_fore_closures.created_at',
+                    'branches.branch_name',
+                    'cc_od_loan_applications.id AS account_no',
+                    DB::raw("'CC / OD Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'cc_od_loan_applications.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'Foreclosure' AS transaction_type")
+                )
+                ->join('cc_od_loan_disbursments', 'cc_od_loan_disbursments.loan_application_id', '=', 'cc_od_loan_fore_closures.loan_id')
+                ->join('cc_od_loan_applications', 'cc_od_loan_applications.id', '=', 'cc_od_loan_disbursments.loan_application_id')
+                ->join('branches', 'branches.id', '=', 'cc_od_loan_applications.branch_id')
+                ->where('cc_od_loan_fore_closures.status', '=', 0);
             /*
         |--------------------------------------------------------------------------
         | 4️⃣ GOLD LOAN EMI QUERY
@@ -567,8 +590,112 @@ class ApproveController extends Controller
                     'personal_loan_applications.branch_id'
                 )
                 ->where('personal_loan_transactions.status', '=', 'pending');
-            // ️UNION ALL
 
+
+            $fdPrincipalQuery = DB::table('fd_transactions')
+                ->select(
+                    'fd_transactions.id',
+                    DB::raw("'fd_transactions' AS source_table"),
+                    'fd_transactions.mode AS payment_mode',
+                    'fd_transactions.amount AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'fd_transactions.status AS approve_status',
+                    'fd_transactions.created_at',
+                    'branches.branch_name',
+                    'fd_accounts.fd_no AS account_no',
+                    DB::raw("'FD Account' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'fd_accounts.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'FD Principal Deposit' AS transaction_type")
+                )
+                ->join(
+                    'fd_accounts',
+                    'fd_accounts.id',
+                    '=',
+                    'fd_transactions.fd_account_id'
+                )
+                ->join(
+                    'branches',
+                    'branches.id',
+                    '=',
+                    'fd_accounts.branch_id'
+                )
+                ->where('fd_transactions.transaction_purpose', '=', 'principal')
+                ->where('fd_transactions.transaction_type', '=', 1) // credit
+                ->where(function ($q) {
+                    $q->whereNull('fd_transactions.status')
+                        ->orWhere('fd_transactions.status', 'pending');
+                });
+
+            Log::info('FD Principal Pending Query');
+
+            $misInitialDepositQuery = DB::table('mis_transactions')
+    ->select(
+        'mis_transactions.id',
+        DB::raw("'mis_transactions' AS source_table"),
+        'mis_transactions.pay_mode AS payment_mode',
+        'mis_transactions.amount AS amount',
+        DB::raw("NULL AS bank_name"),
+        'mis_transactions.approve_status AS approve_status',
+        'mis_transactions.created_at',
+        'branches.branch_name',
+        'misaccounts.mis_account_no AS account_no',
+        DB::raw("'MIS Account' AS account_type"),
+        DB::raw("'-' AS account_holder_type"),
+        DB::raw("NULL AS firm_name"),
+        'branches.id AS branch_id',
+        'misaccounts.member_id AS member_id',
+        DB::raw("'Active' AS account_status"),
+        DB::raw("'MIS Initial Deposit' AS transaction_type")
+    )
+    ->join(
+        'misaccounts',
+        'misaccounts.id',
+        '=',
+        'mis_transactions.misaccount_id'
+    )
+    ->join(
+        'branches',
+        'branches.id',
+        '=',
+        'misaccounts.branch_id'
+    )
+    ->where('mis_transactions.remark', '=', 'Initial Deposit')
+    ->where(function ($q) {
+        $q->whereNull('mis_transactions.approve_status')
+          ->orWhere('mis_transactions.approve_status', 'pending');
+    });
+
+Log::info('MIS Initial Deposit Pending Query');
+
+
+            // ️UNION ALL
+            $ccOdLoanEmiQuery = DB::table('cc_od_loan_transactions')
+                ->select(
+                    'cc_od_loan_transactions.id',
+                    DB::raw("'cc_od_loan_transactions' AS source_table"),
+                    'cc_od_loan_transactions.fee_mode AS payment_mode',
+                    'cc_od_loan_transactions.amount_collected AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'cc_od_loan_transactions.status AS approve_status',
+                    'cc_od_loan_transactions.created_at',
+                    'branches.branch_name',
+                    'cc_od_loan_applications.id AS account_no',
+                    DB::raw("'CC / OD Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'cc_od_loan_applications.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'EMI Payment' AS transaction_type")
+                )
+                ->join('cc_od_loan_disbursments', 'cc_od_loan_disbursments.loan_application_id', '=', 'cc_od_loan_transactions.loan_id')
+                ->join('cc_od_loan_applications', 'cc_od_loan_applications.id', '=', 'cc_od_loan_disbursments.loan_application_id')
+                ->join('branches', 'branches.id', '=', 'cc_od_loan_applications.branch_id')
+                ->where('cc_od_loan_transactions.status', '=', 'pending');
             Log::info('Step 6: Combining All Queries Using UNION');
 
             $unionQuery = $transactionQuery
@@ -585,7 +712,10 @@ class ApproveController extends Controller
                 ->unionAll($dailyWeeklyEmiQuery)
                 ->unionAll($dailyWeeklyForeclosureQuery)
                 ->unionAll($vehicleEmiQuery)
-
+                ->unionAll($fdPrincipalQuery)
+                ->unionAll($misInitialDepositQuery)
+                ->unionAll($ccOdLoanEmiQuery)
+                ->unionAll($ccOdForeclosureQuery)
                 ->unionAll($vehicleForeclosureQuery)
                 ->unionAll($personalForeclosureQuery)
                 ->unionAll($personalLoanEmiQuery);
@@ -794,6 +924,107 @@ class ApproveController extends Controller
                     DB::rollBack();
                     return back()->with('error', $e->getMessage());
                 }
+            } elseif ($sourceTable === 'fd_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $transaction = DB::table('fd_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$transaction) {
+                        DB::rollBack();
+                        return back()->with('error', 'FD transaction not found.');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // Get FD account
+                        $fdAccount = DB::table('fd_accounts')
+                            ->where('id', $transaction->fd_account_id)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if (!$fdAccount) {
+                            DB::rollBack();
+                            return back()->with('error', 'FD Account not found.');
+                        }
+
+                        // ✅ Approve only if account status = 1
+                        if ($fdAccount->status != 1) {
+                            DB::rollBack();
+                            return back()->with('error', 'FD Account is not in pending state for approval.');
+                        }
+
+                        // 1️⃣ Mark transaction approved
+                        DB::table('fd_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'Approved',
+                                'processed' => 1,
+                                'paid_on' => now(),
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'FD principal transaction approved successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'mis_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $transaction = DB::table('mis_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$transaction) {
+                        DB::rollBack();
+                        return back()->with('error', 'MIS transaction not found.');
+                    }
+
+                    // Only allow approval for Initial Deposit
+                    if ($transaction->remark !== 'Initial Deposit') {
+                        DB::rollBack();
+                        return back()->with('error', 'Only Initial Deposit transactions can be approved.');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // 1️⃣ Approve transaction
+                        DB::table('mis_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'approve_status' => 'approved',
+                                'processed' => 1,
+                                'status' => 'Paid',
+                                'updated_at' => now()
+                            ]);
+
+                       
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'MIS Initial Deposit approved successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+
+                    return back()->with('error', $e->getMessage());
+                }
             } elseif ($sourceTable === 'misaccounts') {
 
                 DB::beginTransaction();
@@ -818,7 +1049,7 @@ class ApproveController extends Controller
                             ->update([
                                 'foreclose_status' => 2, // approved
                                 'status' => 3, // closed
-                                'closing_date' =>now(),
+                                'closing_date' => now(),
                                 'updated_at' => now()
                             ]);
                     }
@@ -1067,6 +1298,55 @@ class ApproveController extends Controller
                     DB::commit();
 
                     return back()->with('success', 'Personal Loan Foreclosure updated successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'cc_od_loan_fore_closures') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $foreclosure = DB::table('cc_od_loan_fore_closures')
+                        ->where('id', $id)
+                        ->first();
+
+                    if (!$foreclosure) {
+                        return back()->with('error', 'Foreclosure record not found.');
+                    }
+
+                    DB::table('cc_od_loan_fore_closures')
+                        ->where('id', $id)
+                        ->update([
+                            'status' => $status === 'approved' ? 1 : 0,
+                            'remarks' => $remarks,
+                            'updated_at' => now(),
+                        ]);
+
+                    if ($status === 'approved') {
+
+                        DB::table('cc_od_loan_emi_status')
+                            ->where('loan_id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 'PAID',
+                                'remaining_amount' => 0,
+                                'paid_date' => now()->format('Y-m-d'),
+                                'updated_at' => now()
+                            ]);
+
+                        DB::table('cc_od_loan_applications')
+                            ->where('id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 2,
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'CC / OD Foreclosure approved successfully.');
                 } catch (\Exception $e) {
 
                     DB::rollBack();
@@ -1894,6 +2174,82 @@ class ApproveController extends Controller
 
                     return back()->with('success', 'Personal Loan EMI approved successfully.');
                 } catch (\Exception $e) {
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'cc_od_loan_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $emi = DB::table('cc_od_loan_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$emi) {
+                        DB::rollBack();
+                        return back()->with('error', 'Transaction not found');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // 1️⃣ Mark transaction paid
+                        DB::table('cc_od_loan_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'paid',
+                                'paid_date' => now(),
+                                'updated_at' => now()
+                            ]);
+
+                        // 2️⃣ Update EMI status
+                        $emiStatus = DB::table('cc_od_loan_emi_status')
+                            ->where('loan_id', $emi->loan_id)
+                            ->where('emi_no', $emi->emi_no)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if ($emiStatus) {
+
+                            $newRemaining = round(
+                                $emiStatus->remaining_amount - $emi->amount_collected,
+                                2
+                            );
+
+                            DB::table('cc_od_loan_emi_status')
+                                ->where('id', $emiStatus->id)
+                                ->update([
+                                    'status' => $newRemaining <= 0 ? 'PAID' : 'PARTIAL',
+                                    'remaining_amount' => $newRemaining <= 0 ? 0 : $newRemaining,
+                                    'paid_date' => now()->format('Y-m-d'),
+                                    'updated_at' => now()
+                                ]);
+                        }
+
+                        // 3️⃣ Close loan if fully paid
+                        $totalRemaining = DB::table('cc_od_loan_emi_status')
+                            ->where('loan_id', $emi->loan_id)
+                            ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
+                            ->sum('remaining_amount');
+
+                        if ($totalRemaining <= 0) {
+
+                            DB::table('cc_od_loan_applications')
+                                ->where('id', $emi->loan_id)
+                                ->update([
+                                    'status' => 2,
+                                    'updated_at' => now()
+                                ]);
+                        }
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'CC / OD EMI approved successfully.');
+                } catch (\Exception $e) {
+
                     DB::rollBack();
                     return back()->with('error', $e->getMessage());
                 }

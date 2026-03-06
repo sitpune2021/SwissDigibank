@@ -1816,4 +1816,55 @@ class MortgageAccountController extends Controller
             return back()->withErrors('There was an error storing your comment.');
         }
     }
+    public function uploadDocuments($id)
+    {
+        $loan = LoanApplication::findOrFail($id);
+
+        return view('gold-loan.account.documents.upload_documents', compact('loan'));
+    }
+    public function storeDocuments(Request $request, $id)
+    {
+        $request->validate([
+            'document_type.*' => 'required|string',
+            'file_path.*' => 'required|file|mimes:pdf,jpg,jpeg,png'
+        ]);
+
+        foreach ($request->document_type as $index => $docType) {
+
+            $file = $request->file('file_path')[$index] ?? null;
+
+            if ($file) {
+
+                $destinationPath = public_path('assets/documents');
+                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+                $file->move($destinationPath, $fileName);
+
+                $path = 'assets/documents/' . $fileName;
+
+                GoldLoanDocument::create([
+                    'loan_id' => $id,
+                    'document_type' => $docType,
+                    'file_path' => $path,
+                ]);
+            }
+        }
+
+        return redirect()->route('gold-loan.account.show', $id)
+            ->with('success', 'Documents uploaded successfully');
+    }
+    public function destroyDocument($id)
+    {
+        $document = GoldLoanDocument::findOrFail($id);
+
+        // Delete file from folder
+        if (file_exists(public_path($document->file_path))) {
+            unlink(public_path($document->file_path));
+        }
+
+        // Delete record from DB
+        $document->delete();
+
+        return back()->with('success', 'Document deleted successfully');
+    }
 }

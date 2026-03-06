@@ -1059,40 +1059,6 @@ class BusinessLoanAccount extends Controller
         ));
     }
 
-    // update emi status on pay tab
-    public function updateEmiStatus(Request $request)
-    {
-        Log::info('🟢 updateEmiStatus() called', $request->all());
-
-        $request->validate([
-            'loan_id' => 'required|integer',
-            'status'  => 'required|string',
-        ]);
-
-        $emi = BusinessLoanTransaction::where('loan_id', $request->loan_id)
-            ->where('status', 'UNPAID')
-            ->orderBy('id', 'asc')
-            ->first();
-
-        if (!$emi) {
-            Log::warning("⚠️ No unpaid EMI found for loan_id={$request->loan_id}");
-            return response()->json(['success' => false, 'message' => 'No unpaid EMI found'], 404);
-        }
-
-        Log::info("📝 Before update:", $emi->toArray());
-
-        $emi->status = $request->status; // e.g. 'PAID' or 'DUE'
-        $emi->paid_date = now();
-        $emi->save();
-
-        Log::info("✅ After update:", $emi->fresh()->toArray());
-
-        return response()->json([
-            'success' => true,
-            'message' => 'First unpaid EMI status updated successfully',
-            'emi' => $emi
-        ]);
-    }
 
     public function payEmi(Request $request)
     {
@@ -1148,6 +1114,40 @@ class BusinessLoanAccount extends Controller
         }
     }
 
+    // update emi status on pay tab
+    public function updateEmiStatus(Request $request)
+    {
+        Log::info('🟢 updateEmiStatus() called', $request->all());
+
+        $request->validate([
+            'loan_id' => 'required|integer',
+            'status'  => 'required|string',
+        ]);
+
+        $emi = BusinessLoanTransaction::where('loan_id', $request->loan_id)
+            ->where('status', 'UNPAID')
+            ->orderBy('id', 'asc')
+            ->first();
+
+        if (!$emi) {
+            Log::warning("⚠️ No unpaid EMI found for loan_id={$request->loan_id}");
+            return response()->json(['success' => false, 'message' => 'No unpaid EMI found'], 404);
+        }
+
+        Log::info("📝 Before update:", $emi->toArray());
+
+        $emi->status = $request->status; // e.g. 'PAID' or 'DUE'
+        $emi->paid_date = now();
+        $emi->save();
+
+        Log::info("✅ After update:", $emi->fresh()->toArray());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'First unpaid EMI status updated successfully',
+            'emi' => $emi
+        ]);
+    }
     public function fourcloser($id)
     {
         Log::info('🟢 FORECLOSURE PAGE OPENED', [
