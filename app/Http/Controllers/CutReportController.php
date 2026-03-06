@@ -134,7 +134,7 @@ class CutReportController extends Controller
 
         $account = Member::with(['shareTransfers', 'accounts'])
             ->whereDoesntHave('promotor')
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->paginate(10);
         return view('cut-reports.report.customer-list', compact('account'));
     }

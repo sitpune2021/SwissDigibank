@@ -57,15 +57,17 @@
 
     <!-- Society Header -->
     <div class="header">
-        {{ $company['name'] ?? '' }}
-{{ isset($company['address_line1']) ? ', ' . $company['address_line1'] : '' }}
+        {{ $company['name'] ?? '' }}<br>
+<!--{{ isset($company['address_line1']) ? ', ' . $company['address_line1'] : '' }}
 {{ isset($company['address_line2']) ? ', ' . $company['address_line2'] : '' }}
-{{ isset($company['city']) ? ', ' . $company['city'] : '' }}
-{{ isset($company['cin_no']) ? ', र. नं. ' . $company['cin_no'] : '' }}
+{{ isset($company['city']) ? ', ' . $company['city'] : '' }}-->
+ केशव नगर चौक अकोला <br>
+<!--{{ isset($company['cin_no']) ? ', र. नं. ' . $company['cin_no'] : '' }}-->
+  र. नं. १५३
     </div>
 
     <div class="sub-header">
-       सभासद यादी - {{ date('d-m-Y') }}
+       सभासद यादी - {{ date('Y') }}
     </div>
     <hr>
         <!-- Data Table -->
@@ -88,6 +90,7 @@
             @php
             $shareAmount = optional($member->shareTransfers)->sum('total_consideration') ?? 0;
             $totalShare += $shareAmount;
+            $totalBalance += $shareAmount;
             @endphp
 
             <tr>
@@ -112,6 +115,34 @@
             </tr>
 
             @endforeach
+
+            <tr style="font-weight:bold; border:none;">
+                <td colspan="2" style="border:none;">
+                    Total Records : {{ count($members) }}
+                </td>
+
+                <td colspan="2" class="text-right" style="border:none;">
+                    Total Balance
+                </td>
+
+                <td class="text-right" style="border:none;">
+                    {{ number_format($totalBalance, 2) }}
+                </td>
+            </tr>
+
+            <tr style="border:none;">
+                <td colspan="2" style="border:none;">
+                    Credit Balance : {{ number_format($totalBalance, 2) }}
+                </td>
+
+                <td colspan="2" class="text-center" style="border:none;">
+                    Debit Balance : {{ number_format(0, 2) }}
+                </td>
+
+                <td class="text-right" style="border:none;">
+                    GL Total : {{ number_format(0, 2) }}
+                </td>
+            </tr>
             
         </table>
 

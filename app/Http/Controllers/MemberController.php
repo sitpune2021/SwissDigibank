@@ -82,7 +82,7 @@ class MemberController extends Controller
                 });
             }
 
-            $members = $query->latest()->paginate(10);
+            $members = $query->latest()->paginate(30);
 
             session()->forget('member_id');
             return view('members.member.index', compact('members'));

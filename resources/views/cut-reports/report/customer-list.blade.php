@@ -51,12 +51,10 @@
         <h3 class=" flex text-lg   uppercase font-semibold">
             Report - Customer List
         </h3>
-
     </div>
 
     <div class="col-span-12 box lg:col-span-12">
         <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
-
             <a href="{{ route('reports.customer.print') }}" target="_blank"
                 class="btn-primary rounded-10 px-2 py-2 flex justify-center  text-sm uppercase">
                 <i class="las la-print"></i>
@@ -104,43 +102,70 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody>
+               <tbody>
+                    @php $totalBalance = 0; @endphp
+
                     @foreach ($account as $key => $row)
+
+                    @php
+                    $balance = $row->shareTransfers->sum('total_consideration');
+                    $totalBalance += $balance;
+                    @endphp
+
                     <tr class="border-b dark:border-bg3">
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 uppercase">
-                                {{ $account->firstItem() + $key }}
-                            </div>
-                        </td>
 
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 capitalize">
-                                {{ $row->member_no ?? '-' }}
-                            </div>
-                        </td>
+                    <td class="px-6 py-4">
+                    {{ $account->firstItem() + $key }}
+                    </td>
 
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                {{ $row->full_name ?: '-' }}
-                            </div>
-                        </td>
+                    <td class="px-6 py-4">
+                    {{ $row->member_no ?? '-' }}
+                    </td>
 
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                            -
-                            </div>
-                        </td>
+                    <td class="px-6 py-4">
+                    {{ $row->full_name ?? '-' }}
+                    </td>
 
-                        <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                {{ number_format($row->shareTransfers->sum('total_consideration'), 2) }}
-                            </div>
-                        </td>
+                    <td class="px-6 py-4">
+                    -
+                    </td>
+
+                    <td class="px-6 py-4">
+                    {{ number_format($balance,2) }}
+                    </td>
 
                     </tr>
+
                     @endforeach
+                   <tr class="bg-gray-100 font-semibold">
+                        <td colspan="2" class="px-6 py-4 text-start">
+                            Total Records : {{ $account->total() }}
+                        </td>
+
+                        <td colspan="2" class="px-6 py-4 text-end">
+                            Total Balance
+                        </td>
+
+                        <td class="px-6 py-4 text-start">
+                            {{ number_format($totalBalance, 2) }}
+                        </td>
+                    </tr>
+                    <tr class="bg-gray-100 font-semibold">
+                        <td colspan="2" class="px-6 py-4 text-start">
+                            Credit Balance : {{ number_format($totalBalance, 2) }}
+                        </td>
+
+                        <td colspan="2" class="px-6 py-4 text-center">
+                            Debit Balance : {{ number_format(0, 2) }}
+                        </td>
+
+                        <td class="px-6 py-4 text-end">
+                            GL Total : {{ number_format(0, 2) }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
+
         </div>
         <div class="mt-5">
             <x-pagination :paginator="$account" />

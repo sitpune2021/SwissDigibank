@@ -325,6 +325,7 @@ class PrintDocumentsController extends Controller
 
         return view('print-documents.form-i-and-j.form-i-view', compact('members', 'company'));
     }
+    
     public function generateFormI()
     {
         // $companyName = Company::value('company_name');

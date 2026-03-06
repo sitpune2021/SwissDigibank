@@ -74,155 +74,177 @@
 
  <div class="p-4 box">
 
-<!-- Tabs -->
-<ul class="flex border-b font-semibold" id="reportTabs">
-    <li><button class="tab px-4 py-2 border-b-2 border-blue-600 text-primary" data-tab="all">ALL</button></li>
-    <li><button class="tab px-4 py-2" data-tab="rd">RD</button></li>
-    <li><button class="tab px-4 py-2" data-tab="dd">DD</button></li>
-    <li><button class="tab px-4 py-2" data-tab="fd">FD</button></li>
-    <li><button class="tab px-4 py-2" data-tab="mis">MIS</button></li>
-</ul>
+    <!-- Tabs -->
+    <ul class="flex border-b font-semibold" id="reportTabs">
+        <li><button class="tab px-4 py-2 border-b-2 border-blue-600 text-primary" data-tab="all">ALL</button></li>
+        <li><button class="tab px-4 py-2" data-tab="rd">RD</button></li>
+        <li><button class="tab px-4 py-2" data-tab="dd">DD</button></li>
+        <li><button class="tab px-4 py-2" data-tab="fd">FD</button></li>
+        <li><button class="tab px-4 py-2" data-tab="mis">MIS</button></li>
+    </ul>
+
+    <!-- ================= RD ================= -->
+    <div data-content="rd" class="report-block">
+    <div class="max-w-3xl mx-auto mt-6 overflow-x-auto">
+    <table class="w-full border border-gray-300 text-center">
+    <tr>
+    <td rowspan="2" class="font-semibold border p-3 w-[30%]">
+    Summary (RD) <br>(Active & Matured)
+    </td>
+    <td class="border p-3">Total Accounts</td>
+    <td class="border p-3">Total Maturity</td>
+    <td class="border p-3">Total Current Balance</td>
+    </tr>
+    <tr class="font-semibold">
+    <td class="border p-3">{{ $rdTotalAccounts ?? 0 }}</td>
+    <td class="border p-3">{{ number_format($rdTotalMaturity ?? 0,2) }}</td>
+    <td class="border p-3">{{ number_format($rdTotalBalance ?? 0,2) }}</td>
+    </tr>
+    </table>
+    </div>
+    </div>
+
+    <!-- ================= DD ================= -->
+    <div data-content="dd" class="report-block">
+    <div class="max-w-3xl mx-auto mt-6 overflow-x-auto">
+    <table class="w-full border border-gray-300 text-center">
+    <tr>
+    <td rowspan="2" class="font-semibold border p-3 w-[30%]">
+    Summary (DD) <br>(Active & Matured)
+    </td>
+    <td class="border p-3">Total Accounts</td>
+    <td class="border p-3">Total Maturity</td>
+    <td class="border p-3">Total Current Balance</td>
+    </tr>
+    <tr class="font-semibold">
+    <td class="border p-3">{{ $ddTotalAccounts ?? 0 }}</td>
+    <td class="border p-3">{{ number_format($ddTotalMaturity ?? 0,2) }}</td>
+    <td class="border p-3">{{ number_format($ddTotalBalance ?? 0,2) }}</td>
+    </tr>
+    </table>
+    </div>
+    </div>
+
+    <!-- ================= FD ================= -->
+    <div data-content="fd" class="report-block">
+    <div class="max-w-3xl mx-auto mt-6 overflow-x-auto">
+    <table class="w-full border border-gray-300 text-center">
+    <tr>
+    <td rowspan="2" class="font-semibold border p-3 w-[30%]">
+    Summary (FD) <br>(Active & Matured)
+    </td>
+    <td class="border p-3">Total Accounts</td>
+    <td class="border p-3">Total Maturity</td>
+    <td class="border p-3">Total Current Balance</td>
+    </tr>
+    <tr class="font-semibold">
+    <td class="border p-3">{{ $fdTotalAccounts ?? 0 }}</td>
+    <td class="border p-3">{{ number_format($fdTotalMaturity ?? 0,2) }}</td>
+    <td class="border p-3">{{ number_format($fdTotalBalance ?? 0,2) }}</td>
+    </tr>
+    </table>
+    </div>
+    </div>
+
+    <!-- ================= MIS ================= -->
+    <div data-content="mis" class="report-block">
+    <div class="max-w-3xl mx-auto mt-6 overflow-x-auto">
+    <table class="w-full border border-gray-300 text-center">
+    <tr>
+    <td rowspan="2" class="font-semibold border p-3 w-[30%]">
+    Summary (MIS) <br>(Active & Matured)
+    </td>
+    <td class="border p-3">Total Accounts</td>
+    <td class="border p-3">Total Maturity</td>
+    <td class="border p-3">Total Current Balance</td>
+    </tr>
+    <tr class="font-semibold">
+    <td class="border p-3">{{ $misTotalAccounts ?? 0 }}</td>
+    <td class="border p-3">{{ number_format($misTotalMaturity ?? 0,2) }}</td>
+    <td class="border p-3">{{ number_format($misTotalBalance ?? 0,2) }}</td>
+    </tr>
+    </table>
+    </div>
+    </div>
+
+    <!-- ================= GRAND TOTAL ================= -->
+    <div class="max-w-3xl mx-auto mt-6 overflow-x-auto">
+        <table class="w-full border border-gray-300 text-center font-semibold">
+        <tr>
+        <td class="border p-3 w-[30%]">GRAND TOTAL</td>
+
+        <td class="border p-3" id="grandAccounts"
+        data-rd="{{ $rdTotalAccounts }}"
+        data-dd="{{ $ddTotalAccounts }}"
+        data-fd="{{ $fdTotalAccounts }}"
+        data-mis="{{ $misTotalAccounts }}"
+        data-all="{{ $grandAccounts }}">
+        {{ $grandAccounts }}
+        </td>
+
+        <td class="border p-3" id="grandMaturity"
+        data-rd="{{ $rdTotalMaturity }}"
+        data-dd="{{ $ddTotalMaturity }}"
+        data-fd="{{ $fdTotalMaturity }}"
+        data-mis="{{ $misTotalMaturity }}"
+        data-all="{{ $grandMaturity }}">
+        {{ number_format($grandMaturity,2) }}
+        </td>
+
+        <td class="border p-3" id="grandBalance"
+        data-rd="{{ $rdTotalBalance }}"
+        data-dd="{{ $ddTotalBalance }}"
+        data-fd="{{ $fdTotalBalance }}"
+        data-mis="{{ $misTotalBalance }}"
+        data-all="{{ $grandBalance }}">
+        {{ number_format($grandBalance,2) }}
+        </td>
+
+        </tr>
+        </table>
+    </div>
 
 
+    <!-- Alert -->
+    <div class="mt-6 max-w-3xl mx-auto">
+    <div class="bg-red-500 text-white px-4 py-3 rounded">
+    <strong class="block mb-1">Alert!</strong>
+    Don't select long dates while viewing all, it will slow the system.
+    </div>
+    </div>
 
-<!-- ================= RD ================= -->
-<div data-content="rd" class="report-block">
-<div class="max-w-3xl mx-auto mt-6 overflow-x-auto">
-<table class="w-full border border-gray-300 text-center">
-<tr>
-<td rowspan="2" class="font-semibold border p-3 w-[30%]">
-Summary (RD) <br>(Active & Matured)
-</td>
-<td class="border p-3">Total Accounts</td>
-<td class="border p-3">Total Maturity</td>
-<td class="border p-3">Total Current Balance</td>
-</tr>
-<tr class="font-semibold">
-<td class="border p-3">{{ $rdTotalAccounts ?? 0 }}</td>
-<td class="border p-3">{{ number_format($rdTotalMaturity ?? 0,2) }}</td>
-<td class="border p-3">{{ number_format($rdTotalBalance ?? 0,2) }}</td>
-</tr>
-</table>
+ </div>
+
 </div>
-</div>
-
-
-
-<!-- ================= DD ================= -->
-<div data-content="dd" class="report-block">
-<div class="max-w-3xl mx-auto mt-6 overflow-x-auto">
-<table class="w-full border border-gray-300 text-center">
-<tr>
-<td rowspan="2" class="font-semibold border p-3 w-[30%]">
-Summary (DD) <br>(Active & Matured)
-</td>
-<td class="border p-3">Total Accounts</td>
-<td class="border p-3">Total Maturity</td>
-<td class="border p-3">Total Current Balance</td>
-</tr>
-<tr class="font-semibold">
-<td class="border p-3">{{ $ddTotalAccounts ?? 0 }}</td>
-<td class="border p-3">{{ number_format($ddTotalMaturity ?? 0,2) }}</td>
-<td class="border p-3">{{ number_format($ddTotalBalance ?? 0,2) }}</td>
-</tr>
-</table>
-</div>
-</div>
-
-
-
-<!-- ================= FD ================= -->
-<div data-content="fd" class="report-block">
-<div class="max-w-3xl mx-auto mt-6 overflow-x-auto">
-<table class="w-full border border-gray-300 text-center">
-<tr>
-<td rowspan="2" class="font-semibold border p-3 w-[30%]">
-Summary (FD) <br>(Active & Matured)
-</td>
-<td class="border p-3">Total Accounts</td>
-<td class="border p-3">Total Maturity</td>
-<td class="border p-3">Total Current Balance</td>
-</tr>
-<tr class="font-semibold">
-<td class="border p-3">{{ $fdTotalAccounts ?? 0 }}</td>
-<td class="border p-3">{{ number_format($fdTotalMaturity ?? 0,2) }}</td>
-<td class="border p-3">{{ number_format($fdTotalBalance ?? 0,2) }}</td>
-</tr>
-</table>
-</div>
-</div>
-
-
-
-<!-- ================= MIS ================= -->
-<div data-content="mis" class="report-block">
-<div class="max-w-3xl mx-auto mt-6 overflow-x-auto">
-<table class="w-full border border-gray-300 text-center">
-<tr>
-<td rowspan="2" class="font-semibold border p-3 w-[30%]">
-Summary (MIS) <br>(Active & Matured)
-</td>
-<td class="border p-3">Total Accounts</td>
-<td class="border p-3">Total Maturity</td>
-<td class="border p-3">Total Current Balance</td>
-</tr>
-<tr class="font-semibold">
-<td class="border p-3">{{ $misTotalAccounts ?? 0 }}</td>
-<td class="border p-3">{{ number_format($misTotalMaturity ?? 0,2) }}</td>
-<td class="border p-3">{{ number_format($misTotalBalance ?? 0,2) }}</td>
-</tr>
-</table>
-</div>
-</div>
-
-
-
-<!-- ================= GRAND TOTAL ================= -->
-<div class="max-w-3xl mx-auto mt-6 overflow-x-auto">
-<table class="w-full border border-gray-300 text-center font-semibold">
-<tr>
-<td class="border p-3 w-[30%]">GRAND TOTAL</td>
-<td class="border p-3">{{ $grandAccounts ?? 0 }}</td>
-<td class="border p-3">{{ number_format($grandMaturity ?? 0,2) }}</td>
-<td class="border p-3">{{ number_format($grandBalance ?? 0,2) }}</td>
-</tr>
-</table>
-</div>
-
-
-
-<!-- Alert -->
-<div class="mt-6 max-w-3xl mx-auto">
-<div class="bg-red-500 text-white px-4 py-3 rounded">
-<strong class="block mb-1">Alert!</strong>
-Don't select long dates while viewing all, it will slow the system.
-</div>
-</div>
-
-</div>
-</div>
-
 
 
 <!-- ================= TAB SCRIPT ================= -->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
 
     const tabs = document.querySelectorAll(".tab");
     const blocks = document.querySelectorAll(".report-block");
 
+    const grandAccounts = document.getElementById("grandAccounts");
+    const grandMaturity = document.getElementById("grandMaturity");
+    const grandBalance  = document.getElementById("grandBalance");
+
+    function updateGrand(tab){
+
+        grandAccounts.innerText = grandAccounts.dataset[tab];
+        grandMaturity.innerText = Number(grandMaturity.dataset[tab]).toLocaleString();
+        grandBalance.innerText  = Number(grandBalance.dataset[tab]).toLocaleString();
+    }
+
     function activateTab(tab){
 
-        /* reset tab style */
         tabs.forEach(t=>{
             t.classList.remove("border-blue-600","text-blue-600","border-b-2");
         });
 
-        /* active style */
         document.querySelector(`[data-tab="${tab}"]`)
             .classList.add("border-blue-600","text-blue-600","border-b-2");
 
-        /* toggle sections */
         blocks.forEach(block=>{
             if(tab === "all"){
                 block.classList.remove("hidden");
@@ -232,16 +254,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     : block.classList.add("hidden");
             }
         });
+
+        updateGrand(tab);
     }
 
     tabs.forEach(btn=>{
         btn.addEventListener("click", ()=>activateTab(btn.dataset.tab));
     });
 
-    activateTab("all"); // default
+    activateTab("all");
 });
 </script>
-
 
 
 @endsection

@@ -824,8 +824,6 @@
                     </div>
                 </div>
 
-
-
                 <div id="itemsContainer">
                     @if (isset($application) && $application->properties->count() > 0)
                         @foreach ($application->properties as $index => $prop)
@@ -904,7 +902,6 @@
                                             value="{{ $prop->area_sqft }}" class="w-full border rounded-10 px-3 py-2">
                                     </div>
 
-
                                     {{-- Boundaries Sale --}}
                                     <div class="w-full border-t mt-4 pt-4">
                                         <h4 class="text-lg font-semibold mb-2">Boundaries as per Sale Deed</h4>
@@ -961,7 +958,6 @@
                                             @enderror
                                     </div>
 
-
                                     <div class="w-1/2 mb-3">
                                         <label class="uppercase font-medium block mb-2">Registered</label>
                                         <select name="properties[{{ $index }}][registered]"
@@ -996,7 +992,6 @@
                         + Add NEW Items
                     </button>
                 </div>
-
 
                 <!-- Loan Calculation Summary Table -->
                 <!-- Calculation Result Box -->
@@ -1066,6 +1061,7 @@
             });
         });
     </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
@@ -1079,6 +1075,7 @@
 
         });
     </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
@@ -1108,6 +1105,7 @@
 
         });
     </script>
+
     <!-- collapsed logic + - button-->
     <script>
         document.getElementById('member_id').addEventListener('change', function() {
@@ -1403,6 +1401,7 @@
 
         });
     </script>
+
     <!-- // =====logic for dynamic cibil rows===== -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -1530,12 +1529,35 @@
         });
     </script>
 
-    <!-- loan amount & max amount valication -->
+    <!-- Recaluction logic & loan amount & max amount valication -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let isCalculated = false;
             const calcBtn = document.getElementById("calculateBtn");
             const form = calcBtn.closest("form");
+
+            // ===== RESET CALCULATION IF USER CHANGES VALUES =====
+            document.addEventListener("input", function (e) {
+
+                if (
+                    e.target.classList.contains("expectedValue") ||
+                    e.target.id === "loanAmount" ||
+                    e.target.id === "insuranceAmount" ||
+                    e.target.id === "scheme_id"
+                ) {
+
+                    // reset calculation
+                    isCalculated = false;
+
+                    // change button text back
+                    calcBtn.textContent = "Calculate";
+
+                    // hide summary box
+                    document.getElementById("calculationBox").classList.add("hidden");
+
+                }
+
+            });
 
             calcBtn.addEventListener("click", function(e) {
                 e.preventDefault();
@@ -1592,15 +1614,25 @@
                 document.getElementById("calculationBox").classList.remove("hidden");
 
                 // Step 4: Convert CALCULATE → SUBMIT
-                if (!isCalculated) {
+                // if (!isCalculated) {
+                //     calcBtn.textContent = "Submit Application";
+
+                //     calcBtn.addEventListener("click", function() {
+                //         form.submit(); // REAL SUBMIT
+                //     });
+
+                //     isCalculated = true;
+                // }
+                
+                // If already calculated → submit form
+                    if (isCalculated) {
+                        form.submit();
+                        return;
+                    }
+
+                    // First time → just calculate
                     calcBtn.textContent = "Submit Application";
-
-                    calcBtn.addEventListener("click", function() {
-                        form.submit(); // REAL SUBMIT
-                    });
-
                     isCalculated = true;
-                }
             });
         });
     </script>

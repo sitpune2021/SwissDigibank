@@ -12,80 +12,67 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Pagination\LengthAwarePaginator; // ✅ ADD THIS
+use Illuminate\Pagination\LengthAwarePaginator;
+use Carbon\Carbon;
 
 class PaymentsToCollectController extends Controller
 {
-
-
     public function payment_index()
     {
+        $gold = $this->loanModule(
+            'loan_applications',
+            'gold_loan_emi_status',
+            'Gold Loan'
+        );
 
-        $gold = DB::table('loan_applications')
-            ->leftJoin('members', 'members.id', '=', 'loan_applications.member_id')
-            ->leftJoin('branches', 'branches.id', '=', 'loan_applications.branch_id')
-            ->join('gold_loan_emi_status', 'gold_loan_emi_status.loan_id', '=', 'loan_applications.id')
+        $mortgage = $this->loanModule(
+            'mortgage_loan_applications',
+            'mortgage_loan_emi_status',
+            'Mortgage Loan'
+        );
 
-            ->where('gold_loan_emi_status.remaining_amount', '>', 0)
+        $personal = $this->loanModule(
+            'personal_loan_applications',
+            'personal_loan_emi_status',
+            'Personal Loan'
+        );
 
-            ->select(
-                'loan_applications.id as loan_id',
-                'loan_applications.member_id',
-                'members.member_no',
-                'members.member_info_first_name',
-                'members.member_info_mobile_no',
-                'branches.branch_name',
-                DB::raw("'Gold Loan' as loan_type"),
-                'gold_loan_emi_status.emi_no',
-                'gold_loan_emi_status.remaining_amount',
-                'gold_loan_emi_status.created_at as due_date'
-            )
-            ->get();
-        $mortgage = DB::table('loan_applications')
-            ->leftJoin('members', 'members.id', '=', 'loan_applications.member_id')
-            ->leftJoin('branches', 'branches.id', '=', 'loan_applications.branch_id')
-            ->join('mortgage_loan_emi_status', 'mortgage_loan_emi_status.loan_id', '=', 'loan_applications.id')
-            ->where('mortgage_loan_emi_status.status', '!=', 'PAID')
-            ->select(
-                'loan_applications.id as loan_id',
-                'loan_applications.member_id',
-                'members.member_no',
-                'members.member_info_first_name',
-                'members.member_info_mobile_no',
-                'branches.branch_name',
-                DB::raw("'Mortgage Loan' as loan_type"),
-                'mortgage_loan_emi_status.emi_no',
-                'mortgage_loan_emi_status.remaining_amount',
-                'mortgage_loan_emi_status.created_at as due_date'
-            )
-            ->get();
+        $loanAgainst = $this->loanModule(
+            'loan_against_applications',
+            'loan_against_emi_status',
+            'Loan Against Deposit'
+        );
 
+        $business = $this->loanModule(
+            'bussiness_loan_applications',
+            'business_loan_emi_status',
+            'Business Loan'
+        );
 
+        $dailyWeekly = $this->loanModule(
+            'daily_weekly_applications',
+            'daily_weekly_loan_emi_status',
+            'Daily Weekly Loan'
+        );
 
+        $vehicle = $this->loanModule(
+            'vehical_applications',
+            'vehical_loan_emi_status',
+            'Vehicle Loan'
+        );
 
-        $personal = DB::table('loan_applications')
-            ->leftJoin('members', 'members.id', '=', 'loan_applications.member_id')
-            ->leftJoin('branches', 'branches.id', '=', 'loan_applications.branch_id')
-            ->join('personal_loan_emi_status', 'personal_loan_emi_status.loan_id', '=', 'loan_applications.id')
-            ->where('personal_loan_emi_status.status', '!=', 'PAID')
-            ->select(
-                'loan_applications.id as loan_id',
-                'loan_applications.member_id',
-                'members.member_no',
-                'members.member_info_first_name',
-                'members.member_info_mobile_no',
-                'branches.branch_name',
-                DB::raw("'Personal Loan' as loan_type"),
-                'personal_loan_emi_status.emi_no',
-                'personal_loan_emi_status.remaining_amount',
-                'personal_loan_emi_status.created_at as due_date'
-            )
-            ->get();
-
+        $ccod = $this->loanModule(
+            'cc_od_loan_applications',
+            'cc_od_loan_emi_status',
+            'CC/OD Loan',
+            false
+        );
         $rd = DB::table('rd_transactions')
             ->leftJoin('rd_accounts', 'rd_accounts.id', '=', 'rd_transactions.rd_account_id')
             ->leftJoin('members', 'members.id', '=', 'rd_accounts.member_id')
             ->leftJoin('branches', 'branches.id', '=', 'rd_accounts.branch_id')
+            ->whereDate('rd_transactions.due_date', '<=', now())
+
             ->where(function ($q) {
                 $q->whereNull('rd_transactions.status')
                     ->orWhere('rd_transactions.status', '!=', 'paid');
@@ -110,6 +97,7 @@ class PaymentsToCollectController extends Controller
             ->leftJoin('branches', 'branches.id', '=', 'dds_accounts.branch_id')
             ->where('dd_transactions.type', 'credit')
             ->whereNull('dd_transactions.deleted_at')
+            ->whereDate('dd_transactions.transaction_date', '<=', now())
             ->groupBy('dds_accounts.id')
             ->select(
                 'dds_accounts.id as loan_id',
@@ -126,11 +114,13 @@ class PaymentsToCollectController extends Controller
             ->get();
 
         $fd = DB::table('fd_transactions')
+
             ->leftJoin('fd_accounts', 'fd_accounts.id', '=', 'fd_transactions.fd_account_id')
             ->leftJoin('members', 'members.id', '=', 'fd_accounts.member_id')
             ->leftJoin('branches', 'branches.id', '=', 'fd_accounts.branch_id')
             ->where('fd_transactions.transaction_type', 1)
             ->whereNull('fd_transactions.deleted_at')
+            ->whereDate('fd_transactions.due_date', '<=', now())
             ->select(
                 'fd_accounts.id as loan_id',
                 'fd_accounts.member_id',
@@ -144,16 +134,62 @@ class PaymentsToCollectController extends Controller
                 'fd_transactions.due_date'
             )
             ->get();
+        $mis = DB::table('mis_transactions')
+            ->leftJoin('misaccounts', 'misaccounts.id', '=', 'mis_transactions.misaccount_id')
+            ->leftJoin('members', 'members.id', '=', 'misaccounts.member_id')
+            ->leftJoin('branches', 'branches.id', '=', 'misaccounts.branch_id')
 
+            ->whereDate('mis_transactions.due_date', '<=', now())
 
+            ->where(function ($q) {
+                $q->whereNull('mis_transactions.status')
+                    ->orWhere('mis_transactions.status', '!=', 'paid');
+            })
+
+            ->select(
+                'misaccounts.id as loan_id',
+                'misaccounts.member_id',
+                'members.member_no',
+                'members.member_info_first_name',
+                'members.member_info_mobile_no',
+                'branches.branch_name',
+                DB::raw("'MIS' as loan_type"),
+                DB::raw('NULL as emi_no'),
+                'mis_transactions.amount as remaining_amount',
+                'mis_transactions.due_date'
+            )
+            ->get();
         $all = collect()
             ->merge($gold)
             ->merge($mortgage)
             ->merge($personal)
+            ->merge($loanAgainst)
+            ->merge($business)
+            ->merge($dailyWeekly)
+            ->merge($vehicle)
+            ->merge($ccod)
+            ->merge($mis)
             ->merge($rd)
             ->merge($dd)
             ->merge($fd);
+        $all = $all->map(function ($item) {
 
+            if (!$item->due_date) {
+                $item->due_days = '-';
+                return $item;
+            }
+
+            $dueDate = Carbon::parse($item->due_date);
+            $today = now();
+
+            if ($dueDate->lt($today)) {
+                $item->due_days = $dueDate->diffInDays($today) . ' Days Overdue';
+            } else {
+                $item->due_days = $today->diffInDays($dueDate) . ' Days Left';
+            }
+
+            return $item;
+        });
 
         $all = $all->sortBy('due_date')->values();
 
@@ -174,16 +210,45 @@ class PaymentsToCollectController extends Controller
                 'Gold Loan' => 'gold_loan_transactions',
                 'Mortgage Loan' => 'mortgage_loan_transactions',
                 'Personal Loan' => 'personal_loan_transactions',
+                'Loan Against Deposit' => 'loan_against_transactions',
                 'Vehicle Loan' => 'vehical_loan_transactions',
                 'Business Loan' => 'business_loan_transactions',
+                'Daily/Weekly Loan' => 'daily_weekly_loan_transactions',
+                'CC/OD Loan' => 'cc_od_loan_transactions',
             ];
 
-            if (isset($tableMap[$item->loan_type])) {
+            if ($item->loan_type == 'MIS') {
+
+                $item->last_transaction = DB::table('mis_transactions')
+                    ->where('misaccount_id', $item->loan_id)
+                    ->latest('created_at')
+                    ->first();
+            } elseif ($item->loan_type == 'RD') {
+
+                $item->last_transaction = DB::table('rd_transactions')
+                    ->where('rd_account_id', $item->loan_id)
+                    ->latest('created_at')
+                    ->first();
+            } elseif ($item->loan_type == 'DD') {
+
+                $item->last_transaction = DB::table('dd_transactions')
+                    ->where('dds_account_id', $item->loan_id)
+                    ->latest('created_at')
+                    ->first();
+            } elseif ($item->loan_type == 'FD') {
+
+                $item->last_transaction = DB::table('fd_transactions')
+                    ->where('fd_account_id', $item->loan_id)
+                    ->latest('created_at')
+                    ->first();
+            } elseif (isset($tableMap[$item->loan_type])) {
+
                 $item->last_transaction = DB::table($tableMap[$item->loan_type])
                     ->where('loan_id', $item->loan_id)
                     ->latest('created_at')
                     ->first();
             } else {
+
                 $item->last_transaction = null;
             }
 
@@ -204,6 +269,47 @@ class PaymentsToCollectController extends Controller
 
         return view("payments.payments-to-collect.index", compact('applications'));
     }
+    private function loanModule($appTable, $emiTable, $loanType, $hasDueDate = true)
+    {
+        $query = DB::table($appTable)
+            ->leftJoin('members', 'members.id', '=', $appTable . '.member_id')
+            ->leftJoin('branches', 'branches.id', '=', $appTable . '.branch_id')
+            ->join($emiTable, $emiTable . '.loan_id', '=', $appTable . '.id')
+            ->where($emiTable . '.status', '!=', 'PAID');
+
+        if ($hasDueDate) {
+            $query->whereDate($emiTable . '.emi_due_date', '<=', now());
+        }
+        return $query->select(
+            $appTable . '.id as loan_id',
+            $appTable . '.member_id',
+            'members.member_no',
+            'members.member_info_first_name',
+            'members.member_info_mobile_no',
+            'branches.branch_name',
+            DB::raw("'" . $loanType . "' as loan_type"),
+
+            DB::raw('COUNT(' . $emiTable . '.emi_no) as inst_due'),
+
+            DB::raw('SUM(CASE WHEN ' . $emiTable . '.emi_due_date < CURDATE() THEN 1 ELSE 0 END) as inst_overdue'),
+
+            DB::raw('SUM(' . $emiTable . '.remaining_amount) as remaining_amount'),
+
+            DB::raw('MIN(' . $emiTable . '.emi_no) as emi_no'),
+
+            $hasDueDate
+                ? DB::raw('MIN(' . $emiTable . '.emi_due_date) as due_date')
+                : DB::raw('NULL as due_date')
+        )->groupBy(
+            $appTable . '.id',
+            $appTable . '.member_id',
+            'members.member_no',
+            'members.member_info_first_name',
+            'members.member_info_mobile_no',
+            'branches.branch_name'
+        )
+            ->get();
+    }
     public function getLastTransaction($type, $loan_id)
     {
         switch ($type) {
@@ -220,6 +326,10 @@ class PaymentsToCollectController extends Controller
                 $table = "personal_loan_transactions";
                 break;
 
+            case "Loan Against Deposit":
+                $table = "loan_against_transactions";
+                break;
+
             case "Vehicle Loan":
                 $table = "vehical_loan_transactions";
                 break;
@@ -228,6 +338,13 @@ class PaymentsToCollectController extends Controller
                 $table = "business_loan_transactions";
                 break;
 
+            case "CC/OD Loan":
+                $table = "cc_od_loan_transactions";
+                break;
+
+            case "Daily/Weekly Loan":
+                $table = "daily_weekly_loan_transactions";
+                break;
             default:
                 return null;
         }
@@ -239,84 +356,148 @@ class PaymentsToCollectController extends Controller
     }
     public function markDone($type, $loan_id, $emi_no, $amount)
     {
-        switch ($type) {
+        Log::info("Mark Done Start", compact('type', 'loan_id', 'emi_no', 'amount'));
 
-            case "Gold Loan":
-                $transactionTable = "gold_loan_transactions";
-                $statusTable = "gold_loan_emi_status";
-                $loanTable = "loan_applications";
-                break;
+        $config = [
 
-            case "Mortgage Loan":
-                $transactionTable = "mortgage_loan_transactions";
-                $statusTable = "mortgage_loan_emi_status";
-                $loanTable = "loan_applications";
-                break;
+            "Gold Loan" => [
+                "statusTable" => "gold_loan_emi_status",
+                "transactionTable" => "gold_loan_transactions"
+            ],
 
-            case "Personal Loan":
-                $transactionTable = "personal_loan_transactions";
-                $statusTable = "personal_loan_emi_status";
-                $loanTable = "loan_applications";
-                break;
+            "Mortgage Loan" => [
+                "statusTable" => "mortgage_loan_emi_status",
+                "transactionTable" => "mortgage_loan_transactions"
+            ],
 
-            default:
-                return back()->with('error', 'Invalid loan type');
+            "Personal Loan" => [
+                "statusTable" => "personal_loan_emi_status",
+                "transactionTable" => "personal_loan_transactions"
+            ],
+
+            "Loan Against Deposit" => [
+                "statusTable" => "loan_against_emi_status",
+                "transactionTable" => "loan_against_transactions"
+            ],
+
+            "Business Loan" => [
+                "statusTable" => "business_loan_emi_status",
+                "transactionTable" => "business_loan_transactions"
+            ],
+
+            "Daily Weekly Loan" => [
+                "statusTable" => "daily_weekly_loan_emi_status",
+                "transactionTable" => "daily_weekly_loan_transactions"
+            ],
+
+            "Vehicle Loan" => [
+                "statusTable" => "vehical_loan_emi_status",
+                "transactionTable" => "vehical_loan_transactions"
+            ],
+
+            "CC/OD Loan" => [
+                "statusTable" => "cc_od_loan_emi_status",
+                "transactionTable" => "cc_od_loan_transactions"
+            ],
+
+            "RD" => [
+                "statusTable" => "rd_transactions",
+                "loanColumn" => "rd_account_id",
+                "emiColumn" => "installment_no"
+            ],
+
+            "DD" => [
+                "statusTable" => "dd_transactions",
+                "loanColumn" => "dds_account_id"
+            ],
+
+            "FD" => [
+                "statusTable" => "fd_transactions",
+                "loanColumn" => "fd_account_id"
+            ],
+
+            "MIS" => [
+                "statusTable" => "mis_transactions",
+                "loanColumn" => "misaccount_id"
+            ]
+        ];
+
+        if (!isset($config[$type])) {
+            Log::error("Invalid Loan Type", ['type' => $type]);
+            return back()->with('error', 'Invalid Loan Type');
         }
+
+        $statusTable = $config[$type]['statusTable'];
+        $transactionTable = $config[$type]['transactionTable'] ?? null;
+
+        $loanColumn = $config[$type]['loanColumn'] ?? 'loan_id';
+        $emiColumn  = $config[$type]['emiColumn'] ?? 'emi_no';
 
         DB::beginTransaction();
 
         try {
 
-            // 1️⃣ Get EMI Remaining
-            $emiData = DB::table($statusTable)
-                ->where('loan_id', $loan_id)
-                ->where('emi_no', $emi_no)
+            $emi = DB::table($statusTable)
+                ->where($loanColumn, $loan_id)
+                ->where($emiColumn, $emi_no)
                 ->first();
 
-            if (!$emiData) {
-                return back()->with('error', 'EMI not found.');
+            if (!$emi) {
+                return back()->with('error', 'EMI not found');
             }
 
-            $remainingBefore = $emiData->remaining_amount;
+            // Loan EMI modules
+            if ($transactionTable) {
 
-            // 2️⃣ Calculate new remaining
-            $newRemaining = $remainingBefore - $amount;
-            if ($newRemaining < 0) $newRemaining = 0;
-
-            // 3️⃣ Insert transaction
-            DB::table($transactionTable)->insert([
-                "loan_id" => $loan_id,
-                "emi_no" => $emi_no,
-                "transaction_date" => now(),
-                "paid_date" => now(),
-                "amount_collected" => $amount,
-                "current_debt" => $newRemaining,
-                "status" => "paid",
-                "created_at" => now(),
-                "updated_at" => now(),
-            ]);
-
-            // 4️⃣ Update EMI status table
-            DB::table($statusTable)
-                ->where('loan_id', $loan_id)
-                ->where('emi_no', $emi_no)
-                ->update([
-                    "remaining_amount" => $newRemaining,
-                    "status" => $newRemaining == 0 ? "PAID" : "UNPAID",
-                    "paid_date" => $newRemaining == 0 ? now() : null,
+                DB::table($transactionTable)->insert([
+                    "loan_id" => $loan_id,
+                    "emi_no" => $emi_no,
+                    "transaction_date" => now(),
+                    "paid_date" => now(),
+                    "amount_collected" => $amount,
+                    "current_debt" => 0,
+                    "status" => "paid",
+                    "created_at" => now(),
                     "updated_at" => now()
                 ]);
 
+                DB::table($statusTable)
+                    ->where($loanColumn, $loan_id)
+                    ->where($emiColumn, $emi_no)
+                    ->update([
+                        "remaining_amount" => 0,
+                        "status" => "PAID",
+                        "paid_date" => now(),
+                        "updated_at" => now()
+                    ]);
+            }
+            // RD / FD / MIS / DD
+            else {
+
+                DB::table($statusTable)
+                    ->where($loanColumn, $loan_id)
+                    ->where($emiColumn, $emi_no)
+                    ->update([
+                        "status" => "paid",
+                        "paid_on" => now(),
+                        "updated_at" => now()
+                    ]);
+            }
+
             DB::commit();
 
-            return back()->with('success', 'Payment recorded successfully!');
+            Log::info("Mark Done Success");
+
+            return back()->with('success', 'Payment Marked Done');
         } catch (\Exception $e) {
 
             DB::rollBack();
-            return back()->with('error', 'Something went wrong.');
+
+            Log::error("Mark Done Error", ['error' => $e->getMessage()]);
+
+            return back()->with('error', $e->getMessage());
         }
     }
-
     private function sendSms($mobile, $message)
     {
         // Localhost Testing Mode
@@ -327,46 +508,149 @@ class PaymentsToCollectController extends Controller
 
     public function generateLink($loan_type, $loan_id)
     {
-        // 1. Loan Find ਕਰੋ
-        $loan = LoanApplication::with('member')->findOrFail($loan_id);
+        switch ($loan_type) {
 
-        if (!$loan->member) {
-            return back()->with('error', 'Member not found for this loan.');
+            case "Gold Loan":
+                $loan = DB::table('loan_applications')->where('id', $loan_id)->first();
+                break;
+
+            case "Mortgage Loan":
+                $loan = DB::table('mortgage_loan_applications')->where('id', $loan_id)->first();
+                break;
+
+            case "Personal Loan":
+                $loan = DB::table('personal_loan_applications')->where('id', $loan_id)->first();
+                break;
+
+            case "Loan Against Deposit":
+                $loan = DB::table('loan_against_applications')->where('id', $loan_id)->first();
+                break;
+
+            case "Business Loan":
+                $loan = DB::table('bussiness_loan_applications')->where('id', $loan_id)->first();
+                break;
+
+            case "Daily/Weekly Loan":
+                $loan = DB::table('daily_weekly_applications')->where('id', $loan_id)->first();
+                break;
+
+            case "Vehicle Loan":
+                $loan = DB::table('vehical_applications')->where('id', $loan_id)->first();
+                break;
+
+            case "CC/OD Loan":
+                $loan = DB::table('cc_od_loan_applications')->where('id', $loan_id)->first();
+                break;
+
+            default:
+                return back()->with('error', 'Invalid loan type.');
         }
 
-        // 2. Member Mobile Number
-        $mobile = $loan->member->member_info_mobile_no;
+        if (!$loan) {
+            return back()->with('error', 'Loan not found.');
+        }
+
+        $member = DB::table('members')->where('id', $loan->member_id)->first();
+
+        if (!$member) {
+            return back()->with('error', 'Member not found.');
+        }
+
+        $mobile = $member->member_info_mobile_no;
 
         if (!$mobile) {
             return back()->with('error', 'Member mobile number missing.');
         }
 
-        // 3. Loan Module Wise Payment URL Generate
-        if ($loan_type === 'Gold Loan') {
-            $paymentUrl = route('gold-loan.account.pay-emi', $loan_id);
-        } elseif ($loan_type === 'Mortgage Loan') {
-            $paymentUrl = route('mortgage.account.pay-emi', $loan_id);
-        } elseif ($loan_type === 'Personal Loan') {
-            $paymentUrl = route('personal-loan.account.pay-emi', $loan_id);
-        } else {
-            return back()->with('error', 'Invalid loan type.');
+        // Payment URL
+        switch ($loan_type) {
+
+            case "Gold Loan":
+                $paymentUrl = route('gold-loan.account.pay-emi', $loan_id);
+                break;
+
+            case "Mortgage Loan":
+                $paymentUrl = route('mortgage.account.pay-emi', $loan_id);
+                break;
+
+            case "Personal Loan":
+                $paymentUrl = route('personal.account.pay-emi', $loan_id);
+                break;
+
+            case "Loan Against Deposit":
+                $paymentUrl = route('loanagainst.account.pay-emi', $loan_id);
+                break;
+
+            case "Business Loan":
+                $paymentUrl = route('bussiness.account.pay-emi', $loan_id);
+                break;
+
+            case "Daily/Weekly Loan":
+                $paymentUrl = route('daily_weekly.account.pay-emi', $loan_id);
+                break;
+
+            case "Vehicle Loan":
+                $paymentUrl = route('vehical.account.pay-emi', $loan_id);
+                break;
+
+            case "CC/OD Loan":
+                $paymentUrl = route('cc_od.account.pay-emi', $loan_id);
+                break;
         }
 
-        // 4. SMS Message
         $message = "Dear Customer, Click to pay your EMI: " . $paymentUrl;
 
-        // 5. Send SMS (Example - Fast2SMS, MSG91, ANY API)
         $this->sendSms($mobile, $message);
 
         return back()->with('success', 'Collection link sent to member mobile.');
     }
-
-    public function payment_comments()
+    public function payment_comments($loan_id)
     {
+        $comments = DB::table('gold_loan_comments')
+            ->leftJoin('users', 'users.id', '=', 'gold_loan_comments.commented_by')
+            ->where('gold_loan_id', $loan_id)
+            ->select(
+                'gold_loan_comments.comment',
+                'users.name as comment_by',
+                'gold_loan_comments.created_at'
+            )
+            ->orderBy('gold_loan_comments.id', 'desc')
+            ->get();
 
-        return view("payments.payments-to-collect.comments");
+        return view(
+            "payments.payments-to-collect.comments",
+            compact('loan_id', 'comments')
+        );
     }
 
+    public function saveComment(Request $request)
+    {
+        DB::table('gold_loan_comments')->insert([
+            'gold_loan_id' => $request->loan_id,
+            'date' => now(),
+            'comment' => $request->comment,
+            'commented_by' => Auth::id(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return back()->with('success', 'Comment Saved');
+    }
+    public function getComments($loan_id)
+    {
+        $comments = DB::table('gold_loan_comments')
+            ->leftJoin('users', 'users.id', '=', 'gold_loan_comments.commented_by')
+            ->where('gold_loan_id', $loan_id)
+            ->select(
+                'gold_loan_comments.comment',
+                'users.name as comment_by',
+                'gold_loan_comments.created_at'
+            )
+            ->orderBy('gold_loan_comments.id', 'desc')
+            ->get();
+
+        return response()->json($comments);
+    }
     public function release_index()
     {
 
@@ -377,5 +661,80 @@ class PaymentsToCollectController extends Controller
     {
 
         return view("payments.payments-to-release.payments-history");
+    }
+    public function print()
+    {
+        $applications = $this->payment_index()->getData()['applications'];
+
+        return view('payments.payments-to-collect.print', compact('applications'));
+    }
+    public function exportCsv()
+    {
+        $applications = $this->payment_index()->getData()['applications'];
+
+        $fileName = "payment_collection.csv";
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate"
+        ];
+
+        $columns = [
+            'Branch',
+            'Member No',
+            'Customer',
+            'Account Type',
+            'Account No',
+            'Due Date',
+            'Amount'
+        ];
+
+        $callback = function () use ($applications, $columns) {
+
+            $file = fopen('php://output', 'w');
+
+            fputcsv($file, $columns);
+
+            foreach ($applications as $app) {
+
+                fputcsv($file, [
+                    $app->branch_name,
+                    $app->member_no,
+                    $app->member_info_first_name,
+                    $app->loan_type,
+                    $app->loan_id,
+                    $app->due_date,
+                    $app->remaining_amount
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+    public function exportDat()
+    {
+        $applications = $this->payment_index()->getData()['applications'];
+
+        $fileName = "collection_machine.dat";
+
+        $content = '';
+
+        foreach ($applications as $app) {
+
+            $content .=
+                $app->loan_id . "|" .
+                $app->member_no . "|" .
+                $app->remaining_amount . "|" .
+                $app->due_date .
+                "\n";
+        }
+
+        return response($content)
+            ->header('Content-Type', 'text/plain')
+            ->header('Content-Disposition', "attachment; filename=$fileName");
     }
 }

@@ -40,8 +40,6 @@
         </div>
     @endif
 
-
-
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center  justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col  gap-2">
@@ -1419,6 +1417,87 @@
 
     <!-- Calculation box -->
     <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        let isCalculated = false;
+        const calcBtn = document.getElementById("calculateBtn");
+
+        calcBtn.type = "button";
+
+        // 🔁 RESET IF USER CHANGES VALUES
+        document.addEventListener("input", function(e){
+
+            if(
+                e.target.id === "loanAmount" ||
+                e.target.id === "vehicle_price" ||
+                e.target.id === "scheme_id"
+            ){
+                isCalculated = false;
+
+                calcBtn.textContent = "Calculate";
+                calcBtn.type = "button";
+
+                document.getElementById("calculationBox").classList.add("hidden");
+            }
+
+        });
+
+        calcBtn.addEventListener("click", function (e) {
+
+            const button = this;
+
+            let loanAmount = parseFloat(document.getElementById("loanAmount")?.value) || 0;
+            let vehiclePrice = parseFloat(document.getElementById("vehicle_price")?.value) || 0;
+
+            let scheme = document.getElementById("scheme_id");
+            let selected = scheme.options[scheme.selectedIndex];
+
+            let maxLoan = parseFloat(selected.getAttribute("data-max")) || 0;
+            let limit = parseFloat(selected.getAttribute("data-limit")) || 0;
+
+            // Calculate maximum approvable
+            let approvable = (vehiclePrice * limit) / 100;
+
+            // Approved loan
+            let approved = Math.min(loanAmount, approvable);
+
+            // Down payment
+            let downPayment = Math.max(vehiclePrice - approved, 0);
+
+            // Display values
+            document.getElementById("request-amt").textContent = loanAmount.toFixed(2);
+            document.getElementById("vehicle-price").textContent = vehiclePrice.toFixed(2);
+            document.getElementById("max-loan-amount").textContent = maxLoan.toFixed(2);
+            document.getElementById("max-loan-limit").textContent = limit + "% of Vehicle Price";
+            document.getElementById("m-approval-amt").textContent = approvable.toFixed(2);
+            document.getElementById("approval-amt").textContent = approved.toFixed(2);
+            document.getElementById("down-payment").textContent = downPayment.toFixed(2);
+
+            // Hidden inputs
+            document.getElementById("inputVehiclePrice").value = vehiclePrice.toFixed(2);
+            document.getElementById("inputMaxLoan").value = maxLoan.toFixed(2);
+            document.getElementById("inputLimit").value = limit;
+            document.getElementById("inputApprovable").value = approvable.toFixed(2);
+            document.getElementById("inputApproved").value = approved.toFixed(2);
+            document.getElementById("inputDownPayment").value = downPayment.toFixed(2);
+
+            document.getElementById("calculationBox").classList.remove("hidden");
+
+            // 🔥 Convert Calculate → Submit
+            if (!isCalculated) {
+                e.preventDefault();
+                button.textContent = "Submit Application";
+                button.type = "submit";
+                isCalculated = true;
+            }
+
+        });
+
+    });
+    </script>
+
+    <!-- old Calculation box -->
+    <!-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             let isCalculated = false;
             const calcBtn = document.getElementById("calculateBtn");
@@ -1472,8 +1551,7 @@
                 }
             });
         });
-    </script>
-
+    </script> -->
 
     <!-- branch Auto populate when select customer -->
     <script>
@@ -1764,7 +1842,7 @@
 
         });
     </script>
-    </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
