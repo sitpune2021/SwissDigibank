@@ -2521,8 +2521,10 @@ Route::group(['prefix' => 'associate-advisor'], function () {
 
 Route::get('payments-to-collect/index', [PaymentsToCollectController::class, 'payment_index'])
     ->name('payments-to-collect.index');
-Route::get('payments-to-collect/comments', [PaymentsToCollectController::class, 'payment_comments'])
-    ->name('payments-to-collect.comments');
+Route::get(
+    'payments-to-collect/comments/{loan_type}/{loan_id}',
+    [PaymentsToCollectController::class, 'payment_comments']
+)->name('payments-to-collect.comments');
 Route::get(
     'generate-collection-link/{loan_type}/{loan_id}',
     [PaymentsToCollectController::class, 'generateLink']
@@ -2536,8 +2538,7 @@ Route::get(
 Route::post('/loan/save-comment', [PaymentsToCollectController::class, 'saveComment'])
     ->name('loan.save.comment');
 
-Route::get('/loan/comments/{type}/{loan_id}', [PaymentsToCollectController::class, 'getComments'])
-    ->name('loan.get.comments');
+Route::get('/loan/comments/{type}/{loan_id}', [PaymentsToCollectController::class, 'getComments']);
 Route::get('/payments-to-collect/print', [PaymentsToCollectController::class, 'print'])->name('payments.collect.print');
 
 Route::get('/payments-to-collect/export-csv', [PaymentsToCollectController::class, 'exportCsv'])->name('payments.collect.csv');
