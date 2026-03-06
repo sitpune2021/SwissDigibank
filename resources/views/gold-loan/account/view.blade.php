@@ -136,9 +136,9 @@
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-lg uppercase font-semibold">Gold Loan - {{ $goldLoan->id }} </h1>
                 <!-- <p class="text-gray-500">
-                                                                    <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
-                                                                    <a href="#" class="text-gray-500 text-sm">00460</a>
-                                                                </p> -->
+                                                                            <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
+                                                                            <a href="#" class="text-gray-500 text-sm">00460</a>
+                                                                        </p> -->
             </div>
         </div>
 
@@ -457,32 +457,86 @@
                 </div>
 
                 <!--documents-->
-                <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
-                    <!-- Header -->
-                    <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                        <h3 class="text-lg font-semibold text-black  uppercase">
-                            Documents
-                        </h3>
-                        <div class="">
-                            <a href="#" class="btn-primary p-1 pointer">
-                                <i class="las la-upload y"></i>
-                            </a>
+                <div class="bg-white dark:bg-bg3 box shadow-md mt-5 rounded-10 overflow-hidden">
 
-                            <button type="button" class="p-1 rounded transition"
-                                onclick="toggleSection(this, 'Documents')">
-                                <span class="toggle-icon text-lg font-bold">−</span>
-                            </button>
-                        </div>
+                    <!-- Header -->
+                    <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
+                        onclick="this.nextElementSibling.classList.toggle('hidden')">
+
+                        <h3 class="text-lg font-semibold">DOCUMENTS</h3>
+
+                        <a href="{{ route('goldloans.uploadDocuments', $loan->id) }}"
+                            class="btn-primary rounded-full p-1 w-2">
+                            <i class="las la-upload"></i>
+                        </a>
+
                     </div>
+
                     <!-- Body -->
-                    <div class="p-4" id="Documents">
+                    <div class="p-4">
                         <div class="overflow-x-auto">
-                            <p class="capitalize">No documents found</p>
+
+                            @if ($documents->isEmpty())
+                                <p class="capitalize text-gray-500">No documents found</p>
+                            @else
+                                <table
+                                    class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+
+                                    <thead class="bg-gray-100 text-gray-700">
+                                        <tr class="border-b bg-secondary/5">
+                                            <th class="px-4 text-start py-2 font-semibold">Name</th>
+                                            <th class="px-4 text-start py-2 font-semibold">URL</th>
+                                            <th class="px-4 text-start py-2 font-semibold">Action</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody class="divide-y divide-gray-200">
+
+                                        @foreach ($documents as $doc)
+                                            <tr class="border-b text-center">
+
+                                                <td class="px-4 text-start py-2">
+                                                    {{ $doc->document_type }}
+                                                </td>
+
+                                                <td class="px-4 text-start py-2">
+
+                                                    <a href="{{ asset($doc->file_path) }}" target="_blank"
+                                                        class="text-primary underline">
+                                                        Show
+                                                    </a>
+
+                                                </td>
+
+                                                <td class="px-4 text-start py-2">
+
+                                                    <form action="{{ route('goldloans.documents.destroy', $doc->id) }}"
+                                                        method="POST" onsubmit="return confirm('Are you sure?');">
+
+                                                        @csrf
+                                                        @method('DELETE')
+
+                                                        <button type="submit" class="text-red-600 hover:text-red-800">
+                                                            Delete
+                                                        </button>
+
+                                                    </form>
+
+                                                </td>
+
+                                            </tr>
+                                        @endforeach
+
+                                    </tbody>
+
+                                </table>
+                            @endif
+
                         </div>
                     </div>
                 </div>
 
-               
+
                 <!-- COMMENTS -->
                 <div x-data="{ open: true }" class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
 
