@@ -1038,7 +1038,7 @@ class FDController extends Controller
             'transaction_date' => now(),
             'transaction_purpose' => 'interest',
             'transaction_type' => 1, // Credit
-            'paid_no'          => now(),
+            'paid_on'          => now(),
             'amount'           => $request->interest,
             'interest'         => $request->interest,
             'tds'              => $request->tds,
