@@ -175,8 +175,7 @@
                     </thead>
                     <tbody>
                         @foreach ($applications as $app)
-                            <tr class="border-b dark:border-bg3">
-
+                            <tr id="row-{{ $app->loan_id }}-{{ $app->emi_no }}" class="border-b dark:border-bg3">
                                 {{-- Branch Name --}}
                                 <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                     <div class="flex items-center gap-1 uppercase">
@@ -353,25 +352,17 @@
                                                 </li>
 
                                                 <li>
-                                                    <button class="single-option"
-                                                        onclick="openLoanModal(
-                                                                                    '{{ $app->member_no }}',
-                                                                                    '{{ $app->member_info_first_name }}',
-                                                                                    '{{ $app->loan_type }}',
-                                                                                    '{{ $app->loan_id }}',
-                                                                                    '{{ $app->inst_due ?? 0 }}',
-                                                                                    '{{ $app->due_date }}',
-                                                                                    '{{ $app->remaining_amount }}'
-                                                                                    )">
+                                                    <a href="{{ route('payments-to-collect.comments', [$app->loan_type, $app->loan_id]) }}"
+                                                        class="single-option">
                                                         COMMENTS
-                                                    </button>
+                                                    </a>
                                                 </li>
-                                                @if (!empty($app->emi_no) && !empty($app->remaining_amount))
+                                                @if (($app->status ?? '') == 'PAID')
                                                     <li>
-                                                        <a href="{{ route('loan.mark.done', [$app->loan_type, $app->loan_id, $app->emi_no, $app->remaining_amount]) }}"
-                                                            class="single-option">
+                                                        <button class="single-option"
+                                                            onclick="markDone('{{ $app->loan_type }}','{{ $app->loan_id }}','{{ $app->emi_no }}','{{ $app->remaining_amount }}', this)">
                                                             MARK DONE
-                                                        </a>
+                                                        </button>
                                                     </li>
                                                 @endif
 
@@ -622,6 +613,34 @@
                     document.getElementById('commentHistory').innerHTML = html;
 
                 });
+        }
+    </script>
+    <script>
+        function markDone(type, loan_id, emi_no, amount, btn) {
+
+            if (!confirm("Mark this EMI as done?")) return;
+
+            fetch(`/loan/mark-done/${type}/${loan_id}/${emi_no}/${amount}`)
+                .then(res => res.text())
+                .then(data => {
+
+                    let row = document.getElementById(`row-${loan_id}-${emi_no}`);
+
+                    if (row) {
+                        row.style.transition = "0.4s";
+                        row.style.opacity = "0";
+
+                        setTimeout(() => {
+                            row.remove();
+                        }, 400);
+                    }
+
+                })
+                .catch(err => {
+                    alert("Something went wrong");
+                    console.log(err);
+                });
+
         }
     </script>
 @endsection

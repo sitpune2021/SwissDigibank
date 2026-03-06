@@ -133,7 +133,29 @@ class ApproveController extends Controller
                 ->where('gold_loan_fore_closures.status', '=', 0);
 
             Log::info('Foreclosure Query Built Successfully');
-
+            $ccOdForeclosureQuery = DB::table('cc_od_loan_fore_closures')
+                ->select(
+                    'cc_od_loan_fore_closures.id',
+                    DB::raw("'cc_od_loan_fore_closures' AS source_table"),
+                    'cc_od_loan_fore_closures.payment_mode AS payment_mode',
+                    'cc_od_loan_fore_closures.net_amount_k AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'cc_od_loan_fore_closures.status AS approve_status',
+                    'cc_od_loan_fore_closures.created_at',
+                    'branches.branch_name',
+                    'cc_od_loan_applications.id AS account_no',
+                    DB::raw("'CC / OD Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'cc_od_loan_applications.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'Foreclosure' AS transaction_type")
+                )
+                ->join('cc_od_loan_disbursments', 'cc_od_loan_disbursments.loan_application_id', '=', 'cc_od_loan_fore_closures.loan_id')
+                ->join('cc_od_loan_applications', 'cc_od_loan_applications.id', '=', 'cc_od_loan_disbursments.loan_application_id')
+                ->join('branches', 'branches.id', '=', 'cc_od_loan_applications.branch_id')
+                ->where('cc_od_loan_fore_closures.status', '=', 0);
             /*
         |--------------------------------------------------------------------------
         | 4️⃣ GOLD LOAN EMI QUERY
@@ -545,7 +567,29 @@ class ApproveController extends Controller
                 )
                 ->where('personal_loan_transactions.status', '=', 'pending');
             // ️UNION ALL
-
+            $ccOdLoanEmiQuery = DB::table('cc_od_loan_transactions')
+                ->select(
+                    'cc_od_loan_transactions.id',
+                    DB::raw("'cc_od_loan_transactions' AS source_table"),
+                    'cc_od_loan_transactions.fee_mode AS payment_mode',
+                    'cc_od_loan_transactions.amount_collected AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'cc_od_loan_transactions.status AS approve_status',
+                    'cc_od_loan_transactions.created_at',
+                    'branches.branch_name',
+                    'cc_od_loan_applications.id AS account_no',
+                    DB::raw("'CC / OD Loan' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'cc_od_loan_applications.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'EMI Payment' AS transaction_type")
+                )
+                ->join('cc_od_loan_disbursments', 'cc_od_loan_disbursments.loan_application_id', '=', 'cc_od_loan_transactions.loan_id')
+                ->join('cc_od_loan_applications', 'cc_od_loan_applications.id', '=', 'cc_od_loan_disbursments.loan_application_id')
+                ->join('branches', 'branches.id', '=', 'cc_od_loan_applications.branch_id')
+                ->where('cc_od_loan_transactions.status', '=', 'pending');
             Log::info('Step 6: Combining All Queries Using UNION');
 
             $unionQuery = $transactionQuery
@@ -561,7 +605,8 @@ class ApproveController extends Controller
                 ->unionAll($dailyWeeklyEmiQuery)
                 ->unionAll($dailyWeeklyForeclosureQuery)
                 ->unionAll($vehicleEmiQuery)
-
+                ->unionAll($ccOdLoanEmiQuery)
+                ->unionAll($ccOdForeclosureQuery)
                 ->unionAll($vehicleForeclosureQuery)
                 ->unionAll($personalForeclosureQuery)
                 ->unionAll($personalLoanEmiQuery);
@@ -996,6 +1041,55 @@ class ApproveController extends Controller
                     DB::commit();
 
                     return back()->with('success', 'Personal Loan Foreclosure updated successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'cc_od_loan_fore_closures') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $foreclosure = DB::table('cc_od_loan_fore_closures')
+                        ->where('id', $id)
+                        ->first();
+
+                    if (!$foreclosure) {
+                        return back()->with('error', 'Foreclosure record not found.');
+                    }
+
+                    DB::table('cc_od_loan_fore_closures')
+                        ->where('id', $id)
+                        ->update([
+                            'status' => $status === 'approved' ? 1 : 0,
+                            'remarks' => $remarks,
+                            'updated_at' => now(),
+                        ]);
+
+                    if ($status === 'approved') {
+
+                        DB::table('cc_od_loan_emi_status')
+                            ->where('loan_id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 'PAID',
+                                'remaining_amount' => 0,
+                                'paid_date' => now()->format('Y-m-d'),
+                                'updated_at' => now()
+                            ]);
+
+                        DB::table('cc_od_loan_applications')
+                            ->where('id', $foreclosure->loan_id)
+                            ->update([
+                                'status' => 2,
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'CC / OD Foreclosure approved successfully.');
                 } catch (\Exception $e) {
 
                     DB::rollBack();
@@ -1823,6 +1917,82 @@ class ApproveController extends Controller
 
                     return back()->with('success', 'Personal Loan EMI approved successfully.');
                 } catch (\Exception $e) {
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'cc_od_loan_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $emi = DB::table('cc_od_loan_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$emi) {
+                        DB::rollBack();
+                        return back()->with('error', 'Transaction not found');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // 1️⃣ Mark transaction paid
+                        DB::table('cc_od_loan_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'paid',
+                                'paid_date' => now(),
+                                'updated_at' => now()
+                            ]);
+
+                        // 2️⃣ Update EMI status
+                        $emiStatus = DB::table('cc_od_loan_emi_status')
+                            ->where('loan_id', $emi->loan_id)
+                            ->where('emi_no', $emi->emi_no)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if ($emiStatus) {
+
+                            $newRemaining = round(
+                                $emiStatus->remaining_amount - $emi->amount_collected,
+                                2
+                            );
+
+                            DB::table('cc_od_loan_emi_status')
+                                ->where('id', $emiStatus->id)
+                                ->update([
+                                    'status' => $newRemaining <= 0 ? 'PAID' : 'PARTIAL',
+                                    'remaining_amount' => $newRemaining <= 0 ? 0 : $newRemaining,
+                                    'paid_date' => now()->format('Y-m-d'),
+                                    'updated_at' => now()
+                                ]);
+                        }
+
+                        // 3️⃣ Close loan if fully paid
+                        $totalRemaining = DB::table('cc_od_loan_emi_status')
+                            ->where('loan_id', $emi->loan_id)
+                            ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
+                            ->sum('remaining_amount');
+
+                        if ($totalRemaining <= 0) {
+
+                            DB::table('cc_od_loan_applications')
+                                ->where('id', $emi->loan_id)
+                                ->update([
+                                    'status' => 2,
+                                    'updated_at' => now()
+                                ]);
+                        }
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'CC / OD EMI approved successfully.');
+                } catch (\Exception $e) {
+
                     DB::rollBack();
                     return back()->with('error', $e->getMessage());
                 }

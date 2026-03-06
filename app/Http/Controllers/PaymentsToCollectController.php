@@ -274,12 +274,13 @@ class PaymentsToCollectController extends Controller
         $query = DB::table($appTable)
             ->leftJoin('members', 'members.id', '=', $appTable . '.member_id')
             ->leftJoin('branches', 'branches.id', '=', $appTable . '.branch_id')
-            ->join($emiTable, $emiTable . '.loan_id', '=', $appTable . '.id')
-            ->where($emiTable . '.status', '!=', 'PAID');
+            ->join($emiTable, $emiTable . '.loan_id', '=', $appTable . '.id');
+        $query->where($emiTable . '.status', '!=', 'DONE');
 
         if ($hasDueDate) {
             $query->whereDate($emiTable . '.emi_due_date', '<=', now());
         }
+
         return $query->select(
             $appTable . '.id as loan_id',
             $appTable . '.member_id',
@@ -288,26 +289,24 @@ class PaymentsToCollectController extends Controller
             'members.member_info_mobile_no',
             'branches.branch_name',
             DB::raw("'" . $loanType . "' as loan_type"),
-
-            DB::raw('COUNT(' . $emiTable . '.emi_no) as inst_due'),
-
-            DB::raw('SUM(CASE WHEN ' . $emiTable . '.emi_due_date < CURDATE() THEN 1 ELSE 0 END) as inst_overdue'),
-
+            DB::raw("SUM(CASE WHEN {$emiTable}.status != 'PAID' THEN 1 ELSE 0 END) as inst_due"),
             DB::raw('SUM(' . $emiTable . '.remaining_amount) as remaining_amount'),
-
+            DB::raw("MIN(CASE 
+            WHEN {$emiTable}.status = 'DUE' THEN 'DUE'
+            WHEN {$emiTable}.status = 'PARTIAL' THEN 'PARTIAL'
+            WHEN {$emiTable}.status = 'PAID' THEN 'PAID'
+                END) as status"),
             DB::raw('MIN(' . $emiTable . '.emi_no) as emi_no'),
-
-            $hasDueDate
-                ? DB::raw('MIN(' . $emiTable . '.emi_due_date) as due_date')
-                : DB::raw('NULL as due_date')
-        )->groupBy(
-            $appTable . '.id',
-            $appTable . '.member_id',
-            'members.member_no',
-            'members.member_info_first_name',
-            'members.member_info_mobile_no',
-            'branches.branch_name'
+            DB::raw('MIN(' . $emiTable . '.emi_due_date) as due_date')
         )
+            ->groupBy(
+                $appTable . '.id',
+                $appTable . '.member_id',
+                'members.member_no',
+                'members.member_info_first_name',
+                'members.member_info_mobile_no',
+                'branches.branch_name'
+            )
             ->get();
     }
     public function getLastTransaction($type, $loan_id)
@@ -466,7 +465,7 @@ class PaymentsToCollectController extends Controller
                     ->where($emiColumn, $emi_no)
                     ->update([
                         "remaining_amount" => 0,
-                        "status" => "PAID",
+                        "status" => "DONE",
                         "paid_date" => now(),
                         "updated_at" => now()
                     ]);
@@ -604,30 +603,48 @@ class PaymentsToCollectController extends Controller
 
         return back()->with('success', 'Collection link sent to member mobile.');
     }
-    public function payment_comments($loan_id)
+    public function payment_comments($loan_type, $loan_id)
     {
-        $comments = DB::table('gold_loan_comments')
-            ->leftJoin('users', 'users.id', '=', 'gold_loan_comments.commented_by')
-            ->where('gold_loan_id', $loan_id)
+        // loan info
+        $loan = DB::table('loan_applications')
+            ->leftJoin('members', 'members.id', '=', 'loan_applications.member_id')
+            ->where('loan_applications.id', $loan_id)
             ->select(
-                'gold_loan_comments.comment',
-                'users.name as comment_by',
-                'gold_loan_comments.created_at'
+                'members.member_no',
+                'members.member_info_first_name'
             )
-            ->orderBy('gold_loan_comments.id', 'desc')
+            ->first();
+
+        // EMI info
+        $emi = DB::table('gold_loan_emi_status')
+            ->where('loan_id', $loan_id)
+            ->where('status', '!=', 'PAID')
+            ->orderBy('emi_no')
+            ->first();
+
+        $comments = DB::table('payment_collect_comments')
+            ->leftJoin('users', 'users.id', '=', 'payment_collect_comments.commented_by')
+            ->where('loan_id', $loan_id)
+            ->where('loan_type', $loan_type)
+            ->select(
+                'payment_collect_comments.comment',
+                'users.name as comment_by',
+                'payment_collect_comments.created_at'
+            )
+            ->orderBy('payment_collect_comments.id', 'desc')
             ->get();
 
         return view(
             "payments.payments-to-collect.comments",
-            compact('loan_id', 'comments')
+            compact('loan_id', 'loan_type', 'comments', 'loan', 'emi')
         );
     }
 
     public function saveComment(Request $request)
     {
-        DB::table('gold_loan_comments')->insert([
-            'gold_loan_id' => $request->loan_id,
-            'date' => now(),
+        DB::table('payment_collect_comments')->insert([
+            'loan_id' => $request->loan_id,
+            'loan_type' => $request->loan_type,
             'comment' => $request->comment,
             'commented_by' => Auth::id(),
             'created_at' => now(),
@@ -636,17 +653,18 @@ class PaymentsToCollectController extends Controller
 
         return back()->with('success', 'Comment Saved');
     }
-    public function getComments($loan_id)
+    public function getComments($loan_type, $loan_id)
     {
-        $comments = DB::table('gold_loan_comments')
-            ->leftJoin('users', 'users.id', '=', 'gold_loan_comments.commented_by')
-            ->where('gold_loan_id', $loan_id)
+        $comments = DB::table('payment_collect_comments')
+            ->leftJoin('users', 'users.id', '=', 'payment_collect_comments.commented_by')
+            ->where('loan_id', $loan_id)
+            ->where('loan_type', $loan_type)
             ->select(
-                'gold_loan_comments.comment',
+                'payment_collect_comments.comment',
                 'users.name as comment_by',
-                'gold_loan_comments.created_at'
+                'payment_collect_comments.created_at'
             )
-            ->orderBy('gold_loan_comments.id', 'desc')
+            ->orderBy('payment_collect_comments.id', 'desc')
             ->get();
 
         return response()->json($comments);
