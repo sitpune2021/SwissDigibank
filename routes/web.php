@@ -548,10 +548,10 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
 
     Route::get('/misaccount/foreclose/{id}', [MisaccountController::class, 'foreclose'])->name('misaccount.foreclose');
     Route::post('/misaccount/{id}/foreclose', [MisaccountController::class, 'raiseForecloseRequest'])->name('misaccount.raiseForecloseRequest');
-    
+
     Route::get('/misaccount/{id}/remove-account', [MisaccountController::class, 'removeAccount'])->name('misaccount.removeAccount');
     Route::delete('/mis_account/{id}', [MisaccountController::class, 'confirmRemoveAccount'])
-    ->name('misaccount.delete');
+        ->name('misaccount.delete');
     Route::get('/misaccount/make-lien/{id}', [MisaccountController::class, 'makeLien'])->name('misaccount.makelien');
 
     Route::get('/misaccount/credit-debit-interest/{id}', [MisaccountController::class, 'creditDebitInterest'])->name('misaccount.creditDebitInterest');
@@ -864,12 +864,22 @@ Route::group(['prefix' => 'gold-loan'], function () {
     Route::post('/gold-loan/foreclose/{loan_id}', [GoldLoanAccountController::class, 'foreClose'])
         ->name('goldloan.foreclose');
 
-    // commnets and documents route
+    // commnets route-------------------------------------------------
     Route::get('gold-loan/{id}/add-comment', [GoldLoanAccountController::class, 'addComment'])
         ->name('goldloan.addComment');
 
     Route::post('gold-loan/store-comment', [GoldLoanAccountController::class, 'storeComment'])
         ->name('goldloan.storeComment');
+
+    // documents route---------------------------------------------------------
+    Route::get('gold-loans/{id}/upload-documents', [GoldLoanAccountController::class, 'uploadDocuments'])
+        ->name('goldloans.uploadDocuments');
+
+    Route::post('gold-loans/{id}/store-documents', [GoldLoanAccountController::class, 'storeDocuments'])
+        ->name('goldloans.storeDocuments');
+
+    Route::delete('gold-loan-documents/{id}', [GoldLoanAccountController::class, 'destroyDocument'])
+        ->name('goldloans.documents.destroy');
 
     // other pages url
     Route::get('applications/disburse-setting', [GoldLoanController::class, 'showdisbursesetting'])
@@ -2831,7 +2841,7 @@ Route::get('/balance-sheet', [LedgergroupController::class, 'balance_sheet'])
     ->name('balance.sheet');
 
 Route::get('/balance-sheet/print', [LedgergroupController::class, 'printBalanceSheet'])
-->name('balance.sheet.print');
+    ->name('balance.sheet.print');
 
 Route::get(
     '/trial-balance',
@@ -3287,8 +3297,8 @@ Route::get('software-settings/software-service-agreement', [SoftwareSettingsCont
 
 ///////////////////// Download REPORTs ///////////////////////////
 Route::get('loan-report/index', [ReportController::class, 'loan_report_index'])->name('loan-report.index');
-Route::get('/loan-report/print', [ReportController::class,'loan_report_print'])
-->name('loan.report.print');
+Route::get('/loan-report/print', [ReportController::class, 'loan_report_print'])
+    ->name('loan.report.print');
 Route::get('maturity-indext/index', [ReportController::class, 'maturity_index'])->name('loan-report.maturity_index');
 Route::get('/reports/branch-report', [ReportController::class, 'branch_index'])->name('reports.branch');
 

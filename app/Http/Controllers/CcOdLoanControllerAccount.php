@@ -451,6 +451,37 @@ class CcOdLoanControllerAccount extends Controller
         }
         // 🔥 Check if any EMI is due
 
+        // $today = Carbon::today();
+
+        // $hasOverdueEmi = DB::table('cc_od_loan_emi_status')
+        //     ->where('loan_id', $id)
+        //     ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
+        //     ->whereDate('emi_due_date', '<', $today)
+        //     ->exists();
+
+        // $hasDueEmi = DB::table('cc_od_loan_emi_status')
+        //     ->where('loan_id', $id)
+        //     ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
+        //     ->exists();
+
+        // // ⭐ Decide Button
+        // if ($hasDueEmi) {
+        //     $payRoute = route('cc_od.account.pay-emi', $goldLoan->id);
+        //     $payButtonText = 'Pay EMI';
+        // } else {
+        //     $payRoute = route('cc_od.account.pay', $goldLoan->id);
+        //     $payButtonText = 'Pay';
+        // }
+
+        // if ($hasOverdueEmi) {
+        //     $payButtonText = 'Pay Overdue EMI';
+        // } elseif ($hasDueEmi) {
+        //     $payButtonText = 'Pay EMI';
+        // } else {
+        //     $payButtonText = 'Pay';
+        // }
+        // ⭐ CHECK IF ANY EMI IS DUE
+
         $today = Carbon::today();
 
         $hasOverdueEmi = DB::table('cc_od_loan_emi_status')
@@ -464,7 +495,6 @@ class CcOdLoanControllerAccount extends Controller
             ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
             ->exists();
 
-        // ⭐ Decide Button
         if ($hasDueEmi) {
             $payRoute = route('cc_od.account.pay-emi', $goldLoan->id);
             $payButtonText = 'Pay EMI';
@@ -511,7 +541,7 @@ class CcOdLoanControllerAccount extends Controller
             'comments',
             'totalRemainingEmiAmount',
             'payButtonText',
-
+            'payRoute'
         ));
     }
 
@@ -558,6 +588,8 @@ class CcOdLoanControllerAccount extends Controller
         ]);
     }
 
+
+    // pay emi tab page   
     public function mortgagePayEmi($id)
     {
         // ✅ Rename $loan → $goldLoan
@@ -638,7 +670,7 @@ class CcOdLoanControllerAccount extends Controller
             'banks'
         ));
     }
-    private function calculatePayAmount($loanId)
+    private function calculateMortgagePayAmount($loanId)
     {
         $totalRemaining = DB::table('cc_od_loan_emi_status')
             ->where('loan_id', $loanId)
@@ -661,12 +693,6 @@ class CcOdLoanControllerAccount extends Controller
 
     public function mortgagepayEmiLoan(Request $request, $id)
     {
-        Log::info('🟢 CC/OD EMI Payment Request Received', [
-            'loan_id' => $id,
-            'request_data' => $request->all(),
-            'user_id' => Auth::id()
-        ]);
-
         DB::beginTransaction();
 
         try {
@@ -674,17 +700,11 @@ class CcOdLoanControllerAccount extends Controller
             $cleanAmount = str_replace(',', '', $request->amount_collected);
             $request->merge(['amount_collected' => $cleanAmount]);
 
-            Log::info('💰 Clean Amount Parsed', [
-                'clean_amount' => $cleanAmount
-            ]);
-
             $request->validate([
                 'transaction_date' => 'required|date',
                 'amount_collected' => 'required|numeric|min:1',
                 'fee_mode' => 'required|in:cash,cheque,online,saving'
             ]);
-
-            Log::info('✅ Validation Passed');
 
             $emi = DB::table('cc_od_loan_emi_status')
                 ->where('loan_id', $id)
@@ -692,14 +712,9 @@ class CcOdLoanControllerAccount extends Controller
                 ->orderBy('emi_no')
                 ->first();
 
-            Log::info('🔍 EMI Status Fetched', [
-                'emi_data' => $emi
-            ]);
-
             if (!$emi) {
 
-                Log::info('⚠️ No Due EMI Found → Full Payment Case');
-
+                // 🔥 FULL PAYMENT CASE
                 DB::table('cc_od_loan_transactions')->insert([
                     'loan_id' => $id,
                     'emi_no' => null,
@@ -715,26 +730,13 @@ class CcOdLoanControllerAccount extends Controller
                     'updated_at' => now()
                 ]);
 
-                Log::info('🟡 Full Payment Transaction Inserted', [
-                    'loan_id' => $id,
-                    'amount' => $cleanAmount
-                ]);
-
                 DB::commit();
 
-                Log::info('✅ Full Payment Submitted For Approval', [
-                    'loan_id' => $id
-                ]);
-
                 return redirect()
-                    ->route('gold-loan.account.show', $id)
+                    ->route('cc_od.account.show', $id)
                     ->with('success', 'Full Payment Submitted For Approval');
             }
 
-            Log::info('📊 Due EMI Found', [
-                'emi_no' => $emi->emi_no,
-                'remaining_amount' => $emi->remaining_amount
-            ]);
 
             DB::table('cc_od_loan_transactions')->insert([
                 'loan_id' => $id,
@@ -743,7 +745,7 @@ class CcOdLoanControllerAccount extends Controller
                 'amount_collected' => $cleanAmount,
                 'total_payable' => $emi->remaining_amount,
                 'current_debt' => $emi->remaining_amount,
-                'status' => 'pending',
+                'status' => 'pending',   // ✅ ONLY PENDING
                 'flag' => 'emi_payment',
                 'fee_mode' => $request->fee_mode,
                 'created_by' => Auth::id(),
@@ -751,37 +753,18 @@ class CcOdLoanControllerAccount extends Controller
                 'updated_at' => now()
             ]);
 
-            Log::info('🟡 EMI Payment Transaction Inserted', [
-                'loan_id' => $id,
-                'emi_no' => $emi->emi_no,
-                'amount_collected' => $cleanAmount
-            ]);
-
             DB::commit();
-
-            Log::info('✅ EMI Payment Submitted For Approval', [
-                'loan_id' => $id,
-                'emi_no' => $emi->emi_no
-            ]);
 
             return redirect()
                 ->route('cc_od.account.show', $id)
                 ->with('success', 'EMI Payment Submitted For Approval');
         } catch (\Exception $e) {
-
             DB::rollBack();
-
-            Log::error('❌ CC/OD EMI Payment Failed', [
-                'loan_id' => $id,
-                'error_message' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile(),
-                'user_id' => Auth::id()
-            ]);
-
             return back()->with('error', $e->getMessage());
         }
     }
+
+
     // Transiction tab 
     public function mortgageTransaction(Request $request, $id)
     {
@@ -973,74 +956,6 @@ class CcOdLoanControllerAccount extends Controller
             return back()->with('error', 'Something went wrong while saving!');
         }
     }
-
-    // only pay tab page
-    public function mortgagePay($id)
-    {
-        $goldLoan = CcOdLoanApplication::with([
-            'member.branch',
-            'CcodLoanTransaction',
-            'branch',
-            'scheme',
-            'coApplicant1',
-            'guarantor1'
-        ])->findOrFail($id);
-
-        $banks = Bank::all();
-
-        $lastTransaction = $goldLoan->CcodLoanTransaction->last();
-        $payableAmount = $lastTransaction->total_payable ?? 0;
-
-        if ($lastTransaction) {
-            $currentDebt = (float) $lastTransaction->current_debt;
-        } else {
-            $currentDebt = (float) $goldLoan->loan_amount;
-        }
-
-        $currentDebt = round($currentDebt, 2);
-
-        $nextDue = $goldLoan->emiPayments()
-            ->where('status', 'pending')
-            ->first();
-
-        if (!$nextDue) {
-            return view('cc_od.account.view-buttons.pay.pay', [
-                'goldLoan' => $goldLoan,
-                'banks' => $banks,
-                'currentDebt' => 0,
-                'payableAmount' => 0,
-                'message' => 'All EMIs are fully paid.'
-            ]);
-        }
-
-        $annualRate = (float) $goldLoan->interest_rate;
-
-        $today = Carbon::today();
-        $dueDate = Carbon::parse($nextDue->emi_date);
-
-        $daysLate = $dueDate->diffInDays($today, false);
-        $daysLate = $daysLate > 0 ? $daysLate : 0;
-
-        $interestTillToday = round(($currentDebt * $annualRate * $daysLate) / 36500, 2);
-
-        $lateFee = $daysLate * 10;
-
-        $emiAmount = (float) $nextDue->emi_amount;
-
-        // $payableAmount = round($emiAmount + $interestTillToday + $lateFee, 2);
-
-        return view('cc_od.account.view-buttons.pay.pay', compact(
-            'goldLoan',
-            'banks',
-            'currentDebt',
-            'payableAmount',
-            'interestTillToday',
-            'lateFee',
-            'daysLate',
-            'nextDue'
-        ));
-    }
-
     // update emi status on pay tab
     public function updateEmiStatus(Request $request)
     {
@@ -1076,120 +991,104 @@ class CcOdLoanControllerAccount extends Controller
         ]);
     }
 
-    // store pay tab data in table
+
+    // only pay tab page
+    public function mortgagePay($id)
+    {
+        $goldLoan = CcOdLoanApplication::with([
+            'member.branch',
+            'CcodLoanTransaction',
+            'branch',
+            'scheme',
+            'coApplicant1',
+            'guarantor1'
+        ])->findOrFail($id);
+
+        $banks = Bank::all();
+
+        $totalPaid = DB::table('cc_od_loan_transactions')
+            ->where('loan_id', $id)
+            ->where('status', 'paid')
+            ->sum('amount_collected');
+
+        $currentDebt = round($goldLoan->loan_amount - $totalPaid, 2);
+
+        if ($currentDebt < 0) {
+            $currentDebt = 0;
+        }
+
+        if ($currentDebt <= 0) {
+            return view('cc_od.account.view-buttons.pay.pay', [
+                'goldLoan' => $goldLoan,
+                'banks' => $banks,
+                'currentDebt' => 0,
+                'payableAmount' => 0,
+                'message' => 'Loan already closed.'
+            ]);
+        }
+
+        $payableAmount = $currentDebt;
+
+        return view('cc_od.account.view-buttons.pay.pay', compact(
+            'goldLoan',
+            'banks',
+            'currentDebt',
+            'payableAmount'
+        ));
+    }
+
+
     public function payEmi(Request $request)
     {
-        Log::info('payEmi() called', ['request_data' => $request->all()]);
+        DB::beginTransaction();
 
         try {
 
-            Log::info('payEmi(): Starting validation');
-
-            $rules = [
-                'loan_id'           => 'required|exists:loan_against_applications,id',
-                'transaction_date'  => 'required|date',
-                'current_debt'      => 'required|numeric',
-                'total_payable'     => 'required|numeric',
-                'amount_collected'  => 'required|numeric|min:1',
-                'fee_mode'          => 'required|in:cash,cheque,online',
-            ];
-
-            if ($request->fee_mode === 'cheque') {
-
-                $rules['bank_id']     = 'required';
-                $rules['cheque_no']   = 'required';
-                $rules['cheque_date'] = 'required|date';
-            }
-
-            if ($request->fee_mode === 'online') {
-                $rules['transfer_date'] = 'required|date';
-                $rules['utr_no']        = 'required';
-                $rules['transfer_mode'] = 'required|in:imps,vpa,neft_rtgs';
-                $rules['credited']      = 'required|in:yes,no';
-            }
-
-            $request->validate($rules);
-
-            Log::info('payEmi(): Validation passed');
-
-            $loan = CcOdLoanApplication::find($request->loan_id);
-
-            if (!$loan) {
-                Log::error('payEmi(): Loan not found', ['loan_id' => $request->loan_id]);
-                return back()->withErrors(['loan_id' => 'Loan not found.']);
-            }
-
-            $lastEmiNo = CcodLoanTransaction::where('loan_id', $loan->id)->max('emi_no');
-            $nextEmiNo = $lastEmiNo ? $lastEmiNo + 1 : 1;
-
-            Log::info('payEmi(): Next EMI Number', [
-                'emi_no' => $nextEmiNo,
+            $request->validate([
+                'loan_id' => 'required|exists:cc_od_loan_applications,id',
+                'transaction_date' => 'required',
+                'current_debt' => 'required|numeric',
+                'total_payable' => 'required|numeric',
+                'amount_collected' => 'required|numeric|min:1',
+                'fee_mode' => 'required|in:cash,cheque,online',
             ]);
 
-            $paymentDetails = ['mode' => $request->fee_mode];
+            $loan = CcOdLoanApplication::findOrFail($request->loan_id);
 
-            if ($request->fee_mode === 'cash') {
-                $paymentDetails['fee_mode']  = $request->fee_mode;
-                $paymentDetails['description'] = 'Cash payment received';
-            }
+            // 🔥 IMPORTANT: Decide full payment
+            $isFullPayment = floatval($request->amount_collected) >= floatval($request->current_debt);
 
-            if ($request->fee_mode === 'cheque') {
-                $paymentDetails['fee_mode']  = $request->fee_mode;
-                $paymentDetails['bank_id']     = $request->bank_id;
-                $paymentDetails['cheque_no']   = $request->cheque_no;
-                $paymentDetails['cheque_date'] = $request->cheque_date;
-            }
+            $flag = $isFullPayment ? 'full_payment' : 'emi_payment';
+            $emiNo = $isFullPayment ? null : (CcodLoanTransaction::where('loan_id', $loan->id)->max('emi_no') + 1);
 
-            if ($request->fee_mode === 'online') {
-                $paymentDetails['fee_mode']  = $request->fee_mode;
-                $paymentDetails['transfer_date'] = $request->transfer_date;
-                $paymentDetails['utr_no']        = $request->utr_no;
-                $paymentDetails['transfer_mode'] = $request->transfer_mode;
-                $paymentDetails['credited']      = $request->credited;
-            }
+            $transactionDate = Carbon::createFromFormat('d-m-Y', $request->transaction_date)
+                ->format('Y-m-d');
 
-
-            $transaction = CcodLoanTransaction::create([
-                'loan_id'          => $loan->id,
-                'emi_no'           => $nextEmiNo,
-                'transaction_date' => Carbon::parse($request->transaction_date)->format('Y-m-d'),
-
-                'current_debt'     => $request->current_debt,
-                'other_charges'    => $request->other_charges ?? 0,
-                'total_payable'    => $request->total_payable,
+            CcodLoanTransaction::create([
+                'loan_id' => $loan->id,
+                'emi_no' => $emiNo,                     // NULL for full payment
+                'transaction_date' => $transactionDate,
+                'current_debt' => $request->current_debt,
+                'other_charges' => $request->other_charges ?? 0,
+                'total_payable' => $request->total_payable,
                 'amount_collected' => $request->amount_collected,
-
-                'remarks'          => $request->remarks ?? null,
-                'payment_mode'     => $request->fee_mode,
-                'payment_details'  => json_encode($paymentDetails),
-
-                'bank_id'          => $request->bank_id ?? null,
-                'cheque_no'        => $request->cheque_no ?? null,
-                'cheque_date'      => $request->cheque_date ?? null,
-
-                'transfer_date'    => $request->transfer_date ?? null,
-                'utr_no'           => $request->utr_no ?? null,
-                'transfer_mode'    => $request->transfer_mode ?? null,
-                'credited'         => $request->credited ?? null,
-
-                'created_by'       => Auth::id(),
+                'remarks' => $request->remarks ?? null,
+                'fee_mode' => $request->fee_mode,
+                'flag' => $flag,                        // 🔥 MUST STORE
+                'status' => 'pending',
+                'created_by' => Auth::id(),
             ]);
 
-            Log::info('payEmi(): Transaction Created', [
-                'transaction_id' => $transaction->id,
-                'data' => $transaction->toArray()
-            ]);
+            DB::commit();
 
-            return redirect()->route('cc_od.account.show', $loan->id)->with('success', 'EMI Payment Recorded Successfully.');
+            return redirect()
+                ->route('cc_od.account.show', $loan->id)
+                ->with('success', 'Payment Submitted For Approval.');
         } catch (\Exception $e) {
 
-            Log::error('payEmi(): Exception Occurred', [
-                'message' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile(),
-            ]);
+            DB::rollBack();
 
-            return back()->withErrors(['error' => 'Something went wrong. Please try again.']);
+            return back()->with('error', $e->getMessage());
         }
     }
 

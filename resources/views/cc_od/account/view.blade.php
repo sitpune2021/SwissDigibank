@@ -158,11 +158,9 @@
             </a>
 
             @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'no_emi')
-                <a href="{{ route('cc_od.account.pay-emi', $goldLoan->id) }}"
-                    class="btn-primary uppercase px-2 py-2 rounded-10 text-sm">
+                <a href="{{ $payRoute }}" class="btn-primary uppercase px-2 py-2 rounded-10 text-sm">
                     {{ $payButtonText }}
                 </a>
-
                 @if (strtolower($goldLoan->scheme->gold_loan_setting) == 'flat_advanced_interest')
                     <a href="{{ route('cc_od.account.extension', $goldLoan->id) }}"
                         class="btn-error text-sm uppercase px-2 py-2 rounded-10 ">
