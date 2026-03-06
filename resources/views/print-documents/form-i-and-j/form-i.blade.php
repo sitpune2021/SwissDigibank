@@ -50,7 +50,6 @@
         </tr>
     </table> --}}
 
-
     <div class="title" style="font-size:24px;  ">नमुना "आय" सदस्याचे नोंदणी पुस्तक</div>
     <div class="subtitle" style="font-size:14px;  text-align: center; ">
         नियम (३२ व ६५ १) महाराष्ट्र सरकारी संस्था अधिनियम १९६० याचे कलम ३८ (१)

@@ -12,15 +12,16 @@
         </button>
     </div>
 
-     <!-- Buttons -->
-        <div class="flex justify-center gap-4 pt-6">
-          <button type="submit" class="btn-primary">
+    <!-- Buttons -->
+    <div class="flex justify-center gap-4 pt-6">
+        <button type="submit" class="btn-primary">
             UPLOAD
-          </button>
-          <a href="" class="btn-outline">
+        </button>
+        <!-- <button onclick="window.history.back()" class="btn-outline">
             BACK
-          </a>
-        </div>
+        </button> -->
+        <a href="javascript:history.back()" class="btn-outline">BACK</a>
+    </div>
 
 </div>
 

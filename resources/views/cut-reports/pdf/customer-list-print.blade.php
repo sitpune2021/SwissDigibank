@@ -50,6 +50,21 @@
         }
 
     </style>
+     <style>
+.header{
+    text-align:center;
+    font-size:22px;
+    font-weight:600; /* semi bold */
+    line-height:1.5;
+}
+
+.sub-header{
+    text-align:center;
+    font-size:18px;
+    font-weight:600; /* semi bold */
+    margin-top:5px;
+}
+</style>
 </head>
 
 <body>

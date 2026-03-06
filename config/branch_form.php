@@ -57,7 +57,7 @@ return [
         'id' => 'country',
         'type' => 'text',
         'required' => true,
-        'default' => 'India',
+        'default' => 'BHARAT',
     ],
     [
         'label' => 'STATE',

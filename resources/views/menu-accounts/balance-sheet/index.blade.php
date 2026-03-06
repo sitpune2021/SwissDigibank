@@ -30,6 +30,7 @@
 
 
     <div class="box mt-5">
+
         <div class="text-end  mb-3 no-print">
             <a href="{{ route('balance.sheet.print',['branch_id'=>$branchId]) }}" 
                 target="_blank"
@@ -42,113 +43,125 @@
             Balance Sheet as on {{ $today->format('d-m-Y') }}
         </h3>
 
-    <div class="card ">
-        <div class="card-body p-0">
+        <style>
+        #printArea table{
+        width:100%;
+        table-layout: fixed;
+        }
+
+        #printArea th,
+        #printArea td{
+        padding:10px;
+        font-size:15px;
+        }
+
+        .card{
+        width:100%;
+        }
+
+        .card-body{
+        padding:0;
+        }
+
+        /* Highlight headings */
+        .section-head{
+        background:#343a40;
+        color:#fff;
+        font-weight:bold;
+        font-size:16px;
+        }
+
+        /* Highlight totals */
+        .total-row{
+        background:#e9ecef;
+        font-weight:bold;
+        }
+        </style>
+
+        <div class="card w-100">
+            <div class="card-body">
 
             <div class="table-responsive" id="printArea">
-                <table class="w-full table table-bordered table-striped mb-0">
+            <table class="table table-bordered mb-0 w-100">
 
-                    <thead class="table-dark text-center">
-                        <tr class="bg-secondary/5 ">
-                            <th class="text-start px-4 py-2">ASSETS</th>
-                            <th class="text-start px-4 py-2">LIABILITIES & EQUITY</th>
-                        </tr>
-                    </thead>
+            <thead class="table-light">
+            <tr>
+            <th class="px-4 py-2">PARTICULARS</th>
+            <th class="text-end px-4 py-2">AMOUNT</th>
+            </tr>
+            </thead>
 
-                    <tbody>
+            <tbody>
 
-                        @php
-                            $maxRows = max(
-                                count($assets),
-                                count($liabilities) + count($equities) + 1
-                            );
-                        @endphp
+            {{-- EQUITY --}}
+            <tr class="section-head">
+            <td colspan="2">EQUITY</td>
+            </tr>
 
-                        @for($i = 0; $i < $maxRows; $i++)
-                            <tr class="border-b">
+            @foreach($equities as $equity)
+            <tr>
+            <td class="px-4">{{ strtoupper($equity['name']) }}</td>
+            <td class="text-end px-4">{{ number_format($equity['amount'],2) }}</td>
+            </tr>
+            @endforeach
 
-                                {{-- ASSETS COLUMN --}}
-                                <td class="text-start px-4 py-2">
-                                    @if(isset($assets[$i]))
-                                        <div class="d-flex justify-content-between">
-                                            <span class="uppercase">{{ $assets[$i]['name'] }}</span>
-                                            <span>{{ number_format($assets[$i]['amount'],2) }}</span>
-                                        </div>
-                                    @endif
-                                </td>
+            <tr class="total-row">
+            <td class="px-4">CURRENT YEAR PROFIT</td>
+            <td class="text-end px-4">{{ number_format($netProfit,2) }}</td>
+            </tr>
 
-                                {{-- LIABILITIES + EQUITY COLUMN --}}
-                                <td class="text-start px-4 py-2">
+            <tr class="total-row">
+            <td class="px-4">TOTAL EQUITY</td>
+            <td class="text-end px-4">{{ number_format($totalEquity,2) }}</td>
+            </tr>
 
-                                    {{-- Liabilities --}}
-                                    @if(isset($liabilities[$i]))
-                                        <div class="d-flex justify-content-between">
-                                            <span class="uppercase">{{ $liabilities[$i]['name'] }}</span>
-                                            <span>{{ number_format($liabilities[$i]['amount'],2) }}</span>
-                                        </div>
-                                    @endif
 
-                                    {{-- Equity --}}
-                                    @if(isset($equities[$i - count($liabilities)]))
-                                        <div class="d-flex justify-content-between">
-                                            <span class="uppercase">{{ $equities[$i - count($liabilities)]['name'] }}</span>
-                                            <span>{{ number_format($equities[$i - count($liabilities)]['amount'],2) }}</span>
-                                        </div>
-                                    @endif
+            {{-- LIABILITIES --}}
+            <tr class="section-head">
+            <td colspan="2">LIABILITIES</td>
+            </tr>
 
-                                    {{-- Current Profit --}}
-                                    @if($i == count($liabilities) + count($equities))
-                                        <div class="d-flex justify-content-between fw-semibold">
-                                            <span>Current Year Profit</span>
-                                            <span>{{ number_format($netProfit,2) }}</span>
-                                        </div>
-                                    @endif
+            @foreach($liabilities as $liability)
+            <tr>
+            <td class="px-4">{{ strtoupper($liability['name']) }}</td>
+            <td class="text-end px-4">{{ number_format($liability['amount'],2) }}</td>
+            </tr>
+            @endforeach
 
-                                </td>
+            <tr class="total-row">
+            <td class="px-4">TOTAL LIABILITIES</td>
+            <td class="text-end px-4">{{ number_format($totalLiabilities,2) }}</td>
+            </tr>
 
-                            </tr>
-                        @endfor
 
-                        {{-- TOTAL ROW --}}
-                        <tr class="fw-bold table-secondary border-b">
-                            <td class="text-start px-4 py-2">
-                                <div class="d-flex justify-content-between">
-                                    <span>Total Assets</span>
-                                    <span>{{ number_format($totalAssets,2) }}</span>
-                                </div>
-                            </td>
-                            <td class="text-start ">
-                                <div class="d-flex px-4 justify-content-between">
-                                    <span>Total Liabilities & Equity</span>
-                                    <span>{{ number_format($totalLiabilities + $totalEquity,2) }}</span>
-                                </div>
-                            </td>
-                        </tr>
+            {{-- ASSETS --}}
+            <tr class="section-head">
+            <td colspan="2">ASSETS</td>
+            </tr>
 
-                    </tbody>
+            @foreach($assets as $asset)
+            <tr>
+            <td class="px-4">{{ strtoupper($asset['name']) }}</td>
+            <td class="text-end px-4">{{ number_format($asset['amount'],2) }}</td>
+            </tr>
+            @endforeach
 
-                </table>
+            <tr class="total-row">
+            <td class="px-4">TOTAL ASSETS</td>
+            <td class="text-end px-4">{{ number_format($totalAssets,2) }}</td>
+            </tr>
+
+            </tbody>
+
+            </table>
             </div>
 
+            </div>
         </div>
-    </div>
     
-    {{-- Difference Alert --}}
-    @if($difference != 0)
-        <div class="alert alert-danger mt-5 text-center">
-            ⚠ Balance Sheet Not Matching. Difference:
-            {{ number_format($difference,2) }}
-        </div>
-    @else
-        <div class="alert alert-success mt-5 text-center">
-            ✅ Balance Sheet Matched Perfectly
-        </div>
-    @endif
+    </div>
 
 </div>
-   </div>
-
-
 
 
 @endsection

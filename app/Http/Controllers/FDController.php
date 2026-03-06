@@ -532,6 +532,7 @@ class FDController extends Controller
                 'transaction_no'  => $request->pay1_transfer_utr ?? null,
                 'transfer_mode'   => $request->transferMode ?? null,
                 'transaction_type' => 1,
+                'transaction_purpose' => 'principal',
                 'saving_account'  => $request->saving_account ?? null,
             ]);
 
@@ -1037,14 +1038,14 @@ class FDController extends Controller
             'transaction_date' => now(),
             'transaction_purpose' => 'interest',
             'transaction_type' => 1, // Credit
-            'paid_no'          => now(),
+            'paid_on'          => now(),
             'amount'           => $request->interest,
             'interest'         => $request->interest,
             'tds'              => $request->tds,
             'net_interest'     => $request->net_interest,
             'due_date'         => $dueDate,
             'status'           => $status,      // LAND or Paid
-            'processed'        => $processed,   // 2 or 1
+            'processed'        => $processed,   // 0 or 1
             'mode'             => 'system',
 
         ]);

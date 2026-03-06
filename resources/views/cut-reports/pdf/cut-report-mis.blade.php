@@ -70,8 +70,36 @@
 
 <body>
     <div class="sheet">
+
+<style>
+.header{
+text-align:center;
+font-size:22px;
+font-weight:600; /* semi bold */
+line-height:1.5;
+}
+
+.sub-header{
+text-align:center;
+font-size:18px;
+font-weight:600; /* semi bold */
+margin-top:5px;
+}
+</style>
+
+<div class="header">
+    {{ $company['name'] ?? '' }}<br>
+    केशव नगर चौक अकोला <br>
+    र. नं. १५३
+</div>
+
+<div class="sub-header">
+    मासिक उत्पन्न योजना - {{ date('Y') }}
+</div>
+    <hr>
+
         <!-- Header -->
-        <table class="header-table">
+        <!-- <table class="header-table">
             <tr>
                 <td style="width: 10%; text-align:left;">
                     <img src="{{ $photoPath }}" alt="Company Logo"  style="width:auto; height:50px;">
@@ -82,7 +110,7 @@
 
                 </td>
             </tr>
-        </table>
+        </table> -->
         {{-- <div style="width:100%; font-family: dejavusans; ">
 
                 <!-- Logo -->
@@ -110,9 +138,9 @@
                 <hr>
             </div> --}}
 
-        <h3 style="font-family: dejavusans; font-size: 18x; margin:20px 20px; ">
+        <!-- <h3 style="font-family: dejavusans; font-size: 18x; margin:20px 20px; ">
             MIS ACCOUNTS CUT REPORT: {{ date('d-m-Y') }}
-        </h3>
+        </h3> -->
 
         <!-- Data Table -->
         <table class="data-table">
@@ -120,7 +148,7 @@
                 <th class="" style="color: #c60707; font-size: 14px;">अनुु.क्.</th>
                 <th style="color: #c60707; font-size: 14px;">खाते क्.</th>
                 <th style="color: #c60707; font-size: 14px;"> नाव</th>
-                <th style="color: #c60707; font-size: 14px;"> िशल्लक</th>
+                <th style="color: #c60707; font-size: 14px;">शिल्लक</th>
             </tr>
             @foreach($associates as $key => $a)
             <tr>
