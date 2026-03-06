@@ -71,19 +71,19 @@
 <body>
     <div class="sheet">
 
-     <style>
+<style>
 .header{
-    text-align:center;
-    font-size:22px;
-    font-weight:600; /* semi bold */
-    line-height:1.5;
+text-align:center;
+font-size:22px;
+font-weight:600; /* semi bold */
+line-height:1.5;
 }
 
 .sub-header{
-    text-align:center;
-    font-size:18px;
-    font-weight:600; /* semi bold */
-    margin-top:5px;
+text-align:center;
+font-size:18px;
+font-weight:600; /* semi bold */
+margin-top:5px;
 }
 </style>
 
@@ -126,7 +126,7 @@
                 <th class="" style="color: #c60707; font-size: 14px;">अनुु.क्.</th>
                 <th style="color: #c60707; font-size: 14px;">खाते क्.</th>
                 <th style="color: #c60707; font-size: 14px;"> नाव</th>
-                <th style="color: #c60707; font-size: 14px;"> िशल्लक</th>
+                <th style="color: #c60707; font-size: 14px;">शिल्लक</th>
             </tr>
             @foreach($associates as $key => $a)
             <tr>

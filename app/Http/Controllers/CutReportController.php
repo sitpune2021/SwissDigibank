@@ -816,7 +816,6 @@ class CutReportController extends Controller
 
     // FD Account Cut Reports End here
 
-
     // MIS Account Cut Reports Start here
 
     public function misaccount_index()

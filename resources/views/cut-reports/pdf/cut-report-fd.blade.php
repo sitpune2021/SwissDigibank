@@ -149,7 +149,7 @@
                 <th class="" style="color: #c60707; font-size: 14px;">अनुु.क्.</th>
                 <th style="color: #c60707; font-size: 14px;">खाते क्.</th>
                 <th style="color: #c60707; font-size: 14px;"> नाव</th>
-                <th style="color: #c60707; font-size: 14px;"> िशल्लक</th>
+                <th style="color: #c60707; font-size: 14px;">शिल्लक</th>
             </tr>
             @foreach($associates as $key => $a)
             <tr>
