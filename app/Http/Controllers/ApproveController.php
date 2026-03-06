@@ -2513,7 +2513,7 @@ class ApproveController extends Controller
                     ->with('success', 'Transaction approved successfully.');
             }
 
-            /*
+        /*
         |--------------------------------------------------------------------------
         | 2️⃣ IF NOT FOUND IN TRANSACTION → CHECK EMI TABLE
         |--------------------------------------------------------------------------

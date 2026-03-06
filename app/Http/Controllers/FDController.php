@@ -532,6 +532,7 @@ class FDController extends Controller
                 'transaction_no'  => $request->pay1_transfer_utr ?? null,
                 'transfer_mode'   => $request->transferMode ?? null,
                 'transaction_type' => 1,
+                'transaction_purpose' => 'principal',
                 'saving_account'  => $request->saving_account ?? null,
             ]);
 
