@@ -567,6 +567,49 @@ class ApproveController extends Controller
                     'personal_loan_applications.branch_id'
                 )
                 ->where('personal_loan_transactions.status', '=', 'pending');
+
+
+            $fdPrincipalQuery = DB::table('fd_transactions')
+                ->select(
+                    'fd_transactions.id',
+                    DB::raw("'fd_transactions' AS source_table"),
+                    'fd_transactions.mode AS payment_mode',
+                    'fd_transactions.amount AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'fd_transactions.status AS approve_status',
+                    'fd_transactions.created_at',
+                    'branches.branch_name',
+                    'fd_accounts.id AS account_no',
+                    DB::raw("'FD Account' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'fd_accounts.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'FD Principal Deposit' AS transaction_type")
+                )
+                ->join(
+                    'fd_accounts',
+                    'fd_accounts.id',
+                    '=',
+                    'fd_transactions.fd_account_id'
+                )
+                ->join(
+                    'branches',
+                    'branches.id',
+                    '=',
+                    'fd_accounts.branch_id'
+                )
+                ->where('fd_transactions.transaction_purpose', '=', 'principal')
+                ->where('fd_transactions.transaction_type', '=', 1) // credit
+                ->where(function ($q) {
+                    $q->whereNull('fd_transactions.status')
+                        ->orWhere('fd_transactions.status', 'pending');
+                });
+
+            Log::info('FD Principal Pending Query');
+
+
             // ️UNION ALL
 
             Log::info('Step 6: Combining All Queries Using UNION');
@@ -585,7 +628,7 @@ class ApproveController extends Controller
                 ->unionAll($dailyWeeklyEmiQuery)
                 ->unionAll($dailyWeeklyForeclosureQuery)
                 ->unionAll($vehicleEmiQuery)
-
+                ->unionAll($fdPrincipalQuery)
                 ->unionAll($vehicleForeclosureQuery)
                 ->unionAll($personalForeclosureQuery)
                 ->unionAll($personalLoanEmiQuery);
@@ -794,6 +837,61 @@ class ApproveController extends Controller
                     DB::rollBack();
                     return back()->with('error', $e->getMessage());
                 }
+            } elseif ($sourceTable === 'fd_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $transaction = DB::table('fd_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$transaction) {
+                        DB::rollBack();
+                        return back()->with('error', 'FD transaction not found.');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // Get FD account
+                        $fdAccount = DB::table('fd_accounts')
+                            ->where('id', $transaction->fd_account_id)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if (!$fdAccount) {
+                            DB::rollBack();
+                            return back()->with('error', 'FD Account not found.');
+                        }
+
+                        // ✅ Approve only if account status = 1
+                        if ($fdAccount->status != 1) {
+                            DB::rollBack();
+                            return back()->with('error', 'FD Account is not in pending state for approval.');
+                        }
+
+                        // 1️⃣ Mark transaction approved
+                        DB::table('fd_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status' => 'Approved',
+                                'processed' => 1,
+                                'paid_on' => now(),
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'FD principal transaction approved successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+
+                    return back()->with('error', $e->getMessage());
+                }
             } elseif ($sourceTable === 'misaccounts') {
 
                 DB::beginTransaction();
@@ -818,7 +916,7 @@ class ApproveController extends Controller
                             ->update([
                                 'foreclose_status' => 2, // approved
                                 'status' => 3, // closed
-                                'closing_date' =>now(),
+                                'closing_date' => now(),
                                 'updated_at' => now()
                             ]);
                     }
@@ -2513,7 +2611,7 @@ class ApproveController extends Controller
                     ->with('success', 'Transaction approved successfully.');
             }
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | 2️⃣ IF NOT FOUND IN TRANSACTION → CHECK EMI TABLE
         |--------------------------------------------------------------------------
