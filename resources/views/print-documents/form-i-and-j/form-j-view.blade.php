@@ -86,13 +86,13 @@
             <tr>
                 <td style="font-size: 16px;">{{ $index + 1 }}</td>
 
-                <td style="font-size: 16px;">
+                <td style="font-size: 16px; text-align:left;"">
                     {{ $member->member_info_first_name }}
                      {{ $member->member_info_middle_name }}
                     {{ $member->member_info_last_name }}
                 </td>
 
-                <td style="font-size: 16px;">
+                <td style="font-size: 16px; text-align:left;">
                     {{ $member->address->member_address_line_1 ?? '' }},
                     {{ $member->address->member_address_city_district ?? '' }},
                     {{ $member->address->state->name ?? '-' }},
@@ -100,7 +100,9 @@
                     {{ $member->address->member_address_pincode ?? '' }},
                 </td>
 
-                <td style="font-size: 16px;">{{ $member->membership_type }}</td>
+                <td style="font-size:16px;">
+                    {{ ucwords($member->membership_type) }} Member
+                </td>
 
                 <td style="font-size: 16px;"></td>
             </tr>

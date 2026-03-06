@@ -133,7 +133,7 @@ class CutReportController extends Controller
     {
 
         $account = Member::with(['shareTransfers', 'accounts'])
-            ->whereDoesntHave('promotor')
+            //->whereDoesntHave('promotor')
             ->orderBy('id', 'asc')
             ->paginate(10);
         return view('cut-reports.report.customer-list', compact('account'));
@@ -144,7 +144,7 @@ class CutReportController extends Controller
         // Fetch NON-PROMOTER members
         $members = Member::with(['shareTransfers', 'accounts'])
             ->orderBy('id', 'asc')
-            ->whereDoesntHave('promotor')
+           // ->whereDoesntHave('promotor')
             ->get();
 
         $data = [
