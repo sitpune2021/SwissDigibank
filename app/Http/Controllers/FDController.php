@@ -1045,7 +1045,7 @@ class FDController extends Controller
             'net_interest'     => $request->net_interest,
             'due_date'         => $dueDate,
             'status'           => $status,      // LAND or Paid
-            'processed'        => $processed,   // 2 or 1
+            'processed'        => $processed,   // 0 or 1
             'mode'             => 'system',
 
         ]);
