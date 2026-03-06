@@ -56,7 +56,7 @@ class CutReportController extends Controller
     // Promoters/Members Cut Reports start here
     public function promoterMemberIndex()
     {
-        $members = Member::with(['promotor', 'branch'])->orderBy('id', 'desc')->paginate(10);
+        $members = Member::with(['promotor', 'branch'])->orderBy('id', 'asc')->paginate(10);
 
         return view('cut-reports.report.promoter-member', compact('members'));
     }
@@ -89,7 +89,7 @@ class CutReportController extends Controller
             $query->where('member_info_mobile', 'LIKE', '%' . $request->mobile_no . '%');
         }
 
-        $members = $query->orderBy('id', 'desc')->paginate(10);
+        $members = $query->orderBy('id', 'asc')->paginate(10);
         $branches = Branch::all();
 
         return view('cut-reports.report.promoter-member', compact('members', 'branches'));
@@ -97,7 +97,7 @@ class CutReportController extends Controller
 
     public function downloadPromoterMemberCsv()
     {
-        $members = Member::with(['promotor', 'branch'])->orderBy('id', 'desc')->get();
+        $members = Member::with(['promotor', 'branch'])->orderBy('id', 'asc')->get();
 
         $filename = 'promoter_members_' . date('Ymd_His') . '.csv';
         $headers = [
@@ -143,7 +143,7 @@ class CutReportController extends Controller
     {
         // Fetch NON-PROMOTER members
         $members = Member::with(['shareTransfers', 'accounts'])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->whereDoesntHave('promotor')
             ->get();
 
@@ -174,7 +174,7 @@ class CutReportController extends Controller
     {
         $account = Member::whereHas('promotor')
             ->with(['promotor','promotor.shareHoldings', 'accounts'])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->paginate(10);
         return view('cut-reports.report.promoter-list', compact('account'));
     }
@@ -205,14 +205,14 @@ class CutReportController extends Controller
     // shareHoldingIndex Cut Reports start here
     public function shareHoldingIndex()
     {
-        $promoters = Promotor::with('latestShare')->orderBy('id', 'desc')->paginate(10);
+        $promoters = Promotor::with('latestShare')->orderBy('id', 'asc')->paginate(10);
         return view('cut-reports.report.share-holding', compact('promoters'));
     }
 
     public function shareHoldingPrint()
     {
         $promoters = Promotor::with('latestShare')
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get(); // use get() instead of paginate()
         $logoPath = public_path('assets/images/SBC_Logo.png');
 
@@ -258,7 +258,7 @@ class CutReportController extends Controller
                     $q->whereBetween('allotment_date', [$fromDate, $toDate]);
                 });
             })
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         return view('cut-reports.report.share-holding', compact('promoters'));
@@ -340,7 +340,7 @@ class CutReportController extends Controller
     public function shareTransferHistoryPrint()
     {
         $shareTransfers = ShareTransfer::with(['promotor', 'members'])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         // default logo
@@ -432,7 +432,7 @@ class CutReportController extends Controller
         $shareTransfers = ShareTransfer::with(['members', 'promotor'])
             ->whereDate('transfer_date', '>=', $fromDate)
             ->whereDate('transfer_date', '<=', $toDate)
-            ->orderBy('transfer_date', 'DESC')
+            ->orderBy('transfer_date', 'asc')
             ->get();
 
         return view('cut-reports.report.share-transfer-history', compact('shareTransfers'));
@@ -474,7 +474,7 @@ class CutReportController extends Controller
 
     public function savingacc_index()
     {
-        $account = Account::with(['members', 'branch'])->orderBy('id', 'desc')->paginate(10);
+        $account = Account::with(['members', 'branch'])->orderBy('id', 'asc')->paginate(10);
 
         return view('cut-reports.report.saving-account', compact('account'));
     }
@@ -643,7 +643,7 @@ class CutReportController extends Controller
 
     public function fdaccount_index()
     {
-        $account = FdAccount::with(['member', 'branch', 'fdscheme.fdslabs'])->orderBy('id', 'desc')->paginate(10);
+        $account = FdAccount::with(['member', 'branch', 'fdscheme.fdslabs'])->orderBy('id', 'asc')->paginate(10);
         return view('cut-reports.report.fd-account', compact('account'));
     }
 
@@ -821,7 +821,7 @@ class CutReportController extends Controller
 
     public function misaccount_index()
     {
-        $account = Misaccount::with(['member', 'branch', 'fdScheme.fdslabs'])->orderBy('id', 'desc')->paginate(10);
+        $account = Misaccount::with(['member', 'branch', 'fdScheme.fdslabs'])->orderBy('id', 'asc')->paginate(10);
         return view('cut-reports.report.mis-account', compact('account'));
     }
 
@@ -944,7 +944,7 @@ class CutReportController extends Controller
     public function downloadMisCsv()
     {
         $accounts = Misaccount::with(['member', 'branch', 'fdscheme'])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         $filename = "mis_accounts_" . date('Y-m-d_H-i-s') . ".csv";
@@ -1008,7 +1008,7 @@ class CutReportController extends Controller
     // DD Account Cut Reports Start here
     public function ddaccount_index()
     {
-        $account = DdsAccount::with(['member', 'branch', 'scheme'])->orderBy('id', 'desc')->paginate(10);
+        $account = DdsAccount::with(['member', 'branch', 'scheme'])->orderBy('id', 'asc')->paginate(10);
         return view('cut-reports.report.dd-accounts', compact('account'));
     }
 
@@ -1124,7 +1124,7 @@ class CutReportController extends Controller
     public function ddAccountCsv()
     {
         $accounts = DdsAccount::with(['member', 'branch', 'scheme'])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         $filename = "dd_accounts_report_" . date('Y-m-d_H-i-s') . ".csv";
@@ -1189,7 +1189,7 @@ class CutReportController extends Controller
 
     public function rd_account_index()
     {
-        $account = RdAccount::with(['member', 'branch', 'scheme'])->orderBy('id', 'desc')->paginate(10);
+        $account = RdAccount::with(['member', 'branch', 'scheme'])->orderBy('id', 'asc')->paginate(10);
         return view('cut-reports.report.rd-account', compact('account'));
     }
 
@@ -1314,7 +1314,7 @@ class CutReportController extends Controller
     public function rdAccountCsv()
     {
         $accounts = RdAccount::with(['member', 'branch', 'scheme'])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get(); // export ALL records
 
         $filename = "rd_accounts_" . date('Y-m-d_H-i-s') . ".csv";
@@ -1468,7 +1468,7 @@ class CutReportController extends Controller
         }
 
         // Fetch result
-        $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
+        $goldLoan = $query->orderBy('id', 'asc')->paginate(10);
 
         // --- Current Debt Calculation ---
         foreach ($goldLoan as $loan) {
@@ -1537,7 +1537,7 @@ class CutReportController extends Controller
             });
         }
 
-        $goldLoan = $query->orderBy('id', 'desc')->get();
+        $goldLoan = $query->orderBy('id', 'asc')->get();
 
         foreach ($goldLoan as $loan) {
 
@@ -1588,7 +1588,7 @@ class CutReportController extends Controller
     {
         $loans = LoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', [2])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         // Calculate current debt for each loan (same as index function)
@@ -1716,7 +1716,7 @@ class CutReportController extends Controller
         }
 
         // Fetch result
-        $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
+        $goldLoan = $query->orderBy('id', 'asc')->paginate(10);
 
         // --- Current Debt Calculation ---
         foreach ($goldLoan as $loan) {
@@ -1781,7 +1781,7 @@ class CutReportController extends Controller
             $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
         }
 
-        $loans = $query->orderBy('id', 'desc')->get();
+        $loans = $query->orderBy('id', 'asc')->get();
 
         foreach ($loans as $loan) {
 
@@ -1833,7 +1833,7 @@ class CutReportController extends Controller
     {
         $loans = MortgageLoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', [2])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         // Calculate current debt for each loan (same as index function)
@@ -1960,7 +1960,7 @@ class CutReportController extends Controller
         }
 
         // Fetch result
-        $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
+        $goldLoan = $query->orderBy('id', 'asc')->paginate(10);
 
         // --- Current Debt Calculation ---
         foreach ($goldLoan as $loan) {
@@ -2026,7 +2026,7 @@ class CutReportController extends Controller
             $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
         }
 
-        $loans = $query->orderBy('id', 'desc')->get();
+        $loans = $query->orderBy('id', 'asc')->get();
 
         foreach ($loans as $loan) {
 
@@ -2077,7 +2077,7 @@ class CutReportController extends Controller
     {
         $loans = LoanAgainstApplication::with(['member', 'branch', 'scheme'])
             ->where('status', [2])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         // Calculate current debt for each loan (same as index function)
@@ -2205,7 +2205,7 @@ class CutReportController extends Controller
         }
 
         // Fetch result
-        $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
+        $goldLoan = $query->orderBy('id', 'asc')->paginate(10);
 
         // --- Current Debt Calculation ---
         foreach ($goldLoan as $loan) {
@@ -2270,7 +2270,7 @@ class CutReportController extends Controller
             $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
         }
 
-        $loans = $query->orderBy('id', 'desc')->get();
+        $loans = $query->orderBy('id', 'asc')->get();
 
         foreach ($loans as $loan) {
 
@@ -2321,7 +2321,7 @@ class CutReportController extends Controller
     {
         $loans = BusinessLoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', [2])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         // Calculate current debt for each loan (same as index function)
@@ -2449,7 +2449,7 @@ class CutReportController extends Controller
         }
 
         // Fetch result
-        $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
+        $goldLoan = $query->orderBy('id', 'asc')->paginate(10);
 
         // --- Current Debt Calculation ---
         foreach ($goldLoan as $loan) {
@@ -2514,7 +2514,7 @@ class CutReportController extends Controller
             $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
         }
 
-        $loans = $query->orderBy('id', 'desc')->get();
+        $loans = $query->orderBy('id', 'asc')->get();
 
         foreach ($loans as $loan) {
 
@@ -2567,7 +2567,7 @@ class CutReportController extends Controller
     {
         $loans = PersonalLoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', [2])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         // Calculate current debt for each loan (same as index function)
@@ -2695,7 +2695,7 @@ class CutReportController extends Controller
         }
 
         // Fetch result
-        $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
+        $goldLoan = $query->orderBy('id', 'asc')->paginate(10);
 
         // --- Current Debt Calculation ---
         foreach ($goldLoan as $loan) {
@@ -2760,7 +2760,7 @@ class CutReportController extends Controller
             $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
         }
 
-        $loans = $query->orderBy('id', 'desc')->get();
+        $loans = $query->orderBy('id', 'asc')->get();
 
         foreach ($loans as $loan) {
 
@@ -2812,7 +2812,7 @@ class CutReportController extends Controller
     {
         $loans = DailyWeeklyApplication::with(['member', 'branch', 'scheme'])
             ->where('status', [2])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         // Calculate current debt for each loan (same as index function)
@@ -2940,7 +2940,7 @@ class CutReportController extends Controller
         }
 
         // Fetch result
-        $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
+        $goldLoan = $query->orderBy('id', 'asc')->paginate(10);
 
         // --- Current Debt Calculation ---
         foreach ($goldLoan as $loan) {
@@ -3005,7 +3005,7 @@ class CutReportController extends Controller
             $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
         }
 
-        $loans = $query->orderBy('id', 'desc')->get();
+        $loans = $query->orderBy('id', 'asc')->get();
 
         foreach ($loans as $loan) {
 
@@ -3057,7 +3057,7 @@ class CutReportController extends Controller
     {
         $loans = VehicalApplication::with(['member', 'branch', 'scheme'])
             ->where('status', [2])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         // Calculate current debt for each loan (same as index function)
@@ -3185,7 +3185,7 @@ class CutReportController extends Controller
         }
 
         // Fetch result
-        $goldLoan = $query->orderBy('id', 'desc')->paginate(10);
+        $goldLoan = $query->orderBy('id', 'asc')->paginate(10);
 
         // --- Current Debt Calculation ---
         foreach ($goldLoan as $loan) {
@@ -3250,7 +3250,7 @@ class CutReportController extends Controller
             $q->where('mobile', 'LIKE', "%{$request->mobile_no}%"));
         }
 
-        $loans = $query->orderBy('id', 'desc')->get();
+        $loans = $query->orderBy('id', 'asc')->get();
 
         foreach ($loans as $loan) {
 
@@ -3302,7 +3302,7 @@ class CutReportController extends Controller
     {
         $loans = CcOdLoanApplication::with(['member', 'branch', 'scheme'])
             ->where('status', [2])
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         // Calculate current debt for each loan (same as index function)
