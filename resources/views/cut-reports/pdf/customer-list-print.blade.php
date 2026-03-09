@@ -72,19 +72,16 @@
 
     <!-- Society Header -->
     <div class="header">
-        {{ $company['name'] ?? '' }}<br>
-<!--{{ isset($company['address_line1']) ? ', ' . $company['address_line1'] : '' }}
-{{ isset($company['address_line2']) ? ', ' . $company['address_line2'] : '' }}
-{{ isset($company['city']) ? ', ' . $company['city'] : '' }}-->
- केशव नगर चौक अकोला <br>
-<!--{{ isset($company['cin_no']) ? ', र. नं. ' . $company['cin_no'] : '' }}-->
-  र. नं. १५३
+        <div class="title" style="font-size:20px;"><b>{{ $company['name'] ?? '' }}</b></div>
+        <div class="title" style="font-size:20px;"><b>केशव नगर चौक अकोला</b></div>
+        <div class="title" style="font-size:20px;"><b> र. नं. १५३ </b></div>
     </div>
 
-    <div class="sub-header">
-       सभासद यादी - {{ date('Y') }}
+    <div class="sub-header" style="font-size:20px;">
+       <b>सभासद यादी - {{ date('Y') }}</b>
     </div>
     <hr>
+
         <!-- Data Table -->
         <table>
             <tr>

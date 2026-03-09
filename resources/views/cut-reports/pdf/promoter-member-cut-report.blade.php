@@ -36,13 +36,23 @@
 </head>
 <body>
 
-       <div style="width:100%; font-family: dejavusans; border-bottom: 2px solid #000 ; padding: 5px;">
+       <div style="width:100%; font-family: dejavusans;">
 
+        <!-- <div class="header">
+        <div class="title" style="font-size:20px;"><b>{{ $members['name'] ?? 'दि कुबेर कमर्शियल को-ऑपरेटिव्ह क्रेडिट सोसायटी लिमिटेड. अकोला' }}</b></div>
+        <div class="title" style="font-size:20px;"><b>केशव नगर चौक अकोला</b></div>
+        <div class="title" style="font-size:20px;"><b> र. नं. १५३ </b></div>
+    </div>
+
+    <div class="sub-header" style="font-size:20px;">
+       <b>संचालक यादी - {{ date('Y') }}</b>
+    </div>
+    <hr> -->
             <!-- Logo -->
-            <div style="float:left; text-align:left;">
+            <!-- <div style="float:left; text-align:left;">
                 <img src="{{ public_path('assets/images/SBC_Logo_gpg.jpg') }}" alt="Company Logo"
                     style="width:auto; height:50px;">
-            </div>
+            </div> -->
 
             <!-- Title Section -->
             {{-- <div style="float: right; width:80%; text-align:center;">
@@ -54,7 +64,6 @@
                 </div>
 
                 <div style="height:10px; margin-top: 40px;">&nbsp;</div>
-
                
             </div> --}}
 
@@ -62,7 +71,7 @@
             <div style="clear:both; "></div>
 
         </div>
-<div class="title">Promoters/ Members Report</div>
+<div class="title" style="border-bottom: 2px solid #000 ; padding: 5px;">Promoters / Members Report</div>
 
 <table>
     <thead>

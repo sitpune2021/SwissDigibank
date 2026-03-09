@@ -1009,12 +1009,21 @@ Route::group(['prefix' => 'mortgage'], function () {
     Route::post('disbursements/cancel/{id}', [MortgageDisbursementController::class, 'cancelLoan'])->name('mortgagedisbursements.cancel');
     Route::get('disbursements/disburse-loan/{id}', [MortgageDisbursementController::class, 'show'])->name('mortgage.disbursements.disburse-loan');
     Route::post('disbursements/store', [MortgageDisbursementController::class, 'store'])->name('mortgagedisbursements.store');
-
+    //comment and document route
     Route::get('mortgage-loan/{id}/add-comment', [MortgageAccountController::class, 'addComment'])
         ->name('mortgageloan.addComment');
 
     Route::post('mortgage-loan/store-comment', [MortgageAccountController::class, 'storeComment'])
         ->name('mortgageloan.storeComment');
+
+    Route::get('mortgage-loan/{id}/upload-documents', [MortgageAccountController::class, 'uploadDocuments'])
+        ->name('mortgage.uploadDocuments');
+
+    Route::post('mortgage-loan/{id}/store-documents', [MortgageAccountController::class, 'storeDocuments'])
+        ->name('mortgage.storeDocuments');
+
+    Route::delete('mortgage-loan-documents/{id}', [MortgageAccountController::class, 'destroyDocument'])
+        ->name('mortgage.documents.destroy');
 
     // account section start
     Route::get('account/index', [MortgageAccountController::class, 'index'])->name('mortgage.account.index');
@@ -1296,6 +1305,15 @@ Route::group(['prefix' => 'loanagainst'], function () {
     Route::post('/loanagainst/{loan_id}/other-charge', [LoanAgainstAccountController::class, 'clearDue'])->name('loanagainst.clear-due');
 
     // account section end
+    Route::get('loanagainst-loan/{id}/upload-documents', [LoanAgainstAccountController::class, 'uploadDocuments'])
+        ->name('loanagainst.uploadDocuments');
+
+    Route::post('loanagainst-loan/{id}/store-documents', [LoanAgainstAccountController::class, 'storeDocuments'])
+        ->name('loanagainst.storeDocuments');
+
+    Route::delete('loanagainst-loan-documents/{id}', [LoanAgainstAccountController::class, 'destroyDocument'])
+        ->name('loanagainst.documents.destroy');
+
 
 
     // line property
@@ -1476,8 +1494,15 @@ Route::group(['prefix' => 'business'], function () {
         ->name('bussiness.clear-due.form');
     Route::post('/bussiness/{loan_id}/other-charge', [BusinessLoanAccount::class, 'clearDue'])->name('bussiness.clear-due');
 
-    // account section end
+    // document uploaded
+    Route::get('business-loan/{id}/upload-documents', [BusinessLoanAccount::class, 'uploadDocuments'])
+        ->name('business.uploadDocuments');
 
+    Route::post('business-loan/{id}/store-documents', [BusinessLoanAccount::class, 'storeDocuments'])
+        ->name('business.storeDocuments');
+
+    Route::delete('business-loan-documents/{id}', [BusinessLoanAccount::class, 'destroyDocument'])
+        ->name('business.documents.destroy');
 
 
     // Show emi chart
@@ -1671,8 +1696,15 @@ Route::group(['prefix' => 'cc_od'], function () {
         ->name('cc_od.clear-due.form');
     Route::post('/cc_od/{loan_id}/other-charge', [CcOdLoanControllerAccount::class, 'clearDue'])->name('cc_od.clear-due');
 
-    // account section end
+    // document uploaded
+    Route::get('cc_od-loan/{id}/upload-documents', [CcOdLoanControllerAccount::class, 'uploadDocuments'])
+        ->name('cc_od.uploadDocuments');
 
+    Route::post('cc_od-loan/{id}/store-documents', [CcOdLoanControllerAccount::class, 'storeDocuments'])
+        ->name('cc_od.storeDocuments');
+
+    Route::delete('cc_od-loan-documents/{id}', [CcOdLoanControllerAccount::class, 'destroyDocument'])
+        ->name('cc_od.documents.destroy');
 
 
     // Collect Processing fee page in application view page
@@ -1836,7 +1868,15 @@ Route::group(['prefix' => 'daily_weekly'], function () {
         ->name('daily_weekly.clear-due.form');
     Route::post('/daily_weekly/{loan_id}/other-charge', [DailyWeeklyAccount::class, 'clearDue'])->name('daily_weekly.clear-due');
 
-    // account section end
+    // document uploaded
+    Route::get('daily_weekly-loan/{id}/upload-documents', [DailyWeeklyAccount::class, 'uploadDocuments'])
+        ->name('daily_weekly.uploadDocuments');
+
+    Route::post('daily_weekly-loan/{id}/store-documents', [DailyWeeklyAccount::class, 'storeDocuments'])
+        ->name('daily_weekly.storeDocuments');
+
+    Route::delete('daily_weekly-loan-documents/{id}', [DailyWeeklyAccount::class, 'destroyDocument'])
+        ->name('daily_weekly.documents.destroy');
 
 
 
@@ -1972,6 +2012,16 @@ Route::group(['prefix' => 'personal'], function () {
         [PersonalAccountController::class, 'storeComment']
     )->name('personal.storeComment');
 
+
+    // document uploaded
+    Route::get('personal-loan/{id}/upload-documents', [PersonalAccountController::class, 'uploadDocuments'])
+        ->name('personal.uploadDocuments');
+
+    Route::post('personal-loan/{id}/store-documents', [PersonalAccountController::class, 'storeDocuments'])
+        ->name('personal.storeDocuments');
+
+    Route::delete('personal-loan-documents/{id}', [PersonalAccountController::class, 'destroyDocument'])
+        ->name('personal.documents.destroy');
     // account section end
 
 
@@ -2056,6 +2106,7 @@ Route::group(['prefix' => 'vehical'], function () {
         [DailyWeeklyAccount::class, 'storeComment']
     )->name('vehical.storeComment');
 
+
     // account section start
 
     Route::get('account/index', [VehicalAccountController::class, 'index'])->name('vehical.account.index');
@@ -2122,6 +2173,18 @@ Route::group(['prefix' => 'vehical'], function () {
         ->name('vehical.clear-due.form');
     Route::post('/vehical/{loan_id}/other-charge', [VehicalAccountController::class, 'clearDue'])->name('vehical.clear-due');
 
+
+
+
+    // document uploaded
+    Route::get('vehical-loan/{id}/upload-documents', [VehicalAccountController::class, 'uploadDocuments'])
+        ->name('vehical.uploadDocuments');
+
+    Route::post('vehical-loan/{id}/store-documents', [VehicalAccountController::class, 'storeDocuments'])
+        ->name('vehical.storeDocuments');
+
+    Route::delete('vehical-loan-documents/{id}', [VehicalAccountController::class, 'destroyDocument'])
+        ->name('vehical.documents.destroy');
     // account section end
 
 

@@ -85,8 +85,19 @@
     margin-top:5px;
 }
 </style>
+ <!-- Society Header -->
+    <div class="header">
+        <div class="title" style="font-size:20px;"><b>{{ $company['name'] ?? 'दि कुबेर कमर्शियल को-ऑपरेटिव्ह क्रेडिट सोसायटी लिमिटेड. अकोला' }}</b></div>
+        <div class="title" style="font-size:20px;"><b>केशव नगर चौक अकोला</b></div>
+        <div class="title" style="font-size:20px;"><b> र. नं. १५३ </b></div>
+    </div>
 
-<div class="header">
+    <div class="sub-header" style="font-size:20px;">
+       <b>मुदत ठेव - {{ date('Y') }}</b>
+    </div>
+    <hr>
+
+<!-- <div class="header">
     {{ $company['name'] ?? '' }}<br>
     केशव नगर चौक अकोला <br>
     र. नं. १५३
@@ -95,7 +106,7 @@
 <div class="sub-header">
     मुदत ठेव - {{ date('Y') }}
 </div>
-    <hr>
+    <hr> -->
         <!-- Header -->
         <table class="header-table">
             <tr>

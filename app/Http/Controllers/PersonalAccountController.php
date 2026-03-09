@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Account;
 use App\Models\PersonalLoanComment;
+use App\Models\PersonalDocument;
 
 class PersonalAccountController extends Controller
 {
@@ -72,6 +73,8 @@ class PersonalAccountController extends Controller
         $comments = PersonalLoanComment::where('loan_id', $id)
             ->orderBy('created_at', 'desc')
             ->paginate(5);
+        $loan = PersonalLoanApplication::findOrFail($id);
+        $documents = PersonalDocument::where('loan_id', $id)->get();
         $savedStatuses = DB::table('personal_loan_emi_status')
             ->where('loan_id', $id)
             ->pluck('status', 'emi_no')
@@ -618,7 +621,9 @@ class PersonalAccountController extends Controller
             'payRoute',
             'payButtonText',
             'comments',
-            'totalRemainingEmiAmount'
+            'totalRemainingEmiAmount',
+            'documents',
+            'loan'
 
         ));
     }
@@ -1807,5 +1812,56 @@ class PersonalAccountController extends Controller
 
             return back()->with('error', 'Something went wrong while adding comment.');
         }
+    }
+    public function uploadDocuments($id)
+    {
+        $loan = PersonalLoanApplication::findOrFail($id);
+
+        return view('personal.account.documents.upload_documents', compact('loan'));
+    }
+    public function storeDocuments(Request $request, $id)
+    {
+        $request->validate([
+            'document_type.*' => 'required|string',
+            'file_path.*' => 'required|file|mimes:pdf,jpg,jpeg,png'
+        ]);
+
+        foreach ($request->document_type as $index => $docType) {
+
+            $file = $request->file('file_path')[$index] ?? null;
+
+            if ($file) {
+
+                $destinationPath = public_path('assets/documents');
+                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+                $file->move($destinationPath, $fileName);
+
+                $path = 'assets/documents/' . $fileName;
+
+                PersonalDocument::create([
+                    'loan_id' => $id,
+                    'document_type' => $docType,
+                    'file_path' => $path,
+                ]);
+            }
+        }
+
+        return redirect()->route('personal.account.show', $id)
+            ->with('success', 'Documents uploaded successfully');
+    }
+    public function destroyDocument($id)
+    {
+        $document = PersonalDocument::findOrFail($id);
+
+        // Delete file from folder
+        if (file_exists(public_path($document->file_path))) {
+            unlink(public_path($document->file_path));
+        }
+
+        // Delete record from DB
+        $document->delete();
+
+        return back()->with('success', 'Document deleted successfully');
     }
 }

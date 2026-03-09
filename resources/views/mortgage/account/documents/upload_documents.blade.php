@@ -21,11 +21,11 @@
     <div class="main-inner">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
             <div class="flex items-start flex-col gap-2">
-                <h1 class="text-2xl font-semibold">Upload Gold Account Documents</h1>
+                <h1 class="text-2xl font-semibold">Upload Mortgage Account Documents</h1>
 
             </div>
         </div>
-        <form class="box" action="{{ route('goldloans.storeDocuments', $loan->id) }}" method="POST"
+        <form class="box" action="{{ route('mortgage.storeDocuments', $loan->id) }}" method="POST"
             enctype="multipart/form-data">
             @csrf
             <x-upload-documents :hideSanctionCheckbox="true" />
