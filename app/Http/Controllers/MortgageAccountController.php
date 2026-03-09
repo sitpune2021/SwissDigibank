@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\MortgageLoanComment;
+use App\Models\MortgageLoanDocument;
 
 class MortgageAccountController extends Controller
 {
@@ -77,7 +78,9 @@ class MortgageAccountController extends Controller
             ->where('loan_id', $id)
             ->pluck('status', 'emi_no')
             ->toArray();
+        $loan = MortgageLoanApplication::findOrFail($id);
 
+        $documents = MortgageLoanDocument::where('loan_id', $id)->get();
         $savedPaidDates = DB::table('mortgage_loan_emi_status')
             ->where('loan_id', $id)
             ->pluck('paid_date', 'emi_no')
@@ -618,6 +621,8 @@ class MortgageAccountController extends Controller
             'comments',
             'tDueAmount',
             'dueDays',
+            'documents',
+            'loan'
 
         ));
     }
@@ -1818,9 +1823,9 @@ class MortgageAccountController extends Controller
     }
     public function uploadDocuments($id)
     {
-        $loan = LoanApplication::findOrFail($id);
+        $loan = MortgageLoanApplication::findOrFail($id);
 
-        return view('gold-loan.account.documents.upload_documents', compact('loan'));
+        return view('mortgage.account.documents.upload_documents', compact('loan'));
     }
     public function storeDocuments(Request $request, $id)
     {
@@ -1842,7 +1847,7 @@ class MortgageAccountController extends Controller
 
                 $path = 'assets/documents/' . $fileName;
 
-                GoldLoanDocument::create([
+                MortgageLoanDocument::create([
                     'loan_id' => $id,
                     'document_type' => $docType,
                     'file_path' => $path,
@@ -1850,12 +1855,12 @@ class MortgageAccountController extends Controller
             }
         }
 
-        return redirect()->route('gold-loan.account.show', $id)
+        return redirect()->route('mortgage.account.show', $id)
             ->with('success', 'Documents uploaded successfully');
     }
     public function destroyDocument($id)
     {
-        $document = GoldLoanDocument::findOrFail($id);
+        $document = MortgageLoanDocument::findOrFail($id);
 
         // Delete file from folder
         if (file_exists(public_path($document->file_path))) {

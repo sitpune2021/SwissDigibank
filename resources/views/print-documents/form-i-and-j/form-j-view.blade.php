@@ -54,11 +54,11 @@
 
     
     <div class="header" style="font-size: 20px; text-align: center;">
-        {{ $company->company_name }}  &nbsp; <!--र. नं.  {{ $company->cin_no }}-->
-        र. नं. १५३
+        <b>{{ $company->company_name }}  &nbsp; <!--र. नं.  {{ $company->cin_no }}-->
+        र. नं. १५३ </b>
     </div>
-<div class="title" style="font-size:24px;  ">नमुना ‘जे’</div>
-    <div class="subtitle" style="font-size:14px; text-align: center;  ">नियम ३२ (कलम ३९ अन्वये)</div>
+<div class="title" style="font-size:20px;">नमुना ‘जे’</div>
+    <div class="subtitle" style="font-size:14px; text-align: center;"><b>नियम ३२ (कलम ३९ अन्वये)</b></div>
 
     <div style="text-align:center; font-weight:bold;font-size: 20px;  margin-top: 12px; ">
        सदस्यांची यादी

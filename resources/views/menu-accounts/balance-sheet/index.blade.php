@@ -81,80 +81,78 @@
         <div class="card w-100">
             <div class="card-body">
 
-            <div class="table-responsive" id="printArea">
-            <table class="table table-bordered mb-0 w-100">
+                <div class="table-responsive" id="printArea">
+                    <table class="table table-bordered mb-0 w-100">
 
-            <thead class="table-light">
-            <tr>
-            <th class="px-4 py-2">PARTICULARS</th>
-            <th class="text-end px-4 py-2">AMOUNT</th>
-            </tr>
-            </thead>
+                        <thead class="table-light">
+                            <tr>
+                                <th class="px-4 py-2">PARTICULARS</th>
+                                <th class="text-end px-4 py-2">AMOUNT</th>
+                            </tr>
+                        </thead>
 
-            <tbody>
+                        <tbody>
 
-            {{-- EQUITY --}}
-            <tr class="section-head">
-            <td colspan="2">EQUITY</td>
-            </tr>
+                            {{-- EQUITY --}}
+                            <tr class="total-row">
+                            <td colspan="2">EQUITY</td>
+                            </tr>
 
-            @foreach($equities as $equity)
-            <tr>
-            <td class="px-4">{{ strtoupper($equity['name']) }}</td>
-            <td class="text-end px-4">{{ number_format($equity['amount'],2) }}</td>
-            </tr>
-            @endforeach
+                            @foreach($equities as $equity)
+                            <tr>
+                            <td class="px-4">{{ strtoupper($equity['name']) }}</td>
+                            <td class="text-end px-4">{{ number_format($equity['amount'],2) }}</td>
+                            </tr>
+                            @endforeach
 
-            <tr class="total-row">
-            <td class="px-4">CURRENT YEAR PROFIT</td>
-            <td class="text-end px-4">{{ number_format($netProfit,2) }}</td>
-            </tr>
+                            <tr class="">
+                            <td class="px-4">CURRENT YEAR PROFIT</td>
+                            <td class="text-end px-4">{{ number_format($netProfit,2) }}</td>
+                            </tr>
 
-            <tr class="total-row">
-            <td class="px-4">TOTAL EQUITY</td>
-            <td class="text-end px-4">{{ number_format($totalEquity,2) }}</td>
-            </tr>
+                            <tr class="">
+                            <td class="px-4">TOTAL EQUITY</td>
+                            <td class="text-end px-4">{{ number_format($totalEquity,2) }}</td>
+                            </tr>
 
+                            {{-- LIABILITIES --}}
+                            <tr class="total-row">
+                            <td colspan="2">LIABILITIES</td>
+                            </tr>
 
-            {{-- LIABILITIES --}}
-            <tr class="section-head">
-            <td colspan="2">LIABILITIES</td>
-            </tr>
+                            @foreach($liabilities as $liability)
+                            <tr>
+                            <td class="px-4">{{ strtoupper($liability['name']) }}</td>
+                            <td class="text-end px-4">{{ number_format($liability['amount'],2) }}</td>
+                            </tr>
+                            @endforeach
 
-            @foreach($liabilities as $liability)
-            <tr>
-            <td class="px-4">{{ strtoupper($liability['name']) }}</td>
-            <td class="text-end px-4">{{ number_format($liability['amount'],2) }}</td>
-            </tr>
-            @endforeach
+                            <tr class="total-row">
+                            <td class="px-4">TOTAL LIABILITIES</td>
+                            <td class="text-end px-4">{{ number_format($totalLiabilities,2) }}</td>
+                            </tr>
 
-            <tr class="total-row">
-            <td class="px-4">TOTAL LIABILITIES</td>
-            <td class="text-end px-4">{{ number_format($totalLiabilities,2) }}</td>
-            </tr>
+                            {{-- ASSETS --}}
+                            <tr class="total-row">
+                            <td colspan="2">ASSETS</td>
+                            </tr>
 
+                            @foreach($assets as $asset)
+                            <tr>
+                            <td class="px-4">{{ strtoupper($asset['name']) }}</td>
+                            <td class="text-end px-4">{{ number_format($asset['amount'],2) }}</td>
+                            </tr>
+                            @endforeach
 
-            {{-- ASSETS --}}
-            <tr class="section-head">
-            <td colspan="2">ASSETS</td>
-            </tr>
+                            <tr class="total-row">
+                            <td class="px-4">TOTAL ASSETS</td>
+                            <td class="text-end px-4">{{ number_format($totalAssets,2) }}</td>
+                            </tr>
 
-            @foreach($assets as $asset)
-            <tr>
-            <td class="px-4">{{ strtoupper($asset['name']) }}</td>
-            <td class="text-end px-4">{{ number_format($asset['amount'],2) }}</td>
-            </tr>
-            @endforeach
+                        </tbody>
 
-            <tr class="total-row">
-            <td class="px-4">TOTAL ASSETS</td>
-            <td class="text-end px-4">{{ number_format($totalAssets,2) }}</td>
-            </tr>
-
-            </tbody>
-
-            </table>
-            </div>
+                    </table>
+                </div>
 
             </div>
         </div>

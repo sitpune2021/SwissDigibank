@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\CcOdLoanComment;
 use App\Models\Account;
+use App\Models\CcOdDocument;
 
 class CcOdLoanControllerAccount extends Controller
 {
@@ -76,6 +77,8 @@ class CcOdLoanControllerAccount extends Controller
         $comments = CcOdLoanComment::where('loan_id', $id)
             ->orderBy('created_at', 'desc')
             ->paginate(5);
+        $loan = CcOdLoanApplication::findOrFail($id);
+        $documents = CcOdDocument::where('loan_id', $id)->get();
         $savedStatuses = DB::table('cc_od_loan_emi_status')
             ->where('loan_id', $id)
             ->pluck('status', 'emi_no')
@@ -449,38 +452,7 @@ class CcOdLoanControllerAccount extends Controller
                 $totalRemainingEmiAmount += $remaining;
             }
         }
-        // 🔥 Check if any EMI is due
 
-        // $today = Carbon::today();
-
-        // $hasOverdueEmi = DB::table('cc_od_loan_emi_status')
-        //     ->where('loan_id', $id)
-        //     ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
-        //     ->whereDate('emi_due_date', '<', $today)
-        //     ->exists();
-
-        // $hasDueEmi = DB::table('cc_od_loan_emi_status')
-        //     ->where('loan_id', $id)
-        //     ->whereIn('status', ['DUE', 'PARTIAL', 'UNPAID'])
-        //     ->exists();
-
-        // // ⭐ Decide Button
-        // if ($hasDueEmi) {
-        //     $payRoute = route('cc_od.account.pay-emi', $goldLoan->id);
-        //     $payButtonText = 'Pay EMI';
-        // } else {
-        //     $payRoute = route('cc_od.account.pay', $goldLoan->id);
-        //     $payButtonText = 'Pay';
-        // }
-
-        // if ($hasOverdueEmi) {
-        //     $payButtonText = 'Pay Overdue EMI';
-        // } elseif ($hasDueEmi) {
-        //     $payButtonText = 'Pay EMI';
-        // } else {
-        //     $payButtonText = 'Pay';
-        // }
-        // ⭐ CHECK IF ANY EMI IS DUE
 
         $today = Carbon::today();
 
@@ -541,7 +513,9 @@ class CcOdLoanControllerAccount extends Controller
             'comments',
             'totalRemainingEmiAmount',
             'payButtonText',
-            'payRoute'
+            'payRoute',
+            'documents',
+            'loan'
         ));
     }
 
@@ -1596,5 +1570,56 @@ class CcOdLoanControllerAccount extends Controller
 
             return back()->withErrors('There was an error storing your comment.');
         }
+    }
+    public function uploadDocuments($id)
+    {
+        $loan = CcOdLoanApplication::findOrFail($id);
+
+        return view('cc_od.account.documents.upload_documents', compact('loan'));
+    }
+    public function storeDocuments(Request $request, $id)
+    {
+        $request->validate([
+            'document_type.*' => 'required|string',
+            'file_path.*' => 'required|file|mimes:pdf,jpg,jpeg,png'
+        ]);
+
+        foreach ($request->document_type as $index => $docType) {
+
+            $file = $request->file('file_path')[$index] ?? null;
+
+            if ($file) {
+
+                $destinationPath = public_path('assets/documents');
+                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+                $file->move($destinationPath, $fileName);
+
+                $path = 'assets/documents/' . $fileName;
+
+                CcOdDocument::create([
+                    'loan_id' => $id,
+                    'document_type' => $docType,
+                    'file_path' => $path,
+                ]);
+            }
+        }
+
+        return redirect()->route('cc_od.account.show', $id)
+            ->with('success', 'Documents uploaded successfully');
+    }
+    public function destroyDocument($id)
+    {
+        $document = CcOdDocument::findOrFail($id);
+
+        // Delete file from folder
+        if (file_exists(public_path($document->file_path))) {
+            unlink(public_path($document->file_path));
+        }
+
+        // Delete record from DB
+        $document->delete();
+
+        return back()->with('success', 'Document deleted successfully');
     }
 }

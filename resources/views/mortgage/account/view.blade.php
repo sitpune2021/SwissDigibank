@@ -131,7 +131,12 @@
             }, 30000);
         </script>
     @endif
-
+    @if (session('success'))
+        {{-- //alert msg --}}
+        <div class="w-44 mb-5 flex justify-end">
+            <x-alert />
+        </div>
+    @endif
     <div class="main-inner">
         @if ($hasPendingApproval)
             <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
@@ -449,32 +454,85 @@
                 </div>
 
                 <!--documents-->
-                <div class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
+                <div class="bg-white dark:bg-bg3 box shadow-md mt-5 rounded-10 overflow-hidden">
+
                     <!-- Header -->
-                    <div class="border-b flex items-center bg-secondary/5 justify-between px-4 py-2 rounded-10 ">
-                        <h3 class="text-lg font-semibold text-black  uppercase">
-                            Documents
+                    <div class="flex items-center justify-between rounded-10 bg-secondary/5 text-black px-4 py-3 cursor-pointer"
+                        onclick="this.nextElementSibling.classList.toggle('hidden')">
 
-                        </h3>
-                        <div class="">
-                            <a href="#" class="btn-primary p-1 pointer">
-                                <i class="las la-upload y"></i>
-                            </a>
+                        <h3 class="text-lg font-semibold">DOCUMENTS</h3>
 
-                            <button type="button" class="p-1 rounded transition"
-                                onclick="toggleSection(this, 'Documents')">
-                                <span class="toggle-icon text-lg font-bold">−</span>
-                            </button>
-                        </div>
+                        <a href="{{ route('mortgage.uploadDocuments', $loan->id) }}"
+                            class="btn-primary rounded-full p-1 w-2">
+                            <i class="las la-upload"></i>
+                        </a>
+
                     </div>
+
                     <!-- Body -->
-                    <div class="p-4" id="Documents">
+                    <div class="p-4">
                         <div class="overflow-x-auto">
-                            <p class="capitalize">No documents found</p>
+
+                            @if ($documents->isEmpty())
+                                <p class="capitalize text-gray-500">No documents found</p>
+                            @else
+                                <table
+                                    class="w-full border-collapse rounded-lg overflow-hidden shadow-md responsive-table">
+
+                                    <thead class="bg-gray-100 text-gray-700">
+                                        <tr class="border-b bg-secondary/5">
+                                            <th class="px-4 text-start py-2 font-semibold">Name</th>
+                                            <th class="px-4 text-start py-2 font-semibold">URL</th>
+                                            <th class="px-4 text-start py-2 font-semibold">Action</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody class="divide-y divide-gray-200">
+
+                                        @foreach ($documents as $doc)
+                                            <tr class="border-b text-center">
+
+                                                <td class="px-4 text-start py-2">
+                                                    {{ $doc->document_type }}
+                                                </td>
+
+                                                <td class="px-4 text-start py-2">
+
+                                                    <a href="{{ asset($doc->file_path) }}" target="_blank"
+                                                        class="text-primary underline">
+                                                        Show
+                                                    </a>
+
+                                                </td>
+
+                                                <td class="px-4 text-start py-2">
+
+                                                    <form action="{{ route('mortgage.documents.destroy', $doc->id) }}"
+                                                        method="POST" onsubmit="return confirm('Are you sure?');">
+
+                                                        @csrf
+                                                        @method('DELETE')
+
+                                                        <button type="submit" class="text-red-600 hover:text-red-800">
+                                                            Delete
+                                                        </button>
+
+                                                    </form>
+
+                                                </td>
+
+                                            </tr>
+                                        @endforeach
+
+                                    </tbody>
+
+                                </table>
+                            @endif
+
                         </div>
                     </div>
                 </div>
-
+                {{-- </div> --}}
                 <!--COMMENTS-->
                 <div x-data="{ open: true }" class="box dark:bg-bg3 shadow-md mt-5 rounded-lg overflow-hidden">
 

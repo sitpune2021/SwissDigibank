@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Account;
 use App\Models\VehicalLoanComment;
+use App\Models\VehicalDocument;
 
 class VehicalAccountController extends Controller
 {
@@ -72,6 +73,8 @@ class VehicalAccountController extends Controller
         $comments = VehicalLoanComment::where('loan_id', $id)
             ->orderBy('created_at', 'desc')
             ->paginate(5);
+        $loan = VehicalApplication::findOrFail($id);
+        $documents = VehicalDocument::where('loan_id', $id)->get();
 
         $savedStatuses = DB::table('vehical_loan_emi_status')
             ->where('loan_id', $id)
@@ -616,7 +619,9 @@ class VehicalAccountController extends Controller
             'payButtonText',
             'hasPendingApproval',
             'comments',
-            'totalRemainingEmiAmount'
+            'totalRemainingEmiAmount',
+            'documents',
+            'loan',
         ));
     }
 
@@ -1784,5 +1789,56 @@ class VehicalAccountController extends Controller
 
             return back()->withErrors('There was an error storing your comment.');
         }
+    }
+    public function uploadDocuments($id)
+    {
+        $loan = VehicalApplication::findOrFail($id);
+
+        return view('vehical.account.documents.upload_documents', compact('loan'));
+    }
+    public function storeDocuments(Request $request, $id)
+    {
+        $request->validate([
+            'document_type.*' => 'required|string',
+            'file_path.*' => 'required|file|mimes:pdf,jpg,jpeg,png'
+        ]);
+
+        foreach ($request->document_type as $index => $docType) {
+
+            $file = $request->file('file_path')[$index] ?? null;
+
+            if ($file) {
+
+                $destinationPath = public_path('assets/documents');
+                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+                $file->move($destinationPath, $fileName);
+
+                $path = 'assets/documents/' . $fileName;
+
+                VehicalDocument::create([
+                    'loan_id' => $id,
+                    'document_type' => $docType,
+                    'file_path' => $path,
+                ]);
+            }
+        }
+
+        return redirect()->route('vehical.account.show', $id)
+            ->with('success', 'Documents uploaded successfully');
+    }
+    public function destroyDocument($id)
+    {
+        $document = VehicalDocument::findOrFail($id);
+
+        // Delete file from folder
+        if (file_exists(public_path($document->file_path))) {
+            unlink(public_path($document->file_path));
+        }
+
+        // Delete record from DB
+        $document->delete();
+
+        return back()->with('success', 'Document deleted successfully');
     }
 }
