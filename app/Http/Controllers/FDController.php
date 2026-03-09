@@ -30,7 +30,7 @@ use App\Models\Transaction;
 
 class FDController extends Controller
 {
-    
+
 
     public function index(Request $request)
     {
@@ -1833,11 +1833,256 @@ class FDController extends Controller
         return $pdf->download('fd-closing-form-' . $fdAccount->id . '.pdf');
     }
 
+
+    public function fdForeClosingFormview($id)
+    {
+        $fdAccount = FdAccount::with(['member', 'fdScheme.fdslabs'])
+            ->findOrFail($id);
+
+        $principal = $fdAccount->fd_amount;
+
+        $currentBalance = DB::table('fd_transactions')
+            ->where('fd_account_id', $fdAccount->id)
+            ->where('transaction_type', 1)
+            ->where('status', 'Approved')
+            ->sum('amount');
+
+        $closureDate = Carbon::today();
+        $openDate = Carbon::parse($fdAccount->open_date);
+
+        $totalDays = $openDate->diffInDays($closureDate);
+
+        $slab = $fdAccount->fdScheme->fdslabs
+            ->where('day_from', '<=', $totalDays)
+            ->where('day_to', '>=', $totalDays)
+            ->first();
+
+        if (!$slab) {
+            abort(500, 'No slab found for this tenure');
+        }
+
+        $rate = $slab->interest_rate;
+        $annualRate = $rate / 100;
+
+        /*
+    | Interest till date
+    */
+
+        $interestTillDate =
+            ($currentBalance * $annualRate * $totalDays) / 365;
+
+        $interestTillDate = round($interestTillDate, 2);
+
+        /*
+    | TDS
+    */
+        $tds = 0;
+
+        if ($fdAccount->tds_deduction === 'yes' && $interestTillDate > 40000) {
+            $tds = round($interestTillDate * 0.10, 2);
+        }
+
+        /*
+    | Penal Charges
+    */
+        $lockInMonths = $fdAccount->fdScheme->lock_in_period ?? 0;
+        $completedMonths = $openDate->diffInMonths($closureDate);
+
+        $penalRate = 0;
+        $penalCharges = 0;
+        $penalChargesWithGst = 0;
+        $gstRate = 18;
+
+        if ($completedMonths < $lockInMonths) {
+
+            $penalType  = $fdAccount->fdScheme->penal_charge_type ?? 'percentage';
+            $penalValue = $fdAccount->fdScheme->penal_charge ?? 0;
+
+            if ($penalType === 'percentage') {
+
+                // Percentage based
+                $penalRate = $penalValue;
+
+                $penalCharges = round(
+                    ($currentBalance * $penalRate) / 100,
+                    2
+                );
+            } else {
+
+                // Fixed charge
+                $penalRate = 0;
+
+                $penalCharges = round($penalValue, 2);
+            }
+
+            // GST Calculation
+            $gst = round(($penalCharges * $gstRate) / 100, 2);
+
+            $penalChargesWithGst = $penalCharges + $gst;
+        }
+        /*
+    | Premature Interest
+    */
+
+        $prematureRate = $rate - $penalRate;
+
+        if ($prematureRate < 0) {
+            $prematureRate = 0;
+        }
+
+        $prematureInterest =
+            ($currentBalance * ($prematureRate / 100) * $totalDays) / 365;
+
+        $prematureInterest = round($prematureInterest, 2);
+
+        /*
+    | Interest already paid
+    */
+
+        $interestPaid = DB::table('fd_transactions')
+            ->where('fd_account_id', $fdAccount->id)
+            ->where('transaction_purpose', 'interest')
+            ->where('status', 'Approved')
+            ->sum('amount');
+
+        $interestLeftToPay = $interestTillDate - $interestPaid;
+
+        if ($interestLeftToPay < 0) {
+            $interestLeftToPay = 0;
+        }
+
+        /*
+    | Reverse interest
+    */
+
+        $reverseInterest = 0;
+
+        if ($interestPaid > $prematureInterest) {
+            $reverseInterest = $interestPaid - $prematureInterest;
+        }
+
+        /*
+    | Cancellation charges
+    */
+
+        $cancellationCharge = $fdAccount->fdScheme->cancellation_charge ?? 0;
+
+        $cancellationGst =
+            round($cancellationCharge * ($gstRate / 100), 2);
+
+        $cancellationTotal =
+            $cancellationCharge + $cancellationGst;
+
+        /*
+    | Final Settlement
+    */
+
+        $totalSettlement =
+            $currentBalance +
+            $interestLeftToPay -
+            $tds -
+            $reverseInterest -
+            $penalChargesWithGst -
+            $cancellationTotal;
+
+        $totalSettlement = round($totalSettlement, 2);
+
+        return view(
+            'fd_mis_account.fd-account.foreclose',
+            compact(
+                'fdAccount',
+                'principal',
+                'currentBalance',
+                'interestTillDate',
+                'interestLeftToPay',
+                'interestPaid',
+                'tds',
+                'penalCharges',
+                'penalChargesWithGst',
+                'penalRate',
+                'prematureRate',
+                'prematureInterest',
+                'reverseInterest',
+                'cancellationCharge',
+                'cancellationTotal',
+                'totalSettlement',
+                'closureDate',
+                'totalDays',
+                'rate',
+                'slab',
+                'gstRate'
+            )
+        );
+    }
+
+    public function raiseFdForecloseRequest(Request $request, $id)
+{
+    $fdAccount = FdAccount::findOrFail($id);
+
+    // Prevent duplicate request
+    if ($fdAccount->foreclose_status == 1) {
+        return back()->with('error', 'Foreclosure request already raised. Check approvals.');
+    }
+
+    if ($fdAccount->foreclose_status == 2) {
+        return back()->with('error', 'FD account already foreclosed.');
+    }
+
+    // Validation
+    $request->validate([
+        'interest_left_paid' => 'nullable|numeric',
+        'tds' => 'nullable|numeric',
+        'reverse_interest' => 'nullable|numeric',
+        'penal_charges' => 'nullable|numeric',
+        'cancellation_charge' => 'nullable|numeric',
+        'total_account' => 'nullable|numeric',
+        'rounding_off' => 'nullable|numeric',
+        'final_amount' => 'nullable|numeric',
+    ]);
+
+    // Update FD Account
+    $fdAccount->update([
+
+        'foreclose_request_date' => now(),
+
+        'foreclose_interest_left' => round($request->interest_left_paid ?? 0, 2),
+        'foreclose_tds' => round($request->tds ?? 0, 2),
+        'foreclose_reverse_interest' => round($request->reverse_interest ?? 0, 2),
+
+        'foreclose_penal_charges' => round($request->penal_charges ?? 0, 2),
+        'foreclose_cancellation_charges' => round($request->cancellation_charge ?? 0, 2),
+
+        'foreclose_total_amount' => round($request->total_account ?? 0, 2),
+
+        'foreclose_rounding' => round($request->rounding_off ?? 0, 2),
+        'foreclose_final_amount' => round($request->final_amount ?? 0, 2),
+
+        'foreclose_status' => 1 // Request Raised
+    ]);
+
+    return redirect()
+        ->route('fdaccount.show', $fdAccount->id)
+        ->with('success', 'FD foreclosure request raised successfully.');
+}
+
     public function sweepInAccount()
     {
 
         return view('fd_mis_account.sweep-in-accounts.index');
     }
 
-    
+    public static function convertDaysToTenure($days)
+{
+    $years = floor($days / 365);
+    $remainingDays = $days % 365;
+
+    $months = floor($remainingDays / 30);
+    $days = $remainingDays % 30;
+
+    return [
+        'years' => $years,
+        'months' => $months,
+        'days' => $days
+    ];
+}
 }
