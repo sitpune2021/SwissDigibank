@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\CcOdLoanComment;
 use App\Models\Account;
 use App\Models\CcOdDocument;
+use App\Models\Passbook;
 
 class CcOdLoanControllerAccount extends Controller
 {
@@ -79,6 +80,11 @@ class CcOdLoanControllerAccount extends Controller
             ->paginate(5);
         $loan = CcOdLoanApplication::findOrFail($id);
         $documents = CcOdDocument::where('loan_id', $id)->get();
+
+        $passbooks = Passbook::where('account_type', 'CCOD Account')
+            ->where('account_no', $loan->id)
+            ->get();
+
         $savedStatuses = DB::table('cc_od_loan_emi_status')
             ->where('loan_id', $id)
             ->pluck('status', 'emi_no')
@@ -515,7 +521,9 @@ class CcOdLoanControllerAccount extends Controller
             'payButtonText',
             'payRoute',
             'documents',
-            'loan'
+            'loan',
+            'passbook',
+
         ));
     }
 

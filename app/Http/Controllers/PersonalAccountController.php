@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Account;
 use App\Models\PersonalLoanComment;
 use App\Models\PersonalDocument;
+use App\Models\Passbook;
 
 class PersonalAccountController extends Controller
 {
@@ -75,6 +76,11 @@ class PersonalAccountController extends Controller
             ->paginate(5);
         $loan = PersonalLoanApplication::findOrFail($id);
         $documents = PersonalDocument::where('loan_id', $id)->get();
+        $passbooks = Passbook::where('account_type', 'Personal Account')
+            ->where('account_no', $loan->id)
+            ->get();
+
+
         $savedStatuses = DB::table('personal_loan_emi_status')
             ->where('loan_id', $id)
             ->pluck('status', 'emi_no')
@@ -623,7 +629,8 @@ class PersonalAccountController extends Controller
             'comments',
             'totalRemainingEmiAmount',
             'documents',
-            'loan'
+            'loan',
+            'passbooks'
 
         ));
     }

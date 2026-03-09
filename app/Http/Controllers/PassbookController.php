@@ -13,6 +13,15 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use App\Models\LoanApplication;
+use App\Models\MortgageLoanApplication;
+use App\Models\LoanAgainstApplication;
+use App\Models\BusinessLoanApplication;
+use App\Models\CcOdLoanApplication;
+use App\Models\DailyWeeklyApplication;
+use App\Models\PersonalLoanApplication;
+use App\Models\VehicalApplication;
+use App\Models\FixedLoanApplication;
 
 class PassbookController extends Controller
 {
@@ -30,6 +39,33 @@ class PassbookController extends Controller
         $fdAccounts = FdAccount::select('id')->get();
         $ddsAccounts = DdsAccount::select('id')->get();
         $misAccounts = Misaccount::select('id')->get();
+        $goldLoans = LoanApplication::with('member')
+            ->select('id', 'member_id')
+            ->get();
+        $mortgageLoans = MortgageLoanApplication::with('member')
+            ->select('id', 'member_id')
+            ->get();
+        $depositLoans = LoanAgainstApplication::with('member')
+            ->select('id', 'member_id')
+            ->get();
+        $businessLoans = BusinessLoanApplication::with('member')
+            ->select('id', 'member_id')
+            ->get();
+        $ccodLoans = CcOdLoanApplication::with('member')
+            ->select('id', 'member_id')
+            ->get();
+        $dailyweeklyLoans = DailyWeeklyApplication::with('member')
+            ->select('id', 'member_id')
+            ->get();
+        $personalLoans = PersonalLoanApplication::with('member')
+            ->select('id', 'member_id')
+            ->get();
+        $vehicleLoans = VehicalApplication::with('member')
+            ->select('id', 'member_id')
+            ->get();
+        $fixedLoans = FixedLoanApplication::with('member')
+            ->select('id', 'member_id')
+            ->get();
 
         return view('passbook.create-passbook', [
             'savingAccounts' => $savingAccounts,
@@ -38,18 +74,45 @@ class PassbookController extends Controller
             'currentAccounts' => $currentAccount,
             'ddsAccounts' => $ddsAccounts,
             'misAccounts' => $misAccounts,
-            'currentDate' => Carbon::now()->format('Y-m-d'), // For input value
-            'currentDateDisplay' => Carbon::now()->format('d/m/Y') // For formatted display
+            'goldLoans' => $goldLoans,
+            'mortgageLoans' => $mortgageLoans,
+            'depositLoans' => $depositLoans,
+            'businessLoans' => $businessLoans,
+            'ccodLoans' => $ccodLoans,
+            'dailyweeklyLoans' => $dailyweeklyLoans,
+            'personalLoans' => $personalLoans,
+            'vehicleLoans' => $vehicleLoans,
+            'fixedLoans' => $fixedLoans,
+            'currentDate' => Carbon::now()->format('Y-m-d'),
+            'currentDateDisplay' => Carbon::now()->format('d/m/Y')
         ]);
     }
-
 
     public function store(Request $request)
     {
         try {
             // Step 1: Define validation rules
+            $accountTypes = [
+                'Saving',
+                'Current',
+                'RD Accounts',
+                'DD Accounts',
+                'FD Accounts',
+                'MIS Accounts',
+                'DDS Accounts',
+                'Gold Account',
+                'Property Account',
+                'Deposit Account',
+                'Business Account',
+                'CCOD Account',
+                'Daily / Weekly Account',
+                'Personal Account',
+                'Vehicle Account',
+                'Fixed Account'
+            ];
+
             $rules = [
-                'account_type' => ['required', 'string', 'in:Saving,Current,RD Accounts,DD Accounts,FD Accounts,MIS Accounts,DDS Accounts'],
+                'account_type' => ['required', 'string', Rule::in($accountTypes)],
                 'account_no'   => 'required|string|max:255',
                 'passbook_no'  => 'required|string|max:255|unique:passbook,passbook_no',
                 'issue_date'   => 'required|date_format:d-m-Y',
@@ -108,8 +171,27 @@ class PassbookController extends Controller
             $passbook = Passbook::findOrFail($id);
 
             // Step 2: Validate input
+            $accountTypes = [
+                'Saving',
+                'Current',
+                'RD Accounts',
+                'DD Accounts',
+                'FD Accounts',
+                'MIS Accounts',
+                'DDS Accounts',
+                'Gold Account',
+                'Property Account',
+                'Deposit Account',
+                'Business Account',
+                'CCOD Account',
+                'Daily / Weekly Account',
+                'Personal Account',
+                'Vehicle Account',
+                'Fixed Account'
+            ];
+
             $validated = $request->validate([
-                'account_type' => 'required|string|in:Saving,Current,RD Accounts,DD Accounts,FD Accounts,MIS Accounts,DDS Accounts',
+                'account_type' => ['required', 'string', Rule::in($accountTypes)],
                 'account_no'   => 'required|string|max:255',
                 'passbook_no'  => [
                     'required',
