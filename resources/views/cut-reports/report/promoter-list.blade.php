@@ -105,7 +105,15 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php $totalBalance = 0; @endphp
+
                     @foreach ($account as $key => $row)
+
+                    @php
+                    $balance = $row->promotor->first()?->shareHoldings?->sum('amount') ?? 0;
+                    $totalBalance += $balance;
+                    @endphp
+
                     <tr class="border-b dark:border-bg3">
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 uppercase">
@@ -135,18 +143,47 @@
 
                         <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                {{ number_format($row->promotor->first()?->shareHoldings?->sum('amount') ?? 0, 2) }}
+                               {{ number_format($balance,2) }}
                             </div>
                         </td>
 
                     </tr>
                     @endforeach
+                    <tr class="bg-gray-100 font-semibold">
+                        <td colspan="2" class="px-6 py-4 text-start">
+                            Total Records : {{ $account->total() }}
+                        </td>
+
+                        <td colspan="2" class="px-6 py-4 text-end">
+                            Total Balance
+                        </td>
+
+                        <td class="px-6 py-4 text-start">
+                            {{ number_format($totalBalance, 2) }}
+                        </td>
+                    </tr>
+                    <tr class="bg-gray-100 font-semibold">
+                        <td colspan="2" class="px-6 py-4 text-start">
+                            Credit Balance : {{ number_format($totalBalance, 2) }}
+                        </td>
+
+                        <td colspan="2" class="px-6 py-4 text-center">
+                            Debit Balance : {{ number_format(0, 2) }}
+                        </td>
+
+                        <td class="px-6 py-4 text-end">
+                            GL Total : {{ number_format(0, 2) }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
+
         </div>
+
         <div class="mt-5">
             <x-pagination :paginator="$account" />
         </div>
+
     </div>
 
 

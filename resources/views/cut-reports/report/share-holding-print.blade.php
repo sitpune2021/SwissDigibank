@@ -36,13 +36,13 @@
 </head>
 <body>
 
-       <div style="width:100%; font-family: dejavusans; border-bottom: 2px solid #000 ; padding: 5px;">
+       <div style="width:100%; font-family: dejavusans;">
 
             <!-- Logo -->
-            <div style="float:left; text-align:left;">
+            <!-- <div style="float:left; text-align:left;">
                 <img src="{{ $logoPath }}" alt="Company Logo"
                     style="width:auto; height:50px;">
-            </div>
+            </div> -->
 
             <!-- Title Section -->
             {{-- <div style="float: right; width:80%; text-align:center;">
@@ -62,7 +62,7 @@
             <div style="clear:both; "></div>
 
         </div>
-<div class="title">Share Holdings Report</div>
+<div class="title" style="border-bottom: 2px solid #000 ; padding: 5px;">Share Holdings Report</div>
 
 <table>
     <thead>
