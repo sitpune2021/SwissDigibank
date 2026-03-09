@@ -98,6 +98,12 @@ class MortgageController extends Controller
                 'scheme_id' => $scheme->id,
             ]);
 
+            $this->saveActivity(
+                'Mortgage Loan Scheme',
+                'Create',
+                'Created Mortgage Loan Scheme ID: ' . $scheme->id
+            );
+
             return redirect()
                 ->route('mortgage.schemes.index')
                 ->with('success', 'Scheme created successfully!');
@@ -130,6 +136,13 @@ class MortgageController extends Controller
         $scheme = MortgageScheme::findOrFail($id);
 
         $scheme->update($request->all());
+
+         $this->saveActivity(
+                'Mortgage Loan Scheme',
+                'Update',
+                'Updated Mortgage Loan Scheme ID: ' . $scheme->id
+            );
+
 
         return redirect()->route('mortgage.schemes.index')
             ->with('success', 'Scheme updated successfully!');
@@ -1330,6 +1343,12 @@ class MortgageController extends Controller
                 'loan_application_id' => $loanApplication->id,
             ]);
 
+             $this->saveActivity(
+                'Mortgage Loan Application',
+                'Create',
+                'Created Mortgage Loan Application ID: ' . $loanApplication->id
+            );
+
             // Step 5: Insert multiple CIBIL records
             if ($request->has('cibil_type') && is_array($request->cibil_type)) {
                 foreach ($request->cibil_type as $index => $type) {
@@ -1584,8 +1603,6 @@ class MortgageController extends Controller
             }
         }
 
-
-
         // Now safely update
         $application->update($data);
 
@@ -1628,6 +1645,11 @@ class MortgageController extends Controller
             }
         }
 
+         $this->saveActivity(
+                'Mortgage Loan Application',
+                'Update',
+                'Updated Mortgage Loan Application ID: ' . $application->id
+            );
 
         return redirect()
             ->route('mortgage.applications.view', $application->id)

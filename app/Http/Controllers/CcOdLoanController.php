@@ -89,6 +89,12 @@ class CcOdLoanController extends Controller
 
             DB::commit();
 
+            $this->saveActivity(
+                'CC / OD Loan Scheme',
+                'Create',
+                'Created CC/OD Scheme ID: ' . $scheme->id
+            );
+
             Log::info('cc_od Loan Scheme Created Successfully', [
                 'scheme_id' => $scheme->id,
             ]);
@@ -123,6 +129,12 @@ class CcOdLoanController extends Controller
         $scheme = CcOdLoanScheme::findOrFail($id);
 
         $scheme->update($request->all());
+
+        $this->saveActivity(
+                'CC / OD Loan Scheme',
+                'Update',
+                'Created CC/OD Scheme ID: ' . $scheme->id
+            );
 
         return redirect()->route('cc_od.schemes.index')
             ->with('success', 'Scheme updated successfully!');
@@ -593,4 +605,6 @@ class CcOdLoanController extends Controller
 
         return redirect()->route('cc_od.applications.view', $id);
     }
+
+    
 }

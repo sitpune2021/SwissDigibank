@@ -102,6 +102,12 @@ class FixedLoanController extends Controller
                 'scheme_id' => $scheme->id,
             ]);
 
+            $this->saveActivity(
+                'fixed Loan Scheme',
+                'Create',
+                'Created fixed Loan Scheme ID: ' . $scheme->id
+            );
+
             return redirect()
                 ->route('fixed_loan.schemes.index')
                 ->with('success', 'Scheme created successfully!');
@@ -148,6 +154,12 @@ class FixedLoanController extends Controller
         $scheme = FixedLoanScheme::findOrFail($id);
 
         $scheme->update($request->all());
+
+        $this->saveActivity(
+            'fixed Loan Scheme',
+            'Update',
+            'Updated fixed Loan Scheme ID: ' . $scheme->id
+        );
 
         return redirect()->route('fixed_loan.schemes.index')
             ->with('success', 'Scheme updated successfully!');
@@ -303,6 +315,12 @@ class FixedLoanController extends Controller
                 'loan_application_id' => $loanApplication->id,
             ]);
 
+             $this->saveActivity(
+                'fixed Loan Application',
+                'Create',
+                'Created fixed Loan Application ID: ' . $loanApplication->id
+            );
+
             return redirect()
                 ->route('fixed_loan.applications.index')
                 ->with('success', 'Loan Application saved successfully');
@@ -432,6 +450,12 @@ class FixedLoanController extends Controller
             Log::info('fixed_loan Loan Application Updated Successfully', [
                 'application_id' => $application->id,
             ]);
+
+             $this->saveActivity(
+                'fixed Loan Application',
+                'Update',
+                'Updated fixed Loan Application ID: ' . $application->id
+            );
 
             return redirect()
                 ->route('fixed_loan.applications.view', $application->id)
