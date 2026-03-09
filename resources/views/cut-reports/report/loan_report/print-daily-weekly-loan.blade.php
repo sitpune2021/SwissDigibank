@@ -41,12 +41,12 @@
 
 <body>
 
-    <div style="width:100%; font-family: dejavusans; border-bottom: 2px solid #000 ; padding: 5px;">
+    <div style="width:100%; font-family: dejavusans;">
 
         <!-- Logo -->
-        <div style="float:left; text-align:left;">
+        <!-- <div style="float:left; text-align:left;">
             <img src="{{ $logoPath }}" alt="Company Logo" style="width:auto; height:50px;">
-        </div>
+        </div> -->
 
         <!-- Title Section -->
         {{-- <div style="float: right; width:80%; text-align:center;">
@@ -63,10 +63,10 @@
         </div> --}}
 
         <!-- Clear Float -->
-        <div style="clear:both; "></div>
+        <div style="clear:both;"></div>
 
     </div>
-    <div class="title">Daily / Weekly Loan Accounts</div>
+    <div class="title" style="border-bottom: 2px solid #000 ; padding: 5px;">Daily / Weekly Loan Accounts</div>
 
     <table>
         <thead>

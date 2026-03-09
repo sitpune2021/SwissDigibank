@@ -602,7 +602,7 @@ class ApproveController extends Controller
                     'fd_transactions.status AS approve_status',
                     'fd_transactions.created_at',
                     'branches.branch_name',
-                    'fd_accounts.id AS account_no',
+                    'fd_accounts.fd_no AS account_no',
                     DB::raw("'FD Account' AS account_type"),
                     DB::raw("'-' AS account_holder_type"),
                     DB::raw("NULL AS firm_name"),
@@ -631,6 +631,45 @@ class ApproveController extends Controller
                 });
 
             Log::info('FD Principal Pending Query');
+
+            $misInitialDepositQuery = DB::table('mis_transactions')
+    ->select(
+        'mis_transactions.id',
+        DB::raw("'mis_transactions' AS source_table"),
+        'mis_transactions.pay_mode AS payment_mode',
+        'mis_transactions.amount AS amount',
+        DB::raw("NULL AS bank_name"),
+        'mis_transactions.approve_status AS approve_status',
+        'mis_transactions.created_at',
+        'branches.branch_name',
+        'misaccounts.mis_account_no AS account_no',
+        DB::raw("'MIS Account' AS account_type"),
+        DB::raw("'-' AS account_holder_type"),
+        DB::raw("NULL AS firm_name"),
+        'branches.id AS branch_id',
+        'misaccounts.member_id AS member_id',
+        DB::raw("'Active' AS account_status"),
+        DB::raw("'MIS Initial Deposit' AS transaction_type")
+    )
+    ->join(
+        'misaccounts',
+        'misaccounts.id',
+        '=',
+        'mis_transactions.misaccount_id'
+    )
+    ->join(
+        'branches',
+        'branches.id',
+        '=',
+        'misaccounts.branch_id'
+    )
+    ->where('mis_transactions.remark', '=', 'Initial Deposit')
+    ->where(function ($q) {
+        $q->whereNull('mis_transactions.approve_status')
+          ->orWhere('mis_transactions.approve_status', 'pending');
+    });
+
+Log::info('MIS Initial Deposit Pending Query');
 
 
             // ️UNION ALL
@@ -674,6 +713,7 @@ class ApproveController extends Controller
                 ->unionAll($dailyWeeklyForeclosureQuery)
                 ->unionAll($vehicleEmiQuery)
                 ->unionAll($fdPrincipalQuery)
+                ->unionAll($misInitialDepositQuery)
                 ->unionAll($ccOdLoanEmiQuery)
                 ->unionAll($ccOdForeclosureQuery)
                 ->unionAll($vehicleForeclosureQuery)
@@ -933,6 +973,52 @@ class ApproveController extends Controller
                     DB::commit();
 
                     return back()->with('success', 'FD principal transaction approved successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'mis_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $transaction = DB::table('mis_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$transaction) {
+                        DB::rollBack();
+                        return back()->with('error', 'MIS transaction not found.');
+                    }
+
+                    // Only allow approval for Initial Deposit
+                    if ($transaction->remark !== 'Initial Deposit') {
+                        DB::rollBack();
+                        return back()->with('error', 'Only Initial Deposit transactions can be approved.');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // 1️⃣ Approve transaction
+                        DB::table('mis_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'approve_status' => 'approved',
+                                'processed' => 1,
+                                'status' => 'Paid',
+                                'updated_at' => now()
+                            ]);
+
+                       
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'MIS Initial Deposit approved successfully.');
                 } catch (\Exception $e) {
 
                     DB::rollBack();

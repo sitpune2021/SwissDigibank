@@ -372,9 +372,9 @@ class PrintDocumentsController extends Controller
     public function procedingBookView()
     {
         // $members = Member::orderBy('id', 'asc')->get();
-//   $members = Member::with('address')
-//         ->orderBy('id', 'asc')
-//         ->get();
+        //   $members = Member::with('address')
+        //         ->orderBy('id', 'asc')
+        //         ->get();
        $company = Company::select('company_name', 'cin_no')->first();
         $members = Member::with([
             'address.state'

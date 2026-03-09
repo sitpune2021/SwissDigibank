@@ -51,10 +51,11 @@
 </div>
    <div class="box mt-5">
      
-    <div class="" style=" text-align:center; border:none; font-size: 18px;  font-weight: bold;">
-           {{ $company->company_name }}  &nbsp; <!-- र. नं.  {{ $company->cin_no }} -->
-            र. नं. १५३
+    <div class="" style=" text-align:center; border:none; font-size: 20px;  font-weight: bold;">
+           <b>{{ $company->company_name }}  &nbsp; <!-- र. नं.  {{ $company->cin_no }} -->
+            र. नं. १५३</b>
     </div>
+
     {{-- <table style="width:100%; font-size:20px; margin-bottom:10px; border:none;">
         <tr>
             <td style="width:33%; text-align:center; border:none; font-size: 18px;  font-weight: bold;"> --}}
@@ -70,12 +71,11 @@
         </tr>
     </table> --}}
 
-
-    <div class="title" style="font-size:24px;  ">नमुना "आय" सदस्याचे नोंदणी पुस्तक</div>
+    <div class="title" style="font-size:20px;  ">नमुना "आय"</div>
     <div class="subtitle" style="font-size:14px;  text-align: center; ">
-        नियम (३२ व ६५ १) महाराष्ट्र सरकारी संस्था अधिनियम १९६० याचे कलम ३८ (१)
+        <b>नियम (३२ व ६५ १) महाराष्ट्र सरकारी संस्था अधिनियम १९६० याचे कलम ३८ (१)</b>
     </div>
-
+    <div class="title" style="text-align:center; font-weight:bold;font-size: 20px;  margin-top: 12px; ">सदस्याचे नोंदणी पुस्तक</div>
 
     <table style="width:100%; margin-top:20px; border:none; font-size:14px;">
         <tr>
@@ -129,8 +129,8 @@
     </p>
 
 
-
     <table style="width:100%; border-collapse:collapse; font-size:12px; margin-top:20px;">
+        
         <thead>
             <tr>
                 <th rowspan="3" style="border:1px solid #000; border-left: none  !important; width:6%;">तारीख</th>
@@ -161,7 +161,7 @@
                 <th style="border:1px solid #000;">७ </th>
                 <th style="border:1px solid #000;">८</th>
                 <th style="border:1px solid #000;">९</th>
-                <th style="border:1px solid #000; border-right: none  !important;">१० </th>
+                <th style="border:1px solid #000; border-right: none  !important;">१०</th>
             </tr>
         </thead>
         <tbody>
@@ -178,15 +178,22 @@
                 <td style="border-right: none;"></td>
             </tr>
         </tbody>
+
+     </table>
+
+     <table style="width:100%; border-collapse:collapse; font-size:12px; margin-top:20px;">
+        
         <thead>
             <tr>
-                <th rowspan="3" style="border:1px solid #000; width:6%; border-left: none  !important;">तारीख</th>
-                <th rowspan="3" style="border:1px solid #000; width:7%;">रोकड<br>वहीचे<br>पान</th>
-                <th colspan="8" style="border:1px solid #000; text-align:center; border-right: none  !important;">
+                <th colspan="9" style="border:1px solid #000; text-align:center; border-right: none  !important; border-left: none  !important;">
                     हस्तांतरित किंवा स्वाधीन केलेल्या शेअर्सचा तपशील
                 </th>
             </tr>
-
+            <tr>
+                <th rowspan="3" style="border:1px solid #000; width:6%; border-left: none  !important;">तारीख</th>
+                <th rowspan="3" style="border:1px solid #000; width:7%;">रोकड<br>वहीचे<br>पान</th>
+                
+            </tr>
             <tr>
                 <th rowspan="2" style="border:1px solid #000; width:8%;">तारीख</th>
                 <th rowspan="2" style="border:1px solid #000; width:15%;">
@@ -210,7 +217,6 @@
                 <th>शेअर प्रमाण पत्राचा अ. नु.</th>
                 <th colspan="2" style="border-right: none  !important;">रक्कम</th>
             </tr>
-
             <tr>
                 <th style="border:1px solid #000; border-left: none  !important;">११</th>
                 <th style="border:1px solid #000;">१२</th>
@@ -222,6 +228,7 @@
                 <th style="border:1px solid #000;">१८</th>
                 <th colspan="2" style="border:1px solid #000; border-right: none  !important;">१९</th>
             </tr>
+
         </thead>
         <tbody>
             <tr style="">
@@ -236,11 +243,12 @@
                 <td colspan="2" style="border-right: none;"></td>
             </tr>
         </tbody>
-    </table>
 
+    </table>
 
 
    </div>
 
 </div>
+
     @endsection
