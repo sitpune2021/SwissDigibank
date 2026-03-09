@@ -110,7 +110,7 @@
                             <td class="text-end px-4">{{ number_format($netProfit,2) }}</td>
                             </tr>
 
-                            <tr class="">
+                            <tr class="" style="background-color: antiquewhite;">
                             <td class="px-4">TOTAL EQUITY</td>
                             <td class="text-end px-4">{{ number_format($totalEquity,2) }}</td>
                             </tr>
@@ -127,7 +127,7 @@
                             </tr>
                             @endforeach
 
-                            <tr class="total-row">
+                            <tr class="total-row" style="background-color: antiquewhite;">
                             <td class="px-4">TOTAL LIABILITIES</td>
                             <td class="text-end px-4">{{ number_format($totalLiabilities,2) }}</td>
                             </tr>
@@ -144,7 +144,7 @@
                             </tr>
                             @endforeach
 
-                            <tr class="total-row">
+                            <tr class="total-row" style="background-color: antiquewhite;">
                             <td class="px-4">TOTAL ASSETS</td>
                             <td class="text-end px-4">{{ number_format($totalAssets,2) }}</td>
                             </tr>
