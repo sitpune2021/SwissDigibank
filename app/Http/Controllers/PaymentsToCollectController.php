@@ -653,6 +653,7 @@ class PaymentsToCollectController extends Controller
 
         return back()->with('success', 'Comment Saved');
     }
+
     public function getComments($loan_type, $loan_id)
     {
         $comments = DB::table('payment_collect_comments')
@@ -669,10 +670,85 @@ class PaymentsToCollectController extends Controller
 
         return response()->json($comments);
     }
+
     public function release_index()
     {
 
-        return view("payments.payments-to-release.index");
+    $fd = DB::table('fd_accounts as f')
+    ->join('branches as b','b.id','=','f.branch_id')
+    ->join('members as m','m.id','=','f.member_id')
+    ->select(
+    'b.branch_name as branch',
+    DB::raw("CONCAT(m.member_no,' - ',m.member_info_first_name) as member"),
+    DB::raw("'FD' as account_type"),
+    'f.fd_no as account_no',
+    DB::raw("'Active' as account_status"),
+    'f.maturity_date as due_date',
+    'f.maturity_amount as amount'
+    )
+    ->where('f.active',1)
+    ->where('f.status',1)
+    ->whereNull('f.close_date')
+    ->whereDate('f.maturity_date','<=',now());
+
+
+    $rd = DB::table('rd_accounts as r')
+    ->join('branches as b','b.id','=','r.branch_id')
+    ->join('members as m','m.id','=','r.member_id')
+    ->select(
+    'b.branch_name as branch',
+    DB::raw("CONCAT(m.member_no,' - ',m.member_info_first_name) as member"),
+    DB::raw("'RD' as account_type"),
+    'r.rd_no as account_no',
+    DB::raw("'Active' as account_status"),
+    'r.maturity_date as due_date',
+    'r.maturity_amount as amount'
+    )
+    ->where('r.approve_status','Approved')
+    ->whereDate('r.maturity_date','<=',now());
+
+
+    $mis = DB::table('misaccounts as mis')
+    ->join('branches as b','b.id','=','mis.branch_id')
+    ->join('members as m','m.id','=','mis.member_id')
+    ->select(
+    'b.branch_name as branch',
+    DB::raw("CONCAT(m.member_no,' - ',m.member_info_first_name) as member"),
+    DB::raw("'MIS' as account_type"),
+    'mis.mis_account_no as account_no',
+    DB::raw("'Active' as account_status"),
+    'mis.maturity_date as due_date',
+    'mis.maturity_amount as amount'
+    )
+    ->where('mis.status',1)
+    ->whereNull('mis.closing_date')
+    ->whereDate('mis.maturity_date','<=',now());
+
+
+    $dd = DB::table('dds_accounts as d')
+    ->join('branches as b','b.id','=','d.branch_id')
+    ->join('members as m','m.id','=','d.member_id')
+    ->select(
+    'b.branch_name as branch',
+    DB::raw("CONCAT(m.member_no,' - ',m.member_info_first_name) as member"),
+    DB::raw("'DD' as account_type"),
+    'd.dd_no as account_no',
+    DB::raw("'Active' as account_status"),
+    'd.maturity_date as due_date',
+    'd.maturity_amount as amount'
+    )
+    ->where('d.status',1)
+    ->whereDate('d.maturity_date','<=',now());
+
+
+    $data = $fd
+    ->union($rd)
+    ->union($mis)
+    ->union($dd)
+    ->get();
+
+    return view("payments.payments-to-release.index",compact('data'));
+
     }
 
     public function payments_history()

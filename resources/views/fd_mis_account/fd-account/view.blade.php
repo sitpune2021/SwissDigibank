@@ -125,7 +125,7 @@
                             class="block px-4 py-2 uppercase   text-black border-b hover:bg-gray-100">Add Nominee</a>
                     </li>
                     <li>
-                        <a href=""
+                        <a href="{{ route('fd.foreclose.account', $fdAccount->id) }}"
                             class="block px-4 py-2 uppercase   text-black border-b hover:bg-gray-100">Fore Close</a>
                     </li>
                     <li>

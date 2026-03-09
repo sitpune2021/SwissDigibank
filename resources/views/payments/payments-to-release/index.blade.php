@@ -51,7 +51,6 @@
             <h3 class=" flex text-xl block  uppercase font-semibold">
                 FD/ RD Payments to Release
             </h3>
-
         </div>
 
         <div class="col-span-12 box lg:col-span-12">
@@ -116,71 +115,60 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="border-b dark:border-bg3">
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1  uppercase">
-                                    Ananthapur
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1 Capitalize">
-                                    <a href="" class="text-primary">DEMO-03187 - DEEPA REDDY</a>
-                                </div>
-                            </td>
 
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center  gap-1">
-                                    FD
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center t gap-1">
-                                    <a href="" class="text-primary">
-                                        03765
-                                    </a>
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    Active
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1  uppercase">
-                                    12-12-2024
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex items-center gap-1">
-                                    1,042.00	
-                                </div>
-                            </td>
-                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                                <div class="flex justify-center">
-                                    <div class="relative">
-                                        <i class="las la-ellipsis-v horiz-option-btn cursor-pointer popover-button"></i>
-                                        <ul class="horiz-option popover-content">
-                                            <li><a href="" class="single-option">RELEASE</a></li>
-                                            <li>
-                                                <a href="" class="single-option">
-                                                   MARK DONE
-                                                </a>
-                                            </li>
-                                           
-                                        </ul>
+                        @foreach($data as $row)
 
-                                        {{-- @include('partials._vertical-options', [
-                                        /* 'id' =>base64_encode($director->id),
-                                        'viewRoute' => 'director.show',
-                                        'editRoute' => 'director.edit'*/
-                                        ]) --}}
-                                    </div>
-                                </div>
-                            </td>
+                        <tr class="border-b">
+
+                        <td class="px-6 py-4">
+                        {{ $row->branch }}
+                        </td>
+
+                        <td class="px-6 py-4">
+                        <a href="#" class="text-primary">
+                        {{ $row->member }}
+                        </a>
+                        </td>
+
+                        <td class="px-6 py-4">
+                        {{ strtoupper($row->account_type) }}
+                        </td>
+
+                        <td class="px-6 py-4">
+                        <a href="#" class="text-primary">
+                        {{ $row->account_no }}
+                        </a>
+                        </td>
+
+                        <td class="px-6 py-4">
+                        {{ $row->account_status }}
+                        </td>
+
+                        <td class="px-6 py-4">
+                        {{ date('d-m-Y',strtotime($row->due_date)) }}
+                        </td>
+
+                        <td class="px-6 py-4">
+                        {{ number_format($row->amount,2) }}
+                        </td>
+
+                        <td class="px-6 py-4">
+
+                        <a href="#" class="text-blue-600">
+                        RELEASE
+                        </a>
+
+                        </td>
+
                         </tr>
+
+                        @endforeach
+
                     </tbody>
                 </table>
+
             </div>
+
         </div>
         <!-- BACKDROP -->
         <div id="loanModal"
@@ -319,47 +307,6 @@
             </div>
         </div>
 
-
-        {{--
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-
-                // Open modal
-                document.querySelectorAll("[data-open-modal]").forEach(btn => {
-                    btn.addEventListener("click", () => {
-                        const modalId = btn.getAttribute("data-open-modal");
-                        const modal = document.getElementById(modalId);
-
-                        modal.classList.remove("hidden");
-                        modal.classList.add("flex");
-                        document.body.classList.add("overflow-hidden");
-                    });
-                });
-
-                // Close modal
-                document.querySelectorAll("[data-close-modal]").forEach(btn => {
-                    btn.addEventListener("click", () => {
-                        const modal = btn.closest("[id]");
-                        modal.classList.add("hidden");
-                        modal.classList.remove("flex");
-                        document.body.classList.remove("overflow-hidden");
-                    });
-                });
-
-                // Close when clicking outside modal
-                document.querySelectorAll("[id]").forEach(backdrop => {
-                    backdrop.addEventListener("click", (e) => {
-                        if (e.target === backdrop) {
-                            backdrop.classList.add("hidden");
-                            backdrop.classList.remove("flex");
-                            document.body.classList.remove("overflow-hidden");
-                        }
-                    });
-                });
-
-            });
-        </script> --}}
-
         <script>
             function openLoanModal() {
                 document.getElementById('loanModal').classList.remove('hidden');
@@ -369,7 +316,6 @@
                 document.getElementById('loanModal').classList.add('hidden');
             }
         </script>
-
 
 
 @endsection

@@ -87,6 +87,12 @@ class PersonalController extends Controller
                 'scheme_id' => $scheme->id,
             ]);
 
+            $this->saveActivity(
+                'Personal Loan Scheme',
+                'Create',
+                'Created Personal Loan Scheme ID: ' . $scheme->id
+            );
+
             return redirect()
                 ->route('personal.schemes.index')
                 ->with('success', 'Scheme created successfully!');
@@ -119,6 +125,12 @@ class PersonalController extends Controller
         $scheme = PersonalScheme::findOrFail($id);
 
         $scheme->update($request->all());
+
+        $this->saveActivity(
+                'Personal Loan Scheme',
+                'Update',
+                'Updated Personal Loan Scheme ID: ' . $scheme->id
+            );
 
         return redirect()->route('personal.schemes.index')
             ->with('success', 'Scheme updated successfully!');
@@ -1282,6 +1294,12 @@ class PersonalController extends Controller
 
             Log::info('All Data Saved Successfully', ['loan_application_id' => $loanApplication->id]);
 
+            $this->saveActivity(
+                'Personal Loan Application',
+                'Create',
+                'Created Personal Loan Application ID: ' . $loanApplication->id
+            );
+
             return redirect()
                 ->route('personal.applications.view', $loanApplication->id)
                 ->with('success', 'Loan application saved successfully.');
@@ -1399,6 +1417,12 @@ class PersonalController extends Controller
                 $application->properties()->create($prop);
             }
         }
+
+        $this->saveActivity(
+                'Personal Loan Application',
+                'Update',
+                'Updated Personal Loan Application ID: ' . $application->id
+            );
 
         // Step 8: Redirect success
         return redirect()

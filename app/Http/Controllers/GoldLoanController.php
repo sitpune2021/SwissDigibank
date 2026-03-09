@@ -104,6 +104,12 @@ class GoldLoanController extends Controller
 
             GoldLoanScheme::create($validated);
 
+             $this->saveActivity(
+                'Gold-loan Loan schemes',
+                'Create',
+                'Created Gold-Loan schemes ID: ' . $request->id
+            );
+
             return redirect()
                 ->route('gold-loan.schemes.index')
                 ->with('success', 'Scheme created successfully!');
@@ -166,6 +172,12 @@ class GoldLoanController extends Controller
         }
 
         $scheme->update($input);
+
+          $this->saveActivity(
+                'Gold Loan schemes',
+                'Update',
+                'Updated Gold-Loan schemes ID: ' . $request->id
+            );
 
         return redirect()->route('gold-loan.schemes.index')
             ->with('success', 'Scheme updated successfully!');
@@ -1380,6 +1392,12 @@ class GoldLoanController extends Controller
                 'loan_application_id' => $loanApplication->id,
             ]);
 
+            $this->saveActivity(
+                'Gold Loan Application',
+                'Create',
+                'Created Gold-Loan Application ID: ' . $loanApplication->id
+            );
+
             // ==== Credit Score Details Save (Dynamic Rows) ====
             if ($request->has('cibil_type')) {
                 foreach ($request->cibil_type as $index => $type) {
@@ -1684,6 +1702,12 @@ class GoldLoanController extends Controller
             }
 
             DB::commit();
+
+            $this->saveActivity(
+                'Gold Loan Application',
+                'Update',
+                'Updated Gold-Loan Application ID: ' . $application->id
+            );
 
             return redirect()
                 ->route('gold-loan.applications.view', $application->id)

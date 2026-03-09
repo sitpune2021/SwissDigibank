@@ -93,6 +93,12 @@ class BusinessLoan extends Controller
 
             DB::commit();
 
+            $this->saveActivity(
+                'Business Loan Scheme',
+                'Create',
+                'Created Business Loan Scheme ID: ' . $scheme->id
+            );
+
             Log::info('Business Loan Scheme Created Successfully', [
                 'scheme_id' => $scheme->id,
             ]);
@@ -127,6 +133,12 @@ class BusinessLoan extends Controller
         $scheme = BusinessLoanScheme::findOrFail($id);
 
         $scheme->update($request->all());
+
+         $this->saveActivity(
+                'Business Loan Scheme',
+                'Update',
+                'Created Business Loan Scheme ID: ' . $scheme->id
+            );
 
         return redirect()->route('bussiness.schemes.index')
             ->with('success', 'Scheme updated successfully!');
@@ -2234,6 +2246,12 @@ class BusinessLoan extends Controller
                 'loan_application_id' => $loanApplication->id,
             ]);
 
+            $this->saveActivity(
+                'Business Loan Application',
+                'Create',
+                'Created Business Loan Application ID: ' . $loanApplication->id
+            );
+
             // ==== Credit Score Details Save (Dynamic Rows) ====
             if ($request->has('cibil_type')) {
                 Log::info('CIBIL block triggered', [
@@ -2369,6 +2387,12 @@ class BusinessLoan extends Controller
             Log::info('Existing Loan Application Data Before Update', [
                 'old_data' => $application->toArray(),
             ]);
+
+            $this->saveActivity(
+                'Business Loan Application',
+                'Create',
+                'Created Business Loan Application ID: ' . $application->id
+            );
 
             // Step 4: Update main table
             Log::info('Attempting to update Loan Application...', [
@@ -2729,7 +2753,6 @@ class BusinessLoan extends Controller
         ));
     }
 
-  
     public function submitForApproval($id)
     {
         $application = BusinessLoanApplication::findOrFail($id);
@@ -2788,4 +2811,6 @@ class BusinessLoan extends Controller
 
         return redirect()->route('bussiness.applications.view', $id)->with('success', 'Processing Fee Collected Successfully!');
     }
+
+    
 }

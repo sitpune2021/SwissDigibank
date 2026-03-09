@@ -113,6 +113,12 @@ class VehicalController extends Controller
                 'scheme_id' => $scheme->id,
             ]);
 
+            $this->saveActivity(
+                'Vehical Loan Scheme',
+                'Create',
+                'Created Vehical Loan Scheme ID: ' . $scheme->id
+            );
+
             return redirect()
                 ->route('vehical.schemes.index')
                 ->with('success', 'Scheme created successfully!');
@@ -145,6 +151,12 @@ class VehicalController extends Controller
         $scheme = VehicalScheme::findOrFail($id);
 
         $scheme->update($request->all());
+
+        $this->saveActivity(
+                'Vehical Loan Scheme',
+                'Update',
+                'Updated Vehical Loan Scheme ID: ' . $scheme->id
+            );
 
         return redirect()->route('vehical.schemes.index')
             ->with('success', 'Scheme updated successfully!');
@@ -1292,6 +1304,12 @@ class VehicalController extends Controller
                 'loan_application_id' => $loanApplication->id,
             ]);
 
+            $this->saveActivity(
+                'Vehical Loan Application',
+                'Create',
+                'Created Vehical Loan Application ID: ' . $loanApplication->id
+            );
+
             // Step 4: CIBIL Data (no change)
             if ($request->has('cibil_type') && is_array($request->cibil_type)) {
                 foreach ($request->cibil_type as $index => $type) {
@@ -1443,10 +1461,16 @@ class VehicalController extends Controller
             }
         }
 
+        $this->saveActivity(
+            'Vehical Loan Application',
+            'Update',
+            'Updated Vehical Loan Application ID: ' . $application->id
+        );
 
         return redirect()
             ->route('vehical.applications.view', $application->id)
             ->with('success', 'Application updated successfully');
+
     }
 
 
