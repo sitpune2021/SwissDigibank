@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\GoldLoanComment;
 use App\Models\GoldLoanDocument;
+use App\Models\Passbook;
 
 class GoldLoanAccountController extends Controller
 {
@@ -86,6 +87,11 @@ class GoldLoanAccountController extends Controller
         $loan = LoanApplication::findOrFail($id);
 
         $documents = GoldLoanDocument::where('loan_id', $id)->get();
+        $passbooks = Passbook::where('account_type', 'Gold Account')
+            ->where('account_no', $loan->id)
+            ->get();
+
+
         $savedPaidDates = DB::table('gold_loan_emi_status')
             ->where('loan_id', $id)
             ->pluck('paid_date', 'emi_no')
@@ -708,9 +714,11 @@ class GoldLoanAccountController extends Controller
             'comments',
             'documents',
             'loan',
+            'passbooks',
 
         ));
     }
+
     public function saveEmiStatus(Request $request)
     {
         Log::info('EMI STATUS SAVE REQUEST', $request->all());

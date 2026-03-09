@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Account;
 use App\Models\DailyWeeklyLoanComment;
 use App\Models\DailyWeeklyDocument;
+use App\Models\Passbook;
 
 class DailyWeeklyAccount extends Controller
 {
@@ -76,6 +77,11 @@ class DailyWeeklyAccount extends Controller
 
         $loan = DailyWeeklyApplication::findOrFail($id);
         $documents = DailyWeeklyDocument::where('loan_id', $id)->get();
+
+        $passbooks = Passbook::where('account_type', 'Daily / Weekly Account')
+            ->where('account_no', $loan->id)
+            ->get();
+
         $disbursementId = $disbursement->id ?? null;
         $comments = collect();
 
@@ -513,7 +519,9 @@ class DailyWeeklyAccount extends Controller
             'totalRemainingEmiAmount',
             'documents',
             'loan',
-            'hasPendingApproval'
+            'hasPendingApproval',
+            'passbooks',
+
         ));
     }
 

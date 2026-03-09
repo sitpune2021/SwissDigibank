@@ -101,6 +101,12 @@ class DailyWeeklyController extends Controller
                 'scheme_id' => $scheme->id,
             ]);
 
+            $this->saveActivity(
+                'daily_weekly Loan Scheme',
+                'Create',
+                'Created daily_weekly Loan Scheme ID: ' . $scheme->id
+            );
+
             return redirect()
                 ->route('daily_weekly.schemes.index')
                 ->with('success', 'Scheme created successfully!');
@@ -131,6 +137,12 @@ class DailyWeeklyController extends Controller
         $scheme = DailyWeeklyScheme::findOrFail($id);
 
         $scheme->update($request->all());
+
+         $this->saveActivity(
+                'daily_weekly Loan Scheme',
+                'Update',
+                'Updated daily_weekly Loan Scheme ID: ' . $scheme->id
+            );
 
         return redirect()->route('daily_weekly.schemes.index')
             ->with('success', 'Scheme updated successfully!');
@@ -288,10 +300,11 @@ class DailyWeeklyController extends Controller
 
             ]);
 
-
             Log::info('daily_weekly Loan Application created successfully', [
                 'loan_application_id' => $loanApplication->id,
             ]);
+
+
 
             // ==== Credit Score Details Save (Dynamic Rows) ====
             if ($request->has('cibil_type')) {
@@ -327,6 +340,12 @@ class DailyWeeklyController extends Controller
             } else {
                 Log::warning('CIBIL block skipped — no cibil_type found in request.');
             }
+
+            $this->saveActivity(
+                'daily_weekly Loan Application',
+                'Create',
+                'Created daily_weekly Loan Application ID: ' . $loanApplication->id
+            );
 
             return redirect()->route('daily_weekly.applications.view', $loanApplication->id)
                 ->with('success', 'Loan Application saved successfully');
@@ -446,7 +465,6 @@ class DailyWeeklyController extends Controller
                 )->format('Y-m-d');
             }
 
-
             if (isset($inputData['credited'])) {
                 $inputData['credited'] = ($inputData['credited'] === 'yes' || $inputData['credited'] === '1') ? 1 : 0;
             }
@@ -521,6 +539,12 @@ class DailyWeeklyController extends Controller
             Log::info('daily_weekly Loan Application Updated Successfully', [
                 'application_id' => $application->id,
             ]);
+
+             $this->saveActivity(
+                'daily_weekly Loan Application',
+                'Update',
+                'Updated daily_weekly Loan Application ID: ' . $application->id
+            );
 
             return redirect()
                 ->route('daily_weekly.applications.view', $application->id)

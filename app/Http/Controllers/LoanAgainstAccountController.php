@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\LoanAgainsstComment;
 use App\Models\LoanAgainstDocument;
+use App\Models\Passbook;
 
 class LoanAgainstAccountController extends Controller
 {
@@ -79,6 +80,11 @@ class LoanAgainstAccountController extends Controller
 
         $loan = LoanAgainstApplication::findOrFail($id);
         $documents = LoanAgainstDocument::where('loan_id', $id)->get();
+
+        $passbooks = Passbook::where('account_type', 'Deposit Account')
+            ->where('account_no', $loan->id)
+            ->get();
+
         $comments = collect();
 
         if ($disbursementId) {
@@ -627,7 +633,7 @@ class LoanAgainstAccountController extends Controller
             'hasPendingApproval' => $hasPendingApproval,
             'comments' => $comments,
             'documents' => $documents,
-
+            'passbooks' => $passbooks
         ]);
     }
 

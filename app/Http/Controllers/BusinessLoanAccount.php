@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\BusinessLoanComment;
 use App\Models\BusinessDocument;
+use App\Models\Passbook;
 
 class BusinessLoanAccount extends Controller
 {
@@ -75,6 +76,10 @@ class BusinessLoanAccount extends Controller
             ->paginate(5);
         $loan = BusinessLoanApplication::findOrFail($id);
         $documents = BusinessDocument::where('loan_id', $id)->get();
+        $passbooks = Passbook::where('account_type', 'Business Account')
+            ->where('account_no', $loan->id)
+            ->get();
+
         $savedStatuses = DB::table('business_loan_emi_status')
             ->where('loan_id', $id)
             ->pluck('status', 'emi_no')
@@ -610,7 +615,8 @@ class BusinessLoanAccount extends Controller
             'comments',
             'totalRemainingEmiAmount',
             'documents',
-            'loan'
+            'loan',
+            'passbooks'
         ));
     }
 

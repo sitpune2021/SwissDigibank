@@ -123,7 +123,7 @@
 
     <div class="main-inner">
         @if ($hasPendingApproval)
-        <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
+            <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
                 <h4 style="margin:0;">PENDING APPROVAL REQUEST</h4>
                 <p style="margin:5px 0;">
                     This loan has pending transaction(s) awaiting approval.
@@ -436,16 +436,68 @@
                 </div>
 
                 <div class="box shadow-md mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
-                    <div
-                        class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10 ">
-                        <h3 class="text-lg font-semibold text-black  capitalize">ALLOCATED PASSBOOK
-                        </h3>
-                        <div class=" flex gap-3">
-                            <a href="" class="p-2 rounded-10 btn-primary">
-                                <i class="las la-upload"></i>Passbook
+
+                    <div class="border-b flex items-center bg-secondary/5 text-black justify-between px-4 py-2 rounded-10">
+                        <h3 class="text-lg font-semibold uppercase">ALLOCATED PASSBOOK</h3>
+
+                        <div class="flex gap-3">
+                            <a href="{{ route('passbook.create-passbook') }}"
+                                class="p-2 rounded-10 text-sm uppercase btn-primary">
+                                <i class="las la-upload"></i> Passbook
                             </a>
                         </div>
                     </div>
+
+                    @if ($passbooks->count())
+                        <div class="p-4 overflow-x-auto">
+
+                            <table class="w-full text-sm text-left border-collapse">
+
+                                <thead class="bg-secondary/5">
+                                    <tr>
+                                        <th class="px-4 py-2">NAME</th>
+                                        <th class="px-4 py-2">DOB</th>
+                                        <th class="px-4 py-2 text-center">ACTIONS</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="divide-y">
+
+                                    @foreach ($passbooks as $passbook)
+                                        <tr>
+
+                                            <td class="px-4 py-2">
+                                                {{ $passbook->passbook_no }}
+                                            </td>
+
+                                            <td class="px-4 py-2">
+                                                {{ \Carbon\Carbon::parse($passbook->issue_date)->format('d/m/Y') }}
+                                            </td>
+
+                                            <td class="px-4 py-2 text-center">
+
+                                                <a href="{{ route('passbook.show', $passbook->id) }}"
+                                                    class="px-2 py-1 text-sm bg-gray-200 rounded">
+                                                    <i class="las la-eye"></i>
+                                                </a>
+
+                                                <a href="{{ route('passbook.edit', $passbook->id) }}"
+                                                    class="px-2 py-1 text-sm bg-gray-200 rounded">
+                                                    <i class="las la-pen"></i>
+                                                </a>
+
+                                            </td>
+
+                                        </tr>
+                                    @endforeach
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    @endif
+
                 </div>
 
                 <!--documents-->

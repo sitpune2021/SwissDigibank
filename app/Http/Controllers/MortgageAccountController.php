@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\MortgageLoanComment;
 use App\Models\MortgageLoanDocument;
+use App\Models\Passbook;
 
 class MortgageAccountController extends Controller
 {
@@ -81,6 +82,10 @@ class MortgageAccountController extends Controller
         $loan = MortgageLoanApplication::findOrFail($id);
 
         $documents = MortgageLoanDocument::where('loan_id', $id)->get();
+        $passbooks = Passbook::where('account_type', 'Property Account')
+            ->where('account_no', $loan->id)
+            ->get();
+
         $savedPaidDates = DB::table('mortgage_loan_emi_status')
             ->where('loan_id', $id)
             ->pluck('paid_date', 'emi_no')
@@ -622,7 +627,8 @@ class MortgageAccountController extends Controller
             'tDueAmount',
             'dueDays',
             'documents',
-            'loan'
+            'loan',
+            'passbooks'
 
         ));
     }

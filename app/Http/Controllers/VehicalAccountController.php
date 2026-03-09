@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Account;
 use App\Models\VehicalLoanComment;
 use App\Models\VehicalDocument;
+use App\Models\Passbook;
 
 class VehicalAccountController extends Controller
 {
@@ -75,6 +76,9 @@ class VehicalAccountController extends Controller
             ->paginate(5);
         $loan = VehicalApplication::findOrFail($id);
         $documents = VehicalDocument::where('loan_id', $id)->get();
+        $passbooks = Passbook::where('account_type', 'Vehicle Account')
+            ->where('account_no', $loan->id)
+            ->get();
 
         $savedStatuses = DB::table('vehical_loan_emi_status')
             ->where('loan_id', $id)
@@ -622,6 +626,7 @@ class VehicalAccountController extends Controller
             'totalRemainingEmiAmount',
             'documents',
             'loan',
+            'passbooks'
         ));
     }
 

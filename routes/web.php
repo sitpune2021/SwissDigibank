@@ -452,6 +452,12 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('fd-accounts/transactions/printReceipt/{id}/{transactionId}', [FdController::class, 'printReceipt'])
         ->name('fd-accounts.transactions.printReceipt');
     Route::get('/change-account-info/{id}', [FdController::class, 'changeAccountInfo'])->name('fd.change.account.info');
+    
+    Route::get('/foreclose-fd-account/{id}', [FdController::class, 'fdForeClosingFormview'])->name('fd.foreclose.account'); 
+   
+Route::post('/fdaccount/{id}/foreclose', [FdController::class, 'raiseForecloseRequest'])
+    ->name('fdaccount.raiseForecloseRequest');
+    
     // Update Account Info (FORM SUBMIT)
     Route::post(
         'fd-account/update-info/{id}',
@@ -3026,6 +3032,10 @@ Route::group(['prefix' => 'vendor'], function () {
 
 Route::get('payments-to-release/index', [PaymentsToCollectController::class, 'release_index'])
     ->name('payments-to-release.index');
+
+Route::get('/fd-release/{fd_no}', [PaymentsToCollectController::class,'release'])->name('fd.release');
+
+Route::get('/fd-mark-done/{fd_no}', [PaymentsToCollectController::class,'markDone'])->name('fd.mark.done');
 
 Route::get('payments-to-release/payments-history', [PaymentsToCollectController::class, 'payments_history'])
     ->name('payments-to-release.payments-history');

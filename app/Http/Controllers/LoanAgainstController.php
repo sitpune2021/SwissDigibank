@@ -95,6 +95,12 @@ class LoanAgainstController extends Controller
                 'scheme_id' => $scheme->id,
             ]);
 
+            $this->saveActivity(
+                'Loan Against Scheme',
+                'Create',
+                'Created Loan Against Scheme ID: ' . $scheme->id
+            );
+
             return redirect()
                 ->route('loanagainst.schemes.index')
                 ->with('success', 'Scheme created successfully!');
@@ -125,6 +131,13 @@ class LoanAgainstController extends Controller
         $scheme = LoanAgainstScheme::findOrFail($id);
 
         $scheme->update($request->all());
+
+         $this->saveActivity(
+                'Loan Against Scheme',
+                'Update',
+                'Updated Loan Against Scheme ID: ' . $scheme->id
+            );
+
 
         return redirect()->route('loanagainst.schemes.index')
             ->with('success', 'Scheme updated successfully!');
@@ -1290,6 +1303,7 @@ class LoanAgainstController extends Controller
                 'validated_data' => $validated,
             ]);
 
+
             // ---------- Insert this block HERE (after validation passed) ----------
             /*
             * SECURITY CHECK:
@@ -1424,6 +1438,13 @@ class LoanAgainstController extends Controller
             Log::info('Loan Against Deposit created successfully', [
                 'loan_application_id' => $loanApplication->id,
             ]);
+
+             $this->saveActivity(
+                'Loan Against Application',
+                'Create',
+                'Created Loan Against Scheme ID: ' . $loanApplication->id
+            );
+      
             // Step 4: Handle CIBIL details
             if ($request->has('cibil_type')) {
                 Log::info('CIBIL block triggered', [
@@ -1669,6 +1690,12 @@ class LoanAgainstController extends Controller
             Log::info('Loan Application Updated Successfully', [
                 'application_id' => $application->id,
             ]);
+
+            $this->saveActivity(
+                'Loan Against Application',
+                'Update',
+                'Updated Loan Against Scheme ID: ' . $application->id
+            );
 
             return redirect()
                 ->route('loanagainst.applications.view', $application->id)
