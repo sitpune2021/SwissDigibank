@@ -452,6 +452,12 @@ Route::group(['prefix' => 'fd-mis-schemes'], function () {
     Route::get('fd-accounts/transactions/printReceipt/{id}/{transactionId}', [FdController::class, 'printReceipt'])
         ->name('fd-accounts.transactions.printReceipt');
     Route::get('/change-account-info/{id}', [FdController::class, 'changeAccountInfo'])->name('fd.change.account.info');
+    
+    Route::get('/foreclose-fd-account/{id}', [FdController::class, 'fdForeClosingFormview'])->name('fd.foreclose.account'); 
+   
+Route::post('/fdaccount/{id}/foreclose', [FdController::class, 'raiseForecloseRequest'])
+    ->name('fdaccount.raiseForecloseRequest');
+    
     // Update Account Info (FORM SUBMIT)
     Route::post(
         'fd-account/update-info/{id}',
