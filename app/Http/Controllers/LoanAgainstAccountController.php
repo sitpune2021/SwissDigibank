@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\LoanAgainsstComment;
+use App\Models\LoanAgainstDocument;
 
 class LoanAgainstAccountController extends Controller
 {
@@ -76,6 +77,8 @@ class LoanAgainstAccountController extends Controller
 
         $disbursementId = $disbursement->id ?? null;
 
+        $loan = LoanAgainstApplication::findOrFail($id);
+        $documents = LoanAgainstDocument::where('loan_id', $id)->get();
         $comments = collect();
 
         if ($disbursementId) {
@@ -561,7 +564,7 @@ class LoanAgainstAccountController extends Controller
             ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
             ->whereDate('emi_due_date', '<', $today)
             ->exists();
-            
+
         $hasDueEmi = DB::table('loan_against_emi_status')
             ->where('loan_id', $id)
             ->whereIn('status', ['UNPAID', 'PARTIAL', 'DUE'])
@@ -622,7 +625,9 @@ class LoanAgainstAccountController extends Controller
             'payRoute' => $payRoute,
             'payButtonText' => $payButtonText,
             'hasPendingApproval' => $hasPendingApproval,
-            'comments' => $comments
+            'comments' => $comments,
+            'documents' => $documents,
+
         ]);
     }
 
@@ -743,7 +748,10 @@ class LoanAgainstAccountController extends Controller
             'rounding',
             'netAmount',
             'savingAccounts',
-            'banks'
+            'banks',
+            'documents',
+            'loan'
+
         ));
     }
     private function calculateMortgagePayAmount($loanId)
@@ -1883,5 +1891,57 @@ class LoanAgainstAccountController extends Controller
 
             return back()->with('error', 'Something went wrong while adding comment.');
         }
+    }
+
+    public function uploadDocuments($id)
+    {
+        $loan = LoanAgainstApplication::findOrFail($id);
+
+        return view('loanagainst.account.documents.upload_documents', compact('loan'));
+    }
+    public function storeDocuments(Request $request, $id)
+    {
+        $request->validate([
+            'document_type.*' => 'required|string',
+            'file_path.*' => 'required|file|mimes:pdf,jpg,jpeg,png'
+        ]);
+
+        foreach ($request->document_type as $index => $docType) {
+
+            $file = $request->file('file_path')[$index] ?? null;
+
+            if ($file) {
+
+                $destinationPath = public_path('assets/documents');
+                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+                $file->move($destinationPath, $fileName);
+
+                $path = 'assets/documents/' . $fileName;
+
+                LoanAgainstDocument::create([
+                    'loan_id' => $id,
+                    'document_type' => $docType,
+                    'file_path' => $path,
+                ]);
+            }
+        }
+
+        return redirect()->route('loanagainst.account.show', $id)
+            ->with('success', 'Documents uploaded successfully');
+    }
+    public function destroyDocument($id)
+    {
+        $document = LoanAgainstDocument::findOrFail($id);
+
+        // Delete file from folder
+        if (file_exists(public_path($document->file_path))) {
+            unlink(public_path($document->file_path));
+        }
+
+        // Delete record from DB
+        $document->delete();
+
+        return back()->with('success', 'Document deleted successfully');
     }
 }
