@@ -1222,12 +1222,97 @@ class LedgergroupController extends Controller
         ));
     }
     
+    // public function balance_sheet(Request $request)
+    // {
+    //     $today = Carbon::today();
+    //     $branchId = $request->branch_id;
+
+    //     $branches = Branch::all(); // dropdown ke liye
+
+    //     $ledgers = Ledger::with('group')->get();
+
+    //     $assets = [];
+    //     $liabilities = [];
+    //     $equities = [];
+
+    //     $totalAssets = 0;
+    //     $totalLiabilities = 0;
+    //     $totalEquity = 0;
+
+    //     foreach ($ledgers as $ledger) {
+
+    //         // Correct branch filter applied
+    //         [$acc, $balance] =
+    //             $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId);
+
+    //         $balance = $balance ?: 0;
+
+    //         if ($ledger->type == 'Asset') {
+
+    //             $assets[] = [
+    //                 'name' => $ledger->display_name,
+    //                 'amount' => $balance
+    //             ];
+
+    //             $totalAssets += $balance;
+    //         }
+
+    //         if ($ledger->type == 'Liability') {
+
+    //             $liabilities[] = [
+    //                 'name' => $ledger->display_name,
+    //                 'amount' => $balance
+    //             ];
+
+    //             $totalLiabilities += $balance;
+    //         }
+
+    //         if ($ledger->type == 'Equity') {
+
+    //             $equities[] = [
+    //                 'name' => $ledger->display_name,
+    //                 'amount' => $balance
+    //             ];
+
+    //             $totalEquity += $balance;
+    //         }
+    //     }
+
+    //     /*
+    //     |------------------------------------------------------
+    //     | Add Current Year Profit to Equity (Branch wise)
+    //     |------------------------------------------------------
+    //     */
+
+    //     [$profitAcc, $netProfit] =
+    //         $this->ledgerService->calculateNetProfit($branchId);
+
+    //     $totalEquity += $netProfit;
+
+    //     $difference = $totalAssets - ($totalLiabilities + $totalEquity);
+
+    //     return view('menu-accounts.balance-sheet.index', compact(
+    //         'assets',
+    //         'liabilities',
+    //         'equities',
+    //         'totalAssets',
+    //         'totalLiabilities',
+    //         'totalEquity',
+    //         'netProfit',
+    //         'difference',
+    //         'today',
+    //         'branches',
+    //         'branchId'
+    //     ));
+    // }
+
+   
     public function balance_sheet(Request $request)
     {
         $today = Carbon::today();
         $branchId = $request->branch_id;
 
-        $branches = Branch::all(); // dropdown ke liye
+        $branches = Branch::all();
 
         $ledgers = Ledger::with('group')->get();
 
@@ -1239,53 +1324,58 @@ class LedgergroupController extends Controller
         $totalLiabilities = 0;
         $totalEquity = 0;
 
+        //$previousDate = Carbon::parse($today)->subYear()->endOfYear();
+        $previousDate = Carbon::create(date('Y')-1, 3, 31);
+
         foreach ($ledgers as $ledger) {
 
-            // ✅ Correct branch filter applied
-            [$acc, $balance] =
-                $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId);
+           [$acc, $currentBalance] =
+            $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId, $today);
 
-            $balance = $balance ?: 0;
+            [$acc, $previousBalance] =
+            $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId, $previousDate);
+
+            $currentBalance = ($currentBalance ?: 0) - ($previousBalance ?: 0);
+            $previousBalance = $previousBalance ?: 0;
+            
+            $previousBalance = $previousBalance ?: 0;
 
             if ($ledger->type == 'Asset') {
 
                 $assets[] = [
                     'name' => $ledger->display_name,
-                    'amount' => $balance
+                    'current' => $currentBalance,
+                    'previous' => $previousBalance
                 ];
 
-                $totalAssets += $balance;
+                $totalAssets += $currentBalance;
             }
 
             if ($ledger->type == 'Liability') {
 
                 $liabilities[] = [
                     'name' => $ledger->display_name,
-                    'amount' => $balance
+                    'current' => $currentBalance,
+                    'previous' => $previousBalance
                 ];
 
-                $totalLiabilities += $balance;
+                $totalLiabilities += $currentBalance;
             }
 
             if ($ledger->type == 'Equity') {
 
                 $equities[] = [
                     'name' => $ledger->display_name,
-                    'amount' => $balance
+                    'current' => $currentBalance,
+                    'previous' => $previousBalance
                 ];
 
-                $totalEquity += $balance;
+                $totalEquity += $currentBalance;
             }
         }
 
-        /*
-        |------------------------------------------------------
-        | Add Current Year Profit to Equity (Branch wise)
-        |------------------------------------------------------
-        */
-
         [$profitAcc, $netProfit] =
-            $this->ledgerService->calculateNetProfit($branchId);
+        $this->ledgerService->calculateNetProfit($branchId);
 
         $totalEquity += $netProfit;
 
@@ -1305,7 +1395,7 @@ class LedgergroupController extends Controller
             'branchId'
         ));
     }
-
+   
     public function printBalanceSheet(Request $request)
     {
         $today = Carbon::today();

@@ -31,8 +31,13 @@
         @endif
 
         <div class="box mb-4 xxxl:mb-6">
-            <form action="" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6 w-full">
+            
+            <form action="{{ isset($shareholding) 
+                ? route('shares-transfer.update',$shareholding->id) 
+                : route('shares.allocate') }}" 
+                method="POST">
                 @csrf
+
                 @if (isset($shareholding) && empty($show))
                     @method('PUT')
                 @endif
@@ -55,23 +60,23 @@
                         CUSTOMER<span class="text-red-500">*</span>
                     </label>
 
-                    @if ($selectedMember)
+                    <select name="member_id" id="promoterDropdown"
+                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
 
-                        <input type="text" disabled
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            value="{{ $members[$selectedMember->id] ?? '' }}">
+                        <option value="">Select Customer</option>
 
-                        <input type="hidden" name="member_id" value="{{ $selectedMember->id }}">
-                    @else
+                        @foreach ($members as $key => $mem)
 
-                        <select name="member_id" id="promoterDropdown"
-                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
-                            <option value="">Select Customer</option>
-                            @foreach ($members as $key => $mem)
-                                <option value="{{ $key }}">{{ $mem }}</option>
-                            @endforeach
-                        </select>
-                    @endif
+                        <option value="{{ $key }}"
+                        {{ old('member_id', $shareholding->member_id ?? '') == $key ? 'selected' : '' }}>
+
+                        {{ $mem }}
+
+                        </option>
+
+                        @endforeach
+
+                    </select>
 
                     {{-- Validation Error --}}
                     @error('member_id')
@@ -94,11 +99,11 @@
                     <select name="business_type" id="business_type"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option value="">Select Business Type</option>
-                        <option value="FD">FD / MIS</option>
-                        <option value="RD">RD / DD</option>
-                        <option value="Saving">Saving</option>
-                        <option value="Loan">Loan</option>
-                        <option value="Shares">Shares</option>
+                        <option value="FD" {{ isset($shareholding) && $shareholding->business_type=='FD' ? 'selected':'' }}>FD / MIS</option>
+                        <option value="RD" {{ isset($shareholding) && $shareholding->business_type=='RD' ? 'selected':'' }}>RD / DD</option>
+                        <option value="Saving" {{ isset($shareholding) && $shareholding->business_type=='Saving' ? 'selected':'' }}>Saving</option>
+                        <option value="Loan" {{ isset($shareholding) && $shareholding->business_type=='Loan' ? 'selected':'' }}>Loan</option>
+                        <option value="Shares" {{ isset($shareholding) && $shareholding->business_type=='Shares' ? 'selected':'' }}>Shares</option>
                     </select>
                     @error('business_type')
                         <span class="text-red-500 text-xs">{{ $message }}</span>
@@ -111,7 +116,7 @@
                     </label>
 
                     <input type="text" name="allotment_date" id="date2" placeholder="Select Date"
-                        value="{{ old('allotment_date', isset($shareholding->allotment_date) ? \Carbon\Carbon::parse($shareholding->allotment_date)->format('d-m-Y') : now()->format('d-m-Y')) }}"
+                        value="{{ old('allotment_date', isset($shareholding->transfer_date) ? \Carbon\Carbon::parse($shareholding->transfer_date)->format('d-m-Y') : now()->format('d-m-Y')) }}"
                         class="w-full text-sm bg-gray-100 border border-gray-300 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         @if ($isView) disabled @endif autocomplete="off">
 
@@ -126,7 +131,7 @@
                 <div class="col-span-2 md:col-span-1">
                     <label for="share_no" class="md:text-lg font-medium block mb-4">SHARES<span
                             class="text-red-500">*</span></label>
-                    <input name="share_no" id="share_no" value="0"
+                    <input name="share_no" id="share_no" value="{{ old('share_no', $shareholding->shares ?? 0) }}"
                         class=" w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Last Share No" @if ($isView) disabled @endif>
 
@@ -147,12 +152,17 @@
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
-                    <label for="total_consideration" class="md:text-lg font-medium block mb-4">TOTAL CONSIDERATION</label>
+                    <label for="total_consideration" class="md:text-lg font-medium block mb-4">
+                        TOTAL CONSIDERATION
+                    </label>
+
                     <div class="w-full">
                         <input name="total_consideration" id="total_consideration"
-                            value="{{ old('total_consideration', $shareholding->total_share_value ?? '') }}"
+                            value="{{ old('total_consideration', $shareholding->total_consideration ?? '') }}"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                            placeholder="Share Value" @if ($isView) disabled @endif>
+                            placeholder="Share Value"
+                            @if ($isView) disabled @endif>
+
                         @error('total_consideration')
                             <span class="text-red-500 text-xs">{{ $message }}</span>
                         @enderror
@@ -223,17 +233,18 @@
         let currentShares = 0; // 
 
         function calculateTotal() {
-            if (!businessTypeSelected) {
-                totalConsiderationInput.val("0.00");
-                return;
-            }
-            let shares = parseFloat(sharesInput.val()) || 0;
-            let faceValue = parseFloat(faceValueInput.val()) || 0;
-            let total = shares * faceValue;
-            totalConsiderationInput.val(total.toFixed(2));
-        }
 
+    let shares = parseFloat(sharesInput.val()) || 0;
+    let faceValue = parseFloat(faceValueInput.val()) || 0;
 
+    if(shares === 0){
+        return;
+    }
+
+    let total = shares * faceValue;
+
+    totalConsiderationInput.val(total.toFixed(2));
+}
 
 
         dropdown.on('change', function() {
@@ -248,7 +259,7 @@
             }
 
             $.ajax({
-                url: '/get-promoter-shares/${memberId}',
+                url: `/get-promoter-shares/${memberId}`,
                 type: "GET",
                 success: function(data) {
                     currentShares = parseInt(data.shares) || 0;
@@ -279,8 +290,9 @@
             } else if (this.value === 'Loan') {
                 sharesInput.val(1);
             } else if (this.value === 'Shares') {
-                let remaining = 100 - currentShares; // ✅ use global
-                sharesInput.val(remaining > 0 ? remaining : 0);
+                // let remaining = 100 - currentShares; // ✅ use global
+                // sharesInput.val(remaining > 0 ? remaining : 0);
+                sharesInput.val(1);
             } else {
                 sharesInput.val(0);
             }
@@ -291,7 +303,7 @@
         sharesInput.on('input', calculateTotal);
         faceValueInput.on('input', calculateTotal);
 
-        totalConsiderationInput.val("0.00");
+        
     });
 </script>
 @endsection

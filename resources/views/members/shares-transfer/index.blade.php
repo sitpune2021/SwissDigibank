@@ -9,7 +9,6 @@
             </a>
         </div>
 
-
         <!-- Latest Transactions -->
 
        <div class="box col-span-12 lg:col-span-6">
@@ -86,8 +85,8 @@
                                         'id' => $shareholding->id,
                                         'viewRoute' => 'shares-transfer.show',
                                         'printRoute' => 'shares-transfer.print',
+                                        'editRoute' => 'shares-transfer.edit',
                                     ])
-
                                 </div>
                             </td>
                         </tr>
