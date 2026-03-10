@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FdAccount extends Model
 {
     protected $table = 'fd_accounts';
+     use SoftDeletes;
 
     protected $fillable = [
         'member_id',
@@ -44,6 +46,21 @@ class FdAccount extends Model
         'maturity_date',
         'saving_account_id',
         'link_status',
+
+        'foreclose_request_date',
+        'foreclose_interest_left',
+        'foreclose_tds',
+        'foreclose_reverse_interest',
+
+        'foreclose_penal_charges',
+        'foreclose_cancellation_charges',
+
+        'foreclose_total_amount',
+        'foreclose_rounding',
+        'foreclose_final_amount',
+
+        'foreclose_status',
+
 
     ];
 

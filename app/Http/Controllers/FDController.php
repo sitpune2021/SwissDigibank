@@ -1965,13 +1965,26 @@ class FDController extends Controller
     | Cancellation charges
     */
 
-        $cancellationCharge = $fdAccount->fdScheme->cancellation_charge ?? 0;
+        $cancellationCharge = 0;
+
+        $type = $fdAccount->fdScheme->cancellation_type;
+        $value = $fdAccount->fdScheme->cancellation_charge;
+
+        if ($type == 'percent') {
+
+            $cancellationCharge =
+                round(($fdAccount->mis_amount * $value) / 100, 2);
+        } else {
+
+            $cancellationCharge = $value;
+        }
 
         $cancellationGst =
             round($cancellationCharge * ($gstRate / 100), 2);
 
         $cancellationTotal =
             $cancellationCharge + $cancellationGst;
+
 
         /*
     | Final Settlement
@@ -1986,6 +1999,13 @@ class FDController extends Controller
             $cancellationTotal;
 
         $totalSettlement = round($totalSettlement, 2);
+
+        /*
+| Rounding Logic
+*/
+
+        $finalAmount = round($totalSettlement);
+        $roundingOff = round($totalSettlement - $finalAmount, 2);
 
         return view(
             'fd_mis_account.fd-account.foreclose',
@@ -2010,59 +2030,83 @@ class FDController extends Controller
                 'totalDays',
                 'rate',
                 'slab',
-                'gstRate'
+                'gstRate',
+                'finalAmount',
+                'roundingOff'
             )
         );
     }
 
-    public function raiseFdForecloseRequest(Request $request, $id)
+    public function raiseForecloseRequest(Request $request, $id)
+    {
+        $fdAccount = FdAccount::findOrFail($id);
+
+        // Prevent duplicate request
+        if ($fdAccount->foreclose_status == 1) {
+            return back()->with('error', 'Foreclosure request already raised. Check approvals.');
+        }
+
+        if ($fdAccount->foreclose_status == 2) {
+            return back()->with('error', 'FD account already foreclosed.');
+        }
+
+        // Validation
+        $request->validate([
+            'interest_left_paid' => 'nullable|numeric',
+            'tds' => 'nullable|numeric',
+            'reverse_interest' => 'nullable|numeric',
+            'penal_charges' => 'nullable|numeric',
+            'cancellation_charge' => 'nullable|numeric',
+            'total_account' => 'nullable|numeric',
+            'rounding_off' => 'nullable|numeric',
+            'final_amount' => 'nullable|numeric',
+        ]);
+
+        // Update FD Account
+        $fdAccount->update([
+
+            'foreclose_request_date' => now(),
+
+            'foreclose_interest_left' => round($request->interest_left_paid ?? 0, 2),
+            'foreclose_tds' => round($request->tds ?? 0, 2),
+            'foreclose_reverse_interest' => round($request->reverse_interest ?? 0, 2),
+
+            'foreclose_penal_charges' => round($request->penal_charges ?? 0, 2),
+            'foreclose_cancellation_charges' => round($request->cancellation_charge ?? 0, 2),
+
+            'foreclose_total_amount' => round($request->total_account ?? 0, 2),
+
+            'foreclose_rounding' => round($request->rounding_off ?? 0, 2),
+            'foreclose_final_amount' => round($request->final_amount ?? 0, 2),
+
+            'foreclose_status' => 1 // Request Raised
+        ]);
+
+        return redirect()
+            ->route('fd-mis-schemes.fd_show', $fdAccount->id)
+            ->with('success', 'FD foreclosure request raised successfully.');
+    }
+
+
+    public function removeAccount($id)
 {
     $fdAccount = FdAccount::findOrFail($id);
 
-    // Prevent duplicate request
-    if ($fdAccount->foreclose_status == 1) {
-        return back()->with('error', 'Foreclosure request already raised. Check approvals.');
-    }
+    return view(
+        'fd_mis_account.fd-account.remove-account',
+        compact('fdAccount')
+    );
+}
 
-    if ($fdAccount->foreclose_status == 2) {
-        return back()->with('error', 'FD account already foreclosed.');
-    }
 
-    // Validation
-    $request->validate([
-        'interest_left_paid' => 'nullable|numeric',
-        'tds' => 'nullable|numeric',
-        'reverse_interest' => 'nullable|numeric',
-        'penal_charges' => 'nullable|numeric',
-        'cancellation_charge' => 'nullable|numeric',
-        'total_account' => 'nullable|numeric',
-        'rounding_off' => 'nullable|numeric',
-        'final_amount' => 'nullable|numeric',
-    ]);
+public function confirmRemoveAccount(Request $request, $id)
+{
+    $fdAccount = FdAccount::findOrFail($id);
 
-    // Update FD Account
-    $fdAccount->update([
+    $fdAccount->delete();
 
-        'foreclose_request_date' => now(),
-
-        'foreclose_interest_left' => round($request->interest_left_paid ?? 0, 2),
-        'foreclose_tds' => round($request->tds ?? 0, 2),
-        'foreclose_reverse_interest' => round($request->reverse_interest ?? 0, 2),
-
-        'foreclose_penal_charges' => round($request->penal_charges ?? 0, 2),
-        'foreclose_cancellation_charges' => round($request->cancellation_charge ?? 0, 2),
-
-        'foreclose_total_amount' => round($request->total_account ?? 0, 2),
-
-        'foreclose_rounding' => round($request->rounding_off ?? 0, 2),
-        'foreclose_final_amount' => round($request->final_amount ?? 0, 2),
-
-        'foreclose_status' => 1 // Request Raised
-    ]);
-
-    return redirect()
-        ->route('fdaccount.show', $fdAccount->id)
-        ->with('success', 'FD foreclosure request raised successfully.');
+    return redirect()->route('fd-mis-schemes.fd_index')
+        ->with('Success', 'FD Account Deleted Successfully');
 }
 
     public function sweepInAccount()
@@ -2072,17 +2116,17 @@ class FDController extends Controller
     }
 
     public static function convertDaysToTenure($days)
-{
-    $years = floor($days / 365);
-    $remainingDays = $days % 365;
+    {
+        $years = floor($days / 365);
+        $remainingDays = $days % 365;
 
-    $months = floor($remainingDays / 30);
-    $days = $remainingDays % 30;
+        $months = floor($remainingDays / 30);
+        $days = $remainingDays % 30;
 
-    return [
-        'years' => $years,
-        'months' => $months,
-        'days' => $days
-    ];
-}
+        return [
+            'years' => $years,
+            'months' => $months,
+            'days' => $days
+        ];
+    }
 }
