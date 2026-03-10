@@ -116,6 +116,7 @@
             <div x-show="open" @click.outside="open = false"
                 class="absolute mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
                 <ul class="py-2">
+                    @if($fdAccount->status == 1)
                     <li>
                         <a href="{{ route('fd.change.account.info', $fdAccount->id) }}"
                             class="block px-4 py-2 uppercase text-start  text-black border-b hover:bg-gray-100">Change A/c Info</a>
@@ -128,8 +129,9 @@
                         <a href="{{ route('fd.foreclose.account', $fdAccount->id) }}"
                             class="block px-4 py-2 uppercase   text-black border-b hover:bg-gray-100">Fore Close</a>
                     </li>
+                    @endif
                     <li>
-                        <a href=""
+                        <a href="{{ route('fdaccount.remove', $fdAccount->id) }}"
                             class="block px-4 py-2 uppercase   text-black border-b hover:bg-gray-100">Remove Account</a>
                     </li>
                 </ul>
@@ -167,7 +169,7 @@
 
             </div>
         </div>
-@endif
+        @endif
         <!-- Print Documents -->
         <div x-data="{ open: false }" class="relative inline-block">
 
@@ -582,11 +584,11 @@
                                         </td>
 
                                         <td class="px-3 py-2">
-                                            @php($status = $tran->final_status)
+                                            @php($status = $tran->status)
 
-                                            @if ($status === 'approved')
+                                            @if ($status === 'Approved' || $status === 'Paid' || $status === 'Land')
                                             <span class="text-green-600 font-semibold">Approved</span>
-                                            @elseif ($status === 'pending')
+                                            @elseif ($status === null)
                                             <span class="text-yellow-600 font-semibold">Pending</span>
                                             @else
                                             <span class="text-red-600 font-semibold">Rejected</span>
@@ -861,6 +863,85 @@
                                 </td>
                             </tr>
                             @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @endif
+
+            <!-- Fore Close  -->
+            @if($fdAccount->status == 3)
+            <div class="bg-white shadow-md box mt-5 dark:bg-bg3 dark:border-lightbg1 rounded-lg overflow-hidden">
+                <!-- Header -->
+                <div class="border-b px-4 py-3 bg-secondary/5 rounded-10">
+                    <h3 class="text-lg font-semibold text-black uppercase ">Fore Closure Info</h3>
+                </div>
+
+                <!-- Body -->
+                <div class="p-4 overflow-x-auto whitespace-nowrap">
+                    <table class="w-full overflow-x-auto whitespace-nowrap text-sm text-left">
+                        <tbody class="divide-y divide-gray-200">
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 w-1/3 uppercase">Fore Close Date</td>
+                                <td class="px-4 py-2">
+                                    {{ $fdAccount->foreclose_request_date 
+              ? \Carbon\Carbon::parse($fdAccount->foreclose_request_date)->format('d-m-Y') 
+              : '-' }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Principal Amount</td>
+                                <td class="px-4 py-2">
+                                    ₹ {{ number_format($fdAccount->fd_amount ?? 0, 2) }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Current Balance (A)</td>
+                                <td class="px-4 py-2">
+                                    ₹ {{ number_format($balance ?? 0, 2) }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Balance Interest to Credit (B)</td>
+                                <td class="px-4 py-2">
+                                    ₹ {{ number_format($fdAccount->foreclose_interest_left ?? 0, 2) }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">TDS on Balance Interest to Credit (C)</td>
+                                <td class="px-4 py-2">
+                                    ₹ {{ number_format($fdAccount->foreclose_tds ?? 0, 2) }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Penal Charges to Deduct (D)</td>
+                                <td class="px-4 py-2">
+                                    ₹ {{ number_format($fdAccount->foreclose_penal_charges ?? 0, 2) }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="font-semibold px-4 py-2 uppercase">Fore Closure Charges (E)</td>
+                                <td class="px-4 py-2">
+                                    ₹ {{ number_format($fdAccount->foreclose_cancellation_charges ?? 0, 2) }}
+                                </td>
+                            </tr>
+
+                            <tr class="border-b bg-gray-50 font-semibold">
+                                <td class="px-4 py-2 uppercase">
+                                    Final Payable Amount (A + B - C - D - E)
+                                </td>
+                                <td class="px-4 py-2 text-green-700">
+                                    ₹ {{ number_format($fdAccount->foreclose_final_amount ?? 0, 2) }}
+                                </td>
+                            </tr>
+
                         </tbody>
                     </table>
                 </div>

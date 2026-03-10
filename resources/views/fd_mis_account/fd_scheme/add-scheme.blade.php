@@ -310,7 +310,7 @@
                                 @php
                                 // if editing, use existing slabs, else make empty rows
                                 $slabs = isset($fdScheme) ? $fdScheme->fdslabs : collect([]);
-                                $rowCount = max(10, $slabs->count());
+                                $rowCount = max(1, $slabs->count());
                                 @endphp
 
                                 @for ($i = 0; $i < $rowCount; $i++)

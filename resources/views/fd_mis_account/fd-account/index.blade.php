@@ -129,6 +129,10 @@
                             <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-error text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
                                 Rejected
                             </span>
+                            @elseif ($account->status == 3)
+                            <span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-error text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
+                                Fore Closed
+                            </span>
                             @endif
                         </td>
                         <td class="px-6 py-3">

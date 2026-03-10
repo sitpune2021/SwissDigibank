@@ -921,67 +921,67 @@ class MisaccountController extends Controller
         return $pdf->stream('payment-receipt-' . $id . '.pdf');
     }
 
-public function show($id)
-{
-    $misaccount = MisAccount::with(['member', 'transactions', 'fdScheme.fdslabs'])
-        ->where('id', $id)
-        ->firstOrFail();
+    public function show($id)
+    {
+        $misaccount = MisAccount::with(['member', 'transactions', 'fdScheme.fdslabs'])
+            ->where('id', $id)
+            ->firstOrFail();
 
-    $branches = Branch::all();
+        $branches = Branch::all();
 
-    $documents = Document::where('mis_id', $misaccount->id)->get();
+        $documents = Document::where('mis_id', $misaccount->id)->get();
 
-    $passbooks = Passbook::where('account_type', 'MIS Accounts')
-        ->where('account_no', $misaccount->id)
-        ->get();
+        $passbooks = Passbook::where('account_type', 'MIS Accounts')
+            ->where('account_no', $misaccount->id)
+            ->get();
 
-    $transactions = MisTransaction::with(['misaccount', 'bank', 'savingAccount'])
-        ->whereHas('misaccount', function ($q) use ($misaccount) {
-            $q->where('member_id', $misaccount->member_id);
-        })
-        ->get();
+        $transactions = MisTransaction::with(['misaccount', 'bank', 'savingAccount'])
+            ->whereHas('misaccount', function ($q) use ($misaccount) {
+                $q->where('member_id', $misaccount->member_id);
+            })
+            ->get();
 
-    $balances = self::getAccountBalance($id);
-    $balance  = $balances[$id] ?? 0;
+        $balances = self::getAccountBalance($id);
+        $balance  = $balances[$id] ?? 0;
 
-    $savingAccounts = Account::where('member_id', $misaccount->member_id)
-        ->where('account_type', 'SAVING')
-        ->get();
+        $savingAccounts = Account::where('member_id', $misaccount->member_id)
+            ->where('account_type', 'SAVING')
+            ->get();
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Slab Interest Calculation
     |--------------------------------------------------------------------------
     */
 
-    $openDate = \Carbon\Carbon::parse($misaccount->open_date);
-    $today = \Carbon\Carbon::today();
+        $openDate = \Carbon\Carbon::parse($misaccount->open_date);
+        $today = \Carbon\Carbon::today();
 
-    $totalDays = $openDate->diffInDays($today);
+        $totalDays = $openDate->diffInDays($today);
 
-    $slab = $misaccount->fdScheme->fdslabs
-        ->where('day_from', '<=', $totalDays)
-        ->where('day_to', '>=', $totalDays)
-        ->first();
+        $slab = $misaccount->fdScheme->fdslabs
+            ->where('day_from', '<=', $totalDays)
+            ->where('day_to', '>=', $totalDays)
+            ->first();
 
-    $rate = $slab ? $slab->interest_rate : 0;
+        $rate = $slab ? $slab->interest_rate : 0;
 
-    return view(
-        'fd_mis_account.misaccount.show',
-        compact(
-            'misaccount',
-            'passbooks',
-            'savingAccounts',
-            'branches',
-            'balance',
-            'documents',
-            'transactions',
-            'rate',
-            'slab',
-            'totalDays'
-        )
-    );
-}
+        return view(
+            'fd_mis_account.misaccount.show',
+            compact(
+                'misaccount',
+                'passbooks',
+                'savingAccounts',
+                'branches',
+                'balance',
+                'documents',
+                'transactions',
+                'rate',
+                'slab',
+                'totalDays'
+            )
+        );
+    }
     // edit editBranch
     public function updateBranch(Request $request, $misaccountId)
     {
@@ -1175,17 +1175,31 @@ public function show($id)
         $penalChargesWithGst = 0;
         $gstRate = 18;
 
-        if ($completedMonths < $lockInMonths) {
+         if ($completedMonths < $lockInMonths) {
 
-            $penalRate = $misaccount->fdScheme->penal_charge ?? 0;
+            $penalType  = $misaccount->fdScheme->penal_charge_type ?? 'percentage';
+            $penalValue = $misaccount->fdScheme->penal_charge ?? 0;
 
-            // Penal amount
-            $penalCharges = round(($misaccount->mis_amount * $penalRate) / 100, 2);
+            if ($penalType === 'percentage') {
 
-            // GST 18%
-            $gst = round($penalCharges * ($gstRate / 100), 2);
+                // Percentage based
+                $penalRate = $penalValue;
 
-            // Penal + GST
+                $penalCharges = round(
+                    ($currentBalance * $penalRate) / 100,
+                    2
+                );
+            } else {
+
+                // Fixed charge
+                $penalRate = 0;
+
+                $penalCharges = round($penalValue, 2);
+            }
+
+            // GST Calculation
+            $gst = round(($penalCharges * $gstRate) / 100, 2);
+
             $penalChargesWithGst = $penalCharges + $gst;
         }
 
@@ -1263,29 +1277,40 @@ public function show($id)
         // dd($currentBalance, $interestLeftToPay, $tds, $reverseInterest, $penalChargesWithGst, $cancellationTotal);
         $totalSettlement = round($totalSettlement, 2);
 
+
+        /*
+| Rounding Logic
+*/
+
+        $finalAmount = round($totalSettlement);
+        $roundingOff = round($totalSettlement - $finalAmount, 2);
+
+
         return view(
             'fd_mis_account.misaccount.account-details.foreclose',
             compact(
                 'misaccount',
                 'currentBalance',
                 'interestTillDate',
+                'interestLeftToPay',
+                'interestPaid',
                 'tds',
-                'gstRate',
                 'penalCharges',
                 'penalChargesWithGst',
                 'penalRate',
+                'prematureRate',
+                'prematureInterest',
+                'reverseInterest',
+                'cancellationCharge',
+                'cancellationTotal',
                 'totalSettlement',
                 'closureDate',
                 'totalDays',
                 'rate',
                 'slab',
-                'prematureRate',
-                'reverseInterest',
-                'interestPaid',
-                'prematureInterest',
-                'cancellationCharge',
-                'interestLeftToPay',
-                'cancellationTotal'
+                'gstRate',
+                'finalAmount',
+                'roundingOff'
             )
         );
     }
