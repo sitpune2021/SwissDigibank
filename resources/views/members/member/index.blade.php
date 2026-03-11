@@ -171,7 +171,11 @@
             </table>
         </div>
         <!-- </div> -->
-        <x-pagination :paginator="$members" />
+
+        <div class="mt-4">
+            <x-pagination :paginator="$members"/>
+        </div>
+        
     </div>
     </div>
 @endsection
