@@ -60,23 +60,23 @@
                         CUSTOMER<span class="text-red-500">*</span>
                     </label>
 
-                    <select name="member_id" id="promoterDropdown"
-                        class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                    @if ($selectedMember)
 
-                        <option value="">Select Customer</option>
+                        <input type="text" disabled
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            value="{{ $members[$selectedMember->id] ?? '' }}">
 
-                        @foreach ($members as $key => $mem)
+                        <input type="hidden" name="member_id" value="{{ $selectedMember->id }}">
+                    @else
 
-                        <option value="{{ $key }}"
-                        {{ old('member_id', $shareholding->member_id ?? '') == $key ? 'selected' : '' }}>
-
-                        {{ $mem }}
-
-                        </option>
-
-                        @endforeach
-
-                    </select>
+                        <select name="member_id" id="promoterDropdown"
+                            class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                            <option value="">Select Customer</option>
+                            @foreach ($members as $key => $mem)
+                                <option value="{{ $key }}">{{ $mem }}</option>
+                            @endforeach
+                        </select>
+                    @endif
 
                     {{-- Validation Error --}}
                     @error('member_id')
