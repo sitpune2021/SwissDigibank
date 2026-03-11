@@ -169,7 +169,7 @@
                     <div class="flex flex-col lg:flex-row gap-8">
 
                         <!-- LEFT COLUMN -->
-                        <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                        <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-4" style="width: stretch;">
 
                         <h4 class="font-semibold text-gray-600 text-center mb-4 tracking-wide">
                             LIABILITIES & EQUITY
@@ -233,7 +233,7 @@
                         </div>
 
                         <!-- RIGHT COLUMN -->
-                        <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                        <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-4" style="width: stretch;">
 
                         <h4 class="font-semibold text-gray-600 text-center mb-4 tracking-wide">
                             ASSETS
