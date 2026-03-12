@@ -66,7 +66,7 @@ return [
         'active' => '1',
         'submenu' => [
             ['title' => 'SCHEMES', 'route' => 'schemes.index'],
-            ['title' => 'SAVING A/C', 'route' => 'accounts.index'],
+            ['title' => 'SAVING / CURRENT A/C', 'route' => 'accounts.index'],
         ]
     ],
     [
@@ -320,7 +320,7 @@ return [
              ['title' => 'PROMOTER LIST', 'route' => 'report.promoter-list'],
             ['title' => 'SHARE HOLDINGS', 'route' => 'report.share-holdings'],
             ['title' => 'SHARE TRANSFER HISTORY', 'route' => 'report.share-transfer-history'],
-            ['title' => 'SAVING ACCOUNTS', 'route' => 'report.saving-account'],
+            ['title' => 'CURRENT / SAVING ACCOUNTS', 'route' => 'report.saving-account'],
             ['title' => 'FD ACCOUNTS', 'route' => 'report.fd-account'],
             ['title' => 'MIS ACCOUNTS', 'route' => 'report.mis-account'],
             ['title' => 'DD ACCOUNTS', 'route' => 'report.dd-accounts'],
