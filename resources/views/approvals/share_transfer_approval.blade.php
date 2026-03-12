@@ -3,7 +3,7 @@
     <div class="main-inner">
 
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
-            <h4 class="h2">APPROVALS - SAVING/ FD/ MIS/ RD/ DD</h4>
+            <h4 class="h2">APPROVALS - SHARE TRANSFER / ALLOCATION</h4>
         </div>
 
         <div class="col-span-12 box lg:col-span-6">
