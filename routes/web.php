@@ -362,12 +362,14 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/form15g15h/download/{member_id}', [Form15Gor15HController::class, 'download'])->name('form15g15h.download');
         Route::get('/form15g15h/download/promoter/{promoter_id}', [Form15Gor15HController::class, 'downloadByPromoter'])->name('form15g15h.download.promoter');
     });
+    
+    Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
+    Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
+
     Route::resource('shares-transfer', ShareTransferController::class);
     Route::get('/shares-transfer/print/{id}', [ShareTransferController::class, 'print'])->name('shares-transfer.print');
 
     Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
-    Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
-    Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
     Route::get('/members/{member}/share-holdings', [ShareHoldingController::class, 'index'])
         ->name('members.share-holdings.index');
 

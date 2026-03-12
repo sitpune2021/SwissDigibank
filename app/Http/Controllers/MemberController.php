@@ -29,6 +29,8 @@ use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 use App\Models\Transaction;
 use App\Models\Group;
+use Illuminate\Support\Facades\Http;
+use App\Helpers\MufinHelper;
 
 class MemberController extends Controller
 {
@@ -91,7 +93,7 @@ class MemberController extends Controller
             abort(404);
         }
     }
-    
+
     public function create()
     {
         try {
@@ -101,9 +103,9 @@ class MemberController extends Controller
                 'religion' => Religion::pluck('name', 'id'),
                 'groups'   => Group::where('is_active', 1)->pluck('group_name', 'id'),
             ];
-            
+
             // $banks = Bank::all();
-             $banks = Bank::pluck('name', 'id');
+            $banks = Bank::pluck('name', 'id');
             $sections = config('member_form');
             $member   = null;
             $route    = route('member.store');
@@ -249,6 +251,7 @@ class MemberController extends Controller
                 }
             }
 
+
             // Generate padded member_no
             $nextId = (Member::max('id') ?? 0) + 1;
             $memberNo = str_pad($nextId, 6, '0', STR_PAD_LEFT);
@@ -330,6 +333,126 @@ class MemberController extends Controller
                 $member->save();
             }
 
+            $apiKey = env('MUFFINPAY_API_KEY');
+            $saltKey = env('MUFFINPAY_SALT_KEY');
+
+            $payload = [
+                "firstName" => $member->member_info_first_name,
+                "lastName" => $member->member_info_last_name,
+                "email" => $member->member_info_email,
+                "mobileNumber" => $member->member_info_mobile_no,
+                "userType" => "ROLE_INDIVIDUAL_MERCHANT_USER",
+                "userCatg" => "INDIVIDUAL"
+            ];
+
+            $xverify = MufinHelper::generateXVerify($payload, $saltKey);
+            // $body = json_encode($payload);
+
+            // $hash = hash('sha256', $apiKey . $body . $saltKey);
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'apiKey' => $apiKey,
+                'xverifyv2' => $xverify
+            ])->post(env('MUFFINPAY_URL') . '/user/create', $payload);
+
+            $data = $response->json();
+
+            Log::info('MuffinPay Create User', $data);
+
+            if ($response->successful()) {
+
+                $data = $response->json();
+
+                Log::info('MufinPay API Response', $data);
+
+                $mufUserId = $data['data']['userId'] ?? null;
+
+                if ($mufUserId && isset($user)) {
+
+                    $user->muf_user_id = $mufUserId;
+                    $user->save();
+
+                    Log::info('MufinPay User ID Stored', [
+                        'user_id' => $user->id,
+                        'muf_user_id' => $mufUserId
+                    ]);
+                }
+            } else {
+
+                Log::error('MuffinPay API Failed', [
+                    'response' => $response->body()
+                ]);
+            }
+
+            $kyc = KycAndNominee::where('member_id', $member->id)->first();
+
+            if ($kyc && !empty($request->member_kyc_pan_no) && !empty($user->muf_user_id)) {
+
+                $kyc->member_kyc_pan_no = $request->member_kyc_pan_no;
+                $kyc->save();
+
+                $panPayload = [
+                    "idType" => "PAN_CARD",
+                    "userId" => $user->muf_user_id,
+                    "pan" => [
+                        "number" => $kyc->member_kyc_pan_no,
+                        "dob" => Carbon::parse($member->member_info_dob)->format('d/m/Y'),
+                        "name" => trim(
+                            $member->member_info_first_name . ' ' .
+                                $member->member_info_middle_name . ' ' .
+                                $member->member_info_last_name
+                        )
+                    ]
+                ];
+
+                $xverifyPan = MufinHelper::generateXVerify($panPayload, env('MUFFINPAY_SALT_KEY'));
+
+                $panResponse = Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'apiKey' => env('MUFFINPAY_API_KEY'),
+                    'xverifyv2' => $xverifyPan
+                ])->post(env('MUFFINPAY_URL') . '/kyc/submit', $panPayload);
+
+                $panData = $panResponse->json();
+
+                Log::info('PAN Payload', $panPayload);
+                Log::info('PAN Response', $panData);
+            }
+            $kyc = KycAndNominee::where('member_id', $member->id)->first();
+
+            if ($kyc && !empty($kyc->member_kyc_aadhaar_no) && !empty($user->muf_user_id)) {
+
+                $aadhaarPayload = [
+
+                    "idType" => "AADHAAR_CARD",
+
+                    "userId" => $user->muf_user_id,
+
+                    "aadhaar" => [
+                        "number" => $kyc->member_kyc_aadhaar_no
+                    ]
+
+                ];
+
+                $xverifyAadhaar = MufinHelper::generateXVerify($aadhaarPayload, env('MUFFINPAY_SALT_KEY'));
+
+                $aadhaarResponse = Http::withHeaders([
+
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'apiKey' => env('MUFFINPAY_API_KEY'),
+                    'xverifyv2' => $xverifyAadhaar
+
+                ])->post(env('MUFFINPAY_URL') . '/kyc/submit', $aadhaarPayload);
+
+                $aadhaarData = $aadhaarResponse->json();
+
+                Log::info('MufinPay Aadhaar KYC Payload', $aadhaarPayload);
+                Log::info('MufinPay Aadhaar KYC Response', $aadhaarData);
+            }
             try {
                 $member = \App\Models\Member::find($member->id);
                 $mobile = $member->member_info_mobile_no;
@@ -482,7 +605,7 @@ class MemberController extends Controller
 
             $method = 'PUT';
             // $banks = Bank::all();
-             $banks = Bank::pluck('name', 'id');
+            $banks = Bank::pluck('name', 'id');
 
             $memberModel = Member::with('address', 'kyc')->findOrFail($id);
 
@@ -612,7 +735,7 @@ class MemberController extends Controller
 
                 // KYC Info
 
-                 'member_kyc_aadhaar_no' => [
+                'member_kyc_aadhaar_no' => [
                     'nullable',
                     'digits:12',
                     'regex:/^[2-9]{1}[0-9]{11}$/',
@@ -626,7 +749,7 @@ class MemberController extends Controller
                 // ],
                 'member_kyc_voter_id_no' => 'nullable|string|regex:/^[A-Za-z0-9]+$/|unique:kyc_and_nominees,member_kyc_voter_id_no',
 
-                   'member_kyc_pan_no' => [
+                'member_kyc_pan_no' => [
                     'nullable',
                     'string',
                     'regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
@@ -1404,7 +1527,7 @@ class MemberController extends Controller
         foreach ($dueCharges as $charge) {
             $charge->total_amount = $charge->charges * (1 + $charge->gst_rate / 100);
         }
-        $gstRate = 18.0; 
+        $gstRate = 18.0;
 
         $totalChargesDue = $dueCharges->sum('charges');
 

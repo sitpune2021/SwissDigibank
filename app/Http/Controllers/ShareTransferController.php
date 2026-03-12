@@ -96,7 +96,8 @@ class ShareTransferController extends Controller
                 'promoter' => $promoter,
                 'members' => $members,
                 'selectedMember' => $selectedMember,
-                 'shareholding' => $shareholding
+                 'shareholding' => $shareholding,
+                 'shareTransfer' => null
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Log::error("ModelNotFoundException in transferForm method.", ['exception' => $e->getMessage()]);
@@ -196,14 +197,17 @@ class ShareTransferController extends Controller
                 'member_id' => $validated['member_id']
             ]);
 
-            return redirect()->route('shareholding', ['id' => $validated['member_id']])
+            // return redirect()->route('shareholding', ['id' => $validated['member_id']])
+            //     ->with('success', 'Share transfer successfully added. Please approve it.');
+            return redirect()->route('share-transfer-approval.approve_transfer')
+            //return redirect()->route('shares-transfer.index')
                 ->with('success', 'Share transfer successfully added. Please approve it.');
         } catch (\Exception $e) {
             Log::error('Share Transfer Failed', [
                 'error_message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return redirect()->route('shares-transfer.index')->with('error', 'Something wrong! Please try again');
+            return redirect()->route('shares-transfer.index')->with('error', 'Not enough shares available for this transfer.');
         }
     }
 
@@ -259,7 +263,8 @@ class ShareTransferController extends Controller
         $selectedMember = Member::find($shareholding->member_id);
 
         return view('members.shares-transfer.create', [
-            'shareholding' => $shareholding,
+            //'shareholding' => $shareholding,
+            'shareTransfer' => $shareholding,
             'members' => $members,
             'promoter' => $promoter,
             'selectedMember' => $selectedMember

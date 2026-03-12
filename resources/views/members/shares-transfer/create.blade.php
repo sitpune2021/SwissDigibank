@@ -32,7 +32,7 @@
 
         <div class="box mb-4 xxxl:mb-6">
             
-            <form action="{{ isset($shareholding) 
+            <!-- <form action="{{ isset($shareholding) 
                 ? route('shares-transfer.update',$shareholding->id) 
                 : route('shares.allocate') }}" 
                 method="POST">
@@ -40,7 +40,18 @@
 
                 @if (isset($shareholding) && empty($show))
                     @method('PUT')
-                @endif
+                @endif -->
+
+                <form action="{{ $shareTransfer 
+        ? route('shares-transfer.update', $shareTransfer->id) 
+        : route('shares.allocate') }}" 
+        method="POST">
+
+@csrf
+
+@if($shareTransfer)
+    @method('PUT')
+@endif
 
                 @php $isView = !empty($show); @endphp
                 <div class="col-span-2 md:col-span-1">
@@ -135,7 +146,7 @@
                 <div class="col-span-2 md:col-span-1">
                     <label for="share_no" class="md:text-lg font-medium block mb-4">SHARES<span
                             class="text-red-500">*</span></label>
-                    <input name="share_no" id="share_no" value="{{ old('share_no', $shareholding->shares ?? 0) }}"
+                    <input name="share_no" id="share_no" value="{{ old('share_no', $shareTransfer->shares ?? 0) }}"
                         class=" w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Enter Last Share No" @if ($isView) disabled @endif>
 
@@ -208,6 +219,7 @@
                     </a>
                 </div>
             </form>
+
         </div>
     </div>
 

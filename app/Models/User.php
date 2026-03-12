@@ -34,7 +34,8 @@ class User extends Authenticatable
         'back_edate_days',
         'emp_id',
         'otp',
-        'otp_expires_at'
+        'otp_expires_at',
+        'muf_user_id'
     ];
 
     protected $casts = [
@@ -63,7 +64,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Branch::class, 'branche_id');
     }
-    
+
     public function companyCertificates()
     {
         return $this->hasOne(CompanyCertificate::class);
@@ -76,7 +77,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Address::class, 'member_id', 'id');
     }
-    
+
     /* ================= Permission Logic ================= */
     public function isSuperAdmin(): bool
     {
@@ -92,6 +93,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
-
-
 }
