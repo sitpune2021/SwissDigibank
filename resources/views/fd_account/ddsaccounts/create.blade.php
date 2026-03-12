@@ -202,7 +202,6 @@
                                 @endif
                             @endforeach
 
-
                         </select>
                         @error('scheme_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -216,7 +215,7 @@
                         </label>
                         <input type="number" id="dd_amount" name="dd_amount"
                             class="w-full text-sm bg-secondary/5 dark:bg-bg3 border 
-        border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
+                            border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                             placeholder="Enter DD Amount" value="">
                         <x-number-to-word for="dd_amount" />
                         @error('dd_amount')

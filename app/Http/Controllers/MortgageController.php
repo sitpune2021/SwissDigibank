@@ -41,7 +41,7 @@ class MortgageController extends Controller
 
     public function store(Request $request)
     {
-        Log::info('personal Scheme Store Started', [
+        Log::info('Mortgage Scheme Store Started', [
             'input' => $request->all(),
             'user_id' => Auth::id(),
         ]);
@@ -56,9 +56,9 @@ class MortgageController extends Controller
             'annual_interest_rate' => 'required|numeric|min:0',
             'is_active' => 'required|in:0,1',
             // property
-            'properties' => 'required|array|min:1',
-            'properties.*.property_type' => 'required|string',
-            'properties.*.expected_value' => 'required|numeric|min:1',
+            // 'properties' => 'required|array|min:1',
+            // 'properties.*.property_type' => 'required|string',
+            // 'properties.*.expected_value' => 'required|numeric|min:1',
 
             // optional numeric fields (these will be saved if present)
             'overdue_interest_rate' => 'nullable|numeric',
@@ -81,9 +81,9 @@ class MortgageController extends Controller
             'tenure.required' => 'Tenure type is required.',
             'annual_interest_rate.required' => 'Annual interest rate is required.',
             'max_loan_amount.max' => 'Maximum loan amount cannot exceed ₹2,00,000.',
-            'properties.*.property_type.required' => 'Property Type is required.',
-            'properties.*.expected_value.required' => 'Expected Value is required.',
-            'properties.*.expected_value.numeric' => 'Expected Value must be number.',
+            // 'properties.*.property_type.required' => 'Property Type is required.',
+            // 'properties.*.expected_value.required' => 'Expected Value is required.',
+            // 'properties.*.expected_value.numeric' => 'Expected Value must be number.',
         ]);
 
         try {
