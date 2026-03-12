@@ -785,6 +785,12 @@ class ApproveController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            Log::info('Approval Update Called', [
+                'id' => $id,
+                'source_table' => $request->input('source_table'),
+                'status' => $request->input('transaction_status'),
+            ]);
+
             $sourceTable = $request->input('source_table');
 
             $status = $request->input('transaction_status');
