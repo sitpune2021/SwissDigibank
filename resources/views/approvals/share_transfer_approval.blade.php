@@ -53,7 +53,7 @@
                             </td>
                         </tr>
 
-                        @foreach ($pending_transactions as $pending_transaction)
+                        @foreach ($share_transfers as $pending_transaction)
                             <tr class="even:bg-secondary/5 dark:even:bg-bg3">
 
                                 <td class="py-5 px-6">
@@ -139,7 +139,7 @@
 
         </div>
 
-        <x-pagination :paginator="$pending_transactions" />
+        <x-pagination :paginator="$share_transfers" />
 
     </div>
 @endsection
