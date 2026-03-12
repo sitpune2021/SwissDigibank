@@ -633,43 +633,43 @@ class ApproveController extends Controller
             Log::info('FD Principal Pending Query');
 
             $misInitialDepositQuery = DB::table('mis_transactions')
-    ->select(
-        'mis_transactions.id',
-        DB::raw("'mis_transactions' AS source_table"),
-        'mis_transactions.pay_mode AS payment_mode',
-        'mis_transactions.amount AS amount',
-        DB::raw("NULL AS bank_name"),
-        'mis_transactions.approve_status AS approve_status',
-        'mis_transactions.created_at',
-        'branches.branch_name',
-        'misaccounts.mis_account_no AS account_no',
-        DB::raw("'MIS Account' AS account_type"),
-        DB::raw("'-' AS account_holder_type"),
-        DB::raw("NULL AS firm_name"),
-        'branches.id AS branch_id',
-        'misaccounts.member_id AS member_id',
-        DB::raw("'Active' AS account_status"),
-        DB::raw("'MIS Initial Deposit' AS transaction_type")
-    )
-    ->join(
-        'misaccounts',
-        'misaccounts.id',
-        '=',
-        'mis_transactions.misaccount_id'
-    )
-    ->join(
-        'branches',
-        'branches.id',
-        '=',
-        'misaccounts.branch_id'
-    )
-    ->where('mis_transactions.remark', '=', 'Initial Deposit')
-    ->where(function ($q) {
-        $q->whereNull('mis_transactions.approve_status')
-          ->orWhere('mis_transactions.approve_status', 'pending');
-    });
+                ->select(
+                    'mis_transactions.id',
+                    DB::raw("'mis_transactions' AS source_table"),
+                    'mis_transactions.pay_mode AS payment_mode',
+                    'mis_transactions.amount AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'mis_transactions.approve_status AS approve_status',
+                    'mis_transactions.created_at',
+                    'branches.branch_name',
+                    'misaccounts.mis_account_no AS account_no',
+                    DB::raw("'MIS Account' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'misaccounts.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'MIS Initial Deposit' AS transaction_type")
+                )
+                ->join(
+                    'misaccounts',
+                    'misaccounts.id',
+                    '=',
+                    'mis_transactions.misaccount_id'
+                )
+                ->join(
+                    'branches',
+                    'branches.id',
+                    '=',
+                    'misaccounts.branch_id'
+                )
+                ->where('mis_transactions.remark', '=', 'Initial Deposit')
+                ->where(function ($q) {
+                    $q->whereNull('mis_transactions.approve_status')
+                        ->orWhere('mis_transactions.approve_status', 'pending');
+                });
 
-Log::info('MIS Initial Deposit Pending Query');
+            Log::info('MIS Initial Deposit Pending Query');
 
 
             // ️UNION ALL
@@ -1012,8 +1012,6 @@ Log::info('MIS Initial Deposit Pending Query');
                                 'status' => 'Paid',
                                 'updated_at' => now()
                             ]);
-
-                       
                     }
 
                     DB::commit();
