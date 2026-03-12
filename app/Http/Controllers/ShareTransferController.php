@@ -203,7 +203,7 @@ class ShareTransferController extends Controller
                 'error_message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return redirect()->route('shares-transfer.index')->with('error', 'Something wrong! Please try again');
+            return redirect()->route('shares-transfer.index')->with('error', 'Not enough shares available for this transfer.');
         }
     }
 
