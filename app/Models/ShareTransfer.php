@@ -3,10 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ShareTransfer extends Model
 {
+
+
+   use SoftDeletes;
+
+    protected $dates = ['deleted_at'];
+
    protected $table = "share_transfer";
+
    protected $fillable = [
       'transferor_id',
       'member_id',
@@ -33,5 +41,6 @@ class ShareTransfer extends Model
    {
       return $this->belongsTo(Promotor::class, 'transferor_id');
    }
+
    
 }

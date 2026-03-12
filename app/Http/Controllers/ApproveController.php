@@ -157,6 +157,30 @@ class ApproveController extends Controller
                 ->join('branches', 'branches.id', '=', 'misaccounts.branch_id')
                 ->where('misaccounts.status', '=', 1)
                 ->where('misaccounts.foreclose_status', '=', 1); // request raised
+
+            $fdForeclosureQuery = DB::table('fd_accounts')
+                ->select(
+                    'fd_accounts.id',
+                    DB::raw("'fd_accounts' AS source_table"),
+                    DB::raw("'Cash' AS payment_mode"),
+                    'fd_accounts.foreclose_final_amount AS amount',
+                    DB::raw("NULL AS bank_name"),
+                    'fd_accounts.status AS approve_status',
+                    DB::raw("COALESCE(fd_accounts.foreclose_request_date, fd_accounts.created_at) AS created_at"),
+                    'branches.branch_name',
+                    'fd_accounts.fd_no AS account_no',
+                    DB::raw("'FD' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'fd_accounts.member_id AS member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'FD Foreclosure' AS transaction_type")
+                )
+                ->join('branches', 'branches.id', '=', 'fd_accounts.branch_id')
+                ->where('fd_accounts.status', '=', 1)
+                ->where('fd_accounts.foreclose_status', '=', 1); // request raised
+
             $ccOdForeclosureQuery = DB::table('cc_od_loan_fore_closures')
                 ->select(
                     'cc_od_loan_fore_closures.id',
@@ -702,6 +726,7 @@ class ApproveController extends Controller
                 ->unionAll($membershipQuery)
                 ->unionAll($foreclosureQuery)
                 ->unionAll($misForeclosureQuery)
+                ->unionAll($fdForeclosureQuery)
                 ->unionAll($goldLoanEmiQuery)
                 ->unionAll($mortgageEmiQuery)
                 ->unionAll($loanAgainstEmiQuery)
@@ -1065,6 +1090,52 @@ class ApproveController extends Controller
                     DB::commit();
 
                     return back()->with('success', 'MIS Foreclosure updated successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'fd_accounts') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $fd = DB::table('fd_accounts')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$fd) {
+                        DB::rollBack();
+                        return back()->with('error', 'FD account not found.');
+                    }
+
+                    if ($status === 'approved') {
+
+                        DB::table('fd_accounts')
+                            ->where('id', $id)
+                            ->update([
+                                'foreclose_status' => 2, // approved
+                                'status' => 3, // closed
+                                'close_date' => now(),
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    if ($status === 'disapproved') {
+
+                        DB::table('fd_accounts')
+                            ->where('id', $id)
+                            ->update([
+                                'foreclose_status' => 3, // rejected
+                                'updated_at' => now()
+                            ]);
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'FD Foreclosure updated successfully.');
                 } catch (\Exception $e) {
 
                     DB::rollBack();

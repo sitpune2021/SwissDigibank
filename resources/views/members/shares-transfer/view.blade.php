@@ -30,15 +30,29 @@
                             <button type="button"
                                 class=" p-2 btn-primary"
                                 title="Edit">
-                                <i class="las la-pencil-alt"></i>
+                                <a href="{{ route('shares-transfer.edit',$shareholding->id) }}">                                  
+                                    <i class="las la-pencil-alt"></i>    
+                                </a>
                             </button>
 
                             <!-- Delete -->
-                            <button
-                                class="p-2 btn-error"
-                                title="Delete">
-                                <i class="las la-trash-alt "></i>
-                            </button>
+                            <form action="{{ route('shares-transfer.destroy',$shareholding->id) }}" 
+                                method="POST" 
+                                style="display:inline">
+
+                                @csrf
+                                @method('DELETE')
+
+                                <button 
+                                    class="p-2 btn-error"
+                                    title="Delete"
+                                    onclick="return confirm('Are you sure you want to delete this record?')">
+
+                                <i class="las la-trash-alt"></i>
+
+                                </button>
+
+                            </form>
                         </div>
                     </div>
 
@@ -51,7 +65,7 @@
                                     <a href="{{ route('member.show', $shareholding->members->id) }}"
                                         class="text-primary hover:underline">
                                         {{ $shareholding->members->member_no
-        ?? ($shareholding->members->id ? str_pad($shareholding->members->id, 6, '0', STR_PAD_LEFT) : 'N/A') }} -
+                                        ?? ($shareholding->members->id ? str_pad($shareholding->members->id, 6, '0', STR_PAD_LEFT) : 'N/A') }} -
                                         {{ $shareholding->members->member_info_first_name ?? '' }}
                                         {{ $shareholding->members->member_info_middle_name }}
                                         {{ $shareholding->members->member_info_last_name }}

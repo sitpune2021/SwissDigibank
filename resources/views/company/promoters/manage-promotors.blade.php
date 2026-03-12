@@ -139,6 +139,7 @@
                             'id' => base64_encode($promotor->id),
                             'viewRoute' => 'promotor.show',
                             'editRoute' => 'promotor.edit',
+                            'deleteRoute' => 'promotor.destroy',
                             ])
                         </div>
                     </td>

@@ -28,137 +28,262 @@
             </form>
         </div>
 
-
-    <div class="box mt-5">
-
-        <div class="text-end  mb-3 no-print">
-            <a href="{{ route('balance.sheet.print',['branch_id'=>$branchId]) }}" 
-                target="_blank"
-                class="btn btn-dark btn-primary text-sm rounded-10 px-4 py-2 uppercase">
-                <i class="las la-print"></i> Print
-            </a>
-        </div>
-
-        <h3 class="mb-4 text-center text-lg uppercase mt-5">
-            Balance Sheet as on {{ $today->format('d-m-Y') }}
-        </h3>
-
         <style>
-        #printArea table{
+
+        .balance-wrapper{
         width:100%;
-        table-layout: fixed;
+        padding:20px 30px;
         }
 
-        #printArea th,
-        #printArea td{
-        padding:10px;
+        /* CARD */
+
+        .balance-card{
+        background:#ffffff;
+        border-radius:8px;
+        box-shadow:0 2px 10px rgba(0,0,0,0.05);
+        padding:25px;
+        }
+
+        /* TABLE */
+
+        .balance-table{
+        width:100%;
+        border-collapse:collapse;
+        font-size:14px;
+        }
+
+        .balance-table thead th{
+        background:#f4f6f9;
+        padding:12px 14px;
+        border-bottom:2px solid #dcdcdc;
+        font-weight:600;
+        text-align:left;
+        }
+
+        .balance-table thead th:nth-child(2),
+        .balance-table thead th:nth-child(3){
+        text-align:right;
+        }
+
+        /* ROWS */
+
+        .balance-table td{
+        padding:10px 14px;
+        border-bottom:1px solid #eee;
+        }
+
+        .balance-table td:nth-child(2),
+        .balance-table td:nth-child(3){
+        text-align:right;
+        font-weight:500;
+        }
+
+        /* SECTION TITLE */
+
+        .section-title{
+        background:#f1f3f5;
+        color:#2c6fb7;
+        font-weight:700;
         font-size:15px;
         }
 
-        .card{
-        width:100%;
+        /* TOTAL ROW */
+
+        .total-row{
+        background:#eef3ff;
+        font-weight:700;
+        border-top:2px solid #cfd8ff;
         }
 
-        .card-body{
-        padding:0;
+        /* HOVER */
+
+        .balance-table tbody tr:hover{
+        background:#f9fbff;
         }
 
-        /* Highlight headings */
-        .section-head{
-        background:#343a40;
-        color:#fff;
-        font-weight:bold;
+        /* STICKY HEADER */
+
+        .balance-table thead{
+        position:sticky;
+        top:0;
+        z-index:10;
+        }
+
+        /* MOBILE */
+
+        @media (max-width:768px){
+
+        .balance-wrapper{
+        padding:10px;
+        }
+
+        .balance-card{
+        padding:15px;
+        }
+
+        .balance-table{
+        font-size:12px;
+        }
+
+        .balance-table th,
+        .balance-table td{
+        padding:8px;
+        }
+
+        .balance-title{
         font-size:16px;
         }
 
-        /* Highlight totals */
-        .total-row{
-        background:#e9ecef;
-        font-weight:bold;
         }
+
         </style>
 
-        <div class="card w-100">
-            <div class="card-body">
 
-                <div class="table-responsive" id="printArea">
-                    <table class="table table-bordered mb-0 w-100">
+        <div class="balance-wrapper">
 
-                        <thead class="table-light">
-                            <tr>
-                                <th class="px-4 py-2">PARTICULARS</th>
-                                <th class="text-end px-4 py-2">AMOUNT</th>
-                            </tr>
-                        </thead>
+            <div class="balance-card">
 
-                        <tbody>
+                <div class="flex justify-end mb-4 no-print">
 
-                            {{-- EQUITY --}}
-                            <tr class="total-row">
-                            <td colspan="2">EQUITY</td>
-                            </tr>
+                    <a href="{{ route('balance.sheet.print',['branch_id'=>$branchId]) }}" 
+                    target="_blank"
+                    class="bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md px-4 py-2 flex items-center gap-2">
 
-                            @foreach($equities as $equity)
-                            <tr>
-                            <td class="px-4">{{ strtoupper($equity['name']) }}</td>
-                            <td class="text-end px-4">{{ number_format($equity['amount'],2) }}</td>
-                            </tr>
-                            @endforeach
+                    <i class="las la-print"></i> Print
 
-                            <tr class="">
-                            <td class="px-4">CURRENT YEAR PROFIT</td>
-                            <td class="text-end px-4">{{ number_format($netProfit,2) }}</td>
-                            </tr>
+                    </a>
 
-                            <tr class="" style="background-color: antiquewhite;">
-                            <td class="px-4">TOTAL EQUITY</td>
-                            <td class="text-end px-4">{{ number_format($totalEquity,2) }}</td>
-                            </tr>
+                </div>
 
-                            {{-- LIABILITIES --}}
-                            <tr class="total-row">
-                            <td colspan="2">LIABILITIES</td>
-                            </tr>
 
-                            @foreach($liabilities as $liability)
-                            <tr>
-                            <td class="px-4">{{ strtoupper($liability['name']) }}</td>
-                            <td class="text-end px-4">{{ number_format($liability['amount'],2) }}</td>
-                            </tr>
-                            @endforeach
+                <div class="max-w-7xl mx-auto p-6 bg-gray-50 rounded-xl shadow-sm">
 
-                            <tr class="total-row" style="background-color: antiquewhite;">
-                            <td class="px-4">TOTAL LIABILITIES</td>
-                            <td class="text-end px-4">{{ number_format($totalLiabilities,2) }}</td>
-                            </tr>
+                    <h3 class="text-center text-xl font-semibold mb-8 text-gray-700">
+                        Balance Sheet for the period
+                        <span class="block text-blue-500 text-sm mt-1">
+                        01/04/{{ date('Y') }} to {{ $today->format('d/m/Y') }}
+                        </span>
+                    </h3>
 
-                            {{-- ASSETS --}}
-                            <tr class="total-row">
-                            <td colspan="2">ASSETS</td>
-                            </tr>
+                    <!-- TWO COLUMNS: LEFT = Liabilities+Equity, RIGHT = Assets -->
+                    <div class="flex flex-col lg:flex-row gap-8">
 
-                            @foreach($assets as $asset)
-                            <tr>
-                            <td class="px-4">{{ strtoupper($asset['name']) }}</td>
-                            <td class="text-end px-4">{{ number_format($asset['amount'],2) }}</td>
-                            </tr>
-                            @endforeach
+                        <!-- LEFT COLUMN -->
+                        <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-4" style="width: stretch;">
 
-                            <tr class="total-row" style="background-color: antiquewhite;">
-                            <td class="px-4">TOTAL ASSETS</td>
-                            <td class="text-end px-4">{{ number_format($totalAssets,2) }}</td>
-                            </tr>
+                        <h4 class="font-semibold text-gray-600 text-center mb-4 tracking-wide">
+                            LIABILITIES & EQUITY
+                        </h4>
 
-                        </tbody>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
 
-                    </table>
+                            <thead class="bg-gray-50 text-gray-600">
+                                <tr>
+                                <th class="text-left p-3">PARTICULARS</th>
+                                <th class="text-right p-3">CURRENT</th>
+                                <th class="text-right p-3">PREVIOUS</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="text-gray-700">
+
+                                <!-- EQUITY -->
+                                <tr class="bg-blue-100 text-blue-800 font-semibold" style="background-color: wheat;">
+                                    <td class="p-3" colspan="3">EQUITY</td>
+                                </tr>
+
+                                @foreach($equities as $equity)
+                                <tr class="border-b hover:bg-gray-50">
+                                <td class="p-3">{{ strtoupper($equity['name']) }}</td>
+                                <td class="p-3 text-right">{{ number_format($equity['current'],2) }}</td>
+                                <td class="p-3 text-right">{{ number_format($equity['previous'],2) }}</td>
+                                </tr>
+                                @endforeach
+
+                                <tr class="font-semibold bg-gray-50">
+                                <td class="p-3">TOTAL EQUITY</td>
+                                <td class="p-3 text-right">{{ number_format($totalEquity,2) }}</td>
+                                <td></td>
+                                </tr>
+
+                                <!-- LIABILITIES -->
+                                <tr class="bg-blue-200 font-semibold" style="background-color: wheat;">
+                                    <td class="p-3" colspan="3">LIABILITIES</td>
+                                </tr>
+
+                                @foreach($liabilities as $liability)
+                                <tr class="border-b hover:bg-gray-50">
+                                <td class="p-3">{{ strtoupper($liability['name']) }}</td>
+                                <td class="p-3 text-right">{{ number_format($liability['current'],2) }}</td>
+                                <td class="p-3 text-right">{{ number_format($liability['previous'],2) }}</td>
+                                </tr>
+                                @endforeach
+
+                                <tr class="font-semibold bg-gray-50">
+                                <td class="p-3">TOTAL LIABILITIES</td>
+                                <td class="p-3 text-right">{{ number_format($totalLiabilities,2) }}</td>
+                                <td></td>
+                                </tr>
+
+                            </tbody>
+                            </table>
+                        </div>
+
+                        </div>
+
+                        <!-- RIGHT COLUMN -->
+                        <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-4" style="width: stretch;">
+
+                        <h4 class="font-semibold text-gray-600 text-center mb-4 tracking-wide">
+                            ASSETS
+                        </h4>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+
+                            <thead class="bg-gray-50 text-gray-600">
+                                <tr>
+                                <th class="text-left p-3">PARTICULARS</th>
+                                <th class="text-right p-3">CURRENT</th>
+                                <th class="text-right p-3">PREVIOUS</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="text-gray-700">
+
+                                <tr class="bg-green-100 text-green-800 font-semibold" style="background-color: wheat;">
+                                    <td class="p-3" colspan="3">ASSETS</td>
+                                </tr>
+
+                                @foreach($assets as $asset)
+                                <tr class="border-b hover:bg-gray-50">
+                                <td class="p-3">{{ strtoupper($asset['name']) }}</td>
+                                <td class="p-3 text-right">{{ number_format($asset['current'],2) }}</td>
+                                <td class="p-3 text-right">{{ number_format($asset['previous'],2) }}</td>
+                                </tr>
+                                @endforeach
+
+                                <tr class="font-semibold bg-gray-50">
+                                <td class="p-3">TOTAL ASSETS</td>
+                                <td class="p-3 text-right">{{ number_format($totalAssets,2) }}</td>
+                                <td></td>
+                                </tr>
+
+                            </tbody>
+                            </table>
+                        </div>
+
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>
-        </div>
-    
-    </div>
 
+        </div>
+       
 </div>
 
 

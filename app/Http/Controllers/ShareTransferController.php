@@ -13,9 +13,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class ShareTransferController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
+
     public function index()
     {
         try {
@@ -48,14 +47,21 @@ class ShareTransferController extends Controller
         }
     }
 
-
     public function transferForm(Request $request)
     {
         $memberId = $request->input('member_id');
         try {
             Log::debug("Starting transferForm method.", ['memberId' => $memberId]);
 
-            $members = Member::pluck('member_info_first_name', 'id');
+            //$members = Member::pluck('member_info_first_name', 'id');
+            $members = Member::get()->mapWithKeys(function ($member) {
+                $fullName = $member->member_info_first_name . ' ' .
+                            $member->member_info_middle_name . ' ' .
+                            $member->member_info_last_name;
+
+                return [$member->id => $fullName];
+            });
+            
             Log::debug("Fetched members info.", ['members_count' => $members->count()]);
 
             $promoterId = Promotor::where('is_transfer', 1)->value('id');
@@ -69,17 +75,28 @@ class ShareTransferController extends Controller
             $promoter = Shareholding::with('promotor')->where('promotor_id', $promoterId)->first();
             Log::debug("Promoter and Shareholding fetched.", ['promoter_id' => $promoterId]);
 
-            $selectedMember = $memberId ? Member::find($memberId) : null;
+            $shareholding = Shareholding::where('promotor_id', $promoterId)->first();
+
+            $selectedMember = null;
+
+            if ($memberId) {
+                $selectedMember = Member::find($memberId);
+            } elseif ($shareholding && $shareholding->member_id) {
+                $selectedMember = Member::find($shareholding->member_id);
+            }
+
             if ($selectedMember) {
                 Log::debug("Selected member fetched.", ['member_id' => $selectedMember->id, 'member_name' => $selectedMember->member_info_first_name]);
             } else {
                 Log::debug("No member selected or member not found.", ['memberId' => $memberId]);
             }
+            
             // dd($memberId);
             return view('members.shares-transfer.create', [
                 'promoter' => $promoter,
                 'members' => $members,
-                'selectedMember' => $selectedMember
+                'selectedMember' => $selectedMember,
+                 'shareholding' => $shareholding
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Log::error("ModelNotFoundException in transferForm method.", ['exception' => $e->getMessage()]);
@@ -190,7 +207,6 @@ class ShareTransferController extends Controller
         }
     }
 
-
     public function show(string $id)
     {
         try {
@@ -230,27 +246,73 @@ class ShareTransferController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $shareholding = ShareTransfer::findOrFail($id);
+
+        $members = Member::pluck('member_info_first_name', 'id');
+
+        $promoter = Shareholding::with('promotor')
+            ->where('id', $shareholding->transferor_id)
+            ->first();
+
+        $selectedMember = Member::find($shareholding->member_id);
+
+        return view('members.shares-transfer.create', [
+            'shareholding' => $shareholding,
+            'members' => $members,
+            'promoter' => $promoter,
+            'selectedMember' => $selectedMember
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'transferor_id'       => 'required',
+            'member_id'           => 'required',
+            'business_type'       => 'required',
+            'allotment_date'      => 'required|date',
+            'share_no'            => 'required|integer|min:1',
+            'share_nominal'       => 'required|numeric|min:0',
+            'total_consideration' => 'required|numeric|min:0',
+        ]);
+
+        $shareTransfer = ShareTransfer::findOrFail($id);
+
+        $shareTransfer->update([
+            'transferor_id'       => $validated['transferor_id'],
+            'member_id'           => $validated['member_id'],
+            'business_type'       => $validated['business_type'],
+            'transfer_date'       => \Carbon\Carbon::createFromFormat('d-m-Y', $validated['allotment_date'])->format('Y-m-d'),
+            'shares'              => $validated['share_no'],
+            'face_value'          => $validated['share_nominal'],
+            'total_consideration' => $validated['total_consideration'],
+        ]);
+
+        return redirect()->route('shares-transfer.index')
+            ->with('success', 'Share transfer updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+   
+    public function destroy($id)
     {
-        //
+        try {
+
+            $shareTransfer = ShareTransfer::findOrFail($id);
+
+            $shareTransfer->delete(); // soft delete
+
+            return redirect()->route('shares-transfer.index')
+                ->with('success', 'Share transfer deleted successfully');
+
+        } catch (\Exception $e) {
+
+            return redirect()->route('shares-transfer.index')
+                ->with('error', 'Unable to delete record');
+
+        }
     }
+
+
 }
