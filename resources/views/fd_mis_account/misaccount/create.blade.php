@@ -256,7 +256,7 @@ $misaccount->name . ' MIS ACCOUNT') : 'ADD MIS ACCOUNT')
 
                     @if (!isset($misaccount))
                     <!-- Show Tenure fields ONLY in Create form -->
-                    <div class="col-span-2 md:col-span-1">
+                    <!-- <div class="col-span-2 md:col-span-1">
                         <label for="" class="md:text-lg font-medium block mb-4 uppercase">
                             Tenure Period
                             <span class="text-red-500">*</span>
@@ -269,10 +269,10 @@ $misaccount->name . ' MIS ACCOUNT') : 'ADD MIS ACCOUNT')
                             <input type="number" name="tenure_day" placeholder="Days"
                                 class="w-full md:w-1/3 border bg-secondary/5 rounded-10 px-3 py-3">
                         </div>
-                    </div>
+                    </div> -->
                     @else
                     <!-- Show another div ONLY in Edit form -->
-                    <div class="col-span-2 md:col-span-1">
+                    <!-- <div class="col-span-2 md:col-span-1">
                         <label for="" class="md:text-lg font-medium block mb-4">
 
                         </label>
@@ -281,9 +281,9 @@ $misaccount->name . ' MIS ACCOUNT') : 'ADD MIS ACCOUNT')
 
                             </p>
                         </div>
-                    </div>
+                    </div> -->
                     @endif
-                    @error('tenure_year')
+                    <!-- @error('tenure_year')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                     @error('tenure_month')
@@ -291,7 +291,7 @@ $misaccount->name . ' MIS ACCOUNT') : 'ADD MIS ACCOUNT')
                     @enderror
                     @error('tenure_day')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
+                    @enderror -->
 
                     <div class="col-span-2 md:col-span-1">
                         <label for="misAmount" class="md:text-lg font-medium block mb-4 uppercase">

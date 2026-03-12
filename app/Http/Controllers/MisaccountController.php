@@ -26,6 +26,8 @@ use Illuminate\Validation\ValidationException;
 
 class MisaccountController extends Controller
 {
+
+
     public function index()
     {
         $misaccounts = MisAccount::orderBy('id', 'desc')->get();
