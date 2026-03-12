@@ -171,8 +171,10 @@ class PromotorController extends Controller
                 'credited' => 'nullable|in:yes,no',
 
             ]);
-            // ✅ Count only active (non-deleted) promotors
-            $promotorCount = Promotor::count(); // soft deleted automatically excluded
+            // Count only active (non-deleted) promotors
+            //$promotorCount = Promotor::count(); // soft deleted automatically excluded
+            // Count only active promotors (soft deleted exclude)
+            $promotorCount = Promotor::whereNull('deleted_at')->count();
 
             if ($promotorCount >= 11) {
                 return redirect()->back()
@@ -187,7 +189,7 @@ class PromotorController extends Controller
                 // Store promotor
                 $promotor = Promotor::create([
                     'enrollment_date' => $validated['enrollment_date'],
-                    'member_id' => $validated['member_id'], // ✅ ADD THIS
+                    'member_id' => $validated['member_id'], 
                     'title' => $validated['title'],
                     'gender' => $validated['gender'],
                     'first_name' => $validated['first_name'],
@@ -631,10 +633,15 @@ class PromotorController extends Controller
     public function destroy($id)
     {
         try {
-            $branch = Promotor::findOrFail($id);
-            $branch->delete();
 
-            return redirect()->route('promotor.index')->with('success', 'Branch deleted successfully.');
+            $id = base64_decode($id);
+
+            $promotor = Promotor::findOrFail($id);
+            $promotor->delete();
+
+            return redirect()->route('promotor.index')
+                ->with('success', 'Promotor deleted successfully.');
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }

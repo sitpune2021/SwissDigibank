@@ -102,15 +102,12 @@
 
             @php
 
-            $promotor = $member->promotor->first(); // get first promoter record
+                $shareAmount = $member->promotor?->shareHoldings?->sum('amount') ?? 0;
 
-            $shareAmount = $promotor
-            ? $promotor->shareHoldings->sum('amount')
-            : 0;
-
-            $totalBalance += $shareAmount; 
+                $totalBalance += $shareAmount; 
 
             @endphp
+
             <tr>
                 <td>{{ $key + 1 }}</td>
 

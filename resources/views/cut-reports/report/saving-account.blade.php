@@ -5,7 +5,7 @@
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h3 class=" flex text-lg block  uppercase font-semibold">
-                Reports - Saving Accounts
+                Reports - Current / Saving Accounts
             </h3>
         </div>
         <div class="col-span-12 box lg:col-span-12">
@@ -35,6 +35,11 @@
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
                                     ACCOUNT NO.
+                                </div>
+                            </th>
+                            <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                <div class="flex items-center gap-1">
+                                    ACCOUNT TYPE
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -72,6 +77,12 @@
                                             </td>
 
                                             <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
+                                                <div class="flex items-center gap-1 uppercase">                   
+                                                        {{ $row->account_type ?? ''}}                                                
+                                                </div>
+                                            </td>
+
+                                            <td class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                                 <div class="flex items-center gap-1 capitalize">
                                                     {{ $row->members->member_info_first_name ?? '' }}
                                                     {{ $row->members->member_info_last_name ?? '' }}
@@ -101,6 +112,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                
             </div>
             <div class="mt-5">
                 <x-pagination :paginator="$account" />
