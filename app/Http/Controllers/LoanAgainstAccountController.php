@@ -755,8 +755,8 @@ class LoanAgainstAccountController extends Controller
             'netAmount',
             'savingAccounts',
             'banks',
-            'documents',
-            'loan'
+            // 'documents',
+            // 'loan'
 
         ));
     }

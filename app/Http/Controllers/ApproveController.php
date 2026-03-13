@@ -3267,89 +3267,114 @@ class ApproveController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        Log::info('--- Update Status Started ---', [
-            'id' => $id,
-            'status' => $request->status,
-            'model_type' => $request->model_type,
+        Log::info('updateStatus() - Request received', [
+            'id'         => $id,
+            'model_type' => $request->input('model_type'),
+            'status'     => $request->input('status'),
+            'remarks'    => $request->input('remarks'),
+            'requested_by' => Auth::id(),
+            'ip'         => $request->ip(),
         ]);
 
-        $modelType = $request->model_type;
-        $status = $request->status;
+        $modelType = $request->input('model_type');
+        $status    = $request->input('status');
+        $remarks   = $request->input('remarks');
 
-        switch ($modelType) {
-            case 'loan':
-                $application = LoanApplication::find($id);
-                break;
+        // Step 1: Resolve model class from model_type
+        $modelMap = [
+            'loan'          => LoanApplication::class,
+            'mortgage'      => MortgageLoanApplication::class,
+            'loan_against'  => LoanAgainstApplication::class,
+            'business_loan' => BusinessLoanApplication::class,
+            'cc_od'         => CcOdLoanApplication::class,
+            'daily_weekly'  => DailyWeeklyApplication::class,
+            'personal'      => PersonalLoanApplication::class,
+            'vehical'       => VehicalApplication::class,
+            'fixed'         => FixedLoanApplication::class,
+        ];
 
-            case 'mortgage':
-                $application = MortgageLoanApplication::find($id);
-                break;
+        $redirectMap = [
+            'loan'          => 'gold-loan.disbursements.index',
+            'mortgage'      => 'mortgage.disbursements.index',
+            'loan_against'  => 'loanagainst.disbursements.index',
+            'business_loan' => 'bussiness.disbursements.index',
+            'cc_od'         => 'cc_od.disbursements.index',
+            'daily_weekly'  => 'daily_weekly.disbursements.index',
+            'personal'      => 'personal.disbursements.index',
+            'vehical'       => 'vehical.disbursements.index',
+            'fixed'         => 'fixed_loan.disbursements.index',
+        ];
 
-            case 'loan_against':
-                $application = LoanAgainstApplication::find($id);
-                break;
-
-            case 'business_loan':
-                $application = BusinessLoanApplication::find($id);
-                break;
-
-            case 'cc_od':
-                $application = CcOdLoanApplication::find($id);
-                break;
-
-            case 'daily_weekly':
-                $application = DailyWeeklyApplication::find($id);
-                break;
-
-            case 'personal':
-                $application = PersonalLoanApplication::find($id);
-                break;
-
-            case 'vehical':
-                $application = VehicalApplication::find($id);
-                break;
-
-            case 'fixed':
-                $application = FixedLoanApplication::find($id);
-                break;
-
-            default:
-                $application = null;
+        // Step 2: Validate model_type
+        if (!array_key_exists($modelType, $modelMap)) {
+            Log::warning('updateStatus() - Invalid model_type received', [
+                'model_type'   => $modelType,
+                'id'           => $id,
+                'requested_by' => Auth::id(),
+            ]);
+            return redirect()->back()->with('error', 'Invalid loan type specified.');
         }
 
-        if ($application) {
+        // Step 3: Find application
+        $modelClass   = $modelMap[$modelType];
+        $application  = $modelClass::find($id);
 
-            $application->status = $status;
-            $application->save();
-
-            /** -------------------------------
-             *  REDIRECT MAP (YAHAN ADD KARNA HAI)
-             * --------------------------------*/
-            $redirectMap = [
-                'loan'          => 'gold-loan.disbursements.index',
-                'mortgage'      => 'mortgage.disbursements.index',
-                'loan_against'  => 'loanagainst.disbursements.index',
-                'business_loan' => 'bussiness.disbursements.index',
-                'cc_od'         => 'cc_od.disbursements.index',
-                'daily_weekly'  => 'daily_weekly.disbursements.index',
-                'personal'      => 'personal.disbursements.index',
-                'vehical'       => 'vehical.disbursements.index',
-                'fixed'       => 'fixed_loan.disbursements.index',
-            ];
-
-            $redirectRoute = $redirectMap[$modelType] ?? null;
-
-            if ($redirectRoute) {
-                return redirect()->route($redirectRoute)
-                    ->with('success', 'Status updated successfully!');
-            }
-
-            return redirect()->back()->with('success', 'Status updated successfully!');
+        if (!$application) {
+            Log::error('updateStatus() - Application not found', [
+                'model_type'   => $modelType,
+                'id'           => $id,
+                'requested_by' => Auth::id(),
+            ]);
+            return redirect()->back()->with('error', 'Application not found!');
         }
 
-        return redirect()->back()->with('error', 'Application not found!');
+        Log::info('updateStatus() - Application found', [
+            'model_type'     => $modelType,
+            'id'             => $id,
+            'current_status' => $application->status,
+            'new_status'     => $status,
+        ]);
+
+        // Step 4: Update status
+        $previousStatus      = $application->status;
+        $application->status = $status;
+
+        if ($remarks) {
+            $application->remarks = $remarks;
+        }
+
+        if (!$application->save()) {
+            Log::error('updateStatus() - Failed to save application', [
+                'model_type'   => $modelType,
+                'id'           => $id,
+                'requested_by' => Auth::id(),
+            ]);
+            return redirect()->back()->with('error', 'Failed to update status. Please try again.');
+        }
+
+        Log::info('updateStatus() - Status updated successfully', [
+            'model_type'      => $modelType,
+            'id'              => $id,
+            'previous_status' => $previousStatus,
+            'new_status'      => $status,
+            'requested_by'    => Auth::id(),
+        ]);
+
+        // Step 5: Redirect to disbursements
+        $redirectRoute = $redirectMap[$modelType] ?? null;
+
+        if ($redirectRoute) {
+            Log::info('updateStatus() - Redirecting to disbursements', [
+                'route'      => $redirectRoute,
+                'model_type' => $modelType,
+                'id'         => $id,
+            ]);
+            return redirect()->route($redirectRoute)
+                ->with('success', 'Status updated successfully!');
+        }
+
+        return redirect()->back()->with('success', 'Status updated successfully!');
     }
-
 
     public function approvals_history()
     {
