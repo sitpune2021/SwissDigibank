@@ -51,7 +51,15 @@
                         </li>
                         <li class="px-4 py-2 hover:bg-gray-100 uppercase cursor-pointer submenu-trigger  "
                             data-submenu="compliancesMenu">
-                            compliances →
+                            Compliances →
+                        </li>
+                        <li class="px-4 py-2 hover:bg-gray-100 uppercase cursor-pointer submenu-trigger  "
+                            data-submenu="legalMenu">
+                            Legal →
+                        </li>
+                        <li class="px-4 py-2 hover:bg-gray-100 uppercase cursor-pointer submenu-trigger  "
+                            data-submenu="niyamakMenu">
+                            niyamak mandal →
                         </li>
                     </ul>
                 </div>
