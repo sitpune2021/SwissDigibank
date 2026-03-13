@@ -2793,17 +2793,24 @@ class ApproveController extends Controller
         }
     }
 
-    // Approve Share Transfer 
+
+    // Approve Share Transfer - LIST PAGE
     public function approveTransfer(Request $request)
     {
         try {
+
             $search = $request->input('search');
+
+            Log::info('approveTransfer() - Fetching pending share transfers', [
+                'search'     => $search,
+                'requested_by' => Auth::id(),
+                'ip'         => $request->ip(),
+            ]);
 
             $share_transfers = ShareTransfer::with('shareholdings.promotor.branch', 'members')
                 ->where('status', '!=', 'approved')
                 ->when($search, function ($query, $search) {
                     $query->where(function ($q) use ($search) {
-                        // Search inside 'members' relationship
                         $q->whereHas('members', function ($q2) use ($search) {
                             $q2->where('member_info_first_name', 'like', "%$search%");
                         })
@@ -2812,43 +2819,170 @@ class ApproveController extends Controller
                     });
                 })
                 ->orderBy('id', 'desc')
-                ->paginate(10); // 10 records per page
+                ->paginate(10);
+
+            Log::info('approveTransfer() - Records fetched successfully', [
+                'total_records'  => $share_transfers->total(),
+                'current_page'   => $share_transfers->currentPage(),
+                'per_page'       => $share_transfers->perPage(),
+                'search_applied' => $search ? true : false,
+            ]);
 
             return view('approvals.share_transfer_approval', compact('share_transfers', 'search'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+
+            Log::error('approveTransfer() - Record not found', [
+                'error'   => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ]);
+
             abort(404);
+        } catch (\Exception $e) {
+
+            Log::error('approveTransfer() - Unexpected error', [
+                'error' => $e->getMessage(),
+                'file'  => $e->getFile(),
+                'line'  => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->with('error', 'Something went wrong while fetching share transfers.');
         }
     }
 
 
+    // Approve Share Transfer - SUBMIT ACTION
     public function approveShareTransfer(Request $request)
     {
+        Log::info('approveShareTransfer() - Request received', [
+            'share_transfer_id' => $request->input('share_transfer_id'),
+            'status'            => $request->input('status'),
+            'remarks'           => $request->input('remarks'),
+            'requested_by'      => Auth::id(),
+            'ip'                => $request->ip(),
+        ]);
+
         try {
+
+            // Step 1: Validate
             $validated = $request->validate([
                 'share_transfer_id' => 'required|exists:share_transfer,id',
                 'status'            => 'required|in:approved,not approve',
                 'remarks'           => 'nullable|string|max:255',
             ]);
 
+            Log::info('approveShareTransfer() - Validation passed', [
+                'share_transfer_id' => $validated['share_transfer_id'],
+                'status'            => $validated['status'],
+            ]);
+
+            // Step 2: Find record
             $transfer = ShareTransfer::with('members')->find($validated['share_transfer_id']);
-            $transfer->status = $validated['status'];
+
+            if (!$transfer) {
+                Log::warning('approveShareTransfer() - ShareTransfer record not found after validation', [
+                    'share_transfer_id' => $validated['share_transfer_id'],
+                ]);
+                return redirect()->back()->with('error', 'Share transfer record not found.');
+            }
+
+            Log::info('approveShareTransfer() - Record found', [
+                'share_transfer_id' => $transfer->id,
+                'current_status'    => $transfer->status,
+                'member_id'         => $transfer->members?->id ?? null,
+                'member_name'       => $transfer->members?->member_info_first_name ?? null,
+            ]);
+
+            // Step 3: Update status
+            $transfer->status  = $validated['status'];
             $transfer->remarks = $validated['remarks'];
 
             if ($validated['status'] === 'approved') {
-
                 $transfer->certificate_number = $transfer->id;
+                Log::info('approveShareTransfer() - Assigning certificate number', [
+                    'share_transfer_id'  => $transfer->id,
+                    'certificate_number' => $transfer->id,
+                ]);
             } else {
                 $transfer->certificate_number = null;
+                Log::info('approveShareTransfer() - Status set to not approve, clearing certificate number', [
+                    'share_transfer_id' => $transfer->id,
+                ]);
             }
 
+            // Step 4: Save transfer
             if ($transfer->save()) {
-                $transfer->members->share_allocated = 1;
-                $transfer->members->save();
+
+                Log::info('approveShareTransfer() - ShareTransfer saved successfully', [
+                    'share_transfer_id' => $transfer->id,
+                    'new_status'        => $transfer->status,
+                ]);
+
+                // Step 5: Update member share_allocated
+                if ($transfer->members) {
+
+                    $transfer->members->share_allocated = 1;
+                    $transfer->members->save();
+
+                    Log::info('approveShareTransfer() - Member share_allocated updated', [
+                        'member_id'       => $transfer->members->id,
+                        'share_allocated' => 1,
+                    ]);
+                } else {
+
+                    Log::warning('approveShareTransfer() - No member found on transfer, share_allocated not updated', [
+                        'share_transfer_id' => $transfer->id,
+                    ]);
+                }
+            } else {
+
+                Log::error('approveShareTransfer() - Failed to save ShareTransfer', [
+                    'share_transfer_id' => $transfer->id,
+                ]);
+
+                return redirect()->back()->with('error', 'Failed to update share transfer. Please try again.');
             }
+
+            Log::info('approveShareTransfer() - Completed successfully', [
+                'share_transfer_id' => $transfer->id,
+                'final_status'      => $transfer->status,
+            ]);
 
             return redirect()->back()->with('success', 'Share transfer updated successfully.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            Log::warning('approveShareTransfer() - Validation failed', [
+                'errors'            => $e->errors(),
+                'share_transfer_id' => $request->input('share_transfer_id'),
+                'status'            => $request->input('status'),
+                'requested_by'      => Auth::id(),
+            ]);
+
+            return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+
+            Log::error('approveShareTransfer() - Model not found', [
+                'share_transfer_id' => $request->input('share_transfer_id'),
+                'error'             => $e->getMessage(),
+                'file'              => $e->getFile(),
+                'line'              => $e->getLine(),
+            ]);
+
             abort(404);
+        } catch (\Exception $e) {
+
+            Log::error('approveShareTransfer() - Unexpected error', [
+                'share_transfer_id' => $request->input('share_transfer_id'),
+                'status'            => $request->input('status'),
+                'error'             => $e->getMessage(),
+                'file'              => $e->getFile(),
+                'line'              => $e->getLine(),
+                'trace'             => $e->getTraceAsString(),
+                'requested_by'      => Auth::id(),
+            ]);
+
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
 
