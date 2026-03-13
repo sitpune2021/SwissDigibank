@@ -2130,4 +2130,6 @@ class GoldLoanController extends Controller
 
         return view("gold-loan.applications.view-buttons.disburse-setting", compact('application'));
     }
+
+    
 }
