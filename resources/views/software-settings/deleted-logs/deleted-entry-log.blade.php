@@ -73,12 +73,15 @@
     @endif
 
     <div class="col-span-12 box lg:col-span-12">
+        
         <div class="text-end">
             <a href="#" class="btn-error uppercase text-sm rounded-10 px-2">
                 Download xls
             </a>
         </div>
+
         <div class="pb-4 mt-4 overflow-x-auto lg:pb-6">
+            
             <table class="w-full whitespace-nowrap select-all-table" id="">
                 <thead>
                     <tr class="bg-secondary/5 dark:bg-bg3">
@@ -163,8 +166,8 @@
 
         </div>
 
-
     </div>
+
 </div>
 
 

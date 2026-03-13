@@ -51,15 +51,14 @@
                             <th class="text-start !py-5 px-6 min-w-[100px]">
                                 <label class="flex items-center gap-2 cursor-pointer font-semibold whitespace-nowrap">
                                     <input type="checkbox" id="approveAllLoans" class="w-4 h-4">
-                                    Approve All
+                                    STATUS
                                 </label>
                             </th>
 
                             <th class="text-start !py-5 px-6 min-w-[100px]">REMARKS</th>
 
-                            {{-- ✅ Sticky right column --}}
-                            <th class="text-center !py-5 px-6 min-w-[140px] sticky right-0 sticky-action z-10"
-                                style="box-shadow: -4px 0 6px rgba(0,0,0,0.06);">
+                            {{-- Sticky right column --}}
+                            <th class="">
                                 <span id="loanActionsHeader" class="font-semibold">ACTIONS</span>
                                 <button type="button" id="loanDoneAllBtn" onclick="submitAllLoans()"
                                     style="display:none; background-color:green;"
