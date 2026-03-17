@@ -2691,6 +2691,9 @@ Route::group(['prefix' => 'cut-report'], function () {
     Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
         ->name('report.saving-account');
 
+     Route::get('report/current-account', [CutReportController::class, 'currentacc_index'])
+        ->name('report.current-account');
+
     Route::get('/accounts/export/csv', [CutReportController::class, 'exportCsv'])
         ->name('accounts.export.csv');
     Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
@@ -2891,9 +2894,11 @@ Route::group(['prefix' => 'ledger'], function () {
     Route::get('ledger-groups-by-type/{type}', [LedgergroupController::class, 'groupsByType'])
         ->name('ledger.groups.by.type');
 
-
     Route::post('/store', [LedgergroupController::class, 'led_store'])
         ->name('ledger.store');
+
+    Route::delete('/delete/{id}', [LedgergroupController::class, 'led_delete'])
+        ->name('ledger.delete');
 
     Route::get('ledger/update-bulkrisk', [LedgergroupController::class, 'update_bulkrisk'])
         ->name('ledger.update-bulkrisk');
@@ -2901,8 +2906,13 @@ Route::group(['prefix' => 'ledger'], function () {
     Route::get('ledger/view/{id}', [LedgergroupController::class, 'ledgerView'])
         ->name('ledger.view');
 
-    Route::get('ledger/edit-ledger', [LedgergroupController::class, 'edit_ledgers'])
-        ->name('ledger.edit-ledger');
+    // Edit page
+    Route::get('/edit/{id}', [LedgergroupController::class, 'edit_ledgers'])
+        ->name('ledger.edit');
+
+    // Update
+    Route::put('/update/{id}', [LedgergroupController::class, 'led_update'])
+        ->name('ledger.update');
 
     Route::get('ledger/journal-entry', [LedgergroupController::class, 'journal_entry_ledger'])
         ->name('ledger.journal-entry');

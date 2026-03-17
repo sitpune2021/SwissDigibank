@@ -99,7 +99,6 @@
                                     </select>
                                 </div>
 
-
                                 {{-- Ledger Group --}}
                                 <div>
                                     <label class="block text-sm font-semibold mb-2 uppercase">
@@ -115,7 +114,6 @@
 
                                 </div>
 
-
                                 {{-- Display Name --}}
                                 <div>
                                     <label class="block text-sm font-semibold mb-2 uppercase">
@@ -125,8 +123,10 @@
                                     <input type="text" name="display_name" 
                                         placeholder="Enter Ledger Display Name"
                                         class="w-full border rounded-10 px-3 py-2  text-sm bg-secondary/5  dark:bg-bg3">
+                                    @error('display_name')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
-
 
                                 {{-- System Name --}}
                                 <div>
@@ -137,11 +137,14 @@
                                     <input type="text" name="system_name" 
                                         placeholder="Enter System Name"
                                         class="w-full border rounded-10 px-3 py-2  text-sm bg-secondary/5  dark:bg-bg3">
+                                    @error('system_name')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
 
                                 {{-- Code --}}
-                                <div>
+                                <!-- <div>
                                     <label class="block text-sm font-semibold mb-2 uppercase">
                                         Code <span class="text-red-500">*</span>
                                     </label>
@@ -150,7 +153,7 @@
                                         style="text-transform: uppercase"
                                         placeholder="Ex: 501"
                                         class="w-full border rounded-10 px-3 py-2  text-sm bg-secondary/5  dark:bg-bg3">
-                                </div>
+                                </div> -->
 
 
                                 {{-- Empty space for alignment --}}
@@ -286,37 +289,36 @@
     </script>
 
 
-<script>
-document.querySelector('select[name="type"]').addEventListener('change', function () {
+    <script>
+    document.querySelector('select[name="type"]').addEventListener('change', function () {
 
-    let type = this.value;
-    let groupSelect = document.getElementById('group_id');
+        let type = this.value;
+        let groupSelect = document.getElementById('group_id');
 
-    groupSelect.innerHTML = '<option value="">Loading...</option>';
+        groupSelect.innerHTML = '<option value="">Loading...</option>';
 
-    if (!type) {
-        groupSelect.innerHTML = '<option value="">Select Group</option>';
-        return;
-    }
-
-    fetch("{{ route('ledger.groups.by.type', '') }}/" + type)
-        .then(res => res.json())
-        .then(data => {
-
+        if (!type) {
             groupSelect.innerHTML = '<option value="">Select Group</option>';
+            return;
+        }
 
-            data.forEach(group => {
-                groupSelect.innerHTML += `<option value="${group.id}">${group.display_name}</option>`;
+        fetch("{{ route('ledger.groups.by.type', '') }}/" + type)
+            .then(res => res.json())
+            .then(data => {
+
+                groupSelect.innerHTML = '<option value="">Select Group</option>';
+
+                data.forEach(group => {
+                    groupSelect.innerHTML += `<option value="${group.id}">${group.display_name}</option>`;
+                });
+
+            })
+            .catch(err => {
+                console.error(err);
+                groupSelect.innerHTML = '<option value="">Error loading groups</option>';
             });
-
-        })
-        .catch(err => {
-            console.error(err);
-            groupSelect.innerHTML = '<option value="">Error loading groups</option>';
-        });
-});
-</script>
-
+    });
+    </script>
 
 
 @endsection

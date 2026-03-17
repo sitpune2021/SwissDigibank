@@ -474,9 +474,25 @@ class CutReportController extends Controller
 
     public function savingacc_index()
     {
-        $account = Account::with(['members', 'branch'])->orderBy('id', 'asc')->paginate(10);
+        //$account = Account::with(['members', 'branch'])->orderBy('id', 'asc')->paginate(10);
+        $account = Account::with(['members', 'branch'])
+            ->where('account_type', 'SAVING')
+            ->whereNull('deleted_at') // optional (soft delete safe)
+            ->orderBy('id', 'asc')
+            ->paginate(10);
 
         return view('cut-reports.report.saving-account', compact('account'));
+    }
+
+    public function currentacc_index()
+    {
+        $account = Account::with(['members', 'branch'])
+            ->where('account_type', 'CURRENT') // 🔥 IMPORTANT
+            ->whereNull('deleted_at') // optional (soft delete safe)
+            ->orderBy('id', 'asc')
+            ->paginate(10);
+
+        return view('cut-reports.report.current-account', compact('account'));
     }
 
     public function savingIndex()
