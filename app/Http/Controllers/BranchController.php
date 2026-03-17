@@ -304,16 +304,39 @@ class BranchController extends Controller
     public function destroy($id)
     {
         try {
-            $branch = Branch::findOrFail($id);
-            $branch->delete();
+            $id = base64_decode($id); // ✔ correct
 
-            return redirect()->route('branch.index')->with('success', 'Branch deleted successfully.');
+            $branch = Branch::findOrFail($id);
+            $branch->delete(); // 🔥 now this will SOFT DELETE
+
+            return redirect()->route('branch.index')
+                ->with('success', 'Branch deleted successfully.');
+
         } catch (\Exception $e) {
-            Log::error('Error deleting branch', ['error' => $e->getMessage()]);
-            return redirect()->back()->with('error', 'Failed to delete branch.');
+            Log::error('Error deleting branch', [
+                'error' => $e->getMessage(),
+                'id' => $id
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Failed to delete branch.');
         }
     }
 
+    // public function destroy($id)
+    // {
+    //     try {
+    //         $branch = Branch::findOrFail($id);
+    //         $branch->delete();
+
+    //         return redirect()->route('branch.index')->with('success', 'Branch deleted successfully.');
+    //     } catch (\Exception $e) {
+    //         Log::error('Error deleting branch', ['error' => $e->getMessage()]);
+    //         return redirect()->back()->with('error', 'Failed to delete branch.');
+    //     }
+    // }
+
+    
     public function getBranches()
     {
         try {

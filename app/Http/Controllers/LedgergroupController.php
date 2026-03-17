@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Services\LedgerService;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Validation\Rule;
 
 class LedgergroupController extends Controller
 {
@@ -69,21 +69,38 @@ class LedgergroupController extends Controller
 
     public function store(Request $request)
     {
+        // Normalize
+        $request->merge([
+            'system_name'  => strtoupper(trim($request->system_name)),
+            'display_name' => strtoupper(trim($request->display_name)),
+        ]);
+
         $request->validate([
-            'display_name' => 'required',
+            'display_name' => 'required|unique:ledger_groups,display_name',
             'system_name'  => 'required|unique:ledger_groups,system_name',
             'type'         => 'required',
             'weightage'    => 'required|numeric'
         ]);
 
-        // 🔥 AUTO GENERATE SAFE CODE
-        $code = Str::slug($request->system_name, '_'); 
-        // example: "Gold Loan" → GOLD_LOAN
+        $code = strtoupper(Str::slug($request->system_name, '_'));
+
+        // Manual check
+        if (LedgerGroup::where('system_name', $request->system_name)->exists()) {
+            return back()->withInput()->withErrors([
+                'system_name' => 'System Name already exists!'
+            ]);
+        }
+
+        if (LedgerGroup::where('code', $code)->exists()) {
+            return back()->withInput()->withErrors([
+                'system_name' => 'Generated code already exists!'
+            ]);
+        }
 
         LedgerGroup::create([
-            'display_name'    => strtoupper($request->display_name),
-            'system_name'     => strtoupper($request->system_name),
-            'code'            => strtoupper($code),   // ⭐ NEW
+            'display_name'    => $request->display_name,
+            'system_name'     => $request->system_name,
+            'code'            => $code,
             'type'            => $request->type,
             'is_system_group' => $request->is_system_group ?? 0,
             'weightage'       => $request->weightage,
@@ -213,17 +230,35 @@ class LedgergroupController extends Controller
     // leder store
     public function led_store(Request $request)
     {
-        $request->validate([
-            'type' => 'required',
-            'group_id' => 'required',
-            'display_name' => 'required',
-            'system_name' => 'required',
+        // Normalize
+        $request->merge([
+            'system_name'  => strtoupper(trim($request->system_name)),
+            'display_name' => strtoupper(trim($request->display_name)),
         ]);
 
-        // 🔥 AUTO UNIQUE CODE
+        $request->validate([
+            'type'         => 'required',
+            'group_id'     => 'required',
+            'display_name' => 'required|unique:ledgers,display_name',
+            'system_name'  => 'required|unique:ledgers,system_name',
+        ]);
+
+        // Manual duplicate check
+        if (Ledger::where('display_name', $request->display_name)->exists()) {
+            return back()->withInput()->withErrors([
+                'display_name' => 'Display Name already exists!'
+            ]);
+        }
+
+        if (Ledger::where('system_name', $request->system_name)->exists()) {
+            return back()->withInput()->withErrors([
+                'system_name' => 'System Name already exists!'
+            ]);
+        }
+
+        // Unique Code
         $baseCode = strtoupper(Str::slug($request->system_name, '_'));
         $code = $baseCode;
-
         $count = 1;
 
         while (Ledger::where('code', $code)->exists()) {
@@ -232,13 +267,13 @@ class LedgergroupController extends Controller
         }
 
         Ledger::create([
-            'type' => $request->type,
-            'group_id' => $request->group_id,
-            'display_name' => $request->display_name,
-            'system_name' => $request->system_name,
-            'code' => $code,
-            'is_bank_acc' => $request->is_bank_acc ?? 0,
-            'show_in_day' => $request->show_in_day ?? 0,
+            'type'            => $request->type,
+            'group_id'        => $request->group_id,
+            'display_name'    => $request->display_name,
+            'system_name'     => $request->system_name,
+            'code'            => $code,
+            'is_bank_acc'     => $request->is_bank_acc ?? 0,
+            'show_in_day'     => $request->show_in_day ?? 0,
             'opening_balance' => 0
         ]);
 
@@ -1110,6 +1145,82 @@ class LedgergroupController extends Controller
 
     }
 
+    public function led_delete($id)
+    {
+        try {
+            $ledger = Ledger::findOrFail($id);
+
+            // ❗ Optional: agar system ledger delete nahi karna ho
+            if ($ledger->is_system_group) {
+                return back()->with('error', 'System Ledger cannot be deleted!');
+            }
+
+            $ledger->delete();
+
+            return back()->with('success', 'Ledger Deleted Successfully');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong!');
+        }
+    }
+
+    public function edit_ledgers($id)
+    {
+        $ledger = Ledger::findOrFail($id);
+        $groups = LedgerGroup::all(); // dropdown ke liye
+
+        return view('menu-accounts.ledger.edit-ledger', compact('ledger','groups'));
+    }
+
+    public function led_update(Request $request, $id)
+    {
+        $ledger = Ledger::findOrFail($id);
+
+        // Normalize
+        $request->merge([
+            'system_name'  => strtoupper(trim($request->system_name)),
+            'display_name' => strtoupper(trim($request->display_name)),
+        ]);
+
+        // Validation (ignore current id 🔥)
+        $request->validate([
+            'type'         => 'required',
+            'group_id'     => 'required',
+            'display_name' => [
+                'required',
+                Rule::unique('ledgers', 'display_name')->ignore($id)
+            ],
+            'system_name'  => [
+                'required',
+                Rule::unique('ledgers', 'system_name')->ignore($id)
+            ],
+        ]);
+
+        // Code regenerate (optional)
+        $baseCode = strtoupper(Str::slug($request->system_name, '_'));
+        $code = $baseCode;
+        $count = 1;
+
+        while (Ledger::where('code', $code)->where('id', '!=', $id)->exists()) {
+            $code = $baseCode . '_' . $count;
+            $count++;
+        }
+
+        // Update
+        $ledger->update([
+            'type'         => $request->type,
+            'group_id'     => $request->group_id,
+            'display_name' => $request->display_name,
+            'system_name'  => $request->system_name,
+            'code'         => $code,
+            'is_bank_acc'  => $request->is_bank_acc ?? 0,
+            'show_in_day'  => $request->show_in_day ?? 0,
+        ]);
+
+        return redirect()->route('ledger.index')
+            ->with('success', 'Ledger Updated Successfully');
+    }
+
     public function update_bulkrisk()
     {
         return view('menu-accounts.ledger.update-bulkrisk');
@@ -1118,10 +1229,7 @@ class LedgergroupController extends Controller
     {
         return view('menu-accounts.ledger.view');
     }
-    public function edit_ledgers()
-    {
-        return view('menu-accounts.ledger.edit-ledger');
-    }
+   
     public function journal_entry_ledger()
     {
         return view('menu-accounts.ledger.journal-entry');
