@@ -215,6 +215,28 @@
                                 </div>
                             </a>
                         </li>
+                        <li class="px-4 py-2 hover:bg-gray-100  cursor-pointer uppercase">
+                            <a href="">
+                                <div class="flex gap-1">
+
+                                    <p> <i class="las la-file-invoice"></i></p>
+                                    <p>
+                                        RBI
+                                    </p>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="px-4 py-2 hover:bg-gray-100  cursor-pointer uppercase">
+                            <a href="">
+                                <div class="flex gap-1">
+
+                                    <p> <i class="las la-file-invoice"></i></p>
+                                    <p>
+                                        DDR / AR / JT Office
+                                    </p>
+                                </div>
+                            </a>
+                        </li>
 
                     </ul>
                 </div>

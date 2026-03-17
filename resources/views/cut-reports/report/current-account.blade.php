@@ -5,7 +5,7 @@
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h3 class=" flex text-lg block  uppercase font-semibold">
-                Reports - Saving Accounts
+                Reports - Current Accounts
             </h3>
         </div>
         <div class="col-span-12 box lg:col-span-12">

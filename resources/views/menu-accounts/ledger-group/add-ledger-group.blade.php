@@ -97,7 +97,9 @@
                                      <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="display_name" placeholder="Display Name" class="w-full border rounded-10 px-3 py-2  text-sm bg-secondary/5  dark:bg-bg3">
-
+                                    @error('display_name')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
                                     <p class="text-primary mt-2 text-sm">
                                         (e.g. Current Assets)
                                     </p>
@@ -109,7 +111,9 @@
                                      <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="system_name" placeholder="System Name" class="w-full border rounded-10 px-3 py-2  text-sm bg-secondary/5  dark:bg-bg3">
-
+                                    @error('system_name')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
                                     <p class="text-primary mt-2 text-sm">
                                       (e.g. Current Assets)
                                     </p>
