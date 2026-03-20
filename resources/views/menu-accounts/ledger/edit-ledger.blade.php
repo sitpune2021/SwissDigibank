@@ -84,9 +84,12 @@
                                     <span class="text-red-500">*</span>
                                 </label>
                                 {{-- Type --}}
-                                <select name="type" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                <select name="type" class="w-full border rounded-10 px-3 py-2  text-sm bg-secondary/5  dark:bg-bg3">
                                     <option value="Asset" {{ $ledger->type=='Asset'?'selected':'' }}>Asset</option>
                                     <option value="Liability" {{ $ledger->type=='Liability'?'selected':'' }}>Liability</option>
+                                    <option value="Equity" {{ $ledger->type=='Equity'?'selected':'' }}>Equity</option>
+                                    <option value="Expense" {{ $ledger->type=='Expense'?'selected':'' }}>Expense</option>
+                                    <option value="Revenue" {{ $ledger->type=='Revenue'?'selected':'' }}>Revenue</option>
                                 </select>
                             </div>
                             <div>
