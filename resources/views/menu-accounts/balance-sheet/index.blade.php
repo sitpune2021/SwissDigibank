@@ -179,48 +179,48 @@
                             <table class="w-full text-sm">
 
                             <thead class="bg-gray-50 text-gray-600">
-                                <tr>
-                                <th class="text-left p-3">PARTICULARS</th>
-                                <th class="text-right p-3">CURRENT</th>
-                                <th class="text-right p-3">PREVIOUS</th>
+                                <tr style="background-color: wheat;">
+                                    <th class="text-right p-3">PREVIOUS</th>
+                                    <th class="text-left p-3">PARTICULARS</th>
+                                    <th class="text-right p-3">CURRENT</th>                       
                                 </tr>
                             </thead>
 
                             <tbody class="text-gray-700">
 
                                 <!-- EQUITY -->
-                                <tr class="bg-blue-100 text-blue-800 font-semibold" style="background-color: wheat;">
+                                <tr class="bg-blue-100 text-blue-800 font-semibold">
                                     <td class="p-3" colspan="3">EQUITY</td>
                                 </tr>
 
                                 @foreach($equities as $equity)
                                 <tr class="border-b hover:bg-gray-50">
-                                <td class="p-3">{{ strtoupper($equity['name']) }}</td>
-                                <td class="p-3 text-right">{{ number_format($equity['current'],2) }}</td>
-                                <td class="p-3 text-right">{{ number_format($equity['previous'],2) }}</td>
+                                    <td class="p-3 text-right">{{ number_format($equity['previous'],2) }}</td>
+                                    <td class="p-3">{{ strtoupper($equity['name']) }}</td>
+                                    <td class="p-3 text-right">{{ number_format($equity['current'],2) }}</td>                               
                                 </tr>
                                 @endforeach
 
-                                <tr class="font-semibold bg-gray-50">
-                                <td class="p-3">TOTAL EQUITY</td>
-                                <td class="p-3 text-right">{{ number_format($totalEquity,2) }}</td>
-                                <td></td>
+                                <tr class="font-semibold bg-gray-50" style="background-color: wheat;">
+                                    <td class="p-3">TOTAL EQUITY</td>
+                                    <td class="p-3 text-right">{{ number_format($totalEquity,2) }}</td>
+                                    <td></td>
                                 </tr>
 
                                 <!-- LIABILITIES -->
-                                <tr class="bg-blue-200 font-semibold" style="background-color: wheat;">
+                                <tr class="bg-blue-200 font-semibold">
                                     <td class="p-3" colspan="3">LIABILITIES</td>
                                 </tr>
 
                                 @foreach($liabilities as $liability)
                                 <tr class="border-b hover:bg-gray-50">
-                                <td class="p-3">{{ strtoupper($liability['name']) }}</td>
-                                <td class="p-3 text-right">{{ number_format($liability['current'],2) }}</td>
-                                <td class="p-3 text-right">{{ number_format($liability['previous'],2) }}</td>
+                                    <td class="p-3 text-right">{{ number_format($liability['previous'],2) }}</td>
+                                    <td class="p-3">{{ strtoupper($liability['name']) }}</td>
+                                    <td class="p-3 text-right">{{ number_format($liability['current'],2) }}</td>                                
                                 </tr>
                                 @endforeach
 
-                                <tr class="font-semibold bg-gray-50">
+                                <tr class="font-semibold bg-gray-50" style="background-color: wheat;">
                                 <td class="p-3">TOTAL LIABILITIES</td>
                                 <td class="p-3 text-right">{{ number_format($totalLiabilities,2) }}</td>
                                 <td></td>
@@ -243,28 +243,29 @@
                             <table class="w-full text-sm">
 
                             <thead class="bg-gray-50 text-gray-600">
-                                <tr>
-                                <th class="text-left p-3">PARTICULARS</th>
-                                <th class="text-right p-3">CURRENT</th>
-                                <th class="text-right p-3">PREVIOUS</th>
+                                <tr style="background-color: wheat;">
+                                    <th class="text-right p-3">PREVIOUS</th>
+                                    <th class="text-left p-3">PARTICULARS</th>
+                                    <th class="text-right p-3">CURRENT</th>                               
                                 </tr>
                             </thead>
 
                             <tbody class="text-gray-700">
 
-                                <tr class="bg-green-100 text-green-800 font-semibold" style="background-color: wheat;">
+                                <!-- <tr class="bg-green-100 text-green-800 font-semibold" style="background-color: wheat;">
                                     <td class="p-3" colspan="3">ASSETS</td>
-                                </tr>
+                                </tr> -->
 
                                 @foreach($assets as $asset)
                                 <tr class="border-b hover:bg-gray-50">
+                                    <td class="p-3 text-right">{{ number_format($asset['previous'],2) }}</td>
                                 <td class="p-3">{{ strtoupper($asset['name']) }}</td>
                                 <td class="p-3 text-right">{{ number_format($asset['current'],2) }}</td>
-                                <td class="p-3 text-right">{{ number_format($asset['previous'],2) }}</td>
+                                
                                 </tr>
                                 @endforeach
 
-                                <tr class="font-semibold bg-gray-50">
+                                <tr class="font-semibold bg-gray-50" style="background-color: wheat;">
                                 <td class="p-3">TOTAL ASSETS</td>
                                 <td class="p-3 text-right">{{ number_format($totalAssets,2) }}</td>
                                 <td></td>

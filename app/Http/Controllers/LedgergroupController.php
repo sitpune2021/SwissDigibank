@@ -1519,52 +1519,50 @@ class LedgergroupController extends Controller
         $totalLiabilities = 0;
         $totalEquity = 0;
 
-        
-        // Default logo (public folder)
+        $previousDate = Carbon::create(date('Y')-1, 3, 31);
+
+        // Logo
         $logoUrl = asset('assets/images/SBC_Logo.png');
-
-        // If custom logo exists in storage/app/public/logo.png
-        $customLogoPath = 'logo.png'; // change if different filename
-
-        if (Storage::disk('public')->exists($customLogoPath)) {
-            $logoUrl = Storage::url($customLogoPath);
+        if (Storage::disk('public')->exists('logo.png')) {
+            $logoUrl = Storage::url('logo.png');
         }
 
         foreach ($ledgers as $ledger) {
 
-            [$acc, $balance] =
-            $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId);
+            [$acc, $currentBalance] =
+            $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId, $today);
 
-            $balance = $balance ?: 0;
+            [$acc, $previousBalance] =
+            $this->ledgerService->calculateLedgerBalance($ledger->code, $branchId, $previousDate);
+
+            $currentBalance = ($currentBalance ?: 0) - ($previousBalance ?: 0);
+            $previousBalance = $previousBalance ?: 0;
 
             if ($ledger->type == 'Asset') {
-
                 $assets[] = [
                     'name' => $ledger->display_name,
-                    'amount' => $balance
+                    'current' => $currentBalance,
+                    'previous' => $previousBalance
                 ];
-
-                $totalAssets += $balance;
+                $totalAssets += $currentBalance;
             }
 
             if ($ledger->type == 'Liability') {
-
                 $liabilities[] = [
                     'name' => $ledger->display_name,
-                    'amount' => $balance
+                    'current' => $currentBalance,
+                    'previous' => $previousBalance
                 ];
-
-                $totalLiabilities += $balance;
+                $totalLiabilities += $currentBalance;
             }
 
             if ($ledger->type == 'Equity') {
-
                 $equities[] = [
                     'name' => $ledger->display_name,
-                    'amount' => $balance
+                    'current' => $currentBalance,
+                    'previous' => $previousBalance
                 ];
-
-                $totalEquity += $balance;
+                $totalEquity += $currentBalance;
             }
         }
 
