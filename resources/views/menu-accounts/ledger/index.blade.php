@@ -64,6 +64,15 @@
             </div>
         </div>
 
+        @if(session('success'))
+
+            {{-- //alert msg --}}
+            <div class="w-44 mb-5 flex justify-end">
+                <x-alert />
+            </div>        
+
+        @endif      
+
         <div>
             <form>
                 <div class="flex justify-center box gap-3">

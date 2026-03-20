@@ -2701,6 +2701,9 @@ Route::group(['prefix' => 'cut-report'], function () {
     Route::get('/report/saving/print', [CutReportController::class, 'printSaving'])
         ->name('reports.saving.print');
 
+    Route::get('/report/current/print', [CutReportController::class, 'printCurrent'])
+        ->name('reports.current.print');
+
     Route::get('report/fd-account', [CutReportController::class, 'fdaccount_index'])
         ->name('report.fd-account');
     Route::get('/fd-accounts/export/csv', [CutReportController::class, 'fdExportCsv'])

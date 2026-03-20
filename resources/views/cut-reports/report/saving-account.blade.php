@@ -15,7 +15,7 @@
                     <i class="las la-print"></i>
                     Print Report
                 </a>
-                <a href="{{route('report.saving.index')}}"
+                <!-- <a href="{{route('report.saving.index')}}"
                     class="btn-primary rounded-10 px-2 py-2 flex justify-center  text-sm uppercase">
                     <i class="las la-download"></i>
                     download Cut Report
@@ -24,7 +24,7 @@
                     class="btn-error rounded-10 px-2 flex justify-center py-2 text-sm uppercase">
                     <i class="las la-download"></i>
                     Download Csv
-                </a>
+                </a> -->
 
             </div>
             <div class="pb-4 overflow-x-auto lg:pb-6">
