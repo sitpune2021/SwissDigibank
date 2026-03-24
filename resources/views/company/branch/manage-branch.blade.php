@@ -144,21 +144,20 @@
 
                         <div class="p-4 overflow-x-auto">
                             <label class="inline-flex items-center cursor-pointer">
-                                 <input type="checkbox"
-           class=" sr-only slider-toggle"
-           data-id="{{ $branch->id }}"
-           {{ $branch->active === 'Yes' ? 'checked' : '' }}>
-    {{-- <input type="checkbox"
-           class="sr-only slider-toggle"
-           data-id="{{ $branch->id }}"
-           {{ $branch->active === 'Yes' ? 'checked' : '' }}> --}}
-    
-    <div class="relative">
-        <div class="blocks"></div>
-        <div class="dot"></div>
-    </div>
-</label>
-
+                                <input type="checkbox"
+                                        class=" sr-only slider-toggle"
+                                        data-id="{{ $branch->id }}"
+                                        {{ $branch->active === 'Yes' ? 'checked' : '' }}>
+                                    {{-- <input type="checkbox"
+                                        class="sr-only slider-toggle"
+                                        data-id="{{ $branch->id }}"
+                                        {{ $branch->active === 'Yes' ? 'checked' : '' }}> --}}
+                                    
+                                    <div class="relative">
+                                        <div class="blocks"></div>
+                                        <div class="dot"></div>
+                                    </div>
+                            </label>
                         </div>
                     </td>
                     <td class="px-6 py-2  text-center">
@@ -167,10 +166,11 @@
                             'id' => base64_encode($branch->id),
                             'viewRoute' => 'branch.show',
                             'editRoute' => 'branch.edit',
+                            'deleteRoute' => 'branch.destroy'
                             ])
-
                         </div>
                     </td>
+                    
                 </tr>
                 @empty
                 <tr>

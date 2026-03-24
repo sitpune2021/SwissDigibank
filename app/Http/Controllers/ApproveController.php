@@ -785,6 +785,12 @@ class ApproveController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            Log::info('Approval Update Called', [
+                'id' => $id,
+                'source_table' => $request->input('source_table'),
+                'status' => $request->input('transaction_status'),
+            ]);
+
             $sourceTable = $request->input('source_table');
 
             $status = $request->input('transaction_status');
@@ -2787,17 +2793,24 @@ class ApproveController extends Controller
         }
     }
 
-    // Approve Share Transfer 
+
+    // Approve Share Transfer - LIST PAGE
     public function approveTransfer(Request $request)
     {
         try {
+
             $search = $request->input('search');
+
+            Log::info('approveTransfer() - Fetching pending share transfers', [
+                'search'     => $search,
+                'requested_by' => Auth::id(),
+                'ip'         => $request->ip(),
+            ]);
 
             $share_transfers = ShareTransfer::with('shareholdings.promotor.branch', 'members')
                 ->where('status', '!=', 'approved')
                 ->when($search, function ($query, $search) {
                     $query->where(function ($q) use ($search) {
-                        // Search inside 'members' relationship
                         $q->whereHas('members', function ($q2) use ($search) {
                             $q2->where('member_info_first_name', 'like', "%$search%");
                         })
@@ -2806,43 +2819,170 @@ class ApproveController extends Controller
                     });
                 })
                 ->orderBy('id', 'desc')
-                ->paginate(10); // 10 records per page
+                ->paginate(10);
+
+            Log::info('approveTransfer() - Records fetched successfully', [
+                'total_records'  => $share_transfers->total(),
+                'current_page'   => $share_transfers->currentPage(),
+                'per_page'       => $share_transfers->perPage(),
+                'search_applied' => $search ? true : false,
+            ]);
 
             return view('approvals.share_transfer_approval', compact('share_transfers', 'search'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+
+            Log::error('approveTransfer() - Record not found', [
+                'error'   => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ]);
+
             abort(404);
+        } catch (\Exception $e) {
+
+            Log::error('approveTransfer() - Unexpected error', [
+                'error' => $e->getMessage(),
+                'file'  => $e->getFile(),
+                'line'  => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->with('error', 'Something went wrong while fetching share transfers.');
         }
     }
 
 
+    // Approve Share Transfer - SUBMIT ACTION
     public function approveShareTransfer(Request $request)
     {
+        Log::info('approveShareTransfer() - Request received', [
+            'share_transfer_id' => $request->input('share_transfer_id'),
+            'status'            => $request->input('status'),
+            'remarks'           => $request->input('remarks'),
+            'requested_by'      => Auth::id(),
+            'ip'                => $request->ip(),
+        ]);
+
         try {
+
+            // Step 1: Validate
             $validated = $request->validate([
                 'share_transfer_id' => 'required|exists:share_transfer,id',
                 'status'            => 'required|in:approved,not approve',
                 'remarks'           => 'nullable|string|max:255',
             ]);
 
+            Log::info('approveShareTransfer() - Validation passed', [
+                'share_transfer_id' => $validated['share_transfer_id'],
+                'status'            => $validated['status'],
+            ]);
+
+            // Step 2: Find record
             $transfer = ShareTransfer::with('members')->find($validated['share_transfer_id']);
-            $transfer->status = $validated['status'];
+
+            if (!$transfer) {
+                Log::warning('approveShareTransfer() - ShareTransfer record not found after validation', [
+                    'share_transfer_id' => $validated['share_transfer_id'],
+                ]);
+                return redirect()->back()->with('error', 'Share transfer record not found.');
+            }
+
+            Log::info('approveShareTransfer() - Record found', [
+                'share_transfer_id' => $transfer->id,
+                'current_status'    => $transfer->status,
+                'member_id'         => $transfer->members?->id ?? null,
+                'member_name'       => $transfer->members?->member_info_first_name ?? null,
+            ]);
+
+            // Step 3: Update status
+            $transfer->status  = $validated['status'];
             $transfer->remarks = $validated['remarks'];
 
             if ($validated['status'] === 'approved') {
-
                 $transfer->certificate_number = $transfer->id;
+                Log::info('approveShareTransfer() - Assigning certificate number', [
+                    'share_transfer_id'  => $transfer->id,
+                    'certificate_number' => $transfer->id,
+                ]);
             } else {
                 $transfer->certificate_number = null;
+                Log::info('approveShareTransfer() - Status set to not approve, clearing certificate number', [
+                    'share_transfer_id' => $transfer->id,
+                ]);
             }
 
+            // Step 4: Save transfer
             if ($transfer->save()) {
-                $transfer->members->share_allocated = 1;
-                $transfer->members->save();
+
+                Log::info('approveShareTransfer() - ShareTransfer saved successfully', [
+                    'share_transfer_id' => $transfer->id,
+                    'new_status'        => $transfer->status,
+                ]);
+
+                // Step 5: Update member share_allocated
+                if ($transfer->members) {
+
+                    $transfer->members->share_allocated = 1;
+                    $transfer->members->save();
+
+                    Log::info('approveShareTransfer() - Member share_allocated updated', [
+                        'member_id'       => $transfer->members->id,
+                        'share_allocated' => 1,
+                    ]);
+                } else {
+
+                    Log::warning('approveShareTransfer() - No member found on transfer, share_allocated not updated', [
+                        'share_transfer_id' => $transfer->id,
+                    ]);
+                }
+            } else {
+
+                Log::error('approveShareTransfer() - Failed to save ShareTransfer', [
+                    'share_transfer_id' => $transfer->id,
+                ]);
+
+                return redirect()->back()->with('error', 'Failed to update share transfer. Please try again.');
             }
+
+            Log::info('approveShareTransfer() - Completed successfully', [
+                'share_transfer_id' => $transfer->id,
+                'final_status'      => $transfer->status,
+            ]);
 
             return redirect()->back()->with('success', 'Share transfer updated successfully.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            Log::warning('approveShareTransfer() - Validation failed', [
+                'errors'            => $e->errors(),
+                'share_transfer_id' => $request->input('share_transfer_id'),
+                'status'            => $request->input('status'),
+                'requested_by'      => Auth::id(),
+            ]);
+
+            return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+
+            Log::error('approveShareTransfer() - Model not found', [
+                'share_transfer_id' => $request->input('share_transfer_id'),
+                'error'             => $e->getMessage(),
+                'file'              => $e->getFile(),
+                'line'              => $e->getLine(),
+            ]);
+
             abort(404);
+        } catch (\Exception $e) {
+
+            Log::error('approveShareTransfer() - Unexpected error', [
+                'share_transfer_id' => $request->input('share_transfer_id'),
+                'status'            => $request->input('status'),
+                'error'             => $e->getMessage(),
+                'file'              => $e->getFile(),
+                'line'              => $e->getLine(),
+                'trace'             => $e->getTraceAsString(),
+                'requested_by'      => Auth::id(),
+            ]);
+
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
 
@@ -3127,89 +3267,114 @@ class ApproveController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        Log::info('--- Update Status Started ---', [
-            'id' => $id,
-            'status' => $request->status,
-            'model_type' => $request->model_type,
+        Log::info('updateStatus() - Request received', [
+            'id'         => $id,
+            'model_type' => $request->input('model_type'),
+            'status'     => $request->input('status'),
+            'remarks'    => $request->input('remarks'),
+            'requested_by' => Auth::id(),
+            'ip'         => $request->ip(),
         ]);
 
-        $modelType = $request->model_type;
-        $status = $request->status;
+        $modelType = $request->input('model_type');
+        $status    = $request->input('status');
+        $remarks   = $request->input('remarks');
 
-        switch ($modelType) {
-            case 'loan':
-                $application = LoanApplication::find($id);
-                break;
+        // Step 1: Resolve model class from model_type
+        $modelMap = [
+            'loan'          => LoanApplication::class,
+            'mortgage'      => MortgageLoanApplication::class,
+            'loan_against'  => LoanAgainstApplication::class,
+            'business_loan' => BusinessLoanApplication::class,
+            'cc_od'         => CcOdLoanApplication::class,
+            'daily_weekly'  => DailyWeeklyApplication::class,
+            'personal'      => PersonalLoanApplication::class,
+            'vehical'       => VehicalApplication::class,
+            'fixed'         => FixedLoanApplication::class,
+        ];
 
-            case 'mortgage':
-                $application = MortgageLoanApplication::find($id);
-                break;
+        $redirectMap = [
+            'loan'          => 'gold-loan.disbursements.index',
+            'mortgage'      => 'mortgage.disbursements.index',
+            'loan_against'  => 'loanagainst.disbursements.index',
+            'business_loan' => 'bussiness.disbursements.index',
+            'cc_od'         => 'cc_od.disbursements.index',
+            'daily_weekly'  => 'daily_weekly.disbursements.index',
+            'personal'      => 'personal.disbursements.index',
+            'vehical'       => 'vehical.disbursements.index',
+            'fixed'         => 'fixed_loan.disbursements.index',
+        ];
 
-            case 'loan_against':
-                $application = LoanAgainstApplication::find($id);
-                break;
-
-            case 'business_loan':
-                $application = BusinessLoanApplication::find($id);
-                break;
-
-            case 'cc_od':
-                $application = CcOdLoanApplication::find($id);
-                break;
-
-            case 'daily_weekly':
-                $application = DailyWeeklyApplication::find($id);
-                break;
-
-            case 'personal':
-                $application = PersonalLoanApplication::find($id);
-                break;
-
-            case 'vehical':
-                $application = VehicalApplication::find($id);
-                break;
-
-            case 'fixed':
-                $application = FixedLoanApplication::find($id);
-                break;
-
-            default:
-                $application = null;
+        // Step 2: Validate model_type
+        if (!array_key_exists($modelType, $modelMap)) {
+            Log::warning('updateStatus() - Invalid model_type received', [
+                'model_type'   => $modelType,
+                'id'           => $id,
+                'requested_by' => Auth::id(),
+            ]);
+            return redirect()->back()->with('error', 'Invalid loan type specified.');
         }
 
-        if ($application) {
+        // Step 3: Find application
+        $modelClass   = $modelMap[$modelType];
+        $application  = $modelClass::find($id);
 
-            $application->status = $status;
-            $application->save();
-
-            /** -------------------------------
-             *  REDIRECT MAP (YAHAN ADD KARNA HAI)
-             * --------------------------------*/
-            $redirectMap = [
-                'loan'          => 'gold-loan.disbursements.index',
-                'mortgage'      => 'mortgage.disbursements.index',
-                'loan_against'  => 'loanagainst.disbursements.index',
-                'business_loan' => 'bussiness.disbursements.index',
-                'cc_od'         => 'cc_od.disbursements.index',
-                'daily_weekly'  => 'daily_weekly.disbursements.index',
-                'personal'      => 'personal.disbursements.index',
-                'vehical'       => 'vehical.disbursements.index',
-                'fixed'       => 'fixed_loan.disbursements.index',
-            ];
-
-            $redirectRoute = $redirectMap[$modelType] ?? null;
-
-            if ($redirectRoute) {
-                return redirect()->route($redirectRoute)
-                    ->with('success', 'Status updated successfully!');
-            }
-
-            return redirect()->back()->with('success', 'Status updated successfully!');
+        if (!$application) {
+            Log::error('updateStatus() - Application not found', [
+                'model_type'   => $modelType,
+                'id'           => $id,
+                'requested_by' => Auth::id(),
+            ]);
+            return redirect()->back()->with('error', 'Application not found!');
         }
 
-        return redirect()->back()->with('error', 'Application not found!');
+        Log::info('updateStatus() - Application found', [
+            'model_type'     => $modelType,
+            'id'             => $id,
+            'current_status' => $application->status,
+            'new_status'     => $status,
+        ]);
+
+        // Step 4: Update status
+        $previousStatus      = $application->status;
+        $application->status = $status;
+
+        if ($remarks) {
+            $application->remarks = $remarks;
+        }
+
+        if (!$application->save()) {
+            Log::error('updateStatus() - Failed to save application', [
+                'model_type'   => $modelType,
+                'id'           => $id,
+                'requested_by' => Auth::id(),
+            ]);
+            return redirect()->back()->with('error', 'Failed to update status. Please try again.');
+        }
+
+        Log::info('updateStatus() - Status updated successfully', [
+            'model_type'      => $modelType,
+            'id'              => $id,
+            'previous_status' => $previousStatus,
+            'new_status'      => $status,
+            'requested_by'    => Auth::id(),
+        ]);
+
+        // Step 5: Redirect to disbursements
+        $redirectRoute = $redirectMap[$modelType] ?? null;
+
+        if ($redirectRoute) {
+            Log::info('updateStatus() - Redirecting to disbursements', [
+                'route'      => $redirectRoute,
+                'model_type' => $modelType,
+                'id'         => $id,
+            ]);
+            return redirect()->route($redirectRoute)
+                ->with('success', 'Status updated successfully!');
+        }
+
+        return redirect()->back()->with('success', 'Status updated successfully!');
     }
-
 
     public function approvals_history()
     {

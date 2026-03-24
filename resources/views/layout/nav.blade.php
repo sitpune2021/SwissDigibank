@@ -51,7 +51,15 @@
                         </li>
                         <li class="px-4 py-2 hover:bg-gray-100 uppercase cursor-pointer submenu-trigger  "
                             data-submenu="compliancesMenu">
-                            compliances →
+                            Compliances →
+                        </li>
+                        <li class="px-4 py-2 hover:bg-gray-100 uppercase cursor-pointer submenu-trigger  "
+                            data-submenu="legalMenu">
+                            Legal →
+                        </li>
+                        <li class="px-4 py-2 hover:bg-gray-100 uppercase cursor-pointer submenu-trigger  "
+                            data-submenu="niyamakMenu">
+                            niyamak mandal →
                         </li>
                     </ul>
                 </div>
@@ -203,6 +211,28 @@
                                     <p> <i class="las la-file-invoice"></i></p>
                                     <p>
                                         Management Information Systems
+                                    </p>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="px-4 py-2 hover:bg-gray-100  cursor-pointer uppercase">
+                            <a href="">
+                                <div class="flex gap-1">
+
+                                    <p> <i class="las la-file-invoice"></i></p>
+                                    <p>
+                                        RBI
+                                    </p>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="px-4 py-2 hover:bg-gray-100  cursor-pointer uppercase">
+                            <a href="">
+                                <div class="flex gap-1">
+
+                                    <p> <i class="las la-file-invoice"></i></p>
+                                    <p>
+                                        DDR / AR / JT Office
                                     </p>
                                 </div>
                             </a>

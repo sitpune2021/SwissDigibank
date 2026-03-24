@@ -854,6 +854,7 @@ class GoldLoanAccountController extends Controller
             compact('account', 'mergedData')
         );
     }
+
     public function removeAccount(Request $request, $id)
     {
         if (!hasPermission('gold-loan.account.show')) {
@@ -1260,7 +1261,7 @@ class GoldLoanAccountController extends Controller
 
     public function goldLoanPayEmi($id)
     {
-        // ✅ Rename $loan → $goldLoan
+        // Rename $loan → $goldLoan
         $goldLoan = LoanApplication::with(['member', 'scheme'])
             ->findOrFail($id);
 
@@ -1338,6 +1339,7 @@ class GoldLoanAccountController extends Controller
             'banks'
         ));
     }
+
     private function calculatePayAmount($loanId)
     {
         $totalRemaining = DB::table('gold_loan_emi_status')
@@ -1844,7 +1846,6 @@ class GoldLoanAccountController extends Controller
         );
     }
 
-
     public function storeComment(Request $request)
     {
         Log::debug('Store Gold Loan Comment Data: ', $request->all());
@@ -1879,6 +1880,7 @@ class GoldLoanAccountController extends Controller
 
         return view('gold-loan.account.documents.upload_documents', compact('loan'));
     }
+
     public function storeDocuments(Request $request, $id)
     {
         $request->validate([
@@ -1910,6 +1912,7 @@ class GoldLoanAccountController extends Controller
         return redirect()->route('gold-loan.account.show', $id)
             ->with('success', 'Documents uploaded successfully');
     }
+
     public function destroyDocument($id)
     {
         $document = GoldLoanDocument::findOrFail($id);
@@ -1924,4 +1927,6 @@ class GoldLoanAccountController extends Controller
 
         return back()->with('success', 'Document deleted successfully');
     }
+
+    
 }

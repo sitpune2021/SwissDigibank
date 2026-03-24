@@ -362,12 +362,14 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/form15g15h/download/{member_id}', [Form15Gor15HController::class, 'download'])->name('form15g15h.download');
         Route::get('/form15g15h/download/promoter/{promoter_id}', [Form15Gor15HController::class, 'downloadByPromoter'])->name('form15g15h.download.promoter');
     });
+    
+    Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
+    Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
+
     Route::resource('shares-transfer', ShareTransferController::class);
     Route::get('/shares-transfer/print/{id}', [ShareTransferController::class, 'print'])->name('shares-transfer.print');
 
     Route::post('/promoter/select-split', [ShareTransferController::class, 'selectForShareSplit'])->name('promoter.select.split');
-    Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
-    Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
     Route::get('/members/{member}/share-holdings', [ShareHoldingController::class, 'index'])
         ->name('members.share-holdings.index');
 
@@ -2689,12 +2691,18 @@ Route::group(['prefix' => 'cut-report'], function () {
     Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
         ->name('report.saving-account');
 
+     Route::get('report/current-account', [CutReportController::class, 'currentacc_index'])
+        ->name('report.current-account');
+
     Route::get('/accounts/export/csv', [CutReportController::class, 'exportCsv'])
         ->name('accounts.export.csv');
     Route::get('report/saving', [CutReportController::class, 'savingIndex'])->name('report.saving.index');
 
     Route::get('/report/saving/print', [CutReportController::class, 'printSaving'])
         ->name('reports.saving.print');
+
+    Route::get('/report/current/print', [CutReportController::class, 'printCurrent'])
+        ->name('reports.current.print');
 
     Route::get('report/fd-account', [CutReportController::class, 'fdaccount_index'])
         ->name('report.fd-account');
@@ -2889,9 +2897,11 @@ Route::group(['prefix' => 'ledger'], function () {
     Route::get('ledger-groups-by-type/{type}', [LedgergroupController::class, 'groupsByType'])
         ->name('ledger.groups.by.type');
 
-
     Route::post('/store', [LedgergroupController::class, 'led_store'])
         ->name('ledger.store');
+
+    Route::delete('/delete/{id}', [LedgergroupController::class, 'led_delete'])
+        ->name('ledger.delete');
 
     Route::get('ledger/update-bulkrisk', [LedgergroupController::class, 'update_bulkrisk'])
         ->name('ledger.update-bulkrisk');
@@ -2899,8 +2909,13 @@ Route::group(['prefix' => 'ledger'], function () {
     Route::get('ledger/view/{id}', [LedgergroupController::class, 'ledgerView'])
         ->name('ledger.view');
 
-    Route::get('ledger/edit-ledger', [LedgergroupController::class, 'edit_ledgers'])
-        ->name('ledger.edit-ledger');
+    // Edit page
+    Route::get('/edit/{id}', [LedgergroupController::class, 'edit_ledgers'])
+        ->name('ledger.edit');
+
+    // Update
+    Route::put('/update/{id}', [LedgergroupController::class, 'led_update'])
+        ->name('ledger.update');
 
     Route::get('ledger/journal-entry', [LedgergroupController::class, 'journal_entry_ledger'])
         ->name('ledger.journal-entry');

@@ -51,7 +51,6 @@
         <h3 class=" flex text-lg   uppercase font-semibold">
             Report - Promoter List
         </h3>
-
     </div>
 
     <div class="col-span-12 box lg:col-span-12">
@@ -110,8 +109,8 @@
                     @foreach ($account as $key => $row)
 
                     @php
-                    $balance = $row->promotor->first()?->shareHoldings?->sum('amount') ?? 0;
-                    $totalBalance += $balance;
+                        $balance = $row->promotor?->shareHoldings?->sum('amount') ?? 0;
+                        $totalBalance += $balance;
                     @endphp
 
                     <tr class="border-b dark:border-bg3">

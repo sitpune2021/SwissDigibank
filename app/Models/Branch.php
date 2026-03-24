@@ -7,9 +7,13 @@ use App\Models\State;
 use App\Models\Member;
 use App\Models\Shareholders;
 use App\Models\dds_accounts;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Branch extends Model
 {
+
+    use SoftDeletes;
+
     protected $fillable = [
         'branch_name',
         'bank_name',

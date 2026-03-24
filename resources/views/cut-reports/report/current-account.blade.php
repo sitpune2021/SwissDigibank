@@ -5,12 +5,12 @@
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
             <h3 class=" flex text-lg block  uppercase font-semibold">
-                Reports - Saving Accounts
+                Reports - Current Accounts
             </h3>
         </div>
         <div class="col-span-12 box lg:col-span-12">
             <div class="mb-5 flex justify-end gap-2 flex-col md:flex-row lg:flex-row">
-                <a href="{{ route('reports.saving.print') }}" target="_blank"
+                <a href="{{ route('reports.current.print') }}" target="_blank"
                     class="btn-primary rounded-10 px-2 py-2 flex justify-center  text-sm uppercase">
                     <i class="las la-print"></i>
                     Print Report

@@ -136,9 +136,9 @@
             <div class="flex items-start flex-col gap-2">
                 <h1 class="text-lg uppercase font-semibold">Gold Loan - {{ $goldLoan->id }} </h1>
                 <!-- <p class="text-gray-500">
-                                                                                        <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
-                                                                                        <a href="#" class="text-gray-500 text-sm">00460</a>
-                                                                                    </p> -->
+                    <a href="#" class="text-gray-500 text-sm">Gold Loans </a> >
+                    <a href="#" class="text-gray-500 text-sm">00460</a>
+                </p> -->
             </div>
         </div>
 
@@ -216,13 +216,12 @@
                 </a>
             @endif --}}
 
-            @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest' &&
+            <!-- @if (strtolower($goldLoan->scheme->gold_loan_setting) != 'flat_advanced_interest' &&
                     strtolower($goldLoan->scheme->gold_loan_setting) != 'reducing_emi')
                 <a href="{{ $payRoute }}" class="btn-primary uppercase px-2 py-2 rounded-10 text-sm">
                     {{ $payButtonText }}
                 </a>
-            @endif
-
+            @endif -->
 
             <a href="{{ route('gold-loan.account.linksaving', $goldLoan->id) }}"
                 class="btn-primary uppercase px-2 py-2 rounded-10 text-sm ">

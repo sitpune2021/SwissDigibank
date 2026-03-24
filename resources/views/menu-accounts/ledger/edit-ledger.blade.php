@@ -74,29 +74,35 @@
             <div class=" w-full overflow-x-auto   overflow-hidden">
                 <div class="overflow-x-auto box rounded-lg dark:bg-bg3 p-2 bg-white shadow-md">
                     <div class="min-w-full p-4">
-                        <form>
+                       <form action="{{ route('ledger.update', $ledger->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                            
                             <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase">
                                     Ledger Type
                                     <span class="text-red-500">*</span>
                                 </label>
-                                <select id="" name="" disabled
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option>Asset</option>
+                                {{-- Type --}}
+                                <select name="type" class="w-full border rounded-10 px-3 py-2  text-sm bg-secondary/5  dark:bg-bg3">
+                                    <option value="Asset" {{ $ledger->type=='Asset'?'selected':'' }}>Asset</option>
+                                    <option value="Liability" {{ $ledger->type=='Liability'?'selected':'' }}>Liability</option>
+                                    <option value="Equity" {{ $ledger->type=='Equity'?'selected':'' }}>Equity</option>
+                                    <option value="Expense" {{ $ledger->type=='Expense'?'selected':'' }}>Expense</option>
+                                    <option value="Revenue" {{ $ledger->type=='Revenue'?'selected':'' }}>Revenue</option>
                                 </select>
                             </div>
                             <div>
                                 <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
                                     Ledger Group <span class="text-red-500">*</span>
-                                </label>
-                                <select id="" name=""
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
-                                    <option>Asset - Cash & Cash Equivalent</option>
-                                    <option>Asset - Loans & Advances</option>
-                                    <option>Asset - Current Asset</option>
-                                    <option>Asset - Fixed Assets</option>
-                                    <option>Asset - Investments</option>
-                                    <option>Asset - Opening Balances</option>
+                                </label>                               
+                                <select name="group_id" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize">
+                                    @foreach($groups as $group)
+                                        <option value="{{ $group->id }}"
+                                            {{ $ledger->group_id == $group->id ? 'selected' : '' }}>
+                                            {{ $group->display_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 
@@ -105,28 +111,36 @@
                                     Display Name
                                     <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="" name="" placeholder="Enter Ledger Display Name"
-                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize" />
+                                {{-- Display Name --}}
+                                <input type="text" name="display_name" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"
+                                    value="{{ old('display_name', $ledger->display_name) }}">
+                                @error('display_name')
+                                    <p class="text-red-500">{{ $message }}</p>
+                                @enderror
                                 <p class="text-xs text-primary mt-1">
                                     (e.g. Accumulated Depreciation - Vehicles)
                                 </p>
                             </div>
 
+                             {{-- System Name --}}
                             <div>
                                 <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
                                     System Name
                                     <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="" name="" value=""
-                                    readonly placeholder="Enter Ledger Name"
-                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"  />
-                                <p class="text-xs text-primary mt-1">
+                                <input type="text" id="" name="system_name"  value="{{ old('system_name', $ledger->system_name) }}"
+                                     placeholder="Enter Ledger Name"
+                                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize"  />                              
+                                    @error('system_name')
+                                        <p class="text-red-500">{{ $message }}</p>
+                                    @enderror
+                                     <p class="text-xs text-primary mt-1">
                                     (e.g. Accumulated Depreciation - Vehicles)
                                 </p>
                             </div>
 
                             <!-- Code -->
-                            <div>
+                            <!-- <div>
                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
                                     Code 
                                     <span class="text-red-500">*</span>
@@ -137,10 +151,10 @@
                                 <p class="text-xs text-primary mt-1">
                                     (e.g. 501, XYZ)
                                 </p>
-                            </div>
+                            </div> -->
 
                             <!-- Risk Percent -->
-                            <div id="risk-col">
+                            <!-- <div id="risk-col">
                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
                                     Risk Percent (%) 
                                     <span class="text-red-500">*</span>
@@ -149,21 +163,23 @@
                                     name="" placeholder="Enter Risk Percent"
                                    class="w-full text-sm bg-secondary/5 dark:bg-bg3 border rounded-10 px-3 md:px-6 py-2 md:py-3 capitalize" />
                                 <p class="text-xs text-primary mt-1">(e.g. 0 to 200)</p>
-                            </div>
+                            </div> -->
 
                             <div>
-                                <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
-                                    Is Bank  Account
+                                <label class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                    Is Bank Account
                                 </label>
+
                                 <div class="flex gap-6">
                                     <label class="flex items-center gap-2">
-                                        <input type="radio" name="is_bank_acc" value="true"  disabled
-                                            class="" />
+                                        <input type="radio" name="is_bank_acc" value="1"
+                                            {{ old('is_bank_acc', $ledger->is_bank_acc) == 1 ? 'checked' : '' }}>
                                         <span>Yes</span>
                                     </label>
+
                                     <label class="flex items-center gap-2">
-                                        <input type="radio" name="is_bank_acc" value="false" checked disabled
-                                            class="" />
+                                        <input type="radio" name="is_bank_acc" value="0"
+                                            {{ old('is_bank_acc', $ledger->is_bank_acc) == 0 ? 'checked' : '' }}>
                                         <span>No</span>
                                     </label>
                                 </div>
@@ -171,17 +187,20 @@
 
                             
                             <div>
-                                 <label for="" class="md:text-lg font-medium block mb-2 mt-2 uppercase ">Show In Day
-                                    Book</label>
+                                <label class="md:text-lg font-medium block mb-2 mt-2 uppercase ">
+                                    Show In Day Book
+                                </label>
+
                                 <div class="flex gap-6">
                                     <label class="flex items-center gap-2">
-                                        <input type="radio" name="show_in_day" checked
-                                            class="" />
+                                        <input type="radio" name="show_in_day" value="1"
+                                            {{ old('show_in_day', $ledger->show_in_day) == 1 ? 'checked' : '' }}>
                                         <span>Yes</span>
                                     </label>
+
                                     <label class="flex items-center gap-2">
-                                        <input type="radio" name="show_in_day" 
-                                            class="text-blue-600 focus:ring-blue-500" />
+                                        <input type="radio" name="show_in_day" value="0"
+                                            {{ old('show_in_day', $ledger->show_in_day) == 0 ? 'checked' : '' }}>
                                         <span>No</span>
                                     </label>
                                 </div>
@@ -194,7 +213,7 @@
                                     UPDATE ACCOUNT
                                 </button>
                                 <a href=""
-                                    class="btn-outline uppercase ">
+                                    class="btn-outline uppercase">
                                     BAck
                                 </a>
                             </div>

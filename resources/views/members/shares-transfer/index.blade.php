@@ -93,7 +93,7 @@
                     @endforeach
                 </tbody>
             </table>
-        </div>
+        </div><br>
         <x-pagination :paginator="$shareholdings" />
     </div>
 @endsection

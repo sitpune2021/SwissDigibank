@@ -474,9 +474,25 @@ class CutReportController extends Controller
 
     public function savingacc_index()
     {
-        $account = Account::with(['members', 'branch'])->orderBy('id', 'asc')->paginate(10);
+        //$account = Account::with(['members', 'branch'])->orderBy('id', 'asc')->paginate(10);
+        $account = Account::with(['members', 'branch'])
+            ->where('account_type', 'SAVING')
+            ->whereNull('deleted_at') // optional (soft delete safe)
+            ->orderBy('id', 'asc')
+            ->paginate(10);
 
         return view('cut-reports.report.saving-account', compact('account'));
+    }
+
+    public function currentacc_index()
+    {
+        $account = Account::with(['members', 'branch'])
+            ->where('account_type', 'CURRENT') // 🔥 IMPORTANT
+            ->whereNull('deleted_at') // optional (soft delete safe)
+            ->orderBy('id', 'asc')
+            ->paginate(10);
+
+        return view('cut-reports.report.current-account', compact('account'));
     }
 
     public function savingIndex()
@@ -559,6 +575,8 @@ class CutReportController extends Controller
             'members.member_info_title as title'
         )
             ->leftJoin('members', 'members.id', '=', 'accounts.member_id')
+            ->where('accounts.account_type', 'SAVING') // 🔥 IMPORTANT
+            ->whereNull('accounts.deleted_at') // optional (safe)
             ->get();
 
         $associates = collect($associates)->map(function ($item) {
@@ -595,10 +613,62 @@ class CutReportController extends Controller
         )->header('Content-Type', 'application/pdf');
     }
 
+     public function printCurrent()
+    {
+
+        $associates = Account::select(
+            'accounts.id',
+            'accounts.account_no',
+            'members.member_info_first_name as name',
+            'members.member_info_last_name as last_name',
+            'members.member_info_title as title'
+        )
+            ->leftJoin('members', 'members.id', '=', 'accounts.member_id')
+            ->where('accounts.account_type', 'CURRENT') // 🔥 IMPORTANT
+            ->whereNull('accounts.deleted_at') // optional (safe)
+            ->get();
+
+        $associates = collect($associates)->map(function ($item) {
+
+            $balance = AccountsTransactionsHelper::getAccountBalacec($item->id);
+
+            // If helper returns array
+            if (is_array($balance) && isset($balance['total_balance'])) {
+                $item->amount = (float) $balance['total_balance'];
+            } else {
+                $item->amount = 0; // fallback
+            }
+
+            return $item;
+        });
+
+        $totalAmount = $associates->sum('amount');
+        $data = [
+            'company' => [
+                'name' => Company::first()->company_name ?? 'SBC GLOBAL'
+            ],
+            'associates' => $associates,
+            'totalAmount' => $totalAmount,
+            'photoPath' => public_path('assets/images/SBC_Logo_gpg.jpg'),
+        ];
+
+        $html = view('cut-reports.pdf.cut-report-current', $data)->render();
+        $mpdf = $this->getMarathiMpdf();
+        $mpdf->SetJS('this.print();'); // auto open print dialog
+        $mpdf->WriteHTML($html);
+
+        return response(
+            $mpdf->Output('current-report.pdf', 'I')
+        )->header('Content-Type', 'application/pdf');
+    }
 
     public function exportCsv()
     {
-        $accounts = Account::with(['members', 'branch'])->get();
+        $accounts = Account::with(['members', 'branch'])
+        ->where('account_type', 'SAVING') // 🔥 IMPORTANT
+        ->whereNull('deleted_at') // optional (soft delete safe)
+        ->get();
+
 
         $filename = "accounts_" . date('Ymd_His') . ".csv";
 

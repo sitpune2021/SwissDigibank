@@ -53,7 +53,15 @@ class ShareTransferController extends Controller
         try {
             Log::debug("Starting transferForm method.", ['memberId' => $memberId]);
 
-            $members = Member::pluck('member_info_first_name', 'id');
+            //$members = Member::pluck('member_info_first_name', 'id');
+            $members = Member::get()->mapWithKeys(function ($member) {
+                $fullName = $member->member_info_first_name . ' ' .
+                            $member->member_info_middle_name . ' ' .
+                            $member->member_info_last_name;
+
+                return [$member->id => $fullName];
+            });
+            
             Log::debug("Fetched members info.", ['members_count' => $members->count()]);
 
             $promoterId = Promotor::where('is_transfer', 1)->value('id');
@@ -67,17 +75,29 @@ class ShareTransferController extends Controller
             $promoter = Shareholding::with('promotor')->where('promotor_id', $promoterId)->first();
             Log::debug("Promoter and Shareholding fetched.", ['promoter_id' => $promoterId]);
 
-            $selectedMember = $memberId ? Member::find($memberId) : null;
+            $shareholding = Shareholding::where('promotor_id', $promoterId)->first();
+
+            $selectedMember = null;
+
+            if ($memberId) {
+                $selectedMember = Member::find($memberId);
+            } elseif ($shareholding && $shareholding->member_id) {
+                $selectedMember = Member::find($shareholding->member_id);
+            }
+
             if ($selectedMember) {
                 Log::debug("Selected member fetched.", ['member_id' => $selectedMember->id, 'member_name' => $selectedMember->member_info_first_name]);
             } else {
                 Log::debug("No member selected or member not found.", ['memberId' => $memberId]);
             }
+            
             // dd($memberId);
             return view('members.shares-transfer.create', [
                 'promoter' => $promoter,
                 'members' => $members,
-                'selectedMember' => $selectedMember
+                'selectedMember' => $selectedMember,
+                 'shareholding' => $shareholding,
+                 'shareTransfer' => null
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Log::error("ModelNotFoundException in transferForm method.", ['exception' => $e->getMessage()]);
@@ -177,14 +197,17 @@ class ShareTransferController extends Controller
                 'member_id' => $validated['member_id']
             ]);
 
-            return redirect()->route('shareholding', ['id' => $validated['member_id']])
+            // return redirect()->route('shareholding', ['id' => $validated['member_id']])
+            //     ->with('success', 'Share transfer successfully added. Please approve it.');
+            return redirect()->route('share-transfer-approval.approve_transfer')
+            //return redirect()->route('shares-transfer.index')
                 ->with('success', 'Share transfer successfully added. Please approve it.');
         } catch (\Exception $e) {
             Log::error('Share Transfer Failed', [
                 'error_message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return redirect()->route('shares-transfer.index')->with('error', 'Something wrong! Please try again');
+            return redirect()->route('shares-transfer.index')->with('error', 'Not enough shares available for this transfer.');
         }
     }
 
@@ -240,7 +263,8 @@ class ShareTransferController extends Controller
         $selectedMember = Member::find($shareholding->member_id);
 
         return view('members.shares-transfer.create', [
-            'shareholding' => $shareholding,
+            //'shareholding' => $shareholding,
+            'shareTransfer' => $shareholding,
             'members' => $members,
             'promoter' => $promoter,
             'selectedMember' => $selectedMember
