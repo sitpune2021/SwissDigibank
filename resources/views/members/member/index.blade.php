@@ -90,7 +90,8 @@
                                     {{ $item->member_no ?? 'N/A' }}
                                 </a>
                             </td>
-                            <td class="py-3 px-6">{{ $item->branch->branch_name }}</td>
+                            
+                            <td class="py-3 px-6">{{ $item->branch->branch_name ?? '' }}</td>
 
                             <td class="py-3 px-6">
                                 {{ $item->member_info_first_name }}
