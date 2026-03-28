@@ -144,95 +144,101 @@ class MemberController extends Controller
 
     public function store(Request $request)
     {
-
         $request->validate([
-            // Membership Type
+            // Membership
             'membership_type' => 'required|in:nominal,regular',
 
-            // General Info
-            'general_advisor_staff' => 'nullable|string',
-            'general_group' => 'nullable|in:group1,group2',
-            'general_branch' => 'required|string',
-            'general_enrollment_date' => 'nullable|date',
-
-            // Member Info
+            // Basic Info
             'member_info_title' => 'required|in:Md,Mr,Ms,Mrs',
             'member_info_gender' => 'required|in:male,female,other',
-            'member_info_first_name'  => 'required|string|max:255|regex:/^[A-Za-z]+$/',
-            'member_info_middle_name' => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-            'member_info_last_name'   => 'required|string|max:255|regex:/^[A-Za-z]+$/',
-            'member_info_dob' => 'required|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
-            'member_info_qualification' => 'nullable|string',
-            'member_info_occupation' => 'nullable|string',
-            'member_info_monthly_income' => 'nullable|numeric',
-            'member_info_old_member_no' => 'nullable|string',
-            'member_info_father_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]+$/',
-            'member_info_mother_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]+$/',
-            'member_info_spouse_name' => 'nullable|string|max:255|regex:/^[A-Za-z\s]+$/',
 
-            'member_info_spouse_dob' => 'nullable|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
-            'member_info_email' => 'required|unique:members,member_info_email|unique:users,email',
-            'member_info_mobile_no' => 'required|digits:10|unique:members,member_info_mobile_no|unique:users,mobile',
+            'member_info_first_name'  => 'required|regex:/^[A-Za-z]+$/|max:50',
+            'member_info_middle_name' => 'nullable|regex:/^[A-Za-z]+$/|max:50',
+            'member_info_last_name'   => 'required|regex:/^[A-Za-z]+$/|max:50',
 
-            // Address Info
-            'member_address_line_1' => 'nullable|string',
-            'member_address_line_2' => 'nullable|string',
-            'member_address_city_district' => 'nullable|string',
+            'member_info_dob' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+
+            // Contact
+            'member_info_email' => [
+                'required',
+                'email:rfc,dns',
+                'max:255',
+                'unique:members,member_info_email',
+                'unique:users,email'
+            ],
+
+            'member_info_mobile_no' => [
+                'required',
+                'digits:10',
+                'regex:/^[6-9]\d{9}$/',
+                'unique:members,member_info_mobile_no',
+                'unique:users,mobile'
+            ],
+
+            // Address
             'member_address_state' => 'required|integer',
-            'member_address_pincode' => 'required|numeric',
+            'member_address_pincode' => 'required|digits:6',
             'member_address_country' => 'required|regex:/^[A-Za-z\s]+$/',
-            'member_address_address' => 'nullable|string',
 
-            // Permanent Address
-            'member_perm_address_city' => 'nullable|string',
-            'member_perm_address_state' => 'nullable|string',
-            'member_perm_address_pincode' => 'nullable|numeric',
+            // KYC
+            'member_kyc_aadhaar_no' => [
+                'nullable',
+                'digits:12',
+                'regex:/^[2-9]{1}[0-9]{11}$/',
+                'unique:kyc_and_nominees,member_kyc_aadhaar_no'
+            ],
 
-            // GPS Location
-            'member_gps_location_latitude' => 'nullable|string',
-            'member_gps_location_longitude' => 'nullable|numeric',
+            'member_kyc_pan_no' => [
+                'nullable',
+                'regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
+                'unique:kyc_and_nominees,member_kyc_pan_no'
+            ],
 
-            // KYC Info
-            'member_kyc_aadhaar_no'     => 'nullable|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:kyc_and_nominees,member_kyc_aadhaar_no',
-            // 'member_kyc_aadhaar_no'     => 'required|digits:12|regex:/^[2-9]{1}[0-9]{11}$/|unique:kyc_and_nominees,member_kyc_aadhaar_no',
-            'member_kyc_voter_id_no' => 'nullable|string|regex:/^[A-Za-z0-9]+$/|unique:kyc_and_nominees,member_kyc_voter_id_no',
-            'member_kyc_pan_no'         => 'nullable|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/|unique:kyc_and_nominees,member_kyc_pan_no',
-            // 'member_kyc_pan_no'         => 'required|string|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/|unique:kyc_and_nominees,member_kyc_pan_no',
-            'member_kyc_ration_card_no' => 'nullable|string|unique:kyc_and_nominees,member_kyc_ration_card_no',
-            'member_kyc_meter_no'       => 'nullable|string|unique:kyc_and_nominees,member_kyc_meter_no',
-
-            'member_kyc_ci_no' => 'nullable|string',
-            'member_kyc_ci_relation' => 'nullable|string',
-            'member_kyc_dl_no' => 'nullable|string',
-            'member_kyc_passport_no' => 'nullable|string',
-
-            // Documents
-            'documents' => 'nullable|array',
-            'documents.*.file' => 'nullable|file',
-            'documents.*.category' => 'nullable|string',
-            'documents.*.type' => 'nullable|string',
-
-            // Nominee Info
-            'nominee_name' => 'nullable|string',
-            'nominee_relation' => 'nullable|string',
-            'nominee_mobile_no' => 'nullable|string',
-            'nominee_gender' => 'nullable|in:Male,Female,Other',
-            'nominee_dob' => 'nullable|date|before_or_equal:' . Carbon::now()->subYears(18)->format('Y-m-d'),
-
-            'nominee_aadhaar_no' => 'nullable|string',
-            'nominee_voter_id_no'    => 'nullable|string|regex:/^[A-Za-z0-9]+$/',
-            'nominee_pan_no' => 'nullable|string',
-            'nominee_ration_card_no' => 'nullable|string',
-            'nominee_address' => 'nullable|string',
-
-            // Extra Settings
-            'extra_sms' => 'nullable|boolean',
-
-            // Membership Charges
+            // Charges
             'charges_transaction_date' => 'required|date|before_or_equal:today',
-            'charges_membership_fee' => 'nullable|numeric',
-            'charges_net_fee' => 'required|numeric',
+            'charges_net_fee' => 'required|numeric|min:1',
             'charges_pay_mode' => 'required|in:cash,online,cheque',
+
+        ], [
+
+            // 🔥 CUSTOM MESSAGES
+
+            'membership_type.required' => 'Please select membership type.',
+
+            'member_info_first_name.required' => 'First name is required.',
+            'member_info_first_name.regex' => 'First name should contain only letters.',
+
+            'member_info_last_name.required' => 'Last name is required.',
+            'member_info_last_name.regex' => 'Last name should contain only letters.',
+
+            'member_info_dob.required' => 'Date of birth is required.',
+            'member_info_dob.before_or_equal' => 'Member must be at least 18 years old.',
+
+            'member_info_email.required' => 'Email is required.',
+            'member_info_email.email' => 'Enter a valid email address.',
+            'member_info_email.unique' => 'This email is already registered.',
+
+            'member_info_mobile_no.required' => 'Mobile number is required.',
+            'member_info_mobile_no.digits' => 'Mobile must be 10 digits.',
+            'member_info_mobile_no.regex' => 'Enter a valid Indian mobile number.',
+            'member_info_mobile_no.unique' => 'This mobile number is already registered.',
+
+            'member_address_state.required' => 'Please select state.',
+            'member_address_pincode.required' => 'Pincode is required.',
+            'member_address_pincode.digits' => 'Pincode must be 6 digits.',
+
+            'member_kyc_aadhaar_no.digits' => 'Aadhaar must be 12 digits.',
+            'member_kyc_aadhaar_no.regex' => 'Enter valid Aadhaar number.',
+            'member_kyc_aadhaar_no.unique' => 'This Aadhaar is already used.',
+
+            'member_kyc_pan_no.regex' => 'Enter valid PAN (ABCDE1234F).',
+            'member_kyc_pan_no.unique' => 'This PAN is already used.',
+
+            'charges_transaction_date.required' => 'Transaction date is required.',
+            'charges_net_fee.required' => 'Amount is required.',
+            'charges_net_fee.min' => 'Amount must be greater than 0.',
+
+            'charges_pay_mode.required' => 'Please select payment mode.',
         ]);
 
         try {
@@ -251,7 +257,6 @@ class MemberController extends Controller
                 }
             }
 
-
             // Generate padded member_no
             $nextId = (Member::max('id') ?? 0) + 1;
             $memberNo = str_pad($nextId, 6, '0', STR_PAD_LEFT);
@@ -269,8 +274,18 @@ class MemberController extends Controller
 
             // Create KYC & Nominee
             $kycData = $request->only((new KycAndNominee)->getFillable());
-            $member->kyc()->create(array_merge($kycData, ['member_id' => $member->id]));
+            $member->kyc()->create(array_merge($kycData, [
+                'member_id' => $member->id,
 
+                // ✅ ADD THESE FLAGS
+                'aadhaar_submitted' => !empty($request->member_kyc_aadhaar_no) ? 1 : 0,
+                'otp_verified' => 0,
+                'aadhaar_ref_id' => session('aadhaar_ref_id'),
+
+                'pan_verified' => !empty($request->member_kyc_pan_no) ? 1 : 0,
+
+                'selfie_uploaded' => isset($request->documents[0]['file']) ? 1 : 0,
+            ]));
             // Store KYC documents
             if ($request->has('documents')) {
                 foreach ($request->documents as $doc) {
@@ -345,17 +360,18 @@ class MemberController extends Controller
                 "userCatg" => "INDIVIDUAL"
             ];
 
-            $xverify = MufinHelper::generateXVerify($payload, $saltKey);
-            // $body = json_encode($payload);
+            $xverify = MufinHelper::generateXVerify($payload);
+            $body = json_encode($payload, JSON_UNESCAPED_SLASHES);
 
-            // $hash = hash('sha256', $apiKey . $body . $saltKey);
 
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
                 'apiKey' => $apiKey,
                 'xverifyv2' => $xverify
-            ])->post(env('MUFFINPAY_URL') . '/user/create', $payload);
+            ])
+                ->withBody($body, 'application/json')
+                ->post(env('MUFFINPAY_URL') . '/user/create');
 
             $data = $response->json();
 
@@ -407,17 +423,26 @@ class MemberController extends Controller
                     ]
                 ];
 
-                $xverifyPan = MufinHelper::generateXVerify($panPayload, env('MUFFINPAY_SALT_KEY'));
+                $xverifyPan = MufinHelper::generateXVerify($panPayload);
+                $body = json_encode($panPayload, JSON_UNESCAPED_SLASHES);
+
 
                 $panResponse = Http::withHeaders([
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
                     'apiKey' => env('MUFFINPAY_API_KEY'),
                     'xverifyv2' => $xverifyPan
-                ])->post(env('MUFFINPAY_URL') . '/kyc/submit', $panPayload);
+                ])
+                    ->withBody($body, 'application/json') // ✅ MUST
+                    ->post(env('MUFFINPAY_URL') . '/kyc/submit');
 
                 $panData = $panResponse->json();
+                if ($panResponse->successful()) {
 
+                    $kyc->update([
+                        'pan_verified' => 1
+                    ]);
+                }
                 Log::info('PAN Payload', $panPayload);
                 Log::info('PAN Response', $panData);
             }
@@ -426,32 +451,50 @@ class MemberController extends Controller
             if ($kyc && !empty($kyc->member_kyc_aadhaar_no) && !empty($user->muf_user_id)) {
 
                 $aadhaarPayload = [
-
                     "idType" => "AADHAAR_CARD",
-
                     "userId" => $user->muf_user_id,
-
-                    "aadhaar" => [
-                        "number" => $kyc->member_kyc_aadhaar_no
+                    "aadhar" => [ // ✅ FIXED
+                        "aadharNumber" => $kyc->member_kyc_aadhaar_no
                     ]
-
                 ];
 
-                $xverifyAadhaar = MufinHelper::generateXVerify($aadhaarPayload, env('MUFFINPAY_SALT_KEY'));
+                $body = json_encode($aadhaarPayload, JSON_UNESCAPED_SLASHES);
 
+                $xverifyAadhaar = MufinHelper::generateXVerify($aadhaarPayload);
                 $aadhaarResponse = Http::withHeaders([
-
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
                     'apiKey' => env('MUFFINPAY_API_KEY'),
                     'xverifyv2' => $xverifyAadhaar
-
-                ])->post(env('MUFFINPAY_URL') . '/kyc/submit', $aadhaarPayload);
+                ])
+                    ->withBody($body, 'application/json') // ✅ MUST
+                    ->post(env('MUFFINPAY_URL') . '/kyc/submit');
 
                 $aadhaarData = $aadhaarResponse->json();
 
-                Log::info('MufinPay Aadhaar KYC Payload', $aadhaarPayload);
-                Log::info('MufinPay Aadhaar KYC Response', $aadhaarData);
+                Log::info('AADHAAR PAYLOAD', $aadhaarPayload);
+                Log::info('AADHAAR RESPONSE', $aadhaarData);
+                // ✅ ADD THIS AFTER $aadhaarData
+
+                if (isset($aadhaarData['data']['aadharOtpResponse']['aadharRefId'])) {
+
+                    $kyc->update([
+                        'aadhaar_submitted' => 1,
+                        'aadhaar_ref_id' => $aadhaarData['data']['aadharOtpResponse']['aadharRefId']
+                    ]);
+
+                    Log::info('AADHAAR OTP SENT SUCCESS', [
+                        'ref_id' => $aadhaarData['data']['aadharOtpResponse']['aadharRefId']
+                    ]);
+
+                    // 🔥 IMPORTANT → redirect for OTP screen
+                    return redirect()
+                        ->route('member.edit', $member->id)
+                        ->with('success', 'OTP Sent');
+                } else {
+
+                    Log::error('AADHAAR FAILED', $aadhaarData);
+                }
             }
             try {
                 $member = \App\Models\Member::find($member->id);
@@ -475,20 +518,374 @@ class MemberController extends Controller
             return back()->withErrors(['error' => 'An error occurred while creating the member. Please try again.']);
         }
     }
+    public function sendAadhaarOtp(Request $request, $id)
+    {
+        $member = Member::findOrFail($id);
+        $user   = $member->user;
+
+        if (!$user || !$user->muf_user_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mufin user not found'
+            ]);
+        }
+
+        $payload = [
+            "idType" => "AADHAAR_CARD",
+            "userId" => $user->muf_user_id,
+            "aadhar" => [
+                "aadharNumber" => $request->aadhaar
+            ]
+        ];
+
+        $body = json_encode($payload, JSON_UNESCAPED_SLASHES);
+
+        $xverify = MufinHelper::generateXVerify($payload);
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            'apiKey' => env('MUFFINPAY_API_KEY'),
+            'xverifyv2' => $xverify
+        ])
+            ->withBody($body, 'application/json')
+            ->post(env('MUFFINPAY_URL') . '/kyc/submit');
+
+        $data = $response->json();
+
+        Log::info('AADHAAR RESPONSE', $data);
+
+        if (isset($data['data']['aadharOtpResponse']['aadharRefId'])) {
+
+            $kyc = KycAndNominee::updateOrCreate(
+                ['member_id' => $id],
+                [
+                    'member_kyc_aadhaar_no' => $request->aadhaar,
+                    'aadhaar_submitted' => 1,
+                    'aadhaar_ref_id' => $data['data']['aadharOtpResponse']['aadharRefId']
+                ]
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'OTP Sent Successfully'
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => $data['message'] ?? 'Aadhaar Failed'
+        ]);
+    }
+    public function verifyAadhaarOtp(Request $request, $id)
+    {
+        $member = Member::findOrFail($id);
+        $user   = $member->user;
+        $kyc    = KycAndNominee::where('member_id', $id)->first();
+
+        // ✅ Safety checks
+        if (!$user || !$user->muf_user_id) {
+            return back()->with('error', 'Mufin user not found');
+        }
+
+        if (!$kyc || !$kyc->aadhaar_ref_id) {
+            return back()->with('error', 'Aadhaar OTP not generated');
+        }
+
+        // ✅ Payload
+        $payload = [
+            "idType" => "AADHAAR_CARD_OTP",
+            "userId" => $user->muf_user_id,
+            "aadhar" => [
+                "aadharRefId" => $kyc->aadhaar_ref_id,
+                "otp" => $request->otp
+            ]
+        ];
+
+        $xverify = MufinHelper::generateXVerify($payload);
+        Log::info('OTP PAYLOAD', $payload);
+        Log::info('OTP HASH', ['hash' => $xverify]);
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            'apiKey' => env('MUFFINPAY_API_KEY'),
+            'xverifyv2' => $xverify
+        ])->post(env('MUFFINPAY_URL') . '/kyc/submit', $payload);
+
+        $data = $response->json();
+
+        Log::info('OTP RESPONSE', $data);
+
+        if ($response->successful()) {
+            $kyc->update(['otp_verified' => 1]);
+            return back()->with('success', 'OTP Verified ✅');
+        }
+
+        return back()->with('error', $data['message'] ?? 'OTP Failed');
+    }
+
+    public function submitPanKyc(Request $request, $id)
+    {
+        $request->validate([
+            'member_kyc_pan_no' => [
+                'required',
+                'regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
+                'unique:kyc_and_nominees,member_kyc_pan_no'
+            ]
+        ], [
+            'member_kyc_pan_no.required' => 'PAN is required.',
+            'member_kyc_pan_no.regex' => 'Enter valid PAN (ABCDE1234F).',
+            'member_kyc_pan_no.unique' => 'This PAN is already registered.'
+        ]);
+        $member = Member::findOrFail($id);
+        $user = $member->user;
+        $kyc = KycAndNominee::where('member_id', $id)->first();
+
+        // PAN duplicate check
+        if ($kyc && $kyc->member_kyc_pan_no == $request->member_kyc_pan_no) {
+            return back()->with('error', 'PAN already submitted!');
+        }
+        // ✅ SAVE PAN
+        if (isset($data['code']) && $data['code'] === '0000') {
+
+            KycAndNominee::updateOrCreate(
+                ['member_id' => $id],
+                [
+                    'member_kyc_pan_no' => $request->member_kyc_pan_no,
+                    'pan_verified' => 1
+                ]
+            );
+
+            return back()->with('success', 'PAN Verified ✅');
+        }
+
+        return back()->with('error', $data['message'] ?? 'PAN Failed');
+
+        // ✅ PAN PAYLOAD (🔥 MISSING PART FIXED)
+        $panPayload = [
+            "idType" => "PAN_CARD",
+            "userId" => $user->muf_user_id,
+            "pan" => [
+                "number" => $request->member_kyc_pan_no,
+                "dob" => \Carbon\Carbon::parse($member->member_info_dob)->format('d/m/Y'),
+                "name" => trim(
+                    $member->member_info_first_name . ' ' .
+                        $member->member_info_middle_name . ' ' .
+                        $member->member_info_last_name
+                )
+            ]
+        ];
+
+        // 🔥 SAME JSON FOR HASH + REQUEST
+        $body = json_encode($panPayload, JSON_UNESCAPED_SLASHES);
+
+        $xverifyPan = MufinHelper::generateXVerify($panPayload);
+
+        $panResponse = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            'apiKey' => env('MUFFINPAY_API_KEY'),
+            'xverifyv2' => $xverifyPan
+        ])
+            ->withBody($body, 'application/json') // 🔥 IMPORTANT
+            ->post(env('MUFFINPAY_URL') . '/kyc/submit');
+
+        $data = $panResponse->json();
+
+        // 🔍 DEBUG
+        Log::info('PAN BODY', ['body' => $body]);
+        Log::info('PAN HASH', ['hash' => $xverifyPan]);
+        Log::info('PAN RESPONSE', $data);
+
+        $kyc->update([
+            'pan_verified' => $panResponse->successful() ? 1 : 0
+        ]);
+
+        return back()->with('success', 'PAN Submitted');
+    }
+
+    public function submitAadhaar(Request $request, $id)
+    {
+        Log::info('AADHAAR START', ['member_id' => $id]);
+
+        // ✅ VALIDATION (ONLY ONCE)
+        $kyc = KycAndNominee::where('member_id', $id)->first();
+
+        $request->validate([
+            'aadhaar' => [
+                'required',
+                'digits:12',
+                'regex:/^[2-9]{1}[0-9]{11}$/',
+                Rule::unique('kyc_and_nominees', 'member_kyc_aadhaar_no')
+                    ->ignore(optional($kyc)->id)
+            ]
+        ], [
+            'aadhaar.required' => 'Aadhaar is required.',
+            'aadhaar.digits' => 'Aadhaar must be 12 digits.',
+            'aadhaar.regex' => 'Enter valid Aadhaar number.',
+            'aadhaar.unique' => 'This Aadhaar is already used by another member.'
+        ]);
+
+        $member = Member::findOrFail($id);
+        $user = $member->user;
+
+        Log::info('USER DATA', [
+            'user_id' => $user->id,
+            'muf_user_id' => $user->muf_user_id
+        ]);
+
+        // ✅ CHECK muf_user_id
+        if (!$user->muf_user_id) {
+            Log::error('MUF USER ID MISSING');
+            return back()->with('error', 'Mufin User ID missing!');
+        }
+
+        // ✅ EXISTING KYC CHECK
+        $kyc = KycAndNominee::where('member_id', $id)->first();
+
+        // if ($kyc && $kyc->member_kyc_aadhaar_no == $request->aadhaar) {
+        //     Log::warning('AADHAAR DUPLICATE ATTEMPT', [
+        //         'aadhaar' => $request->aadhaar
+        //     ]);
+        //     return back()->with('error', 'Aadhaar already submitted!');
+        // }
+
+        // ✅ PAYLOAD
+        $payload = [
+            "idType" => "AADHAAR_CARD",
+            "userId" => $user->muf_user_id,
+            "aadhar" => [
+                "aadharNumber" => $request->aadhaar
+            ]
+        ];
+
+        $body = json_encode($payload, JSON_UNESCAPED_SLASHES);
+        $xverify = MufinHelper::generateXVerify($payload);
+
+        Log::info('AADHAAR REQUEST', [
+            'body' => $body,
+            'hash' => $xverify
+        ]);
+
+        try {
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'apiKey' => env('MUFFINPAY_API_KEY'),
+                'xverifyv2' => $xverify
+            ])
+                ->withBody($body, 'application/json')
+                ->post(env('MUFFINPAY_URL') . '/kyc/submit');
+
+            $data = $response->json();
+
+            Log::info('AADHAAR RESPONSE', [
+                'status' => $response->status(),
+                'response' => $data
+            ]);
+
+            // ✅ SUCCESS
+            if (isset($data['code']) && $data['code'] === '0000') {
+
+                Log::info('AADHAAR SUCCESS');
+
+                KycAndNominee::updateOrCreate(
+                    ['member_id' => $id],
+                    [
+                        'member_kyc_aadhaar_no' => $request->aadhaar,
+                        'aadhaar_submitted' => 1,
+                        'aadhaar_ref_id' => $data['data']['aadharOtpResponse']['aadharRefId'] ?? null
+                    ]
+                );
+
+                return back()->with('success', 'Aadhaar Submitted & OTP Sent ✅');
+            }
+
+            // ❌ FAIL
+            Log::error('AADHAAR FAILED', [
+                'message' => $data['message'] ?? 'Unknown error'
+            ]);
+
+            return back()->with('error', $data['message'] ?? 'Aadhaar Failed');
+        } catch (\Exception $e) {
+
+            Log::error('AADHAAR EXCEPTION', [
+                'error' => $e->getMessage(),
+                'line' => $e->getLine()
+            ]);
+
+            return back()->with('error', 'Something went wrong!');
+        }
+    }
+
+    public function uploadSelfie(Request $request, $id)
+    {
+        $member = Member::findOrFail($id);
+        $user   = $member->user;
+
+        $kyc = KycAndNominee::where('member_id', $id)->first();
+
+        $request->validate([
+            'selfie' => 'required|image|max:2048'
+        ]);
+
+        try {
+
+            $payload = [
+                "userId" => $user->muf_user_id
+            ];
+
+            $xverify = MufinHelper::generateXVerify($payload);
+
+            Log::info('SELFIE PAYLOAD', $payload);
+            Log::info('SELFIE HASH', ['hash' => $xverify]);
+
+            $response = Http::withHeaders([
+                'apiKey'    => env('MUFFINPAY_API_KEY'),
+                'xverifyv2' => $xverify,
+                'Accept'    => 'application/json'
+            ])
+                ->attach(
+                    'selfie', // 🔥 FIXED (NOT file)
+                    file_get_contents($request->file('selfie')->getRealPath()),
+                    $request->file('selfie')->getClientOriginalName()
+                )
+                ->post(env('MUFFINPAY_URL') . '/user/upload-selfie', [
+                    'userId' => $user->muf_user_id
+                ]);
+
+            $data = $response->json();
+
+            Log::info('SELFIE RESPONSE', $data);
+
+            if (isset($data['code']) && $data['code'] === '0000') {
+
+                $kyc->update([
+                    'selfie_uploaded' => 1
+                ]);
+
+                $member->update([
+                    'kyc_status' => 'completed'
+                ]);
+
+                return back()->with('success', 'Selfie Uploaded Successfully ✅');
+            }
+
+            return back()->with('error', $data['message'] ?? 'Selfie upload failed');
+        } catch (\Exception $e) {
+
+            Log::error('SELFIE ERROR', [
+                'message' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Something went wrong!');
+        }
+    }
 
     public function show(string $id)
     {
-        // $member = Member::findOrFail($id);
-        // $loggedInEmail  = Auth::user()->email;
-        // $loggedInMobile = Auth::user()->mobile;
-
-        // $loggedInMember = Member::where('member_info_email', $loggedInEmail)
-        //     ->orWhere('member_info_mobile_no', $loggedInMobile)
-        //     ->first();
-
-        // if ($loggedInMember && $loggedInMember->id != $id) {
-        //     abort(403, 'Unauthorized access');
-        // }
         try {
             $dynamicOptions = [
                 'states' => State::pluck('name', 'id'),
@@ -1087,6 +1484,7 @@ class MemberController extends Controller
 
         return response()->json($member);
     }
+
     //Transaction index page 
     public function showTransactions($memberId)
     {
