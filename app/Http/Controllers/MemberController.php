@@ -371,6 +371,9 @@ class MemberController extends Controller
                 'xverifyv2' => $xverify
             ])
                 ->withBody($body, 'application/json')
+                ->withOptions([
+                    'verify' => false // ❌ disables SSL verification
+                ])
                 ->post(env('MUFFINPAY_URL') . '/user/create');
 
             $data = $response->json();

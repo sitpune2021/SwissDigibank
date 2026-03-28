@@ -138,7 +138,6 @@
                             <h3 class="text-xl font-semibold text-center text-gray-800 mb-4">
                                 {{ strtoupper(str_replace('_', ' ', $sectionName)) }}
                             </h3>
-
                         </div>
                     @endif
 
