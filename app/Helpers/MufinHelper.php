@@ -79,25 +79,24 @@ class MufinHelper
 
     public static function generateXVerify($payload)
     {
-        $salt = env('MUFFINPAY_SALT_KEY');
+        ksort($payload);
 
-        // 1. Flatten
-        $flat = self::flattenArray($payload);
-
-        // 2. Sort keys
-        ksort($flat);
-
-        // 3. Build string
-        $pairs = [];
-        foreach ($flat as $key => $value) {
-            $pairs[] = $key . '=' . $value;
+        $string = '';
+        foreach ($payload as $key => $value) {
+            $string .= $key . '=' . $value . '~';
         }
 
-        $string = implode('~', $pairs) . $salt;
+        $string = rtrim($string, '~');
 
-        Log::info('HASH STRING', ['string' => $string]);
+        $saltKey = env('MUFFINPAY_SALT_KEY');
 
-        // 4. Hash
-        return strtoupper(hash('sha256', $string));
+        // ✅ IMPORTANT LINE
+        $finalString = $string . $saltKey;
+
+        Log::info('FINAL HASH STRING', ['string' => $finalString]);
+
+        return hash('sha256', $finalString);
     }
+
+    
 }

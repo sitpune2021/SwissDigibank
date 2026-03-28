@@ -518,6 +518,7 @@ class MemberController extends Controller
             return back()->withErrors(['error' => 'An error occurred while creating the member. Please try again.']);
         }
     }
+    
     public function sendAadhaarOtp(Request $request, $id)
     {
         $member = Member::findOrFail($id);
