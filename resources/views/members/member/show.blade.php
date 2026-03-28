@@ -151,7 +151,7 @@ CUSTOMER')
                             <div class="flex items-center font-semibold gap-3 uppercase"><span>Branch</span></div>
                         </th>
                         <td class="p-2">
-                            <div><span>{{ $member->branch->branch_name }}</span></div>
+                            <div><span>{{ $member->branch->branch_name ?? '' }}</span></div>
                         </td>
                     </tr>
                     <tr class="border-b dark:even:bg-bg3">
