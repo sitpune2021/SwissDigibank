@@ -316,6 +316,7 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/member/{id}/kyc', [MemberController::class, 'kycForm'])->name('member.kyc.form');
         Route::post('/member/{id}/pan-submit', [MemberController::class, 'submitPanKyc'])
             ->name('member.pan.submit');
+        Route::post('/verify-mobile-otp', [MemberController::class, 'verifyMobileOtp']);
         Route::post('/send-aadhaar-otp', [MemberController::class, 'sendAadhaarOtp']);
         Route::post('/verify-aadhaar-otp-temp', [MemberController::class, 'verifyAadhaarOtpTemp']);
         // ✅ NEW (Direct Aadhaar Submit)
