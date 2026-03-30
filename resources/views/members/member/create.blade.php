@@ -1,585 +1,601 @@
 @extends('layout.main')
 @push('style')
-<style>
-    .switch {
-        position: relative;
-        display: inline-block;
-        width: 60px;
-        height: 30px;
-    }
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
 
-    #sameAsCorrespondence {
-        width: 12px;
-        height: 12px;
-    }
+        #sameAsCorrespondence {
+            width: 12px;
+            height: 12px;
+        }
 
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
-    input[type="radio"] {
-        width: 24px;
-        height: 24px;
-        accent-color: green;
-    }
+        input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green;
+        }
 
-    input[type="checkbox"] {
-        width: 28px;
-        height: 28px;
-        accent-color: green;
-    }
+        input[type="checkbox"] {
+            width: 28px;
+            height: 28px;
+            accent-color: green;
+        }
 
-    input[type="checkbox"]:checked {
-        background-color: green;
-        border: none;
-    }
+        input[type="checkbox"]:checked {
+            background-color: green;
+            border: none;
+        }
 
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        transition: .4s;
-        border-radius: 30px;
-        text-align: center;
-        line-height: 30px;
-        font-size: 12px;
-        font-weight: bold;
-        color: white;
-    }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+            text-align: center;
+            line-height: 30px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
 
-    .slider:before {
-        position: absolute;
-        content: "";
-        height: 22px;
-        width: 22px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        transition: .4s;
-        border-radius: 50%;
-    }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
 
-    input:checked+.slider {
-        background-color: #4CAF50;
-    }
+        input:checked+.slider {
+            background-color: #4CAF50;
+        }
 
-    input:checked+.slider:before {
-        transform: translateX(30px);
-    }
+        input:checked+.slider:before {
+            transform: translateX(30px);
+        }
 
-    .slider .switch-on,
-    .slider .switch-off {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+        .slider .switch-on,
+        .slider .switch-off {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .slider .switch-on {
-        left: 0;
-    }
+        .slider .switch-on {
+            left: 0;
+        }
 
-    .slider .switch-off {
-        right: 0;
-    }
+        .slider .switch-off {
+            right: 0;
+        }
 
-    button[type="reset"]:active {
-        transform: scale(0.95);
-        opacity: 0.7;
-        transition: 0.1s;
-    }
-</style>
+        button[type="reset"]:active {
+            transform: scale(0.95);
+            opacity: 0.7;
+            transition: 0.1s;
+        }
+    </style>
 @endpush
 @section('page-title',
-isset($member)
-? (!empty($show)
-? 'VIEW ' . $member['member_info_first_name'] . 'CUSTOMER'
-: 'EDIT
-' .
-$member['member_info_first_name'] .
-' CUSTOMER')
-: 'ADD CUSTOMER')
+    isset($member)
+    ? (!empty($show)
+    ? 'VIEW ' . $member['member_info_first_name'] . 'CUSTOMER'
+    : 'EDIT
+    ' .
+    $member['member_info_first_name'] .
+    ' CUSTOMER')
+    : 'ADD CUSTOMER')
 
 @section('content')
-@include('fields.errormessage')
-<div class="box mb-4 xxxl:mb-6">
-
-    <form action="{{ isset($route) && isset($method) ? $route : '' }}" method="POST" class=""
-        enctype="multipart/form-data" id="companyForm">
-        <div class="grid grid-cols-2 gap-4 xxxl:gap-6">
-            @csrf
-            @if ($method == 'PUT')
-            @method('PUT')
-            @endif
-
-            @foreach ($sections as $sectionName => $fields)
-
-            {{-- Section Heading --}}
-            @if ($sectionName && (!isset($member) || $sectionName != 'member_KYC_documents'))
-            <div class="col-span-2 {{ str_replace('_', ' ', $sectionName) }}">
-                <h3 class="text-xl font-semibold text-center text-gray-800 mb-4">
-                    {{ strtoupper(str_replace('_', ' ', $sectionName)) }}
-                </h3>
-
-            </div>
-            @endif
-
-            {{-- Handle Correspondence and Permanent Address checkbox toggles --}}
-            @if (in_array($sectionName, ['CUSTOMER_CORRESPONDENCE_ADDRESS', 'CUSTOMER_PERMANENT_ADDRESS']))
-            <div class="col-span-2 flex items-center gap-2 mt-6">
-
-                {{-- Checkbox --}}
-                <input type="checkbox" id="toggle_{{ strtolower($sectionName) }}"  {{ strtolower($sectionName) == 'customer_correspondence_address' ? 'checked' : '' }}
-                    class="toggle-address-checkbox w-5 h-5 cursor-pointer">
-
-                {{-- Label with Asterisk --}}
-                <label for="toggle_{{ strtolower($sectionName) }}"
-                    class="font-semibold text-lg cursor-pointer select-none">
-                    {{ str_replace('_', ' ', $sectionName) }}
-                    <span class="text-red-500">*</span>
-                </label>
-            </div>
+    @include('fields.errormessage')
+    <div class="box mb-4 xxxl:mb-6">
+        <div id="overlay"
+            style="display:none;
+     position:fixed;
+     top:0;
+     left:0;
+     width:100%;
+     height:100%;
+     background:rgba(0,0,0,0.6);
+     z-index:9999;">
         </div>
-
-        {{-- Address fields wrapped inside div for toggling --}}
-        <div class="w-full grid grid-cols-2 gap-4 mt-4 xl:mt-8 xxxxxl:gap-6 address-section {{ strtolower($sectionName) }}"
-            style="display:none;">
-            @foreach ($fields as $field)
-            @php
-            $name = $field['name'];
-            $type = $field['type'] ?? 'text';
-            $label = $field['label'];
-            $id = $field['id'] ?? $field['name'];
-            $required = $field['required'] ?? false;
-            $value = old($name, $member[$name] ?? ($field['default'] ?? ''));
-
-            if (
-            $name === 'general_enrollment_date' ||
-            $name === 'member_info_dob' ||
-            $name === 'member_info_spouse_dob' ||
-            $name === 'nominee_dob' ||
-            $name === 'charges_transaction_date'
-            ) {
-            $value = old(
-            $name,
-            isset($member[$name]) && $member[$name] instanceof \Carbon\Carbon
-            ? $member[$name]->format('d-m-Y')
-            : $member[$name] ?? ($field['default'] ?? ''),
-            );
-            }
-
-            @endphp
-            <div class="w-full  col-span-2 md:col-span-1 mb-4 {{ str_replace('_', ' ', $sectionName) }}">
-                @include('fields.label', [
-                'id' => $id,
-                'label' => $label,
-                'required' => $required,
-                ])
-
-                @if ($type === 'custom' && ($field['component'] ?? '') === 'searchable-dropdown')
-                {{-- ✅ Custom Searchable Dropdown --}}
-                <x-searchable-dropdown :items="$banks" label="BANK NAME" name="bank_id" display-field="name"
-                    value-field="id" :selected="old('bank_id')" />
-
-                @else
-                {{-- Default input rendering --}}
-                @include('fields.inputs', [
-                'id' => $id,
-                'label' => $label,
-                'required' => $required,
-                'type' => $type,
-                'name' => $name,
-                'value' => $value,
-                'readonly' => empty($show) ? '' : 'readonly',
-                'field' => $field,
-                ])
+        <form action="{{ isset($route) && isset($method) ? $route : '' }}" method="POST" class=""
+            enctype="multipart/form-data" id="companyForm">
+            <div class="grid grid-cols-2 gap-4 xxxl:gap-6">
+                @csrf
+                @if ($method == 'PUT')
+                    @method('PUT')
                 @endif
 
-                @error($name)
-                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                @enderror
-            </div>
-            @endforeach
-        </div>
+                @foreach ($sections as $sectionName => $fields)
 
-        <div class="grid grid-cols-2 gap-4 mt-5 xxxl:gap-6">
+                    {{-- Section Heading --}}
+                    @if ($sectionName && (!isset($member) || $sectionName != 'member_KYC_documents'))
+                        <div class="col-span-2 {{ str_replace('_', ' ', $sectionName) }}">
+                            <h3 class="text-xl font-semibold text-center text-gray-800 mb-4">
+                                {{ strtoupper(str_replace('_', ' ', $sectionName)) }}
+                            </h3>
+                        </div>
+                    @endif
+
+                    {{-- Handle Correspondence and Permanent Address checkbox toggles --}}
+                    @if (in_array($sectionName, ['CUSTOMER_CORRESPONDENCE_ADDRESS', 'CUSTOMER_PERMANENT_ADDRESS']))
+                        <div class="col-span-2 flex items-center gap-2 mt-6">
+
+                            {{-- Checkbox --}}
+                            <input type="checkbox" id="toggle_{{ strtolower($sectionName) }}"
+                                {{ strtolower($sectionName) == 'customer_correspondence_address' ? 'checked' : '' }}
+                                class="toggle-address-checkbox w-5 h-5 cursor-pointer">
+
+                            {{-- Label with Asterisk --}}
+                            <label for="toggle_{{ strtolower($sectionName) }}"
+                                class="font-semibold text-lg cursor-pointer select-none">
+                                {{ str_replace('_', ' ', $sectionName) }}
+                                <span class="text-red-500">*</span>
+                            </label>
+                        </div>
+            </div>
+
+            {{-- Address fields wrapped inside div for toggling --}}
+            <div class="w-full grid grid-cols-2 gap-4 mt-4 xl:mt-8 xxxxxl:gap-6 address-section {{ strtolower($sectionName) }}"
+                style="display:none;">
+                @foreach ($fields as $field)
+                    @php
+                        $name = $field['name'];
+                        $type = $field['type'] ?? 'text';
+                        $label = $field['label'];
+                        $id = $field['id'] ?? $field['name'];
+                        $required = $field['required'] ?? false;
+                        $value = old($name, $member[$name] ?? ($field['default'] ?? ''));
+
+                        if (
+                            $name === 'general_enrollment_date' ||
+                            $name === 'member_info_dob' ||
+                            $name === 'member_info_spouse_dob' ||
+                            $name === 'nominee_dob' ||
+                            $name === 'charges_transaction_date'
+                        ) {
+                            $value = old(
+                                $name,
+                                isset($member[$name]) && $member[$name] instanceof \Carbon\Carbon
+                                    ? $member[$name]->format('d-m-Y')
+                                    : $member[$name] ?? ($field['default'] ?? ''),
+                            );
+                        }
+
+                    @endphp
+                    <div class="w-full  col-span-2 md:col-span-1 mb-4 {{ str_replace('_', ' ', $sectionName) }}">
+                        @include('fields.label', [
+                            'id' => $id,
+                            'label' => $label,
+                            'required' => $required,
+                        ])
+
+                        @if ($type === 'custom' && ($field['component'] ?? '') === 'searchable-dropdown')
+                            {{-- ✅ Custom Searchable Dropdown --}}
+                            <x-searchable-dropdown :items="$banks" label="BANK NAME" name="bank_id" display-field="name"
+                                value-field="id" :selected="old('bank_id')" />
+                        @else
+                            {{-- Default input rendering --}}
+                            @include('fields.inputs', [
+                                'id' => $id,
+                                'label' => $label,
+                                'required' => $required,
+                                'type' => $type,
+                                'name' => $name,
+                                'value' => $value,
+                                'readonly' => empty($show) ? '' : 'readonly',
+                                'field' => $field,
+                            ])
+                        @endif
+                        @if ($name == 'member_kyc_aadhaar_no')
+                            <div id="otpSection" style="display:none; margin-top:10px;">
+                                <input type="text" id="otpInput" placeholder="Enter OTP" class="form-control">
+
+                                <button type="button" onclick="verifyOtp()" class="btn btn-success mt-2">
+                                    Verify OTP
+                                </button>
+                            </div>
+                        @endif
+                        @error($name)
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @endforeach
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mt-5 xxxl:gap-6">
             @elseif ($sectionName == 'CUSTOMER_KYC_DOCUMENTS')
-            {{-- Your existing CUSTOMER_KYC_DOCUMENTS code (unchanged) --}}
-            @if (!isset($member))
-            @php
-            function uploadedFileLink($documents, $key)
-            {
-            return !empty($documents[$key]) && $documents[$key]->file_path
-            ? asset('storage/' . $documents[$key]->file_path)
-            : null;
-            }
-            @endphp
+                {{-- Your existing CUSTOMER_KYC_DOCUMENTS code (unchanged) --}}
+                @if (!isset($member))
+                    @php
+                        function uploadedFileLink($documents, $key)
+                        {
+                            return !empty($documents[$key]) && $documents[$key]->file_path
+                                ? asset('storage/' . $documents[$key]->file_path)
+                                : null;
+                        }
+                    @endphp
 
-            {{-- Photo --}}
-            <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
-                @include('fields.label', [
-                'id' => 'photo',
-                'label' => 'Photo',
-                'required' => false,
-                ])
-                @include('fields.inputs', [
-                'id' => 'photo',
-                'label' => 'Photo',
-                'required' => false,
-                'type' => 'file',
-                'name' => 'documents[0][file]',
-                'value' => old('documents.0.file', $documents['photo']->file ?? ''),
-                ])
-                @include('fields.inputs', [
-                'id' => 'photo_category',
-                'type' => 'hidden',
-                'label' => 'File',
-                'value' => old('documents.0.category', $documents['photo']->category ?? 'photo'),
-                'name' => 'documents[0][category]',
-                ])
-                @if ($link = uploadedFileLink($documents, 'photo'))
-                <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
-                    current photo</a>
-                @endif
-                @error('documents.0.file' || 'documents.0.category')
-                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                @enderror
-            </div>
+                    {{-- Photo --}}
+                    <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
+                        @include('fields.label', [
+                            'id' => 'photo',
+                            'label' => 'Photo',
+                            'required' => false,
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'photo',
+                            'label' => 'Photo',
+                            'required' => false,
+                            'type' => 'file',
+                            'name' => 'documents[0][file]',
+                            'value' => old('documents.0.file', $documents['photo']->file ?? ''),
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'photo_category',
+                            'type' => 'hidden',
+                            'label' => 'File',
+                            'value' => old('documents.0.category', $documents['photo']->category ?? 'photo'),
+                            'name' => 'documents[0][category]',
+                        ])
+                        @if ($link = uploadedFileLink($documents, 'photo'))
+                            <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
+                                current photo</a>
+                        @endif
+                        @error('documents.0.file' || 'documents.0.category')
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-            {{-- Signature --}}
-            <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
-                @include('fields.label', [
-                'id' => 'signature',
-                'label' => 'Signature',
-                'required' => false,
-                ])
-                @include('fields.inputs', [
-                'id' => 'signature',
-                'label' => 'Signature',
-                'required' => false,
-                'type' => 'file',
-                'name' => 'documents[1][file]',
-                'value' => old('documents.1.file', $documents['signature']->file ?? ''),
-                ])
-                @include('fields.inputs', [
-                'id' => 'signature_category',
-                'type' => 'hidden',
-                'label' => 'File',
-                'value' => old(
-                'documents.1.category',
-                $documents['signature']->category ?? 'signature'),
-                'name' => 'documents[1][category]',
-                ])
-                @if ($link = uploadedFileLink($documents, 'signature'))
-                <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
-                    current signature</a>
-                @endif
-                @error('documents.1.file')
-                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                @enderror
-            </div>
+                    {{-- Signature --}}
+                    <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
+                        @include('fields.label', [
+                            'id' => 'signature',
+                            'label' => 'Signature',
+                            'required' => false,
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'signature',
+                            'label' => 'Signature',
+                            'required' => false,
+                            'type' => 'file',
+                            'name' => 'documents[1][file]',
+                            'value' => old('documents.1.file', $documents['signature']->file ?? ''),
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'signature_category',
+                            'type' => 'hidden',
+                            'label' => 'File',
+                            'value' => old(
+                                'documents.1.category',
+                                $documents['signature']->category ?? 'signature'),
+                            'name' => 'documents[1][category]',
+                        ])
+                        @if ($link = uploadedFileLink($documents, 'signature'))
+                            <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
+                                current signature</a>
+                        @endif
+                        @error('documents.1.file')
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-            {{-- ID Proof --}}
-            <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
-                @include('fields.label', [
-                'id' => 'id_proof',
-                'label' => 'ID Proof',
-                'required' => false,
-                ])
-                @include('fields.inputs', [
-                'id' => 'id_proof_type',
-                'label' => 'ID Proof Type',
-                'required' => false,
-                'type' => 'select',
-                'value' => old('documents.2.type', $documents['id_proof']->document_type ?? ''),
-                'name' => 'documents[2][type]',
-                'field' => [
-                'options' => [
-                'Aadhaar' => 'Aadhaar Card',
-                'Passport' => 'Passport',
-                'Driving' => 'Driving License',
-                'Voter' => 'Voter ID',
-                ],
-                ],
-                ])
-                @include('fields.inputs', [
-                'id' => 'id_proof',
-                'label' => 'ID Proof',
-                'required' => false,
-                'type' => 'file',
-                'name' => 'documents[2][file]',
-                'value' => '',
-                ])
-                @include('fields.inputs', [
-                'id' => 'id_proof_category',
-                'type' => 'hidden',
-                'label' => 'File',
-                'value' => old('documents.2.category', 'id_proof'),
-                'name' => 'documents[2][category]',
-                ])
-                @if ($link = uploadedFileLink($documents, 'id_proof'))
-                <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
-                    current ID Proof</a>
-                @endif
-                @error('documents.2.file')
-                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                @enderror
-            </div>
+                    {{-- ID Proof --}}
+                    <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
+                        @include('fields.label', [
+                            'id' => 'id_proof',
+                            'label' => 'ID Proof',
+                            'required' => false,
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'id_proof_type',
+                            'label' => 'ID Proof Type',
+                            'required' => false,
+                            'type' => 'select',
+                            'value' => old('documents.2.type', $documents['id_proof']->document_type ?? ''),
+                            'name' => 'documents[2][type]',
+                            'field' => [
+                                'options' => [
+                                    'Aadhaar' => 'Aadhaar Card',
+                                    'Passport' => 'Passport',
+                                    'Driving' => 'Driving License',
+                                    'Voter' => 'Voter ID',
+                                ],
+                            ],
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'id_proof',
+                            'label' => 'ID Proof',
+                            'required' => false,
+                            'type' => 'file',
+                            'name' => 'documents[2][file]',
+                            'value' => '',
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'id_proof_category',
+                            'type' => 'hidden',
+                            'label' => 'File',
+                            'value' => old('documents.2.category', 'id_proof'),
+                            'name' => 'documents[2][category]',
+                        ])
+                        @if ($link = uploadedFileLink($documents, 'id_proof'))
+                            <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
+                                current ID Proof</a>
+                        @endif
+                        @error('documents.2.file')
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-            {{-- ID Proof Back --}}
-            <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
-                @include('fields.label', [
-                'id' => 'id_proof_back',
-                'label' => 'ID Proof Back',
-                'required' => false,
-                ])
-                @include('fields.inputs', [
-                'id' => 'id_proof_back_type',
-                'label' => 'ID Proof Back Type',
-                'required' => false,
-                'type' => 'select',
-                'value' => old('documents.3.type', $documents['id_proof_back']->document_type ?? ''),
-                'name' => 'documents[3][type]',
-                'field' => [
-                'options' => [
-                'Aadhaar' => 'Aadhaar Card',
-                'Passport' => 'Passport',
-                'Driving' => 'Driving License',
-                'Voter' => 'Voter ID',
-                ],
-                ],
-                ])
-                @include('fields.inputs', [
-                'id' => 'id_proof_back',
-                'label' => 'ID Proof Back',
-                'required' => false,
-                'type' => 'file',
-                'name' => 'documents[3][file]',
-                'value' => '',
-                ])
-                @include('fields.inputs', [
-                'id' => 'id_proof_back_category',
-                'type' => 'hidden',
-                'label' => 'File',
-                'value' => old('documents.3.category', 'id_proof_back'),
-                'name' => 'documents[3][category]',
-                ])
-                @if ($link = uploadedFileLink($documents, 'id_proof_back'))
-                <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
-                    current ID Proof Back</a>
-                @endif
-                @error('documents.3.file')
-                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                @enderror
-            </div>
+                    {{-- ID Proof Back --}}
+                    <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
+                        @include('fields.label', [
+                            'id' => 'id_proof_back',
+                            'label' => 'ID Proof Back',
+                            'required' => false,
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'id_proof_back_type',
+                            'label' => 'ID Proof Back Type',
+                            'required' => false,
+                            'type' => 'select',
+                            'value' => old('documents.3.type', $documents['id_proof_back']->document_type ?? ''),
+                            'name' => 'documents[3][type]',
+                            'field' => [
+                                'options' => [
+                                    'Aadhaar' => 'Aadhaar Card',
+                                    'Passport' => 'Passport',
+                                    'Driving' => 'Driving License',
+                                    'Voter' => 'Voter ID',
+                                ],
+                            ],
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'id_proof_back',
+                            'label' => 'ID Proof Back',
+                            'required' => false,
+                            'type' => 'file',
+                            'name' => 'documents[3][file]',
+                            'value' => '',
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'id_proof_back_category',
+                            'type' => 'hidden',
+                            'label' => 'File',
+                            'value' => old('documents.3.category', 'id_proof_back'),
+                            'name' => 'documents[3][category]',
+                        ])
+                        @if ($link = uploadedFileLink($documents, 'id_proof_back'))
+                            <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
+                                current ID Proof Back</a>
+                        @endif
+                        @error('documents.3.file')
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-            {{-- Address Proof --}}
-            <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
-                @include('fields.label', [
-                'id' => 'address_proof',
-                'label' => 'Address Proof',
-                'required' => false,
-                ])
-                @include('fields.inputs', [
-                'id' => 'address_proof_type',
-                'label' => 'Address Proof Type',
-                'required' => false,
-                'type' => 'select',
-                'value' => old('documents.4.type', $documents['address_proof']->document_type ?? ''),
-                'name' => 'documents[4][type]',
-                'field' => [
-                'options' => [
-                'Aadhaar' => 'Aadhaar Card',
-                'Passport' => 'Passport',
-                'Driving' => 'Driving License',
-                'Utility Bill' => 'Utility Bill',
-                ],
-                ],
-                ])
-                @include('fields.inputs', [
-                'id' => 'address_proof',
-                'label' => 'Address Proof',
-                'required' => false,
-                'type' => 'file',
-                'name' => 'documents[4][file]',
-                'value' => '',
-                ])
-                @include('fields.inputs', [
-                'id' => 'address_proof_category',
-                'type' => 'hidden',
-                'label' => 'File',
-                'value' => old('documents.4.category', 'address_proof'),
-                'name' => 'documents[4][category]',
-                ])
-                @if ($link = uploadedFileLink($documents, 'address_proof'))
-                <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
-                    current Address Proof</a>
-                @endif
-                @error('documents.4.file')
-                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                @enderror
-            </div>
+                    {{-- Address Proof --}}
+                    <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
+                        @include('fields.label', [
+                            'id' => 'address_proof',
+                            'label' => 'Address Proof',
+                            'required' => false,
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'address_proof_type',
+                            'label' => 'Address Proof Type',
+                            'required' => false,
+                            'type' => 'select',
+                            'value' => old('documents.4.type', $documents['address_proof']->document_type ?? ''),
+                            'name' => 'documents[4][type]',
+                            'field' => [
+                                'options' => [
+                                    'Aadhaar' => 'Aadhaar Card',
+                                    'Passport' => 'Passport',
+                                    'Driving' => 'Driving License',
+                                    'Utility Bill' => 'Utility Bill',
+                                ],
+                            ],
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'address_proof',
+                            'label' => 'Address Proof',
+                            'required' => false,
+                            'type' => 'file',
+                            'name' => 'documents[4][file]',
+                            'value' => '',
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'address_proof_category',
+                            'type' => 'hidden',
+                            'label' => 'File',
+                            'value' => old('documents.4.category', 'address_proof'),
+                            'name' => 'documents[4][category]',
+                        ])
+                        @if ($link = uploadedFileLink($documents, 'address_proof'))
+                            <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
+                                current Address Proof</a>
+                        @endif
+                        @error('documents.4.file')
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-            {{-- Address Proof Back --}}
-            <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
-                @include('fields.label', [
-                'id' => 'address_proof_back',
-                'label' => 'Address Proof Back',
-                'required' => false,
-                ])
-                @include('fields.inputs', [
-                'id' => 'address_proof_back_type',
-                'label' => 'Address Proof Back Type',
-                'required' => false,
-                'type' => 'select',
-                'value' => old(
-                'documents.5.type',
-                $documents['address_proof_back']->document_type ?? ''),
-                'name' => 'documents[5][type]',
-                'field' => [
-                'options' => [
-                'Aadhaar' => 'Aadhaar Card',
-                'Passport' => 'Passport',
-                'Driving' => 'Driving License',
-                'Utility Bill' => 'Utility Bill',
-                ],
-                ],
-                ])
-                @include('fields.inputs', [
-                'id' => 'address_proof_back',
-                'label' => 'Address Proof Back',
-                'required' => false,
-                'type' => 'file',
-                'name' => 'documents[5][file]',
-                'value' => '',
-                ])
-                @include('fields.inputs', [
-                'id' => 'address_proof_back_category',
-                'type' => 'hidden',
-                'label' => 'File',
-                'value' => old('documents.5.category', 'address_proof_back'),
-                'name' => 'documents[5][category]',
-                ])
-                @if ($link = uploadedFileLink($documents, 'address_proof_back'))
-                <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
-                    current Address Proof Back</a>
-                @endif
-                @error('documents.5.file')
-                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                @enderror
-            </div>
+                    {{-- Address Proof Back --}}
+                    <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
+                        @include('fields.label', [
+                            'id' => 'address_proof_back',
+                            'label' => 'Address Proof Back',
+                            'required' => false,
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'address_proof_back_type',
+                            'label' => 'Address Proof Back Type',
+                            'required' => false,
+                            'type' => 'select',
+                            'value' => old(
+                                'documents.5.type',
+                                $documents['address_proof_back']->document_type ?? ''),
+                            'name' => 'documents[5][type]',
+                            'field' => [
+                                'options' => [
+                                    'Aadhaar' => 'Aadhaar Card',
+                                    'Passport' => 'Passport',
+                                    'Driving' => 'Driving License',
+                                    'Utility Bill' => 'Utility Bill',
+                                ],
+                            ],
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'address_proof_back',
+                            'label' => 'Address Proof Back',
+                            'required' => false,
+                            'type' => 'file',
+                            'name' => 'documents[5][file]',
+                            'value' => '',
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'address_proof_back_category',
+                            'type' => 'hidden',
+                            'label' => 'File',
+                            'value' => old('documents.5.category', 'address_proof_back'),
+                            'name' => 'documents[5][category]',
+                        ])
+                        @if ($link = uploadedFileLink($documents, 'address_proof_back'))
+                            <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
+                                current Address Proof Back</a>
+                        @endif
+                        @error('documents.5.file')
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
 
-            {{-- PAN --}}
-            <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
-                @include('fields.label', [
-                'id' => 'pan_number',
-                'label' => 'PAN',
-                'required' => false,
-                ])
-                @include('fields.inputs', [
-                'id' => 'pan_number_type',
-                'label' => 'PAN Type',
-                'required' => false,
-                'type' => 'select',
-                'value' => old('documents.6.type', $documents['pan_number']->document_type ?? ''),
-                'name' => 'documents[6][type]',
-                'field' => [
-                'options' => [
-                'PAN' => 'PAN',
-                ],
-                ],
-                ])
-                @include('fields.inputs', [
-                'id' => 'pan_number',
-                'label' => 'PAN',
-                'required' => false,
-                'type' => 'file',
-                'name' => 'documents[6][file]',
-                'value' => '',
-                ])
-                @include('fields.inputs', [
-                'id' => 'pan_number_category',
-                'type' => 'hidden',
-                'label' => 'File',
-                'value' => old('documents.6.category', 'pan_number'),
-                'name' => 'documents[6][category]',
-                ])
-                @if ($link = uploadedFileLink($documents, 'pan_number'))
-                <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
-                    current
-                    PAN</a>
+                    {{-- PAN --}}
+                    <div class="col-span-4 md:col-span-2 mb-4 flex flex-col gap-2">
+                        @include('fields.label', [
+                            'id' => 'pan_number',
+                            'label' => 'PAN',
+                            'required' => false,
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'pan_number_type',
+                            'label' => 'PAN Type',
+                            'required' => false,
+                            'type' => 'select',
+                            'value' => old('documents.6.type', $documents['pan_number']->document_type ?? ''),
+                            'name' => 'documents[6][type]',
+                            'field' => [
+                                'options' => [
+                                    'PAN' => 'PAN',
+                                ],
+                            ],
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'pan_number',
+                            'label' => 'PAN',
+                            'required' => false,
+                            'type' => 'file',
+                            'name' => 'documents[6][file]',
+                            'value' => '',
+                        ])
+                        @include('fields.inputs', [
+                            'id' => 'pan_number_category',
+                            'type' => 'hidden',
+                            'label' => 'File',
+                            'value' => old('documents.6.category', 'pan_number'),
+                            'name' => 'documents[6][category]',
+                        ])
+
+                        @if ($link = uploadedFileLink($documents, 'pan_number'))
+                            <a href="{{ $link }}" target="_blank" class="text-blue-600 underline text-sm">View
+                                current
+                                PAN</a>
+                        @endif
+                        @error('documents.6.file')
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
                 @endif
-                @error('documents.6.file')
-                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                @enderror
-            </div>
-            @endif
             @else
-            {{-- Default fields output for all other sections (unchanged) --}}
-            @foreach ($fields as $field)
-            @php
-            $name = $field['name'];
-            $type = $field['type'] ?? 'text';
-            $label = $field['label'];
-            $id = $field['id'] ?? $field['name'];
-            $required = $field['required'] ?? false;
-            $value = old($name, $member[$name] ?? ($field['default'] ?? ''));
+                {{-- Default fields output for all other sections (unchanged) --}}
+                @foreach ($fields as $field)
+                    @php
+                        $name = $field['name'];
+                        $type = $field['type'] ?? 'text';
+                        $label = $field['label'];
+                        $id = $field['id'] ?? $field['name'];
+                        $required = $field['required'] ?? false;
+                        $value = old($name, $member[$name] ?? ($field['default'] ?? ''));
 
-            if (
-            $name === 'general_enrollment_date' ||
-            $name === 'member_info_dob' ||
-            $name === 'member_info_spouse_dob' ||
-            $name === 'nominee_dob' ||
-            $name === 'charges_transaction_date'
-            ) {
-            $value = old(
-            $name,
-            isset($member[$name]) && $member[$name] instanceof \Carbon\Carbon
-            ? $member[$name]->format('d-m-Y')
-            : $member[$name] ?? ($field['default'] ?? ''),
-            );
-            }
-            @endphp
-            <div class="col-span-4 md:col-span-1 {{ str_replace('_', ' ', $sectionName) }}">
-                @include('fields.label', [
-                'id' => $id,
-                'label' => $label,
-                'required' => $required,
-                ])
+                        if (
+                            $name === 'general_enrollment_date' ||
+                            $name === 'member_info_dob' ||
+                            $name === 'member_info_spouse_dob' ||
+                            $name === 'nominee_dob' ||
+                            $name === 'charges_transaction_date'
+                        ) {
+                            $value = old(
+                                $name,
+                                isset($member[$name]) && $member[$name] instanceof \Carbon\Carbon
+                                    ? $member[$name]->format('d-m-Y')
+                                    : $member[$name] ?? ($field['default'] ?? ''),
+                            );
+                        }
+                    @endphp
+                    <div class="col-span-4 md:col-span-1 {{ str_replace('_', ' ', $sectionName) }}">
+                        @include('fields.label', [
+                            'id' => $id,
+                            'label' => $label,
+                            'required' => $required,
+                        ])
 
-                @if ($type === 'custom' && ($field['component'] ?? '') === 'searchable-dropdown')
-
-                {{--
+                        @if ($type === 'custom' && ($field['component'] ?? '') === 'searchable-dropdown')
+                            {{--
                 <x-searchable-dropdown :items="$banks" label="BANK NAME" name="bank_id" display-field="name"
                     value-field="id" :selected="old('bank_id')" /> --}}
-                <div id="bankDropdownWrapper" class="mt-3 ">
+                            <div id="bankDropdownWrapper" class="mt-3 ">
 
-                    <select name="bank_id" id="bank_id"
-                        class="w-full bg-secondary/5 rounded-10 border px-3 py-3 text-sm">
-                        <option value="">-- Select Bank --</option>
+                                <select name="bank_id" id="bank_id"
+                                    class="w-full bg-secondary/5 rounded-10 border px-3 py-3 text-sm">
+                                    <option value="">-- Select Bank --</option>
 
-                        @foreach($banks as $id => $name)
-                        <option value="{{ $id }}" {{ old('bank_id')==$id ? 'selected' : '' }}>
-                            {{ $name }}
-                        </option>
-                        @endforeach
-                    </select>
+                                    @foreach ($banks as $id => $name)
+                                        <option value="{{ $id }}" {{ old('bank_id') == $id ? 'selected' : '' }}>
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
 
-                    @error('bank_id')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
+                                @error('bank_id')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
 
-                    <!-- Cheque No -->
-                    {{-- <div class="mt-3">
+                                <!-- Cheque No -->
+                                {{-- <div class="mt-3">
                         <label class="block text-sm font-medium text-gray-700">Cheque No.</label>
                         <input type="text" name="cheque_no"
                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3"
@@ -587,62 +603,108 @@ $member['member_info_first_name'] .
                             value="  {{ old('cheque_no', $application->cheque_no ?? '') }}">
                     </div> --}}
 
-                    <!-- Cheque Date -->
-                    {{-- <div class="mt-3">
+                                <!-- Cheque Date -->
+                                {{-- <div class="mt-3">
                         <label class="block text-sm font-medium text-gray-700">Cheque Date</label>
                         <input type="text" id="cheque_date" name="cheque_date"
                             value="{{ old('cheque_date', isset($application->cheque_date) ? \Carbon\Carbon::parse($application->cheque_date)->format('d-m-Y') : '') }}"
                             class="w-64 rounded-10 border px-3 py-2 text-sm bg-secondary/5 dark:bg-bg3">
                     </div> --}}
-                </div>
-                @else
-                @include('fields.inputs', [
-                'id' => $id,
-                'label' => $label,
-                'required' => $required,
-                'type' => $type,
-                'name' => $name,
-                'value' => $value,
-                'readonly' => empty($show) ? '' : 'readonly',
-                'field' => $field,
-                ])
-                @endif
-                @if ($id === 'monthly_income')
-                <x-number-to-word for="monthly_income" />
-                @endif
+                            </div>
+                        @else
+                            @if ($name == 'member_kyc_aadhaar_no')
+                                <div style="display:flex; gap:10px; align-items:center;">
 
-                @error($name)
-                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
-                @enderror
-            </div>
-            @endforeach
-            @endif
-            @endforeach
+                                    <div style="flex:1;">
+                                        @include('fields.inputs', [
+                                            'id' => 'member_kyc_aadhaar_no',
+                                            'label' => $label,
+                                            'required' => $required,
+                                            'type' => $type,
+                                            'name' => $name,
+                                            'value' => $value,
+                                            'readonly' => empty($show) ? '' : 'readonly',
+                                            'field' => $field,
+                                        ])
+                                    </div>
 
-            {{-- Save button and other controls --}}
-            <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
-                @if (isset($method))
-                <button class="btn-primary" type="submit"> {{ $method === 'PUT' ? 'UPDATE' : 'SAVE' }} CUSTOMER
-                </button>
-                @if ($method !== 'PUT')
-                <!-- Only show Reset button if not 'Update' --> <button class="btn-outline" type="reset"
-                    onclick="document.getElementById('companyForm').reset();"> RESET </button>
+                                    <button type="button" onclick="sendAadhaarOtp()"
+                                        style="background:#f59e0b; color:white; padding:10px 15px; border-radius:6px;">
+                                        VERIFY
+                                    </button>
+
+                                </div>
+                            @elseif ($name == 'member_kyc_pan_no')
+                                <div style="display:flex; gap:10px; align-items:center;">
+
+                                    <div style="flex:1;">
+                                        @include('fields.inputs', [
+                                            'id' => 'member_kyc_pan_no',
+                                            'label' => $label,
+                                            'required' => $required,
+                                            'type' => $type,
+                                            'name' => $name,
+                                            'value' => $value,
+                                            'readonly' => empty($show) ? '' : 'readonly',
+                                            'field' => $field,
+                                        ])
+                                    </div>
+
+                                    <button type="button" onclick="verifyPAN()"
+                                        style="background:#2563eb; color:white; padding:10px 15px; border-radius:6px;">
+                                        VERIFY
+                                    </button>
+
+                                </div>
+                            @else
+                                @include('fields.inputs', [
+                                    'id' => $id,
+                                    'label' => $label,
+                                    'required' => $required,
+                                    'type' => $type,
+                                    'name' => $name,
+                                    'value' => $value,
+                                    'readonly' => empty($show) ? '' : 'readonly',
+                                    'field' => $field,
+                                ])
+                            @endif
+                        @endif
+                        @if ($id === 'monthly_income')
+                            <x-number-to-word for="monthly_income" />
+                        @endif
+
+                        @error($name)
+                            <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @endforeach
                 @endif
-                @endif <a href="{{ route('member.index') }}"
-                    class="btn-outline inline-flex items-center justify-center"> BACK </a>
-                {{-- @if ($method !== 'PUT')
+                @endforeach
+
+                {{-- Save button and other controls --}}
+                <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
+                    @if (isset($method))
+                        <button class="btn-primary" type="submit"> {{ $method === 'PUT' ? 'UPDATE' : 'SAVE' }} CUSTOMER
+                        </button>
+                        @if ($method !== 'PUT')
+                            <!-- Only show Reset button if not 'Update' --> <button class="btn-outline" type="reset"
+                                onclick="document.getElementById('companyForm').reset();"> RESET </button>
+                        @endif
+                    @endif <a href="{{ route('member.index') }}"
+                        class="btn-outline inline-flex items-center justify-center"> BACK </a>
+                    {{-- @if ($method !== 'PUT')
                 <!-- Only show Reset button if not 'Update' --> <button class="btn-outline" type="reset"
                     onclick="document.getElementById('companyForm').reset();"> RESET </button>
                 @endif --}}
+                </div>
             </div>
-        </div>
-    </form>
-</div>
-</div>
+        </form>
+    </div>
+    </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
             $('.online, .cheque').hide();
 
             $('input[name="charges_pay_mode"]').change(function() {
@@ -660,9 +722,9 @@ $member['member_info_first_name'] .
                 }
             });
         });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
             // -----------------------------
             // DIGIT-ONLY FIELDS
             // -----------------------------
@@ -770,9 +832,9 @@ $member['member_info_first_name'] .
                 });
             });
         });
-</script>
-<script>
-    const titleRadios = document.querySelectorAll('input[name="member_info_title"]');
+    </script>
+    <script>
+        const titleRadios = document.querySelectorAll('input[name="member_info_title"]');
         const genderRadios = document.querySelectorAll('input[name="member_info_gender"]');
 
         titleRadios.forEach(radio => {
@@ -793,10 +855,10 @@ $member['member_info_first_name'] .
                 });
             });
         });
-</script>
-{{-- JavaScript to toggle address sections --}}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+    </script>
+    {{-- JavaScript to toggle address sections --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
             const checkboxes = document.querySelectorAll('.toggle-address-checkbox');
 
             checkboxes.forEach(checkbox => {
@@ -820,9 +882,9 @@ $member['member_info_first_name'] .
                 }
             });
         });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
             // Checkbox for "Same as Correspondence Address"
             const sameAddressCheckbox = document.createElement('div');
@@ -890,32 +952,32 @@ $member['member_info_first_name'] .
                 }
             }
         });
-</script>
+    </script>
 
 
 
 
-{{-- bank dropdown code --}}
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
+    {{-- bank dropdown code --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
 
-        const radios = document.querySelectorAll('input[name="fee_mode"]');
-        const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
-        const onlineFields = document.getElementById("onlineFields");
+            const radios = document.querySelectorAll('input[name="fee_mode"]');
+            const bankDropdownWrapper = document.getElementById("bankDropdownWrapper");
+            const onlineFields = document.getElementById("onlineFields");
 
-        radios.forEach(radio => {
-            radio.addEventListener("change", () => {
-                bankDropdownWrapper.classList.add("hidden");
-                onlineFields.classList.add("hidden");
+            radios.forEach(radio => {
+                radio.addEventListener("change", () => {
+                    bankDropdownWrapper.classList.add("hidden");
+                    onlineFields.classList.add("hidden");
 
-                if (radio.value === "cheque" && radio.checked) {
-                    bankDropdownWrapper.classList.remove("hidden");
-                }
-                if (radio.value === "online" && radio.checked) {
-                    onlineFields.classList.remove("hidden");
-                }
+                    if (radio.value === "cheque" && radio.checked) {
+                        bankDropdownWrapper.classList.remove("hidden");
+                    }
+                    if (radio.value === "online" && radio.checked) {
+                        onlineFields.classList.remove("hidden");
+                    }
+                });
             });
-        });
 
             // ---- FIX: Set default date as d-m-Y ----
             function getDMY() {
@@ -937,5 +999,105 @@ $member['member_info_first_name'] .
             }
 
         });
-</script>
+    </script>
+    @if (session('success') && str_contains(session('success'), 'OTP Sent'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                let otpBox = document.getElementById('otpSection');
+                if (otpBox) {
+                    otpBox.style.display = 'block';
+                }
+                document.getElementById('overlay').style.display = 'block';
+
+            });
+        </script>
+    @endif
+
+    <script>
+        let otpVerified = false;
+
+        // 👉 SEND OTP
+        function sendAadhaarOtp() {
+
+            let aadhaar = document.getElementById('member_kyc_aadhaar_no').value;
+
+            if (!aadhaar || aadhaar.length !== 12) {
+                alert("Enter valid Aadhaar");
+                return;
+            }
+
+            fetch('/member/send-aadhaar-otp/{{ $member->id ?? 0 }}', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        aadhaar: aadhaar
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+
+                    if (data.success) {
+                        alert("OTP Sent ✅");
+                        document.getElementById('otpSection').style.display = 'block';
+                    } else {
+                        alert(data.message);
+                    }
+
+                });
+        }
+
+        // 👉 VERIFY OTP
+        function verifyOtp() {
+
+            let otp = document.getElementById('otpInput').value;
+
+            if (!otp) {
+                alert("Enter OTP");
+                return;
+            }
+
+            fetch('/member/verify-aadhaar-otp/{{ $member->id ?? 0 }}', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        otp: otp
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+
+                    if (data.success) {
+                        alert("OTP Verified ✅");
+                        otpVerified = true;
+
+                        document.getElementById('otpSection').style.display = 'none';
+                    } else {
+                        alert(data.message);
+                    }
+
+                });
+        }
+
+        // 👉 FORM SUBMIT CONTROL
+        document.getElementById('companyForm').addEventListener('submit', function(e) {
+
+            let aadhaar = document.getElementById('member_kyc_aadhaar_no')?.value;
+
+            if (aadhaar && aadhaar.length === 12 && !otpVerified) {
+
+                e.preventDefault();
+                alert("Please verify Aadhaar OTP first!");
+                document.getElementById('otpSection').style.display = 'block';
+
+                return false;
+            }
+        });
+    </script>
+
 @endsection

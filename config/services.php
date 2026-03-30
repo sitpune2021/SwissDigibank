@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'muffinpay' => [
+        'url' => env('MUFFINPAY_URL'),
+    ],
+
 ];

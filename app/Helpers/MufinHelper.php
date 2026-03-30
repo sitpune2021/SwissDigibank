@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\Log;
+
 class MufinHelper
 {
     public static function flattenArray($array, $prefix = '')
@@ -9,6 +11,8 @@ class MufinHelper
         $result = [];
 
         foreach ($array as $key => $value) {
+
+            if ($key === null || $key === '') continue;
 
             $newKey = $prefix ? $prefix . '.' . $key : $key;
 
@@ -25,8 +29,10 @@ class MufinHelper
                             );
                         } else {
 
-                            if ($item !== null && $item !== '') {
-                                $result[$newKey . "[$index]"] = $item;
+                            $cleanValue = self::cleanValue($item);
+
+                            if ($cleanValue !== null) {
+                                $result[$newKey . "[$index]"] = $cleanValue;
                             }
                         }
                     }
@@ -39,8 +45,10 @@ class MufinHelper
                 }
             } else {
 
-                if ($value !== null && $value !== '') {
-                    $result[$newKey] = $value;
+                $cleanValue = self::cleanValue($value);
+
+                if ($cleanValue !== null) {
+                    $result[$newKey] = $cleanValue;
                 }
             }
         }
@@ -48,22 +56,47 @@ class MufinHelper
         return $result;
     }
 
-
-    public static function generateXVerify($payload, $salt)
+    private static function cleanValue($value)
     {
-
-        $flat = self::flattenArray($payload);
-
-        ksort($flat);
-
-        $pairs = [];
-
-        foreach ($flat as $key => $value) {
-            $pairs[] = $key . '=' . $value;
+        if ($value === null || $value === '') {
+            return null;
         }
 
-        $string = implode('~', $pairs) . $salt;
+        // Convert boolean
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
 
-        return strtoupper(hash('sha256', $string));
+        // Convert to string
+        $value = (string) $value;
+
+        // Trim + remove extra spaces
+        $value = trim($value);
+        $value = preg_replace('/\s+/', ' ', $value);
+
+        return $value;
     }
+
+    public static function generateXVerify($payload)
+    {
+        ksort($payload);
+
+        $string = '';
+        foreach ($payload as $key => $value) {
+            $string .= $key . '=' . $value . '~';
+        }
+
+        $string = rtrim($string, '~');
+
+        $saltKey = env('MUFFINPAY_SALT_KEY');
+
+        // ✅ IMPORTANT LINE
+        $finalString = $string . $saltKey;
+
+        Log::info('FINAL HASH STRING', ['string' => $finalString]);
+
+        return hash('sha256', $finalString);
+    }
+
+    
 }

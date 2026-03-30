@@ -1024,7 +1024,7 @@
                         </div>
                         <div class="flex justify-between py-2 border-b">
                             <span class="font-semibold uppercase">IFSC Code</span>
-                            <span>{{ $promoter->branch->ifsc_code }}</span>
+                            <span>{{ $promoter->branch->ifsc_code ?? '' }}</span>
                         </div>
                         <div class="flex justify-between py-2 border-b">
                             <span class="font-semibold uppercase">Account Type</span>

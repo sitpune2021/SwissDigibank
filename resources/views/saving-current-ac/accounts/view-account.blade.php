@@ -380,7 +380,7 @@
                                 <tbody>
                                     <tr class="border-b">
                                         <th class="p-2 text-start uppercase">Branch</th>
-                                        <td class="p-2">{{ $account->branch->branch_name }}</td>
+                                        <td class="p-2">{{ $account->branch->branch_name ?? '' }}</td>
                                     </tr>
                                     <tr>
                                         <th class="p-2 text-start uppercase">Joint Account</th>
@@ -439,7 +439,7 @@
                         <label class="font-semibold text-gray-700 text-lg uppercase">Branch</label>
                         <div class="flex items-center gap-2 mb-2 mt-2">
                             <select class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3" disabled>
-                                <option>{{ $account->branch->branch_name }}</option>
+                                <option>{{ $account->branch->branch_name ?? ''}}</option>
                             </select>
                             <button class="px-3 py-2 text-sm btn-primary rounded-10 text-center uppercase">UPDATE</button>
                         </div>
