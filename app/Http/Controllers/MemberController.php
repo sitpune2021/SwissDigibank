@@ -526,7 +526,6 @@ class MemberController extends Controller
     }
     public function verifyMobileOtp(Request $request)
     {
-        dd($request->all());
         Log::info('OTP VERIFY START', [
             'mobileNumber' => $request->mobileNumber,
             'otp' => $request->otp,
