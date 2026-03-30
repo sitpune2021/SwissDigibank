@@ -542,12 +542,18 @@ class MemberController extends Controller
 
             $url = env('MUFFINPAY_URL') . '/user/verify-otp';
 
+            $xverify = \App\Helpers\MufinHelper::generateXVerify($payload);
+
+            $body = json_encode($payload, JSON_UNESCAPED_SLASHES);
+
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                'apiKey' => env('MUFFINPAY_API_KEY')
-            ])->post($url, $payload);
-
+                'apiKey' => env('MUFFINPAY_API_KEY'),
+                'xverifyv2' => $xverify   // 🔥 MOST IMPORTANT
+            ])
+                ->withBody($body, 'application/json')   // 🔥 MUST
+                ->post($url);
             Log::info('OTP FULL RESPONSE', [
                 'status' => $response->status(),
                 'body' => $response->body(),
@@ -557,8 +563,7 @@ class MemberController extends Controller
             // ✅ SUCCESS
             if (isset($data['code']) && $data['code'] === '0000') {
 
-                $user = \App\Models\User::where('mobile', $request->mobileNumber)->first();
-
+                $user = \App\Models\User::find($request->local_user_id);
                 if ($user) {
 
                     $user->update([
