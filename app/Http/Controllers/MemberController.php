@@ -524,6 +524,7 @@ class MemberController extends Controller
             return back()->withErrors(['error' => 'An error occurred while creating the member. Please try again.']);
         }
     }
+
     public function verifyMobileOtp(Request $request)
     {
         Log::info('OTP VERIFY START', [
@@ -596,6 +597,220 @@ class MemberController extends Controller
             dd($e->getMessage());
         }
     }
+
+    public function submitPanKyc(Request $request, $id)
+    {
+        Log::info('PAN KYC START', ['member_id' => $id]);
+
+        $request->validate([
+            'member_kyc_pan_no' => [
+                'required',
+                'regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
+                'unique:kyc_and_nominees,member_kyc_pan_no'
+            ]
+        ]);
+
+        $member = Member::findOrFail($id);
+        $user = $member->user;
+        $kyc = KycAndNominee::where('member_id', $id)->first();
+
+        // Duplicate PAN check
+        if ($kyc && $kyc->member_kyc_pan_no == $request->member_kyc_pan_no) {
+            return back()->with('error', 'PAN already submitted!');
+        }
+
+        // 🔥 CLEAN DATA (VERY IMPORTANT)
+        $userId = preg_replace('/\s+/', '', $user->muf_user_id);
+
+        $name = trim(
+            preg_replace(
+                '/\s+/',
+                ' ',
+                $member->member_info_first_name . ' ' .
+                    $member->member_info_middle_name . ' ' .
+                    $member->member_info_last_name
+            )
+        );
+
+        $panNumber = strtoupper(trim($request->member_kyc_pan_no));
+
+        $dob = \Carbon\Carbon::parse($member->member_info_dob)->format('d/m/Y');
+
+        // ✅ PAYLOAD
+        $panPayload = [
+            "idType" => "PAN_CARD",
+            "userId" => $userId,
+            "pan" => [
+                "number" => strtoupper(trim($request->member_kyc_pan_no)),
+                "dob" => \Carbon\Carbon::parse($member->member_info_dob)->format('d/m/Y'),
+                "name" => trim(preg_replace('/\s+/', ' ', $name))
+            ]
+        ];
+
+        // ✅ IMPORTANT
+        $body = json_encode($panPayload, JSON_UNESCAPED_SLASHES);
+
+        Log::info('PAN PAYLOAD CREATED', ['body' => $body]);
+
+        // ✅ FIXED
+        $flattenPayload = MufinHelper::flattenArray($panPayload);
+
+        $xverifyPan = MufinHelper::generateXVerify($flattenPayload);
+
+        Log::info('PAN HASH GENERATED', [
+            'hash' => $xverifyPan,
+            'flatten_payload' => $flattenPayload
+        ]);
+        
+        try {
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'apiKey' => env('MUFFINPAY_API_KEY'),
+                'xverifyv2' => $xverifyPan
+            ])
+                ->withBody($body, 'application/json')
+                ->withOptions([
+                    'verify' => false   // 🔥 IMPORTANT (UAT SSL FIX)
+                ])
+                ->post(env('MUFFINPAY_URL') . '/kyc/submit');
+
+            $data = $response->json();
+
+            Log::info('PAN API RESPONSE', [
+                'status' => $response->status(),
+                'response' => $data
+            ]);
+
+            if (isset($data['code']) && $data['code'] == '0000') {
+
+                // KycAndNominee::updateOrCreate(
+                //     ['member_id' => $id],
+                //     [
+                //         'member_kyc_pan_no' => $panNumber,
+                //         'pan_verified' => 1
+                //     ]
+                // );
+                $kyc = KycAndNominee::where('member_id',$id)->first();
+
+                if($kyc){
+                    $kyc->update([
+                        'member_kyc_pan_no'=>$panNumber,
+                        'pan_verified'=>1
+                    ]);
+                }
+
+                return back()->with('success', 'PAN Verified ✅');
+            }
+
+            return back()->with('error', $data['message'] ?? 'PAN Failed');
+        } catch (\Exception $e) {
+
+            Log::error('PAN API ERROR', [
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function submitAadhaar(Request $request, $id)
+    {
+        Log::info('AADHAAR START', ['member_id' => $id]);
+
+        $kyc = KycAndNominee::where('member_id', $id)->first();
+
+        $request->validate([
+            'aadhaar' => [
+                'required',
+                'digits:12',
+                'regex:/^[2-9]{1}[0-9]{11}$/',
+                Rule::unique('kyc_and_nominees', 'member_kyc_aadhaar_no')
+                    ->ignore(optional($kyc)->id)
+            ]
+        ]);
+
+        $member = Member::findOrFail($id);
+        $user = $member->user;
+
+        if (!$user->muf_user_id) {
+            return back()->with('error', 'Mufin User ID missing!');
+        }
+
+        $aadhaar = trim($request->aadhaar);
+
+        // ✅ PAYLOAD
+        $payload = [
+            "idType" => "AADHAAR_CARD",
+            "userId" => trim($user->muf_user_id),
+            "aadhar" => [
+                "aadharNumber" => $aadhaar
+            ]
+        ];
+
+        $body = json_encode($payload, JSON_UNESCAPED_SLASHES);
+
+        Log::info('AADHAAR PAYLOAD CREATED', ['body' => $body]);
+
+        // ✅ 🔥 FIXED HASH (MOST IMPORTANT)
+        $flattenPayload = MufinHelper::flattenArray($payload);
+        $xverify = MufinHelper::generateXVerify($flattenPayload);
+
+        Log::info('AADHAAR HASH GENERATED', [
+            'hash' => $xverify,
+            'flatten_payload' => $flattenPayload
+        ]);
+
+        try {
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'apiKey' => env('MUFFINPAY_API_KEY'),
+                'xverifyv2' => $xverify
+            ])
+            ->withBody($body, 'application/json')
+            ->withOptions([
+                'verify' => false
+            ])
+            ->post(env('MUFFINPAY_URL') . '/kyc/submit');
+
+            $data = $response->json();
+
+            Log::info('AADHAAR API RESPONSE', [
+                'status' => $response->status(),
+                'response' => $data
+            ]);
+
+            if (isset($data['code']) && $data['code'] == '0000') {
+
+                $refId = $data['data']['aadharOtpResponse']['aadharRefId'] ?? null;
+
+                KycAndNominee::updateOrCreate(
+                    ['member_id' => $id],
+                    [
+                        'member_kyc_aadhaar_no' => $aadhaar,
+                        'aadhaar_submitted' => 1,
+                        'aadhaar_ref_id' => $refId
+                    ]
+                );
+
+                return back()->with('success', 'Aadhaar Submitted & OTP Sent ✅');
+            }
+
+            return back()->with('error', $data['message'] ?? 'Aadhaar Failed');
+
+        } catch (\Exception $e) {
+
+            Log::error('AADHAAR API ERROR', [
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Something went wrong!');
+        }
+    }
+
     public function sendAadhaarOtp(Request $request, $id)
     {
         $member = Member::findOrFail($id);
@@ -701,218 +916,6 @@ class MemberController extends Controller
         }
 
         return back()->with('error', $data['message'] ?? 'OTP Failed');
-    }
-    public function submitPanKyc(Request $request, $id)
-    {
-        Log::info('PAN KYC START', ['member_id' => $id]);
-
-        $request->validate([
-            'member_kyc_pan_no' => [
-                'required',
-                'regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
-                'unique:kyc_and_nominees,member_kyc_pan_no'
-            ]
-        ]);
-
-        $member = Member::findOrFail($id);
-        $user = $member->user;
-        $kyc = KycAndNominee::where('member_id', $id)->first();
-
-        // Duplicate PAN check
-        if ($kyc && $kyc->member_kyc_pan_no == $request->member_kyc_pan_no) {
-            return back()->with('error', 'PAN already submitted!');
-        }
-
-        // 🔥 CLEAN DATA (VERY IMPORTANT)
-        $userId = preg_replace('/\s+/', '', $user->muf_user_id);
-
-        $name = trim(
-            preg_replace(
-                '/\s+/',
-                ' ',
-                $member->member_info_first_name . ' ' .
-                    $member->member_info_middle_name . ' ' .
-                    $member->member_info_last_name
-            )
-        );
-
-        $panNumber = strtoupper(trim($request->member_kyc_pan_no));
-
-        $dob = \Carbon\Carbon::parse($member->member_info_dob)->format('d/m/Y');
-
-        // ✅ PAYLOAD
-        $panPayload = [
-            "idType" => "PAN_CARD",
-            "userId" => $userId,
-            "pan" => [
-                "number" => strtoupper(trim($request->member_kyc_pan_no)),
-                "dob" => \Carbon\Carbon::parse($member->member_info_dob)->format('d/m/Y'),
-                "name" => trim(preg_replace('/\s+/', ' ', $name))
-            ]
-        ];
-
-        // ✅ IMPORTANT
-        $body = json_encode($panPayload, JSON_UNESCAPED_SLASHES);
-
-        Log::info('PAN PAYLOAD CREATED', ['body' => $body]);
-
-        // ✅ FIXED
-        $xverifyPan = MufinHelper::generatePanHash($panPayload);
-        Log::info('PAN HASH GENERATED', ['hash' => $xverifyPan]);
-        try {
-
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'apiKey' => env('MUFFINPAY_API_KEY'),
-                'xverifyv2' => $xverifyPan
-            ])
-                ->withBody($body, 'application/json')
-                ->post(env('MUFFINPAY_URL') . '/kyc/submit');
-
-            $data = $response->json();
-
-            Log::info('PAN API RESPONSE', [
-                'status' => $response->status(),
-                'response' => $data
-            ]);
-
-            if (isset($data['code']) && $data['code'] == '0000') {
-
-                KycAndNominee::updateOrCreate(
-                    ['member_id' => $id],
-                    [
-                        'member_kyc_pan_no' => $panNumber,
-                        'pan_verified' => 1
-                    ]
-                );
-
-                return back()->with('success', 'PAN Verified ✅');
-            }
-
-            return back()->with('error', $data['message'] ?? 'PAN Failed');
-        } catch (\Exception $e) {
-
-            Log::error('PAN API ERROR', [
-                'error' => $e->getMessage()
-            ]);
-
-            return back()->with('error', 'Something went wrong');
-        }
-    }
-    public function submitAadhaar(Request $request, $id)
-    {
-        Log::info('AADHAAR START', ['member_id' => $id]);
-
-        // ✅ VALIDATION (ONLY ONCE)
-        $kyc = KycAndNominee::where('member_id', $id)->first();
-
-        $request->validate([
-            'aadhaar' => [
-                'required',
-                'digits:12',
-                'regex:/^[2-9]{1}[0-9]{11}$/',
-                Rule::unique('kyc_and_nominees', 'member_kyc_aadhaar_no')
-                    ->ignore(optional($kyc)->id)
-            ]
-        ], [
-            'aadhaar.required' => 'Aadhaar is required.',
-            'aadhaar.digits' => 'Aadhaar must be 12 digits.',
-            'aadhaar.regex' => 'Enter valid Aadhaar number.',
-            'aadhaar.unique' => 'This Aadhaar is already used by another member.'
-        ]);
-
-        $member = Member::findOrFail($id);
-        $user = $member->user;
-
-        Log::info('USER DATA', [
-            'user_id' => $user->id,
-            'muf_user_id' => $user->muf_user_id
-        ]);
-
-        // ✅ CHECK muf_user_id
-        if (!$user->muf_user_id) {
-            Log::error('MUF USER ID MISSING');
-            return back()->with('error', 'Mufin User ID missing!');
-        }
-
-        // ✅ EXISTING KYC CHECK
-        $kyc = KycAndNominee::where('member_id', $id)->first();
-
-        // if ($kyc && $kyc->member_kyc_aadhaar_no == $request->aadhaar) {
-        //     Log::warning('AADHAAR DUPLICATE ATTEMPT', [
-        //         'aadhaar' => $request->aadhaar
-        //     ]);
-        //     return back()->with('error', 'Aadhaar already submitted!');
-        // }
-
-        // ✅ PAYLOAD
-        $payload = [
-            "idType" => "AADHAAR_CARD",
-            "userId" => $user->muf_user_id,
-            "aadhar" => [
-                "aadharNumber" => $request->aadhaar
-            ]
-        ];
-
-        $body = json_encode($payload, JSON_UNESCAPED_SLASHES);
-        $xverify = MufinHelper::generateXVerify($payload);
-
-        Log::info('AADHAAR REQUEST', [
-            'body' => $body,
-            'hash' => $xverify
-        ]);
-
-        try {
-
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'apiKey' => env('MUFFINPAY_API_KEY'),
-                'xverifyv2' => $xverify
-            ])
-                ->withBody($body, 'application/json')
-                ->post(env('MUFFINPAY_URL') . '/kyc/submit');
-
-            $data = $response->json();
-
-            Log::info('AADHAAR RESPONSE', [
-                'status' => $response->status(),
-                'response' => $data
-            ]);
-
-            // ✅ SUCCESS
-            if (isset($data['code']) && $data['code'] == '0000') {
-
-                Log::info('AADHAAR SUCCESS');
-
-                KycAndNominee::updateOrCreate(
-                    ['member_id' => $id],
-                    [
-                        'member_kyc_aadhaar_no' => $request->aadhaar,
-                        'aadhaar_submitted' => 1,
-                        'aadhaar_ref_id' => $data['data']['aadharOtpResponse']['aadharRefId'] ?? null
-                    ]
-                );
-
-                return back()->with('success', 'Aadhaar Submitted & OTP Sent ✅');
-            }
-
-            // ❌ FAIL
-            Log::error('AADHAAR FAILED', [
-                'message' => $data['message'] ?? 'Unknown error'
-            ]);
-
-            return back()->with('error', $data['message'] ?? 'Aadhaar Failed');
-        } catch (\Exception $e) {
-
-            Log::error('AADHAAR EXCEPTION', [
-                'error' => $e->getMessage(),
-                'line' => $e->getLine()
-            ]);
-
-            return back()->with('error', 'Something went wrong!');
-        }
     }
 
     public function uploadSelfie(Request $request, $id)

@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Log;
 
 class MufinHelper
 {
+
+
     public static function flattenArray($array, $prefix = '')
     {
         $result = [];
@@ -97,59 +99,55 @@ class MufinHelper
 
         return hash('sha256', $finalString);
     }
-    // public static function generatePanHash($payload)
-    // {
-    //     $salt = env('MUFFINPAY_SALT_KEY');
 
-    //     // 🔥 CLEAN VALUES
-    //     $userId = preg_replace('/\s+/', '', $payload['userId']);
-
-    //     $name = preg_replace('/\s+/', ' ', trim($payload['pan']['name']));
-
-    //     $panNumber = strtoupper(trim($payload['pan']['number']));
-
-    //     $dob = trim($payload['pan']['dob']);
-
-    //     // ✅ EXACT ORDER (VERY IMPORTANT)
-    //     $string =
-    //         "idType=" . $payload['idType'] . "~" .
-    //         "pan=number=" . $panNumber .
-    //         ",dob=" . $dob .
-    //         ",name=" . $name . "~" .
-    //         "userId=" . $userId;
-
-    //     $finalString = $string . $salt;
-
-    //     Log::info('FINAL HASH STRING (PAN FINAL)', [
-    //         'string' => $finalString
-    //     ]);
-
-    //     return strtoupper(hash('sha256', $finalString));
-    // }
     public static function generatePanHash($payload)
     {
         $salt = env('MUFFINPAY_SALT_KEY');
 
         $userId = trim($payload['userId']);
-
         $panNumber = strtoupper(trim($payload['pan']['number']));
         $dob = trim($payload['pan']['dob']);
-        $name = preg_replace('/\s+/', ' ', trim($payload['pan']['name']));
+        $name = strtoupper(preg_replace('/\s+/', ' ', trim($payload['pan']['name'])));
 
-        // ✅ EXACT FORMAT (VERY IMPORTANT)
+        // ✅ CORRECT FORMAT (VERY IMPORTANT)
         $string =
             "idType=" . $payload['idType'] . "~" .
             "userId=" . $userId . "~" .
-            "pan=number=" . $panNumber .
-            ",dob=" . $dob .
-            ",name=" . $name;
+            "pan.number=" . $panNumber . "~" .
+            "pan.dob=" . $dob . "~" .
+            "pan.name=" . $name;
 
-        $finalString = $string . $salt;
+        $finalString = $string . "~" . $salt;
 
-        Log::info('FINAL HASH STRING (PAN FINAL CORRECT)', [
+        Log::info('FINAL HASH STRING (PAN FINAL FIXED)', [
             'string' => $finalString
         ]);
 
         return strtoupper(hash('sha256', $finalString));
     }
+
+    public static function generateAadhaarHash($payload)
+    {
+        $salt = env('MUFFINPAY_SALT_KEY');
+
+        $userId = trim($payload['userId']);
+        $aadhaar = trim($payload['aadhar']['aadharNumber']);
+
+        // ✅ EXACT FORMAT (PAN jaisa nahi hai)
+        $string =
+            "idType=" . $payload['idType'] . "~" .
+            "userId=" . $userId . "~" .
+            "aadhar=aadharNumber=" . $aadhaar;
+
+        $finalString = $string . $salt;
+
+        Log::info('FINAL HASH STRING (AADHAAR FINAL)', [
+            'string' => $finalString
+        ]);
+
+        return strtoupper(hash('sha256', $finalString));
+    }
+
+
+
 }
