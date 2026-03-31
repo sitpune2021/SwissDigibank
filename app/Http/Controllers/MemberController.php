@@ -553,6 +553,9 @@ class MemberController extends Controller
                 'xverifyv2' => $xverify   // 🔥 MOST IMPORTANT
             ])
                 ->withBody($body, 'application/json')   // 🔥 MUST
+                ->withOptions([
+                'verify' => false   // 🔥 SSL FIX
+            ])
                 ->post($url);
             Log::info('OTP FULL RESPONSE', [
                 'status' => $response->status(),
