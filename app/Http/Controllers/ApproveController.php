@@ -783,7 +783,7 @@ class ApproveController extends Controller
     }
 
     public function update(Request $request, $id)
-    {dd('hii');
+    {
         try {
             Log::info('Approval Update Called', [
                 'id' => $id,
