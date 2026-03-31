@@ -148,6 +148,24 @@ class MufinHelper
         return strtoupper(hash('sha256', $finalString));
     }
 
+    public static function generateAadhaarOtpHash($payload)
+    {
+        $salt = env('MUFFINPAY_SALT_KEY');
+
+        $string =
+            "idType=" . $payload['idType'] . "~" .
+            "userId=" . trim($payload['userId']) . "~" .
+            "aadharRefId=" . trim($payload['aadhar']['aadharRefId']) . "~" .
+            "aadhaarOtp=" . trim($payload['aadhar']['aadhaarOtp']);
+
+        $finalString = $string . "~" . $salt;
+
+        Log::info('FINAL HASH STRING OTP', [
+            'string' => $finalString
+        ]);
+
+        return hash('sha256', $finalString);
+    }
 
 
 }

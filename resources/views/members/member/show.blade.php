@@ -48,7 +48,6 @@
                 href="javascript:void(0);">
                 <span class="text-sm">DEBIT OTHER CHARGES</span>
                 <i class="las la-angle-down text-sm toggle-icon"></i>
-
             </a>
 
             <!-- Dropdown -->
@@ -62,57 +61,25 @@
                         </a>
                     </li>
 
-                    <tr class="border-b dark:even:bg-bg3">
-                        <th class="py-2 px-6">
-                            <div class="flex items-center font-semibold gap-3 uppercase"><span>Branch</span></div>
-                        </th>
-                        <td class="p-2">
-                            <div><span>{{ $member->branch->branch_name ?? '' }}</span></div>
-                        </td>
-                    </tr>
-                    <tr class="border-b dark:even:bg-bg3">
-                        <th class="py-2 px-6">
-                            <div class="flex items-center font-semibold gap-3 uppercase"><span>Advisor/ Staff</span>
-                            </div>
-                        </th>
-                        <td class="p-2">
-                            <div><span>{{ $member->general_advisor_staff }}</span></div>
-                        </td>
-                    </tr>
-                    <tr class="border-b dark:even:bg-bg3">
-                        <th class="py-2 px-6">
-                            <div class="flex items-center font-semibold gap-3 uppercase"><span>Old Customer No</span>
-                            </div>
-                        </th>
-                        <td class="p-2">
-                            <div><span>{{ $member->member_info_old_member_no }}</span></div>
-                        </td>
-                    </tr>
-                    <tr class="border-b dark:even:bg-bg3">
-                        <th class="py-2 px-6">
-                            <div class="flex items-center font-semibold gap-3 uppercase"><span>Enrollment Date</span>
-                            </div>
-                        </th>
-                        <td class="p-2">
-                            <div>
-                                <span>{{ $member->general_enrollment_date ?
-                                    \Carbon\Carbon::parse($member->general_enrollment_date)->format('d-m-Y') : 'N/A'
-                                    }}</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="border-b dark:even:bg-bg3">
+                    <li>
+                        <a href="{{ route('members.other-charges', ['id' => $member->id]) }}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 border-b text-sm ">
+                            DEBIT OTHER CHARGES
+                        </a>
+                    </li>
+                    <li>
 
                         <a href="{{ $charge && $charge->member_id && $charge->id ? route('members.other-charges.clearDue.form', ['id' => $charge->member_id, 'chargeId' => $charge->id]) : '#' }}"
                             class="{{ !$charge || !$charge->member_id || !$charge->id ? 'text-black cursor-not-allowed' : '' }} block px-4 py-2 text-sm text-black hover:bg-gray-100 uppercase">
                             {{-- href="{{ route('members.other-charges.clearDue.form', ['id' => $charge->member_id ?? '',
-                        'chargeId' => $charge->id ?? '']) }}"> --}}
+                            'chargeId' => $charge->id ?? '']) }}"> --}}
                             Clear Due
 
                         </a>
                     </li>
                 </ul>
             </div>
+           
         </div>
 
         <a title="DOWNLOAD 15G/ 15H"
@@ -1184,7 +1151,7 @@
                             <input type="text" name="otp" placeholder="Enter OTP"
                                 class="border px-3 py-2 rounded">
 
-                            <button class="btn-success px-4 py-2 rounded">Verify OTP</button>
+                            <button class="btn-primary px-4 py-2 rounded">Verify OTP</button>
                         </form>
                     </div>
 
@@ -1197,13 +1164,39 @@
                             </span>
                         </div>
 
-                        <form method="POST" action="{{ route('member.selfie', $member->id) }}"
-                            enctype="multipart/form-data" class="flex gap-2 items-center">
+                        <form method="POST" action="{{ route('member.selfie', $member->id) }}">
                             @csrf
-                            <input type="file" name="selfie" class="border p-1">
 
-                            <button class="btn-secondary px-4 py-2 rounded">Upload</button>
+                            <br>
+
+                            <button type="button" id="openCameraBtn" onclick="startCamera()" class="btn-primary px-4 py-2 rounded">
+                                Upload Selfie
+                            </button>
+
+                            <br><br>
+
+                            <video id="video" width="250" autoplay style="display:none;"></video>
+
+                            <canvas id="canvas" style="display:none;"></canvas>
+
+                            <img id="preview" width="250" style="display:none;border:1px solid #ccc;margin-top:10px;">
+
+                            <br><br>
+
+                            <button type="button" class="btn-primary px-4 py-2 rounded" id="captureBtn" onclick="capture()" style="display:none;">
+                            Capture
+                            </button>
+
+                            <input type="hidden" name="selfie_base64" id="selfie_base64">
+
+                            <br><br>
+
+                            <button type="submit" class="btn-primary px-4 py-2 rounded" id="submitBtn" style="display:none;">
+                            Submit Selfie
+                            </button>
+
                         </form>
+
                     </div>
 
                 </div>
@@ -1555,4 +1548,66 @@
 
         });
     </script>
+
+<script>
+
+let stream;
+
+// camera start
+function startCamera()
+{
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(s){
+        stream = s;
+
+        document.getElementById('video').srcObject = stream;
+        document.getElementById('video').style.display="block";
+
+        // capture button show
+        document.getElementById('captureBtn').style.display="inline-block";
+
+        // open camera button hide
+        document.getElementById('openCameraBtn').style.display="none";
+    })
+    .catch(function(err){
+        console.log("Camera error:", err);
+        alert("Camera access denied");
+    });
+}
+
+// capture image
+function capture()
+{
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const preview = document.getElementById('preview');
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video,0,0,canvas.width,canvas.height);
+
+    let data = canvas.toDataURL('image/jpeg');
+
+    document.getElementById('selfie_base64').value = data;
+
+    // preview show
+    preview.src = data;
+    preview.style.display = "block";
+
+    // camera stop
+    stream.getTracks().forEach(track => track.stop());
+
+    // hide video
+    video.style.display = "none";
+
+    // show submit button
+    document.getElementById('submitBtn').style.display="inline-block";
+
+    // hide capture button
+    document.getElementById('captureBtn').style.display="none";
+}
+</script>
+
 @endsection

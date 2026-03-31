@@ -870,52 +870,84 @@ class MemberController extends Controller
             'message' => $data['message'] ?? 'Aadhaar Failed'
         ]);
     }
+
     public function verifyAadhaarOtp(Request $request, $id)
     {
+        Log::info('AADHAAR OTP VERIFY START', ['member_id'=>$id]);
+
+        $request->validate([
+            'otp' => 'required|digits:6'
+        ]);
+
         $member = Member::findOrFail($id);
         $user   = $member->user;
-        $kyc    = KycAndNominee::where('member_id', $id)->first();
 
-        // ✅ Safety checks
-        if (!$user || !$user->muf_user_id) {
-            return back()->with('error', 'Mufin user not found');
+        $kyc = KycAndNominee::where('member_id',$id)->first();
+
+        if(!$kyc || !$kyc->aadhaar_ref_id){
+            return back()->with('error','Aadhaar reference missing');
         }
 
-        if (!$kyc || !$kyc->aadhaar_ref_id) {
-            return back()->with('error', 'Aadhaar OTP not generated');
-        }
-
-        // ✅ Payload
         $payload = [
             "idType" => "AADHAAR_CARD_OTP",
-            "userId" => $user->muf_user_id,
+            "userId" => trim($user->muf_user_id),
             "aadhar" => [
                 "aadharRefId" => $kyc->aadhaar_ref_id,
-                "otp" => $request->otp
+                "aadhaarOtp"  => $request->otp
             ]
         ];
 
-        $xverify = MufinHelper::generateXVerify($payload);
-        Log::info('OTP PAYLOAD', $payload);
-        Log::info('OTP HASH', ['hash' => $xverify]);
+        $body = json_encode($payload, JSON_UNESCAPED_SLASHES);
 
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
-            'apiKey' => env('MUFFINPAY_API_KEY'),
-            'xverifyv2' => $xverify
-        ])->post(env('MUFFINPAY_URL') . '/kyc/submit', $payload);
+        Log::info('AADHAAR OTP PAYLOAD', ['body'=>$body]);
 
-        $data = $response->json();
+        // ✅ CORRECT HASH
+        $flattenPayload = MufinHelper::flattenArray($payload);
 
-        Log::info('OTP RESPONSE', $data);
+        $xverify = MufinHelper::generateXVerify($flattenPayload);
 
-        if ($response->successful()) {
-            $kyc->update(['otp_verified' => 1]);
-            return back()->with('success', 'OTP Verified ✅');
+        Log::info('AADHAAR OTP HASH', [
+            'flatten_payload'=>$flattenPayload,
+            'hash'=>$xverify
+        ]);
+
+        try {
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept'       => 'application/json',
+                'apiKey'       => env('MUFFINPAY_API_KEY'),
+                'xverifyv2'    => $xverify
+            ])
+            ->withBody($body,'application/json')
+            ->withOptions([
+                'verify' => false
+            ])
+            ->post(env('MUFFINPAY_URL').'/kyc/submit');
+
+            $data = $response->json();
+
+            Log::info('AADHAAR OTP RESPONSE',$data);
+
+            if(isset($data['code']) && $data['code']=='0000'){
+
+                $kyc->update([
+                    'otp_verified'=>1
+                ]);
+
+                return back()->with('success','Aadhaar Verified Successfully');
+            }
+
+            return back()->with('error',$data['message'] ?? 'OTP verification failed');
+
+        } catch (\Exception $e){
+
+            Log::error('AADHAAR OTP ERROR',[
+                'error'=>$e->getMessage()
+            ]);
+
+            return back()->with('error','Something went wrong');
         }
-
-        return back()->with('error', $data['message'] ?? 'OTP Failed');
     }
 
     public function uploadSelfie(Request $request, $id)
@@ -926,33 +958,63 @@ class MemberController extends Controller
         $kyc = KycAndNominee::where('member_id', $id)->first();
 
         $request->validate([
-            'selfie' => 'required|image|max:2048'
-        ]);
+        'selfie_base64' => 'required'
+    ]);
 
         try {
 
+        $base64 = $request->selfie_base64;
+
+    $base64 = str_replace('data:image/jpeg;base64,', '', $base64);
+    $base64 = str_replace(' ', '+', $base64);
+
+    $imageData = base64_decode($base64);
+
+    $fileName = 'selfie_'.time().'.jpg';
+
+    $tempPath = storage_path('app/'.$fileName);
+
+    file_put_contents($tempPath, $imageData);
+
             $payload = [
-                "userId" => $user->muf_user_id
+                "userId" => trim($user->muf_user_id)
             ];
 
-            $xverify = MufinHelper::generateXVerify($payload);
+            // ✅ FIXED HASH
+           $salt = env('MUFFINPAY_SALT_KEY');
+
+$string = "userId=" . trim($user->muf_user_id);
+
+$finalString = $string . $salt;
+
+Log::info('SELFIE HASH STRING', ['string'=>$finalString]);
+
+$xverify = hash('sha256', $finalString);
 
             Log::info('SELFIE PAYLOAD', $payload);
-            Log::info('SELFIE HASH', ['hash' => $xverify]);
+            Log::info('SELFIE HASH', [
+                
+                'hash'=>$xverify
+            ]);
 
-            $response = Http::withHeaders([
-                'apiKey'    => env('MUFFINPAY_API_KEY'),
-                'xverifyv2' => $xverify,
-                'Accept'    => 'application/json'
-            ])
-                ->attach(
-                    'selfie', // 🔥 FIXED (NOT file)
-                    file_get_contents($request->file('selfie')->getRealPath()),
-                    $request->file('selfie')->getClientOriginalName()
-                )
-                ->post(env('MUFFINPAY_URL') . '/user/upload-selfie', [
-                    'userId' => $user->muf_user_id
-                ]);
+           $response = Http::withHeaders([
+    'apiKey'    => env('MUFFINPAY_API_KEY'),
+    'xverifyv2' => $xverify,
+    'Accept'    => 'application/json'
+])
+->attach(
+    'selfie',
+    file_get_contents($tempPath),
+    $fileName
+)
+->attach(
+    'userId',
+    trim($user->muf_user_id)
+)
+->withOptions([
+    'verify' => false
+])
+->post(env('MUFFINPAY_URL') . '/user/upload-selfie');
 
             $data = $response->json();
 
@@ -972,6 +1034,7 @@ class MemberController extends Controller
             }
 
             return back()->with('error', $data['message'] ?? 'Selfie upload failed');
+
         } catch (\Exception $e) {
 
             Log::error('SELFIE ERROR', [
