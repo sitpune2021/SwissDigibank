@@ -49,7 +49,7 @@
 
                 <input type="text" id="" name="scheme_name" value="{{ old('scheme_name', $scheme->scheme_name) }}"
                     class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
-                    placeholder="Enter Scheme Name " disabled>
+                    placeholder="Enter Scheme Name " >
                 @error('scheme_name')
                 <span class="text-red-500">{{ $message }}</span>
                 @enderror
@@ -62,7 +62,7 @@
 
                 <input type="text" name="scheme_code" value="{{ old('scheme_name', $scheme->scheme_code) }}" class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 
                                                       rounded-10 px-3 md:px-6 py-2 md:py-3 uppercase"
-                    placeholder="Enter Scheme Code" disabled>
+                    placeholder="Enter Scheme Code" >
                 @error('scheme_code') <span class="text-red-500">{{ $message }}</span> @enderror
 
             </div>
