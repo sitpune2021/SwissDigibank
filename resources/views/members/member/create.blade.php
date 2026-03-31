@@ -211,7 +211,7 @@
                                 'field' => $field,
                             ])
                         @endif
-                        @if ($name == 'member_kyc_aadhaar_no')
+                        {{-- @if ($name == 'member_kyc_aadhaar_no')
                             <div id="otpSection" style="display:none; margin-top:10px;">
                                 <input type="text" id="otpInput" placeholder="Enter OTP" class="form-control">
 
@@ -219,7 +219,7 @@
                                     Verify OTP
                                 </button>
                             </div>
-                        @endif
+                        @endif --}}
                         @error($name)
                             <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                         @enderror
@@ -699,6 +699,31 @@
                 </div>
             </div>
         </form>
+        <!-- OTP POPUP -->
+        <div id="otpSection"
+            style="
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    background:white;
+    padding:20px;
+    z-index:10000;
+    border-radius:10px;
+    width:300px;
+    text-align:center;
+">
+            <h3>Enter OTP</h3>
+
+            <input type="text" id="otpInput" placeholder="Enter OTP"
+                style="width:100%; padding:10px; margin-top:10px; border:1px solid #ccc;">
+
+            <button onclick="verifyOtp()"
+                style="margin-top:10px; background:green; color:white; padding:10px 15px; border-radius:5px;">
+                Verify
+            </button>
+        </div>
     </div>
     </div>
 
@@ -1013,60 +1038,40 @@
         </script>
     @endif
 
+    @if (session('otp_success'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+
+                document.getElementById('otpSection').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+
+            });
+        </script>
+    @endif
     <script>
-        let otpVerified = false;
-
-        // 👉 SEND OTP
-        function sendAadhaarOtp() {
-
-            let aadhaar = document.getElementById('member_kyc_aadhaar_no').value;
-
-            if (!aadhaar || aadhaar.length !== 12) {
-                alert("Enter valid Aadhaar");
-                return;
-            }
-
-            fetch('/member/send-aadhaar-otp/{{ $member->id ?? 0 }}', {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({
-                        aadhaar: aadhaar
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-
-                    if (data.success) {
-                        alert("OTP Sent ✅");
-                        document.getElementById('otpSection').style.display = 'block';
-                    } else {
-                        alert(data.message);
-                    }
-
-                });
-        }
-
-        // 👉 VERIFY OTP
         function verifyOtp() {
 
             let otp = document.getElementById('otpInput').value;
+            let mobile = "{{ session('mobile') }}";
+            let userId = "{{ session('userId') }}";
+            let localUserId = "{{ session('local_user_id') }}";
 
             if (!otp) {
                 alert("Enter OTP");
                 return;
             }
 
-            fetch('/member/verify-aadhaar-otp/{{ $member->id ?? 0 }}', {
+            fetch("{{ url('/members/verify-mobile-otp') }}", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": "{{ csrf_token() }}"
                     },
                     body: JSON.stringify({
-                        otp: otp
+                        mobileNumber: mobile,
+                        otp: otp,
+                        userId: userId,
+                        local_user_id: localUserId
                     })
                 })
                 .then(res => res.json())
@@ -1074,30 +1079,17 @@
 
                     if (data.success) {
                         alert("OTP Verified ✅");
-                        otpVerified = true;
-
-                        document.getElementById('otpSection').style.display = 'none';
+                        window.location.href = "{{ route('member.index') }}";
                     } else {
-                        alert(data.message);
+                        alert(data.message || "OTP Failed");
                     }
 
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Something went wrong");
                 });
         }
-
-        // 👉 FORM SUBMIT CONTROL
-        document.getElementById('companyForm').addEventListener('submit', function(e) {
-
-            let aadhaar = document.getElementById('member_kyc_aadhaar_no')?.value;
-
-            if (aadhaar && aadhaar.length === 12 && !otpVerified) {
-
-                e.preventDefault();
-                alert("Please verify Aadhaar OTP first!");
-                document.getElementById('otpSection').style.display = 'block';
-
-                return false;
-            }
-        });
     </script>
 
 @endsection

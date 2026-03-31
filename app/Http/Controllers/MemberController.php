@@ -512,8 +512,11 @@ class MemberController extends Controller
             } catch (\Exception $e) {
                 Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
             }
-
-            return redirect()->route('member.index')->with('success', 'Member created successfully.');
+            return redirect()->route('member.create')
+                ->with('otp_success', true)
+                ->with('mobile', $member->member_info_mobile_no)
+                ->with('userId', $user->muf_user_id)
+                ->with('local_user_id', $user->id);   // 🔥 ADD THIS LINE
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {
@@ -521,7 +524,78 @@ class MemberController extends Controller
             return back()->withErrors(['error' => 'An error occurred while creating the member. Please try again.']);
         }
     }
-    
+    public function verifyMobileOtp(Request $request)
+    {
+        Log::info('OTP VERIFY START', [
+            'mobileNumber' => $request->mobileNumber,
+            'otp' => $request->otp,
+            'userId' => $request->userId
+        ]);
+
+        try {
+
+            $payload = [
+                "mobileNumber" => $request->mobileNumber,
+                "otp" => $request->otp,
+                "userId" => $request->userId
+            ];
+
+            $url = env('MUFFINPAY_URL') . '/user/verify-otp';
+
+            $xverify = \App\Helpers\MufinHelper::generateXVerify($payload);
+
+            $body = json_encode($payload, JSON_UNESCAPED_SLASHES);
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'apiKey' => env('MUFFINPAY_API_KEY'),
+                'xverifyv2' => $xverify   // 🔥 MOST IMPORTANT
+            ])
+                ->withBody($body, 'application/json')   // 🔥 MUST
+                ->withOptions([
+                'verify' => false   // 🔥 SSL FIX
+            ])
+                ->post($url);
+            Log::info('OTP FULL RESPONSE', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            $data = $response->json();
+            // ✅ SUCCESS
+            if (isset($data['code']) && $data['code'] === '0000') {
+
+                $user = \App\Models\User::find($request->local_user_id);
+                if ($user) {
+
+                    $user->update([
+                        'otp' => $request->otp,
+                        'otp_verified' => 1,
+                        'otp_expires_at' => now()
+                    ]);
+
+                    Log::info('USER OTP UPDATED', [
+                        'user_id' => $user->id
+                    ]);
+                } else {
+                    Log::warning('USER NOT FOUND');
+                }
+                return response()->json([
+                    'success' => true,
+                    'message' => 'OTP Verified'
+                ]);
+            }
+            return response()->json([
+                'success' => false,
+                'message' => $data['message'] ?? $response->body()
+            ]);
+        } catch (\Exception $e) {
+
+
+            dd($e->getMessage());
+        }
+    }
     public function sendAadhaarOtp(Request $request, $id)
     {
         $member = Member::findOrFail($id);
@@ -628,87 +702,104 @@ class MemberController extends Controller
 
         return back()->with('error', $data['message'] ?? 'OTP Failed');
     }
-
     public function submitPanKyc(Request $request, $id)
     {
+        Log::info('PAN KYC START', ['member_id' => $id]);
+
         $request->validate([
             'member_kyc_pan_no' => [
                 'required',
                 'regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
                 'unique:kyc_and_nominees,member_kyc_pan_no'
             ]
-        ], [
-            'member_kyc_pan_no.required' => 'PAN is required.',
-            'member_kyc_pan_no.regex' => 'Enter valid PAN (ABCDE1234F).',
-            'member_kyc_pan_no.unique' => 'This PAN is already registered.'
         ]);
+
         $member = Member::findOrFail($id);
         $user = $member->user;
         $kyc = KycAndNominee::where('member_id', $id)->first();
 
-        // PAN duplicate check
+        // Duplicate PAN check
         if ($kyc && $kyc->member_kyc_pan_no == $request->member_kyc_pan_no) {
             return back()->with('error', 'PAN already submitted!');
         }
-        // ✅ SAVE PAN
-        if (isset($data['code']) && $data['code'] === '0000') {
 
-            KycAndNominee::updateOrCreate(
-                ['member_id' => $id],
-                [
-                    'member_kyc_pan_no' => $request->member_kyc_pan_no,
-                    'pan_verified' => 1
-                ]
-            );
+        // 🔥 CLEAN DATA (VERY IMPORTANT)
+        $userId = preg_replace('/\s+/', '', $user->muf_user_id);
 
-            return back()->with('success', 'PAN Verified ✅');
-        }
+        $name = trim(
+            preg_replace(
+                '/\s+/',
+                ' ',
+                $member->member_info_first_name . ' ' .
+                    $member->member_info_middle_name . ' ' .
+                    $member->member_info_last_name
+            )
+        );
 
-        return back()->with('error', $data['message'] ?? 'PAN Failed');
+        $panNumber = strtoupper(trim($request->member_kyc_pan_no));
 
-        // ✅ PAN PAYLOAD (🔥 MISSING PART FIXED)
+        $dob = \Carbon\Carbon::parse($member->member_info_dob)->format('d/m/Y');
+
+        // ✅ PAYLOAD
         $panPayload = [
             "idType" => "PAN_CARD",
-            "userId" => $user->muf_user_id,
+            "userId" => $userId,
             "pan" => [
-                "number" => $request->member_kyc_pan_no,
+                "number" => strtoupper(trim($request->member_kyc_pan_no)),
                 "dob" => \Carbon\Carbon::parse($member->member_info_dob)->format('d/m/Y'),
-                "name" => trim(
-                    $member->member_info_first_name . ' ' .
-                        $member->member_info_middle_name . ' ' .
-                        $member->member_info_last_name
-                )
+                "name" => trim(preg_replace('/\s+/', ' ', $name))
             ]
         ];
 
-        // 🔥 SAME JSON FOR HASH + REQUEST
+        // ✅ IMPORTANT
         $body = json_encode($panPayload, JSON_UNESCAPED_SLASHES);
 
-        $xverifyPan = MufinHelper::generateXVerify($panPayload);
+        Log::info('PAN PAYLOAD CREATED', ['body' => $body]);
 
-        $panResponse = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
-            'apiKey' => env('MUFFINPAY_API_KEY'),
-            'xverifyv2' => $xverifyPan
-        ])
-            ->withBody($body, 'application/json') // 🔥 IMPORTANT
-            ->post(env('MUFFINPAY_URL') . '/kyc/submit');
+        // ✅ FIXED
+        $xverifyPan = MufinHelper::generatePanHash($panPayload);
+        Log::info('PAN HASH GENERATED', ['hash' => $xverifyPan]);
+        try {
 
-        $data = $panResponse->json();
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'apiKey' => env('MUFFINPAY_API_KEY'),
+                'xverifyv2' => $xverifyPan
+            ])
+                ->withBody($body, 'application/json')
+                ->post(env('MUFFINPAY_URL') . '/kyc/submit');
 
-        // 🔍 DEBUG
-        Log::info('PAN BODY', ['body' => $body]);
-        Log::info('PAN HASH', ['hash' => $xverifyPan]);
-        Log::info('PAN RESPONSE', $data);
+            $data = $response->json();
 
-        $kyc->update([
-            'pan_verified' => $panResponse->successful() ? 1 : 0
-        ]);
+            Log::info('PAN API RESPONSE', [
+                'status' => $response->status(),
+                'response' => $data
+            ]);
 
-        return back()->with('success', 'PAN Submitted');
+            if (isset($data['code']) && $data['code'] == '0000') {
+
+                KycAndNominee::updateOrCreate(
+                    ['member_id' => $id],
+                    [
+                        'member_kyc_pan_no' => $panNumber,
+                        'pan_verified' => 1
+                    ]
+                );
+
+                return back()->with('success', 'PAN Verified ✅');
+            }
+
+            return back()->with('error', $data['message'] ?? 'PAN Failed');
+        } catch (\Exception $e) {
+
+            Log::error('PAN API ERROR', [
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Something went wrong');
+        }
     }
-
     public function submitAadhaar(Request $request, $id)
     {
         Log::info('AADHAAR START', ['member_id' => $id]);
@@ -791,7 +882,7 @@ class MemberController extends Controller
             ]);
 
             // ✅ SUCCESS
-            if (isset($data['code']) && $data['code'] === '0000') {
+            if (isset($data['code']) && $data['code'] == '0000') {
 
                 Log::info('AADHAAR SUCCESS');
 
@@ -864,7 +955,7 @@ class MemberController extends Controller
 
             Log::info('SELFIE RESPONSE', $data);
 
-            if (isset($data['code']) && $data['code'] === '0000') {
+            if (isset($data['code']) && $data['code'] == '0000') {
 
                 $kyc->update([
                     'selfie_uploaded' => 1
