@@ -118,6 +118,13 @@ class RdAccountController extends Controller
             }
 
             $validated = $request->validate($rules);
+            $member = Member::find($request->member_id);
+
+if (!$member || (int)$member->share_allocated == 0) {
+    throw \Illuminate\Validation\ValidationException::withMessages([
+        'member_id' => 'This member has no shares allocated. You cannot open a RD account.'
+    ]);
+}
 
             Log::info('RD Account Validated Data', $validated);
 

@@ -374,10 +374,17 @@ class FDController extends Controller
             'saving_account'     => 'nullable|required_if:pay1_mode,saving|string|max:255',
         ]);
 
+        $member = Member::find($request->member_id);
+
+            if (!$member || (int)$member->share_allocated == 0) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'member_id' => 'This member has no shares allocated. You cannot proceed.'
+                ]);
+            }
+
         try {
             // ---------------------------- VALIDATION ----------------------------
             Log::info(' Validating request data...');
-
 
 
             Log::info('✔ Validation Successful', ['validated_data' => $validated]);
@@ -1486,7 +1493,7 @@ class FDController extends Controller
             ->where('status', 'Approved')
             ->latest('id')
             ->first();
-       
+
         $balances = AccountsTransactionsHelper::getFdAccountBalance($fdAccount->id);
         $balance  = $balances[$fdAccount->id] ?? 0;
 

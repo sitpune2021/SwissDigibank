@@ -92,6 +92,14 @@ class MisaccountController extends Controller
                 'pay_mode'             => 'required|in:cash,cheque,online,saving',
             ]);
 
+             $member = Member::find($request->member_id);
+
+            if (!$member || (int)$member->share_allocated == 0) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'member_id' => 'This member has no shares allocated. You cannot proceed.'
+                ]);
+            }
+            
             Log::info('MIS Account Validated Data', $validated);
 
             // Handle joint accounts
