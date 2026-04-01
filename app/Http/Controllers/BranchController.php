@@ -264,7 +264,7 @@ class BranchController extends Controller
                 'city'             => 'required|string|max:100',
                 'state'            => 'required|integer|exists:states,id',
                 'pincode'          => 'required|numeric|digits:6',
-                'country'          => 'required|string|max:10|in:India',
+                'country'          => 'required|string|max:10|in:BHARAT',
                 'contact_email'    => 'nullable|email|max:255|regex:/^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/',
                 'mobile_no'        => 'nullable|digits:10|regex:/^[6-9]\d{9}$/',
                 'landline_no'      => 'nullable|string|max:10',

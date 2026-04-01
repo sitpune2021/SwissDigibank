@@ -13,7 +13,7 @@ class RoleSeeder extends Seeder
      */
 
     public function run(): void
-    {        
+    {
         Schema::disableForeignKeyConstraints();
 
         DB::table('roles')->truncate();
@@ -63,13 +63,13 @@ class RoleSeeder extends Seeder
             //     'created_at' => now(),
             //     'updated_at' => now(),
             // ],
-            // [
-            //     'name' => 'Member',
-            //     'guard_name' => 'web',
-            //     'description' => 'Customer role',
-            //     'created_at' => now(),
-            //     'updated_at' => now(),
-            // ],
+            [
+                'name' => 'Member',
+                'guard_name' => 'web',
+                'description' => 'Customer role',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ];
 
         DB::table('roles')->insert($roles);

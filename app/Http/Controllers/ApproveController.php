@@ -984,7 +984,7 @@ class ApproveController extends Controller
                             return back()->with('error', 'FD Account not found.');
                         }
 
-                        // ✅ Approve only if account status = 1
+                        // Approve only if account status = 1
                         if ($fdAccount->status != 1) {
                             DB::rollBack();
                             return back()->with('error', 'FD Account is not in pending state for approval.');
@@ -2401,18 +2401,6 @@ class ApproveController extends Controller
                 $fdAccount->remarks = $validated['remarks'];
                 $fdAccount->save();
 
-                if ($fdAccount->status == 1) {
-
-                    // 🔹 Approve first principal transaction
-                    FdTransaction::where('fd_account_id', $fdAccount->id)
-                        ->where('transaction_type', 1) // credit
-                        ->whereNull('status') // only pending ones
-                        ->update([
-                            'status' => 'Approved',
-                            'transaction_purpose' => 'principal',
-                            'processed' => 1
-                        ]);
-                }
 
                 try {
                     $fdaccount = \App\Models\FdAccount::with('member')->find($fdAccount->id);
@@ -2752,7 +2740,7 @@ class ApproveController extends Controller
             $query = DB::table(DB::raw("({$sql}) as combined"))
                 ->orderBy('created_at', 'desc');
 
-            Log::info("approveAccounts() - Query Built Successfully");
+                Log::info("approveAccounts() - Query Built Successfully");
 
             if ($search) {
                 Log::info("approveAccounts() - Applying Search Filter", [
@@ -3051,6 +3039,7 @@ class ApproveController extends Controller
 
     public function approveTransaction($encodedId, Request $request)
     {
+        dd('hii');
         try {
 
             $id = base64_decode($encodedId);

@@ -35,7 +35,9 @@ class User extends Authenticatable
         'emp_id',
         'otp',
         'otp_expires_at',
-        'muf_user_id'
+        'muf_user_id',
+        'otp_verified',
+        'mpin'
     ];
 
     protected $casts = [

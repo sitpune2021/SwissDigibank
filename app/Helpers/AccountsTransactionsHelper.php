@@ -161,7 +161,7 @@ class AccountsTransactionsHelper
                 ->get();
 
             $principal = $txns
-                ->where('tarnsaction_purpose', 'principal')
+                ->where('transaction_purpose', 'principal')
                 ->whereNull('deleted_at')
                 ->where('transaction_type', 1)
                ->sum('amount');
@@ -225,7 +225,7 @@ class AccountsTransactionsHelper
     public static function getFdInterestSummary($fdAccountId)
     {
         $txns = FdTransaction::where('fd_account_id', $fdAccountId)
-            ->where('status', 'approved')
+            ->where('status', 'Approved')
             ->get();
 
         // Interest

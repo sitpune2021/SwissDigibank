@@ -313,6 +313,25 @@ Route::middleware('auth.user')->group(function () {
     Route::group(['prefix' => 'members'], function () {
         Route::resource('member', MemberController::class);
         Route::resource('minor', MinorController::class);
+        Route::get('/member/{id}/kyc', [MemberController::class, 'kycForm'])->name('member.kyc.form');
+        Route::post('/member/{id}/pan-submit', [MemberController::class, 'submitPanKyc'])
+            ->name('member.pan.submit');
+        Route::post('/verify-mobile-otp', [MemberController::class, 'verifyMobileOtp']);
+        Route::post('/send-aadhaar-otp', [MemberController::class, 'sendAadhaarOtp']);
+        Route::post('/member/verify-otp', [MemberController::class, 'verifyMemberOtp'])
+            ->name('member.verifyOtp');
+        Route::post('/member/resend-otp', [MemberController::class, 'resendMemberOtp'])
+            ->name('member.resendOtp');
+        Route::post('/verify-aadhaar-otp-temp', [MemberController::class, 'verifyAadhaarOtpTemp']);
+        // ✅ NEW (Direct Aadhaar Submit)
+        Route::post('/member/{id}/aadhaar-submit', [MemberController::class, 'submitAadhaar'])
+            ->name('member.aadhaar.submit');
+
+        Route::post('/member/{id}/aadhaar-verify', [MemberController::class, 'verifyAadhaarOtp'])
+            ->name('member.aadhaar.verify');
+
+        Route::post('/member/{id}/selfie', [MemberController::class, 'uploadSelfie'])
+            ->name('member.selfie');
         Route::get('/members/{member_id}/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
         // Route::get('/members/add-comment', [MemberController::class, 'addComment'])->name('member.addComment');
         Route::post('/members/member/store-comment', [MemberController::class, 'storeComment'])->name('member.storeComment');
@@ -362,7 +381,7 @@ Route::middleware('auth.user')->group(function () {
         Route::get('/form15g15h/download/{member_id}', [Form15Gor15HController::class, 'download'])->name('form15g15h.download');
         Route::get('/form15g15h/download/promoter/{promoter_id}', [Form15Gor15HController::class, 'downloadByPromoter'])->name('form15g15h.download.promoter');
     });
-    
+
     Route::get('/share/allocate', [ShareTransferController::class, 'transferForm'])->name('shareholding.transfer.form');
     Route::post('/share/allocate', [ShareTransferController::class, 'store'])->name('shares.allocate');
 
@@ -2691,7 +2710,7 @@ Route::group(['prefix' => 'cut-report'], function () {
     Route::get('report/saving-account', [CutReportController::class, 'savingacc_index'])
         ->name('report.saving-account');
 
-     Route::get('report/current-account', [CutReportController::class, 'currentacc_index'])
+    Route::get('report/current-account', [CutReportController::class, 'currentacc_index'])
         ->name('report.current-account');
 
     Route::get('/accounts/export/csv', [CutReportController::class, 'exportCsv'])
