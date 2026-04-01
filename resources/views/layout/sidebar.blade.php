@@ -186,20 +186,48 @@ $logoPath = $sidebarLogo
 
 {{-- ✅ Optional JS: Only one submenu open at a time --}}
 <script>
+   
+    // document.querySelectorAll('.menu-btn').forEach(btn => {
+    //     btn.addEventListener('click', function() {
+    //         document.querySelectorAll('.submenu-show').forEach(sub => {
+    //             if (sub !== this.nextElementSibling) {
+    //                 sub.classList.remove('submenu-show');
+    //             }
+    //         });
+    //         document.querySelectorAll('.menu-btn.active').forEach(activeBtn => {
+    //             if (activeBtn !== this) {
+    //                 activeBtn.classList.remove('active');
+    //                 activeBtn.querySelector('.la-plus')?.classList.add('show');
+    //                 activeBtn.querySelector('.la-minus')?.classList.remove('show');
+    //             }
+    //         });
+    //     });
+    // });
+
     document.querySelectorAll('.menu-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.submenu-show').forEach(sub => {
-                if (sub !== this.nextElementSibling) {
-                    sub.classList.remove('submenu-show');
-                }
-            });
-            document.querySelectorAll('.menu-btn.active').forEach(activeBtn => {
-                if (activeBtn !== this) {
-                    activeBtn.classList.remove('active');
-                    activeBtn.querySelector('.la-plus')?.classList.add('show');
-                    activeBtn.querySelector('.la-minus')?.classList.remove('show');
-                }
-            });
+    btn.addEventListener('click', function() {
+
+        // your existing code
+        document.querySelectorAll('.submenu-show').forEach(sub => {
+            if (sub !== this.nextElementSibling) {
+                sub.classList.remove('submenu-show');
+            }
         });
+
+        document.querySelectorAll('.menu-btn.active').forEach(activeBtn => {
+            if (activeBtn !== this) {
+                activeBtn.classList.remove('active');
+                activeBtn.querySelector('.la-plus')?.classList.add('show');
+                activeBtn.querySelector('.la-minus')?.classList.remove('show');
+            }
+        });
+
+        // ✅ ADD THIS PART (scroll fix)
+        const submenu = this.nextElementSibling;
+        if (submenu && submenu.children.length > 7) {
+            submenu.style.maxHeight = "250px";
+            submenu.style.overflowY = "auto";
+        }
     });
+});
 </script>
