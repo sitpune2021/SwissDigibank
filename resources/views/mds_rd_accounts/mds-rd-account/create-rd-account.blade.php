@@ -134,7 +134,7 @@
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                         <option value="">Select Scheme</option>
                         @foreach ($schemes as $scheme)
-                        <option value="{{ $scheme->id }}">{{ $scheme->scheme_name }}</option>
+                        <option value="{{ $scheme->id }}" data-amount="{{ $scheme->min_rd_dd_amount }}">{{ $scheme->scheme_name }}</option>
                         @endforeach
                     </select>
                     @error('scheme')
@@ -149,6 +149,7 @@
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3"
                         placeholder="Amount" value="">
                     <x-number-to-word for="rdAmount" />
+                    <div id="minAmountMessage" class="text-sm mt-1"></div>
                     @error('rd_amount')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
@@ -422,7 +423,6 @@
         });
     }
 </script>
-
 <script>
     function togglePaymentMode(type) {
         // Hide all sections first
@@ -575,6 +575,21 @@
         });
     });
 </script>
+<script>
+document.querySelector('select[name="scheme_id"]').addEventListener('change', function () {
 
+    let selectedOption = this.options[this.selectedIndex];
+    let minAmount = selectedOption.getAttribute('data-amount');
+
+    let messageBox = document.getElementById('minAmountMessage');
+
+    if (minAmount) {
+        messageBox.innerHTML = "Minimum amount to be deposited ₹ " + parseFloat(minAmount).toFixed(2);
+        messageBox.classList.add('text-red-500');
+    } else {
+        messageBox.innerHTML = "";
+    }
+});
+</script>
 
 @endsection

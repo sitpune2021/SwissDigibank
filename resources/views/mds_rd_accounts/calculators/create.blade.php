@@ -133,7 +133,6 @@
                 <!-- Buttons -->
                 <div class="flex justify-center col-span-2 gap-4 mt-5 md:gap-6">
                     <button id="calculateBtn" class="btn-primary uppercase" type="submit">Calculate</button>
-                    <button class="btn-outline uppercase" type="button">Back</button>
                 </div>
             </div>
 
