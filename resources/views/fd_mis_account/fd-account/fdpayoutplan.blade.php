@@ -114,7 +114,7 @@
 
                                     <td class="text-center">
                                         <span id="processed-label-{{ $loop->parent->index ?? $index }}">
-                                            @if ($payout['processed'] == 1)
+                                            @if (!empty($payout['processed']))
                                                 <span
                                                     class="block w-28 rounded-[30px] border bg-primary/20 py-2 text-xs text-primary">Yes</span>
                                             @else

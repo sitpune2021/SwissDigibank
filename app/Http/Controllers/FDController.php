@@ -374,10 +374,17 @@ class FDController extends Controller
             'saving_account'     => 'nullable|required_if:pay1_mode,saving|string|max:255',
         ]);
 
+        $member = Member::find($request->member_id);
+
+            if (!$member || (int)$member->share_allocated == 0) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'member_id' => 'This member has no shares allocated. You cannot proceed.'
+                ]);
+            }
+
         try {
             // ---------------------------- VALIDATION ----------------------------
             Log::info(' Validating request data...');
-
 
 
             Log::info('✔ Validation Successful', ['validated_data' => $validated]);
@@ -759,6 +766,11 @@ class FDController extends Controller
             'nominee'
         ])->findOrFail($id);
 
+        $hasPendingPrincipal = $fdAccount->transactions()
+            ->where('transaction_purpose', 'principal')
+            ->whereNull('status')
+            ->exists();
+
         $documents = Document::where('fd_id', $fdAccount->id)->get();
         $passbooks = Passbook::where('account_type', 'FD Accounts')
             ->where('account_no', $fdAccount->id)
@@ -795,6 +807,7 @@ class FDController extends Controller
                 'documents' => $documents,
                 'passbooks' => $passbooks,
                 'summary' => $summary,
+                'hasPendingPrincipal' => $hasPendingPrincipal,
             ],
             $calculation
         ));
@@ -964,8 +977,21 @@ class FDController extends Controller
                 $dueDate = $currentTo->copy();
             }
 
-            $transaction = $transactions->get($dueDate->format('Y-m-d'));
+            $transaction = null;
 
+            // Interest transaction (based on due date)
+            if (!empty($dueDateDisplay)) {
+                $transaction = FdTransaction::where('fd_account_id', $id)
+                    ->whereDate('due_date', $dueDate)
+                    ->first();
+            }
+
+            // Principal fallback (ONLY first period)
+            if (!$transaction && $period == 1) {
+                $transaction = FdTransaction::where('fd_account_id', $id)
+                    ->where('transaction_purpose', 'principal')
+                    ->first();
+            }
             // Special case: if period ends on 31 March → blank due date + blank net interest on due date
             if ($currentTo->month == 3 && $currentTo->day == 31) {
                 $dueDateDisplay = '';
@@ -1433,7 +1459,7 @@ class FDController extends Controller
 
         // Get all approved transactions for these accounts
         $transactions = FdTransaction::whereIn('fd_account_id', $fdaccountids)
-            ->where('status', 'approved')
+            ->where('status', 'Approved')
             ->get()
             ->groupBy('fd_account_id');
 
@@ -1464,12 +1490,12 @@ class FDController extends Controller
         $fdAccount = FdAccount::with('transactions')->findOrFail($id);
 
         $transaction = $fdAccount->transactions()
-            ->where('status', 'approved')
+            ->where('status', 'Approved')
             ->latest('id')
             ->first();
-        $balances   = self::getAccountBalance($id);
 
-        $balance    = $balances[$id] ?? 0;
+        $balances = AccountsTransactionsHelper::getFdAccountBalance($fdAccount->id);
+        $balance  = $balances[$fdAccount->id] ?? 0;
 
         return view('fd_mis_account.fd-account.interest-tds.credit_debit_interest', compact('fdAccount', 'balance', 'transaction'));
     }
@@ -2089,25 +2115,25 @@ class FDController extends Controller
 
 
     public function removeAccount($id)
-{
-    $fdAccount = FdAccount::findOrFail($id);
+    {
+        $fdAccount = FdAccount::findOrFail($id);
 
-    return view(
-        'fd_mis_account.fd-account.remove-account',
-        compact('fdAccount')
-    );
-}
+        return view(
+            'fd_mis_account.fd-account.remove-account',
+            compact('fdAccount')
+        );
+    }
 
 
-public function confirmRemoveAccount(Request $request, $id)
-{
-    $fdAccount = FdAccount::findOrFail($id);
+    public function confirmRemoveAccount(Request $request, $id)
+    {
+        $fdAccount = FdAccount::findOrFail($id);
 
-    $fdAccount->delete();
+        $fdAccount->delete();
 
-    return redirect()->route('fd-mis-schemes.fd_index')
-        ->with('Success', 'FD Account Deleted Successfully');
-}
+        return redirect()->route('fd-mis-schemes.fd_index')
+            ->with('Success', 'FD Account Deleted Successfully');
+    }
 
     public function sweepInAccount()
     {

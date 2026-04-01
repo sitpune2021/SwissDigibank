@@ -106,10 +106,10 @@ $promoter->first_name . ' PROMOTER') : 'ADD PROMOTER')
 @include('fields.errormessage')
 
 <div class="box mb-4 xxxl:mb-6">
-    @if($errors->has('limit'))
-    <div class="text-red-600 text-sm mb-3">
-        {{ $errors->first('limit') }}
-    </div>
+    @if($errors->has('error'))
+        <div class="text-red-600 text-sm mb-3">
+            {{ $errors->first('error') }}
+        </div>
     @endif
     <form id="companyForm" action="{{ $route }}" method="POST" class="grid grid-cols-2 gap-4 xxxl:gap-6">
         @csrf
