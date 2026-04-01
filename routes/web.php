@@ -318,6 +318,10 @@ Route::middleware('auth.user')->group(function () {
             ->name('member.pan.submit');
         Route::post('/verify-mobile-otp', [MemberController::class, 'verifyMobileOtp']);
         Route::post('/send-aadhaar-otp', [MemberController::class, 'sendAadhaarOtp']);
+        Route::post('/member/verify-otp', [MemberController::class, 'verifyMemberOtp'])
+            ->name('member.verifyOtp');
+        Route::post('/member/resend-otp', [MemberController::class, 'resendMemberOtp'])
+            ->name('member.resendOtp');
         Route::post('/verify-aadhaar-otp-temp', [MemberController::class, 'verifyAadhaarOtpTemp']);
         // ✅ NEW (Direct Aadhaar Submit)
         Route::post('/member/{id}/aadhaar-submit', [MemberController::class, 'submitAadhaar'])

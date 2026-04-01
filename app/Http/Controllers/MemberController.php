@@ -32,6 +32,7 @@ use App\Models\Group;
 use Illuminate\Support\Facades\Http;
 use App\Helpers\MufinHelper;
 
+
 class MemberController extends Controller
 {
 
@@ -53,7 +54,9 @@ class MemberController extends Controller
                     abort(403, 'Member record not found for this user.');
                 }
             }
-            $query = Member::with(['branch', 'kyc']);
+
+            //$query = Member::with(['branch', 'kyc']);
+            $query = Member::with(['branch', 'kyc','user']);
 
             if ($request->has('search') && $request->search != '') {
                 $search = $request->search;
@@ -92,6 +95,122 @@ class MemberController extends Controller
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
+    }
+
+    public function resendMemberOtp(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required'
+        ]);
+
+        try {
+
+            $user = User::findOrFail($request->user_id);
+
+            // ✅ OTP generate
+                $user->otp = rand(1000,9999);
+                $user->otp_verified = 0;
+                $user->otp_expires_at = now()->addMinutes(5); // OTP valid 5 minutes
+                $user->save();
+
+            $apiKey = env('MUFFINPAY_API_KEY');
+            $url = env('MUFFINPAY_URL');
+
+            $payload = [
+                "firstName" => $user->fname ?? "User",
+                "lastName" => $user->lname ?? "User",
+                "email" => $user->email,
+                "mobileNumber" => $user->mobile,
+                "userType" => "ROLE_INDIVIDUAL_MERCHANT_USER",
+                "userCatg" => "INDIVIDUAL"
+            ];
+
+            $xverify = \App\Helpers\MufinHelper::generateXVerify($payload);
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+                'apiKey' => $apiKey,
+                'xverifyv2' => $xverify
+            ])
+            ->withBody(json_encode($payload, JSON_UNESCAPED_SLASHES), 'application/json')
+            ->withOptions([
+                'verify' => false
+            ])
+            ->post($url.'/user/create');
+
+            $data = $response->json();
+
+            Log::info('MuffinPay Resend OTP Response', $data);
+
+            if ($response->successful()) {
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'OTP sent successfully to '.$user->mobile
+                ]);
+
+            } else {
+
+                Log::error('MuffinPay resend OTP failed', [
+                    'response' => $response->body()
+                ]);
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Failed to resend OTP'
+                ]);
+            }
+
+        } catch (\Exception $e) {
+
+            Log::error('Resend OTP Error', [
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong'
+            ]);
+        }
+    }
+
+    public function verifyMemberOtp(Request $request)
+    {
+    $request->validate([
+    'user_id' => 'required',
+    'otp' => 'required|digits:4'
+    ]);
+
+    $user = User::findOrFail($request->user_id);
+
+    if(now()->greaterThan($user->otp_expires_at))
+    {
+    return response()->json([
+    'status'=>false,
+    'message'=>'OTP expired. Please resend OTP.'
+    ]);
+    }
+
+    if($user->otp == $request->otp)
+    {
+    $user->otp_verified = 1;
+    $user->save();
+
+    Log::info('Member OTP verified',[
+    'user_id'=>$user->id
+    ]);
+
+    return response()->json([
+    'status'=>true,
+    'message'=>'OTP Verified Successfully'
+    ]);
+    }
+
+    return response()->json([
+    'status'=>false,
+    'message'=>'Invalid OTP'
+    ]);
     }
 
     public function create()
@@ -1053,7 +1172,24 @@ $xverify = hash('sha256', $finalString);
                 'branch' => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id'),
             ];
+
             $member = Member::with('address', 'kyc', 'minors', 'religion', 'accounts.bank', 'memberOtherCharges')->findOrFail($id);
+
+            $kycStatus = 'PENDING';
+
+            if ($member->kyc) {
+
+                $pan = $member->kyc->pan_verified;
+                $aadhaar = $member->kyc->aadhaar_submitted;
+                $otp = $member->kyc->otp_verified;
+                $selfie = $member->kyc->selfie_uploaded;
+
+                if ($pan == 1 && $aadhaar == 1 && $otp == 1 && $selfie == 1) {
+                    $kycStatus = 'FULL_KYC';
+                } elseif ($pan == 1 || $aadhaar == 1 || $otp == 1 || $selfie == 1) {
+                    $kycStatus = 'MINI_KYC';
+                }
+            }
 
             $comments = MembershipChargeTransaction::where('member_id', $id)
                 ->where('status', 'comment')
@@ -1092,7 +1228,8 @@ $xverify = hash('sha256', $finalString);
                 'chargeId',
                 'charge',
                 'id',
-                'comments'
+                'comments',
+                'kycStatus'
             ));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
