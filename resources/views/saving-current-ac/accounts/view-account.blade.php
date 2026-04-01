@@ -110,7 +110,7 @@
 
                 <!-- Dropdown menu -->
                 <div id="accountDropdownMenu"
-                    class="hidden absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                    class="hidden absolute left-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                     <ul class="py-2 text-gray-700">
                         <li>
                             <a href="{{route('accounts.credit.interest', base64_encode($account->id))}}"
