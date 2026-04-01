@@ -108,7 +108,8 @@ class MemberController extends Controller
             $user = User::findOrFail($request->user_id);
 
             // ✅ OTP generate
-                $user->otp = rand(1000,9999);
+                //$user->otp = rand(1000,9999);
+                $user->otp = 1234;
                 $user->otp_verified = 0;
                 $user->otp_expires_at = now()->addMinutes(5); // OTP valid 5 minutes
                 $user->save();

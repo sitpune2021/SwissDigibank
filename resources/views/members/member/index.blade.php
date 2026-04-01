@@ -222,11 +222,11 @@
 
                 <div class="flex justify-end gap-2">
 
-                    <button onclick="closeOtpModal()" class="px-3 py-1 bg-gray-400 text-white rounded">
+                    <button onclick="closeOtpModal()" class="px-3 py-1 bg-primary text-white rounded">
                     Cancel
                     </button>
 
-                    <button onclick="resendOtp()" class="px-3 py-1 bg-yellow-500 text-white rounded">
+                    <button onclick="resendOtp()" class="px-3 py-1 bg-warning text-white rounded">
                     Resend OTP
                     </button>
 
