@@ -92,13 +92,27 @@
                 <tbody>
                     @foreach ($members as $index => $item)
                         <tr class="border-b dark:border-bg3">
+                            
                             <td class="py-3 px-6">{{ $item->general_group }}</td>
 
-                            <td class="py-3 px-6 text-center ">
-                                <a href="{{ $item?->id ? route('member.show', $item->id) : '#' }}"
+                            <td class="py-3 px-6 text-center">
+
+                                @if($item->user && $item->user->otp_verified == 1)
+
+                                    <a href="{{ route('member.show',$item->id) }}"
                                     class="text-primary hover:underline">
                                     {{ $item->member_no ?? 'N/A' }}
-                                </a>
+                                    </a>
+
+                                    @else
+
+                                    <span class="text-gray-400 cursor-not-allowed"
+                                    title="Please verify OTP first">
+                                    {{ $item->member_no ?? 'N/A' }}
+                                    </span>
+
+                                @endif
+
                             </td>
                             
                             <td class="py-3 px-6">{{ $item->branch->branch_name ?? '' }}</td>
