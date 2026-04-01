@@ -12,9 +12,8 @@ use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
+
     public function index(Request $request)
     {
         try {
@@ -40,6 +39,7 @@ class UserController extends Controller
             abort(404);
         }
     }
+
     public function create()
     {
         try {
@@ -59,9 +59,6 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -116,9 +113,6 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         try {
@@ -135,9 +129,6 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         try {
@@ -155,9 +146,6 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         try {
@@ -172,11 +160,14 @@ class UserController extends Controller
             $validated = $request->validate([
                 'employee'           => 'nullable|integer',
                 'designation'        => 'nullable|string|max:100',
-                'user_name'          => 'required|string|max:255,' . $user->id,
+                //'user_name'          => 'required|string|max:255,' . $user->id,
+                'user_name' => 'required|string|max:255|unique:users,username,' . $user->id,
                 'first_name'         => 'required|string|max:255|regex:/^[A-Za-z]+$/',
                 'last_name'          => 'nullable|string|max:255|regex:/^[A-Za-z]+$/',
-                'email'              => 'required|email|max:255|regex:/^[A-Za-z0-9._]+@[^@\s]+\.[A-Za-z]{2,}$/,' . $user->id,
-                'mobile_no'          => 'required|string|max:10,' . $user->id,
+                //'email'              => 'required|email|max:255|regex:/^[A-Za-z0-9._]+@[^@\s]+\.[A-Za-z]{2,}$/,' . $user->id,
+                'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+                //'mobile_no'          => 'required|string|max:10,' . $user->id,
+                'mobile_no' => 'required|digits:10|unique:users,mobile,' . $user->id,
                 'back_date'          => 'required|integer|min:0',
                 'permission_role'    => 'required|integer|exists:roles,id',
                 'branch'             => 'required|integer|exists:branches,id',
@@ -223,11 +214,10 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //
     }
+
+
 }
