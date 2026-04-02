@@ -119,7 +119,7 @@
                 </div>
             </div>
 
-        </div>
+        </div><br>
 
             <h3>VIEW ROLE PERMISSION</h3>
 
@@ -282,10 +282,19 @@
                                     @include('roles.checkboxes.payment-col')
 
                                 </div>
+                                <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
+                                    <button class="btn-outline" type="reset">
+                                        <a href="{{ route('roles.index') }}">
+                                        Cancel
+                                        </a>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    
                 </div>
+                
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {

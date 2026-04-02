@@ -144,9 +144,11 @@
                                             <tr class="">
                                                 @foreach ($row as $item)
                                                     <td class="  text-start " style="padding: 5px 20px">
-                                                        <button class="tab-link active">
-                                                            {{ $item['title'] }}
-                                                        </button>
+                                                        <button type="button"
+    class="tab-link"
+    data-tab="{{ Str::slug($item['title']) }}">
+    {{ $item['title'] }}
+</button>
                                                     </td>
                                                 @endforeach
                                             </tr>
@@ -225,6 +227,10 @@
                                     <!--------------------DAILY WEEKLY LOAN------------------------>
                                     
                                     @include('roles.checkboxes.dailyweekly-loan')
+
+                                     <!---------------------FIXED LOAN------------------------>
+                                     
+                                    @include('roles.checkboxes.fixed-loan')
                                     
                                     <!---------------------APPROVALS------------------------>
 
