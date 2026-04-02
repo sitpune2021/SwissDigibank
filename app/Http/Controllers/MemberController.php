@@ -1506,6 +1506,7 @@ $xverify = hash('sha256', $finalString);
             ]);
 
             $member = Member::findOrFail($id);
+            $user = User::find($member->user_id);
             $memberData = $request->only((new Member)->getFillable());
             $addressData = $request->only((new Address)->getFillable());
             $kycData = $request->only((new KycAndNominee)->getFillable());
@@ -1514,9 +1515,61 @@ $xverify = hash('sha256', $finalString);
             $member->address()->update($addressData);
             $member->kyc()->update($kycData);
 
+            if ($user && empty($user->muf_user_id)) {
+
+                $payload = [
+                    "firstName" => $member->member_info_first_name,
+                    "lastName" => $member->member_info_last_name,
+                    "email" => $member->member_info_email,
+                    "mobileNumber" => $member->member_info_mobile_no,
+                    "userType" => "ROLE_INDIVIDUAL_MERCHANT_USER",
+                    "userCatg" => "INDIVIDUAL"
+                ];
+
+                $xverify = MufinHelper::generateXVerify($payload);
+                $body = json_encode($payload, JSON_UNESCAPED_SLASHES);
+
+                $response = Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                    'apiKey' => env('MUFFINPAY_API_KEY'),
+                    'xverifyv2' => $xverify
+                ])
+                ->withBody($body, 'application/json')
+                ->withOptions([
+                    'verify' => false
+                ])
+                ->post(env('MUFFINPAY_URL') . '/user/create');
+
+                Log::info('MuffinPay HTTP Status', [
+                    'status' => $response->status(),
+                    'body' => $response->body()
+                ]);
+
+                $data = $response->json();
+
+                Log::info('MuffinPay Edit User Create', $data);
+
+                if ($response->successful()) {
+
+                    $mufUserId = $data['data']['userId'] ?? null;
+
+                    if ($mufUserId) {
+
+                        $user->muf_user_id = $mufUserId;
+                        $user->save();
+
+                        Log::info('MufinPay ID Stored From Edit', [
+                            'user_id' => $user->id,
+                            'muf_user_id' => $mufUserId
+                        ]);
+                    }
+                }
+            }
+
             return redirect()->route('member.index')->with('success', 'Member updated successfully.');
         } catch (ValidationException $e) {
-            // ✅ Log validation errors clearly
+            // Log validation errors clearly
             Log::error('Member update validation failed', [
                 'member_id' => $id,
                 'errors' => $e->errors(),
