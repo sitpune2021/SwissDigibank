@@ -95,7 +95,7 @@
                             
                             <td class="py-3 px-6">{{ $item->general_group }}</td>
 
-                            <td class="py-3 px-6 text-center">
+                            <!-- <td class="py-3 px-6 text-center">
 
                                 @if($item->user && $item->user->otp_verified == 1)
 
@@ -112,6 +112,15 @@
                                     </span>
 
                                 @endif
+
+                            </td> -->
+
+                            <td class="py-3 px-6 text-center">
+                                
+                                <a href="{{ route('member.show',$item->id) }}"
+                                class="text-primary hover:underline">
+                                {{ $item->member_no ?? 'N/A' }}
+                                </a>
 
                             </td>
                             
