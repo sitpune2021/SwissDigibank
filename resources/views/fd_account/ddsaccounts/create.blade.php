@@ -459,12 +459,6 @@
                             <select id="saving_account_id" name="saving_account_id"
                                 class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                 <option value="">Choose Account</option>
-                                @foreach ($savingAccounts as $account)
-                                    <option value="{{ $account->id }}">
-                                        {{ $account->account_no }}
-                                        {{ $account->members->full_name ?? '' }}
-                                    </option>
-                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -652,6 +646,35 @@
                 document.getElementById('single').classList.remove('hidden');
             }
         }
+
+        document.getElementById('memberDropdown').addEventListener('change', function () {
+    let memberId = this.value;
+    let savingDropdown = document.getElementById('saving_account_id');
+
+    savingDropdown.innerHTML = '<option value="">Loading...</option>';
+
+    if (memberId) {
+        fetch('/member-saving-accounts/' + memberId)
+            .then(res => res.json())
+            .then(data => {
+                savingDropdown.innerHTML = '<option value="">Choose Account</option>';
+
+                if (data.length === 0) {
+                    savingDropdown.innerHTML = '<option value="">No Saving Accounts</option>';
+                    return;
+                }
+console.log(data);
+                data.forEach(acc => {
+                    let option = document.createElement('option');
+                    option.value = acc.id;
+                    option.text = acc.account_no + ' (₹ ' + acc.balance + ')';
+                    savingDropdown.appendChild(option);
+                });
+            });
+    } else {
+        savingDropdown.innerHTML = '<option value="">Choose Account</option>';
+    }
+});
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -685,7 +708,7 @@
                     // Auto-fill customer info
                     document.getElementById('memberName').value =
                         `${data.member_info_first_name ?? ''} ${data.member_info_last_name ?? ''}`;
-                    document.getElementById('memberAddress').value = data.member_address_line_1 ?? '';
+                    document.getElementById('memberAddress').value = data.member_address ?? '';
                     document.getElementById('memberMobile').value = data.member_info_mobile_no ?? '';
 
                     // Replace branch dropdown with only customer's branch
