@@ -116,12 +116,33 @@ class DdsAccountsController extends Controller
         $banks = Bank::all();
         Log::info('All Schemes:', $schemes->pluck('rd_dd_frequency', 'scheme_name')->toArray());
 
-        $savingAccounts = Account::where('account_type', 'saving')->get();
+        // $savingAccounts = Account::where('account_type', 'saving')->get();
         $members = Member::orderBy('member_info_first_name')->get();
         $membersData = $members->keyBy('id');
 
-        return view('fd_account.ddsaccounts.create', compact('members', 'branches', 'schemes', 'minors', 'savingAccounts', 'membersData', 'banks'));
+        return view('fd_account.ddsaccounts.create', compact('members', 'branches', 'schemes', 'minors', 'membersData', 'banks'));
     }
+
+    public function getSavingAccounts($id)
+{
+    $accounts = Account::where('member_id', $id)
+        ->where('account_type', 'SAVING')
+        ->orWhere('approve_status', 1)
+        ->orWhere('approve_status',1)
+        ->get();
+// dd($accounts);
+    $data = $accounts->map(function ($acc) {
+        $balance = AccountsTransactionsHelper::getAccountBalacec($acc->id);
+
+        return [
+            'id' => $acc->id,
+            'account_no' => $acc->account_no,
+            'balance' => $balance['total_balance'] ?? 0
+        ];
+    });
+
+    return response()->json($data);
+}
 
     public function store(Request $request)
     {
@@ -308,7 +329,6 @@ class DdsAccountsController extends Controller
         }
     }
 
-
     public function show($id)
     {
         Log::info("DdsAccountsController@show called for ID: $id");
@@ -473,8 +493,6 @@ class DdsAccountsController extends Controller
             'passbooks'            => $passbooks
         ]);
     }
-
-
     public function edit(DdsAccount $ddaccount)
     {
         Log::info("DdsAccountsController@edit called for ID: {$ddaccount->id}");
@@ -555,7 +573,7 @@ class DdsAccountsController extends Controller
         return response()->json([
             'member_info_first_name' => $member->member_info_first_name,
             'member_info_last_name'  => $member->member_info_last_name,
-            'member_address_line_1'  => $member->member_address_line_1,
+            'member_address'         => $member->full_address,
             'member_info_mobile_no'  => $member->member_info_mobile_no,
             'branch_id'              => $member->branch->id ?? null,
             'branch_name'            => $member->branch->branch_name ?? null,

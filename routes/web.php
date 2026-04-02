@@ -267,6 +267,7 @@ Route::middleware('auth.user')->group(function () {
         Route::post('/change-account-info/{id}', [DdsAccountsController::class, 'updateAccountInfo'])
             ->name('dd.update.account.info');
         Route::get('/change-minor-info/{id}', [DdsAccountsController::class, 'changeMinorInfo'])->name('ddChange.minor.info');
+        Route::get('/member-saving-accounts/{id}', [DdsAccountsController::class, 'getSavingAccounts']);
         Route::post(
             '/ddsaccounts/{id}/update-minor',
             [DdsAccountsController::class, 'updateMinor']
