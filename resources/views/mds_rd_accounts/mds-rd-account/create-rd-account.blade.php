@@ -372,11 +372,11 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div id="accountBalanceDiv" class="mt-3 hidden">
+                     <!-- <div id="accountBalanceDiv" class="mt-3 hidden">
                         <label class="block text-sm font-medium text-gray-700">Account Balance</label>
                         <div id="accountBalance"
-                            class="p-3  text-sm font-semibold text-primary"></div>
-                    </div>
+                            class="p-3  text-sm font-semibold text-primary"></div> 
+                    </div>  -->
                 </div>
             </div>
 
@@ -431,7 +431,7 @@
         });
 
         // Always hide balance first
-        document.getElementById('accountBalanceDiv').classList.add('hidden');
+        // document.getElementById('accountBalanceDiv').classList.add('hidden');
 
         // Show the selected section
         if (type === 'onlineTr') {
@@ -442,7 +442,7 @@
         }
         if (type === 'savingAcc') {
             document.getElementById('savingAcc').classList.remove('hidden');
-            document.getElementById('accountBalanceDiv').classList.remove('hidden');
+            
         }
     }
 
@@ -461,19 +461,138 @@
 
     }
 </script>
+
 <script>
+$(document).ready(function() {
+    $('#memberDropdown').on('change', function() {
+        let memberId = $(this).val();
+
+        const $jointSelect = $('#savingAccountJoint');
+        let savingDropdown = document.getElementById('savingAccountSelect');
+
+        // Reset dropdowns
+        $jointSelect.empty().append('<option value="">Select Account</option>');
+        savingDropdown.innerHTML = '<option value="">Select Account</option>';
+
+        if (memberId) {
+
+            $.ajax({
+                url: "{{ route('members.get', '') }}/" + memberId,
+                type: 'GET',
+                success: function(response) {
+                    console.log(response);
+
+                    // ========== Fill Member Info ==========
+                    $('#memberName').val(response.member?.member_info_first_name ?? 'Not Available');
+                    $('#memberAddress').val(response.member?.full_address ?? 'Not Available');
+                    $('#memberMobile').val(response.member?.member_info_mobile_no ?? '');
+                    $('#branch_id').val(response.member?.branch?.id ?? '');
+
+                    // ========== Populate Minors ==========
+                    const $minorSelect = $('#minor_id');
+                    $minorSelect.empty();
+                    if (response.member?.minors?.length > 0) {
+                        response.member.minors.forEach(minor => {
+                            $minorSelect.append(
+                                `<option value="${minor.id}">${minor.first_name} ${minor.last_name}</option>`
+                            );
+                        });
+                    } else {
+                        $minorSelect.append('<option value="">No minors found</option>');
+                    }
+
+                    // ========== Populate Branch ==========
+                    const $branchSelect = $('#branch_id');
+                    $branchSelect.empty();
+                    if (response.member?.branch?.id) {
+                        $branchSelect.append(
+                            `<option value="${response.member.branch.id}">${response.member.branch.branch_name}</option>`
+                        );
+                    } else {
+                        $branchSelect.append('<option value="">No branches available</option>');
+                    }
+                    
+console.log(response.accounts);
+
+                    // ========== Populate BOTH Saving + Joint Accounts ==========
+                    if (response.accounts?.length > 0) {
+
+                        response.accounts.forEach(account => {
+
+                            // Joint dropdown
+                            $jointSelect.append(
+                                `<option value="${account.id}">${account.account_no}</option>`
+                            );
+
+                            // Saving dropdown (WITH BALANCE)
+                            let option = document.createElement('option');
+                            option.value = account.id;
+                            option.text = account.account_no + ' (₹ ' + (account.balance ?? 0) + ')';
+                            savingDropdown.appendChild(option);
+                        });
+
+                    } else {
+                        $jointSelect.append('<option value="">No Saving Accounts Found</option>');
+                        savingDropdown.innerHTML = '<option value="">No Saving Accounts Found</option>';
+                    }
+                },
+                error: function() {
+                    alert('Unable to fetch member details and accounts.');
+                }
+            });
+
+        } else {
+            // Reset all fields if no member selected
+            $('#memberName').val('');
+            $('#memberAddress').val('');
+            $('#memberMobile').val('');
+            $('#minor_id').empty();
+            $('#branch_id').empty().append('<option value="">Select branch</option>');
+
+            $jointSelect.empty().append('<option value="">Select a member first</option>');
+            savingDropdown.innerHTML = '<option value="">Select a member first</option>';
+        }
+    });
+});
+</script>
+
+<!-- <script>
     $(document).ready(function() {
         $('#memberDropdown').on('change', function() {
             let memberId = $(this).val();
 
             // Get dropdown references
             const $jointSelect = $('#savingAccountJoint');
-            const $savingSelect = $('#savingAccountSelect');
+            // const $savingSelect = $('#savingAccountSelect');
 
             // Always clear both dropdowns first
             $jointSelect.empty().append('<option value="">Select Account</option>');
-            $savingSelect.empty().append('<option value="">Select Account</option>');
+            // $savingSelect.empty().append('<option value="">Select Account</option>');
 
+            let savingDropdown = document.getElementById('savingAccountSelect');
+            savingDropdown.innerHTML = '<option value="">Loading...</option>';
+
+            if (memberId) {
+                fetch('/member-saving-accounts/' + memberId)
+                    .then(res => res.json())
+                    .then(data => {
+                        savingDropdown.innerHTML = '<option value="">Choose Account</option>';
+
+                        if (data.length === 0) {
+                            savingDropdown.innerHTML = '<option value="">No Saving Accounts</option>';
+                            return;
+                        }
+                        console.log(data);
+                        data.forEach(acc => {
+                            let option = document.createElement('option');
+                            option.value = acc.id;
+                            option.text = acc.account_no + ' (₹ ' + acc.balance + ')';
+                            savingDropdown.appendChild(option);
+                        });
+                    });
+            } else {
+                savingDropdown.innerHTML = '<option value="">Choose Account</option>';
+            }
 
             if (memberId) {
                 $.ajax({
@@ -528,30 +647,30 @@
                         }
 
                         // ========== Populate Saving Accounts ==========
-                        if (response.accounts?.length > 0) {
-                            response.accounts.forEach(account => {
-                                $savingSelect.append(`<option value="${account.id}" data-balance="${account.amount_deposit}">${account.account_no}</option>`);
-                            });
-                        } else {
-                            $savingSelect.append('<option value="">No Saving Accounts Found</option>');
-                        }
+                        // if (response.accounts?.length > 0) {
+                        //     response.accounts.forEach(account => {
+                        //         $savingSelect.append(`<option value="${account.id}" data-balance="${account.amount_deposit}">${account.account_no}</option>`);
+                        //     });
+                        // } else {
+                        //     $savingSelect.append('<option value="">No Saving Accounts Found</option>');
+                        // }
 
                         // show account balance when savingAccountSelect changes
-                        $savingSelect.on('change', function() {
-                            const selected = $(this).find('option:selected');
-                            const balance = selected.data('balance');
-                            if (balance || balance === 0) {
-                                $('#accountBalance').text('₹ ' + balance);
-                                $('#accountBalanceDiv').removeClass('hidden');
-                            } else {
-                                $('#accountBalance').text('');
-                                $('#accountBalanceDiv').addClass('hidden');
-                            }
-                        });
+                        // $savingSelect.on('change', function() {
+                        //     const selected = $(this).find('option:selected');
+                        //     const balance = selected.data('balance');
+                        //     if (balance || balance === 0) {
+                        //         $('#accountBalance').text('₹ ' + balance);
+                        //         $('#accountBalanceDiv').removeClass('hidden');
+                        //     } else {
+                        //         $('#accountBalance').text('');
+                        //         $('#accountBalanceDiv').addClass('hidden');
+                        //     }
+                        // });
 
-                        // Reset displayed balance
-                        $('#accountBalance').text('');
-                        $('#accountBalanceDiv').addClass('hidden');
+                        // // Reset displayed balance
+                        // $('#accountBalance').text('');
+                        // $('#accountBalanceDiv').addClass('hidden');
                     },
                     error: function() {
                         alert('Unable to fetch member details and accounts.');
@@ -574,7 +693,7 @@
             }
         });
     });
-</script>
+</script> -->
 <script>
 document.querySelector('select[name="scheme_id"]').addEventListener('change', function () {
 

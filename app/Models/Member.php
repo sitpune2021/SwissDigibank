@@ -51,7 +51,7 @@ class Member extends Model
             optional($this->address)->member_address_country,
         ])->filter()->implode(', ');
     }
-
+    protected $appends = ['full_address'];
     public function address(): HasOne
     {
         return $this->hasOne(Address::class, 'member_id', 'id');
@@ -108,8 +108,8 @@ class Member extends Model
     {
         return trim(
             ($this->member_info_first_name ?? '') . ' ' .
-            ($this->member_info_middle_name ?? '') . ' ' .
-            ($this->member_info_last_name ?? '')
+                ($this->member_info_middle_name ?? '') . ' ' .
+                ($this->member_info_last_name ?? '')
         );
     }
 
@@ -117,7 +117,7 @@ class Member extends Model
     {
         return $this->hasOne(Promotor::class, 'member_id');
     }
-    
+
     public function shareHoldings()
     {
         return $this->hasMany(ShareHolding::class, 'promotor_id');
@@ -149,5 +149,4 @@ class Member extends Model
     {
         return $this->belongsToMany(Group::class, 'group_members');
     }
-    
 }

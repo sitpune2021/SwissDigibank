@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AccountsTransactionsHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Account;
 use Illuminate\Http\Request;
@@ -59,16 +60,29 @@ class RdAccountController extends Controller
     {
         $member = Member::with('address', 'branch', 'minors')->find($id);
 
-        $accounts = Account::where('member_id', $id)->get();
-
         if (!$member) {
             return response()->json(['error' => 'Member not found'], 404);
         }
 
+        //Correct filtering
+        $accounts = Account::where('member_id', $id)
+            ->where('account_type', 'SAVING')
+            ->orwhere('account_status', 1)
+            ->orwhere('approve_status', 1)
+            ->get();
+
+        //Attach balance to each account
+        $accounts = $accounts->map(function ($acc) {
+            $balance = AccountsTransactionsHelper::getAccountBalacec($acc->id);
+
+            $acc->balance = $balance['total_balance'] ?? 0;
+            return $acc;
+        });
+
+        //Correct response structure
         return response()->json([
             'member' => $member,
             'accounts' => $accounts
-
         ]);
     }
 
@@ -120,11 +134,11 @@ class RdAccountController extends Controller
             $validated = $request->validate($rules);
             $member = Member::find($request->member_id);
 
-if (!$member || (int)$member->share_allocated == 0) {
-    throw \Illuminate\Validation\ValidationException::withMessages([
-        'member_id' => 'This member has no shares allocated. You cannot open a RD account.'
-    ]);
-}
+            if (!$member || (int)$member->share_allocated == 0) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'member_id' => 'This member has no shares allocated. You cannot open a RD account.'
+                ]);
+            }
 
             Log::info('RD Account Validated Data', $validated);
 
@@ -1460,9 +1474,9 @@ if (!$member || (int)$member->share_allocated == 0) {
     }
 
     //print
-     public function rdBondFormView($id)
+    public function rdBondFormView($id)
     {
-        
+
         // Load RD account with required relations
         $rdAccount = RdAccount::with([
             'member',
@@ -1477,8 +1491,7 @@ if (!$member || (int)$member->share_allocated == 0) {
             'company_reg_no'  => 'Reg. No. 969/03-04',
         ];
 
-      return view('mds_rd_accounts.mds-rd-account.view.print-documents.rd-bond-view',$data);
-   
+        return view('mds_rd_accounts.mds-rd-account.view.print-documents.rd-bond-view', $data);
     }
     public function rdBondForm($id)
     {
@@ -1506,7 +1519,7 @@ if (!$member || (int)$member->share_allocated == 0) {
         return $pdf->download('rd-bond-' . $rdAccount->id . '.pdf');
     }
 
-     public function rdOpeningFormView($id)
+    public function rdOpeningFormView($id)
     {
         // Load RD account with required relations
         $account = RdAccount::with([
@@ -1521,7 +1534,7 @@ if (!$member || (int)$member->share_allocated == 0) {
 
         $member = $account->member;
 
-      return view('mds_rd_accounts.mds-rd-account.view.print-documents.accountopeningformview' , compact('account'));
+        return view('mds_rd_accounts.mds-rd-account.view.print-documents.accountopeningformview', compact('account'));
     }
 
 
@@ -1550,12 +1563,12 @@ if (!$member || (int)$member->share_allocated == 0) {
         return $pdf->download('rd-opening-' . $id . '.pdf');
     }
 
-     public function rdClosingFormView($id)
+    public function rdClosingFormView($id)
     {
         $rdAccount = RdAccount::with(['member.branch'])->findOrFail($id);
 
         $data = [
-               'rdAccount' => $rdAccount,
+            'rdAccount' => $rdAccount,
             'name'           => $rdAccount->member->member_info_first_name . ' ' .
                 $rdAccount->member->member_info_last_name,
 
@@ -1576,7 +1589,7 @@ if (!$member || (int)$member->share_allocated == 0) {
             'branch_address' => $rdAccount->member->branch->branch_address ?? '',
         ];
 
-       
+
 
         return view('mds_rd_accounts.mds-rd-account.view.print-documents.closingformView', $data);
     }
