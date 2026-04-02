@@ -216,22 +216,87 @@ class RoleController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        $rolePermission = RolePermission::with('role')->findOrFail($id);
-        $roles = Role::all();
-        $allPermissions = Permissions::all();
+  public function edit($id)
+{
+    $rolePermission = RolePermission::with('role')->findOrFail($id);
+    $roles = Role::all();
+    $allPermissions = Permissions::all();
 
-        $selectedPermissions = $rolePermission->permissions ?? [];
+    $selectedPermissions = $rolePermission->permissions ?? [];
 
-        return view('roles.edit-role', compact(
-            'rolePermission',
-            'roles',
-            'allPermissions',
-            'selectedPermissions'
-        ));
-    }
+    $menuItems1 = [
+        ['title' => 'DASHBOARD'],
+        ['title' => 'COMPANY'],
+        ['title' => 'USER MANAGEMENT'],
+        ['title' => 'COLLECTION CENTERS'],
+        ['title' => 'CUSTOMER MANAGEMENT'],
+    ];
 
+    $menuItems2 = [
+        ['title' => 'SAVING ACCOUNTS'],
+        ['title' => 'FIXED DEPOSITS'],
+        ['title' => 'RECURRING DEPOSITS'],
+        ['title' => 'GOLD LOAN'],
+        ['title' => 'PROPERTY LOAN'],
+    ];
+
+    $menuItems3 = [
+        ['title' => 'DEPOSIT LOAN'],
+        ['title' => 'BUSINESS LOAN'],
+        ['title' => 'CC LIMIT'],
+        ['title' => 'VEHICLE LOAN'],
+    ];
+
+    $menuItems4 = [
+        ['title' => 'PERSONAL LOAN'],
+        ['title' => 'DAILY WEEKLY'],
+        ['title' => 'FIXED LOAN'],
+        ['title' => 'APPROVALS'],
+        ['title' => 'PASSBOOKS'],
+        ['title' => 'PRINT DOCUMENTS'],
+        ['title' => 'ADVISORS'],
+    ];
+
+    $menuItems5 = [];
+
+    $menuItems6 = [
+        ['title' => 'REPORTS'],
+        ['title' => 'HR MANAGEMENT'],
+        ['title' => 'SOFTWARE SETTINGS'],
+        ['title' => 'ACCOUNTING'],
+    ];
+
+    $menuItems7 = [
+        ['title' => 'LOCKERS'],
+    ];
+
+    $menuItems8 = [
+        ['title' => 'NOTICE BOARD'],
+    ];
+
+    $menuItems9 = [];
+
+    $menuItems10 = [
+        ['title' => 'PAYMENT COLLECTIONS'],
+    ];
+
+    return view('roles.edit-role', compact(
+        'rolePermission',
+        'roles',
+        'allPermissions',
+        'selectedPermissions',
+        'menuItems1',
+        'menuItems2',
+        'menuItems3',
+        'menuItems4',
+        'menuItems5',
+        'menuItems6',
+        'menuItems7',
+        'menuItems8',
+        'menuItems9',
+        'menuItems10'
+    ));
+}
     public function update(Request $request, $id)
     {
         $request->validate([
