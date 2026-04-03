@@ -323,15 +323,15 @@
                         <div class="cheque-row flex flex-wrap justify-start gap-4">
                             <div class="flex-center flex-1 min-w-[300px] max-w-full">
                                 <label class="font-medium block mb-1 uppercase">Bank Name<span class="text-red-500">*</span></label>
-                                <select name="bank_id" id="bank_id"  class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
+                                <select name="cheque_bank_name" id="bank_id"  class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
                                     <option value="">-- Select Bank --</option>
                                     @foreach($banks as $id => $name)
-                                    <option value="{{ $id }}" {{ old('bank_id') == $id ? 'selected' : '' }}>
+                                    <option value="{{ $id }}" {{ old('cheque_bank_name') == $id ? 'selected' : '' }}>
                                         {{ $name }}
                                     </option>
                                     @endforeach
                                 </select>
-                                @error('bank_id')
+                                @error('cheque_bank_name')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             
