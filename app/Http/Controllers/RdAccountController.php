@@ -47,12 +47,11 @@ class RdAccountController extends Controller
             'member_info_middle_name',
             'member_info_last_name'
         )->get();
-        $banks = Bank::all();
-        $selectedBankId = 'bank_name';
+        $banks = Bank::pluck('name', 'id');
         $schemes = Rdscheme::all();
         $accounts = Account::all();
 
-        return view('mds_rd_accounts.mds-rd-account.create-rd-account', compact('members', 'schemes', 'accounts', 'banks', 'selectedBankId'));
+        return view('mds_rd_accounts.mds-rd-account.create-rd-account', compact('members', 'schemes', 'accounts', 'banks'));
     }
 
     // get member for rd creation
