@@ -225,7 +225,7 @@
                 data.forEach(acc => {
                     accountSelect.innerHTML += `
                        <option value="${acc.id}">
-                            ${acc.members.member_info_first_name} (Bal - ${acc.latest_balance})
+                            ${acc.members.member_info_first_name} (AVL. BAL. - ${acc.latest_balance})
                         </option>`;
                 });
 
