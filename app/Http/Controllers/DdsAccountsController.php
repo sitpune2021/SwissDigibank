@@ -113,7 +113,7 @@ class DdsAccountsController extends Controller
         $branches = Branch::all();
         $schemes = Rdscheme::all();
         $minors   = Minor::all();
-        $banks = Bank::all();
+        $banks = Bank::pluck('name', 'id');
         Log::info('All Schemes:', $schemes->pluck('rd_dd_frequency', 'scheme_name')->toArray());
 
         // $savingAccounts = Account::where('account_type', 'saving')->get();
@@ -159,7 +159,7 @@ class DdsAccountsController extends Controller
             'scheme_id' => 'required|integer|exists:rdschemes,id',
             'open_date' => 'required|date',
             'amount' => 'required|numeric',
-            'account_type' => 'required|in:single,joint',   // ✅ ADD THIS
+            'account_type' => 'required|in:single,joint',
             'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
             'dd_amount' => [
                 'required',
@@ -174,14 +174,22 @@ class DdsAccountsController extends Controller
         ]);
 
         try {
-            Log::info('✅ Validation successful', $validated);
+            $member = Member::find($request->member_id);
+
+            if (!$member || (int)$member->share_allocated == 0) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'member_id' => 'This member has no shares allocated. You cannot open a RD account.'
+                ]);
+            }
+
+            Log::info(' Validation successful', $validated);
 
             $scheme = Rdscheme::findOrFail($validated['scheme_id']);
-            Log::info('✅ Scheme fetched', ['scheme_id' => $scheme->id, 'scheme_name' => $scheme->name ?? 'N/A']);
+            Log::info(' Scheme fetched', ['scheme_id' => $scheme->id, 'scheme_name' => $scheme->name ?? 'N/A']);
 
             $depositPerDay = $scheme->min_rd_dd_amount;
             $days = $scheme->tenure_of_rd_dd_type === 'months' ? $scheme->tenure_of_rd_dd_value * 30 : $scheme->tenure_of_rd_dd_value * 365;
-            Log::info('📅 Tenure calculated', ['days' => $days]);
+            Log::info(' Tenure calculated', ['days' => $days]);
 
             $rate = $scheme->anuual_interest_rate;
 
