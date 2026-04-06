@@ -1,38 +1,57 @@
 @php
-use App\Models\Menu;
-use Illuminate\Support\Facades\Auth;
-$menuItems = Menu::with('submenus')->orderBy('id')->get();
-$user = Auth::user();
-$roleName = optional($user?->role)->name; // safely get role name
+    use App\Models\Menu;
+    use Illuminate\Support\Facades\Auth;
+    $menuItems = Menu::with('submenus')->orderBy('id')->get();
+    $user = Auth::user();
+    $roleName = optional($user?->role)->name; // safely get role name
+@endphp
 
+@php
+
+    use App\Models\logo_letterhead_img_uploads;
+    use App\Models\User;
+    //  use Illuminate\Support\Facades\Auth;
+
+    // Find Super Admin
+    $superAdmin = User::whereHas('role', function ($q) {
+        $q->where('id', 1);
+    })->first();
+
+
+    // Fetch logo uploaded by Super Admin
+    $sidebarLogo = null;
+
+    if ($superAdmin) {
+        $sidebarLogo = logo_letterhead_img_uploads::where('type', 'logo')
+            ->where('uploaded_by', $superAdmin->id)
+            ->latest()
+            ->first();       
+    }
+
+    // Final logo path with fallback
+    $logoPath = $sidebarLogo 
+        ? asset('storage/' . $sidebarLogo->image_path)
+        :  asset('assets/images/SBC_Logo.png');
 
 @endphp
-@php
-use App\Models\logo_letterhead_img_uploads;
-use App\Models\User;
-//  use Illuminate\Support\Facades\Auth;
 
-// Find Super Admin
-$superAdmin = User::whereHas('role', function ($q) {
-    $q->where('id', 1);
-})->first();
-
-
-// Fetch logo uploaded by Super Admin
-$sidebarLogo = null;
-
-if ($superAdmin) {
-    $sidebarLogo = logo_letterhead_img_uploads::where('type', 'logo')
-        ->where('uploaded_by', $superAdmin->id)
-        ->latest()
-        ->first();       
+<style>
+.submenu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
-// Final logo path with fallback
-$logoPath = $sidebarLogo 
-    ? asset('storage/' . $sidebarLogo->image_path)
-    :  asset('assets/images/SBC_Logo.png');
-@endphp
+/* hidden state */
+.submenu-hide {
+    display: none !important;
+}
+
+/* visible state */
+.submenu-show {
+    display: block !important;
+}
+</style>
 
 <aside id="sidebar" class="sidebar bg-n0 dark:!bg-bg4">
     <div class="sidebar-inner relative">
@@ -106,7 +125,7 @@ $logoPath = $sidebarLogo
                         });
                         @endphp
 
-                        {{-- ✅ Future-ready: Add tab/section separator logic --}}
+                        {{-- Future-ready: Add tab/section separator logic --}}
                         @if (!empty($item->is_tab_start))
                         <hr style="margin: 10px 0; border-color: #ccc;">
                         @endif
@@ -171,7 +190,7 @@ $logoPath = $sidebarLogo
                             @endif
                         </li>
 
-                        {{-- ✅ Always add
+                        {{-- Always add
                         <hr> AFTER HR MANAGEMENT --}}
                         @if ($item->title === 'HR MANAGEMENT')
                         {{-- <hr style="margin: 10px 0; border-color: #ccc;"> --}}
@@ -184,26 +203,8 @@ $logoPath = $sidebarLogo
     </div>
 </aside>
 
-{{-- ✅ Optional JS: Only one submenu open at a time --}}
+{{-- Optional JS: Only one submenu open at a time --}}
 <script>
-   
-    // document.querySelectorAll('.menu-btn').forEach(btn => {
-    //     btn.addEventListener('click', function() {
-    //         document.querySelectorAll('.submenu-show').forEach(sub => {
-    //             if (sub !== this.nextElementSibling) {
-    //                 sub.classList.remove('submenu-show');
-    //             }
-    //         });
-    //         document.querySelectorAll('.menu-btn.active').forEach(activeBtn => {
-    //             if (activeBtn !== this) {
-    //                 activeBtn.classList.remove('active');
-    //                 activeBtn.querySelector('.la-plus')?.classList.add('show');
-    //                 activeBtn.querySelector('.la-minus')?.classList.remove('show');
-    //             }
-    //         });
-    //     });
-    // });
-
     document.querySelectorAll('.menu-btn').forEach(btn => {
     btn.addEventListener('click', function() {
 
