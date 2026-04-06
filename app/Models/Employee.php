@@ -22,7 +22,6 @@ class Employee extends Model
         'father_name',
         'pan_no',
         'aadhar_no',
-        'blood_group',
         'monthly_salary',
         'location',
 
@@ -32,7 +31,6 @@ class Employee extends Model
         'ifsc',
 
         'nominee_name',
-        'nominee_relation',
         'nominee_address',
         'blood_group',
         'nominee_relation',
