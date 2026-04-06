@@ -812,24 +812,36 @@ class FDController extends Controller
             $calculation
         ));
     }
+public function getMemberSavings($member_id)
+{
+    try {
+        $savings = Account::where('member_id', $member_id)
+            ->where('account_type', 'SAVING')
+        ->where('account_status', 1)
+        ->orwhere('approve_status', 1)
+        ->get();
 
-    public function getMemberSavings($member_id)
-    {
-        try {
-            $savings = Account::where('member_id', $member_id)->get();
+        $data = $savings->map(function ($acc) {
+            $balance = AccountsTransactionsHelper::getAccountBalacec($acc->id);
 
-            return response()->json([
-                'status' => 'success',
-                'data' => $savings
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+            return [
+                'id' => $acc->id,
+                'account_no' => $acc->account_no,
+                'balance' => $balance['total_balance'] ?? 0
+            ];
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 500);
     }
-
+}
     function processPeriod(
         $results,
         $periodStart,
