@@ -14,6 +14,8 @@ use Illuminate\Validation\Rule;
 
 class LockerController extends Controller
 {
+
+
     public function locker_list_index()
     {
         // $lockers = LockerList::all();
@@ -142,6 +144,7 @@ class LockerController extends Controller
 
         return view('lockers.locker-list.assign-locker', compact('locker','members'));
     }
+    
     public function member_locker_index()
     {
         $lockers = LockerList::all();
@@ -223,12 +226,24 @@ class LockerController extends Controller
             ->get();
 
         // Add latest balance for each account
-        foreach ($accounts as $acc) {
-            $lastTxn = Transaction::where('account_id', $acc->id)
-                ->orderBy('id', 'DESC')
-                ->first();
+        // foreach ($accounts as $acc) {
+        //     $lastTxn = Transaction::where('account_id', $acc->id)
+        //         ->orderBy('id', 'DESC')
+        //         ->first();
 
-            $acc->latest_balance = $lastTxn ? $lastTxn->amount : 0;
+        //     $acc->latest_balance = $lastTxn ? $lastTxn->amount : 0;
+        // }
+        foreach ($accounts as $acc) {
+
+            $credit = Transaction::where('account_id', $acc->id)
+                ->where('transaction_type', 'credit')
+                ->sum('amount');
+
+            $debit = Transaction::where('account_id', $acc->id)
+                ->where('transaction_type', 'debit')
+                ->sum('amount');
+
+            $acc->latest_balance = $credit - $debit; // ✅ FIXED
         }
 
         return response()->json($accounts);
@@ -420,11 +435,6 @@ class LockerController extends Controller
             ->route('lockers.locker-list.index')
             ->with('success', 'Locker released successfully.');
     }
-
-   
-
-
-
 
     
 }

@@ -127,16 +127,16 @@ const qrCodeImg = document.querySelector('.qrcode-img');
 // load dark images
 const loadImg = () => {
   if (document.documentElement.classList.contains('dark')) {
-    logoFull.setAttribute('src', './assets/images/logo-with-text.png');
-    logoFull2.setAttribute('src', './assets/images/logo-with-text.png');
+    logoFull.setAttribute('src', '../assets/images/SBC_Logo.png');
+    logoFull2.setAttribute('src', '../assets/images/SBC_Logo.png');
     logoIcon.setAttribute('src', './assets/images/logo.png');
     logoText.setAttribute('src', './assets/images/logo-text.png');
     qrCodeImg && qrCodeImg.setAttribute('src', './assets/images/qrcode.png');
   } else {
-    logoFull.setAttribute('src', './assets/images/logo-with-text-dark.png');
-    logoFull2.setAttribute('src', './assets/images/logo-with-text-dark.png');
-    logoIcon.setAttribute('src', './assets/images/logo-dark.png');
-    logoText.setAttribute('src', './assets/images/logo-text-dark.png');
+    logoFull.setAttribute('src', '../assets/images/SBC_Logo.png');
+    logoFull2.setAttribute('src', '../assets/images/SBC_Logo.png');
+    logoIcon.setAttribute('src', '../assets/images/SBC_Logo.png');
+    logoText.setAttribute('src', '../assets/images/SBC_Logo.png');
     qrCodeImg && qrCodeImg.setAttribute('src', './assets/images/qrcode-dark.png');
   }
 };
@@ -253,11 +253,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (darkBtn) {
       darkBtn.classList.add('active');
       lightBtn.classList.remove('active');
-      logoFull.setAttribute('src', './assets/images/logo-with-text-dark.png');
-      logoIcon.setAttribute('src', './assets/images/logo-dark.png');
-      logoText.setAttribute('src', './assets/images/logo-text-dark.png');
+      logoFull.setAttribute('src', '../assets/images/SBC_Logo.png');
+      logoIcon.setAttribute('src', '../assets/images/SBC_Logo.png');
+      logoText.setAttribute('src', '../assets/images/SBC_Logo.png');
     }
-    logoFull2 && logoFull2.setAttribute('src', './assets/images/logo-with-text-dark.png');
+    logoFull2 && logoFull2.setAttribute('src', '../assets/images/SBC_Logo.png');
     qrCodeImg && qrCodeImg.setAttribute('src', './assets/images/qrcode-dark.png');
   } else {
     darkBtn && darkBtn.classList.remove('active');

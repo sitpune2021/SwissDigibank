@@ -110,7 +110,7 @@
             </a>
         </p>
     </div>
-    <!-- @endif --}}
+@endif --}}
    
   <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
     <div class="flex items-start flex-col gap-2">
