@@ -389,7 +389,7 @@
                 </div>
 
                 <div class=" col-span-2 md:col-span-1  ">
-                    <label class="font-medium block mb-2 uppercase">
+                    <label class="font-medium block mb-5 uppercase">
                         Amount <span class="text-red-500">*</span> </label>
                     <input type="number" name="amount" placeholder="Amount"
                         class="w-full text-sm bg-secondary/5 dark:bg-bg3 border border-n30 dark:border-n500 rounded-10 px-3 md:px-6 py-2 md:py-3">
@@ -455,9 +455,8 @@
         } else {
             document.getElementById('single').classList.remove('hidden');
         }
-
-
     }
+
 </script>
 
 <script>

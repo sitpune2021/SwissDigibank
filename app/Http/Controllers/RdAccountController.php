@@ -66,11 +66,11 @@ class RdAccountController extends Controller
         //Correct filtering
         $accounts = Account::where('member_id', $id)
             ->where('account_type', 'SAVING')
-            ->orwhere('account_status', 1)
+            ->where('account_status', 1)
             ->orwhere('approve_status', 1)
             ->get();
 
-        //Attach balance to each account
+            //Attach balance to each account
         $accounts = $accounts->map(function ($acc) {
             $balance = AccountsTransactionsHelper::getAccountBalacec($acc->id);
 

@@ -127,10 +127,10 @@ class DdsAccountsController extends Controller
 {
     $accounts = Account::where('member_id', $id)
         ->where('account_type', 'SAVING')
-        ->orWhere('approve_status', 1)
-        ->orWhere('approve_status',1)
+        ->where('account_status', 1)
+        ->orwhere('approve_status', 1)
         ->get();
-// dd($accounts);
+
     $data = $accounts->map(function ($acc) {
         $balance = AccountsTransactionsHelper::getAccountBalacec($acc->id);
 

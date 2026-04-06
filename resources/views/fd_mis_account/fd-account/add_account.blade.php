@@ -65,7 +65,7 @@
                     @error('member_id')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
-           
+
                 </div>
 
                 <div class="col-span-2 md:col-span-1">
@@ -454,6 +454,7 @@
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
+                <!-- Cheque Fields -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 uppercase">Cheque No.<span
                             class="text-red-500">*</span></label>
@@ -535,14 +536,12 @@
             <div id="savingFields" class="space-y-4 hidden mt-3">
                 <label class="block text-sm font-medium text-gray-700 uppercase">Select Saving Account <span
                         class="text-red-500">*</span></label>
-                <select class="w-full border rounded-10 dark:bg-bg3 px-3 py-3 text-sm bg-white saving-account">
+                <select id="savingAccount" class="w-full border rounded-10 dark:bg-bg3 px-3 py-3 text-sm bg-white saving-account">
                     <option value="">Select Account</option>
-                    @foreach ($savings as $saving)
-                    <option value="{{ $saving->id }}">{{ $saving->account_no }}</option>
-                    @endforeach
+
                 </select>
-                <span id="accountBalance" style="color:red"></span>
-                <span id="accountBalance2" style="color:red"></span>
+                <!-- <span id="accountBalance" style="color:red"></span>
+                <span id="accountBalance2" style="color:red"></span> -->
                 <!-- Balance display -->
             </div>
     </div>
@@ -735,6 +734,8 @@ $(document).ready(function(){
     const payModeRadios = document.querySelectorAll('input[name="pay1_mode"]');
     const onlineFields = document.getElementById('onlineFields');
     const chequeFields = document.getElementById('chequeFields');
+    const savingFields = document.getElementById('savingFields');
+
 
     payModeRadios.forEach(radio => {
         radio.addEventListener('change', () => {
@@ -750,7 +751,7 @@ $(document).ready(function(){
     });
 </script>
 
-<script>
+<!-- <script>
     //pay mode 2
     (function() {
         const payModeRadios2 = document.querySelectorAll('input[name="payMode2"]');
@@ -770,12 +771,12 @@ $(document).ready(function(){
             });
         });
     })();
-</script>
+</script> -->
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
     const membersData = @json($membersData);
+
     $(document).ready(function() {
         $('#member_id').on('change', function() {
             const memberId = $(this).val();
@@ -787,17 +788,29 @@ $(document).ready(function(){
                     url: "{{ route('member.savings', '') }}/" + memberId,
                     type: "GET",
                     dataType: "json",
-                    success: function(savings) {
-                        console.log(savings);
+                    success: function(response) {
+                        console.log(response);
+
                         let savingSelect = $("#savingAccount");
                         savingSelect.empty().append(
-                            '<option value="">Select Account</option>');
+                            '<option value="">Select Account</option>'
+                        );
 
-                        if (savings.length > 0) {
-                            $.each(savings, function(i, saving) {
-                                savingSelect.append('<option value="' + saving.id +
-                                    '">' + saving.account_no + '</option>');
+                        let savings = response.data; //FIX: access data properly
+
+                        if (savings && savings.length > 0) {
+                            $.each(savings, function(i, account) {
+
+                                // WITH BALANCE FORMAT
+                                let option = document.createElement('option');
+                                option.value = account.id;
+                                option.text = account.account_no + ' (₹ ' +
+                                    (account.balance ?? 0) + ')';
+                                option.setAttribute('data-balance', account.balance ?? 0);
+                                savingSelect.append(option);
+
                             });
+
                             $("#savingFields").removeClass("hidden");
                         } else {
                             $("#savingFields").addClass("hidden");
@@ -811,7 +824,7 @@ $(document).ready(function(){
                 $("#savingFields").addClass("hidden");
             }
 
-            // 🔹 Fill member details
+            // 🔹 Fill member details (UNCHANGED)
             if (member) {
                 $('#member_name').val(member.first_name + ' ' + member.last_name);
                 $('#member_mobile').val(member.mobile);
@@ -833,15 +846,14 @@ $(document).ready(function(){
                 $branchSelect.empty();
 
                 if (member.branch_id) {
-                    // if you load single branch as object
                     $branchSelect.append(
                         `<option value="${member.branch_id.id}" selected>${member.branch_id.branch_name}</option>`
                     );
                 } else if (member.branch && member.branch.length > 0) {
-                    // if member has multiple branches
                     member.branch.forEach(branch => {
                         $branchSelect.append(
-                            `<option value="${branch.id}">${branch.branch_name}</option>`);
+                            `<option value="${branch.id}">${branch.branch_name}</option>`
+                        );
                     });
                 }
             } else {
@@ -870,42 +882,24 @@ $(document).ready(function(){
 </script>
 <script>
     $(".saving-account").on("change", function() {
-        let accountId = $(this).val(); // get selected account id
-        if (accountId) {
-            $.ajax({
-                url: "{{ route('ajax.get.account.balance') }}",
-                type: "POST",
-                data: {
-                    account_id: accountId,
-                    _token: "{{ csrf_token() }}"
-                },
-                dataType: "json",
-                success: function(response) {
 
-                    var currentBalace = response.balance;
+        let selectedOption = this.options[this.selectedIndex];
+        let balance = selectedOption.getAttribute('data-balance');
 
-                    // Example: update balance field
-                    $("#accountBalance").text(response.balance);
+        let fd_amount = $("#fd_amount").val();
 
-                    var fd_amount = $("#fd_amount").val();
-                    if (fd_amount !== "") {
-                        if (currentBalace < fd_amount) {
+        if (balance) {
+            balance = Number(balance);
 
-                            $("#accountBalance2").text("insufficiant balance......");
-                        }
-                    }
+            console.log("Balance:", balance);
 
-                    // Show balance box if hidden
-                    $("#balanceBox").removeClass("hidden");
-                },
-                error: function(xhr) {
-                    console.log("Error:", xhr.responseText);
-                }
-            });
+            if (fd_amount && balance < fd_amount) {
+                console.log("Insufficient balance");
+            } else {
+                console.log("Sufficient balance");
+            }
         }
     });
-
-
 
     document.addEventListener('DOMContentLoaded', function() {
         let savingFields = document.getElementById('savingFields');
