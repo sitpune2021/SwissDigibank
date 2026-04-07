@@ -121,7 +121,6 @@
                                 class="text-primary hover:underline">
                                 {{ $item->member_no ?? 'N/A' }}
                                 </a>
-
                             </td>
                             
                             <td class="py-3 px-6">{{ $item->branch->branch_name ?? '' }}</td>
@@ -181,7 +180,7 @@
                                 </span>
                                </div>
                             </td> -->
-                            
+
                             <td class="py-3 px-6">
                                 <div class="px-2">
                                     @php
