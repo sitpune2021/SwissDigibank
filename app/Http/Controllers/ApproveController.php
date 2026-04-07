@@ -695,6 +695,82 @@ class ApproveController extends Controller
 
             Log::info('MIS Initial Deposit Pending Query');
 
+            $rdTransactionQuery = DB::table('rd_transactions')
+                ->select(
+                    'rd_transactions.id',
+                    DB::raw("'rd_transactions' AS source_table"),
+                    'rd_transactions.payment_mode',
+                    'rd_transactions.amount',
+                    'rd_transactions.cheque_bank_name AS bank_name',
+                    'rd_transactions.approve_status',
+                    'rd_transactions.created_at',
+                    'branches.branch_name',
+                    'rd_accounts.rd_no AS account_no',
+                    DB::raw("'RD Account' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'rd_accounts.member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'RD Installment' AS transaction_type")
+                )
+                ->join(
+                    'rd_accounts',
+                    'rd_accounts.id',
+                    '=',
+                    'rd_transactions.rd_account_id'
+                )
+                ->join(
+                    'branches',
+                    'branches.id',
+                    '=',
+                    'rd_accounts.branch_id'
+                )
+                ->where('rd_accounts.approve_status', 'approved')
+                ->where('rd_transactions.transaction_type', '=', 'credit')
+                ->where(function ($q) {
+                    $q->whereNull('rd_transactions.approve_status')
+                        ->orWhere('rd_transactions.approve_status', 'pending');
+                });
+
+            Log::info('RD Pending Transactions Query');
+
+            $ddTransactionQuery = DB::table('dd_transactions')
+                ->select(
+                    'dd_transactions.id',
+                    DB::raw("'dd_transactions' AS source_table"),
+                    'dd_transactions.pay_mode AS payment_mode',
+                    'dd_transactions.amount',
+                    'dd_transactions.bank_name',
+                    DB::raw("NULL AS approve_status"),
+                    'dd_transactions.created_at',
+                    'branches.branch_name',
+                    'dds_accounts.dd_no AS account_no',
+                    DB::raw("'DD Account' AS account_type"),
+                    DB::raw("'-' AS account_holder_type"),
+                    DB::raw("NULL AS firm_name"),
+                    'branches.id AS branch_id',
+                    'dds_accounts.member_id',
+                    DB::raw("'Active' AS account_status"),
+                    DB::raw("'DD Collection' AS transaction_type")
+                )
+                ->join(
+                    'dds_accounts',
+                    'dds_accounts.id',
+                    '=',
+                    'dd_transactions.dds_account_id'
+                )
+                ->join(
+                    'branches',
+                    'branches.id',
+                    '=',
+                    'dds_accounts.branch_id'
+                )
+                ->where('dds_accounts.status', 1) // 1 = Approved
+                ->where('dd_transactions.type', 'credit')
+                ->whereNull('dd_transactions.deleted_at');
+
+            Log::info('DD Pending Transactions Query');
 
             // ️UNION ALL
             $ccOdLoanEmiQuery = DB::table('cc_od_loan_transactions')
@@ -739,6 +815,8 @@ class ApproveController extends Controller
                 ->unionAll($vehicleEmiQuery)
                 ->unionAll($fdPrincipalQuery)
                 ->unionAll($misInitialDepositQuery)
+                ->unionAll($rdTransactionQuery)
+                ->unionAll($ddTransactionQuery)
                 ->unionAll($ccOdLoanEmiQuery)
                 ->unionAll($ccOdForeclosureQuery)
                 ->unionAll($vehicleForeclosureQuery)
@@ -1048,6 +1126,107 @@ class ApproveController extends Controller
                     DB::commit();
 
                     return back()->with('success', 'MIS Initial Deposit approved successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'rd_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $transaction = DB::table('rd_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$transaction) {
+                        DB::rollBack();
+                        return back()->with('error', 'RD transaction not found.');
+                    }
+
+                    // Optional: Only allow approval for CREDIT transactions
+                    if ($transaction->transaction_type !== 'credit') {
+                        DB::rollBack();
+                        return back()->with('error', 'Only credit transactions can be approved.');
+                    }
+
+                    if ($status === 'approved') {
+
+                        DB::table('rd_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'approve_status' => 'approved',
+                                'status'         => 'Paid',
+                                'paid_on'        => now(),
+                                'updated_at'     => now()
+                            ]);
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'RD transaction approved successfully.');
+                } catch (\Exception $e) {
+
+                    DB::rollBack();
+
+                    return back()->with('error', $e->getMessage());
+                }
+            } elseif ($sourceTable === 'dds_transactions') {
+
+                DB::beginTransaction();
+
+                try {
+
+                    $transaction = DB::table('dds_transactions')
+                        ->where('id', $id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$transaction) {
+                        DB::rollBack();
+                        return back()->with('error', 'DD transaction not found.');
+                    }
+
+                    // Prevent double approval
+                    if ($transaction->status === 'approved') {
+                        DB::rollBack();
+                        return back()->with('error', 'Transaction already approved.');
+                    }
+
+                    //Only allow credit entries
+                    if ($transaction->type !== 'credit') {
+                        DB::rollBack();
+                        return back()->with('error', 'Only credit transactions can be approved.');
+                    }
+
+                    if ($status === 'approved') {
+
+                        // Update transaction
+                        DB::table('dds_transactions')
+                            ->where('id', $id)
+                            ->update([
+                                'status'     => 'approved', // if you have this column
+                                'updated_at' => now()
+                            ]);
+
+                        // Update DD account balance
+                        DB::table('dds_accounts')
+                            ->where('id', $transaction->dds_account_id)
+                            ->increment('balance', $transaction->amount);
+
+                        // Update paid installments
+                        DB::table('dds_accounts')
+                            ->where('id', $transaction->dds_account_id)
+                            ->increment('paid_installments', 1);
+                    }
+
+                    DB::commit();
+
+                    return back()->with('success', 'DD transaction approved successfully.');
                 } catch (\Exception $e) {
 
                     DB::rollBack();
@@ -2740,7 +2919,7 @@ class ApproveController extends Controller
             $query = DB::table(DB::raw("({$sql}) as combined"))
                 ->orderBy('created_at', 'desc');
 
-                Log::info("approveAccounts() - Query Built Successfully");
+            Log::info("approveAccounts() - Query Built Successfully");
 
             if ($search) {
                 Log::info("approveAccounts() - Applying Search Filter", [
