@@ -265,20 +265,21 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-                <label for="active" class="md:text-lg font-medium block mb-4 uppercase">
+                <label class="md:text-lg font-medium block mb-4 uppercase">
                     Active
                     <span class="text-red-500">*</span>
                 </label>
+
                 <div class="flex items-center gap-6">
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="active" value="1"
-                            {{ old('active', $item->active ?? 0) == 1 ? 'checked' : '' }}>
+                        <input type="radio" name="is_active" value="1"
+                            {{ old('is_active', $fdScheme->is_active ?? 0) == 1 ? 'checked' : '' }}>
                         <span>Yes</span>
                     </label>
 
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="active" value="0"
-                            {{ old('active', $item->active ?? 0) == 0 ? 'checked' : '' }}>
+                        <input type="radio" name="is_active" value="0"
+                            {{ old('is_active', $fdScheme->is_active ?? 0) == 0 ? 'checked' : '' }}>
                         <span>No</span>
                     </label>
                 </div>

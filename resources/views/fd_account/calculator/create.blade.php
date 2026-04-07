@@ -72,7 +72,7 @@
 
 
     <div class="mb-2">
-        <h3 class="text-xl font-semibold uppercase">FD/ MIS CALCULATOR</h3>
+        <h3 class="text-xl font-semibold uppercase">FD / MIS CALCULATOR</h3>
     </div>
 
     <div class=" ">
@@ -290,7 +290,7 @@
         <!--Tabs-->
         <div id="accordion" style="display:none;" class="box">
 
-            <h3 class="mt-5 uppercase">FD/ MIS Payout Information</h3>
+            <h3 class="mt-5 uppercase">FD / MIS Payout Information</h3>
 
             <div class="tab mt-5 flex gap-2" id="tabButtons">
                 <!-- JS tabs injected here-->
@@ -298,40 +298,66 @@
             </div>
 
             <!-- Default Final Payment tab content -->
-            <div id="finalpayment" class="tabcontent w-full" style="display:block;">
+            <div id="finalpayment" class="tabcontent w-full mt-4" style="display:block;">
 
-                <table class="w-full text-sm border">
-                    <tbody class="divide-y divide-gray-200">
-                        <tr>
-                            <td class="font-semibold">Principal Amount (A)</td>
-                            <td id="principal"></td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold">Interest Earned (B)</td>
-                            <td id="interest_earned"></td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold">TDS Deducted (C)</td>
-                            <td id="tds_deducted"></td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold">Net Interest Earned (D = B - C)</td>
-                            <td id="net_interest"></td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold">Maturity Bonus Amount (E)</td>
-                            <td id="maturity_bonus"></td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold">Maturity Amount (A + D + E)</td>
-                            <td id="maturity_amount"></td>
-                        </tr>
-                        <tr>
-                            <td class="font-semibold">Maturity Date</td>
-                            <td id="maturity_date"></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm border border-gray-200 rounded-lg">
+
+                        <tbody class="divide-y divide-gray-200">
+
+                            <tr class="hover:bg-gray-50">
+                                <td class="font-semibold text-gray-600 p-3 w-1/2">
+                                    Principal Amount (A)
+                                </td>
+                                <td id="principal" class="text-right font-medium p-3"></td>
+                            </tr>
+
+                            <tr class="hover:bg-gray-50 bg-gray-50">
+                                <td class="font-semibold text-gray-600 p-3">
+                                    Interest Earned (B)
+                                </td>
+                                <td id="interest_earned" class="text-right p-3"></td>
+                            </tr>
+
+                            <tr class="hover:bg-gray-50">
+                                <td class="font-semibold text-gray-600 p-3">
+                                    TDS Deducted (C)
+                                </td>
+                                <td id="tds_deducted" class="text-right p-3"></td>
+                            </tr>
+
+                            <tr class="hover:bg-gray-50 bg-gray-50">
+                                <td class="font-semibold text-gray-600 p-3">
+                                    Net Interest Earned (D = B - C)
+                                </td>
+                                <td id="net_interest" class="text-right p-3"></td>
+                            </tr>
+
+                            <tr class="hover:bg-gray-50">
+                                <td class="font-semibold text-gray-600 p-3">
+                                    Maturity Bonus Amount (E)
+                                </td>
+                                <td id="maturity_bonus" class="text-right p-3"></td>
+                            </tr>
+
+                            <tr class="hover:bg-green-50 bg-green-50">
+                                <td class="font-semibold text-gray-800 p-3">
+                                    Maturity Amount (A + D + E)
+                                </td>
+                                <td id="maturity_amount" class="text-right font-bold text-green-600 p-3"></td>
+                            </tr>
+
+                            <tr class="hover:bg-gray-50">
+                                <td class="font-semibold text-gray-600 p-3">
+                                    Maturity Date
+                                </td>
+                                <td id="maturity_date" class="text-right p-3"></td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
 
             </div>
 
@@ -345,7 +371,7 @@
 
 @push('script')
 
-<script>
+<!-- <script>
     document.addEventListener("DOMContentLoaded", function() {
 
         const manualToggle = document.getElementById("manual_entry_toggle");
@@ -625,7 +651,314 @@
         const amount = parseInt($("#amount").val(), 10);
         $("#amount-in-words").text(!isNaN(amount) && amount >= 0 ? numberToWords(amount) : '');
     }
+</script> -->
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const manualToggle = document.getElementById("manual_entry_toggle");
+        const schemeDropdown = document.getElementById("scheme_id");
+
+        const manualFields = [
+            "amount",
+            "interest_payout_type",
+            "annual_interest_rate",
+            "tenure_year",
+            "tenure_month",
+            "tenure_day",
+            "bonus_type",
+            "bonus"
+        ];
+
+        function toggleMode() {
+
+            if (manualToggle.checked) {
+                // Manual Mode ON
+                schemeDropdown.disabled = true;
+
+                manualFields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.disabled = false;
+                });
+
+            } else {
+                // Scheme Mode ON
+                schemeDropdown.disabled = false;
+
+                manualFields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.disabled = true;
+                });
+            }
+        }
+
+        // Default state
+        manualToggle.checked = false;
+        toggleMode();
+
+        manualToggle.addEventListener("change", toggleMode);
+
+    });
+
+    // *************************************************************************
+    //console.log(summary);
+    function openTab(evt, tabId) {
+        var i, tabcontent, tablinks;
+
+        // Hide all tab contents
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Remove active state from all tab buttons
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the selected tab and mark button active
+        document.getElementById(tabId).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+
+    function calculateFD() {
+        let tenureValue = parseFloat($("#tenure_value").val()) || 0;
+
+        let tenureType = $("input[name='tenure_type']:checked").val();
+
+        let tenure_year = 0;
+        let tenure_month = 0;
+        let tenure_day = 0;
+
+        if (tenureType === "months") {
+            tenure_month = tenureValue;
+        } else {
+            tenure_day = tenureValue;
+        }
+
+        let formData = {
+            amount: $("#amount").val() || 0,
+            open_date: $("#open_date").val(),
+            annual_interest_rate: $("#annual_interest_rate").val() || 0,
+            interest_payout_type: $("#interest_payout_type").val(),
+            tenure_year: tenure_year,
+            tenure_month: tenure_month,
+            tenure_day: tenure_day,
+            bonus: $("#bonus").val() || 0,
+            bonus_type: $("#bonus_type").val() || 0,
+            tds_deduction: $("input[name='tds_deduction']:checked").val(),
+            _token: $('meta[name="csrf-token"]').attr('content')
+        };
+
+        $.ajax({
+            url: "{{ route('calculate.investment') }}",
+            type: "POST",
+            data: formData,
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    let summary = response.results.summary;
+
+                    // --- first summary update
+                    $("#principal").text("INR " + parseFloat(summary.principal).toFixed(2));
+                    $("#interest_earned").text("INR " + parseFloat(summary.interest_earned).toFixed(2));
+                    $("#tds_deducted").text("INR " + parseFloat(summary.tds_deducted).toFixed(2));
+                    $("#net_interest").text("INR " + parseFloat(summary.net_interest).toFixed(2));
+                    $("#maturity_bonus").text("INR " + parseFloat(summary.maturity_bonus).toFixed(2));
+                    $("#maturity_amount").text("INR " + parseFloat(summary.maturity_amount).toFixed(2));
+                    $("#maturity_date").text(formatDateDMY(summary.maturity_date));
+
+                    // yearly tabs clean
+                    $(".yearlyTabBtn").remove();
+                    $(".yearlyTabContent").remove();
+
+                    // --- yearly breakdown add 
+                    if (response.results.details && response.results.details.length > 0) {
+                        let final = {
+                            principal: 0,
+                            interest: 0,
+                            tds: 0,
+                            netInterest: 0,
+                            bonus: 0,
+                            maturityAmount: 0,
+                            maturityDate: ""
+                        };
+                        let rows = '';
+
+                        if (response.results.periods && response.results.periods.length > 0) {
+                            response.results.periods.forEach(p => {
+                                rows += `
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="p-2">${formatDateWithDash(p.period)}</td>
+                                        <td class="p-2">${p.days}</td>
+                                        <td class="p-2 text-right border-2">${parseFloat(p.principal).toFixed(2)}</td>
+                                        <td class="p-2 text-right">${parseFloat(p.interest).toFixed(2)}</td>
+                                        <td class="p-2 text-right">${parseFloat(p.tds).toFixed(2)}</td>
+                                        <td class="p-2 text-right">${parseFloat(p.net_interest).toFixed(2)}</td>
+                                        <td class="p-2 text-right">${p.net_interest_due ? parseFloat(p.net_interest_due).toFixed(2) : ''}</td>
+                                        <td class="p-2 text-right">${p.principal_at_eoy ?? ''}</td>
+                                        <td class="p-2">${formatDateWithDash(p.due_by)}</td>
+                                    </tr>`;
+                            });
+                        }
+
+
+                        response.results.details.forEach(function(yearData, index) {
+
+                            // =========================
+                            // FINAL ACCUMULATION
+                            // =========================
+                            if (index === 0) {
+                                final.principal = parseFloat(yearData.principal) || 0;
+                            }
+
+                            final.interest += parseFloat(yearData.interestEarned) || 0;
+                            final.tds += parseFloat(yearData.tds) || 0;
+                            final.netInterest += parseFloat(yearData.netInterest) || 0;
+                            final.bonus += parseFloat(yearData.bonus) || 0;
+                            final.maturityAmount = parseFloat(yearData.maturity) || 0;
+                            final.maturityDate = formatDateDMY(yearData.date);
+
+                            // =========================
+                            // YEAR TAB BUTTON
+                            // =========================
+                            $("#tabButtons").append(`
+                                <button class="tablinks yearlyTabBtn"
+                                    onclick="openTab(event, 'year_${yearData.year}')">
+                                    ${yearData.year} Year
+                                </button>
+                            `);
+
+                            // =========================
+                            // YEAR ROWS (FILTER)
+                            // =========================
+                            let yearRows = '';
+
+                            if (response.results.periods && response.results.periods.length > 0) {
+                                response.results.periods
+                                    .filter(p => parseInt(p.fd_year) === parseInt(yearData.year))
+                                    .forEach(p => {
+                                        yearRows += `
+                                            <tr class="hover:bg-blue-50 transition">
+                                                <td class="p-2 whitespace-nowrap font-medium text-gray-700">
+                                                    ${formatDateWithDash(p.period)}
+                                                </td>
+                                                <td class="p-2 text-center">${p.days}</td>
+                                                <td class="p-2 text-right font-medium text-gray-800">
+                                                    ₹ ${parseFloat(p.principal).toFixed(2)}
+                                                </td>
+                                                <td class="p-2 text-center text-blue-600">
+                                                    ${parseFloat(p.interest).toFixed(2)}
+                                                </td>
+                                                <td class="p-2 text-right text-red-500">
+                                                    ${parseFloat(p.tds).toFixed(2)}
+                                                </td>
+                                                <td class="p-2 text-center text-green-600 font-medium">
+                                                    ${parseFloat(p.net_interest).toFixed(2)}
+                                                </td>
+                                                <td class="p-2 text-center">
+                                                    ${p.net_interest_due !== null ? parseFloat(p.net_interest_due).toFixed(2) : '-'}
+                                                </td>
+                                                <td class="p-2 text-center">
+                                                    ${p.principal_at_eoy ?? '-'}
+                                                </td>
+                                                <td class="p-2 whitespace-nowrap text-gray-600">
+                                                    ${formatDateWithDash(p.due_by)}
+                                                </td>
+                                            </tr>`;
+                                    });
+                            }
+
+                            // =========================
+                            // YEAR TAB CONTENT
+                            // =========================
+                           $("#accordion").append(`
+                                <div id="year_${yearData.year}" class="tabcontent yearlyTabContent">
+
+                                    <div class="overflow-x-auto">
+                                        
+                                        <table class="w-full text-sm border border-gray-200 rounded-lg mt-3 min-w-[1000px] bg-white shadow-sm">
+
+                                            <thead class="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 text-xs uppercase">
+                                                <tr class="text-xs font-semibold tracking-wide">
+                                                    <th class="p-3 text-left whitespace-nowrap">Period</th>
+                                                    <th class="p-3 text-center">Days</th>
+                                                    <th class="p-3 text-right">Principal</th>
+                                                    <th class="p-3 text-right">Interest</th>
+                                                    <th class="p-3 text-right">TDS</th>
+                                                    <th class="p-3 text-right">Net Interest</th>
+                                                    <th class="p-3 text-right">Net Interest Due</th>
+                                                    <th class="p-3 text-right">Principal @ EOY</th>
+                                                    <th class="p-3 text-left whitespace-nowrap">Due Date</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody class="divide-y divide-gray-200">
+                                                ${yearRows || `<tr><td colspan="9" class="text-center p-4">No Data</td></tr>`}
+                                            </tbody>
+
+                                        </table>
+                                    
+                                    </div>
+
+                                </div>
+                            `);
+
+                        });
+
+                        // Final Payment tab do overwrite with yearly 
+                        $("#principal").text("INR " + final.principal.toFixed(2));
+                        $("#interest_earned").text("INR " + final.interest.toFixed(2));
+                        $("#tds_deducted").text("INR " + final.tds.toFixed(2));
+                        $("#net_interest").text("INR " + final.netInterest.toFixed(2));
+                        $("#maturity_bonus").text("INR " + final.bonus.toFixed(2));
+                        $("#maturity_amount").text("INR " + final.maturityAmount.toFixed(2));
+                        $("#maturity_date").text(final.maturityDate);
+
+                    }
+
+                    // show calculation
+                    $("#accordion").show();
+
+                    // Smooth scroll to tabs
+                    $('html, body').animate({
+                        scrollTop: $("#accordion").offset().top - 80
+                    }, 600);
+                } else {
+                    $("#result").html(`<div class="alert alert-danger">Something went wrong.</div>`);
+                }
+            },
+
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                $("#result").html(`<div class="alert alert-danger">Server error, please try again.</div>`);
+            }
+        });
+    }
+
+    function numberToWords(n) {
+        const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+            "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"
+        ];
+        const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+        if (n < 20) return a[n];
+        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? " " + a[n % 10] : "");
+        if (n < 1000) return a[Math.floor(n / 100)] + " Hundred " + (n % 100 ? numberToWords(n % 100) : "");
+        if (n < 100000) return numberToWords(Math.floor(n / 1000)) + " Thousand " + (n % 1000 ? numberToWords(n % 1000) : "");
+        if (n < 10000000) return numberToWords(Math.floor(n / 100000)) + " Lakh " + (n % 100000 ? numberToWords(n % 100000) : "");
+        return numberToWords(Math.floor(n / 10000000)) + " Crore " + (n % 10000000 ? numberToWords(n % 10000000) : "");
+    }
+
+    function updateAmountInWords() {
+        const amount = parseInt($("#amount").val(), 10);
+        $("#amount-in-words").text(!isNaN(amount) && amount >= 0 ? numberToWords(amount) : '');
+    }
 </script>
+
 
 <!-- date fomate show d-m-y -->
 <script>
@@ -689,7 +1022,7 @@
     function detectSlab(slabs, totalDays) {
         for (let i = 0; i < slabs.length; i++) {
             if (totalDays >= slabs[i].day_from &&
-                totalDays <= slabs[i].day_to) {
+                totalDays <= (slabs[i].day_to + 1)) {
                 return slabs[i];
             }
         }
@@ -751,7 +1084,7 @@
                     let totalDays;
 
                     if (tenureType === "months") {
-                        totalDays = Math.round(tenureValue * 30.44);
+                        totalDays = tenureValue * 30;
                     } else {
                         totalDays = tenureValue;
                     }

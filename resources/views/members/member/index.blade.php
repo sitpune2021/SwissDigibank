@@ -121,7 +121,6 @@
                                 class="text-primary hover:underline">
                                 {{ $item->member_no ?? 'N/A' }}
                                 </a>
-
                             </td>
                             
                             <td class="py-3 px-6">{{ $item->branch->branch_name ?? '' }}</td>
@@ -171,7 +170,7 @@
                                 {{ $item->kyc?->member_kyc_pan_no ?? 'N/A' }}
                             </td>
 
-                            <td class="py-3 px-6">
+                            <!-- <td class="py-3 px-6">
                                <div class="px-2">
                                  @php
                                     $hasKYC = $item->kyc?->member_kyc_aadhaar_no || $item->kyc?->member_kyc_pan_no;
@@ -180,6 +179,32 @@
                                     {{ $hasKYC ? 'COMPLETED' : 'PENDING' }}
                                 </span>
                                </div>
+                            </td> -->
+
+                            <td class="py-3 px-6">
+                                <div class="px-2">
+                                    @php
+                                        $aadhaar = $item->kyc?->member_kyc_aadhaar_no;
+                                        $pan = $item->kyc?->member_kyc_pan_no;
+                                        $otpVerified = $item->kyc?->otp_verified; 
+                                        $selfie = $item->kyc?->selfie_uploaded;
+
+                                        if (!$aadhaar && $pan) {
+                                            $status = 'MINI KYC';
+                                            $class = 'text-warning';
+                                        } elseif ($aadhaar && $pan && $otpVerified && $selfie) {
+                                            $status = 'FULL KYC';
+                                            $class = 'text-success';
+                                        } else {
+                                            $status = 'PENDING';
+                                            $class = 'text-error';
+                                        }
+                                    @endphp
+
+                                    <span class="text-sm {{ $class }}">
+                                        {{ $status }}
+                                    </span>
+                                </div>
                             </td>
 
                             <td class="py-3 px-6">
