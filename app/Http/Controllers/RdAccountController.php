@@ -70,7 +70,7 @@ class RdAccountController extends Controller
             ->orwhere('approve_status', 1)
             ->get();
 
-            //Attach balance to each account
+        //Attach balance to each account
         $accounts = $accounts->map(function ($acc) {
             $balance = AccountsTransactionsHelper::getAccountBalacec($acc->id);
 
@@ -88,7 +88,7 @@ class RdAccountController extends Controller
     public function store(Request $request)
     {
         try {
-            Log::info('RD Account Store Request Received', $request->all());
+            Log::info('RD Account Store Request Received');
 
             $rules = [
                 'member_id' => 'required|exists:members,id',
@@ -225,7 +225,7 @@ class RdAccountController extends Controller
                 't_date'           => $validated['t_date'],
                 'amount'           => $validated['rd_amount'],
                 'transaction_type' => 'credit',
-                'approve_status'   => 'pending',
+                'status'           => 0,  // pending
                 'installment_no'   => 1,
                 'due_date'         => $validated['open_date'],
                 'created_at'       => now(),
@@ -545,25 +545,29 @@ class RdAccountController extends Controller
                 'amount'           => $installment,
                 'due_date'         => $dueDate->format('Y-m-d'),
                 'display_due_date' => $dueDate->format('d M Y'),
-                'approve_status'   => 'Pending',
+                'status'           => 0,
                 'paid_on'          => null,
                 'print_flag'       => false,
             ];
 
             // Apply transaction status
+            $status = 0;
+
             if (isset($txnMap[$i])) {
                 $txn = $txnMap[$i];
 
-                $row['approve_status'] = 'approved';
-                $row['paid_on']        = Carbon::parse($txn->paid_on)->format('d M Y');
-                $row['print_flag']     = true;
+                $status = $txn->status ?? 0;
 
-                Log::info("Installment marked approved", [
-                    'installment_no' => $i,
-                    'txn_id' => $txn->id,
-                    'paid_on' => $row['paid_on']
-                ]);
+                if ($status == 1) {
+                    $row['paid_on'] = $txn->paid_on
+                        ? Carbon::parse($txn->paid_on)->format('d M Y')
+                        : null;
+
+                    $row['print_flag'] = true;
+                }
             }
+
+            $row['status'] = $status;
 
             $results[] = $row;
         }
@@ -620,7 +624,7 @@ class RdAccountController extends Controller
                     'installment_no'   => $validated['installment_no'],
                     'amount'           => $validated['amount'],
                     'due_date'         => Carbon::parse($validated['due_date'])->format('Y-m-d'),
-                    'approve_status'   => 'approved',
+                    'status'           => 1,
                     'transaction_type' => 'credit',
                     'remark'           => $validated['remark'] ?? null,
                     'paid_on'          => now(),
@@ -703,7 +707,6 @@ class RdAccountController extends Controller
 
     //     return $balances;
     // }
-
 
 
     public function installmentReceipt($id)
