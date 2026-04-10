@@ -90,7 +90,7 @@
     <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
         <h4 style="margin:0;">PENDING REQUEST</h4>
         <p style="margin:5px 0;">
-            Approval request has been made for the loan application & is pending for approval.
+            Approval request has been made for the MIS Account application & is pending for approval.
             To approve
             <a href="{{ route('approveAccounts') }}"
                 style="background:#e74c3c; color:white; padding:6px 12px; text-decoration:none; border-radius:4px;">
@@ -99,18 +99,18 @@
         </p>
     </div>
     @endif
-    {{-- @if ($hasPendingPrincipal) 
+ @if ($misaccount->status == 1 && $misaccount->transactions()->where('status', 0)->exists())
     <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
         <h4 style="margin:0;"> ALERT PENDING TRANSACTION!</h4>
         <p style="margin:5px 0;">
             Some transactions are pending for approval. To approve
             <a href="{{ url('approvals/pending-transaction') }}"
-                style="background:e74c3c; color:white; padding:6px 12px; text-decoration:none; border-radius:4px;">
+                style="background:#e74c3c; color:white; padding:6px 12px; text-decoration:none; border-radius:4px;">
                 CLICK HERE
             </a>
         </p>
     </div>
-@endif --}}
+@endif 
    
   <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
     <div class="flex items-start flex-col gap-2">

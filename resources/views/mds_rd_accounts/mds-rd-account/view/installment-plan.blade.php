@@ -31,15 +31,14 @@
 
                 // check previous installments
                 for ($x = 0; $x < $index; $x++) {
-                    if ($installments[$x]['approve_status'] !=='approved' ) {
+                    if ($installments[$x]['status'] !== 1) {
                     $previousPending=true;
                     break;
                     }
                     }
 
-                    // MIS-style logic
                     $showProcessButton=(
-                    $inst['approve_status'] !=='approved' &&
+                    $inst['status'] !== 1 &&
                     !$previousPending &&
                     $inst['due_date']===$today
                     );
@@ -63,7 +62,7 @@
 
                     <!-- Status -->
                     <td class="installment-status px-4 py-3">
-                        @if($inst['approve_status'] === 'approved')
+                        @if($inst['status'] === 1)
                         <span class="block px-2 py-2 rounded-[30px] border border-n30 bg-primary/20 text-primary text-xs">
                             Paid
                         </span>
@@ -204,20 +203,7 @@ $(document).ready(function () {
                 if (data.success) {
 console.log(data.success);
                     // Update status
-                    row.find('.installment-status').html(`
-                        <span class="block px-2 py-2 rounded-[30px] border border-n30 bg-primary/20 text-primary text-xs">
-                            Paid
-                        </span>
-                    `);
-
-                    // Update paid on
-                    row.find('.installment-paid-on').text(data.paid_on);
-
-                    // Hide process button
-                    $(this).hide();
-
-                    // Show print button
-                    row.find('.print-btn').css('display', 'inline-flex');
+                    location.reload();
                 }
             })
             .catch(err => console.error("AJAX Error:", err));
