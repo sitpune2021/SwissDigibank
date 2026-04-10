@@ -69,7 +69,7 @@ class AutoCreditRdInterest extends Command
                     'transaction_type' => 'credit',
                     'payment_mode'     => 'System',
                     't_date'           => $today->format('Y-m-d'),
-                    'approve_status'   => 'approved',
+                    'status'           => 1, // directly mark as credited   
                     'remark'           => "Auto interest credit as per compounding",
                 ]);
  
@@ -130,7 +130,7 @@ class AutoCreditRdInterest extends Command
                     'transaction_type' => 'credit',
                     'payment_mode'     => 'System',
                     't_date'           => $today->format('Y-m-d'),
-                    'approve_status'   => 'approved',
+                    'status'           => 1, // directly mark as credited
                     'remark'           => "Bonus credited ({$bonusType})"
                 ]);
  

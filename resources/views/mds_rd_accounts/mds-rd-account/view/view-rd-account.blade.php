@@ -86,13 +86,39 @@
     }
 </style>
 
+
 <div class="main-inner">
 
+@if ($rdAccount->approve_status == 'Pending')
+<div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
+    <h4 style="margin:0;">PENDING REQUEST</h4>
+    <p style="margin:5px 0;">
+        Approval request has been made for the RD Account & is pending for approval.
+        To approve
+        <a href="{{ route('approveAccounts') }}"
+            style="background:#e74c3c; color:white; padding:6px 12px; text-decoration:none; border-radius:4px;">
+            CLICK HERE
+        </a>
+    </p>
+</div>
+@endif
+ @if ($rdAccount->approve_status == 'Approved' && $rdAccount->rdTransactions()->where('status', 0)->exists())
+    <div style="background:#f39c12; padding:20px; color:white; margin-bottom:20px; border-radius:5px;">
+        <h4 style="margin:0;"> ALERT PENDING TRANSACTION!</h4>
+        <p style="margin:5px 0;">
+            Some transactions are pending for approval. To approve
+            <a href="{{ url('approvals/pending-transaction') }}"
+                style="background:#e74c3c; color:white; padding:6px 12px; text-decoration:none; border-radius:4px;">
+                CLICK HERE
+            </a>
+        </p>
+    </div>
+@endif
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4 lg:mb-8">
         <div class="flex items-start flex-col gap-2">
-            <h1 class="text-lg font-semibold">RD - {{ $rdAccount->id }}</h1>
+            <h1 class="text-lg font-semibold">RD - {{ $rdAccount->rd_no }}</h1>
         </div>
     </div>
     <!-- Menu Buttons -->
@@ -287,7 +313,7 @@
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">RD No.</td>
-                            <td class="px-4 py-2">{{ $rdAccount->id }}</td>
+                            <td class="px-4 py-2">{{ $rdAccount->rd_no }}</td>
                         </tr>
                         <tr class="border-b">
                             <td class="font-semibold px-4 py-2 uppercase">Old RD No.</td>
@@ -1168,7 +1194,7 @@
                                 </td>
                             </tr>
 
-                            <tr  class="border-b">
+                            <tr class="border-b">
                                 <td class="px-4 py-3 w-1/2 text-start align-middle uppercase">
                                     Joint Account
                                 </td>
