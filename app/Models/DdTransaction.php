@@ -36,7 +36,8 @@ class DdTransaction extends Model
         'interest_amount',
         'dds_account_id',
         'amount',
-        'gst_rate'
+        'gst_rate',
+        'status',
 
     ];
 

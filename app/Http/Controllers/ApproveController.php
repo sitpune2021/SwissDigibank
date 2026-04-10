@@ -767,7 +767,7 @@ class ApproveController extends Controller
                     'dds_accounts.branch_id'
                 )
                 ->where('dds_accounts.status', 1) // 1 = Approved
-                ->where('dd_transactions.type', 'credit')
+                ->where('dd_transactions.status', 0)
                 ->whereNull('dd_transactions.deleted_at');
 
             Log::info('DD Pending Transactions Query');
@@ -1174,13 +1174,13 @@ class ApproveController extends Controller
 
                     return back()->with('error', $e->getMessage());
                 }
-            } elseif ($sourceTable === 'dds_transactions') {
+            } elseif ($sourceTable === 'dd_transactions') {
 
                 DB::beginTransaction();
 
                 try {
 
-                    $transaction = DB::table('dds_transactions')
+                    $transaction = DB::table('dd_transactions')
                         ->where('id', $id)
                         ->lockForUpdate()
                         ->first();
@@ -1191,7 +1191,7 @@ class ApproveController extends Controller
                     }
 
                     // Prevent double approval
-                    if ($transaction->status === 'approved') {
+                    if ($transaction->status === 1) {
                         DB::rollBack();
                         return back()->with('error', 'Transaction already approved.');
                     }
@@ -1205,10 +1205,10 @@ class ApproveController extends Controller
                     if ($status === 'approved') {
 
                         // Update transaction
-                        DB::table('dds_transactions')
+                        DB::table('dd_transactions')
                             ->where('id', $id)
                             ->update([
-                                'status'     => 'approved', // if you have this column
+                                'status'     => 1, // if you have this column
                                 'updated_at' => now()
                             ]);
 
