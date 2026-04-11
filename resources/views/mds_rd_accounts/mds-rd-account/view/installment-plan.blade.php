@@ -27,6 +27,7 @@
                 @foreach($installments as $index => $inst)
                 @php
                 $today = \Carbon\Carbon::today()->format('Y-m-d');
+                //$today = '2026-05-11';
                 $previousPending = false;
 
                 // check previous installments
@@ -37,10 +38,11 @@
                     }
                     }
 
-                    $showProcessButton=(
-                    $inst['status'] !== 1 &&
-                    !$previousPending &&
-                    $inst['due_date']===$today
+                    $showProcessButton = (
+                        $inst['status'] !== 1 &&
+                        !$previousPending &&
+                        \Carbon\Carbon::parse($inst['due_date'])->lte(\Carbon\Carbon::today())
+                        //\Carbon\Carbon::parse($inst['due_date'])->lte(\Carbon\Carbon::parse($today))
                     );
                     @endphp
 
@@ -189,7 +191,8 @@ $(document).ready(function () {
                 due_date: row.data('due')
             };
 
-            fetch("{{ url('/mds-rds-dds/installments') }}/" + installmentId + "/process", {
+            //fetch("{{ url('/mds-rds-dds/installments') }}/" + installmentId + "/process", {
+            fetch("/mds-rds-dds/installments/" + installmentId + "/process", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -201,7 +204,7 @@ $(document).ready(function () {
             .then(data => {
 
                 if (data.success) {
-console.log(data.success);
+                    console.log(data.success);
                     // Update status
                     location.reload();
                 }

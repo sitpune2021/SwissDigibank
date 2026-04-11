@@ -653,6 +653,7 @@ Route::group(['prefix' => 'mds-rds-dds'], function () {
     Route::get('/rd-accounts/{id}', [RdAccountController::class, 'show'])->name('rd-accounts.show');
 
     Route::get('/rd-accounts/{id}/installments', [RdAccountController::class, 'installmentPlan'])->name('installment.plan');
+    Route::post('/installments/{id}/process', [RdAccountController::class, 'processInstallment'])->name('installment.process');
     Route::get('/rd-accounts/{id}/transactions', [RdAccountController::class, 'viewTransactions'])->name('view.viewTransaction');
     Route::get('/rd-accounts/{id}/transaction-summary', [RdAccountController::class, 'viewRdTransactionSummary'])->name('view.transactionSummary');
     Route::get('/rd-accounts/{id}/deposit', [RdAccountController::class, 'showDepositForm'])->name('rd-accounts.deposit.form');
