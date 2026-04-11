@@ -556,7 +556,8 @@ class RdAccountController extends Controller
             if (isset($txnMap[$i])) {
                 $txn = $txnMap[$i];
 
-                $status = $txn->status ?? 0;
+                //$status = $txn->status ?? 0;
+                $status = ($txn->approve_status === 'approved') ? 1 : 0;
 
                 if ($status == 1) {
                     $row['paid_on'] = $txn->paid_on
@@ -584,7 +585,10 @@ class RdAccountController extends Controller
         }
 
         // Get all transactions WITH installment_no for mapping
-        $transactions = RdTransactions::where('rd_account_id', $id)->get();
+        //$transactions = RdTransactions::where('rd_account_id', $id)->get();
+        $transactions = RdTransactions::where('rd_account_id', $id)
+            ->where('status', '1')
+            ->get();
 
         Log::info("Fetched RD transactions", [
             'account_id' => $id,
@@ -619,17 +623,48 @@ class RdAccountController extends Controller
                     'amount'          => $validated['amount'],
                 ]);
 
+                // $saved = RdTransactions::create([
+                //     'rd_account_id'    => $validated['rd_account_id'],
+                //     'installment_no'   => $validated['installment_no'],
+                //     'amount'           => $validated['amount'],
+                //     'due_date'         => Carbon::parse($validated['due_date'])->format('Y-m-d'),
+                //     'status'           => 1,
+                //     'transaction_type' => 'credit',
+                //     'remark'           => $validated['remark'] ?? null,
+                //     'paid_on'          => now(),
+                //     'print_flag'       => 1,
+                //     't_date'          => now(),
+                // ]);
+
+                // check if installment already exists
+                $exists = RdTransactions::where('rd_account_id', $validated['rd_account_id'])
+                    ->where('installment_no', $validated['installment_no'])
+                    ->exists();
+
+                if ($exists) {
+                    return [
+                        'success' => false,
+                        'message' => 'Installment already processed'
+                    ];
+                }
+
                 $saved = RdTransactions::create([
                     'rd_account_id'    => $validated['rd_account_id'],
                     'installment_no'   => $validated['installment_no'],
                     'amount'           => $validated['amount'],
                     'due_date'         => Carbon::parse($validated['due_date'])->format('Y-m-d'),
-                    'status'           => 1,
+
                     'transaction_type' => 'credit',
-                    'remark'           => $validated['remark'] ?? null,
-                    'paid_on'          => now(),
-                    'print_flag'       => 1,
-                    't_date'          => now(),
+
+                    // important fields
+                    'status'           => 0,                 // pending
+                    'approve_status'   => 'approved',         // direct for approval
+                    'paid_on'          => null,
+                    'print_flag'       => 0,
+
+                    't_date'           => now(),
+                    'created_at'       => now(),
+                    'updated_at'       => now(),
                 ]);
 
                 Log::info("Installment Saved", [
@@ -638,10 +673,13 @@ class RdAccountController extends Controller
                     'paid_on'        => now()->format('d M Y')
                 ]);
 
+                // return [
+                //     'success'     => true,
+                //     'paid_on'     => now()->format('d M Y'),
+                //     'print_flag'  => true,
+                // ];
                 return [
-                    'success'     => true,
-                    'paid_on'     => now()->format('d M Y'),
-                    'print_flag'  => true,
+                    'success' => true,
                 ];
             });
 
