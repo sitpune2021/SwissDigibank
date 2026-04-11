@@ -636,6 +636,18 @@ class RdAccountController extends Controller
                 //     't_date'          => now(),
                 // ]);
 
+                // check if installment already exists
+                $exists = RdTransactions::where('rd_account_id', $validated['rd_account_id'])
+                    ->where('installment_no', $validated['installment_no'])
+                    ->exists();
+
+                if ($exists) {
+                    return [
+                        'success' => false,
+                        'message' => 'Installment already processed'
+                    ];
+                }
+
                 $saved = RdTransactions::create([
                     'rd_account_id'    => $validated['rd_account_id'],
                     'installment_no'   => $validated['installment_no'],
