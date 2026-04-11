@@ -26,8 +26,8 @@
             <tbody>
                 @foreach($installments as $index => $inst)
                 @php
-                // $today = \Carbon\Carbon::today()->format('Y-m-d');
-                $today = '2026-05-11';
+                $today = \Carbon\Carbon::today()->format('Y-m-d');
+                //$today = '2026-05-11';
                 $previousPending = false;
 
                 // check previous installments
@@ -41,8 +41,8 @@
                     $showProcessButton = (
                         $inst['status'] !== 1 &&
                         !$previousPending &&
-                        //\Carbon\Carbon::parse($inst['due_date'])->lte(\Carbon\Carbon::today())
-                        \Carbon\Carbon::parse($inst['due_date'])->lte(\Carbon\Carbon::parse($today))
+                        \Carbon\Carbon::parse($inst['due_date'])->lte(\Carbon\Carbon::today())
+                        //\Carbon\Carbon::parse($inst['due_date'])->lte(\Carbon\Carbon::parse($today))
                     );
                     @endphp
 
