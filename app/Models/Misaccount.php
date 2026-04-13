@@ -12,6 +12,7 @@ class Misaccount extends Model
  use SoftDeletes;
     protected $fillable = [
         'member_id',
+        'payment_mode',
         'mis_account_no',
         'member_name',
         'member_address',

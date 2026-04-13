@@ -11,6 +11,7 @@ class DdsAccount extends Model
 
     protected $fillable = [
         'member_id',
+        'payment_mode',
         'dd_no',
         'member_name',
         'member_address',
