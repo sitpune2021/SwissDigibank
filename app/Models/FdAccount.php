@@ -30,7 +30,7 @@ class FdAccount extends Model
         'final_amount',
         'transaction_date',
         'pay1_amount',
-        'pay1_mode',
+        'payment_mode',
         'pay1_bank',
         'pay1_cheque_no',
         'pay1_cheque_date',
