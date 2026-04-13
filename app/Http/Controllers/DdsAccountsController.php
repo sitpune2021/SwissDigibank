@@ -124,25 +124,25 @@ class DdsAccountsController extends Controller
     }
 
     public function getSavingAccounts($id)
-{
-    $accounts = Account::where('member_id', $id)
-        ->where('account_type', 'SAVING')
-        ->where('account_status', 1)
-        ->orwhere('approve_status', 1)
-        ->get();
+    {
+        $accounts = Account::where('member_id', $id)
+            ->where('account_type', 'SAVING')
+            ->where('account_status', 1)
+            ->orwhere('approve_status', 1)
+            ->get();
 
-    $data = $accounts->map(function ($acc) {
-        $balance = AccountsTransactionsHelper::getAccountBalacec($acc->id);
+        $data = $accounts->map(function ($acc) {
+            $balance = AccountsTransactionsHelper::getAccountBalacec($acc->id);
 
-        return [
-            'id' => $acc->id,
-            'account_no' => $acc->account_no,
-            'balance' => $balance['total_balance'] ?? 0
-        ];
-    });
+            return [
+                'id' => $acc->id,
+                'account_no' => $acc->account_no,
+                'balance' => $balance['total_balance'] ?? 0
+            ];
+        });
 
-    return response()->json($data);
-}
+        return response()->json($data);
+    }
 
     public function store(Request $request)
     {
@@ -161,6 +161,13 @@ class DdsAccountsController extends Controller
             'amount' => 'required|numeric',
             'account_type' => 'required|in:single,joint',
             'pay_mode' => 'required|in:cash,onlineTr,cheque,saving',
+            'saving_account_id' => 'required_if:pay_mode,saving',
+
+            'bank_id' => 'required_if:pay_mode,cheque',
+            'cheque_no' => 'required_if:pay_mode,cheque',
+            'cheque_date' => 'required_if:pay_mode,cheque',
+            'transfer_date' => 'required_if:pay_mode,onlineTr',
+            'utr_no' => 'required_if:pay_mode,onlineTr',
             'dd_amount' => [
                 'required',
                 'numeric',
@@ -174,6 +181,27 @@ class DdsAccountsController extends Controller
         ]);
 
         try {
+            //insuficiant account balance when selectcted pay mode SA
+            // if ($request->pay_mode === 'saving') {
+
+            //     $savingAccount = Account::find($request->saving_account_id);
+
+            //     if (!$savingAccount) {
+            //         return back()->withErrors([
+            //             'saving_account_id' => 'Saving account not found.'
+            //         ])->withInput();
+            //     }
+
+            //     $balance = AccountsTransactionsHelper::getAccountBalacec($savingAccount->id);
+            //     $availableBalance = $balance['total_balance'] ?? 0;
+
+            //     if ($availableBalance < $request->amount) {
+            //         return back()->withErrors([
+            //             'saving_account_id' => 'Insufficient account balance. Please change payment mode.'
+            //         ])->withInput();
+            //     }
+            // }
+
             $member = Member::find($request->member_id);
 
             if (!$member || (int)$member->share_allocated == 0) {
@@ -225,7 +253,7 @@ class DdsAccountsController extends Controller
             $calculation = $this->calculateMaturity(
                 $request->dd_amount,
                 $installments,
-                $scheme->rd_dd_frequency,   // USE REAL FREQUENCY
+                $scheme->rd_dd_frequency,
                 $rate,
                 $bonusRate,
                 $fixedBonus,
@@ -238,7 +266,7 @@ class DdsAccountsController extends Controller
             $maturity = $calculation['maturity'];
             $maturity_date = $calculation['maturity_date'];
 
-            Log::info('📈 Maturity calculated', $calculation);
+            Log::info('Maturity calculated', $calculation);
 
             // Generate dd_no based on the last inserted value
             $lastAccount = DdsAccount::orderBy('id', 'desc')->first();
@@ -246,7 +274,8 @@ class DdsAccountsController extends Controller
             $newDdNo = 'DD' . str_pad($lastDdNo + 1, 10, '0', STR_PAD_LEFT);
 
             $ddsAccount = new DdsAccount();
-            $ddsAccount->dd_no = $newDdNo;  
+            $ddsAccount->payment_mode = $request->pay_mode;
+            $ddsAccount->dd_no = $newDdNo;
             $ddsAccount->member_id = $request->member_id;
             $ddsAccount->branch_id = $request->branch_id;
             $ddsAccount->scheme_id = $request->scheme_id;
@@ -254,7 +283,7 @@ class DdsAccountsController extends Controller
             $ddsAccount->balance = $ddsAccount->dd_amount;
             $ddsAccount->open_date = $request->open_date;
             // $ddsAccount->nominee = ($request->nominee === 'yes') ? 1 : 0;
-            $ddsAccount->account_type = $request->account_type; // ✅ FIXED
+            $ddsAccount->account_type = $request->account_type;
             $ddsAccount->remarks = $request->remarks;
             $ddsAccount->tds_deduction = 0;
             $ddsAccount->rd_dd_frequency = $scheme->rd_dd_frequency;
@@ -275,17 +304,16 @@ class DdsAccountsController extends Controller
             $ddsAccount->maturity_date = \Carbon\Carbon::createFromFormat('d-m-Y', $calculation['maturity_date'])->format('Y-m-d');
             $ddsAccount->save();
 
-            Log::info('✅ DDS Account created', ['dds_account_id' => $ddsAccount->id]);
+            Log::info('DDS Account created', ['dds_account_id' => $ddsAccount->id]);
 
             try {
                 $ddsaccount = DdsAccount::with('member')->find($ddsAccount->id);
                 $mobile = $ddsaccount->member->member_info_mobile_no;
                 if (!empty($mobile)) {
                     $dlttemplateid = 1707172234295563351;  // Replace with actual template ID
-                    $message = "Dear Customer, we have received your request for opening DD. Your temp. DD no. is $ddsAccount->dd_no. SBC GLOBAL
-    ";
+                    $message = "Dear Customer, we have received your request for opening DD. Your temp. DD no. is $ddsAccount->dd_no. SBC GLOBAL";
                     \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
-                    Log::info('✅ SMS sent', ['mobile' => $mobile, 'message' => $message]);
+                    Log::info(' SMS sent', ['mobile' => $mobile, 'message' => $message]);
                 }
             } catch (\Exception $e) {
                 Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
@@ -298,11 +326,28 @@ class DdsAccountsController extends Controller
             $transaction->balance_available = $request->amount;
             $transaction->type = "credit";
             $transaction->pay_mode = $request->pay_mode;
+
+            if ($request->pay_mode === 'saving') {
+                $transaction->saving_account_id = $request->saving_account_id;
+            }
+
+            if ($request->pay_mode === 'cheque') {
+                $transaction->bank_id = $request->bank_id;
+                $transaction->cheque_no = $request->cheque_no;
+                $transaction->cheque_date = $request->cheque_date;
+            }
+
+            if ($request->pay_mode === 'onlineTr') {
+                $transaction->transfer_date = $request->transfer_date;
+                $transaction->utr_no = $request->utr_no;
+                $transaction->transfer_mode = $request->transfer_mode;
+                $transaction->credited_in_company = $request->credited_in_company;
+            }
             $transaction->save();
 
-            Log::info('✅ Transaction saved', ['transaction_id' => $transaction->id]);
+            Log::info('Transaction saved', ['transaction_id' => $transaction->id]);
 
-            Log::debug('📦 Full transaction request payload', $request->all());
+            Log::debug('Full transaction request payload', $request->all());
 
             if ($request->nominee === "yes" && $request->has('nominee_name')) {
                 $totalNominees = count(array_filter($request->nominee_name));
@@ -329,7 +374,7 @@ class DdsAccountsController extends Controller
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Exception $e) {
-            Log::error('❌ DDS Store Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            Log::error('DDS Store Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return back()->withInput()->withErrors([
                 'error' => 'Something went wrong. Please try again.',
                 'exception' => $e->getMessage(),
@@ -558,11 +603,30 @@ class DdsAccountsController extends Controller
 
             $transaction = $account->transactions()->first();
             if ($transaction) {
-                $transaction->update([
+                $data = [
                     'transaction_date' => $request->transaction_date,
                     'amount'           => $request->amount,
                     'pay_mode'         => $request->pay_mode,
-                ]);
+                ];
+
+                if ($request->pay_mode === 'saving') {
+                    $data['saving_account_id'] = $request->saving_account_id;
+                }
+
+                if ($request->pay_mode === 'cheque') {
+                    $data['bank_id'] = $request->bank_id;
+                    $data['cheque_no'] = $request->cheque_no;
+                    $data['cheque_date'] = $request->cheque_date;
+                }
+
+                if ($request->pay_mode === 'onlineTr') {
+                    $data['transfer_date'] = $request->transfer_date;
+                    $data['utr_no'] = $request->utr_no;
+                    $data['transfer_mode'] = $request->transfer_mode;
+                    $data['credited_in_company'] = $request->credited_in_company;
+                }
+
+                $transaction->update($data);
             }
 
             return redirect()->route('ddsaccounts.index')
@@ -1313,7 +1377,7 @@ class DdsAccountsController extends Controller
                 'remarks' => $remarks,
                 'transaction_date' => $transactionDate,
                 'amount' => $amount,
-                'balance_available' => 0, // will update below
+                'balance_available' => 0,
                 'collected_by' => $request->collected_by ?? null,
                 't_receipt' => $request->t_receipt ?? null,
                 'saving_account_id' => $savingAccount->id ?? null,
@@ -1999,151 +2063,152 @@ class DdsAccountsController extends Controller
             ->with('success', 'Documents uploaded successfully.');
     }
 
-        // Print DD Bond
-     public function ddBondFormView($id)   {
-          $ddAccount = DdsAccount::with([
-        'member',
-        'nominee',
-        'scheme'
-    ])->findOrFail($id);
+    // Print DD Bond
+    public function ddBondFormView($id)
+    {
+        $ddAccount = DdsAccount::with([
+            'member',
+            'nominee',
+            'scheme'
+        ])->findOrFail($id);
 
-    $data = [
-        'ddAccount'       => $ddAccount,
-        'company_address' => 'HEAD OFFICE',
-        'date'            => now()->format('d-m-Y'),
-        'company_reg_no'  => 'Reg. No. 969/03-04',
-    ];
+        $data = [
+            'ddAccount'       => $ddAccount,
+            'company_address' => 'HEAD OFFICE',
+            'date'            => now()->format('d-m-Y'),
+            'company_reg_no'  => 'Reg. No. 969/03-04',
+        ];
 
-   
 
-    return view('fd_account.ddsaccounts.print-documents.dd-bondView', compact('ddAccount'));
-     }
-public function ddBondForm($id)
-{
-    $ddAccount = DdsAccount::with([
-        'member',
-        'nominee',
-        'scheme'
-    ])->findOrFail($id);
 
-    $data = [
-        'ddAccount'       => $ddAccount,
-        'company_address' => 'HEAD OFFICE',
-        'date'            => now()->format('d-m-Y'),
-        'company_reg_no'  => 'Reg. No. 969/03-04',
-    ];
+        return view('fd_account.ddsaccounts.print-documents.dd-bondView', compact('ddAccount'));
+    }
+    public function ddBondForm($id)
+    {
+        $ddAccount = DdsAccount::with([
+            'member',
+            'nominee',
+            'scheme'
+        ])->findOrFail($id);
 
-    $pdf = app('dompdf.wrapper')
-        ->loadView('fd_account.ddsaccounts.print-documents.dd-bond',
-            $data
-        )
-        ->setPaper('a4', 'portrait');
+        $data = [
+            'ddAccount'       => $ddAccount,
+            'company_address' => 'HEAD OFFICE',
+            'date'            => now()->format('d-m-Y'),
+            'company_reg_no'  => 'Reg. No. 969/03-04',
+        ];
 
-    return $pdf->download('dd-bond-' . $ddAccount->id . '.pdf');
-}
+        $pdf = app('dompdf.wrapper')
+            ->loadView(
+                'fd_account.ddsaccounts.print-documents.dd-bond',
+                $data
+            )
+            ->setPaper('a4', 'portrait');
 
-public function ddOpeningFormView($id)
-{
-    $account = DdsAccount::with([
-        'member.kyc',
-        'member.address.state',
-        'member.branch',
-        'scheme'
-    ])->findOrFail($id);
+        return $pdf->download('dd-bond-' . $ddAccount->id . '.pdf');
+    }
 
-    // DD interest rate (direct from scheme)
-    $interestRate = $account->scheme->anuual_interest_rate ?? 0;
+    public function ddOpeningFormView($id)
+    {
+        $account = DdsAccount::with([
+            'member.kyc',
+            'member.address.state',
+            'member.branch',
+            'scheme'
+        ])->findOrFail($id);
 
-    $member = $account->member;
+        // DD interest rate (direct from scheme)
+        $interestRate = $account->scheme->anuual_interest_rate ?? 0;
 
-   return view('fd_account.ddsaccounts.print-documents.accountopeningformView', compact('account'));
-}
-public function ddOpeningForm($id)
-{
-    $account = DdsAccount::with([
-        'member.kyc',
-        'member.address.state',
-        'member.branch',
-        'scheme'
-    ])->findOrFail($id);
+        $member = $account->member;
 
-    // DD interest rate (direct from scheme)
-    $interestRate = $account->scheme->anuual_interest_rate ?? 0;
+        return view('fd_account.ddsaccounts.print-documents.accountopeningformView', compact('account'));
+    }
+    public function ddOpeningForm($id)
+    {
+        $account = DdsAccount::with([
+            'member.kyc',
+            'member.address.state',
+            'member.branch',
+            'scheme'
+        ])->findOrFail($id);
 
-    $member = $account->member;
+        // DD interest rate (direct from scheme)
+        $interestRate = $account->scheme->anuual_interest_rate ?? 0;
 
-    $pdf = app('dompdf.wrapper')
-        ->loadView(
-            'fd_account.ddsaccounts.print-documents.accountopeningform',
-            compact('account', 'member', 'interestRate')
-        )
-        ->setPaper('a4', 'portrait');
+        $member = $account->member;
 
-    return $pdf->download('dd-opening-' . $id . '.pdf');
-}
+        $pdf = app('dompdf.wrapper')
+            ->loadView(
+                'fd_account.ddsaccounts.print-documents.accountopeningform',
+                compact('account', 'member', 'interestRate')
+            )
+            ->setPaper('a4', 'portrait');
 
-public function ddClosingFormView($id)
-{
-    $ddAccount = DdsAccount::with(['member.branch'])->findOrFail($id);
+        return $pdf->download('dd-opening-' . $id . '.pdf');
+    }
 
-    $data = [
-        'name' => $ddAccount->member->member_info_first_name . ' ' .
-                  $ddAccount->member->member_info_last_name,
+    public function ddClosingFormView($id)
+    {
+        $ddAccount = DdsAccount::with(['member.branch'])->findOrFail($id);
 
-        'date' => now()->format('d-m-Y'),
+        $data = [
+            'name' => $ddAccount->member->member_info_first_name . ' ' .
+                $ddAccount->member->member_info_last_name,
 
-        // DD Account No
-        'agreement_no' => $ddAccount->dd_no ?? 'DD' . str_pad($ddAccount->id, 5, '0', STR_PAD_LEFT),
+            'date' => now()->format('d-m-Y'),
 
-        'holder_name' => strtoupper(
-            $ddAccount->member->member_info_first_name . ' ' .
-            $ddAccount->member->member_info_last_name
-        ),
+            // DD Account No
+            'agreement_no' => $ddAccount->dd_no ?? 'DD' . str_pad($ddAccount->id, 5, '0', STR_PAD_LEFT),
 
-        'expiry_date' => \Carbon\Carbon::parse($ddAccount->maturity_date)->format('d-m-Y'),
+            'holder_name' => strtoupper(
+                $ddAccount->member->member_info_first_name . ' ' .
+                    $ddAccount->member->member_info_last_name
+            ),
 
-        'branch_name' => $ddAccount->member->branch->branch_name ?? '',
+            'expiry_date' => \Carbon\Carbon::parse($ddAccount->maturity_date)->format('d-m-Y'),
 
-        'branch_address' => $ddAccount->member->branch->branch_address ?? '',
-    ];
+            'branch_name' => $ddAccount->member->branch->branch_name ?? '',
 
-    return view('fd_account.ddsaccounts.print-documents.closingfromView',    array_merge($data, compact('ddAccount')));
-     }
-public function ddClosingForm($id)
-{
-    $ddAccount = DdsAccount::with(['member.branch'])->findOrFail($id);
+            'branch_address' => $ddAccount->member->branch->branch_address ?? '',
+        ];
 
-    $data = [
-        'name' => $ddAccount->member->member_info_first_name . ' ' .
-                  $ddAccount->member->member_info_last_name,
+        return view('fd_account.ddsaccounts.print-documents.closingfromView',    array_merge($data, compact('ddAccount')));
+    }
+    public function ddClosingForm($id)
+    {
+        $ddAccount = DdsAccount::with(['member.branch'])->findOrFail($id);
 
-        'date' => now()->format('d-m-Y'),
+        $data = [
+            'name' => $ddAccount->member->member_info_first_name . ' ' .
+                $ddAccount->member->member_info_last_name,
 
-        // DD Account No
-        'agreement_no' => $ddAccount->dd_no ?? 'DD' . str_pad($ddAccount->id, 5, '0', STR_PAD_LEFT),
+            'date' => now()->format('d-m-Y'),
 
-        'holder_name' => strtoupper(
-            $ddAccount->member->member_info_first_name . ' ' .
-            $ddAccount->member->member_info_last_name
-        ),
+            // DD Account No
+            'agreement_no' => $ddAccount->dd_no ?? 'DD' . str_pad($ddAccount->id, 5, '0', STR_PAD_LEFT),
 
-        'expiry_date' => \Carbon\Carbon::parse($ddAccount->maturity_date)->format('d-m-Y'),
+            'holder_name' => strtoupper(
+                $ddAccount->member->member_info_first_name . ' ' .
+                    $ddAccount->member->member_info_last_name
+            ),
 
-        'branch_name' => $ddAccount->member->branch->branch_name ?? '',
+            'expiry_date' => \Carbon\Carbon::parse($ddAccount->maturity_date)->format('d-m-Y'),
 
-        'branch_address' => $ddAccount->member->branch->branch_address ?? '',
-    ];
+            'branch_name' => $ddAccount->member->branch->branch_name ?? '',
 
-    $pdf = app('dompdf.wrapper')
-        ->loadView(
-            'fd_account.ddsaccounts.print-documents.closingform',
-            $data
-        )
-        ->setPaper('A4', 'portrait')
-        ->setOption('isHtml5ParserEnabled', true)
-        ->setOption('isRemoteEnabled', true);
+            'branch_address' => $ddAccount->member->branch->branch_address ?? '',
+        ];
 
-    return $pdf->download('dd-closing-form-' . $ddAccount->id . '.pdf');
-}
+        $pdf = app('dompdf.wrapper')
+            ->loadView(
+                'fd_account.ddsaccounts.print-documents.closingform',
+                $data
+            )
+            ->setPaper('A4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', true);
 
+        return $pdf->download('dd-closing-form-' . $ddAccount->id . '.pdf');
+    }
 }

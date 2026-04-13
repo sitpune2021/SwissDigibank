@@ -235,7 +235,7 @@
                         <label class="flex items-center gap-2 text-sm">
                             <input type="radio" name="payment_mode" value="cash" onclick="togglePaymentMode('cash')" checked>
                             <span>Cash</span>
-                        </label>
+                        </label>    
                         <label class="flex items-center gap-2">
                             <input type="radio" name="payment_mode" value="onlineTr" onclick="togglePaymentMode('onlineTr')">
                             <span>Online Tr.</span>

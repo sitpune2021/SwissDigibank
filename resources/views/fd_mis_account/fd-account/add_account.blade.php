@@ -536,7 +536,7 @@
             <div id="savingFields" class="space-y-4 hidden mt-3">
                 <label class="block text-sm font-medium text-gray-700 uppercase">Select Saving Account <span
                         class="text-red-500">*</span></label>
-                <select id="savingAccount" class="w-full border rounded-10 dark:bg-bg3 px-3 py-3 text-sm bg-white saving-account">
+                <select id="savingAccount" name="saving_account" class="w-full border rounded-10 dark:bg-bg3 px-3 py-3 text-sm bg-white saving-account">
                     <option value="">Select Account</option>
 
                 </select>
@@ -810,8 +810,6 @@ $(document).ready(function(){
                                 savingSelect.append(option);
 
                             });
-
-                            $("#savingFields").removeClass("hidden");
                         } else {
                             $("#savingFields").addClass("hidden");
                         }
@@ -905,7 +903,7 @@ $(document).ready(function(){
         let savingFields = document.getElementById('savingFields');
 
         if (savingFields) {
-            savingFields.addEventListener('change', function() {
+            // savingFields.addEventListener('change', function() {
                 let accountId = this.value;
 
                 if (accountId) {
@@ -921,7 +919,7 @@ $(document).ready(function(){
                     // document.getElementById('balanceBox').classList.add('hidden');
                     document.getElementById('accountBalance').value = '';
                 }
-            });
+            // });
         }
     });
 </script>

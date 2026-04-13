@@ -70,10 +70,13 @@
 
                                 {{-- A/C No --}}
                                 <td class="py-5 px-6">
-                                    <a href="{{ $pending_transaction->account_no ? route('accounts.show', base64_encode($pending_transaction->account_no)) : '#' }}"
+                                    <!-- <a href="{{ $pending_transaction->account_no ? route('accounts.show', base64_encode($pending_transaction->account_no)) : '#' }}"
                                         class="text-primary underline hover:text-primary/80">
                                         {{ $pending_transaction->account_no ?? '' }}
-                                    </a>
+                                    </a> -->
+                                     
+                                        {{ $pending_transaction->account_no ?? '' }}
+                                   
                                 </td>
 
                                 {{-- View Transaction --}}
