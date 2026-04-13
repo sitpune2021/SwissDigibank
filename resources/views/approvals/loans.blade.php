@@ -150,9 +150,8 @@
                                         placeholder="Enter Remarks" rows="2"></textarea>
                                 </td>
 
-                                {{-- ✅ DONE button — NO display:none, always visible, sticky right --}}
-                                <td class="text-center !py-5 px-6 sticky right-0 sticky-action"
-                                    style="box-shadow: -4px 0 6px rgba(0,0,0,0.06);">
+                                {{-- DONE button — NO display:none, always visible, sticky right --}}
+                                <td>
                                     <button type="button" onclick="submitSingleLoanRow(this)"
                                         class="text-white font-semibold py-2 px-4 rounded"
                                         style="background-color:green;">
