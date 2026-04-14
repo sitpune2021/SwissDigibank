@@ -75,7 +75,7 @@ class PaymentsToCollectController extends Controller
 
             ->where(function ($q) {
                 $q->whereNull('rd_transactions.status')
-                    ->orWhere('rd_transactions.status', '!=', 'paid');
+                    ->orWhere('rd_transactions.status', '!=', '1');
             })
             ->select(
                 'rd_accounts.id as loan_id',
@@ -98,6 +98,10 @@ class PaymentsToCollectController extends Controller
             ->where('dd_transactions.type', 'credit')
             ->whereNull('dd_transactions.deleted_at')
             ->whereDate('dd_transactions.transaction_date', '<=', now())
+             ->where(function ($q) {
+                $q->whereNull('dd_transactions.status')
+                    ->orWhere('dd_transactions.status', '!=', '1');
+            })
             ->groupBy('dds_accounts.id')
             ->select(
                 'dds_accounts.id as loan_id',
@@ -121,6 +125,10 @@ class PaymentsToCollectController extends Controller
             ->where('fd_transactions.transaction_type', 1)
             ->whereNull('fd_transactions.deleted_at')
             ->whereDate('fd_transactions.due_date', '<=', now())
+            ->where(function ($q) {
+                $q->whereNull('fd_transactions.status')
+                    ->orWhere('fd_transactions.status', '!=', '1');
+            })
             ->select(
                 'fd_accounts.id as loan_id',
                 'fd_accounts.member_id',
@@ -143,7 +151,7 @@ class PaymentsToCollectController extends Controller
 
             ->where(function ($q) {
                 $q->whereNull('mis_transactions.status')
-                    ->orWhere('mis_transactions.status', '!=', 'paid');
+                    ->orWhere('mis_transactions.status', '!=', '1');
             })
 
             ->select(
