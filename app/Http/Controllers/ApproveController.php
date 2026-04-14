@@ -1049,7 +1049,7 @@ class ApproveController extends Controller
                         return back()->with('error', 'FD transaction not found.');
                     }
 
-                    if ($status === 'approved') {
+                    if (strtolower($status) === 'approved') {
 
                         // Get FD account
                         $fdAccount = DB::table('fd_accounts')
@@ -1069,8 +1069,17 @@ class ApproveController extends Controller
                         }
 
                         // 1️⃣ Mark transaction approved
-                        DB::table('fd_transactions')
+                        // DB::table('fd_transactions')
+                        //     ->where('id', $id)
+                        //     ->update([
+                        //         'status' => 'Approved',
+                        //         'processed' => 1,
+                        //         'paid_on' => now(),
+                        //         'updated_at' => now()
+                        //     ]);
+                         DB::table('fd_transactions')
                             ->where('id', $id)
+                            ->where('processed', 0)
                             ->update([
                                 'status' => 'Approved',
                                 'processed' => 1,
