@@ -117,508 +117,728 @@ use Illuminate\Support\Facades\Storage;
 <div class="grid grid-cols-12 gap-4 xxl:gap-6">
 
     <!-- BRANCHES -->
+<div class="col-span-12 sm:col-span-6 lg:col-span-4">
+<a href="{{ route('branch.index') }}">
 
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('branch.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium"> BRANCHES</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-home"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['branchesCount'] }}</h4>
-                </div>
-            </div>
-        </a>
-    </div>
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-blue-400">
 
-    <!-- MEMBER -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('member.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">CUSTOMERS </span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-user"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['membersCount'] }}</h4><span
-                        class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
-                </div>
-            </div>
-        </a>
-    </div>
-    <!-- GROUPS -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="#">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">GROUPS</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-users"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4><span
-                        class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
-                </div>
-            </div>
-        </a>
-    </div>
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">Branches</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-md"> 
+    <i class="text-3xl las xl:text-5xl la-home"></i> 
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">{{ $dashboardData['branchesCount'] }}</h2>
+<p class="text-xs text-gray-500">Total Branches</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
+
+
+<!-- CUSTOMERS -->
+<div class="col-span-12 sm:col-span-6 lg:col-span-4">
+<a href="{{ route('member.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-green-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">Customers</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-md"> <i class="text-3xl las xl:text-5xl la-user"></i> </div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">{{ $dashboardData['membersCount'] }}</h2>
+<p class="text-xs text-gray-500">Total Customers</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
+
+
+<!-- GROUPS -->
+<div class="col-span-12 sm:col-span-6 lg:col-span-4">
+<a href="#">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-purple-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">Groups</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-md"> <i class="text-3xl las xl:text-5xl la-users"></i> </div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">0</h2>
+<p class="text-xs text-gray-500">Total Groups</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
     <!-- PROMOTERS -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('promotor.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">PROMOTERS</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-business-time"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['promotorCount'] }}</h4><span
-                        class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
-                </div>
-            </div>
-        </a>
-    </div>
+    <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+<a href="{{ route('promotor.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-indigo-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">Promoters</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg"> <i class="text-3xl las xl:text-5xl la-business-time"></i> </div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">{{ $dashboardData['promotorCount'] }}</h2>
+<p class="text-xs text-gray-500">Total Promoters</p>
+</div>
+
+</div>
+</div>
+
+</a>
+</div>
     <!-- SAVING ACCOUNTS -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('accounts.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium"> SAVING ACCOUNTS</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-piggy-bank"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['savingAccounts'] }}</h4><span
-                        class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
-                </div>
-            </div>
-        </a>
-    </div>
+    <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+<a href="{{ route('accounts.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-green-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">Saving Accounts</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg"> <i class="text-3xl las xl:text-5xl la-piggy-bank"></i> </div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">{{ $dashboardData['savingAccounts'] }}</h2>
+<p class="text-xs text-gray-500">Total Saving Accounts</p>
+</div>
+
+</div>
+</div>
+
+</a>
+</div>
     <!-- CURRENT ACCOUNTS -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('accounts.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium"> CURRENT ACCOUNTS</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-credit-card"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['currentAccounts'] }}</h4><span
-                        class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
-                </div>
-            </div>
-        </a>
-    </div>
+   <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+<a href="{{ route('accounts.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-blue-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">Current Accounts</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg"> <i class="text-3xl las xl:text-5xl la-credit-card"></i> </div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">{{ $dashboardData['currentAccounts'] }}</h2>
+<p class="text-xs text-gray-500">Total Current Accounts</p>
+</div>
+
+</div>
+</div>
+
+</a>
+</div>
     <!-- FD ACCOUNTS -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('fd-mis-schemes.fd_index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium"> FD ACCOUNTS </span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-piggy-bank"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['fdCount'] }}</h4><span
-                        class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
-                </div>
-            </div>
-        </a>
-    </div>
+    <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+<a href="{{ route('fd-mis-schemes.fd_index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-purple-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">FD Accounts</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
+<i class="text-3xl las xl:text-5xl la-university"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">{{ $dashboardData['fdCount'] }}</h2>
+<p class="text-xs text-gray-500">Total FD Accounts</p>
+</div>
+
+</div>
+</div>
+
+</a>
+</div>
     <!-- MIS ACCOUNTS -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('misaccount.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium"> MIS ACCOUNTS </span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-coins"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['misCount'] }}</h4><span
-                        class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
-                </div>
-            </div>
-        </a>
-    </div>
+    <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+<a href="{{ route('misaccount.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-orange-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">MIS Accounts</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
+<i class="text-3xl las xl:text-5xl la-wallet"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">{{ $dashboardData['misCount'] }}</h2>
+<p class="text-xs text-gray-500">Total MIS Accounts</p>
+</div>
+
+</div>
+</div>
+
+</a>
+</div>
     <!-- DDS ACCOUNTS -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('dds-accounts.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium"> DDS ACCOUNTS </span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-coins"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['ddsCount'] }}</h4><span
-                        class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
-                </div>
-            </div>
-        </a>
-    </div>
+    <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+<a href="{{ route('dds-accounts.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-cyan-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">DDS Accounts</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+	<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
+<i class="text-3xl las xl:text-5xl la-calendar-alt"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">{{ $dashboardData['ddsCount'] }}</h2>
+<p class="text-xs text-gray-500">Total DDS Accounts</p>
+</div>
+
+</div>
+</div>
+
+</a>
+</div>
        <!-- MDS /RD ACCOUNTS -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('mds-rd-accounts.rd-account-index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium"> MDS/RD ACCOUNTS </span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-coins"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['mdsRdCount'] }}</h4><span
-                        class="flex items-center gap-1 whitespace-nowrap text-primary"></span>
-                </div>
-            </div>
-        </a>
-    </div>
+   <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+<a href="{{ route('mds-rd-accounts.rd-account-index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-pink-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">MDS / RD Accounts</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
+<i class="text-3xl las xl:text-5xl la-coins"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">{{ $dashboardData['mdsRdCount'] }}</h2>
+<p class="text-xs text-gray-500">Total MDS / RD Accounts</p>
+</div>
+
+</div>
+</div>
+
+</a>
+</div>
 
     <!-- Gold Loan  -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('gold-loan.account.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">GOLD LOAN</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-coins"></i>
-                </div>
+    <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+<a href="{{ route('gold-loan.account.index') }}">
 
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['goldloan'] }}</h4>
-                </div>
-            </div>
-        </a>
-    </div>
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-yellow-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">
+Gold Loan
+</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+fill="none" stroke="currentColor" stroke-width="2"
+class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
+<i class="text-3xl las xl:text-5xl la-gem"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">
+{{ $dashboardData['goldloan'] }}
+</h2>
+
+<p class="text-xs text-gray-500">Total Gold Loans</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
 
     <!-- MORTGAGE LOAN  -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('mortgage.account.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">MORTGAGE LOAN</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                      <i class="text-3xl las xl:text-5xl la-coins"></i>
-                </div>
+    <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+<a href="{{ route('mortgage.account.index') }}">
 
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['mortgageloan'] }}</h4>
-                </div>
-            </div>
-        </a>
-    </div>
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-blue-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">
+Mortgage Loan
+</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+fill="none" stroke="currentColor" stroke-width="2"
+class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
+<i class="text-3xl las xl:text-5xl la-home"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">
+{{ $dashboardData['mortgageloan'] }}
+</h2>
+
+<p class="text-xs text-gray-500">Total Mortgage Loans</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
 
     <!-- LOAN AGAINST DEPOSITE  -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('loanagainst.account.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">LOAN AGAINST DEPOSITE</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-coins"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['loanagainst'] }}</h4>
-                </div>
-            </div>
-        </a>
-    </div>
+    <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+<a href="{{ route('loanagainst.account.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-green-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">
+Loan Against Deposit
+</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+fill="none" stroke="currentColor" stroke-width="2"
+class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
+<i class="text-3xl las xl:text-5xl la-hand-holding-usd"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">
+{{ $dashboardData['loanagainst'] }}
+</h2>
+
+<p class="text-xs text-gray-500">Deposit Loans</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
 
     <!-- BUSINESS LOAN  -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('bussiness.account.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">BUSINESS LOAN</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
+    <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+<a href="{{ route('bussiness.account.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-purple-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">
+Business Loan
+</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+fill="none" stroke="currentColor" stroke-width="2"
+class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div
+                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
                     <i class="text-3xl las xl:text-5xl la-briefcase"></i>
                 </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['businessloan'] }}</h4>
-                </div>
-            </div>
-        </a>
-    </div>
 
-    <!-- CC / OD LIMIT LOAN  -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('cc_od.account.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">CC / OD LIMIT LOAN</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-sync"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['ccodloan'] }}</h4>
-                </div>
-            </div>
-        </a>
-    </div>
+<div>
+<h2 class="text-2xl font-bold text-gray-800">
+{{ $dashboardData['businessloan'] }}
+</h2>
 
-    <!-- DAILY WEEKLY LOAN  -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('daily_weekly.account.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">DAILY WEEKLY LOAN</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-calendar"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['dailyweeklyloan'] }}</h4>
-                </div>
-            </div>
-        </a>
-    </div>
+<p class="text-xs text-gray-500">Total Business Loans</p>
+</div>
 
-    <!-- PERSONAL LOAN  -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('personal.account.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">PERSONAL LOAN</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-user"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['personalloan'] }}</h4>
-                </div>
-            </div>
-        </a>
-    </div>
+</div>
+</div>
+</a>
+</div>
 
-    <!-- VEHICAL LOAN  -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('vehical.account.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">VEHICAL LOAN</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-car"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">{{ $dashboardData['vehicalloan'] }}</h4>
-                </div>
-            </div>
-        </a>
-    </div>
+    <!-- CC / OD LIMIT LOAN -->
+<div class="col-span-12 sm:col-span-6 lg:col-span-3">
+<a href="{{ route('cc_od.account.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">CC / OD Limit Loan</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 h-14 flex items-center justify-center bg-primary/5 text-primary border border-n30 rounded-xl shadow-lg">
+<i class="text-3xl las la-sync"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">
+{{ $dashboardData['ccodloan'] }}
+</h2>
+<p class="text-xs text-gray-500">Total CC / OD Loans</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
+
+
+<!-- DAILY WEEKLY LOAN -->
+<div class="col-span-12 sm:col-span-6 lg:col-span-3">
+<a href="{{ route('daily_weekly.account.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">Daily Weekly Loan</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 h-14 flex items-center justify-center bg-primary/5 text-primary border border-n30 rounded-xl shadow-lg">
+<i class="text-3xl las la-calendar"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">
+{{ $dashboardData['dailyweeklyloan'] }}
+</h2>
+<p class="text-xs text-gray-500">Daily / Weekly Loans</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
+
+
+<!-- PERSONAL LOAN -->
+<div class="col-span-12 sm:col-span-6 lg:col-span-3">
+<a href="{{ route('personal.account.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">Personal Loan</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 h-14 flex items-center justify-center bg-primary/5 text-primary border border-n30 rounded-xl shadow-lg">
+<i class="text-3xl las la-user"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">
+{{ $dashboardData['personalloan'] }}
+</h2>
+<p class="text-xs text-gray-500">Total Personal Loans</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
+
+
+<!-- VEHICLE LOAN -->
+<div class="col-span-12 sm:col-span-6 lg:col-span-3">
+<a href="{{ route('vehical.account.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">Vehicle Loan</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 h-14 flex items-center justify-center bg-primary/5 text-primary border border-n30 rounded-xl shadow-lg">
+<i class="text-3xl las la-car"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">
+{{ $dashboardData['vehicalloan'] }}
+</h2>
+<p class="text-xs text-gray-500">Total Vehicle Loans</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
+
+    <!-- Fixed LOAN  -->
+   <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+<a href="{{ route('personal.account.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-blue-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">
+Fixed Loan
+</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
+<i class="text-3xl las xl:text-5xl la-university"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">
+0
+</h2>
+
+<p class="text-xs text-gray-500">Total Personal Loans</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
+
+   
 
     <!-- Consumer durable loan LOAN  -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('consumer_loan.schemes.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">CONSUMER DURABLE LOAN</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-car"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
-                </div>
-            </div>
-        </a>
-    </div>
+    <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+<a href="{{ route('consumer_loan.schemes.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-purple-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">
+Consumer Durable Loan
+</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
+<i class="text-3xl las xl:text-5xl la-tv"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">0</h2>
+<p class="text-xs text-gray-500">Durable Loans</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
 
     <!-- Agricultural LOAN  -->
-    <div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">
-        <a href="{{ route('agricultural_loan.schemes.index') }}">
-            <div class="flex items-center justify-between pb-4 mb-4 lg:mb-6 lg:pb-6 bb-dashed">
-                <span class="font-medium">AGRICULTURAL LOAN</span><span aria-expanded="false"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="cursor-pointer tabler-icon tabler-icon-dots">
-                        <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                        <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                    </svg></span>
-            </div>
-            <div class="flex items-center gap-4 xl:gap-6">
-                <div
-                    class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl">
-                    <i class="text-3xl las xl:text-5xl la-car"></i>
-                </div>
-                <div>
-                    <h4 class="mb-2 h4 xxl:mb-4">0</h4>
-                </div>
-            </div>
-        </a>
-    </div>
+    <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+<a href="{{ route('agricultural_loan.schemes.index') }}">
+
+<div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-green-400">
+
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-gray-500 uppercase">
+Agricultural Loan
+</span>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400">
+<circle cx="5" cy="12" r="1"></circle>
+<circle cx="12" cy="12" r="1"></circle>
+<circle cx="19" cy="12" r="1"></circle>
+</svg>
+</div>
+
+<div class="flex items-center gap-4">
+
+<div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
+<i class="text-3xl las xl:text-5xl la-leaf"></i>
+</div>
+
+<div>
+<h2 class="text-2xl font-bold text-gray-800">0</h2>
+<p class="text-xs text-gray-500">Agriculture Loans</p>
+</div>
+
+</div>
+</div>
+</a>
+</div>
+
+    
 
   <!-- MIS REPORT  -->  
   {{--<div class="col-span-12 p-4 sm:col-span-3 xxxl:col-span-3 box bg-n0 dark:bg-bg4 4xl:px-8 4xl:py-6">

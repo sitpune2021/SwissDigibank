@@ -593,101 +593,8 @@
                     </div>
                 </div> --}}
             </div>
-
-            <div class="flex-2 col-span-2 md:col-span-1 bg-white dark:bg-bg3 rounded-2xl p-6 min-w-[300px]">
-                {{-- Member Info Box --}}
-                <div id="memberBox" class="w-full hidden"> {{-- hidden by default --}}
-                    <div class="flex justify-between items-center bg-secondary/5  rounded-10 px-4 py-3 dark:bg-bg3">
-                        <h3 class="text-base uppercase font-semibold md:text-lg">Customer Info</h3>
-                        <button type="button" class="p-1 rounded transition"
-                            onclick="toggleSection(this, 'memberInfoBody')">
-                            <span class="toggle-icon text-lg font-bold">−</span>
-                        </button>
-                    </div>
-                    <div id="memberInfoBody" class="px-4 py-3">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left">
-                                <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                                    <tr class="border-b">
-                                        <td class="font-semibold uppercase py-2 pr-4">Customer Name</td>
-                                        <td class="py-2 capitalize" id="memberName">-</td>
-                                    </tr>
-                                    <tr class="border-b">
-                                        <td class="font-semibold uppercase py-2 pr-4">Mobile No</td>
-                                        <td class="py-2" id="memberMobile">-</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             
-
-                {{--schemeBox info --}}
-                <div id="schemeBox" class=" mt-5 hidden">
-                    <div class="flex justify-between items-center bg-secondary/5 rounded-10 px-4 py-3 dark:bg-bg3">
-                        <h3 class="text-base uppercase font-semibold md:text-lg">Scheme Info</h3>
-                        <button type="button" class="p-1 rounded transition"
-                            onclick="toggleSection(this, 'schemeInfoBody')">
-                            <span class="toggle-icon text-lg font-bold">−</span>
-                        </button>
-                    </div>
-
-                    <div id="schemeInfoBody" class="px-4 py-3">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left">
-                                <tbody>
-                                    <tr class="border-b">
-                                        <td class="font-semibold uppercase py-2 pr-4">Scheme Code</td>
-                                        <td class="py-2" id="schemeCode">-</td>
-                                    </tr>
-                                    <tr class="border-b">
-                                        <td class="font-semibold uppercase py-2 pr-4">Scheme Name</td>
-                                        <td class="py-2" id="schemeName">-</td>
-                                    </tr>
-                                    <tr class="border-b">
-                                        <td class="font-semibold uppercase py-2 pr-4">Max Tenure</td>
-                                        <td class="py-2" id="schemeTenure">-</td>
-                                    </tr>
-                                    <tr class="border-b">
-                                        <td class="font-semibold uppercase py-2 pr-4">Maximum Loan Amount</td>
-                                        <td class="py-2" id="schemeMax">-</td>
-                                    </tr>
-                                    <tr class="border-b">
-                                        <td class="font-semibold uppercase py-2 pr-4">Maximum Loan Limit Against Security</td>
-                                        <td class="py-2" id="schemeLimit">- %</td>
-                                    </tr>
-                                    <tr class="border-b">
-                                        <td class="font-semibold uppercase py-2 pr-4">Minimum Loan Amount</td>
-                                        <td class="py-2" id="schemeMin">-</td>
-                                    </tr>
-                                    <tr class="border-b">
-                                        <td class="font-semibold uppercase py-2 pr-4">Annual Interest Rate</td>
-                                        <td class="py-2" id="schemeInterest">-</td>
-                                    </tr>
-                                    <tr class="border-b">
-                                        <td class="font-semibold uppercase py-2 pr-4">Interest Type</td>
-                                        <td class="py-2" id="schemeType">-</td>
-                                    </tr>
-                                
-                                    <tr class="border-b">
-                                        <td class="font-semibold uppercase py-2 pr-4">Active</td>
-                                        <td class="py-2" id="schemeActive">-</td>
-                                    </tr>
-                                    <tr class="border-b">
-                                        <td class="font-semibold uppercase py-2 pr-4">Fore Closure Charges</td>
-                                        <td class="py-2" id="schemeCharge">-</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-</div>
-    
-
+        </div>
         
         <!-- Calculation Result Box -->
        <!-- Hidden fields for backend -->
@@ -715,8 +622,6 @@
                     </table>
                 </div>
 
-
-
            <!-- Buttons -->
             <div class="flex flex-col min-w-10 sm:flex-row justify-start gap-3 mt-5">
                 <button type="button" id="calculateBtn"
@@ -724,14 +629,234 @@
                     Calculate
                 </button>
                 <button class="btn-outline uppercase justify-center" type="reset">
-                <a href="{{route('cc_od.applications.index')}}"> Back</a>
-            </button>
+                    <a href="{{route('cc_od.applications.index')}}"> Back</a>
+                </button>
             </div>
-    </form>
-</div>
+
+            <!-- CUSTOMER INFO MODAL -->
+                <div id="memberModal"
+                onclick="closeModal('memberModal')"
+                class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+
+                    <!-- POPUP BOX -->
+                    <div onclick="event.stopPropagation()"
+                    class="bg-white w-[450px] max-w-[95%] rounded-2xl shadow-xl overflow-hidden relative">
+
+                        <!-- HEADER -->
+                        <div class="flex justify-between items-center bg-blue-600 text-white px-6 py-4">
+                            <h3 class="text-lg font-semibold uppercase tracking-wide">
+                                Customer Information
+                            </h3>
+
+                            <button type="button"
+                            onclick="closeModal('memberModal')"
+                            class="text-white text-xl hover:text-red-200 transition">
+                                ✕
+                            </button>
+                        </div>
+
+                        <!-- BODY -->
+                        <div class="p-6">
+
+                            <table class="w-full text-sm border rounded-lg overflow-hidden">
+                                <tbody class="divide-y">
+
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="font-semibold py-3 px-4 text-gray-600 w-[45%]">
+                                            Customer Name
+                                        </td>
+                                        <td id="memberName"
+                                        class="py-3 px-4 font-medium text-gray-900">
+                                            -
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="font-semibold py-3 px-4 text-gray-600">
+                                            Mobile Number
+                                        </td>
+                                        <td id="memberMobile"
+                                        class="py-3 px-4 font-medium text-blue-600">
+                                            -
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+               <!-- SCHEME INFO MODAL -->
+                <div id="schemeModal"
+                onclick="closeModal('schemeModal')"
+                class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+
+                    <!-- POPUP BOX -->
+                    <div onclick="event.stopPropagation()"
+                    class="bg-white w-[500px] max-w-[95%] rounded-2xl shadow-xl overflow-hidden relative">
+
+                        <!-- HEADER -->
+                        <div class="flex justify-between items-center bg-blue-600 text-white px-6 py-4">
+                            <h3 class="text-lg font-semibold uppercase tracking-wide">
+                                Scheme Information
+                            </h3>
+
+                            <button type="button"
+                            onclick="closeModal('schemeModal')"
+                            class="text-white text-xl hover:text-red-200 transition">
+                                ✕
+                            </button>
+                        </div>
+
+                        <!-- BODY -->
+                        <div class="p-6">
+
+                            <table class="w-full text-sm border rounded-lg overflow-hidden">
+
+                                <tbody class="divide-y">
+
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="font-semibold py-3 px-4 text-gray-600 w-[45%]">
+                                            Scheme Code
+                                        </td>
+                                        <td id="schemeCode" class="py-3 px-4 font-medium text-gray-900">
+                                            -
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="font-semibold py-3 px-4 text-gray-600">
+                                            Scheme Name
+                                        </td>
+                                        <td id="schemeName" class="py-3 px-4 font-medium">
+                                            -
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="font-semibold py-3 px-4 text-gray-600">
+                                            Maximum Tenure
+                                        </td>
+                                        <td id="schemeTenure" class="py-3 px-4 font-medium text-blue-600">
+                                            -
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="font-semibold py-3 px-4 text-gray-600">
+                                            Maximum Loan Amount
+                                        </td>
+                                        <td id="schemeMax" class="py-3 px-4 font-medium text-green-600">
+                                            -
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="font-semibold py-3 px-4 text-gray-600">
+                                            Loan Limit Against Security
+                                        </td>
+                                        <td id="schemeLimit" class="py-3 px-4 font-medium">
+                                            -
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="font-semibold py-3 px-4 text-gray-600">
+                                            Annual Interest Rate
+                                        </td>
+                                        <td id="schemeInterest" class="py-3 px-4 font-medium text-red-600">
+                                            -
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            
+        </form>
+    </div>
 </div>
 
 
+ <!-- Customer and Scheme info show in pop-pup -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function(){
+
+    // CUSTOMER SELECT
+    let memberSelect = document.getElementById("member_id");
+
+    if(memberSelect){
+        memberSelect.addEventListener("change", function(){
+
+            let selectedOption = this.options[this.selectedIndex];
+
+            let name = selectedOption.getAttribute("data-name");
+            let mobile = selectedOption.getAttribute("data-mobile");
+
+            document.getElementById("memberName").innerText = name ?? "-";
+            document.getElementById("memberMobile").innerText = mobile ?? "-";
+
+            openModal("memberModal");
+
+        });
+    }
+
+    // SCHEME SELECT
+    let schemeSelect = document.getElementById("scheme_id");
+
+    if(schemeSelect){
+        schemeSelect.addEventListener("change", function(){
+
+            let selectedOption = this.options[this.selectedIndex];
+
+            document.getElementById("schemeCode").innerText =
+                selectedOption.getAttribute("data-code") ?? "-";
+
+            document.getElementById("schemeName").innerText =
+                selectedOption.getAttribute("data-name") ?? "-";
+
+            document.getElementById("schemeTenure").innerText =
+                selectedOption.getAttribute("data-tenure") ?? "-";
+
+            document.getElementById("schemeMax").innerText =
+                selectedOption.getAttribute("data-max") ?? "-";
+
+            document.getElementById("schemeLimit").innerText =
+                selectedOption.getAttribute("data-limit") ?? "-";
+
+            document.getElementById("schemeInterest").innerText =
+                selectedOption.getAttribute("data-interest") ?? "-";
+
+            openModal("schemeModal");
+
+        });
+    }
+
+    });
+
+    function openModal(id){
+    let modal = document.getElementById(id);
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+    }
+
+    function closeModal(id){
+    let modal = document.getElementById(id);
+    modal.classList.remove("flex");
+    modal.classList.add("hidden");
+    }
+    </script>
 
 <script>
 document.getElementById('member_id').addEventListener('change', function () {
@@ -1121,6 +1246,65 @@ document.getElementById('netLoanAmount').addEventListener('input', function() {
     }
 });
 </script>
+
+{{-- No Duplicate Customer In Droupown --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            // All related dropdowns
+            const dropdownIds = [
+                "member_id",
+                "co_applicant_1_id",
+                "co_applicant_2_id",
+                "guarantor_1_id",
+                "guarantor_2_id",
+                "guarantor_3_id",
+                "guarantor_4_id"
+            ];
+
+            const dropdowns = dropdownIds
+                .map(id => document.getElementById(id))
+                .filter(el => el !== null);
+
+            function updateDropdownOptions() {
+
+                // Collect all selected values
+                const selectedValues = dropdowns
+                    .map(select => select.value)
+                    .filter(value => value !== "");
+
+                dropdowns.forEach(select => {
+
+                    const currentValue = select.value;
+
+                    Array.from(select.options).forEach(option => {
+
+                        if (option.value === "") return;
+
+                        // If selected in another dropdown → hide
+                        if (
+                            selectedValues.includes(option.value) &&
+                            option.value !== currentValue
+                        ) {
+                            option.style.display = "none";
+                        } else {
+                            option.style.display = "block";
+                        }
+
+                    });
+                });
+            }
+
+            // Attach change event
+            dropdowns.forEach(select => {
+                select.addEventListener("change", updateDropdownOptions);
+            });
+
+            // Run once on page load (for edit mode)
+            updateDropdownOptions();
+
+        });
+    </script>
 
 @endsection
 
