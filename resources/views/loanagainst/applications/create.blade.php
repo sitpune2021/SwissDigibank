@@ -1820,5 +1820,63 @@
         });
     </script>
 
+    {{-- No Duplicate Customer In Droupown --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            // All related dropdowns
+            const dropdownIds = [
+                "member_id",
+                "co_applicant_1_id",
+                "co_applicant_2_id",
+                "guarantor_1_id",
+                "guarantor_2_id",
+                "guarantor_3_id",
+                "guarantor_4_id"
+            ];
+
+            const dropdowns = dropdownIds
+                .map(id => document.getElementById(id))
+                .filter(el => el !== null);
+
+            function updateDropdownOptions() {
+
+                // Collect all selected values
+                const selectedValues = dropdowns
+                    .map(select => select.value)
+                    .filter(value => value !== "");
+
+                dropdowns.forEach(select => {
+
+                    const currentValue = select.value;
+
+                    Array.from(select.options).forEach(option => {
+
+                        if (option.value === "") return;
+
+                        // If selected in another dropdown → hide
+                        if (
+                            selectedValues.includes(option.value) &&
+                            option.value !== currentValue
+                        ) {
+                            option.style.display = "none";
+                        } else {
+                            option.style.display = "block";
+                        }
+
+                    });
+                });
+            }
+
+            // Attach change event
+            dropdowns.forEach(select => {
+                select.addEventListener("change", updateDropdownOptions);
+            });
+
+            // Run once on page load (for edit mode)
+            updateDropdownOptions();
+
+        });
+    </script>
 
 @endsection
