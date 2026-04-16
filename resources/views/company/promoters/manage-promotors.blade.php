@@ -1,24 +1,49 @@
 @extends('layout.main')
 @section('page-title', 'PROMOTERS')
+
 @section('action-button')
 <a class="btn-primary uppercase btns-add-index" href="{{ route('promotor.create') }}">
     ADD
 </a>
 @endsection
 
+<style>
+
+@keyframes fadeRow{
+0%{
+opacity:0;
+transform:translateY(10px);
+}
+100%{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.table-row{
+animation:fadeRow .4s ease forwards;
+}
+
+/* hover animation */
+
+.table-row:hover{
+transform:scale(1.01);
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+transition:all .25s ease;
+}
+
+</style>
+
 @section('content')
+
 <div class="box col-span-12 lg:col-span-6">
+    
     <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
+        
         <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 mb-4">
-            {{-- <label for="perPage" class="text-sm">Show</label>
-            <select name="perPage" id="perPage" onchange="this.form.submit()" class="border rounded px-2 py-1 text-sm">
-                <option value="10" {{ request('perPage')==10 ? 'selected' : '' }}>10</option>
-                <option value="25" {{ request('perPage')==25 ? 'selected' : '' }}>25</option>
-                <option value="50" {{ request('perPage')==50 ? 'selected' : '' }}>50</option>
-                <option value="100" {{ request('perPage')==100 ? 'selected' : '' }}>100</option>
-            </select>
-            <span class="text-sm">entries</span> --}}
+            
         </form>
+
         <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
             <form method="GET" action="{{ route('promotor.index') }}"
                 class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xl:max-w-[319px]">
@@ -39,13 +64,18 @@
             </form>
         </div>
     </div>
+
     <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
         <x-alert />
     </div>
+
     <div class="overflow-x-auto pb-4 lg:pb-6">
+
         <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
-            <thead class="custom-thead">
-                <tr class="bg-secondary/5 dark:bg-bg3">
+
+            <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: lavender;">
+                <tr class="text-gray-700 dark:text-gray-200 text-sm font-semibold uppercase tracking-wider">
+
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
                             CUSTOMER NO
@@ -82,7 +112,8 @@
             </thead>
             <tbody>
                 @foreach ($promotors as $promotor)
-                <tr class="border-b dark:even:bg-bg3">
+               <tr class="table-row dark:even:bg-bg3 border-b hover:bg-gray-50 dark:hover:bg-bg3"
+                    style="animation-delay: {{ $loop->index * 0.05 }}s">
                     <td class="py-5 px-6">
                        <span class="px-2">
                          <a href="{{ $promotor?->id ? route('promotor.show', base64_encode($promotor->id)) : '#' }}"
@@ -146,67 +177,14 @@
                 </tr>
                 @endforeach
             </tbody>
+
         </table>
+        
     </div>
-    @if ($promotors->lastPage() > 1)
-    <div class="flex col-span-12 gap-4 sm:justify-between justify-center items-center flex-wrap">
-        <ul class="flex gap-2 md:gap-3 flex-wrap md:font-semibold items-center">
-
-            {{-- Previous Page Link --}}
-            @if ($promotors->onFirstPage())
-            <li>
-                <button
-                    class="border md:w-10 md:h-10 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 border-gray-300"
-                    disabled>
-                    <i class="las la-angle-left text-lg"></i>
-                </button>
-            </li>
-            @else
-            <li>
-                <a href="{{ $promotors->previousPageUrl() }}"
-                    class="hover:bg-primary text-primary rtl:rotate-180 hover:text-n0 border md:w-10 duration-300 md:h-10 w-8 h-8 flex items-center rounded-full justify-center border-primary">
-                    <i class="las la-angle-left text-lg"></i>
-                </a>
-            </li>
-            @endif
-
-            {{-- Page Number Links --}}
-            @for ($i = 1; $i <= $promotors->lastPage(); $i++)
-                @if ($i == $promotors->currentPage())
-                <li>
-                    <button
-                        class="hover:bg-primary text-n0 bg-primary hover:text-n0 border md:w-10 duration-300 md:h-10 w-8 h-8 flex items-center rounded-full justify-center border-primary">
-                        {{ $i }}
-                    </button>
-                </li>
-                @else
-                <li>
-                    <a href="{{ $promotors->url($i) }}"
-                        class="hover:bg-primary text-primary hover:text-n0 border md:w-10 duration-300 md:h-10 w-8 h-8 flex items-center rounded-full justify-center border-primary">
-                        {{ $i }}
-                    </a>
-                </li>
-                @endif
-                @endfor
-                {{-- Next Page Link --}}
-                @if ($promotors->hasMorePages())
-                <li>
-                    <a href="{{ $promotors->nextPageUrl() }}"
-                        class="hover:bg-primary text-primary hover:text-n0 rtl:rotate-180 border md:w-10 duration-300 md:h-10 w-8 h-8 flex items-center rounded-full justify-center border-primary">
-                        <i class="las la-angle-right text-lg"></i>
-                    </a>
-                </li>
-                @else
-                <li>
-                    <button
-                        class="border md:w-10 md:h-10 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 border-gray-300"
-                        disabled>
-                        <i class="las la-angle-right text-lg"></i>
-                    </button>
-                </li>
-                @endif
-        </ul>
+    
+    <div class="mt-4">
+        <x-pagination :paginator="$promotors"/>
     </div>
-    @endif
+
 </div>
 @endsection

@@ -8,16 +8,48 @@
 @endsection
 
 @section('content')
+
+<style>
+
+@keyframes fadeRow{
+0%{
+opacity:0;
+transform:translateY(10px);
+}
+100%{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.table-row{
+animation:fadeRow .4s ease forwards;
+}
+
+/* hover animation */
+
+.table-row:hover{
+transform:scale(1.01);
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+transition:all .25s ease;
+}
+
+</style>
+
 <div class="col-span-12 box lg:col-span-6">
+
     <x-searchbox />
     <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
         <x-alert />
     </div>
 
     <div class="overflow-x-auto pb-4 lg:pb-6">
+
         <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
-            <thead class="custom-thead">
-                <tr class="bg-secondary/5 dark:bg-bg3">
+
+           <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: lavender;">
+                    <tr class="text-gray-700 dark:text-gray-200 text-sm font-semibold uppercase tracking-wider">
+
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">SR NO</div>
                     </th>
@@ -42,7 +74,9 @@
             {{-- Table body should be rendered here with roles data --}}
             <tbody>
                 @forelse($roles as $key => $role)
-                    <tr class="border-b">
+                    <tr class="table-row dark:even:bg-bg3 border-b hover:bg-gray-50 dark:hover:bg-bg3"
+                        style="animation-delay: {{ $loop->index * 0.05 }}s">
+
                         <td class="px-6 py-4">
                             {{ $key + 1 }}
                         </td>
@@ -85,9 +119,13 @@
                     </tr>
                 @endforelse
             </tbody>
+
         </table>
+
     </div>
+
 </div>
+
 @endsection
 
 @push('script')
