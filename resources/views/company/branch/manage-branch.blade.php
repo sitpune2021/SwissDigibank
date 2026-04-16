@@ -1,10 +1,12 @@
 @extends('layout.main')
 @section('page-title', 'BRANCHES')
+
 @section('action-button')
 <a class="btn-primary uppercase btns-add-index" href="{{ route('branch.create') }}">
     Add
 </a>
 @endsection
+
 <style>
     .sr-only {
         position: absolute;
@@ -61,22 +63,50 @@
     }
 </style>
 
+<style>
+
+@keyframes fadeRow{
+0%{
+opacity:0;
+transform:translateY(10px);
+}
+100%{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.table-row{
+animation:fadeRow .4s ease forwards;
+}
+
+/* hover animation */
+
+.table-row:hover{
+transform:scale(1.01);
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+transition:all .25s ease;
+}
+
+</style>
+
 @section('content')
+
 <div class="col-span-12 box lg:col-span-6">
+
     <x-searchbox />
     @include('fields.errormessage')
+
     <div class="pb-4 overflow-x-auto lg:pb-6">
+
         <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
-            <thead class="custom-thead">
-                <tr class="bg-secondary/5 dark:bg-bg3">
+
+            <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: lavender;">
+                <tr class="text-gray-700 dark:text-gray-200 text-sm font-semibold uppercase tracking-wider">
+
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-start justify-start gap-1">
                             BRANCH NAME
-                        </div>
-                    </th>
-                    <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center justify-center gap-1">
-                            BRANCH CODE
                         </div>
                     </th>
                     <th class="text-start !py-5 min-w-[100px] cursor-pointer">
@@ -107,59 +137,75 @@
                     <th class="text-center justify-center !py-5" data-sortable="false">ACTION</th>
                 </tr>
             </thead>
+
             <tbody>
                 @forelse ($branches as $branch)
-                <tr class=" dark:even:bg-bg3  border-b">
-                    <td class="px-4 py-5 text-start">
-                        <div class="px-4">
-                            <a href="{{ $branch?->id ? route('branch.show', base64_encode($branch->id)) : '#' }}"
-                                class="text-primary hover:underline">
-                                <p class="mb-1 font-medium">{{ $branch?->branch_name ?? '' }}</p>
-                            </a>
+                <tr class="table-row dark:even:bg-bg3 border-b hover:bg-gray-50 dark:hover:bg-bg3"
+                    style="animation-delay: {{ $loop->index * 0.05 }}s">
+
+                    <td class="px-6 py-4 text-left">
+
+                        <div class="flex items-center gap-3">
+
+                        <div class="w-9 h-9 flex items-center justify-center bg-primary/10 rounded-lg">
+                        <i class="las la-building text-primary"></i>
                         </div>
+
+                        <div>
+                        <a href="{{ $branch?->id ? route('branch.show', base64_encode($branch->id)) : '#' }}"
+                        class="font-semibold text-primary hover:underline">
+                        {{ $branch?->branch_name ?? '' }}
+                        </a>
+
+                        <p class="text-xs text-gray-500">
+                        Branch Code: {{ $branch?->branch_code ?? '' }}
+                        </p>
+                        </div>
+
+                        </div>
+
                     </td>
-                    <td class="px-6 py-5 text-start">
-                        {{ $branch?->branch_code ?? '' }}
-                    </td>
+                   
                     <td class="px-6 py-5 text-center">{{ $branch?->city ?? '' }}</td>
+
                     <td class="px-6 py-5 text-center">{{ $branch->State?->name ?? '' }}</td>
+
                     <td class="px-6 py-5 text-center">
+
                         {{ $branch->open_date ? \Carbon\Carbon::parse($branch->open_date)->format('d-m-Y') : '' }}
 
                     </td>
-                    <td class="px-7 py-5 text-center">{{ $branch->Member->count() }}</td>
-                    <td class="px-6 py-5  text-center">
-                        {{-- @if ($branch->active == 'Yes')
-                        <span
-                            class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2  text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
-                            Yes
-                        </span>
-                        @else
-                        <span
-                            class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
-                            {{ $branch->active }}
 
-                        </span>
-                        @endif --}}
+                    <td class="px-6 py-4 text-center">
 
-                        <div class="p-4 overflow-x-auto">
-                            <label class="inline-flex items-center cursor-pointer">
-                                <input type="checkbox"
-                                        class=" sr-only slider-toggle"
-                                        data-id="{{ $branch->id }}"
-                                        {{ $branch->active === 'Yes' ? 'checked' : '' }}>
-                                    {{-- <input type="checkbox"
-                                        class="sr-only slider-toggle"
-                                        data-id="{{ $branch->id }}"
-                                        {{ $branch->active === 'Yes' ? 'checked' : '' }}> --}}
-                                    
-                                    <div class="relative">
-                                        <div class="blocks"></div>
-                                        <div class="dot"></div>
-                                    </div>
-                            </label>
-                        </div>
+                        <span class="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-700 rounded-full">
+                        {{ $branch->Member->count() }}
+                        </span>
+
                     </td>
+
+                    <td class="px-6 py-4 text-center">
+
+                        <div class="flex justify-center">
+
+                        <label class="inline-flex items-center cursor-pointer">
+
+                        <input type="checkbox"
+                        class="sr-only slider-toggle"
+                        data-id="{{ $branch->id }}"
+                        {{ $branch->active === 'Yes' ? 'checked' : '' }}>
+
+                        <div class="relative">
+                        <div class="blocks"></div>
+                        <div class="dot"></div>
+                        </div>
+
+                        </label>
+
+                        </div>
+
+                    </td>
+
                     <td class="px-6 py-2  text-center">
                         <div class="flex justify-center">
                             @include('partials._vertical-options', [
@@ -178,71 +224,17 @@
                 </tr>
                 @endforelse
             </tbody>
+
         </table>
+
     </div>
-    @if ($branches->lastPage() > 1)
-    <div class="flex flex-wrap items-center justify-center col-span-12 gap-4 sm:justify-between">
-        <ul class="flex flex-wrap items-center gap-2 md:gap-3 md:font-semibold">
 
-            {{-- Previous Page Link --}}
-            @if ($branches->onFirstPage())
-            <li>
-                <button
-                    class="flex items-center justify-center w-8 h-8 text-gray-400 border border-gray-300 rounded-full md:w-10 md:h-10"
-                    disabled>
-                    <i class="text-lg las la-angle-left"></i>
-                </button>
-            </li>
-            @else
-            <li>
-                <a href="{{ $branches->previousPageUrl() }}"
-                    class="flex items-center justify-center w-8 h-8 duration-300 border rounded-full hover:bg-primary text-primary rtl:rotate-180 hover:text-n0 md:w-10 md:h-10 border-primary">
-                    <i class="text-lg las la-angle-left"></i>
-                </a>
-            </li>
-            @endif
-
-            {{-- Page Number Links --}}
-            @for ($i = 1; $i <= $branches->lastPage(); $i++)
-                @if ($i == $branches->currentPage())
-                <li>
-                    <button
-                        class="flex items-center justify-center w-8 h-8 duration-300 border rounded-full hover:bg-primary text-n0 bg-primary hover:text-n0 md:w-10 md:h-10 border-primary">
-                        {{ $i }}
-                    </button>
-                </li>
-                @else
-                <li>
-                    <a href="{{ $branches->url($i) }}"
-                        class="flex items-center justify-center w-8 h-8 duration-300 border rounded-full hover:bg-primary text-primary hover:text-n0 md:w-10 md:h-10 border-primary">
-                        {{ $i }}
-                    </a>
-                </li>
-                @endif
-                @endfor
-
-                {{-- Next Page Link --}}
-                @if ($branches->hasMorePages())
-                <li>
-                    <a href="{{ $branches->nextPageUrl() }}"
-                        class="flex items-center justify-center w-8 h-8 duration-300 border rounded-full hover:bg-primary text-primary hover:text-n0 rtl:rotate-180 md:w-10 md:h-10 border-primary">
-                        <i class="text-lg las la-angle-right"></i>
-                    </a>
-                </li>
-                @else
-                <li>
-                    <button
-                        class="flex items-center justify-center w-8 h-8 text-gray-400 border border-gray-300 rounded-full md:w-10 md:h-10"
-                        disabled>
-                        <i class="text-lg las la-angle-right"></i>
-                    </button>
-                </li>
-                @endif
-
-        </ul>
+    <div class="mt-4">
+        <x-pagination :paginator="$branches"/>
     </div>
-    @endif
+
 </div>
+
 
 <script>
 document.addEventListener('change', function(e){
@@ -275,16 +267,4 @@ document.addEventListener('change', function(e){
 });
 </script>
 
-{{-- <script>
-    // Label update on toggle
-            document.querySelectorAll('.slider-toggle').forEach(toggle => {
-                toggle.addEventListener('change', function () {
-                    const label = document.getElementById(this.dataset.labelId);
-                    label.textContent = this.checked ? 'ON' : 'OFF';
-                });
-
-                // Initialize label on page load
-                toggle.dispatchEvent(new Event('change'));
-            });
-</script> --}}
 @endsection

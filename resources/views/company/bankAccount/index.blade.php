@@ -1,5 +1,4 @@
 @extends('layout.main')
-
 @section('page-title', 'Bank Accounts')
 
 @section('action-button')
@@ -8,7 +7,35 @@
     </a>
 @endsection
 
+<style>
+
+@keyframes fadeRow{
+0%{
+opacity:0;
+transform:translateY(10px);
+}
+100%{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.table-row{
+animation:fadeRow .4s ease forwards;
+}
+
+/* hover animation */
+
+.table-row:hover{
+transform:scale(1.01);
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+transition:all .25s ease;
+}
+
+</style>
+
 @section('content')
+
     <div class="box col-span-12 lg:col-span-6">
 
         <x-searchbox />
@@ -18,9 +45,12 @@
         </div>
 
         <div class="overflow-x-auto pb-4 lg:pb-6">
+
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
-                <thead>
-                    <tr class="bg-secondary/5 dark:bg-bg3">
+
+                <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: lavender;">
+                    <tr class="text-gray-700 dark:text-gray-200 text-sm font-semibold uppercase tracking-wider">
+
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex uppercase items-center gap-1">
                                 BANK NAME
@@ -47,7 +77,7 @@
 
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex uppercase px-5 items-center gap-1">
-                                ACTIVE
+                                STATUS
                             </div>
                         </th>
 
@@ -59,22 +89,51 @@
 
                 <tbody>
                     @foreach ($bankAcc as $item)
-                        <tr class="border-b dark:border-bg3">
+                        <tr class="table-row dark:even:bg-bg3 border-b hover:bg-gray-50 dark:hover:bg-bg3"
+                            style="animation-delay: {{ $loop->index * 0.05 }}s">
 
-                            <td class="py-3 px-6">
+                            <td class="py-4 px-6">
+
+                                <div class="flex items-center gap-3">
+
+                                <div class="w-9 h-9 flex items-center justify-center bg-primary/10 rounded-lg">
+                                <i class="las la-university text-primary"></i>
+                                </div>
+
+                                <div>
+                                <p class="font-semibold">
                                 {{ $item->bank->name ?? 'N/A' }}
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                Bank Account
+                                </p>
+                                </div>
+
+                                </div>
+
                             </td>
 
-                            <td class="py-3 px-6 text-start">
-                               <span class="px-2">
-                                 {{ $item->bank->name ?? '' }}
-                               </span>
+                            <td class="py-4 px-6">
+
+                                <div class="flex items-center gap-2 text-gray-700">
+
+                                <!-- <i class="las la-book text-primary"></i> -->
+
+                                <span class="font-medium">
+                                {{ $item->bank->name ?? '' }}
+                                </span>
+
+                                </div>
+
                             </td>
 
-                            <td class="py-3 px-6 text-start">
+                            <td class="py-4 px-6">
+
+                                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">
                                 {{ $item->account_no }}
-                            </td>
+                                </span>
 
+                            </td>
 
                             <td class="py-3  text-start">
                                <span class="px-6">
@@ -82,21 +141,23 @@
                                </span>
                             </td>
 
-                            <td class="py-3 px-6 text-center">
+                            <td class="py-4 px-6 text-center">
+
                                 @if ($item->account_active)
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3">
-                                        Yes
-                                    </span>
+
+                                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                                Active
+                                </span>
+
                                 @else
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3">
-                                        No
-                                    </span>
+
+                                <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">
+                                Inactive
+                                </span>
+
                                 @endif
+
                             </td>
-
-
 
                             <td class="py-2 px-6">
                                 <div class="flex justify-center">
@@ -115,7 +176,9 @@
             </table>
         </div>
 
-        <x-pagination :paginator="$bankAcc" />
+        <div class="mt-4">
+            <x-pagination :paginator="$bankAcc"/>
+        </div>
 
     </div>
 @endsection
