@@ -106,11 +106,11 @@
                                     </span>
                                 </div><br>
                                                              
-                                <div class="mt-1 flex gap-6">
+                                <div class="mt-1 flex gap-6" style="padding-left: 125px;">
                                     <button type="submit"
                                         class="w-full bg-blue-600 hover:bg-blue-700 
                                             text-white py-3 rounded-xl 
-                                            font-medium transition duration-200 shadow-md">
+                                            font-medium transition duration-200 shadow-md" style="background-color: cadetblue; width: 370px;">
                                         Login 
                                     </button>
                                 </div>
