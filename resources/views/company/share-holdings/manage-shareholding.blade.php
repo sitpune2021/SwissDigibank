@@ -74,7 +74,7 @@ transition:all .25s ease;
 
         <table class="w-full whitespace-nowrap overflow-x-auto  select-all-table " id="transactionTable1">
             
-            <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: lavender;">
+            <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: bisque;">
                 <tr class="text-gray-700 dark:text-gray-200 text-sm font-semibold uppercase tracking-wider">
 
                     <th class="text-start py-4 px-6 min-w-[160px] cursor-pointer">
@@ -115,18 +115,35 @@ transition:all .25s ease;
                 @forelse($share_holdings as $index => $share)
                 <tr class="table-row dark:even:bg-bg3 border-b hover:bg-gray-50 dark:hover:bg-bg3"
                     style="animation-delay: {{ $loop->index * 0.05 }}s">
-                    <td class="px-5 py-4">
-                        <a href="{{ $share?->promotor?->id ? route('promotor.show', base64_encode($share->promotor->id)) : '#' }}" class="text-primary hover:underline">
-                          000{{ $share->promotor->id ?? 'N/A' }}-{{ $share->promotor->first_name ?? 'N/A' }} {{ $share->promotor->middle_name ?? 'N/A' }} {{ $share->promotor->last_name ?? 'N/A' }}
-                        </a>
+                    
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-3">
+
+                            <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full">
+                                <i class="las la-user text-blue-600"></i>
+                            </div>
+
+                            <div>
+                                <a href="{{ $share?->promotor?->id ? route('promotor.show', base64_encode($share->promotor->id)) : '#' }}"
+                                class="font-semibold text-green-600 hover:text-green-700 transition">
+
+                                    {{ $share->promotor->first_name }} {{ $share->promotor->last_name }}
+                                </a>
+
+                                <p class="text-xs text-gray-400">
+                                    CUSTOMER NO: 000{{ $share->promotor->id }}
+                                </p>
+                            </div>
+
+                        </div>
                     </td>
-                    <td class="px-6 py-4">{{ $share->first_share }}</td>
-                    <td class="px-4 py-4">{{ $share->share_no }}</td>
-                    <td class="px-4 py-4">{{ $share->total_share_held ?? '-' }}</td>
-                    <td class="px-4 py-4">{{ $share->nominal_value ?? '-' }}</td>
-                    <td class="px-4 py-4">{{ $share->total_share_value ?? '-' }}</td>
+                    <td class="px-4 py-3 text-center font-medium text-gray-700">{{ $share->first_share }}</td>
+                    <td class="px-4 py-3 text-center font-medium text-gray-700">{{ $share->share_no }}</td>
+                    <td class="px-4 py-3 text-center font-medium text-gray-700">{{ $share->total_share_held ?? '-' }}</td>
+                    <td class="px-4 py-3 text-center font-medium text-gray-700">{{ $share->nominal_value ?? '-' }}</td>
+                    <td class="px-4 py-3 text-center font-medium text-gray-700">{{ $share->total_share_value ?? '-' }}</td>
                     <!-- <td class="px-6 py-4">{{ \Carbon\Carbon::parse($share->allotment_date)->format('d-m-Y') }}</td> -->
-                    <td class="py-2 px-6">
+                    <td class="px-4 py-3 text-center font-medium text-gray-700">
                         <div class="flex justify-center">
                             @include('partials._vertical-options', [
                             'id' => base64_encode($share->id),
@@ -135,6 +152,7 @@ transition:all .25s ease;
                             ])
                         </div>
                     </td>
+                    
                 </tr>
                 @empty
                 <tr>

@@ -48,7 +48,7 @@ transition:all .25s ease;
 
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
 
-                <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: lavender;">
+                <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: bisque;">
                     <tr class="text-gray-700 dark:text-gray-200 text-sm font-semibold uppercase tracking-wider">
 
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">

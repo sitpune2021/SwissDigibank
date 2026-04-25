@@ -94,14 +94,17 @@ transition:all .25s ease;
 
 <div class="col-span-12 box lg:col-span-6">
 
-    <x-searchbox />
+    <div class="mb-2">
+        <x-searchbox />
+    </div>
+
     @include('fields.errormessage')
 
-    <div class="pb-4 overflow-x-auto lg:pb-6">
+    <div class="mt-2 overflow-x-auto">
 
         <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
 
-            <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: lavender;">
+            <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: bisque;">
                 <tr class="text-gray-700 dark:text-gray-200 text-sm font-semibold uppercase tracking-wider">
 
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -121,7 +124,7 @@ transition:all .25s ease;
                     </th>
                     <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                         <div class="flex items-center justify-center gap-1">
-                            OPENING DATE
+                            OPENED ON
                         </div>
                     </th>
                     <th class="text-start !py-5 min-w-[100px] cursor-pointer">
@@ -131,10 +134,10 @@ transition:all .25s ease;
                     </th>
                     <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                         <div class="   flex items-center justify-center gap-1">
-                            IS ACTIVE
+                            Status
                         </div>
                     </th>
-                    <th class="text-center justify-center !py-5" data-sortable="false">ACTION</th>
+                    <th class="text-center justify-center !py-5" data-sortable="false">Actions</th>
                 </tr>
             </thead>
 
@@ -206,7 +209,7 @@ transition:all .25s ease;
 
                     </td>
 
-                    <td class="px-6 py-2  text-center">
+                    <td class="px-6 py-2  text-left">
                         <div class="flex justify-center">
                             @include('partials._vertical-options', [
                             'id' => base64_encode($branch->id),
@@ -237,34 +240,35 @@ transition:all .25s ease;
 
 
 <script>
-document.addEventListener('change', function(e){
+    document.addEventListener('change', function(e)
+    {
 
-    if(!e.target.classList.contains('slider-toggle')) return;
+        if(!e.target.classList.contains('slider-toggle')) return;
 
-    let checkbox = e.target;
-    let id = checkbox.dataset.id;
+        let checkbox = e.target;
+        let id = checkbox.dataset.id;
 
-    fetch("{{ route('branch.toggle.status') }}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({ id:id })
-    })
-    .then(res => res.json())
-    .then(res => {
-        if(!res.success){
+        fetch("{{ route('branch.toggle.status') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ id:id })
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(!res.success){
+                checkbox.checked = !checkbox.checked;
+                alert("Update failed");
+            }
+        })
+        .catch(err => {
             checkbox.checked = !checkbox.checked;
-            alert("Update failed");
-        }
-    })
-    .catch(err => {
-        checkbox.checked = !checkbox.checked;
-        alert("Server error");
-    });
+            alert("Server error");
+        });
 
-});
+    });
 </script>
 
 @endsection

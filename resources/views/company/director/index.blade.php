@@ -47,19 +47,19 @@ transition:all .25s ease;
 
         <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
 
-            <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: lavender;">
+            <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: bisque;">
                 <tr class="text-gray-700 dark:text-gray-200 text-sm font-semibold uppercase tracking-wider">
 
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            DESIGNATION
+                            CUSTOMER NAME
                         </div>
                     </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
-                            CUSTOMER
+                            DESIGNATION
                         </div>
-                    </th>
+                    </th>                   
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
                             NAME
@@ -95,18 +95,29 @@ transition:all .25s ease;
                 @forelse ($directors as $index => $director)
                 <tr class="table-row dark:even:bg-bg3 border-b hover:bg-gray-50 dark:hover:bg-bg3"
                     style="animation-delay: {{ $loop->index * 0.05 }}s">
-                    <td class="px-6 py-4">{{ $director->designation ?? 'N/A' }}</td>
+                    
                     <!-- {{-- <td class="px-6 py-4">{{ $director->member?->member_info_first_name ?? 'N/A' }}</td> --}} -->
-                    <td class="py-3 px-6">
+                    <td class="px-4 py-3">
                         @if ($director->member)
-                        <a href="{{ $director?->member?->id ? route('member.show', $director->member->id) : '#' }}"
-                            class="text-primary px-3 hover:underline">
-                            {{ $director->member?->member_info_first_name ??''}} {{ $director->member?->member_info_middle_name ??''}} {{ $director->member?->member_info_last_name ??''}}
-                        </a>
+                        <div class="flex items-center gap-2">
+
+                            <div class="w-9 h-9 flex items-center justify-center bg-blue-100 rounded-full">
+                                <i class="las la-user text-blue-600"></i>
+                            </div>
+
+                            <div>
+                                <a href="{{ route('member.show', $director->member->id) }}"
+                                class="text-green-600 font-medium hover:underline">
+                                    {{ $director->member->member_info_first_name }} {{ $director->member->member_info_last_name }}
+                                </a>
+                            </div>
+
+                        </div>
                         @else
                         N/A
                         @endif
                     </td>
+                    <td class="px-6 py-4">{{ $director->designation ?? 'N/A' }}</td>
                     <td class="px-6 py-4">
                         <a href="{{ $director?->id ? route('director.show', base64_encode($director->id)) : '#' }}" class="text-primary  hover:underline">
                             {{ $director?->director_name ?? '' }}
