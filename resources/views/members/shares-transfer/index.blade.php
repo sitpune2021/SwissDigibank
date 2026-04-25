@@ -18,7 +18,7 @@
         </div>
         <div class="overflow-x-auto pb-4 lg:pb-6">
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
-                <thead>
+                <thead style="background-color: bisque;">
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">BRANCH</div>
@@ -59,12 +59,65 @@
                 <tbody>
                     @foreach ($shareholdings as $shareholding)
                         <tr class="border-b">
-                            <td class="px-6 py-5">{{ $shareholding->members->branch->branch_name ?? '-' }}</td>
-                            <td class="px-6 py-5">{{ $shareholding->promotor->first_name ?? '-' }}</td>
-                            <td class="px-6 py-5">
-                                {{ optional($shareholding->members)->member_no ??
-                                    (optional($shareholding->members)->id ? str_pad($shareholding->members->id, 6, '0', STR_PAD_LEFT) : '-') }}-
-                                {{ optional($shareholding->members)->member_info_first_name ?? '-' }}
+                            <!-- BRANCH -->
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+
+                                    <div class="w-8 h-8 flex items-center justify-center 
+                                                bg-blue-100 rounded-lg">
+                                        <i class="las la-building text-blue-600 text-sm"></i>
+                                    </div>
+
+                                    <span class="text-gray-700 font-medium">
+                                        {{ $shareholding->members->branch->branch_name ?? '-' }}
+                                    </span>
+
+                                </div>
+                            </td>
+
+                            <!-- PROMOTOR -->
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+
+                                    <div class="w-8 h-8 flex items-center justify-center 
+                                                bg-purple-100 rounded-full">
+                                        <i class="las la-user-tie text-purple-600 text-sm"></i>
+                                    </div>
+
+                                    <span class="font-semibold text-purple-700">
+                                        {{ $shareholding->promotor->first_name ?? '-' }}
+                                    </span>
+
+                                </div>
+                            </td>
+
+                            <!-- CUSTOMER (ICON + ID + NAME) -->
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+
+                                    <div class="w-9 h-9 flex items-center justify-center 
+                                                bg-green-100 rounded-full">
+                                        <i class="las la-user text-green-600"></i>
+                                    </div>
+
+                                    <div class="leading-tight">
+
+                                        <!-- NAME -->
+                                        <p class="font-semibold text-green-700">
+                                            {{ optional($shareholding->members)->member_info_first_name ?? '-' }}
+                                        </p>
+
+                                        <!-- ID -->
+                                        <p class="text-xs text-gray-400">
+                                            Customer No : {{ optional($shareholding->members)->member_no ??
+                                            (optional($shareholding->members)->id 
+                                            ? str_pad($shareholding->members->id, 6, '0', STR_PAD_LEFT) 
+                                            : '-') }}
+                                        </p>
+
+                                    </div>
+
+                                </div>
                             </td>
 
                             <td class="px-6 py-5">

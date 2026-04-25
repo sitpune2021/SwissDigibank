@@ -22,16 +22,11 @@
             
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 
-                <thead>
+                <thead style="background-color: bisque;">
                     <tr class="bg-secondary/5 dark:bg-bg3">
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 GROUP
-                            </div>
-                        </th>
-                        <th class="text-start text-center !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 text-center">
-                                CUSTOMER NO
                             </div>
                         </th>
                         <th class="text-start text-center !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -41,14 +36,9 @@
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                NAME
+                                CUSTOMER NAME
                             </div>
                         </th>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                F/H NAME
-                            </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
@@ -93,48 +83,49 @@
                     @foreach ($members as $index => $item)
                         <tr class="border-b dark:border-bg3">
                             
-                            <td class="py-3 px-6">{{ $item->general_group }}</td>
+                            <td class="py-3 px-6">{{ $item->general_group }}</td>                                                 
+                            
+                            <td class="px-3 py-3">
+                                <div class="flex items-center gap-2">
 
-                            <!-- <td class="py-3 px-6 text-center">
+                                    <!-- Branch Icon -->
+                                    <div class="w-8 h-8 flex items-center justify-center 
+                                                bg-blue-100 rounded-lg">
+                                        <i class="las la-building text-blue-600 text-sm"></i>
+                                    </div>
 
-                                @if($item->user && $item->user->otp_verified == 1)
-
-                                    <a href="{{ route('member.show',$item->id) }}"
-                                    class="text-primary hover:underline">
-                                    {{ $item->member_no ?? 'N/A' }}
-                                    </a>
-
-                                    @else
-
-                                    <span class="text-gray-400 cursor-not-allowed"
-                                    title="Please verify OTP first">
-                                    {{ $item->member_no ?? 'N/A' }}
+                                    <!-- Branch Name -->
+                                    <span class="text-gray-700 font-medium">
+                                        {{ $item->branch->branch_name ?? '-' }}
                                     </span>
 
-                                @endif
-
-                            </td> -->
-
-                            <td class="py-3 px-6 text-center">
-                                
-                                <a href="{{ route('member.show',$item->id) }}"
-                                class="text-primary hover:underline">
-                                {{ $item->member_no ?? 'N/A' }}
-                                </a>
-                            </td>
-                            
-                            <td class="py-3 px-6">{{ $item->branch->branch_name ?? '' }}</td>
-
-                            <td class="py-3 px-6">
-                                {{ $item->member_info_first_name }}
-                                {{ $item->member_info_last_name }}
+                                </div>
                             </td>
 
-                            <td class="py-3 px-6">
-                              <div class="px-2">
-                                  {{ $item->member_info_father_name ?? ($item->member_info_spouse_name ?? 'N/A') }}
-                              </div>
-                            </td>
+                            <td class="px-3 py-3">
+                                <div class="flex items-center gap-2">
+
+                                    <!-- Customer Icon -->
+                                    <div class="w-9 h-9 flex items-center justify-center 
+                                                bg-green-100 rounded-full">
+                                        <i class="las la-user text-blue-600"></i>
+                                    </div>
+
+                                    <!-- Name + Number -->
+                                    <div>
+                                         <a href="{{ route('member.show',$item->id) }}">
+                                            <p class="text-primary hover:underline font-semibold text-green-700 leading-tight">
+                                                {{ $item->member_info_first_name }} {{ $item->member_info_last_name }}
+                                            </p>
+
+                                            <p class="text-xs text-gray-400">
+                                                Customer No : {{ $item->member_no }}
+                                            </p>
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </td>                         
 
                             <td class="py-3 px-6">
                                 @php
@@ -244,7 +235,9 @@
                         </tr>
                     @endforeach
                 </tbody>
+
             </table>
+
         </div>
         
 

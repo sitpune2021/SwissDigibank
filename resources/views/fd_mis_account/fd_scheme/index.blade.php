@@ -14,13 +14,8 @@
     <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
         <div class="overflow-x-auto pb-4 lg:pb-6">
             <table class="w-full whitespace-nowrap overflow-x-auto  select-all-table" id="transactionTable1">
-                <thead>
-                    <tr class="bg-secondary/5 dark:bg-bg3">
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                CODE
-                            </div>
-                        </th>
+                <thead style="background-color: bisque;">
+                    <tr class="bg-secondary/5 dark:bg-bg3">                     
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 SCHEME NAME
@@ -28,7 +23,7 @@
                         </th>
                         <th class="text-start !py-5 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                MIN.<br>FD AMT
+                                MIN. FD AMT
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
@@ -39,32 +34,22 @@
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                INTEREST<br>PAYOUT
+                                INTEREST PAYOUT
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                EFFECTIVE<br>DATE
+                                EFFECTIVE DATE
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                A. INTEREST<br>RATE (%)
+                                A. INTEREST RATE (%)
                             </div>
-                        </th>
+                        </th>                   
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
-                                IS<br>CHART<br>TYPE
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                SWEEP IN
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                ACTIVE
+                                STATUS
                             </div>
                         </th>
                         <th class="text-center !py-5 px-6 min-w-[100px]" data-sortable="false">
@@ -77,12 +62,34 @@
                 <tbody>
                     @foreach($fdSchemes as $fdScheme)
                     <tr class="border-b">
-                        <td class="py-5 px-6">
-                            <a href="{{ $fdScheme?->id ? route('fd-mis-schemes.show', $fdScheme->id) : '#' }}" class="text-primary underline hover:text-primary/80">
-                                {{ $fdScheme->scheme_code?? 'N/A' }}
+
+                        <td class="px-4 py-3">
+                            <a href="{{ $fdScheme?->id ? route('fd-mis-schemes.show', $fdScheme->id) : '#' }}"
+                            class="flex items-center gap-3 group">
+
+                                <!-- Icon -->
+                                <div class="w-9 h-9 flex items-center justify-center bg-blue-100 rounded-full">
+                                    <i class="las la-layer-group text-blue-600 text-sm"></i>
+                                </div>
+
+                                <!-- Scheme Info -->
+                                <div class="leading-tight">
+                                            
+                                    <!-- Scheme Name -->
+                                    <p class="font-semibold text-primary group-hover:text-blue-600 transition">
+                                        {{ $fdScheme->scheme_name ?? 'N/A' }}
+                                    </p>
+
+                                    <!-- Scheme Code -->
+                                    <p class="text-xs text-gray-400">
+                                        Scheme Code : {{ $fdScheme->scheme_code ?? 'N/A' }}
+                                    </p>
+
+                                </div>
+
                             </a>
                         </td>
-                        <td class="py-5 px-6">{{ $fdScheme->scheme_name?? 'N/A' }}</td>
+
                         <td class="py-5 px-6">{{ $fdScheme->min_amount?? 'N/A' }}</td>
 
                         <td class="py-5 px-6">
@@ -110,9 +117,11 @@
                             <span class="text-gray-400">N/A</span>
                             @endforelse
                         </td>
+
                         <td class="py-5 px-6">{{ $fdScheme->effective_date 
                              ? \Carbon\Carbon::parse($fdScheme->effective_date)->format('d-m-Y') 
-                            : 'N/A' }}</td>
+                            : 'N/A' }}
+                        </td>
 
                         <td class="py-5 px-6">
                             @forelse($fdScheme->fdslabs as $slab)
@@ -121,17 +130,7 @@
                             <span class="text-gray-400">N/A</span>
                             @endforelse
                         </td>
-                        <td class="py-5 px-6">
-                            @if($fdScheme->is_active == 1)
-                            <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 
-                             py-2 text-center text-xs text-primary dark:border-n500 
-                             dark:bg-bg3 xxl:w-16">Yes</span>
-                            @else
-                            <span class="block w-28 rounded-[30px] border border-n30 bg-warning/10 
-                             py-2 text-center text-xs text-warning dark:border-n500 
-                             dark:bg-bg3 xxl:w-16">No</span>
-                            @endif
-                        </td>
+                        
                         <td class="py-5 px-6">
                             @if($fdScheme->is_active == 1)
                             <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">Yes</span>
@@ -139,23 +138,17 @@
                             <span class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">No</span>
                             @endif
                         </td>
-                        <td class="py-5 px-6">
-                            @if($fdScheme->is_active == 1)
-                            <span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">Yes</span>
-                            @else
-                            <span class="block w-28 rounded-[30px] border border-n30 bg-warning/10 py-2 text-center text-xs text-warning dark:border-n500 dark:bg-bg3 xxl:w-16">No</span>
-                            @endif
-                        </td>
+
                         <td class="py-2 px-6">
                             <div class="flex justify-center">
                                 @include('partials._vertical-options', [
                                 'id' => $fdScheme->id,
                                 'viewRoute' => 'fd-mis-schemes.show',
                                 'editRoute' => 'fd-mis-schemes.edit',
-
                                 ])
                             </div>
                         </td>
+
                     </tr>
                     @endforeach
                 </tbody>

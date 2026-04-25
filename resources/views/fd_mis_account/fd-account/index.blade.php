@@ -15,37 +15,17 @@
     <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
         <div class="overflow-x-auto  whitespace-nowrap  pb-4 lg:pb-6">
             <table class="w-full whitespace-nowrap overflow-x-auto select-all-table" id="transactionTable1">
-                <thead>
+                
+                <thead style="background-color: bisque;">
                     <tr class="bg-secondary/5 dark:bg-bg3">
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 uppercase">
-                                Associate
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 uppercase">
-                                Group
-                            </div>
-                        </th>
                         <th class="text-start px-6 !py-5 min-w-[100px] cursor-pointer">
                             <div class=" uppercase">
                                 Fd. No
                             </div>
                         </th>
-                        <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                            <div class="flex items-center gap-1 uppercase">
-                                Customer No
-                            </div>
-                        </th>
-                        </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 uppercase">
                                 Customer Name
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 uppercase">
-                                Minor
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -60,56 +40,69 @@
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 uppercase">
-                                Principal<br>Amt
+                                Principal Amount
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 uppercase">
-                                Open<br>Date
+                                Open Date
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 uppercase">
-                                Int.<br>Payout
+                                Int. Payout
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 uppercase">
-                                Maturity<br>Date
+                                Maturity Date
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1 uppercase">
                                 Status
                             </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 uppercase">
-                                Active
-                            </div>
-                        </th>
+                        </th>                      
                         <th class="text-center !py-5 uppercase" data-sortable="false">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-
                     @foreach($accounts as $account)
                     <tr class="border-b">
-                        <td class="px-6 py-3">{{ $account->member->associate ?? '-' }}</td>
-                        <td class="px-6 py-3">{{ $account->member->group ?? '-' }}</td>
+                       
                         <td class="px-6 py-3">
                             <a href="{{route('fd-mis-schemes.fd_show',$account->id)}}" style="color:green;">{{ $account->fd_no }}</a>
                         </td>
-                        <td class="px-6 py-3">
-                            <a href="#" style="color:green;">
-                                {{ $account->member->member_no 
-            ?? ($account->member->id ? str_pad($account->member->id, 6, '0', STR_PAD_LEFT) : '-') }}
+                        <td class="px-4 py-3">
+                            <a href="#" class="flex items-center gap-3 group">
+
+                                <!-- Icon -->
+                                <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full">
+                                    <i class="las la-user text-blue-600 text-sm"></i>
+                                </div>
+
+                                <!-- Text Content -->
+                                <div class="flex flex-col leading-tight">
+
+                                    <!-- Name (Top) -->
+                                    <span class="font-semibold text-primary group-hover:text-green-600 transition">
+                                        {{ $account->member->member_info_first_name ?? '-' }}
+                                    </span>
+
+                                    <!-- Member No (Bottom) -->
+                                    <span class="text-xs text-gray-400">
+                                        Customer No : {{ $account->member->member_no 
+                                            ?? ($account->member->id 
+                                                ? str_pad($account->member->id, 6, '0', STR_PAD_LEFT) 
+                                                : '-') }}
+                                    </span>
+
+                                </div>
+
                             </a>
                         </td>
-                        <td class="px-6 py-3">{{ $account->member->member_info_first_name ?? '-' }}</td>
-                        <td class="px-6 py-3">{{ $account->minor_id ? 'Yes' : 'No' }}</td>
                         <td class="px-6 py-3">{{ $account->branch->branch_name ?? '-' }}</td>
-                        <td class="px-6 py-3">{{ $account->account_type??'-' }}</td>
+                        <td class="px-6 py-3">{{ $account->fdscheme->scheme_name }}</td>
                         <td class="px-6 py-3">{{ number_format($account->fd_amount, 2) }}</td>
                         <td class="px-6 py-3">{{ \Carbon\Carbon::parse($account->open_date)->format('d-m-Y') ?? '-' }}</td>
                         <td class="px-6 py-3">{{ $account->interest_payout_type??'-' }}</td>
@@ -134,9 +127,6 @@
                                 Fore Closed
                             </span>
                             @endif
-                        </td>
-                        <td class="px-6 py-3">
-                            <span class="text-green-600">Active</span>
                         </td>
                         <td class="py-2 px-6">
                             <div class="flex justify-center">

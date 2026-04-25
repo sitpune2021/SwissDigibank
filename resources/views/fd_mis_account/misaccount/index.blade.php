@@ -16,39 +16,17 @@
         </div>
         <div class="pb-4 overflow-x-auto lg:pb-6">
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
-                <thead>
+                <thead style="background-color: bisque;">
                     <tr class="bg-secondary/5 dark:bg-bg3">
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                ASSOCIATE
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                GROUP
-                            </div>
-                        </th>
+
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 MIS NO
                             </div>
                         </th>
-
-
-                        <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                CUSTOMER NO
-                            </div>
-                        </th>
-
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                             <div class="flex items-center gap-1">
                                 CUSTOMER NAME
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                MINOR
                             </div>
                         </th>
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -96,23 +74,43 @@
                 <tbody>
                     @foreach ($misaccounts as $mis)
                     <tr class="border-b dark:border-bg3">
-                        <td class="text-start !py-5 px-6 min-w-[100px]">-</td>
-                        <td class="text-start !py-5 px-6 min-w-[100px]">-</td>
+                       
                         <td class="text-start !py-5 px-6 min-w-[100px]">
                             <a href="{{ $mis?->id ? route('misaccount.show', $mis->id) : '#' }}" class="text-primary underline hover:text-primary/80">
                                 {{ $mis->mis_account_no }}
                             </a>
                         </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px]">
-                            <a href="{{ $mis?->member_id ? route('member.show', $mis->member_id) : '#' }}" class="text-primary underline hover:text-primary/80">
-                                {{ $mis->member->member_no 
-    ?? ($mis->member_id ? str_pad($mis->member_id, 6, '0', STR_PAD_LEFT) : '-') }}
+                        <td class="px-4 py-3">
+                            <a href="{{ $mis?->member_id ? route('member.show', $mis->member_id) : '#' }}"
+                            class="flex items-center gap-3 group">
+
+                                <!-- Icon -->
+                                <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full">
+                                    <i class="las la-user text-blue-600 text-sm"></i>
+                                </div>
+
+                                <!-- Text -->
+                                <div class="flex flex-col leading-tight">
+
+                                    <!-- Name -->
+                                    <span class="font-semibold text-primary group-hover:text-green-600 transition">
+                                        {{ $mis->member->full_name ?? '-' }}
+                                    </span>
+
+                                    <!-- Member No -->
+                                    <span class="text-xs text-gray-400">
+                                        Customer No : {{ $mis->member->member_no 
+                                            ?? ($mis->member_id 
+                                                ? str_pad($mis->member_id, 6, '0', STR_PAD_LEFT) 
+                                                : '-') }}
+                                    </span>
+
+                                </div>
+
                             </a>
-                        </td>
-                        <td class="text-start !py-5 px-6 min-w-[100px]">{{ $mis->member->full_name  ?? '-' }}</td>
-                        <td class="text-start !py-5 px-6 min-w-[100px]">{{ $mis->minor->first_name ?? '-' }}</td>
-                        <td class="text-start !py-5 px-6 min-w-[100px]">{{ $mis->branches->branch_id ?? '-' }}</td>
-                        <td class="text-start !py-5 px-6 min-w-[100px]">-</td>
+                        </td>                      
+                        <td class="px-6 py-3">{{ $mis->branch->branch_name ?? '-' }}</td>
+                        <td class="px-6 py-3">{{ $mis->fdscheme->scheme_name }}</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ number_format($mis->mis_amount, 2) }}</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ \Carbon\Carbon::parse($mis->open_date)->format('d-m-Y') }}</td>
                         <td class="text-start !py-5 px-6 min-w-[100px]">{{ strtoupper($mis->interest_payout_type) }}</td>
