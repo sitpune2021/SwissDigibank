@@ -73,14 +73,9 @@ transition:all .25s ease;
 
         <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
 
-            <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: lavender;">
+            <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: bisque;">
                 <tr class="text-gray-700 dark:text-gray-200 text-sm font-semibold uppercase tracking-wider">
 
-                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">
-                            CUSTOMER NO
-                        </div>
-                    </th>
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">
                             NAME
@@ -114,22 +109,33 @@ transition:all .25s ease;
                 @foreach ($promotors as $promotor)
                <tr class="table-row dark:even:bg-bg3 border-b hover:bg-gray-50 dark:hover:bg-bg3"
                     style="animation-delay: {{ $loop->index * 0.05 }}s">
-                    <td class="py-5 px-6">
-                       <span class="px-2">
-                         <a href="{{ $promotor?->id ? route('promotor.show', base64_encode($promotor->id)) : '#' }}"
-                            class="text-primary hover:underline">
-                            {{ $promotor->folio_no ?? '' }}
-                        </a>
-                       </span>
-                    </td>
-                    <td class="py-5 px-6">
-                        <div class="px-1">
-                            <p class="font-medium mb-1">{{ trim(implode(' ', array_filter([
-                                $promotor->first_name,
-                                $promotor->middle_name,
-                                $promotor->last_name
-                                ]))) }}
-                            </p>
+                    
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-3">
+
+                            <!-- Icon (Blue) -->
+                            <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full">
+                                <i class="las la-user text-blue-600"></i>
+                            </div>
+
+                            <!-- Name + Link -->
+                            <div>
+                                <a href="{{ $promotor?->id ? route('promotor.show', base64_encode($promotor->id)) : '#' }}"
+                                class="block">
+
+                                    <!-- Name (Green) -->
+                                    <p class="font-semibold text-green-600 hover:text-green-700 transition">
+                                        {{ trim(implode(' ', array_filter([$promotor->first_name,$promotor->middle_name,$promotor->last_name]))) }}
+                                    </p>
+
+                                    <!-- Customer No -->
+                                    <p class="text-xs text-gray-400">
+                                        CUSTOMER NO: {{ $promotor->folio_no }}
+                                    </p>
+
+                                </a>
+                            </div>
+
                         </div>
                     </td>
                     <td class="text-start !py-5 min-w-[130px] cursor-pointer">

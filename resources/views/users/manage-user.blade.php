@@ -52,7 +52,7 @@
 
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
 
-                <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: lavender;">
+                <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: bisque;">
                     <tr class="text-gray-700 dark:text-gray-200 text-sm font-semibold uppercase tracking-wider">
 
                         <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -89,7 +89,19 @@
                     <tr class="table-row dark:even:bg-bg3 border-b hover:bg-gray-50 dark:hover:bg-bg3"
                         style="animation-delay: {{ $loop->index * 0.05 }}s">
 
-                        <td class="px-6 py-4=">{{ $user->fname . ' ' . $user->lname ?? 'N/A' }}</td>
+                        <td class="px-3 py-2">
+                            <div class="flex items-center gap-2">
+
+                                <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full">
+                                    <i class="las la-user text-blue-600 text-sm"></i>
+                                </div>
+
+                                <span class="font-medium text-green-800">
+                                    {{ $user->fname }} {{ $user->lname }}
+                                </span>
+
+                            </div>
+                        </td>
                         <td class="px-6 py-4  ">{{ $user->email }}</td>
                         <td class="px-6 py-4">{{ $user->mobile ?? 'N/A' }}</td>
                         {{-- <td class="px-6 py-4">{{ $user->user_active ?? 'N/A' }}</td> --}}
@@ -128,6 +140,7 @@
                 </tbody>
 
             </table>
+
         </div>
 
         <div class="mt-3">

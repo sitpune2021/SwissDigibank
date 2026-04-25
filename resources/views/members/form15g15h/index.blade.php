@@ -14,11 +14,11 @@
                 
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
 
-                    <thead >
+                    <thead style="background-color: bisque;">
                         <tr class="bg-secondary/5">
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-center gap-1">
-                                    CUSTOMER
+                                    CUSTOMER NAME
                                 </div>
                             </th>
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
@@ -61,7 +61,9 @@
                             </tr>
                         @endforeach
                     </tbody>
+
                 </table>
+                
             </div>
             <x-pagination :paginator="$form15g15hs" />
         </div>

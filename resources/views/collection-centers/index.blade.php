@@ -19,7 +19,7 @@
 
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
 
-                    <thead>
+                    <thead style="background-color: bisque;">
                         <tr class="bg-secondary/5 dark:bg-bg3">
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-start gap-1">
@@ -68,7 +68,29 @@
                     <tbody>
                         @foreach($collectionCenters as $center)
                             <tr class="border-b">
-                                <td class="text-center !py-5 px-6">{{ $center->branch->branch_name ?? '-' }}</td>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-3">
+
+                                        <!-- Icon -->
+                                        <div class="w-9 h-9 flex items-center justify-center 
+                                                    bg-gradient-to-r from-blue-100 to-blue-200 
+                                                    rounded-lg shadow-sm">
+                                            <i class="las la-building text-blue-600"></i>
+                                        </div>
+
+                                        <!-- Branch Info -->
+                                        <div>
+                                            <p class="font-semibold text-gray-800 hover:text-blue-600 transition">
+                                                {{ $center->branch->branch_name ?? '-' }}
+                                            </p>
+
+                                            <p class="text-xs text-gray-400">
+                                                Branch No: {{ $center->branch->id ?? 'N/A' }}
+                                            </p>
+                                        </div>
+
+                                    </div>
+                                </td>
                                 <td class="text-center !py-5 px-6">{{ $center->center_no }}</td>
                                 <td class="text-center !py-5 px-6">{{ $center->center_name }}</td>
                                 <td class="text-center !py-5 px-6">
@@ -112,8 +134,6 @@
                     </tbody>
 
                 </table>
-
-
 
             </div>
         </div>
