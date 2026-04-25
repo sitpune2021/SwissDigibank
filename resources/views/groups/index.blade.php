@@ -1,5 +1,6 @@
 @extends('layout.main')
 @section('content')
+
     <div class="main-inner">
 
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
@@ -8,6 +9,7 @@
             </h3>
             <a href="{{ route('groups.create') }}" class="btn-primary">Add</a>
         </div>
+
         @if(session('success'))
             <div class="">
                 <div class="w-44 mb-5 flex justify-end">
@@ -16,12 +18,13 @@
                 {{-- {{ session('success') }} --}}
             </div>
         @endif
+
         <div class="col-span-12 box lg:col-span-12">
             <div class="pb-4 overflow-x-auto lg:pb-6">
 
                 <table class="w-full whitespace-nowrap select-all-table" id="">
 
-                    <thead>
+                    <thead style="background-color: bisque;">
                         <tr class="bg-secondary/5 dark:bg-bg3">
                             <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                                 <div class="flex items-start gap-1">
@@ -141,10 +144,7 @@
                         @endforelse
                     </tbody>
 
-
                 </table>
-
-
 
             </div>
         </div>

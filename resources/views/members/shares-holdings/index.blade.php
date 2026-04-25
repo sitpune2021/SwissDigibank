@@ -10,6 +10,7 @@
             ADD
         </a>
     </div>
+
     <!-- Latest Transactions -->
     <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
         <form method="GET" action="{{ route('shares-holdings.index') }}"
@@ -30,9 +31,10 @@
             @endif
         </form>
     </div>
+
     <div class="w-full overflow-x-auto whitespace-nowrap pb-4 lg:pb-6">
         <table class="w-full whitespace-nowrap overflow-x-auto select-all-table" id="transactionTable1">
-            <thead>
+            <thead style="background-color: bisque;">
                 <tr class="bg-secondary/5 dark:bg-bg3">
                     <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
                         <div class="flex items-center gap-1">BRANCH</div>

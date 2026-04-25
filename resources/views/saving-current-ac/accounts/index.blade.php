@@ -16,7 +16,7 @@
             </div>
             <div class="overflow-x-auto pb-4 lg:pb-6">
                 <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
-                    <thead class="custom-thead">
+                    <thead class="custom-thead" style="background-color: bisque;">
                         <tr class="bg-secondary/5 dark:bg-bg3">
                             @php
                                 $headers = [
@@ -75,24 +75,38 @@
                                 </td>
 
                                 {{-- Member Name --}}
-                                <td class="text-start py-5 px-6">
+                                <td class="px-4 py-3">
                                     @if ($Account->members)
-                                        <a href="{{ $Account?->members?->id ? route('member.show', $Account->members->id) : '#' }}"
-                                            class="text-primary hover:underline">
-                                            {{ $Account->members->id
-                                                ? str_pad($Account->members->id, 6, '0', STR_PAD_LEFT) .
-                                                    ' - ' .
-                                                    ($Account->members->member_info_first_name || $Account->members->member_info_last_name
-                                                        ? ucfirst($Account->members->member_info_first_name) .
-                                                            ' ' .
-                                                            ucfirst($Account->members->member_info_last_name)
-                                                        : '-')
-                                                : 'NA' }}
+                                        <a href="{{ route('member.show', $Account->members->id) }}"
+                                        class="flex items-center gap-3 group">
+
+                                            <!-- Icon -->
+                                            <div class="w-9 h-9 flex items-center justify-center bg-blue-100 rounded-full">
+                                                <i class="las la-user text-blue-600 text-sm"></i>
+                                            </div>
+
+                                            <!-- Member Info -->
+                                            <div class="leading-tight">
+                                                        
+                                                <!-- Member Name -->
+                                                <p class="font-semibold text-primary group-hover:text-green-600 transition">
+                                                    {{ ucfirst($Account->members->member_info_first_name ?? '') }}
+                                                    {{ ucfirst($Account->members->member_info_last_name ?? '') }}
+                                                </p>
+
+                                                <!-- Member ID -->
+                                                <p class="text-xs text-gray-400">
+                                                    Customer No : {{ str_pad($Account->members->id, 6, '0', STR_PAD_LEFT) }}
+                                                </p>
+
+                                            </div>
+
                                         </a>
                                     @else
-                                        -
+                                        <span class="text-gray-400">N/A</span>
                                     @endif
                                 </td>
+
                                 {{-- joint_account --}}
                                 <td class="text-start py-5 px-6">
 
@@ -100,8 +114,6 @@
                                         ? '<span class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">Yes</span>'
                                         : '<span class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">No</span>' !!}
                                 </td>
-
-
 
                                 {{-- show Balance --}}
                                 <td class="text-start py-5 px-6">
@@ -111,7 +123,6 @@
                                     </button>
                                     <div class="mt-2 balance-output" id="balance-{{ $Account->id }}"></div>
                                 </td>
-
 
                                 {{-- Balance --}}
                                 {{-- Action --}}
