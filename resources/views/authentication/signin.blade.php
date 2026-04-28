@@ -36,7 +36,7 @@
                     class="logo-full2 lg:block p-6 lg:p-8 relative z-[2]" width="300" style="top: 10px;" />
             </a>
             
-            <div class="relative z-10 flex justify-center items-center min-h-screen" style="top: -120px; left: 30px;">
+            <div class="relative z-10 flex justify-center items-center min-h-screen" style="top: -120px;">
                 
                 <div class="w-full max-w-3xl px-4">
                     @if (session('session_expired'))
