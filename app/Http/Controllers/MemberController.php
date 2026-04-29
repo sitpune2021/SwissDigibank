@@ -632,7 +632,7 @@ class MemberController extends Controller
             } catch (\Exception $e) {
                 Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
             }
-            return redirect()->route('member.create')
+            return redirect()->route('member.index')
                 ->with('otp_success', true)
                 ->with('mobile', $member->member_info_mobile_no)
                 ->with('userId', $user->muf_user_id)

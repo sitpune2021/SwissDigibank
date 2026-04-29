@@ -52,7 +52,7 @@ class RolePermissionSeeder extends Seeder
 
         // Create Super Admin User
         $user = User::firstOrCreate(
-            ['email' => 'admin@gmail.com'],
+            ['email' => 'shekharmudmesitsolution@gmail.com'],
             [
                 'name' => 'Super Admin',
                 'fname' => 'Shekhar',

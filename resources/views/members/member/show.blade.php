@@ -929,7 +929,7 @@
                     </div>
 
                 </div>
-                <div class="mt-4 box p-4 rounded-10 shadow bg-white">
+                <!-- <div class="mt-4 box p-4 rounded-10 shadow bg-white">
 
                     <h3 class="text-lg font-semibold mb-4 uppercase text-center">
                         KYC Verification
@@ -1043,7 +1043,7 @@
 
                     </div>
 
-                </div>
+                </div> -->
                 <!-- Settings Section -->
                 <div class="mt-4 overflow-hidden box border rounded shadow">
 

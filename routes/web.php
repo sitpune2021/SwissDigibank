@@ -104,6 +104,8 @@ Route::view('/privacy-policy', 'privacy-policy')
 Route::middleware(['guest', SessionProtection::class])->group(function () {
     Route::get('/', [AuthenticationController::class, 'signIn'])->name('sign.in');
     Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
+    Route::post('/verify-login-otp', [AuthenticationController::class, 'verifyLoginOtp']);
+    Route::post('/resend-otp', [AuthenticationController::class, 'resendOtp']);
     Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
 });
 
