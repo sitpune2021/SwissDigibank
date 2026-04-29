@@ -208,7 +208,7 @@
                                 </span>
                             </td>
 
-                            <td class="py-2 px-6">
+                            <!-- <td class="py-2 px-6">
                                 <div class="flex justify-center">
 
                                     @if($item->user && $item->user->otp_verified != 1)
@@ -228,6 +228,18 @@
                                         ])
 
                                     @endif
+
+                                </div>
+                            </td> -->
+
+                             <td class="py-2 px-6">
+                                <div class="flex justify-center">
+                                   
+                                        @include('partials._vertical-options', [
+                                        'id' => $item->id,
+                                        'viewRoute' => 'member.show',
+                                        'editRoute' => 'member.edit',
+                                        ])
 
                                 </div>
                             </td>

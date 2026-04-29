@@ -1025,6 +1025,7 @@
 
         });
     </script>
+
     @if (session('success') && str_contains(session('success'), 'OTP Sent'))
         <script>
             document.addEventListener("DOMContentLoaded", function() {
@@ -1038,6 +1039,8 @@
         </script>
     @endif
 
+
+    <!-- otp pop pup show after create member on create page -->
     @if (session('otp_success'))
         <script>
             document.addEventListener("DOMContentLoaded", function() {
@@ -1048,6 +1051,8 @@
             });
         </script>
     @endif
+
+    <!-- verify member otp -->
     <script>
         function verifyOtp() {
 
