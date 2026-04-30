@@ -18,8 +18,15 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
 
         $middleware->append(RedirectIfAuthenticated::class);
-        $middleware->append(SessionProtection::class);
+        
 
+         // 🔥 CSRF EXCLUDE (MAIN FIX)
+        $middleware->validateCsrfTokens(except: [
+            'biometric/register-options',
+            'biometric/register',
+            'biometric/login-options',
+            'biometric/login',
+        ]);
 
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
