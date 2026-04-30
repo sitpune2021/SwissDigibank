@@ -73,8 +73,8 @@ class AuthenticationController extends Controller
 ]);
     }
 
-   public function verifyLoginOtp(Request $request)
-{
+    public function verifyLoginOtp(Request $request)
+    {
     $request->validate([
         'user_id' => 'required',
         'otp' => 'required|digits:4'
@@ -108,7 +108,8 @@ class AuthenticationController extends Controller
 
         return response()->json([
             'status' => true,
-            'user_id' => $user->id, // 🔥 IMPORTANT (frontend ke liye)
+            'user_id' => $user->id, // 🔥 IMPORTANT (frontend)
+            'has_biometric' => !empty($user->webauthn_id),
             'redirect' => route('index1')
         ]);
     }
@@ -117,7 +118,7 @@ class AuthenticationController extends Controller
         'status' => false,
         'message' => 'Invalid OTP'
     ]);
-}
+    }
 
     public function resendOtp(Request $request)
     {
@@ -255,6 +256,7 @@ class AuthenticationController extends Controller
     public function biometricLoginOptions(Request $request)
     {
         $user = User::whereNotNull('webauthn_id')->first();
+        //$user = User::find($request->user_id);
 
         if (!$user) {
             return response()->json(['error' => 'No biometric registered']);

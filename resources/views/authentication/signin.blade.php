@@ -329,11 +329,13 @@
             if (data.status) 
             {
 
-                if (confirm("Enable Fingerprint Login?")) {
-                    let success = await registerBiometric();
+                if (!data.has_biometric) {
+                    if (confirm("Enable Secure Biometric Login?")) {
+                        let success = await registerBiometric();
 
-                    if (!success) {
-                        alert("Biometric setup failed, continue login");
+                        if (!success) {
+                            alert("Biometric setup failed, continue login");
+                        }
                     }
                 }
 
