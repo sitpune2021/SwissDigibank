@@ -265,13 +265,31 @@ class AuthenticationController extends Controller
         $challenge = base64_encode(random_bytes(32));
         session(['challenge' => $challenge]);
 
+        // return response()->json([
+        //     'challenge' => $challenge,
+        //     'timeout' => 60000,
+        //     'userVerification' => 'required',
+        //     'allowCredentials' => [
+        //         [
+        //             'id' => $user->webauthn_id, // 🔥 IMPORTANT
+        //             'type' => 'public-key'
+        //         ]
+        //     ]
+        // ]);
         return response()->json([
             'challenge' => $challenge,
             'timeout' => 60000,
             'userVerification' => 'required',
+
+            // 🔥 ADD THIS BLOCK
+            'authenticatorSelection' => [
+                'authenticatorAttachment' => 'platform', // 👈 IMPORTANT
+                'userVerification' => 'required'
+            ],
+
             'allowCredentials' => [
                 [
-                    'id' => $user->webauthn_id, // 🔥 IMPORTANT
+                    'id' => $user->webauthn_id,
                     'type' => 'public-key'
                 ]
             ]
