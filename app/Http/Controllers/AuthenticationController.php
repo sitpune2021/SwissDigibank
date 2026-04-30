@@ -73,60 +73,51 @@ class AuthenticationController extends Controller
 ]);
     }
 
-    public function verifyLoginOtp(Request $request)
-    {
-    try {
+   public function verifyLoginOtp(Request $request)
+{
+    $request->validate([
+        'user_id' => 'required',
+        'otp' => 'required|digits:4'
+    ]);
 
-        $request->validate([
-            'user_id' => 'required',
-            'otp' => 'required|digits:4'
-        ]);
+    $user = User::find($request->user_id);
 
-        $user = User::find($request->user_id);
+    if (!$user) {
+        return response()->json(['status' => false, 'message' => 'User not found']);
+    }
 
-        if (!$user) {
-            return response()->json(['status' => false, 'message' => 'User not found']);
-        }
-
-        if (!$user->otp_expires_at || now()->gt($user->otp_expires_at)) {
-
-            // 🔥 OTP invalidate
-            $user->otp = null;
-            $user->save();
-
-            return response()->json([
-                'status' => false,
-                'message' => 'OTP expired'
-            ]);
-        }
-
-        if ($user->otp == $request->otp) {
-
-            $user->otp_verified = 1;
-            $user->otp = null; // 🔥 reuse na ho
-            $user->save();
-
-            Auth::login($user);
-
-            return response()->json([
-                'status' => true,
-                'redirect' => route('index1')
-            ]);
-        }
+    if (!$user->otp_expires_at || now()->gt($user->otp_expires_at)) {
+        $user->otp = null;
+        $user->save();
 
         return response()->json([
             'status' => false,
-            'message' => 'Invalid OTP'
+            'message' => 'OTP expired'
         ]);
+    }
 
-    } catch (\Exception $e) {
+    if ($user->otp == $request->otp) {
+
+        $user->otp_verified = 1;
+        $user->otp = null;
+        $user->save();
+
+        // ✅ LOGIN
+        Auth::login($user);
+        $request->session()->regenerate();
 
         return response()->json([
-            'status' => false,
-            'message' => $e->getMessage() // 🔥 REAL ERROR
+            'status' => true,
+            'user_id' => $user->id, // 🔥 IMPORTANT (frontend ke liye)
+            'redirect' => route('index1')
         ]);
     }
-    }
+
+    return response()->json([
+        'status' => false,
+        'message' => 'Invalid OTP'
+    ]);
+}
 
     public function resendOtp(Request $request)
     {
@@ -189,54 +180,6 @@ class AuthenticationController extends Controller
         // return redirect()->route('/')->with('success', 'Registration successful!');
     }
 
-    // public function login(Request $request)
-    // {
-    //     try {
-    //         $request->validate([
-    //             'login' => 'required',
-    //             'password' => 'required',
-    //         ]);
-
-    //         $loginInput = trim($request->login);
-    //         $password = $request->password;
-
-    //         $field = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
-    //         if ($field === 'mobile') {
-    //             $loginInput = preg_replace('/\D/', '', $loginInput); // keep only digits
-    //             if (str_starts_with($loginInput, '91') && strlen($loginInput) > 10) {
-    //                 $loginInput = substr($loginInput, -10);
-    //             }
-    //         }
-
-    //         $user = User::where($field, $loginInput)->first();
-    //         if (!$user) {
-    //             return back()->with('error', ucfirst($field) . ' not found')->withInput();
-    //         }
-
-    //         if (!Hash::check($password, $user->password)) {
-    //             return back()->with('error', 'Incorrect password')->withInput();
-    //         }
-
-    //         Auth::login($user);
-    //         $request->session()->regenerate();
-    //         // Save login log
-    //         LoginLog::create([
-    //             'user_id' => $user->id,
-    //             'ip_address' => $request->ip(),
-    //             'user_agent' => $request->userAgent(),
-    //             'login_at' => now(),
-    //         ]);
-
-    //         return redirect()->intended('dashboard')->with('success', 'Login successful');
-    //     } catch (\Illuminate\Validation\ValidationException $e) {
-    //         return back()->withErrors($e->errors())->withInput();
-    //     } catch (\Exception $e) {
-    //         return back()->with('error', 'Something went wrong: ' . $e->getMessage());
-    //     }
-    // }
-
-     
-
     public function logout(Request $request)
     {
         try {
@@ -247,6 +190,106 @@ class AuthenticationController extends Controller
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404);
         }
+    }
+
+    public function biometricRegisterOptions(Request $request)
+    {
+    if (!$request->user_id) {
+        return response()->json(['error' => 'User ID missing'], 400);
+    }
+
+    $user = User::find($request->user_id);
+
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404);
+    }
+
+    $challenge = base64_encode(random_bytes(32));
+    session(['challenge' => $challenge]);
+
+    return response()->json([
+        'challenge' => $challenge,
+        'rp' => ['name' => 'Swiss Payment'],
+        'user' => [
+            'id' => base64_encode((string)$user->id),
+            'name' => $user->email,
+            'displayName' => $user->name
+        ],
+        'pubKeyCredParams' => [
+            ['type' => 'public-key', 'alg' => -7]
+        ],
+        'timeout' => 60000
+    ]);
+    }
+
+    public function biometricRegister(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required',
+            'rawId' => 'required',
+            'attestationObject' => 'required',
+            'clientDataJSON' => 'required',
+        ]);
+
+        $user = User::find($request->user_id);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        $user->webauthn_id = $request->rawId;
+
+        $user->webauthn_public_key = json_encode([
+            'attestationObject' => $request->attestationObject,
+            'clientDataJSON' => $request->clientDataJSON
+        ]);
+
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Biometric saved'
+        ]);
+    }
+
+    public function biometricLoginOptions(Request $request)
+    {
+        $user = User::whereNotNull('webauthn_id')->first();
+
+        if (!$user) {
+            return response()->json(['error' => 'No biometric registered']);
+        }
+
+        $challenge = base64_encode(random_bytes(32));
+        session(['challenge' => $challenge]);
+
+        return response()->json([
+            'challenge' => $challenge,
+            'timeout' => 60000,
+            'userVerification' => 'required',
+            'allowCredentials' => [
+                [
+                    'id' => $user->webauthn_id, // 🔥 IMPORTANT
+                    'type' => 'public-key'
+                ]
+            ]
+        ]);
+    }
+
+    public function biometricLogin(Request $request)
+    {
+        $user = User::where('webauthn_id', $request->id)->first();
+
+        if (!$user) {
+            return response()->json(['status' => false]);
+        }
+
+        Auth::login($user);
+
+        return response()->json([
+            'status' => true,
+            'redirect' => route('index1')
+        ]);
     }
 
     public function resetPassword(Request $request)
