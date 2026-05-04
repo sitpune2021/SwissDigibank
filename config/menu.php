@@ -3,14 +3,14 @@
 return [
     [
         'title' => 'DASHBOARD',
-        'icon' => 'las la-home',
+        'icon' => 'las la-tachometer-alt',
         'route' => 'index1',
         'position' => '0',
         'active' => '1'
     ],
     [
         'title' => 'COMPANY',
-        'icon' => 'las la-piggy-bank',
+        'icon' => 'las la-building',
         'position' => '2',
         'active' => '1',
         'submenu' => [
@@ -26,7 +26,7 @@ return [
     ],
     [
         'title' => 'USER',
-        'icon' => 'las la-user',
+        'icon' => 'las la-users-cog',
         'position' => '3',
         'active' => '1',
         'submenu' => [
@@ -36,7 +36,7 @@ return [
     ],
     [
         'title' => 'COLL.CENTER/GROUPS',
-        'icon' => 'las la-university',
+        'icon' => 'las la-layer-group',
         'position' => '3',
         'active' => '1',
         'submenu' => [
@@ -47,7 +47,7 @@ return [
     ],
     [
         'title' => 'CUSTOMER',
-        'icon' => 'las la-piggy-bank',
+        'icon' => 'las la-user-friends',
         'position' => '4',
         'active' => '1',
         'submenu' => [
@@ -61,7 +61,7 @@ return [
     ],
     [
         'title' => 'SAVING/CURRENT',
-        'icon' => 'las la-university',
+        'icon' => 'las la-wallet',
         'position' => '5',
         'active' => '1',
         'submenu' => [
@@ -71,7 +71,7 @@ return [
     ],
     [
         'title' => 'FD/MIS',
-        'icon' => 'las la-university',
+        'icon' => 'las la-piggy-bank',
         'position' => '7',
         'active' => '1',
         'submenu' => [
