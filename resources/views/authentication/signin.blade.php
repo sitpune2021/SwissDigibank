@@ -387,7 +387,6 @@
         <script>
         function loginUser() 
         {
-
             let login = document.querySelector('input[name="login"]').value;
             let password = document.querySelector('input[name="password"]').value;
 
@@ -405,23 +404,33 @@
             .then(res => res.json())
             .then(data => {
 
-                if (data.status) {
+                // ✅ VALIDATION ERROR
+                if (data.type === 'validation') {
+                    let messages = '';
 
-                    // 🔥 USER ID STORE
-                    window.userId = data.user_id;
+                    for (let field in data.errors) {
+                        messages += data.errors[field][0] + '\n';
+                    }
 
-                    // 🔥 SHOW POPUP
-                    document.getElementById('otpModal').style.display = 'flex';
-
-                    // ✅ CLEAR INPUT
-                    document.querySelectorAll(".otp-box-input").forEach(i => i.value = "");
-                    document.getElementById("otp1").focus();
-
-                    startTimer(data.expires_in);
-
-                } else {
-                    alert(data.message || 'Login failed');
+                    alert(messages); // 🔥 popup
+                    return;
                 }
+
+                // ❌ NORMAL ERROR
+                if (!data.status) {
+                    alert(data.message);
+                    return;
+                }
+
+                // ✅ SUCCESS
+                window.userId = data.user_id;
+
+                document.getElementById('otpModal').style.display = 'flex';
+
+                document.querySelectorAll(".otp-box-input").forEach(i => i.value = "");
+                document.getElementById("otp1").focus();
+
+                startTimer(data.expires_in);
 
             });
         }
@@ -489,23 +498,41 @@
         </script>
 
         <script>
-            async function biometricLogin() 
-            {
+            async function biometricLogin() {
                 try {
 
+                    // ❌ Browser support check
                     if (!window.PublicKeyCredential) {
-                        alert("Biometric not supported in this browser");
+                        alert("Biometric / Passkey not supported in this browser");
                         return;
                     }
 
+                    let login = document.querySelector('input[name="login"]').value;
+
+                    if (!login) {
+                        alert("Please enter Email or Mobile first");
+                        return;
+                    }
+
+                    // ✅ STEP 1: Get options from server
                     let res = await fetch("/biometric/login-options", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                credentials: "same-origin" // 🔥 ADD THIS
-            });
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        credentials: "same-origin",
+                        body: JSON.stringify({ login: login })
+                    });
+
+                    // 🔥 IMPORTANT: handle non-JSON response
+                    if (!res.ok) {
+                        let text = await res.text();
+                        console.error("SERVER ERROR:", text);
+                        alert("Server error (check console)");
+                        return;
+                    }
+
                     let options = await res.json();
 
                     if (options.error) {
@@ -513,9 +540,10 @@
                         return;
                     }
 
+                    // ✅ STEP 2: decode challenge
                     options.challenge = Uint8Array.from(atob(options.challenge), c => c.charCodeAt(0));
 
-                    // 🔥 IMPORTANT
+                    // ✅ STEP 3: decode allowCredentials
                     if (options.allowCredentials) {
                         options.allowCredentials = options.allowCredentials.map(cred => ({
                             ...cred,
@@ -523,24 +551,42 @@
                         }));
                     }
 
+                    // ✅ STEP 4: get credential from device
                     let credential = await navigator.credentials.get({
                         publicKey: options
                     });
 
-                    let rawId = btoa(
-                String.fromCharCode(...new Uint8Array(credential.rawId))
-            );
+                    // ❌ user cancelled
+                    if (!credential) {
+                        alert("Authentication cancelled");
+                        return;
+                    }
 
-            let response = await fetch("/biometric/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({
-                    id: rawId
-                })
-            });
+                    // ✅ STEP 5: encode rawId
+                    let rawId = btoa(
+                        String.fromCharCode(...new Uint8Array(credential.rawId))
+                    );
+
+                    // ✅ STEP 6: send to server
+                    let response = await fetch("/biometric/login", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        credentials: "same-origin",
+                        body: JSON.stringify({
+                            id: rawId
+                        })
+                    });
+
+                    // 🔥 again safe parsing
+                    if (!response.ok) {
+                        let text = await response.text();
+                        console.error("LOGIN ERROR:", text);
+                        alert("Login failed (server error)");
+                        return;
+                    }
 
                     let data = await response.json();
 
@@ -551,7 +597,7 @@
                     }
 
                 } catch (err) {
-                    console.error(err);
+                    console.error("FULL ERROR:", err);
                     alert("Biometric failed or not supported");
                 }
             }
