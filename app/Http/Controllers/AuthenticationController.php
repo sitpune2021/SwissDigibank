@@ -10,7 +10,7 @@ use Illuminate\Validation\Rules\Password;
 use App\Models\LoginLog;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-
+use App\Models\WebauthnCredential;
 
 class AuthenticationController extends Controller
 {
@@ -277,78 +277,88 @@ class AuthenticationController extends Controller
 
     public function biometricRegister(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required',
-            'rawId' => 'required',
-            'attestationObject' => 'required',
-            'clientDataJSON' => 'required',
-        ]);
+    $request->validate([
+        'user_id' => 'required',
+        'rawId' => 'required',
+        'attestationObject' => 'required',
+        'clientDataJSON' => 'required',
+    ]);
 
-        $user = User::find($request->user_id);
+    $user = User::find($request->user_id);
 
-        if (!$user) {
-            return response()->json(['error' => 'User not found'], 404);
-        }
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404);
+    }
 
-        $user->webauthn_id = $request->rawId;
-
-        $user->webauthn_public_key = json_encode([
+    WebauthnCredential::create([
+        'user_id' => $user->id,
+        'credential_id' => $request->rawId,
+        'public_key' => json_encode([
             'attestationObject' => $request->attestationObject,
             'clientDataJSON' => $request->clientDataJSON
-        ]);
+        ])
+    ]);
 
-        $user->save();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Biometric saved'
-        ]);
+    return response()->json([
+        'status' => true,
+        'message' => 'Biometric saved'
+    ]);
     }
 
     public function biometricLoginOptions(Request $request)
     {
-        $user = User::whereNotNull('webauthn_id')->first();
-        //$user = User::find($request->user_id);
+    $request->validate([
+        'login' => 'required'
+    ]);
 
-        if (!$user) {
-            return response()->json(['error' => 'No biometric registered']);
-        }
+    $user = User::where('email', $request->login)
+        ->orWhere('mobile', $request->login)
+        ->first();
 
-        $challenge = base64_encode(random_bytes(32));
-        session(['challenge' => $challenge]);
+    if (!$user) {
+        return response()->json(['error' => 'User not found']);
+    }
 
-        // return response()->json([
-        //     'challenge' => $challenge,
-        //     'timeout' => 60000,
-        //     'userVerification' => 'required',
-        //     'allowCredentials' => [
-        //         [
-        //             'id' => $user->webauthn_id, // 🔥 IMPORTANT
-        //             'type' => 'public-key'
-        //         ]
-        //     ]
-        // ]);
-        return response()->json([
-            'challenge' => $challenge,
-            'timeout' => 60000,
-            'userVerification' => 'required'
-        ]);
+    $credentials = WebauthnCredential::where('user_id', $user->id)->get();
+
+    if ($credentials->isEmpty()) {
+        return response()->json(['error' => 'No passkey registered']);
+    }
+
+    $challenge = base64_encode(random_bytes(32));
+    session(['challenge' => $challenge]);
+
+    return response()->json([
+        'challenge' => $challenge,
+        'timeout' => 60000,
+        'userVerification' => 'required',
+
+        // 🔥 MULTIPLE PASSKEY SUPPORT
+        'allowCredentials' => $credentials->map(function ($cred) {
+            return [
+                'id' => $cred->credential_id,
+                'type' => 'public-key'
+            ];
+        })->values()
+    ]);
     }
 
     public function biometricLogin(Request $request)
     {
-        $user = User::where('webauthn_id', $request->id)->first();
+    $credential = WebauthnCredential::where('credential_id', $request->id)->first();
 
-        if (!$user) {
-            return response()->json(['status' => false]);
-        }
+    if (!$credential) {
+        return response()->json(['status' => false]);
+    }
 
-        Auth::login($user);
+    $user = User::find($credential->user_id);
 
-        return response()->json([
-            'status' => true,
-            'redirect' => route('index1')
-        ]);
+    Auth::login($user);
+
+    return response()->json([
+        'status' => true,
+        'redirect' => route('index1')
+    ]);
     }
 
     public function resetPassword(Request $request)
