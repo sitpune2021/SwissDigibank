@@ -77,6 +77,13 @@
 
         <div class="relative min-h-screen w-full overflow-hidden">
 
+            <!-- SUCCESS -->
+            @if(session('success'))
+                <div class="alert alert-success text-center py-2">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <!-- BACKGROUND -->
             <div class="absolute inset-0"
                 style="
@@ -198,6 +205,8 @@
                         <div style="background:white; padding:20px; border-radius:10px; width:300px;">
                             <h4>Enter OTP</h4>
 
+                            <div id="otpMessage" style="color:red; font-size:14px; margin-bottom:10px;"></div>
+
                             <div id="otpBoxes" style="display:flex; gap:10px; justify-content:center; margin-bottom:10px;">
     
                                 <input type="text" maxlength="1" class="otp-box-input" id="otp1">
@@ -231,45 +240,66 @@
             <!-- 🔥 FORGOT PASSWORD MODAL -->
             <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content rounded-3xl border-0 shadow-lg">
+                    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
-                        <div class="modal-header border-0">
-                            <h5 class="modal-title">Reset Password</h5>
+                        <!-- HEADER -->
+                        <div class="modal-header border-0 bg-light">
+                            <h5 class="modal-title fw-semibold">
+                                🔐 Reset Password
+                            </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
 
-                        <form action="{{ route('reset.password') }}" method="POST">
-                            @csrf
+                        <!-- BODY -->
+                        <div class="modal-body px-4 py-3">
 
-                            <div class="modal-body">
+                            <!-- SUCCESS MESSAGE -->
+                            @if(session('success'))
+                                <div class="alert alert-success text-center py-2">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
 
-                                <!-- EMAIL -->
+                            <!-- ERROR MESSAGE -->
+                            @if(session('error'))
+                                <div class="alert alert-danger text-center py-2">
+                                    {{ session('error') }}
+                                </div>
+                            @endif
+
+                            <!-- VALIDATION ERROR -->
+                            @if($errors->any())
+                                <div class="alert alert-danger py-2">
+                                    @foreach($errors->all() as $error)
+                                        <div>{{ $error }}</div>
+                                    @endforeach
+                                </div>
+                            @endif
+
+                            <p class="text-muted text-center mb-3" style="font-size:14px;">
+                                Enter your registered email to receive password reset link
+                            </p>
+
+                            <form action="/forgot-password" method="POST">
+                                @csrf
+
+                                <!-- EMAIL INPUT -->
                                 <div class="mb-3">
-                                    <input type="text" name="login"
-                                        class="w-full px-3 py-2 rounded-lg border outline-none"
-                                        placeholder="Enter your email" required>
+                                    <input type="email" name="email"
+                                        class="form-control rounded-pill px-3 py-2"
+                                        placeholder="Enter your email"
+                                        required>
                                 </div>
 
-                                <!-- NEW PASSWORD -->
-                                <div class="mb-3">
-                                    <input type="password" name="password"
-                                        class="w-full px-3 py-2 rounded-lg border outline-none"
-                                        placeholder="New Password" required>
-                                </div>
-
-                            </div>
-
-                            <div class="modal-footer border-0">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                    Cancel
+                                <!-- BUTTON -->
+                                <button type="submit"
+                                    class="btn w-100 rounded-pill text-white fw-semibold"
+                                    style="background: linear-gradient(90deg, #06b6d4, #3b82f6);">
+                                    Send Reset Link
                                 </button>
+                            </form>
 
-                                <button type="submit" class="btn btn-primary">
-                                    Reset
-                                </button>
-                            </div>
-
-                        </form>
+                        </div>
 
                     </div>
                 </div>
@@ -328,19 +358,23 @@
 
             if (data.status) 
             {
+                document.getElementById("otpMessage").innerText = "";
 
-                if (confirm("Enable Fingerprint Login?")) {
-                    let success = await registerBiometric();
+                if (data.has_biometric === false && !localStorage.getItem("biometric_asked")) {
 
-                    if (!success) {
-                        alert("Biometric setup failed, continue login");
-                    }
+                    localStorage.setItem("biometric_asked", "yes");
+
+                    setTimeout(async () => {
+                        if (confirm("Enable Secure Biometric Login?")) {
+                            await registerBiometric();
+                        }
+                    }, 500);
                 }
 
                 // 🔥 AFTER biometric
                 window.location.href = data.redirect;
             } else {
-                alert(data.message);
+                document.getElementById("otpMessage").innerText = data.message;
             }
         }
         </script>
@@ -375,7 +409,7 @@
                         // 🔥 INPUT CLEAR
                         document.querySelectorAll(".otp-box-input").forEach(i => i.value = "");
 
-                        alert("OTP expired, please resend");
+                        document.getElementById("otpMessage").innerText = "OTP expired, please resend";
                     }
 
                 }, 1000);
@@ -385,7 +419,6 @@
         <script>
         function loginUser() 
         {
-
             let login = document.querySelector('input[name="login"]').value;
             let password = document.querySelector('input[name="password"]').value;
 
@@ -393,6 +426,7 @@
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Accept": "application/json",
                     "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 },
                 body: JSON.stringify({
@@ -403,25 +437,34 @@
             .then(res => res.json())
             .then(data => {
 
-                if (data.status) {
+                // ✅ VALIDATION ERROR (backend se aa raha hai)
+                if (data.errors) {
+                    let messages = '';
 
-                    // 🔥 USER ID STORE
-                    window.userId = data.user_id;
+                    for (let field in data.errors) {
+                        messages += data.errors[field][0] + '\n';
+                    }
 
-                    // 🔥 SHOW POPUP
-                    document.getElementById('otpModal').style.display = 'flex';
-
-                    // ✅ CLEAR INPUT
-                    document.querySelectorAll(".otp-box-input").forEach(i => i.value = "");
-                    document.getElementById("otp1").focus();
-
-                    startTimer(data.expires_in);
-
-                } else {
-                    alert(data.message || 'Login failed');
+                    alert(messages); // 🔥 show validation
+                    return;
                 }
 
-            });
+                // ❌ LOGIN ERROR (invalid credentials)
+                if (!data.status) {
+                    alert(data.message); // 🔥 IMPORTANT
+                    return;
+                }
+
+                // ✅ SUCCESS
+                window.userId = data.user_id;
+
+                document.getElementById('otpModal').style.display = 'flex';
+
+                document.querySelectorAll(".otp-box-input").forEach(i => i.value = "");
+                document.getElementById("otp1").focus();
+
+                startTimer(data.expires_in);
+            })
         }
         </script>
 
@@ -443,7 +486,7 @@
 
                     if (data.status) {
 
-                        alert("OTP Resent Successfully");
+                        document.getElementById("otpMessage").innerText = "OTP Resent Successfully";
 
                         // ✅ STEP 1: PURANA OTP CLEAR
                         document.querySelectorAll(".otp-box-input").forEach(i => i.value = "");
@@ -455,7 +498,7 @@
                         startTimer(data.expires_in);
 
                     } else {
-                        alert(data.message);
+                        document.getElementById("otpMessage").innerText = data.message;
                     }
 
                 });
@@ -487,23 +530,41 @@
         </script>
 
         <script>
-            async function biometricLogin() 
-            {
+            async function biometricLogin() {
                 try {
 
+                    // ❌ Browser support check
                     if (!window.PublicKeyCredential) {
-                        alert("Biometric not supported in this browser");
+                        alert("Biometric / Passkey not supported in this browser");
                         return;
                     }
 
+                    let login = document.querySelector('input[name="login"]').value;
+
+                    if (!login) {
+                        alert("Please enter Email or Mobile first");
+                        return;
+                    }
+
+                    // ✅ STEP 1: Get options from server
                     let res = await fetch("/biometric/login-options", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                credentials: "same-origin" // 🔥 ADD THIS
-            });
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        credentials: "same-origin",
+                        body: JSON.stringify({ login: login })
+                    });
+
+                    // 🔥 IMPORTANT: handle non-JSON response
+                    if (!res.ok) {
+                        let text = await res.text();
+                        console.error("SERVER ERROR:", text);
+                        alert("Server error (check console)");
+                        return;
+                    }
+
                     let options = await res.json();
 
                     if (options.error) {
@@ -511,9 +572,10 @@
                         return;
                     }
 
+                    // ✅ STEP 2: decode challenge
                     options.challenge = Uint8Array.from(atob(options.challenge), c => c.charCodeAt(0));
 
-                    // 🔥 IMPORTANT
+                    // ✅ STEP 3: decode allowCredentials
                     if (options.allowCredentials) {
                         options.allowCredentials = options.allowCredentials.map(cred => ({
                             ...cred,
@@ -521,24 +583,42 @@
                         }));
                     }
 
+                    // ✅ STEP 4: get credential from device
                     let credential = await navigator.credentials.get({
                         publicKey: options
                     });
 
-                    let rawId = btoa(
-                String.fromCharCode(...new Uint8Array(credential.rawId))
-            );
+                    // ❌ user cancelled
+                    if (!credential) {
+                        alert("Authentication cancelled");
+                        return;
+                    }
 
-            let response = await fetch("/biometric/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({
-                    id: rawId
-                })
-            });
+                    // ✅ STEP 5: encode rawId
+                    let rawId = btoa(
+                        String.fromCharCode(...new Uint8Array(credential.rawId))
+                    );
+
+                    // ✅ STEP 6: send to server
+                    let response = await fetch("/biometric/login", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        credentials: "same-origin",
+                        body: JSON.stringify({
+                            id: rawId
+                        })
+                    });
+
+                    // 🔥 again safe parsing
+                    if (!response.ok) {
+                        let text = await response.text();
+                        console.error("LOGIN ERROR:", text);
+                        alert("Login failed (server error)");
+                        return;
+                    }
 
                     let data = await response.json();
 
@@ -549,7 +629,7 @@
                     }
 
                 } catch (err) {
-                    console.error(err);
+                    console.error("FULL ERROR:", err);
                     alert("Biometric failed or not supported");
                 }
             }
@@ -621,7 +701,10 @@
 
                     let data = await response.json();
 
-                    if (data.status) {
+                    if (data.status) 
+                    {
+                        // 🔥 ADD THIS LINE
+                        localStorage.setItem("biometric_asked", "done");
                         alert("Biometric Enabled Successfully");
                         return true;
                     } else {

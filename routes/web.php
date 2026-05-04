@@ -106,16 +106,16 @@ Route::middleware(['guest', SessionProtection::class])->group(function () {
     Route::post('/login', [AuthenticationController::class, 'login'])->name('log.in');
     Route::post('/verify-login-otp', [AuthenticationController::class, 'verifyLoginOtp']);
     Route::post('/resend-otp', [AuthenticationController::class, 'resendOtp']);
-    Route::post('/reset-password', [AuthenticationController::class, 'resetPassword'])->name('reset.password');
+    Route::post('/forgot-password', [AuthenticationController::class, 'sendResetLink']);
+    Route::get('/reset-password/{token}', [AuthenticationController::class, 'showResetForm']);
+    Route::post('/update-password', [AuthenticationController::class, 'updatePassword']);
 });
 
-Route::middleware([SessionProtection::class])->group(function () {
+Route::post('/biometric/register-options', [AuthenticationController::class, 'biometricRegisterOptions']);
+Route::post('/biometric/register', [AuthenticationController::class, 'biometricRegister']);
+Route::post('/biometric/login-options', [AuthenticationController::class, 'biometricLoginOptions']);
+Route::post('/biometric/login', [AuthenticationController::class, 'biometricLogin']);
 
-    Route::post('/biometric/register-options', [AuthenticationController::class, 'biometricRegisterOptions']);
-    Route::post('/biometric/register', [AuthenticationController::class, 'biometricRegister']);
-    Route::post('/biometric/login-options', [AuthenticationController::class, 'biometricLoginOptions']);
-    Route::post('/biometric/login', [AuthenticationController::class, 'biometricLogin']);
-});
 
 Route::middleware('auth.user')->group(function () {
     Route::post('logout', [AuthenticationController::class, 'logout'])->name('log.out');
