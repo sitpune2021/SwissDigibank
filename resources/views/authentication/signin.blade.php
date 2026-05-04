@@ -387,7 +387,6 @@
         <script>
         function loginUser() 
         {
-
             let login = document.querySelector('input[name="login"]').value;
             let password = document.querySelector('input[name="password"]').value;
 
@@ -405,23 +404,33 @@
             .then(res => res.json())
             .then(data => {
 
-                if (data.status) {
+                // ✅ VALIDATION ERROR
+                if (data.type === 'validation') {
+                    let messages = '';
 
-                    // 🔥 USER ID STORE
-                    window.userId = data.user_id;
+                    for (let field in data.errors) {
+                        messages += data.errors[field][0] + '\n';
+                    }
 
-                    // 🔥 SHOW POPUP
-                    document.getElementById('otpModal').style.display = 'flex';
-
-                    // ✅ CLEAR INPUT
-                    document.querySelectorAll(".otp-box-input").forEach(i => i.value = "");
-                    document.getElementById("otp1").focus();
-
-                    startTimer(data.expires_in);
-
-                } else {
-                    alert(data.message || 'Login failed');
+                    alert(messages); // 🔥 popup
+                    return;
                 }
+
+                // ❌ NORMAL ERROR
+                if (!data.status) {
+                    alert(data.message);
+                    return;
+                }
+
+                // ✅ SUCCESS
+                window.userId = data.user_id;
+
+                document.getElementById('otpModal').style.display = 'flex';
+
+                document.querySelectorAll(".otp-box-input").forEach(i => i.value = "");
+                document.getElementById("otp1").focus();
+
+                startTimer(data.expires_in);
 
             });
         }
@@ -499,13 +508,13 @@
                     }
 
                     let res = await fetch("/biometric/login-options", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                credentials: "same-origin" // 🔥 ADD THIS
-            });
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        credentials: "same-origin" // 🔥 ADD THIS
+                    });
                     let options = await res.json();
 
                     if (options.error) {

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use App\Models\LoginLog;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 
 class AuthenticationController extends Controller
@@ -34,45 +35,90 @@ class AuthenticationController extends Controller
         return view('authentication.signin');
     }
 
+//     public function login(Request $request)
+//     {
+//     $request->validate([
+//     'login' => 'required',
+//     'password' => 'required'
+//     ]);
+
+//     // Email ya mobile se login
+//     $user = User::where('email', $request->login)
+//     ->orWhere('mobile', $request->login)
+//     ->first();
+
+//     if (!$user || !Hash::check($request->password, $user->password)) {
+//     return back()->withErrors(['login' => 'Invalid credentials']);
+//     }
+
+//     // ✅ OTP GENERATE
+//     $user->otp = rand(1000, 9999);
+//     $user->otp_verified = 0;
+//     $user->otp_expires_at = now()->addMinutes(1);
+//     $user->save();
+
+//     // ✅ MAIL SEND
+//     Mail::raw("Your OTP is: " . $user->otp, function ($message) use ($user) {
+//     $message->to($user->email)
+//             ->subject('Login OTP');
+//     });
+
+//     // ❌ LOGIN MAT KARO ABHI
+//     // Auth::login($user); ❌ REMOVE
+
+//     // ✅ Popup trigger
+//    return response()->json([
+//     'status' => true,
+//     'user_id' => $user->id,
+//     'expires_in' => 60 // 🔥 seconds
+// ]);
+//     }
+
+
     public function login(Request $request)
     {
-    $request->validate([
-    'login' => 'required',
-    'password' => 'required'
-    ]);
+        $validator = Validator::make($request->all(), [
+            'login' => 'required',
+            'password' => 'required'
+        ]);
 
-    // Email ya mobile se login
-    $user = User::where('email', $request->login)
-    ->orWhere('mobile', $request->login)
-    ->first();
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'type' => 'validation',
+                'errors' => $validator->errors()
+            ]);
+        }
 
-    if (!$user || !Hash::check($request->password, $user->password)) {
-    return back()->withErrors(['login' => 'Invalid credentials']);
+        $user = User::where('email', $request->login)
+            ->orWhere('mobile', $request->login)
+            ->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'status' => false,
+                'type' => 'error',
+                'message' => 'Invalid credentials'
+            ]);
+        }
+
+        // OTP logic same
+        $user->otp = rand(1000, 9999);
+        $user->otp_verified = 0;
+        $user->otp_expires_at = now()->addMinutes(1);
+        $user->save();
+
+        Mail::raw("Your OTP is: " . $user->otp, function ($message) use ($user) {
+            $message->to($user->email)->subject('Login OTP');
+        });
+
+        return response()->json([
+            'status' => true,
+            'user_id' => $user->id,
+            'expires_in' => 60
+        ]);
     }
-
-    // ✅ OTP GENERATE
-    $user->otp = rand(1000, 9999);
-    $user->otp_verified = 0;
-    $user->otp_expires_at = now()->addMinutes(1);
-    $user->save();
-
-    // ✅ MAIL SEND
-    Mail::raw("Your OTP is: " . $user->otp, function ($message) use ($user) {
-    $message->to($user->email)
-            ->subject('Login OTP');
-    });
-
-    // ❌ LOGIN MAT KARO ABHI
-    // Auth::login($user); ❌ REMOVE
-
-    // ✅ Popup trigger
-   return response()->json([
-    'status' => true,
-    'user_id' => $user->id,
-    'expires_in' => 60 // 🔥 seconds
-]);
-    }
-
+    
     public function verifyLoginOtp(Request $request)
     {
     $request->validate([
@@ -195,32 +241,38 @@ class AuthenticationController extends Controller
 
     public function biometricRegisterOptions(Request $request)
     {
-    if (!$request->user_id) {
-        return response()->json(['error' => 'User ID missing'], 400);
-    }
+        if (!$request->user_id) {
+            return response()->json(['error' => 'User ID missing'], 400);
+        }
 
-    $user = User::find($request->user_id);
+        $user = User::find($request->user_id);
 
-    if (!$user) {
-        return response()->json(['error' => 'User not found'], 404);
-    }
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
 
-    $challenge = base64_encode(random_bytes(32));
-    session(['challenge' => $challenge]);
+        $challenge = base64_encode(random_bytes(32));
+        session(['challenge' => $challenge]);
 
-    return response()->json([
-        'challenge' => $challenge,
-        'rp' => ['name' => 'Swiss Payment'],
-        'user' => [
-            'id' => base64_encode((string)$user->id),
-            'name' => $user->email,
-            'displayName' => $user->name
-        ],
-        'pubKeyCredParams' => [
-            ['type' => 'public-key', 'alg' => -7]
-        ],
-        'timeout' => 60000
-    ]);
+        return response()->json([
+            'challenge' => $challenge,
+            'rp' => ['name' => 'Swiss Payment'],
+            'user' => [
+                'id' => base64_encode((string)$user->id),
+                'name' => $user->email,
+                'displayName' => $user->name
+            ],
+            'pubKeyCredParams' => [
+                ['type' => 'public-key', 'alg' => -7]
+            ],
+            'timeout' => 60000,
+
+            // ✅ IMPORTANT
+            'authenticatorSelection' => [
+                'residentKey' => 'required',
+                'userVerification' => 'required'
+            ]
+        ]);
     }
 
     public function biometricRegister(Request $request)
@@ -279,20 +331,7 @@ class AuthenticationController extends Controller
         return response()->json([
             'challenge' => $challenge,
             'timeout' => 60000,
-            'userVerification' => 'required',
-
-            // 🔥 ADD THIS BLOCK
-            'authenticatorSelection' => [
-                'authenticatorAttachment' => 'platform', // 👈 IMPORTANT
-                'userVerification' => 'required'
-            ],
-
-            'allowCredentials' => [
-                [
-                    'id' => $user->webauthn_id,
-                    'type' => 'public-key'
-                ]
-            ]
+            'userVerification' => 'required'
         ]);
     }
 
