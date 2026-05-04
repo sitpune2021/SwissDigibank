@@ -1,6 +1,8 @@
 <nav class="navbar-top topbarfull z-20 gap-3 bg-n0 py-3 shadow-sm duration-300 border-b border-n0 dark:border-n700 dark:bg-bg4 xl:py-4 xxxl:py-6"
     id="topbar">
+    
     <div class="topbar-inner flex items-center justify-between gap-2">
+        
         <div class="flex grow items-center gap-2 xxl:gap-4">
             <a href="{{ route('index1') }}" class="topbar-logo hidden shrink-0">
                 <img width="174" height="38" src="{{ asset('assets/images/SBC_Logo.png') }}" alt="logo"
@@ -11,6 +13,7 @@
                 <i class="las la-angle-left text-lg"></i>
             </button>
             <!-- Select layout -->
+
             <!-- Dropdown Trigger -->
             <div class="whitespace-norwrap  relative inline-block grow items-center gap-2 xxl:gap-4 ">
                 <!-- Main button -->
@@ -159,6 +162,7 @@
                         
                     </ul>
                 </div>
+
                 <div id="dailycollectionMenu"
                     class="hidden absolute left-0  bg-white border  border-gray-200 rounded-lg shadow-lg z-50 w-64"
                     style="margin-left: 5px; margin-top: 55px !important;">
@@ -189,6 +193,7 @@
                         </li>
                     </ul>
                 </div>
+
                 <div id="compliancesMenu"
                     class="hidden absolute left-0  bg-white border  border-gray-200 rounded-lg shadow-lg z-50 w-64"
                     style="margin-left: 5px; margin-top: 55px !important;">
@@ -244,14 +249,6 @@
             </div>
             <!-- Dropdown end -->
 
-            <!-- Search bar -->
-            <form class="topnav-search">
-                <input type="text" placeholder="Search"
-                    class="w-full border-none bg-transparent py-2 focus:border-none focus:shadow-none focus:outline-none md:py-2.5 xxl:py-3 ltr:pl-4 rtl:pr-4" />
-                <button class="flex h-8 w-9 items-center justify-center rounded-full bg-primary text-n0">
-                    <i class="las la-search text-lg"></i>
-                </button>
-            </form>
         </div>
 
         <div class="  flex items-center gap-3 sm:gap-1 xxl:gap-2">
@@ -274,6 +271,7 @@
                     </form>
                 </div>
             </div>
+
             <!-- dark mode toggle -->
             <button id="darkModeToggle" aria-label="dark mode switch"
                 class="h-10 w-10 shrink-0 rounded-full border border-n30 bg-primary/5 dark:border-n500 dark:bg-bg3 md:h-12 md:w-12">
@@ -282,178 +280,99 @@
                     <i class="las la-moon text-2xl"></i>
                 </span>
             </button>
-            <!-- Notification -->
-            <div class="relative">
-                <button id="notification-btn"
-                    class="relative h-10 w-10 rounded-full border border-n30 bg-primary/5 dark:border-n500 dark:bg-bg3 md:h-12 md:w-12">
-                    <i class="las la-bell text-2xl"></i>
-                    <span
-                        class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-n0">
-                        0
-                    </span>
-                </button>
-                <div id="notification"
-                    class="hide absolute top-full z-20 origin-[60%_0] rounded-md bg-n0 shadow-[0px_6px_30px_0px_rgba(0,0,0,0.08)] duration-300 dark:bg-bg4 ltr:-right-[110px] sm:ltr:right-0 sm:ltr:origin-top-right rtl:-left-[120px] sm:rtl:left-0 sm:rtl:origin-top-left">
-                    <div class="flex items-center justify-between border-b p-3 dark:border-n500 lg:px-4">
-                        <h5 class="h5">Notifications</h5>
-                        <a href="#" class="text-sm text-primary"> View All </a>
-                    </div>
-                    <ul class="flex w-[300px] flex-col p-4">
-                        <div class="flex cursor-pointer gap-2 rounded-md p-2 duration-300 hover:bg-primary/10">
-                            <img src="{{ asset('assets/images/user-3.png') }}" width="44" height="40"
-                                class="shrink-0 rounded-full" alt="img" />
-                            <div class="text-sm">
-                                <div class="flex gap-1">
-                                    <span class="font-medium">Admin</span>
-                                    <span>Sent a message</span>
-                                </div>
-                                <span class="text-xs text-n100 dark:text-n50">1 hour ago</span>
-                            </div>
-                        </div>
 
-
-                        <div class="flex cursor-pointer gap-2 rounded-md p-2 duration-300 hover:bg-primary/10">
-                            <img src="{{ asset('assets/images/user-7.png') }}" width="44" height="40"
-                                class="shrink-0 rounded-full" alt="img" />
-                            <div class="text-sm">
-                                <div class="flex gap-1">
-                                    <span class="font-medium">Samuel</span>
-                                    <span>Uploaded a file</span>
-                                </div>
-                                <span class="text-xs text-n100 dark:text-n50">Yesterday</span>
-                            </div>
-                        </div>
-                        <div class="flex cursor-pointer gap-2 rounded-md p-2 duration-300 hover:bg-primary/10">
-                            <img src="{{ asset('assets/images/user-7.png') }}" width="44" height="40"
-                                class="shrink-0 rounded-full" alt="img" />
-                            <div class="text-sm">
-                                <div class="flex gap-1">
-                                    <span class="font-medium">David</span>
-                                    <span>Left a Comment</span>
-                                </div>
-                                <span class="text-xs text-n100 dark:text-n50">Yesterday</span>
-                            </div>
-                        </div>
-                    </ul>
-                </div>
-            </div>
-            <!-- language dropdown -->
-            <div class="relative">
-                <button id="language-btn"
-                    class="flex gap-1 rounded-full border border-n30 bg-primary/5 p-2 dark:border-n500 dark:bg-bg3 md:p-3">
-                    <i class="las la-language"></i>
-                </button>
-                <div id="language"
-                    class="hide absolute top-full z-20 rounded-md bg-n0 shadow-[0px_6px_30px_0px_rgba(0,0,0,0.08)] duration-300 dark:bg-bg4 ltr:right-0 ltr:origin-top-right rtl:left-0 rtl:origin-top-left">
-                    <ul class="flex w-32 flex-col rounded-md bg-n0 p-1 dark:bg-bg4">
-                        <li class="active block cursor-pointer rounded-md px-4 py-2 duration-300 hover:text-primary">
-                            English
-                        </li>
-                        <li class="block cursor-pointer rounded-md px-4 py-2 duration-300 hover:text-primary">
-                            Arabic
-                        </li>
-                        <li class="block cursor-pointer rounded-md px-4 py-2 duration-300 hover:text-primary">
-                            Hindi
-                        </li>
-                        <li class="block cursor-pointer rounded-md px-4 py-2 duration-300 hover:text-primary">
-                            Spanish
-                        </li>
-                    </ul>
-                </div>
-            </div>
             <!-- Profile dropdown -->
             <div class="relative shrink-0">
                 @php
-                $photo = auth()->user()?->profilePhoto?->filename;
+                    $user = auth()->user();
+                    $photo = $user->profilePhoto->filename ?? null;
                 @endphp
 
-                <div id="profile-btn" class="w-10 cursor-pointer md:w-12">
-                    <img src="{{ $photo
-    ? asset('storage/profile_photos/' . $photo)
-    : asset('assets/images/user-big-4.png') }}" class="rounded-full" style="width:50px;height:50px;object-fit:cover;"
-                        alt="profile img">
-                    {{-- <img src="{{ auth()->user()->profilePhoto
-    ? asset('storage/profile_photos/' . auth()->user()->profilePhoto->filename)
-    : asset('assets/images/user-big-4.png') }}" class="rounded-full"
-                        style="width: 50px; height:50px; object-fit: cover;" alt="profile img" /> --}}
-                    {{-- <img src="{{ asset('assets/images/user-big-4.png') }}" class="rounded-full" width="48"
-                        height="48" alt="profile img" /> --}}
+                <!-- PROFILE BUTTON -->
+                <div id="profile-btn" class="cursor-pointer">
+                    <img src="{{ $photo 
+                        ? asset('storage/profile_photos/'.$photo) 
+                        : asset('assets/images/user-big-4.png') }}"
+                        class="rounded-full border-2 border-primary shadow-md hover:scale-105 transition duration-300"
+                        style="width:45px;height:45px;object-fit:cover;">
                 </div>
+
+                <!-- DROPDOWN -->
                 <div id="profile"
-                    class="hide absolute top-full z-20 rounded-md bg-n0 shadow-[0px_6px_30px_0px_rgba(0,0,0,0.08)] duration-300 dark:bg-bg4 ltr:right-0 ltr:origin-top-right rtl:left-0 rtl:origin-top-left">
-                    <div class="flex flex-col items-center border-b p-3 text-center dark:border-n500 lg:p-4">
-                        @php
-                        $user = auth()->user();
-                        $photo = $user->profilePhoto->filename ?? null;
-                        @endphp
-                       <img src="{{ $photo
-        ? asset('storage/profile_photos/'.$photo)
-        : asset('assets/images/user-big-4.png') }}"
-     class="rounded-full"
-     style="width:50px;height:50px;object-fit:cover;"
-     alt="profile img">
-                        <h6 class="h6 mt-2 uppercase">
-                            {{-- {{ auth()->user()->fname . ' ' . auth()->user()->lname}} --}}
-                                {{ auth()->user()?->fname && auth()->user()?->lname
-        ? auth()->user()->fname . ' ' . auth()->user()->lname
-        : '' }}
+                    class="hide absolute right-0 mt-3 w-72 rounded-2xl overflow-hidden
+                    bg-white dark:bg-gray-900
+                    shadow-[0_10px_30px_rgba(0,0,0,0.15)]
+                    border border-gray-200 dark:border-gray-700
+                    transition-all duration-300">
 
-                        </h6>
-                        <h6 class="h6 ">
-                            {{-- {{ auth()->user()->name}} --}}
-                            {{ auth()->user()?->name ?? '' }}
+                    <!-- USER INFO -->
+                    <div class="flex flex-col items-center text-center p-5 border-b dark:border-gray-700">
 
+                        <img src="{{ $photo 
+                            ? asset('storage/profile_photos/'.$photo) 
+                            : asset('assets/images/user-big-4.png') }}"
+                            class="rounded-full mb-3 border-2 border-primary"
+                            style="width:60px;height:60px;object-fit:cover;">
+
+                        <h6 class="font-semibold text-sm uppercase">
+                            {{ $user?->fname && $user?->lname ? $user->fname.' '.$user->lname : '' }}
                         </h6>
-                        <span class="text-sm">{{auth()->user()?->email ?? ''}}</span>
+
+                        <span class="text-gray-500 text-xs mt-1">
+                            {{ $user?->email ?? '' }}
+                        </span>
                     </div>
-                    <ul class="flex w-[250px] flex-col p-4">
+
+                    <!-- MENU -->
+                    <ul class="flex flex-col text-sm">
+
                         <li>
                             <a href="{{ route('settings.profile') }}"
-                                class="flex items-center gap-2 rounded-md p-2 duration-300 hover:bg-primary hover:text-n0">
-                                <span>
-                                    <i class="las la-user mt-1 text-xl"></i>
-                                </span>
+                                class="flex items-center gap-3 px-5 py-3 hover:bg-primary hover:text-white transition">
+                                <i class="las la-user text-lg"></i>
                                 Profile
                             </a>
                         </li>
+
                         <li>
                             <a href="{{ route('support.help.center') }}"
-                                class="flex items-center gap-2 rounded-md p-2 duration-300 hover:bg-primary hover:text-n0">
-                                <span>
-                                    <i class="las la-life-ring mt-1 text-xl"></i>
-                                </span>
-                                Help
+                                class="flex items-center gap-3 px-5 py-3 hover:bg-primary hover:text-white transition">
+                                <i class="las la-life-ring text-lg"></i>
+                                Help Center
                             </a>
                         </li>
+
                         <li>
                             <a href="{{ route('settings.security') }}"
-                                class="flex items-center gap-2 rounded-md p-2 duration-300 hover:bg-primary hover:text-n0">
-                                <span>
-                                    <i class="las la-cog mt-1 text-xl"></i>
-                                </span>
+                                class="flex items-center gap-3 px-5 py-3 hover:bg-primary hover:text-white transition">
+                                <i class="las la-cog text-lg"></i>
                                 Settings
                             </a>
                         </li>
-                        <li>
 
+                        <li class="border-t mt-2">
                             <a href="#"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                class="flex items-center gap-2 rounded-md p-2 duration-300 hover:bg-primary hover:text-n0">
-                                <span>
-                                    <i class="las la-sign-out-alt mt-1 text-xl"></i>
-                                </span>
+                                class="flex items-center gap-3 px-5 py-3 text-red-500 hover:bg-red-500 hover:text-white transition">
+                                <i class="las la-sign-out-alt text-lg"></i>
                                 Logout
                             </a>
-                            <form id="logout-form" action="{{ route('log.out') }}" method="POST" style="display: none;">
+
+                            <form id="logout-form" action="{{ route('log.out') }}" method="POST" style="display:none;">
                                 @csrf
                             </form>
                         </li>
+
                     </ul>
                 </div>
             </div>
+            
         </div>
+
     </div>
+
 </nav>
+
 
 <script>
     const dropdownBtn = document.getElementById("dropdownBtn");

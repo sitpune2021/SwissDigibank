@@ -11,6 +11,8 @@ use App\Models\LoginLog;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Models\WebauthnCredential;
+use Illuminate\Support\Str;
+
 
 class AuthenticationController extends Controller
 {
@@ -34,46 +36,6 @@ class AuthenticationController extends Controller
     {
         return view('authentication.signin');
     }
-
-//     public function login(Request $request)
-//     {
-//     $request->validate([
-//     'login' => 'required',
-//     'password' => 'required'
-//     ]);
-
-//     // Email ya mobile se login
-//     $user = User::where('email', $request->login)
-//     ->orWhere('mobile', $request->login)
-//     ->first();
-
-//     if (!$user || !Hash::check($request->password, $user->password)) {
-//     return back()->withErrors(['login' => 'Invalid credentials']);
-//     }
-
-//     // ✅ OTP GENERATE
-//     $user->otp = rand(1000, 9999);
-//     $user->otp_verified = 0;
-//     $user->otp_expires_at = now()->addMinutes(1);
-//     $user->save();
-
-//     // ✅ MAIL SEND
-//     Mail::raw("Your OTP is: " . $user->otp, function ($message) use ($user) {
-//     $message->to($user->email)
-//             ->subject('Login OTP');
-//     });
-
-//     // ❌ LOGIN MAT KARO ABHI
-//     // Auth::login($user); ❌ REMOVE
-
-//     // ✅ Popup trigger
-//    return response()->json([
-//     'status' => true,
-//     'user_id' => $user->id,
-//     'expires_in' => 60 // 🔥 seconds
-// ]);
-//     }
-
 
     public function login(Request $request)
     {
@@ -119,51 +81,102 @@ class AuthenticationController extends Controller
         ]);
     }
     
+    // public function verifyLoginOtp(Request $request)
+    // {
+    // $request->validate([
+    //     'user_id' => 'required',
+    //     'otp' => 'required|digits:4'
+    // ]);
+
+    // $user = User::find($request->user_id);
+
+    // if (!$user) {
+    //     return response()->json(['status' => false, 'message' => 'User not found']);
+    // }
+
+    // if (!$user->otp_expires_at || now()->gt($user->otp_expires_at)) {
+    //     $user->otp = null;
+    //     $user->save();
+
+    //     return response()->json([
+    //         'status' => false,
+    //         'message' => 'OTP expired'
+    //     ]);
+    // }
+
+    // if ($user->otp == $request->otp) {
+
+    //     $user->otp_verified = 1;
+    //     $user->otp = null;
+    //     $user->save();
+
+    //     // ✅ LOGIN
+    //     Auth::login($user);
+    //     $request->session()->regenerate();
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'user_id' => $user->id, // 🔥 IMPORTANT (frontend)
+    //         'has_biometric' => !empty($user->webauthn_id),
+    //         'redirect' => route('index1')
+    //     ]);
+    // }
+
+    // return response()->json([
+    //     'status' => false,
+    //     'message' => 'Invalid OTP'
+    // ]);
+    // }
+
+    
     public function verifyLoginOtp(Request $request)
     {
-    $request->validate([
-        'user_id' => 'required',
-        'otp' => 'required|digits:4'
-    ]);
+        $request->validate([
+            'user_id' => 'required',
+            'otp' => 'required|digits:4'
+        ]);
 
-    $user = User::find($request->user_id);
+        $user = User::find($request->user_id);
 
-    if (!$user) {
-        return response()->json(['status' => false, 'message' => 'User not found']);
-    }
+        if (!$user) {
+            return response()->json(['status' => false, 'message' => 'User not found']);
+        }
 
-    if (!$user->otp_expires_at || now()->gt($user->otp_expires_at)) {
-        $user->otp = null;
-        $user->save();
+        if (!$user->otp_expires_at || now()->gt($user->otp_expires_at)) {
+            $user->otp = null;
+            $user->save();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'OTP expired'
+            ]);
+        }
+
+        if ($user->otp == $request->otp) {
+
+            $user->otp_verified = 1;
+            $user->otp = null;
+            $user->save();
+
+            // ✅ LOGIN
+            Auth::login($user);
+            $request->session()->regenerate();
+
+            // 🔥 CORRECT CHECK (IMPORTANT)
+            $hasBiometric = WebauthnCredential::where('user_id', $user->id)->exists();
+
+            return response()->json([
+                'status' => true,
+                'user_id' => $user->id,
+                'has_biometric' => $hasBiometric, // ✅ FIXED
+                'redirect' => route('index1')
+            ]);
+        }
 
         return response()->json([
             'status' => false,
-            'message' => 'OTP expired'
+            'message' => 'Invalid OTP'
         ]);
-    }
-
-    if ($user->otp == $request->otp) {
-
-        $user->otp_verified = 1;
-        $user->otp = null;
-        $user->save();
-
-        // ✅ LOGIN
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        return response()->json([
-            'status' => true,
-            'user_id' => $user->id, // 🔥 IMPORTANT (frontend)
-            'has_biometric' => !empty($user->webauthn_id),
-            'redirect' => route('index1')
-        ]);
-    }
-
-    return response()->json([
-        'status' => false,
-        'message' => 'Invalid OTP'
-    ]);
     }
 
     public function resendOtp(Request $request)
@@ -401,6 +414,70 @@ class AuthenticationController extends Controller
     public function error()
     {
         return view('authentication.error');
+    }
+
+    public function sendResetLink(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->with('error', 'Email not found');
+        }
+
+        $token = Str::random(64);
+
+        $user->reset_token = $token;
+        $user->reset_token_expires_at = now()->addMinutes(30);
+        $user->save();
+
+        $link = url('/reset-password/' . $token);
+
+        Mail::raw("Click here to reset password: $link", function ($message) use ($user) {
+            $message->to($user->email)
+                    ->subject('Reset Password');
+        });
+
+        return back()->with('success', 'Reset link sent to email');
+    }
+
+    public function showResetForm($token)
+    {
+        $user = User::where('reset_token', $token)->first();
+
+        if (!$user || now()->gt($user->reset_token_expires_at)) {
+            return "Link expired";
+        }
+
+        return view('authentication.reset-password', compact('token'));
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'password' => 'required|min:6'
+        ]);
+
+        $user = User::where('reset_token', $request->token)->first();
+
+        if (!$user) {
+            return back()->with('error', 'Invalid token');
+        }
+
+        if (now()->gt($user->reset_token_expires_at)) {
+            return back()->with('error', 'Token expired');
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->reset_token = null;
+        $user->reset_token_expires_at = null;
+        $user->save();
+
+        return redirect('/')->with('success', 'Password updated');
     }
 
     
