@@ -5,7 +5,7 @@
         
         <div class="flex grow items-center gap-2 xxl:gap-4">
             <a href="{{ route('index1') }}" class="topbar-logo hidden shrink-0">
-                <img width="174" height="38" src="{{ asset('assets/images/SBC_Logo.png') }}" alt="logo"
+                <img width="174" height="38" src="{{ asset('assets/images/SIT_LOGO.png') }}" alt="logo"
                     class="logo-full2 hidden lg:block" />
             </a>
             <button class="flex items-center rounded-s-2xl bg-primary px-0.5 py-3 text-xl text-n0"
