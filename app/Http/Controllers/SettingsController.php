@@ -9,71 +9,114 @@ use Illuminate\Support\Facades\Auth; // ✅ Needed for Auth::user()
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+
+
 class SettingsController extends Controller
 {
+
+
     public function profile()
     {
-         $user = Auth::user(); // fetch currently logged-in user
+        $user = Auth::user(); // fetch currently logged-in user
         return view('settings.profile', compact('user'));
     }
     
-     public function change_password()
+    public function change_password()
     {
-       
         return view('settings.change-password');
     }
 
-   public function updatePasswordFromProfile(Request $request)
-{
-    // Call the existing method
-    $response = $this->updatePassword($request);
-
-    // If validation failed or old password wrong,
-    // Laravel already redirected back with errors.
-    if ($response instanceof \Illuminate\Http\RedirectResponse && session()->has('errors')) {
-        return $response;
-    }
-
-    // If success, redirect to profile page instead
-    return redirect()->route('settings.profile')
-        ->with('success', 'Password updated successfully.');
-}
-
-public function updateProfilePhoto(Request $request)
+    public function updatePasswordFromProfile(Request $request)
     {
-        $request->validate([
-            'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+        // Call the existing method
+        $response = $this->updatePassword($request);
 
-        $user = Auth::user();
-
-        // Get existing record
-        $profilePhoto = ProfilePhoto::where('user_id', $user->id)->first();
-
-        // Delete old image file if exists
-        if ($profilePhoto && Storage::disk('public')->exists('profile_photos/' . $profilePhoto->filename)) {
-            Storage::disk('public')->delete('profile_photos/' . $profilePhoto->filename);
+        // If validation failed or old password wrong,
+        // Laravel already redirected back with errors.
+        if ($response instanceof \Illuminate\Http\RedirectResponse && session()->has('errors')) {
+            return $response;
         }
 
-        // Store new file
-        $filename = time() . '.' . $request->photo->extension();
-        $request->photo->storeAs('profile_photos', $filename, 'public');
+        // If success, redirect to profile page instead
+        return redirect()->route('settings.profile')
+            ->with('success', 'Password updated successfully.');
+    }
 
-        if ($profilePhoto) {
-            // Update same row (ID does not change)
-            $profilePhoto->filename = $filename;
-            $profilePhoto->save();
-        } else {
-            // Create first record
-            ProfilePhoto::create([
-                'user_id' => $user->id,
-                'filename' => $filename,
+    public function updateProfilePhoto(Request $request)
+    {
+        Log::info('Profile photo upload started');
+
+        try {
+
+            Log::info('Request received', [
+                'hasFile' => $request->hasFile('photo'),
+                'all' => $request->all()
+            ]);
+
+            $request->validate([
+                'photo' => 'required|file|image|mimes:jpg,jpeg,png|max:2048',
+            ], [
+                'photo.required' => 'Please select an image.',
+                'photo.image' => 'File must be an image.',
+                'photo.mimes' => 'Only JPG, JPEG, PNG allowed.',
+                'photo.max' => 'Image size must be less than 2MB.',
+                'photo.uploaded' => 'File upload failed (server issue or size too large).',
+            ]);
+
+            $user = Auth::user();
+
+            if (!$user) {
+                Log::error('User not authenticated');
+                return back()->withErrors(['photo' => 'User not logged in']);
+            }
+
+            Log::info('User found', ['user_id' => $user->id]);
+
+            $profilePhoto = ProfilePhoto::where('user_id', $user->id)->first();
+
+            // Delete old file
+            if ($profilePhoto) {
+                Log::info('Old photo found', ['filename' => $profilePhoto->filename]);
+
+                if (Storage::disk('public')->exists('profile_photos/' . $profilePhoto->filename)) {
+                    Storage::disk('public')->delete('profile_photos/' . $profilePhoto->filename);
+                    Log::info('Old photo deleted');
+                }
+            }
+
+            // Store new file safely
+            $path = $request->file('photo')->store('profile_photos', 'public');
+            $filename = basename($path);
+
+            Log::info('New file stored', ['filename' => $filename]);
+
+            if ($profilePhoto) {
+                $profilePhoto->filename = $filename;
+                $profilePhoto->save();
+                Log::info('Profile photo updated');
+            } else {
+                ProfilePhoto::create([
+                    'user_id' => $user->id,
+                    'filename' => $filename,
+                ]);
+                Log::info('Profile photo created');
+            }
+
+            return back()->with('success', 'Profile photo updated successfully.');
+
+        } catch (\Exception $e) {
+
+            Log::error('Upload failed', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ]);
+
+            return back()->withErrors([
+                'photo' => 'Something went wrong while uploading image.'
             ]);
         }
-
-        return back()->with('success', 'Profile photo updated successfully.');
     }
-
 
     public function security()
     {
@@ -121,7 +164,6 @@ public function updateProfilePhoto(Request $request)
         } 
     }
 
-
     public function socialNetwork()
     {
         return view('settings.social-network');
@@ -136,4 +178,6 @@ public function updateProfilePhoto(Request $request)
     {
         return view('settings.payment-limit');
     }
+
+
 }

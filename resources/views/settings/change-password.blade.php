@@ -41,6 +41,7 @@
         <div class="col-span-2 md:col-span-1  dark:bg-bg3 rounded-2xl ">
 
             <div class="box">
+
                 <form action="{{ route('settings.profile-update-password') }}" method="POST" >
                     @csrf
                     <div class="mb-4">
@@ -84,21 +85,16 @@
                         <button type="submit" class="btn-primary uppercase">
                             Change
                         </button>
-                        <a href="" class="btn-outline uppercase">Back</a>
+                        <a href="{{ route('settings.profile') }}" class="btn-outline uppercase">Back</a>
                     </div>
 
                 </form>
 
             </div>
+
         </div>
-
     </div>
+
 </div>
-</div>
-
-
-
-
-
 
 @endsection

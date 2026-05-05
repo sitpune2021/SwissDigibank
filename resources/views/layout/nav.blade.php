@@ -1,11 +1,157 @@
-<nav class="navbar-top topbarfull z-20 gap-3 bg-n0 py-3 shadow-sm duration-300 border-b border-n0 dark:border-n700 dark:bg-bg4 xl:py-4 xxxl:py-6"
-    id="topbar">
+
+<style>
+    #topbar::before {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        top: -100px;
+        left: -100px;
+
+        background: radial-gradient(circle, rgba(0,255,255,0.15), transparent);
+        filter: blur(100px);
+    }
+    /* 🔥 NAVBAR GLASS EFFECT */
+    #topbar {
+        background: linear-gradient(90deg, #0f172a, #1e293b);
+        backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(0,255,255,0.15);
+
+        box-shadow: 
+            0 5px 20px rgba(0,0,0,0.3),
+            inset 0 0 20px rgba(0,255,255,0.05);
+    }
+
+    /* 🔥 MENU BUTTON */
+    #dropdownBtn {
+        background: rgba(0,255,255,0.08);
+        color: #3b82f6;
+        border-radius: 10px;
+        padding: 6px 14px;
+        transition: 0.3s;
+    }
+
+    #dropdownBtn:hover {
+        background: rgba(0,255,255,0.2);
+        box-shadow: 0 0 12px rgba(0,255,255,0.6);
+    }
+
+    /* 🔥 MAIN DROPDOWN */
+    #dropdownMenu {
+        background: rgba(15, 23, 42, 0.95) !important;
+        backdrop-filter: blur(18px);
+        border: 1px solid rgba(0,255,255,0.2);
+        border-radius: 12px;
+
+        animation: fadeSlide 0.25s ease;
+    }
+
+    /* 🔥 SUBMENUS */
+    #accountsMenu,
+    #reportsMenu,
+    #dailycollectionMenu,
+    #compliancesMenu {
+        background: rgba(15, 23, 42, 0.97) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(0,255,255,0.15);
+        border-radius: 12px;
+
+        animation: slideRight 0.25s ease;
+    }
+
+    /* 🔥 MENU ITEMS */
+    #dropdownMenu li,
+    #accountsMenu li,
+    #reportsMenu li,
+    #dailycollectionMenu li,
+    #compliancesMenu li {
+        color: #cbd5e1;
+        transition: 0.25s;
+    }
+
+    /* 🔥 HOVER EFFECT */
+    #dropdownMenu li:hover,
+    #accountsMenu li:hover,
+    #reportsMenu li:hover,
+    #dailycollectionMenu li:hover,
+    #compliancesMenu li:hover {
+        background: rgba(0,255,255,0.12);
+        color: white;
+
+        transform: translateX(5px);
+        box-shadow: 0 0 10px rgba(0,255,255,0.4);
+    }
+
+    /* 🔥 ICON GLOW */
+    li i {
+        transition: 0.2s;
+    }
+    li:hover i {
+        text-shadow: 0 0 8px #3b82f6;
+    }
+
+    /* 🔥 ANIMATIONS */
+    @keyframes fadeSlide {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideRight {
+        from {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* 🔥 SCROLLBAR STYLING */
+    #dropdownMenu::-webkit-scrollbar,
+    #accountsMenu::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    #dropdownMenu::-webkit-scrollbar-thumb,
+    #accountsMenu::-webkit-scrollbar-thumb {
+        background: #3b82f6;
+        border-radius: 10px;
+    }
+
+    /* 🔥 MOBILE RESPONSIVE */
+    @media (max-width: 768px) {
+
+        #dropdownMenu {
+            width: 90vw !important;
+            left: 5% !important;
+        }
+
+        #accountsMenu,
+        #reportsMenu,
+        #dailycollectionMenu,
+        #compliancesMenu {
+            position: relative !important;
+            left: 0 !important;
+            margin-top: 5px !important;
+            width: 100% !important;
+        }
+    }
+</style>
+
+<nav class="navbar-top topbarfull z-20 gap-3 bg-n0 py-3 shadow-sm duration-300 border-b border-n0 dark:border-n700 dark:bg-bg4 xl:py-4 xxxl:py-6" id="topbar" style="background: aliceblue;">
     
     <div class="topbar-inner flex items-center justify-between gap-2">
         
         <div class="flex grow items-center gap-2 xxl:gap-4">
             <a href="{{ route('index1') }}" class="topbar-logo hidden shrink-0">
-                <img width="174" height="38" src="{{ asset('assets/images/SBC_Logo.png') }}" alt="logo"
+                <img width="174" height="38" src="{{ asset('assets/images/SIT_LOGO.png') }}" alt="logo"
                     class="logo-full2 hidden lg:block" />
             </a>
             <button class="flex items-center rounded-s-2xl bg-primary px-0.5 py-3 text-xl text-n0"
@@ -273,13 +419,13 @@
             </div>
 
             <!-- dark mode toggle -->
-            <button id="darkModeToggle" aria-label="dark mode switch"
+            <!-- <button id="darkModeToggle" aria-label="dark mode switch"
                 class="h-10 w-10 shrink-0 rounded-full border border-n30 bg-primary/5 dark:border-n500 dark:bg-bg3 md:h-12 md:w-12">
                 <i class="las la-sun text-2xl dark:hidden"></i>
                 <span class="hidden text-n30 dark:block">
                     <i class="las la-moon text-2xl"></i>
                 </span>
-            </button>
+            </button> -->
 
             <!-- Profile dropdown -->
             <div class="relative shrink-0">

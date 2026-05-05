@@ -5,20 +5,46 @@
 use Illuminate\Support\Facades\Storage;
 @endphp
 
-<div class="mb-6 flex items-center justify-between">
+<style>
+    .neo-card{
+    background: linear-gradient(145deg, #ffffff, #f1f5f9);
+    border-radius: 18px;
+    box-shadow: 
+        8px 8px 18px rgba(0,0,0,0.08),
+        -8px -8px 18px rgba(255,255,255,0.9);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.4);
+}
+
+.dark .neo-card{
+    background: #0F172A;
+    box-shadow: 
+        6px 6px 14px rgba(0,0,0,0.6),
+        -6px -6px 14px rgba(255,255,255,0.05);
+}
+
+.neo-card:hover{
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 
+        10px 10px 25px rgba(0,0,0,0.12),
+        -6px -6px 20px rgba(255,255,255,0.8);
+}
+</style>
+
+<div class="mb-6 flex items-center justify-between  px-6 py-4">
 
     <div>
-        <p class="text-sm text-gray-500">
-        <b>Welcome back {{ auth()->user()->name }}</b>
-        </p>
+        <h2 class="text-xl font-bold text-gray-800 dark:text-white tracking-wide">
+            Welcome, {{ auth()->user()->name }}
+        </h2>
+        <p class="text-sm text-gray-500">Dashboard Overview</p>
     </div>
 
-    <div class="flex gap-3">
-
-        <div class="px-4 py-2 bg-white shadow rounded-xl text-sm">
-        <b>Today : {{ date('d M Y') }}</b>
-        </div>
-
+    <div class="text-right">
+        <p class="text-sm text-gray-500">Today</p>
+        <h3 class="font-semibold text-gray-800 dark:text-white">
+            {{ date('d M Y') }}
+        </h3>
     </div>
 
 </div>
@@ -122,7 +148,7 @@ use Illuminate\Support\Facades\Storage;
     <div class="grid grid-cols-12 gap-4 xxl:gap-6">
 
         <!-- BRANCHES -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-4">
         <a href="{{ route('branch.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-green-400">
@@ -149,7 +175,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- CUSTOMERS -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-4">
         <a href="{{ route('member.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-green-400">
@@ -173,7 +199,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- GROUPS -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-4">
         <a href="#">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-purple-400">
@@ -198,7 +224,7 @@ use Illuminate\Support\Facades\Storage;
 
 
         <!-- PROMOTERS -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-3">
         <a href="{{ route('promotor.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-indigo-400">
@@ -223,7 +249,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- SAVING ACCOUNTS -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-3">
         <a href="{{ route('accounts.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-green-400">
@@ -248,7 +274,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- CURRENT ACCOUNTS -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-3">
         <a href="{{ route('accounts.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-blue-400">
@@ -273,7 +299,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- FD ACCOUNTS -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-3">
         <a href="{{ route('fd-mis-schemes.fd_index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-purple-400">
@@ -301,7 +327,7 @@ use Illuminate\Support\Facades\Storage;
 
 
         <!-- MIS ACCOUNTS -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-4">
         <a href="{{ route('misaccount.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-orange-400">
@@ -328,7 +354,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- DDS ACCOUNTS -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-4">
         <a href="{{ route('dds-accounts.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-cyan-400">
@@ -355,7 +381,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- MDS /RD ACCOUNTS -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-4">
         <a href="{{ route('mds-rd-accounts.rd-account-index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-pink-400">
@@ -383,7 +409,7 @@ use Illuminate\Support\Facades\Storage;
 
 
         <!-- Gold Loan  -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-3">
         <a href="{{ route('gold-loan.account.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-yellow-400">
@@ -414,7 +440,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- MORTGAGE LOAN  -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-3">
         <a href="{{ route('mortgage.account.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-blue-400">
@@ -445,7 +471,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- LOAN AGAINST DEPOSITE  -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-3">
         <a href="{{ route('loanagainst.account.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-green-400">
@@ -476,7 +502,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- BUSINESS LOAN  -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-3">
         <a href="{{ route('bussiness.account.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-purple-400">
@@ -509,7 +535,7 @@ use Illuminate\Support\Facades\Storage;
 
 
         <!-- CC / OD LIMIT LOAN -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-3">
         <a href="{{ route('cc_od.account.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100">
@@ -537,7 +563,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- DAILY WEEKLY LOAN -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-3">
         <a href="{{ route('daily_weekly.account.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100">
@@ -565,7 +591,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- PERSONAL LOAN -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-3">
         <a href="{{ route('personal.account.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100">
@@ -593,7 +619,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- VEHICLE LOAN -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-3">
         <a href="{{ route('vehical.account.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100">
@@ -622,7 +648,7 @@ use Illuminate\Support\Facades\Storage;
 
 
         <!-- Fixed LOAN  -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-4">
         <a href="{{ route('personal.account.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-blue-400">
@@ -653,7 +679,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- Consumer durable loan LOAN  -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-4">
         <a href="{{ route('consumer_loan.schemes.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-purple-400">
@@ -681,7 +707,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
         <!-- Agricultural LOAN  -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+        <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-4">
         <a href="{{ route('agricultural_loan.schemes.index') }}">
 
         <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-green-400">
@@ -740,7 +766,7 @@ use Illuminate\Support\Facades\Storage;
                 });
         </script>
 
-        <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
+        <div class="neo-card p-5 box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
             <a href="{{ route('payments-to-collect.index') }}">
             <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
                 <span class="font-medium">PAYMENT TO COLLECT</span>
@@ -760,7 +786,7 @@ use Illuminate\Support\Facades\Storage;
         </div>
 
 
-        <div class="box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
+        <div class=" neo-card p-5 box col-span-12 bg-n0 dark:bg-bg4 min-[650px]:col-span-6 xxxl:col-span-3">
             <div class="flex items-center justify-between pb-4 mb-4 bb-dashed lg:mb-6 lg:pb-6">
                 <span class="font-medium">PAYMENT TO RELEASE</span>
                 <!-- @include('partials._horizontal-options') -->
