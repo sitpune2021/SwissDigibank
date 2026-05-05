@@ -46,12 +46,12 @@
             }
 
            .otp-box-input {
-                width: 50px;
-                height: 55px;
+                width: 55px;
+                height: 60px;
                 text-align: center;
-                font-size: 22px;
-                border: 2px solid #ddd;
-                border-radius: 10px;
+                font-size: 24px;
+                border: 2px solid #e5e7eb;
+                border-radius: 12px;
                 transition: 0.2s;
             }
 
@@ -59,6 +59,7 @@
                 border-color: #06b6d4;
                 box-shadow: 0 0 10px rgba(6,182,212,0.4);
             }
+
             @keyframes scaleIn {
                 from {
                     transform: scale(0.8);
@@ -68,6 +69,57 @@
                     transform: scale(1);
                     opacity: 1;
                 }
+            }
+
+            /* 🌌 Animated Background Glow */
+            body::before {
+                content: "";
+                position: fixed;
+                width: 600px;
+                height: 600px;
+                background: radial-gradient(circle, rgba(0,255,255,0.15), transparent);
+                top: -100px;
+                left: -100px;
+                filter: blur(120px);
+                animation: moveGlow 10s infinite alternate;
+            }
+
+            @keyframes moveGlow {
+                0% { transform: translate(0,0); }
+                100% { transform: translate(200px,150px); }
+            }
+
+            /* 🔥 Neon Card Glow */
+            .neon-card {
+                border: 1px solid rgba(0,255,255,0.2);
+                box-shadow: 0 0 25px rgba(0,255,255,0.15),
+                            0 0 60px rgba(0,255,255,0.05);
+            }
+
+            /* 🚀 Neon Button */
+            .neon-btn {
+                background: linear-gradient(90deg, #00f0ff, #0066ff);
+                box-shadow: 0 0 15px rgba(0,240,255,0.6);
+            }
+            .neon-btn:hover {
+                box-shadow: 0 0 25px rgba(0,240,255,1);
+                transform: translateY(-1px);
+            }
+
+            /* 🧠 Input Focus Glow */
+            input:focus {
+                box-shadow: 0 0 12px rgba(0,255,255,0.6) !important;
+            }
+
+            /* 🔢 OTP Neon Boxes */
+            .otp-box-input {
+                background: rgba(255,255,255,0.05);
+                color: white;
+                border: 1px solid rgba(0,255,255,0.3);
+            }
+            .otp-box-input:focus {
+                border-color: #00f0ff;
+                box-shadow: 0 0 12px rgba(0,255,255,0.8);
             }
         </style>
         <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -116,22 +168,19 @@
                             px-5 py-6
                             shadow-[0_20px_60px_rgba(0,0,0,0.7)]
                             transition-all duration-300" 
-                            style="width: 470px; background-color: #362a2a;">
+                            style="width: 420px; background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); animation: scaleIn 0.4s ease;">
 
                             <!-- TITLE -->
                             <h2 class="text-white text-2xl font-semibold text-center mb-6 tracking-wide">
-                                Welcome Back 👋
+                                Secure Banking Login
                             </h2>
-
-                            <p class="text-center text-white text-sm mb-6">
-                                <b>Login to your secure banking dashboard</b>
-                            </p>
+                           
+                            <div class="text-center mb-4 text-white text-xs text-cyan-300">
+                                🔐 Trusted Secure Login • End-to-End Encrypted
+                            </div>
 
                             <!-- EMAIL -->
                             <div class="mb-4">
-                                <!-- <label class="text-white">
-                                    Email or Mobile
-                                </label> -->
                                 <input type="text" name="login"
                                     class="w-full px-4 py-3 rounded-xl 
                                     bg-white/80 text-black text-sm
@@ -142,9 +191,6 @@
 
                             <!-- PASSWORD -->
                             <div class="relative mb-5">
-                                <!-- <label class="text-white">
-                                    Password
-                                </label> -->
                                 <input type="password" name="password" id="password"
                                     class="w-full px-4 py-3 pr-10 rounded-xl 
                                     bg-white/80 text-black text-sm
@@ -161,11 +207,11 @@
 
                             <!-- BUTTON -->
                             <button type="button" onclick="loginUser()"
-                                class="w-full bg-gradient-to-r from-teal-400 to-cyan-500 
-                                    hover:from-teal-500 hover:to-cyan-600
-                                    text-white py-2.5 rounded-lg text-sm font-medium 
-                                    shadow-md hover:shadow-lg transition duration-300" style="background-color: cornflowerblue;">
-                                Login Securely
+                                class="w-full py-2.5 rounded-lg text-sm font-semibold 
+                                bg-gradient-to-r from-cyan-500 to-blue-600
+                                hover:from-cyan-600 hover:to-blue-700
+                                shadow-lg hover:shadow-cyan-500/40 transition duration-300" style="background-color: cornflowerblue;">
+                                Continue to Secure Login →
                             </button>
 
                             <!-- FORGOT -->
@@ -176,7 +222,13 @@
                                     class="text-cyan-300 text-xs hover:text-cyan-200 transition" style="color: aliceblue;">
                                     <b>Forgot Password?</b>
                                 </a>
-                            </div><br>
+                            </div>
+
+                            <div class="flex items-center my-4">
+                                <div class="flex-grow h-px bg-white/30"></div>
+                                <span class="px-3 text-xs text-gray-300">OR</span>
+                                <div class="flex-grow h-px bg-white/30"></div>
+                            </div>
 
                             <button type="button" onclick="biometricLogin()"
                                 class="w-full flex items-center justify-center gap-2 
@@ -191,8 +243,8 @@
                                     <path d="M8 0c-.69 0-1.843.405-3.516 1.316C2.825 2.26 2 3.21 2 4.2V7c0 3.248 2.432 6.023 6 6.9 3.568-.877 6-3.652 6-6.9V4.2c0-.99-.825-1.94-2.484-2.884C9.843.405 8.69 0 8 0zM8 1c.45 0 1.44.285 3.03 1.09C12.46 2.79 13 3.42 13 4.2V7c0 2.8-2.1 5.2-5 6-2.9-.8-5-3.2-5-6V4.2c0-.78.54-1.41 1.97-2.11C6.56 1.285 7.55 1 8 1z"/>
                                 </svg>
 
-                                <span class="text-sm font-medium tracking-wide">
-                                    Login with Passkey
+                                <span class="text-sm font-medium tracking-wide hover:scale-105 active:scale-95">
+                                    Secure Login with Fingerprint / Face ID
                                 </span>
                             </button><br>
 
@@ -201,13 +253,38 @@
                     </form>
 
                     <!-- OTP POPUP -->
-                    <div id="otpModal"  class="otp-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000080; justify-content:center; align-items:center;">
-                        <div style="background:white; padding:20px; border-radius:10px; width:300px;">
-                            <h4>Enter OTP</h4>
+                    <div id="otpModal" class="otp-modal" style="
+                        display:none;
+                        position:fixed;
+                        top:0;
+                        left:0;
+                        width:100%;
+                        height:100%;
+                        background: rgba(0,0,0,0.75);
+                        backdrop-filter: blur(10px);
+                        justify-content:center;
+                        align-items:center;
+                    ">
+                        <div class="otp-box neon-card" style="
+                            background: rgba(0,0,0,0.85);
+                            backdrop-filter: blur(20px);
+                            color:white;
+                            border-radius:20px;
+                            padding:25px;
+                            width:340px;
+                            animation: scaleIn 0.3s ease;
+                        ">
+                            <h4 style="font-weight:600;">
+                                🔐 OTP Verification
+                            </h4>
 
-                            <div id="otpMessage" style="color:red; font-size:14px; margin-bottom:10px;"></div>
+                            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">
+                                Enter the OTP sent to your registered device
+                            </p>
 
-                            <div id="otpBoxes" style="display:flex; gap:10px; justify-content:center; margin-bottom:10px;">
+                            <div id="otpMessage" style="color:#ff6b6b; font-size:13px;"></div>
+
+                            <div id="otpBoxes" style="display:flex; gap:12px; justify-content:center; margin:15px 0;">
     
                                 <input type="text" maxlength="1" class="otp-box-input" id="otp1">
                                 <input type="text" maxlength="1" class="otp-box-input" id="otp2">
@@ -216,16 +293,18 @@
 
                             </div>
 
-                            <button onclick="verifyOtp()" class="btn btn-primary w-100 mb-2">Verify OTP</button>
-
+                            <button onclick="verifyOtp()" 
+                                class="w-full py-2 rounded-lg text-white neon-btn">
+                                ✔ Verify & Continue
+                            </button>
                             <!-- TIMER -->
-                            <p id="timerText" style="font-size:13px; color:gray;">
-                                Resend OTP in <span id="countdown">30</span> sec
+                            <p id="timerText" style="font-size:12px; margin-top:10px; color:#aaa;">
+                                Resend OTP in <span id="countdown">60</span> sec
                             </p>
 
                             <!-- RESEND BUTTON -->
                             <button id="resendBtn" onclick="resendOtp()" 
-                                class="btn btn-secondary w-100" disabled>
+                                class="w-full mt-2 py-2 rounded-lg border border-cyan-400 text-cyan-300" disabled>
                                 Resend OTP
                             </button>
                         </div>
@@ -237,71 +316,93 @@
 
         </div>
 
-            <!-- 🔥 FORGOT PASSWORD MODAL -->
+            <!-- 🔥 PREMIUM FORGOT PASSWORD MODAL -->
             <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                    
+                    <div class="modal-content border-0 bg-transparent shadow-none">
 
-                        <!-- HEADER -->
-                        <div class="modal-header border-0 bg-light">
-                            <h5 class="modal-title fw-semibold">
+                        <div class="otp-box neon-card" style="
+                            background: rgba(0,0,0,0.85);
+                            backdrop-filter: blur(20px);
+                            color:white;
+                            border-radius:20px;
+                            padding:25px;
+                            width:100%;
+                            animation: scaleIn 0.3s ease;
+                        ">
+
+                            <!-- TITLE -->
+                            <h4 style="font-weight:600;">
                                 🔐 Reset Password
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
+                            </h4>
 
-                        <!-- BODY -->
-                        <div class="modal-body px-4 py-3">
+                            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">
+                                Enter your registered email to receive reset link
+                            </p>
 
-                            <!-- SUCCESS MESSAGE -->
+                            <!-- SUCCESS -->
                             @if(session('success'))
-                                <div class="alert alert-success text-center py-2">
+                                <div style="color:#22c55e; font-size:13px; margin-bottom:10px;">
                                     {{ session('success') }}
                                 </div>
                             @endif
 
-                            <!-- ERROR MESSAGE -->
+                            <!-- ERROR -->
                             @if(session('error'))
-                                <div class="alert alert-danger text-center py-2">
+                                <div style="color:#ff6b6b; font-size:13px; margin-bottom:10px;">
                                     {{ session('error') }}
                                 </div>
                             @endif
 
-                            <!-- VALIDATION ERROR -->
+                            <!-- VALIDATION -->
                             @if($errors->any())
-                                <div class="alert alert-danger py-2">
+                                <div style="color:#ff6b6b; font-size:13px; margin-bottom:10px;">
                                     @foreach($errors->all() as $error)
                                         <div>{{ $error }}</div>
                                     @endforeach
                                 </div>
                             @endif
 
-                            <p class="text-muted text-center mb-3" style="font-size:14px;">
-                                Enter your registered email to receive password reset link
-                            </p>
-
+                            <!-- FORM -->
                             <form action="/forgot-password" method="POST">
                                 @csrf
 
                                 <!-- EMAIL INPUT -->
-                                <div class="mb-3">
+                                <div style="margin-bottom:15px;">
                                     <input type="email" name="email"
-                                        class="form-control rounded-pill px-3 py-2"
+                                        class="w-full px-4 py-3 rounded-xl 
+                                        bg-white/10 text-white text-sm
+                                        border border-cyan-400/30
+                                        focus:ring-2 focus:ring-cyan-400
+                                        outline-none transition"
                                         placeholder="Enter your email"
                                         required>
-                                </div>
+                                </div><br>
 
                                 <!-- BUTTON -->
-                                <button type="submit"
-                                    class="btn w-100 rounded-pill text-white fw-semibold"
-                                    style="background: linear-gradient(90deg, #06b6d4, #3b82f6);">
-                                    Send Reset Link
-                                </button>
+                                <div style="display:flex; gap:10px; margin-top:10px;">
+
+                                    <!-- SEND BUTTON -->
+                                    <button type="submit"
+                                        class="w-50 py-2 rounded-lg text-white neon-btn">
+                                        ✉ Send Reset Link
+                                    </button>
+
+                                    <!-- CANCEL BUTTON -->
+                                    <button type="button" data-bs-dismiss="modal"
+                                        class="w-50 py-2 rounded-lg border border-gray-500 text-gray-300">
+                                        Cancel
+                                    </button>
+
+                                </div>
+
                             </form>
 
                         </div>
 
                     </div>
+
                 </div>
             </div>
 
