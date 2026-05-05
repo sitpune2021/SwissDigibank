@@ -1,9 +1,10 @@
 @extends('layout.main')
-@section('page-title', 'BRANCHES')
+@section('page-title', 'Branch Management')
 
 @section('action-button')
-<a class="btn-primary uppercase btns-add-index" href="{{ route('branch.create') }}">
-    Add
+<a href="{{ route('branch.create') }}"
+    class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition">
+    Add Branch
 </a>
 @endsection
 
@@ -100,7 +101,7 @@ transition:all .25s ease;
 
     @include('fields.errormessage')
 
-    <div class="mt-2 overflow-x-auto">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 
         <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
 
@@ -146,7 +147,7 @@ transition:all .25s ease;
                 <tr class="table-row dark:even:bg-bg3 border-b hover:bg-gray-50 dark:hover:bg-bg3"
                     style="animation-delay: {{ $loop->index * 0.05 }}s">
 
-                    <td class="px-6 py-4 text-left">
+                    <td class="px-6 py-5 text-left">
 
                         <div class="flex items-center gap-3">
 

@@ -128,7 +128,7 @@
                 <div class="logo-inner">                   
                     <a href="{{ route('index1') }}" class="logo-wrapper">
                         <!-- Full Logo -->
-                        <img src="{{ $logoPath }} " width="174" height="50" class="logo-full" alt="logo"  />
+                        <img src="{{ $logoPath }} " width="174" height="50" class="logo-full" alt="logo" style="width: 225px; height: 100px;" />
 
                         <!-- Icon Logo -->
                         <img src="{{ $logoPath }}" width="37" height="36" class="logo-icon hidden" alt="logo" />
