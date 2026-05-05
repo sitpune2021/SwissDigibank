@@ -31,7 +31,7 @@
     // Final logo path with fallback
     $logoPath = $sidebarLogo 
         ? asset('storage/' . $sidebarLogo->image_path)
-        :  asset('assets/images/SBC_Logo.png');
+        :  asset('assets/images/SIT_LOGO.png');
 
 @endphp
 
@@ -53,14 +53,82 @@
 }
 </style>
 
-<aside id="sidebar" class="sidebar bg-n0 dark:!bg-bg4">
-    <div class="sidebar-inner relative">
+<style>
+
+.menu-ul li:last-child {
+    margin-bottom: 20px;
+}
+.menu-container {
+    scroll-behavior: smooth;
+}
+    /* 🔥 HOVER EFFECT */
+.menu-btn:hover {
+    background: rgba(59,130,246,0.15) !important;
+    color: #fff !important;
+    transform: translateX(6px);
+    box-shadow: 0 0 12px rgba(59,130,246,0.6);
+}
+
+/* 🔥 ACTIVE MENU */
+.menu-btn.active {
+    background: linear-gradient(90deg,#3b82f6,#06b6d4) !important;
+    color: #fff !important;
+    box-shadow: 0 0 15px rgba(59,130,246,0.8);
+}
+
+/* 🔥 LEFT ACTIVE LINE */
+.menu-li.active::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 6px;
+    height: 75%;
+    width: 3px;
+    background: linear-gradient(#3b82f6,#06b6d4);
+    border-radius: 5px;
+    box-shadow: 0 0 8px rgba(59,130,246,0.8);
+}
+
+/* 🔥 SUBMENU STYLE */
+.submenu-link {
+    color: #94a3b8;
+    border-radius: 8px;
+    padding: 6px 10px;
+    transition: 0.25s;
+}
+
+/* 🔥 SUBMENU HOVER */
+.submenu-link:hover {
+    color: #fff;
+    background: rgba(59,130,246,0.12);
+    transform: translateX(6px);
+}
+
+/* 🔥 ICON GLOW */
+.menu-btn:hover i {
+    text-shadow: 0 0 8px #3b82f6;
+}
+.menu-btn {
+    background: transparent !important;
+}
+.menu-li {
+    background: transparent !important;
+}
+
+.menu-li * {
+    background-color: transparent !important;
+}
+</style>
+
+<aside id="sidebar" class="sidebar" style="background: linear-gradient(180deg,#0f172a,#020617); border-right:1px solid rgba(59,130,246,0.25); box-shadow:0 0 30px rgba(59,130,246,0.2);">
+    <div class="sidebar-inner relative" >
         <div class="logo-column">
-            <div class="logo-container">
+            
+            <div class="logo-container" style="height: 130px; margin-bottom: 20px;">
                 <div class="logo-inner">                   
                     <a href="{{ route('index1') }}" class="logo-wrapper">
                         <!-- Full Logo -->
-                        <img src="{{ $logoPath }} " width="174" height="50" class="logo-full" alt="logo"  />
+                        <img src="{{ $logoPath }} " width="174" height="50" class="logo-full" alt="logo" style="width: 225px; height: 100px;" />
 
                         <!-- Icon Logo -->
                         <img src="{{ $logoPath }}" width="37" height="36" class="logo-icon hidden" alt="logo" />
@@ -74,131 +142,132 @@
                 </div>
             </div>
 
-            <div class="menu-container pb-28" style="background-color: #1c2836;">
+            <div class="menu-container pb-28" style="background: transparent; height: calc(100vh - 130px); overflow-y: auto; padding-bottom: 20px;">
             {{-- <div class="menu-wrapper"> --}}
-                <div class=""  style="padding: 0px 10px; background-color: #1c2836;">
-                <ul class="menu-ul">
-                    @foreach ($menuItems as $item)
+                <div style="padding: 0px 10px; background: transparent;">
+                    <ul class="menu-ul" style="background: transparent;">
+                        @foreach ($menuItems as $item)
 
-                    @php
-                        // Skip main menu if no permission for any submenu
-                        $hasSubPermission = false;
+                        @php
+                            // Skip main menu if no permission for any submenu
+                            $hasSubPermission = false;
 
-                        if($item->submenus->isNotEmpty()) {
-                            foreach($item->submenus as $sub) {
-                                if(hasPermission($sub->route)) {
-                                    $hasSubPermission = true;
-                                    break;
+                            if($item->submenus->isNotEmpty()) {
+                                foreach($item->submenus as $sub) {
+                                    if(hasPermission($sub->route)) {
+                                        $hasSubPermission = true;
+                                        break;
+                                    }
                                 }
+                            } else {
+                                $hasSubPermission = hasPermission($item->route);
                             }
-                        } else {
-                            $hasSubPermission = hasPermission($item->route);
+
+                            if(!$hasSubPermission) continue;
+                        @endphp
+                        @php
+
+                        // Skip "User" menu for Customer
+                        if (
+                        in_array($roleName, ['Customer']) &&
+                        in_array(strtolower($item->title), ['approvals', 'user', 'hr management'])
+                        ) {
+                        continue;
                         }
 
-                        if(!$hasSubPermission) continue;
-                    @endphp
-                    @php
+                        $filteredSubmenus = $item->submenus;
 
-                    // Skip "User" menu for Customer
-                    if (
-                    in_array($roleName, ['Customer']) &&
-                    in_array(strtolower($item->title), ['approvals', 'user', 'hr management'])
-                    ) {
-                    continue;
-                    }
+                        // If Role Customer and menu title is "Company" → hide specific submenus
+                        if ($roleName === 'Customer' && strtolower($item->title) === 'company') {
+                        $filteredSubmenus = $filteredSubmenus->filter(function ($sub) {
+                        return !in_array(
+                        strtolower($sub->title),
+                        ['promotors', 'promotor share holdings', 'director']
+                        );
+                        });
+                        }
 
-                    $filteredSubmenus = $item->submenus;
+                        $isActive = request()->routeIs($item?->route ?? '');
+                        $submenuActive = $item->submenus->contains(function ($sub) {
+                        return request()->routeIs($sub->route);
+                        });
+                        @endphp
 
-                    // If Role Customer and menu title is "Company" → hide specific submenus
-                    if ($roleName === 'Customer' && strtolower($item->title) === 'company') {
-                    $filteredSubmenus = $filteredSubmenus->filter(function ($sub) {
-                    return !in_array(
-                    strtolower($sub->title),
-                    ['promotors', 'promotor share holdings', 'director']
-                    );
-                    });
-                    }
-
-                    $isActive = request()->routeIs($item?->route ?? '');
-                    $submenuActive = $item->submenus->contains(function ($sub) {
-                    return request()->routeIs($sub->route);
-                    });
-                    @endphp
-
-                    {{-- Future-ready: Add tab/section separator logic --}}
-                    @if (!empty($item->is_tab_start))
-                    <hr style="margin: 10px 0; border-color: #ccc;">
-                    @endif
-
-                    <li class="menu-li {{ $isActive || $submenuActive ? 'active' : '' }}    ">
-                        @if ($item->submenus->isNotEmpty())
-                        <button style="padding: 5px 13px; background-color: #1c2836; color: springgreen;"
-                            class="menu-btn group bg-n0 dark:!border-n500  dark:!bg-bg4 {{ $isActive || $submenuActive ? 'active' : '' }}"
-                            type="button" onclick="this.nextElementSibling.classList.toggle('submenu-show'); this.classList.toggle('active'); 
-                                        this.querySelector('.plus-minus .la-plus').classList.toggle('show'); 
-                                        this.querySelector('.plus-minus .la-minus').classList.toggle('show');">
-                            <span class="flex items-center justify-center gap-2">
-                                <span class="menu-icon" style="font-size: 14px !important;">
-                                    <i class="{{ $item->icon }}"></i>
-                                </span>
-                                <span class="menu-title font-medium  text-start "
-                                    style="font-size: 14px !important;">{{ $item->title }}</span>
-                            </span>
-                            <span class="plus-minus" style="font-size: 14px !important;">
-                                <i class="las la-plus text-xl {{ $submenuActive ? 'show' : '' }}"
-                                    style="font-size: 14px !important;"></i>
-                                <i class="las la-minus text-xl {{ $submenuActive ? '' : 'show' }}"
-                                    style="font-size: 14px !important;"></i>
-                            </span>
-                        </button>
-
-
-
-                        <ul class="submenu {{ $submenuActive ? 'submenu-show' : 'submenu-hide' }}">
-                            @foreach ($item->submenus as $sub)
-                            @if(!hasPermission($sub->route))
-                                @continue
-                            @endif
-                            <li>
-                                <a href="{{ route($sub->route) }}"
-                                    class="submenu-link {{ request()->routeIs($sub->route) ? 'text-primary' : '' }}"
-                                    style="padding: 3px 10px;">
-                                    <i class="las la-minus text-xl"></i>
-                                    <span style="font-size: 14px !important;">{{ $sub->title }}</span>
-                                </a>
-                            </li>
-                            @endforeach
-                        </ul>
-                        @else
-                        <a href="{{ route($item?->route) }}" style="padding: 5px 13px; background-color: #1c2836; color: springgreen;"
-                            class="menu-btn border-n30 bg-n0 dark:!border-n500 dark:bg-bg4 flex items-center justify-center gap-2 {{ $isActive ? 'active' : '' }}">
-                            <span class=" flex justify-start gap-2 ">
-                                <span class="menu-icon ">
-                                    <i class="{{ $item->icon }}"></i>
-                                </span>
-                                <span class="menu-title font-medium" style="font-size: 14px !important ;">
-                                    {{ $item->title }}
-                                </span>
-                            </span>
-                            <span class="plus-minus" style="font-size: 14px !important;">
-                                <i class="las la-plus text-xl {{ $submenuActive ? 'show' : '' }}"
-                                    style="font-size: 14px !important;"></i>
-                                <i class="las la-minus text-xl {{ $submenuActive ? '' : 'show' }}"
-                                    style="font-size: 14px !important;"></i>
-                            </span>
-                        </a>
+                        {{-- Future-ready: Add tab/section separator logic --}}
+                        @if (!empty($item->is_tab_start))
+                        <hr style="margin: 10px 0; border-color: #ccc;">
                         @endif
-                    </li>
 
-                    {{-- Always add
-                    <hr> AFTER HR MANAGEMENT --}}
-                    @if ($item->title === 'HR MANAGEMENT')
-                    {{-- <hr style="margin: 10px 0; border-color: #ccc;"> --}}
-                    @endif
-                    @endforeach
-                </ul>
+                        <li class="menu-li {{ $isActive || $submenuActive ? 'active' : '' }}    ">
+                            @if ($item->submenus->isNotEmpty())
+                            <button style="padding: 8px 14px; color:#cbd5e1; background: rgba(59,130,246,0.08); border-radius:10px; transition:0.25s;"
+                                class="menu-btn group !bg-transparent dark:!bg-transparent {{ $isActive || $submenuActive ? 'active' : '' }}"
+                                type="button" onclick="this.nextElementSibling.classList.toggle('submenu-show'); this.classList.toggle('active'); 
+                                            this.querySelector('.plus-minus .la-plus').classList.toggle('show'); 
+                                            this.querySelector('.plus-minus .la-minus').classList.toggle('show');">
+                                <span class="flex items-center justify-center gap-2">
+                                    <span class="menu-icon" style="font-size: 14px !important;">
+                                        <i class="{{ $item->icon }}"></i>
+                                    </span>
+                                    <span class="menu-title font-medium  text-start "
+                                        style="font-size: 14px !important;">{{ $item->title }}</span>
+                                </span>
+                                <span class="plus-minus" style="font-size: 14px !important;">
+                                    <i class="las la-plus text-xl {{ $submenuActive ? 'show' : '' }}"
+                                        style="font-size: 14px !important;"></i>
+                                    <i class="las la-minus text-xl {{ $submenuActive ? '' : 'show' }}"
+                                        style="font-size: 14px !important;"></i>
+                                </span>
+                            </button>
+
+
+
+                            <ul class="submenu {{ $submenuActive ? 'submenu-show' : 'submenu-hide' }}">
+                                @foreach ($item->submenus as $sub)
+                                @if(!hasPermission($sub->route))
+                                    @continue
+                                @endif
+                                <li>
+                                    <a href="{{ route($sub->route) }}"
+                                        class="submenu-link {{ request()->routeIs($sub->route) ? 'text-primary' : '' }}"
+                                        style="padding: 3px 10px;">
+                                        <i class="las la-minus text-xl"></i>
+                                        <span style="font-size: 14px !important;">{{ $sub->title }}</span>
+                                    </a>
+                                </li>
+                                @endforeach
+                            </ul>
+                            @else
+                            <a href="{{ route($item?->route) }}" style="padding:8px 14px; color:#cbd5e1; background: rgba(255,255,255,0.03); border-radius:10px; transition:0.25s;"
+                                class="menu-btn border-n30 !bg-transparent dark:!bg-transparent flex items-center justify-center gap-2 {{ $isActive ? 'active' : '' }}">
+                                <span class=" flex justify-start gap-2 ">
+                                    <span class="menu-icon ">
+                                        <i class="{{ $item->icon }}"></i>
+                                    </span>
+                                    <span class="menu-title font-medium" style="font-size: 14px !important ;">
+                                        {{ $item->title }}
+                                    </span>
+                                </span>
+                                <span class="plus-minus" style="font-size: 14px !important;">
+                                    <i class="las la-plus text-xl {{ $submenuActive ? 'show' : '' }}"
+                                        style="font-size: 14px !important;"></i>
+                                    <i class="las la-minus text-xl {{ $submenuActive ? '' : 'show' }}"
+                                        style="font-size: 14px !important;"></i>
+                                </span>
+                            </a>
+                            @endif
+                        </li>
+
+                        {{-- Always add
+                        <hr> AFTER HR MANAGEMENT --}}
+                        @if ($item->title === 'HR MANAGEMENT')
+                        {{-- <hr style="margin: 10px 0; border-color: #ccc;"> --}}
+                        @endif
+                        @endforeach
+                    </ul>
+                </div>
             </div>
-        </div>
+            
         </div>
     </div>
 </aside>

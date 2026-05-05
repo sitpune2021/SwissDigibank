@@ -1,10 +1,10 @@
 @extends('layout.main')
-@section('page-title', 'CUSTOMERS')
+@section('page-title', 'CUSTOMER Management')
 
 @section('action-button')
 
     <a class="btn-primary uppercase" href="{{ route('member.create') }}">
-        ADD
+        ADD CUSTOMER
     </a>
 
 @endsection

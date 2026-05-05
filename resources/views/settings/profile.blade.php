@@ -178,112 +178,119 @@
     }
 
 </style>
+
 <div class="main-inner">
+    
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6 px-4 lg:mb-8">
         <h3 class=" flex text-xl  uppercase font-semibold">
            My Account
         </h3>
-
     </div>
+
     <div class="">
         <div class="w-44 mb-5 flex justify-end">
             <x-alert />
         </div>
-        {{-- {{ session('success') }} --}}
-    </div>
-<div class=" box">
-
-    <div class="header">
-        {{-- <h1>Profile</h1>
-        <p>I'm a creative webdeveloper</p> --}}
     </div>
 
-    <div class="grid">
+    <div class=" box">
 
-        <div class="profile-card bg-primary text-center">
+        <div class="grid">
 
-    <img src="{{ $user->profilePhoto
-            ? asset('storage/profile_photos/' . $user->profilePhoto->filename)
-            : asset('assets/images/user-big-4.png') }}"
-         class="profile-img bg-secondary/5"
-         alt="Profile">
+            <div class="profile-card bg-primary text-center">
 
-    <form id="photoForm"
-          action="{{ route('settings.profile-photo.update') }}"
-          method="POST"
-          enctype="multipart/form-data">
-        @csrf
+                <img src="{{ $user?->profilePhoto?->filename
+                    ? asset('storage/profile_photos/' . $user->profilePhoto->filename)
+                    : asset('assets/images/user-big-4.png') }}"
+                    class="profile-img bg-secondary/5"
+                    alt="Profile">
 
-        <!-- Hidden File Input -->
-        <input type="file" name="photo" id="photoInput" hidden
-               accept="image/*"
-               onchange="document.getElementById('photoForm').submit();">
-    </form>
+                <form id="photoForm"
+                    action="{{ route('settings.profile-photo.update') }}"
+                    method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
 
-    <!-- Button that triggers file picker -->
-    <button type="button"
-            onclick="document.getElementById('photoInput').click();"
-            class="btn-secondary cursor-pointer rounded-10 mt-5">
-        <i class="las la-upload"></i> UPDATE IMAGE
-    </button>
+                    <!-- Hidden File Input -->
+                    <input type="file" name="photo" id="photoInput" hidden
+                        accept="image/*"
+                        onchange="validateImage(this)">
+                </form>
 
-    @error('photo')
-        <p class="text-error text-sm mt-2">{{ $message }}</p>
-    @enderror
+                <!-- Button that triggers file picker -->
+                <button type="button"
+                        onclick="document.getElementById('photoInput').click();"
+                        class="btn-secondary cursor-pointer rounded-10 mt-5">
+                    <i class="las la-upload"></i> UPDATE IMAGE
+                </button>
 
-</div>
-         {{-- <div class="profile-card bg-primary">
-            <img src="https://randomuser.me/api/portraits/women/44.jpg" class="profile-img bg-secondary/5"  alt="Profile">
+                @error('photo')
+                    <p class="text-error text-sm mt-2">{{ $message }}</p>
+                @enderror
 
-            {{-- <h3>HELLO, I'M<br>PATRYCJA</h3> --}}
-
-           {{-- <a href="" class="btn-secondary cursor-pointer rounded-10 mt-5">
-               <i class="las la-upload "></i>
-                UPDATE IMAGE
-            </a>
-        </div> --}}
-
-        <!-- Details -->
-        <div class="details flex flex-col gap-2" >
-            <div class="section-title uppercase">{{ $user->fname }} {{ $user->lname }}</div>
-            <div class="flex  items-center justify-start gap-3 ">
-                <p class="">
-                    <i class="las la-envelope "></i>
-                </p>
-                <p class=" " >{{ $user->email }}</p>
             </div>
-            <div class="flex items-center justify-start gap-3 ">
-                <p class="">
-                    <i class="las la-users"></i>
-                </p>
-                <p class=" " >{{ $user->name }}</p>
-            </div>
-            <div class="flex  items-center justify-start gap-3 ">
-                <p class="">
-                      <i class="las la-building"></i>
-                </p>
-              <p class=" " >All (static)</p>
-            </div>
-          
-             <div class="flex items-center justify-start gap-3 ">
-                <p class="">
-                <i class="las la-signal"></i>
-                </p>
-                <p class=" " >{{ $user->user_active ? 'Active': 'Inactive' }}</p>
-            </div>
-            
-            <div class="">
+
+            <!-- Details -->
+            <div class="details flex flex-col gap-2">
+
+                <div class="section-title uppercase">
+                    {{ optional($user)->fname }} {{ optional($user)->lname }}
+                </div>
+                <div class="flex  items-center justify-start gap-3 ">
+                    <p class="">
+                        <i class="las la-envelope "></i>
+                    </p>
+                    <p>{{ $user?->email ?? 'No email available' }}</p>
+                </div>
+                <div class="flex items-center justify-start gap-3 ">
+                    <p class="">
+                        <i class="las la-users"></i>
+                    </p>
+                    <p>{{ $user?->name ?? 'Guest User' }}</p>
+                </div>
+                <div class="flex  items-center justify-start gap-3 ">
+                    <p class="">
+                        <i class="las la-building"></i>
+                    </p>
+                <p class=" " >All (static)</p>
+                </div>
+                <div class="flex items-center justify-start gap-3 ">
+                    <p class="">
+                    <i class="las la-signal"></i>
+                    </p>
+                    <p>{{ $user?->user_active ? 'Active' : 'Inactive' }}</p>
+                </div>
                 
-                <a href="{{ route('settings.profile-change-password') }}" class="btn-outline rounded-10 uppercase text-sm cursor-pointer">
-                  <i class="las la-sync"></i>   
-                    Change Password
-                </a>
+                <div class="">       
+                    <a href="{{ route('settings.profile-change-password') }}" class="btn-outline rounded-10 uppercase text-sm cursor-pointer">
+                    <i class="las la-sync"></i>   
+                        Change Password
+                    </a>
+                </div>
+
             </div>
-        </div>      
+                
+        </div>
+
     </div>
-</div>
 
+    <script>
+        function validateImage(input) {
+            const file = input.files[0];
 
+            if (!file) return;
+
+            // ❌ size check (2MB limit)
+            if (file.size > 2 * 1024 * 1024) {
+                alert("Image must be less than 2MB");
+                input.value = "";
+                return;
+            }
+
+            // ✅ submit only if valid
+            document.getElementById('photoForm').submit();
+        }
+    </script>
 
 
 @endsection
