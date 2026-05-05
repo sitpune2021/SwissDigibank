@@ -53,11 +53,78 @@
 }
 </style>
 
-<aside id="sidebar" class="sidebar bg-n0 dark:!bg-bg4">
-    <div class="sidebar-inner relative">
+<style>
+
+.menu-ul li:last-child {
+    margin-bottom: 20px;
+}
+.menu-container {
+    scroll-behavior: smooth;
+}
+    /* 🔥 HOVER EFFECT */
+.menu-btn:hover {
+    background: rgba(59,130,246,0.15) !important;
+    color: #fff !important;
+    transform: translateX(6px);
+    box-shadow: 0 0 12px rgba(59,130,246,0.6);
+}
+
+/* 🔥 ACTIVE MENU */
+.menu-btn.active {
+    background: linear-gradient(90deg,#3b82f6,#06b6d4) !important;
+    color: #fff !important;
+    box-shadow: 0 0 15px rgba(59,130,246,0.8);
+}
+
+/* 🔥 LEFT ACTIVE LINE */
+.menu-li.active::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 6px;
+    height: 75%;
+    width: 3px;
+    background: linear-gradient(#3b82f6,#06b6d4);
+    border-radius: 5px;
+    box-shadow: 0 0 8px rgba(59,130,246,0.8);
+}
+
+/* 🔥 SUBMENU STYLE */
+.submenu-link {
+    color: #94a3b8;
+    border-radius: 8px;
+    padding: 6px 10px;
+    transition: 0.25s;
+}
+
+/* 🔥 SUBMENU HOVER */
+.submenu-link:hover {
+    color: #fff;
+    background: rgba(59,130,246,0.12);
+    transform: translateX(6px);
+}
+
+/* 🔥 ICON GLOW */
+.menu-btn:hover i {
+    text-shadow: 0 0 8px #3b82f6;
+}
+.menu-btn {
+    background: transparent !important;
+}
+.menu-li {
+    background: transparent !important;
+}
+
+.menu-li * {
+    background-color: transparent !important;
+}
+</style>
+
+<aside id="sidebar" class="sidebar" style="background: linear-gradient(180deg,#0f172a,#020617); border-right:1px solid rgba(59,130,246,0.25); box-shadow:0 0 30px rgba(59,130,246,0.2);">
+    <div class="sidebar-inner relative" >
         <div class="logo-column">
             
-            <div class="logo-container" style="height: 140px;">
+            <div class="logo-container" style="height: 130px; margin-bottom: 20px;">
                 <div class="logo-inner">                   
                     <a href="{{ route('index1') }}" class="logo-wrapper">
                         <!-- Full Logo -->
@@ -75,10 +142,10 @@
                 </div>
             </div>
 
-            <div class="menu-container pb-28" style="background-color: #1c2836;">
+            <div class="menu-container pb-28" style="background: transparent; height: calc(100vh - 130px); overflow-y: auto; padding-bottom: 20px;">
             {{-- <div class="menu-wrapper"> --}}
-                <div class=""  style="padding: 0px 10px; background-color: #1c2836;">
-                    <ul class="menu-ul">
+                <div style="padding: 0px 10px; background: transparent;">
+                    <ul class="menu-ul" style="background: transparent;">
                         @foreach ($menuItems as $item)
 
                         @php
@@ -133,8 +200,8 @@
 
                         <li class="menu-li {{ $isActive || $submenuActive ? 'active' : '' }}    ">
                             @if ($item->submenus->isNotEmpty())
-                            <button style="padding: 5px 13px; background-color: #1c2836; color: springgreen;"
-                                class="menu-btn group bg-n0 dark:!border-n500  dark:!bg-bg4 {{ $isActive || $submenuActive ? 'active' : '' }}"
+                            <button style="padding: 8px 14px; color:#cbd5e1; background: rgba(59,130,246,0.08); border-radius:10px; transition:0.25s;"
+                                class="menu-btn group !bg-transparent dark:!bg-transparent {{ $isActive || $submenuActive ? 'active' : '' }}"
                                 type="button" onclick="this.nextElementSibling.classList.toggle('submenu-show'); this.classList.toggle('active'); 
                                             this.querySelector('.plus-minus .la-plus').classList.toggle('show'); 
                                             this.querySelector('.plus-minus .la-minus').classList.toggle('show');">
@@ -171,8 +238,8 @@
                                 @endforeach
                             </ul>
                             @else
-                            <a href="{{ route($item?->route) }}" style="padding: 5px 13px; background-color: #1c2836; color: springgreen;"
-                                class="menu-btn border-n30 bg-n0 dark:!border-n500 dark:bg-bg4 flex items-center justify-center gap-2 {{ $isActive ? 'active' : '' }}">
+                            <a href="{{ route($item?->route) }}" style="padding:8px 14px; color:#cbd5e1; background: rgba(255,255,255,0.03); border-radius:10px; transition:0.25s;"
+                                class="menu-btn border-n30 !bg-transparent dark:!bg-transparent flex items-center justify-center gap-2 {{ $isActive ? 'active' : '' }}">
                                 <span class=" flex justify-start gap-2 ">
                                     <span class="menu-icon ">
                                         <i class="{{ $item->icon }}"></i>
