@@ -563,14 +563,20 @@
                                 <i class="las la-cog text-lg"></i>
                                 Settings
                             </a>
-                        </li>
+                        </li>                    
 
                         <li class="border-t mt-2">
                             <a href="#"
-                                class="menu-item logout-item flex items-center gap-3 px-5 py-3">
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                class="flex items-center gap-3 px-5 py-3 text-red-500 hover:bg-red-500 hover:text-white transition"
+                                style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                                 <i class="las la-sign-out-alt text-lg"></i>
                                 Logout
                             </a>
+
+                            <form id="logout-form" action="{{ route('log.out') }}" method="POST" style="display:none;">
+                                @csrf
+                            </form>
                         </li>
 
                     </ul>

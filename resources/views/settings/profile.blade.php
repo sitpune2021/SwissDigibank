@@ -248,12 +248,6 @@
                     </p>
                     <p>{{ $user?->name ?? 'Guest User' }}</p>
                 </div>
-                <div class="flex  items-center justify-start gap-3 ">
-                    <p class="">
-                        <i class="las la-building"></i>
-                    </p>
-                <p class=" " >All (static)</p>
-                </div>
                 <div class="flex items-center justify-start gap-3 ">
                     <p class="">
                     <i class="las la-signal"></i>
@@ -262,7 +256,8 @@
                 </div>
                 
                 <div class="">       
-                    <a href="{{ route('settings.profile-change-password') }}" class="btn-outline rounded-10 uppercase text-sm cursor-pointer">
+                    <a href="{{ route('settings.profile-change-password') }}" class="btn-outline rounded-10 uppercase text-sm cursor-pointer"
+                    style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                     <i class="las la-sync"></i>   
                         Change Password
                     </a>
