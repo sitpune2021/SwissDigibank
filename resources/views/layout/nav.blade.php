@@ -18,14 +18,14 @@
         border-bottom: 1px solid rgba(0,255,255,0.15);
 
         box-shadow: 
-            0 5px 20px rgba(0,0,0,0.3),
+            0 3px 6px rgba(0,0,0,0.3),
             inset 0 0 20px rgba(0,255,255,0.05);
     }
 
     /* 🔥 MENU BUTTON */
     #dropdownBtn {
         background: rgba(0,255,255,0.08);
-        color: #3b82f6;
+        color: #e54d3d;
         border-radius: 10px;
         padding: 6px 14px;
         transition: 0.3s;
@@ -145,6 +145,79 @@
     }
 </style>
 
+<style>
+    .profile-avatar {
+    border-radius: 50%;
+    border: 2px solid rgba(0,255,255,0.4);
+    box-shadow: 
+        0 0 10px rgba(0,255,255,0.6),
+        0 0 25px rgba(0,255,255,0.3),
+        inset 0 0 5px rgba(0,255,255,0.5);
+    transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.08);
+    box-shadow: 
+        0 0 15px rgba(0,255,255,1),
+        0 0 35px rgba(0,255,255,0.6);
+}
+.profile-dropdown {
+    background: rgba(10, 15, 25, 0.85);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(0,255,255,0.2);
+
+    box-shadow:
+        0 10px 40px rgba(0,0,0,0.6),
+        0 0 30px rgba(0,255,255,0.15);
+
+    transition: all 0.3s ease;
+}
+.profile-dropdown .user-info {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* USER NAME */
+.profile-dropdown h6 {
+    color: #ffffff;
+    font-weight: 700; /* 🔥 bold */
+    letter-spacing: 0.6px;
+    text-shadow: 0 0 8px rgba(0,255,255,0.4); /* neon glow */
+}
+
+/* EMAIL */
+.profile-dropdown span {
+    color: #d1d5db; /* thoda soft white */
+    font-weight: 500;
+}
+
+/* MENU ITEMS TEXT */
+.menu-item {
+    color: #ffffff;
+    font-weight: 600; /* 🔥 bold */
+    transition: all 0.25s ease;
+}
+
+/* HOVER EFFECT */
+.menu-item:hover {
+    color: #00f0ff;
+    font-weight: 600;
+    background: rgba(0,255,255,0.08);
+    box-shadow: inset 0 0 15px rgba(0,255,255,0.15);
+}
+
+/* ICON COLOR */
+.menu-item i {
+    color: #ffffff;
+}
+
+/* LOGOUT */
+.logout-item {
+    color: #ff6b6b;
+    font-weight: 600;
+}
+</style>
+
 <nav class="navbar-top topbarfull z-20 gap-3 bg-n0 py-3 shadow-sm duration-300 border-b border-n0 dark:border-n700 dark:bg-bg4 xl:py-4 xxxl:py-6" id="topbar" style="background: aliceblue;">
     
     <div class="topbar-inner flex items-center justify-between gap-2">
@@ -163,7 +236,7 @@
             <!-- Dropdown Trigger -->
             <div class="whitespace-norwrap  relative inline-block grow items-center gap-2 xxl:gap-4 ">
                 <!-- Main button -->
-                <button id="dropdownBtn" class="btn-outline uppercase py-2 px-1 transition">
+                <button id="dropdownBtn" class="btn-outline uppercase py-2 px-1 transition" style="box-shadow: 0px 5px 15px 15px rgba(0, 0, 0, 0.2); background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                     Menu
                     <i id="dropdownArrow" class="las la-angle-down ml-2 transition-transform duration-200"></i>
                 </button>
@@ -435,21 +508,17 @@
                 @endphp
 
                 <!-- PROFILE BUTTON -->
-                <div id="profile-btn" class="cursor-pointer">
+                <div id="profile-btn" class="cursor-pointer" style="box-shadow: 0px 5px 15px 15px rgba(0, 0, 0, 0.2);">
                     <img src="{{ $photo 
-                        ? asset('storage/profile_photos/'.$photo) 
-                        : asset('assets/images/user-big-4.png') }}"
-                        class="rounded-full border-2 border-primary shadow-md hover:scale-105 transition duration-300"
-                        style="width:45px;height:45px;object-fit:cover;">
+                    ? asset('storage/profile_photos/'.$photo) 
+                    : asset('assets/images/user-big-4.png') }}"
+                    class="profile-avatar"
+                    style="width:45px;height:45px;object-fit:cover;">
                 </div>
 
                 <!-- DROPDOWN -->
                 <div id="profile"
-                    class="hide absolute right-0 mt-3 w-72 rounded-2xl overflow-hidden
-                    bg-white dark:bg-gray-900
-                    shadow-[0_10px_30px_rgba(0,0,0,0.15)]
-                    border border-gray-200 dark:border-gray-700
-                    transition-all duration-300">
+                    class="profile-dropdown hide absolute right-0 mt-3 w-72 rounded-2xl overflow-hidden">
 
                     <!-- USER INFO -->
                     <div class="flex flex-col items-center text-center p-5 border-b dark:border-gray-700">
@@ -474,7 +543,7 @@
 
                         <li>
                             <a href="{{ route('settings.profile') }}"
-                                class="flex items-center gap-3 px-5 py-3 hover:bg-primary hover:text-white transition">
+                                class="menu-item flex items-center gap-3 px-5 py-3">
                                 <i class="las la-user text-lg"></i>
                                 Profile
                             </a>
@@ -482,7 +551,7 @@
 
                         <li>
                             <a href="{{ route('support.help.center') }}"
-                                class="flex items-center gap-3 px-5 py-3 hover:bg-primary hover:text-white transition">
+                                class="menu-item flex items-center gap-3 px-5 py-3">
                                 <i class="las la-life-ring text-lg"></i>
                                 Help Center
                             </a>
@@ -490,16 +559,17 @@
 
                         <li>
                             <a href="{{ route('settings.security') }}"
-                                class="flex items-center gap-3 px-5 py-3 hover:bg-primary hover:text-white transition">
+                                class="menu-item flex items-center gap-3 px-5 py-3">
                                 <i class="las la-cog text-lg"></i>
                                 Settings
                             </a>
-                        </li>
+                        </li>                    
 
                         <li class="border-t mt-2">
                             <a href="#"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                class="flex items-center gap-3 px-5 py-3 text-red-500 hover:bg-red-500 hover:text-white transition">
+                                class="flex items-center gap-3 px-5 py-3 text-red-500 hover:bg-red-500 hover:text-white transition"
+                                style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                                 <i class="las la-sign-out-alt text-lg"></i>
                                 Logout
                             </a>
@@ -510,6 +580,7 @@
                         </li>
 
                     </ul>
+
                 </div>
             </div>
             

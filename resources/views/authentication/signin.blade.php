@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html dir="ltr">
 
-    <head>
-        
+    <head>              
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon" />
@@ -125,7 +124,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
     </head>
 
-   <body class="vertical">
+    <body class="vertical">
 
         <div class="relative min-h-screen w-full overflow-hidden">
 
@@ -139,7 +138,7 @@
             <!-- BACKGROUND -->
             <div class="absolute inset-0"
                 style="
-                    background-image: url('{{ asset('assets/images/sbc_new_logo3.png') }}');
+                    background-image: url('{{ asset('assets/images/sbc_new_logo7.png') }}');
                     background-size: cover;
                     background-position: center;
                     background-repeat: no-repeat;
@@ -164,7 +163,7 @@
                             bg-white/10
                             backdrop-blur-3xl
                             border border-white/20
-                            rounded-2xl
+                            rounded-3xl
                             px-5 py-6
                             shadow-[0_20px_60px_rgba(0,0,0,0.7)]
                             transition-all duration-300" 
@@ -226,7 +225,7 @@
 
                             <div class="flex items-center my-4">
                                 <div class="flex-grow h-px bg-white/30"></div>
-                                <span class="px-3 text-xs text-gray-300">OR</span>
+                                <span class="px-3 text-xs text-gray-300" style="color: blanchedalmond;">OR</span>
                                 <div class="flex-grow h-px bg-white/30"></div>
                             </div>
 

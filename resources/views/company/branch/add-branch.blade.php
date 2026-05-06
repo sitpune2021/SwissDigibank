@@ -74,17 +74,17 @@
             @endforeach
             <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                 @if (empty($show))
-                    <button class="btn-primary" type="submit">
+                    <button class="btn-primary" type="submit" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                         {{ $method === 'PUT' ? 'UPDATE' : 'SAVE' }} BRANCH
                     </button>
                     @if ($method === 'POST')
-                        <button class="btn-outline" type="reset"
+                        <button class="btn-outline" type="reset" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;"
                             onclick="document.getElementById('companyForm').reset();">
                             RESET
                         </button>
                     @endif
                 @endif
-                <button class="btn-outline" type="reset"
+                <button class="btn-outline" type="reset" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;"
                     onclick="window.location.href='{{ route('branch.index') }}'">BACK</button>
             </div>
         </form>
@@ -92,7 +92,9 @@
 @endsection
 
 @push('script')
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
         setTimeout(function() {
             var successAlert = document.getElementById('success-alert');
@@ -101,6 +103,7 @@
             if (errorAlert) errorAlert.style.display = 'none';
         }, 5000);
     </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Reusable digit-only validation
@@ -154,4 +157,5 @@
             applyGSTValidation('gst_no'); // GST
         });
     </script>
+    
 @endpush

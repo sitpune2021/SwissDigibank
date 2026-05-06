@@ -71,7 +71,8 @@
 
 /* 🔥 ACTIVE MENU */
 .menu-btn.active {
-    background: linear-gradient(90deg,#3b82f6,#06b6d4) !important;
+    /* background: linear-gradient(90deg,#e54d3d,#06b6d4) !important; */
+    background: linear-gradient(90deg,#e54d3d,#d4c406) !important;
     color: #fff !important;
     box-shadow: 0 0 15px rgba(59,130,246,0.8);
 }
@@ -143,7 +144,7 @@
             </div>
 
             <div class="menu-container pb-28" style="background: transparent; height: calc(100vh - 130px); overflow-y: auto; padding-bottom: 20px;">
-            {{-- <div class="menu-wrapper"> --}}
+                {{-- <div class="menu-wrapper"> --}}
                 <div style="padding: 0px 10px; background: transparent;">
                     <ul class="menu-ul" style="background: transparent;">
                         @foreach ($menuItems as $item)

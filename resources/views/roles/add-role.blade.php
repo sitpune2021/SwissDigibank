@@ -270,10 +270,10 @@
                     </div>
                 </div>
                 <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
-                    <button class="btn-primary" type="submit">
-                        Add Role
+                    <button class="btn-primary" type="submit" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
+                        SAVE PERMISSION
                     </button>
-                    <button class="btn-outline" type="reset">
+                    <button class="btn-outline" type="reset" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                         Cancel
                     </button>
                 </div>

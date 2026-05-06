@@ -2,8 +2,8 @@
 @section('page-title', 'Unencumbered Deposits')
 
 @section('action-button')
-    <a class="btn-primary" href="{{ route('unencumbered-deposits.create') }}">
-        ADD
+    <a class="btn-primary" href="{{ route('unencumbered-deposits.create') }}" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
+        ADD DEPOSIT
     </a>
 @endsection
 

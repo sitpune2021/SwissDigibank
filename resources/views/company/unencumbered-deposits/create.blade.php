@@ -218,13 +218,12 @@ $isView = $mode === 'show';
             {{-- Buttons --}}
             <div class="flex justify-center gap-3 mt-6 col-span-2">
                 @if (!$isView)
-                <button type="submit" class="btn-primary uppercase">
-                    {{ $mode === 'edit' ? 'UPDATE' : 'SAVE' }}
+                <button type="submit" class="btn-primary uppercase" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
+                    {{ $mode === 'edit' ? 'UPDATE' : 'SAVE DEPOSIT' }}
                 </button>
                 @endif
 
-
-                <a href="{{ route('unencumbered-deposits.index') }}" class="btn-outline uppercase">
+                <a href="{{ route('unencumbered-deposits.index') }}" class="btn-outline uppercase" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                     BACK
                 </a>
             </div>
