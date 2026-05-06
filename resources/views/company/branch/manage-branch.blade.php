@@ -2,9 +2,9 @@
 @section('page-title', 'Branch Management')
 
 @section('action-button')
-<a href="{{ route('branch.create') }}"
+<a href="{{ route('branch.create') }}" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;"
     class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition">
-    Add Branch
+    ADD BRANCH
 </a>
 @endsection
 

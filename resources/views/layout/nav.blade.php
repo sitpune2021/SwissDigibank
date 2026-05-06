@@ -236,7 +236,7 @@
             <!-- Dropdown Trigger -->
             <div class="whitespace-norwrap  relative inline-block grow items-center gap-2 xxl:gap-4 ">
                 <!-- Main button -->
-                <button id="dropdownBtn" class="btn-outline uppercase py-2 px-1 transition">
+                <button id="dropdownBtn" class="btn-outline uppercase py-2 px-1 transition" style="box-shadow: 0px 5px 15px 15px rgba(0, 0, 0, 0.2); background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                     Menu
                     <i id="dropdownArrow" class="las la-angle-down ml-2 transition-transform duration-200"></i>
                 </button>
@@ -508,7 +508,7 @@
                 @endphp
 
                 <!-- PROFILE BUTTON -->
-                <div id="profile-btn" class="cursor-pointer">
+                <div id="profile-btn" class="cursor-pointer" style="box-shadow: 0px 5px 15px 15px rgba(0, 0, 0, 0.2);">
                     <img src="{{ $photo 
                     ? asset('storage/profile_photos/'.$photo) 
                     : asset('assets/images/user-big-4.png') }}"

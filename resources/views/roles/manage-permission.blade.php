@@ -2,8 +2,8 @@
 @section('page-title', 'PERMISSIONS / ROLES')
 
 @section('action-button')
-<a class="btn-primary" href="{{ route('roles.create') }}">
-    ADD
+<a class="btn-primary" href="{{ route('roles.create') }}" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
+    ADD PERMISSION
 </a>
 @endsection
 

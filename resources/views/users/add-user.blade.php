@@ -266,21 +266,21 @@
                 <div class="col-span-2 flex gap-4  uppercase md:gap-6 mt-2">
                     {{-- Show Submit button only if not view page --}}
                     @if (empty($isView))
-                        <button class="btn-primary uppercase" type="submit">
+                        <button class="btn-primary uppercase" type="submit" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                             {{ isset($user) ? 'Update User' : 'Save User' }}
                         </button>
                     @endif
 
                     {{-- Reset button only on Add page --}}
                     @if (!isset($user) && empty($isView))
-                        <button class="btn-outline uppercase" type="reset">
+                        <button class="btn-outline uppercase" type="reset" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                             Reset
                         </button>
                     @endif
 
                     {{-- Back button on Add, Edit, and View pages --}}
                     @if (!empty($isAdd) || isset($user) || !empty($isView))
-                        <button class="btn-outline uppercase" type="button"
+                        <button class="btn-outline uppercase" type="button" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;"
                             onclick="window.location.href='{{ route('users.index') }}'">
                             Back
                         </button>

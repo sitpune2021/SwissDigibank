@@ -2,8 +2,8 @@
 @section('page-title', 'Bank Accounts')
 
 @section('action-button')
-    <a class="btn-primary" href="{{ route('bank-account.create') }}">
-        ADD
+    <a class="btn-primary" href="{{ route('bank-account.create') }}" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
+        ADD BANK
     </a>
 @endsection
 
