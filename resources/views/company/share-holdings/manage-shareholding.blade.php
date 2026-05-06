@@ -2,8 +2,8 @@
 @section('page-title', 'PROMOTERS SHARE HOLDING DETAILS')
 
 @section('action-button')
-<a class="btn-primary" href="{{ route('shareholding.create') }}">
-    ADD
+<a class="btn-primary" href="{{ route('shareholding.create') }}" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
+    ALLOCATE SHARE
 </a>
 @endsection
 

@@ -156,16 +156,16 @@ ALLOCATED SHARES'
 
         <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
             @if (empty($show))
-            <button class="btn-primary" type="submit">
+            <button class="btn-primary" type="submit" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                 {{ $method === 'PUT' ? 'UPDATE SHARE' : 'ALLOCATE SHARE' }}
             </button>
             @endif
             @if ($method === 'POST')
-            <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();">
+            <button class="btn-outline" type="reset" onclick="document.getElementById('companyForm').reset();" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                 RESET
             </button>
             @endif
-            <button class="btn-outline" type="button"
+            <button class="btn-outline" type="button" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;"
                 onclick="window.location.href='{{ route('shareholding.index') }}'">BACK</button>
         </div>
     </form>

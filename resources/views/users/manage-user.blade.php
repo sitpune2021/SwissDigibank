@@ -5,9 +5,9 @@
 <div class="main-inner">
 
     <div class="mb-6 flex flex-wrap px-6 items-center justify-between gap-4 lg:mb-8">
-        <h2 class=" uppercase text-lg">USER</h2>
-        <a class="btn-primary text-sm" href="{{route('users.create')}}">
-            ADD
+        <h2 class=" uppercase text-lg">USER MANAGEMENT</h2>
+        <a class="btn-primary text-sm" href="{{route('users.create')}}" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
+            ADD USER
         </a>
     </div>
 

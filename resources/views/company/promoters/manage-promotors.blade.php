@@ -1,9 +1,9 @@
 @extends('layout.main')
-@section('page-title', 'PROMOTERS')
+@section('page-title', 'PROMOTERS MANAGEMENT')
 
 @section('action-button')
-<a class="btn-primary uppercase btns-add-index" href="{{ route('promotor.create') }}">
-    ADD
+<a class="btn-primary uppercase btns-add-index" href="{{ route('promotor.create') }}" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
+    ADD PROMOTER
 </a>
 @endsection
 
