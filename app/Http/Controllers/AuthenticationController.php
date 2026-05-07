@@ -286,13 +286,48 @@ class AuthenticationController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
 
+        // WebauthnCredential::create([
+        //     'user_id' => $user->id,
+        //     'credential_id' => $request->rawId,  // unique biometric ID
+        //     'public_key' => json_encode([
+        //         'attestationObject' => $request->attestationObject,  // actual cryptographic data
+        //         'clientDataJSON' => $request->clientDataJSON
+        //     ])
+        // ]);
+
+        // 🔥 SAME DEVICE CHECK
+        // 🔥 DEVICE ALREADY USED CHECK
+        $deviceExists = WebauthnCredential::where('browser', $request->userAgent())
+            ->exists();
+
+        if ($deviceExists) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Another account already using biometric on this device'
+            ]);
+        }
+
         WebauthnCredential::create([
+
             'user_id' => $user->id,
-            'credential_id' => $request->rawId,  // unique biometric ID
+
+            'credential_id' => $request->rawId,
+
             'public_key' => json_encode([
-                'attestationObject' => $request->attestationObject,  // actual cryptographic data
+                'attestationObject' => $request->attestationObject,
                 'clientDataJSON' => $request->clientDataJSON
-            ])
+            ]),
+
+            // 🔥 DEVICE SECURITY
+            'device_name' => $request->header('User-Agent'),
+
+            'browser' => $request->userAgent(),
+
+            'ip_address' => $request->ip(),
+
+            'last_used_at' => now()
+
         ]);
 
         return response()->json([
@@ -346,6 +381,17 @@ class AuthenticationController extends Controller
         if (!$credential) {
             return response()->json(['status' => false]);
         }
+
+        // 🔥 UPDATE DEVICE INFO
+        $credential->update([
+
+            'ip_address' => $request->ip(),
+
+            'last_used_at' => now(),
+
+            'browser' => $request->userAgent()
+
+        ]);
 
         $user = User::find($credential->user_id);
 
