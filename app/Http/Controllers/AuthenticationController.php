@@ -127,6 +127,99 @@ class AuthenticationController extends Controller
             Auth::login($user);
             $request->session()->regenerate();
 
+
+            // 🔥 CURRENT LOGIN DETAILS  (suspicious login detect)
+            $currentBrowser = $request->userAgent();
+
+            $currentIp = $request->ip();
+
+            // 🔥 LOCALHOST FIX
+            if ($currentIp == "127.0.0.1") {
+
+                $currentCity = "Latur";
+
+            } else {
+
+                // 🌍 GET CITY FROM IP
+                try {
+
+                    $response = Http::get("http://ip-api.com/json/" . $currentIp);
+
+                    $location = $response->json();
+
+                    $currentCity = $location['city'] ?? 'Unknown';
+
+                } catch (\Exception $e) {
+
+                    $currentCity = 'Unknown';
+                }
+            }
+
+            // 🔥 SUSPICIOUS CHECK
+            $isSuspicious = false;
+
+            if (
+                $user->last_login_browser &&
+                $user->last_login_browser != $currentBrowser
+            ) {
+                $isSuspicious = true;
+            }
+
+            if (
+                $user->last_login_ip &&
+                $user->last_login_ip != $currentIp
+            ) {
+                $isSuspicious = true;
+            }
+
+            if (
+                $user->last_login_city &&
+                $user->last_login_city != $currentCity
+            ) {
+                $isSuspicious = true;
+            }
+
+            // 🔥 SEND ALERT MAIL
+            if ($isSuspicious) {
+
+                Mail::raw(
+                    "⚠ Suspicious Login Detected
+
+                New Login Details:
+
+                Browser:
+                $currentBrowser
+
+                IP:
+                $currentIp
+
+                City:
+                $currentCity
+
+                Time:
+                " . now(),
+
+                        function ($message) use ($user) {
+
+                            $message->to($user->email)
+                                ->subject('Suspicious Login Alert');
+                        }
+                    );
+            }
+
+                // 🔥 UPDATE LOGIN DETAILS
+                $user->update([
+
+                    'last_login_browser' => $currentBrowser,
+
+                    'last_login_ip' => $currentIp,
+
+                    'last_login_city' => $currentCity,
+
+                    'last_login_at' => now()
+
+                ]);
+
             // 🔥 CORRECT CHECK biomatrix unable (IMPORTANT)
             $hasBiometric = WebauthnCredential::where('user_id', $user->id)->exists();
 
@@ -286,13 +379,48 @@ class AuthenticationController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
 
+        // WebauthnCredential::create([
+        //     'user_id' => $user->id,
+        //     'credential_id' => $request->rawId,  // unique biometric ID
+        //     'public_key' => json_encode([
+        //         'attestationObject' => $request->attestationObject,  // actual cryptographic data
+        //         'clientDataJSON' => $request->clientDataJSON
+        //     ])
+        // ]);
+
+        // 🔥 SAME DEVICE CHECK
+        // 🔥 DEVICE ALREADY USED CHECK
+        $deviceExists = WebauthnCredential::where('browser', $request->userAgent())
+            ->exists();
+
+        if ($deviceExists) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Another account already using biometric on this device'
+            ]);
+        }
+
         WebauthnCredential::create([
+
             'user_id' => $user->id,
-            'credential_id' => $request->rawId,  // unique biometric ID
+
+            'credential_id' => $request->rawId,
+
             'public_key' => json_encode([
-                'attestationObject' => $request->attestationObject,  // actual cryptographic data
+                'attestationObject' => $request->attestationObject,
                 'clientDataJSON' => $request->clientDataJSON
-            ])
+            ]),
+
+            // 🔥 DEVICE SECURITY
+            'device_name' => $request->header('User-Agent'),
+
+            'browser' => $request->userAgent(),
+
+            'ip_address' => $request->ip(),
+
+            'last_used_at' => now()
+
         ]);
 
         return response()->json([
@@ -346,6 +474,17 @@ class AuthenticationController extends Controller
         if (!$credential) {
             return response()->json(['status' => false]);
         }
+
+        // 🔥 UPDATE DEVICE INFO
+        $credential->update([
+
+            'ip_address' => $request->ip(),
+
+            'last_used_at' => now(),
+
+            'browser' => $request->userAgent()
+
+        ]);
 
         $user = User::find($credential->user_id);
 
