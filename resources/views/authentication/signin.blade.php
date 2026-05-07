@@ -804,14 +804,29 @@
 
                     let data = await response.json();
 
+                    //if (data.status) 
+                    //{
+                        // 🔥 ADD THIS LINE
+                       // localStorage.setItem("biometric_asked", "done");
+                       // alert("Biometric Enabled Successfully");
+                       // return true;
+                    //} else {
+                       // alert("Save failed");
+                       // return false;
+                    //}
                     if (data.status) 
                     {
-                        // 🔥 ADD THIS LINE
                         localStorage.setItem("biometric_asked", "done");
-                        alert("Biometric Enabled Successfully");
+
+                        alert(data.message);
+
                         return true;
-                    } else {
-                        alert("Save failed");
+
+                    } 
+                    else 
+                    {
+                        alert(data.message);
+
                         return false;
                     }
 
