@@ -136,7 +136,7 @@ class AuthenticationController extends Controller
             // 🔥 LOCALHOST FIX
             if ($currentIp == "127.0.0.1") {
 
-                $currentCity = "Nagpur";
+                $currentCity = "Latur";
 
             } else {
 
