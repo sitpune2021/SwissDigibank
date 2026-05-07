@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Models\WebauthnCredential;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class AuthenticationController extends Controller
 {
@@ -134,25 +135,40 @@ class AuthenticationController extends Controller
             $currentIp = $request->ip();
 
             // 🔥 LOCALHOST FIX
-            if ($currentIp == "127.0.0.1") {
+            // 🔥 DEFAULT
+            $currentCity = 'Unknown';
 
-                $currentCity = "Latur";
+            try {
 
-            } else {
+                // 🔥 LOCALHOST
+                if (
+                    $currentIp == "127.0.0.1" ||
+                    $currentIp == "::1"
+                ) {
 
-                // 🌍 GET CITY FROM IP
-                try {
+                    $currentCity = "Localhost";
 
-                    $response = Http::get("http://ip-api.com/json/" . $currentIp);
+                } else {
 
-                    $location = $response->json();
+                    // 🔥 TIMEOUT IMPORTANT
+                    $response = Http::timeout(5)
+                        ->get("http://ip-api.com/json/" . $currentIp);
 
-                    $currentCity = $location['city'] ?? 'Unknown';
+                    // 🔥 RESPONSE CHECK
+                    if ($response->successful()) {
 
-                } catch (\Exception $e) {
+                        $location = $response->json();
 
-                    $currentCity = 'Unknown';
+                        $currentCity = $location['city'] ?? 'Unknown';
+                    }
                 }
+
+            } catch (\Exception $e) {
+
+                // 🔥 ERROR LOG
+                Log::error('IP API ERROR: ' . $e->getMessage());
+
+                $currentCity = 'Unknown';
             }
 
             // 🔥 SUSPICIOUS CHECK
