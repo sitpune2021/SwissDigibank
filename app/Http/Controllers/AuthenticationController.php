@@ -68,7 +68,7 @@ class AuthenticationController extends Controller
         // OTP logic same
         $user->otp = rand(1000, 9999);
         $user->otp_verified = 0;
-        $user->otp_expires_at = now()->addMinutes(1);
+        $user->otp_expires_at = now()->addSeconds(60);
         $user->otp_attempts = 0;
         $user->otp_blocked_until = null;
         $user->save();
@@ -278,7 +278,7 @@ class AuthenticationController extends Controller
         // 🔥 NEW OTP
         $user->otp = rand(1000, 9999);
         $user->otp_verified = 0; // 🔥 reset
-        $user->otp_expires_at = now()->addMinutes(1);
+        $user->otp_expires_at = now()->addSeconds(60);
         $user->otp_attempts = 0;
         $user->otp_blocked_until = null;
         $user->save();
