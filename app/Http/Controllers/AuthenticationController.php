@@ -259,10 +259,15 @@ class AuthenticationController extends Controller
             'timeout' => 60000,
 
             // ✅ IMPORTANT Force for fingerprint / face use
+            // 'authenticatorSelection' => [
+            //     'residentKey' => 'required',
+            //     'userVerification' => 'required'
+            // ]
             'authenticatorSelection' => [
-                'residentKey' => 'required',
-                'userVerification' => 'required'
-            ]
+                'residentKey' => 'required'
+            ],
+
+            'userVerification' => 'required',
         ]);
     }
 

@@ -460,15 +460,18 @@
             {
                 document.getElementById("otpMessage").innerText = "";
 
-                if (data.has_biometric === false && !localStorage.getItem("biometric_asked")) {
+                if (!data.has_biometric) {
 
-                    localStorage.setItem("biometric_asked", "yes");
+                    let enableBiometric = confirm("Enable Secure Biometric Login?");
 
-                    setTimeout(async () => {
-                        if (confirm("Enable Secure Biometric Login?")) {
-                            await registerBiometric();
+                    if (enableBiometric) {
+
+                        let saved = await registerBiometric();
+
+                        if (saved) {
+                            alert("Biometric Registered Successfully");
                         }
-                    }, 500);
+                    }
                 }
 
                 // 🔥 AFTER biometric
