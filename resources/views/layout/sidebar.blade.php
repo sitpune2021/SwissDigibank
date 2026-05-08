@@ -43,13 +43,13 @@
 }
 
 /* hidden state */
-.submenu-hide {
-    display: none !important;
+.submenu{
+    display:none;
+    margin-top:6px;
 }
 
-/* visible state */
-.submenu-show {
-    display: block !important;
+.submenu.submenu-show{
+    display:block !important;
 }
 </style>
 
@@ -312,9 +312,24 @@
                             @if ($item->submenus->isNotEmpty())
                             <button style="padding: 8px 14px; color:#cbd5e1; background: rgba(59,130,246,0.08); border-radius:10px; transition:0.25s;"
                                 class="menu-btn group !bg-transparent dark:!bg-transparent {{ $isActive || $submenuActive ? 'active' : '' }}"
-                                type="button" onclick="this.nextElementSibling.classList.toggle('submenu-show'); this.classList.toggle('active'); 
-                                            this.querySelector('.plus-minus .la-plus').classList.toggle('show'); 
-                                            this.querySelector('.plus-minus .la-minus').classList.toggle('show');">
+                                type="button" onclick="
+                                    const submenu = this.nextElementSibling;
+
+                                    document.querySelectorAll('.submenu').forEach(el => {
+                                        if(el !== submenu){
+                                            el.classList.remove('submenu-show');
+                                        }
+                                    });
+
+                                    document.querySelectorAll('.menu-btn').forEach(btn => {
+                                        if(btn !== this){
+                                            btn.classList.remove('active');
+                                        }
+                                    });
+
+                                    submenu.classList.toggle('submenu-show');
+                                    this.classList.toggle('active');
+                            ">
                                 <span class="flex items-center justify-center gap-2">
                                     <span class="menu-icon" style="font-size: 14px !important;">
                                         <i class="{{ $item->icon }}"></i>
@@ -330,9 +345,7 @@
                                 </span>
                             </button>
 
-
-
-                            <ul class="submenu {{ $submenuActive ? 'submenu-show' : 'submenu-hide' }}">
+                            <ul class="submenu {{ $submenuActive ? 'submenu-show' : '' }}">
                                 @foreach ($item->submenus as $sub)
                                 @if(!hasPermission($sub->route))
                                     @continue
