@@ -54,6 +54,7 @@
 </style>
 
 <style>
+
 .menu-ul li:last-child {
     margin-bottom: 20px;
 }
@@ -118,119 +119,9 @@
 .menu-li * {
     background-color: transparent !important;
 }
-
-/* =======================================================
-   RESPONSIVE SIDEBAR
-======================================================= */
-
-/* =======================================================
-   DESKTOP SIDEBAR
-======================================================= */
-
-.sidebar{
-    width:270px;
-    min-width:270px;
-    height:100vh;
-
-    position:fixed;
-    top:0;
-    left:0;
-
-    z-index:9999;
-
-    overflow-y:auto;
-    overflow-x:hidden;
-
-    transform: translateX(0);
-    transition: transform .3s ease;
-}
-
-/* HIDE STATE */
-.sidebar.hide-sidebar{
-    transform: translateX(-100%);
-}
-
-/* CONTENT */
-.main-content{
-    margin-left:270px;
-    width: calc(100% - 270px);
-    transition: all .3s ease;
-}
-
-.main-content.full{
-    margin-left:0 !important;
-    width:100% !important;
-}
-
-/* MOBILE OVERLAY */
-.sidebar-overlay{
-    position:fixed;
-    inset:0;
-
-    background:rgba(0,0,0,0.6);
-
-     z-index:99990;
-
-    opacity:0;
-    visibility:hidden;
-
-    transition:.3s;
-}
-
-.sidebar-overlay.show{
-    opacity:1;
-    visibility:visible;
-}
-
-/* MOBILE VIEW */
-@media(max-width:991px){
-
-    .sidebar{
-        position: fixed !important;
-        top: 0;
-        left: 0;
-        width: 270px;
-        height: 100vh;
-
-        transform: translateX(-100%);
-        transition: transform .3s ease-in-out !important;
-
-        z-index: 99999 !important;
-    }
-
-    .sidebar.show{
-        transform: translateX(0%) !important;
-    }
-
-    .main-content{
-        margin-left:0 !important;
-        width:100%;
-    }
-}
-
-/* SMALL MOBILE */
-@media(max-width:576px){
-
-    .sidebar{
-        width:85%;
-        min-width:85%;
-    }
-    .sidebar.show{
-    transform: translateX(0) !important;
-}
-
-    .menu-btn{
-        border-radius:12px !important;
-    }
-
-    .submenu-link{
-        padding:8px 10px !important;
-    }
-}
 </style>
 
-<aside id="sidebar" class="sidebar mobile-sidebar" style="background: linear-gradient(180deg,#0f172a,#020617); border-right:1px solid rgba(59,130,246,0.25); box-shadow:0 0 30px rgba(59,130,246,0.2);">
-    
+<aside id="sidebar" class="sidebar" style="background: linear-gradient(180deg,#0f172a,#020617); border-right:1px solid rgba(59,130,246,0.25); box-shadow:0 0 30px rgba(59,130,246,0.2);">
     <div class="sidebar-inner relative" >
         <div class="logo-column">
             
@@ -380,10 +271,7 @@
             
         </div>
     </div>
-
 </aside>
-
-<div id="sidebarOverlay" class="sidebar-overlay"></div>
 
 {{-- Optional JS: Only one submenu open at a time --}}
 <script>
@@ -414,4 +302,3 @@
     });
 });
 </script>
-

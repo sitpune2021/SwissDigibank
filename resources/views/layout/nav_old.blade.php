@@ -1,19 +1,16 @@
 
 <style>
     #topbar::before {
-    content: "";
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    top: -100px;
-    left: -100px;
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        top: -100px;
+        left: -100px;
 
-    background: radial-gradient(circle, rgba(0,255,255,0.15), transparent);
-    filter: blur(100px);
-
-    pointer-events: none;
-    z-index: -1;
-}
+        background: radial-gradient(circle, rgba(0,255,255,0.15), transparent);
+        filter: blur(100px);
+    }
     /* 🔥 NAVBAR GLASS EFFECT */
     #topbar {
         background: linear-gradient(90deg, #0f172a, #1e293b);
@@ -23,13 +20,7 @@
         box-shadow: 
             0 3px 6px rgba(0,0,0,0.3),
             inset 0 0 20px rgba(0,255,255,0.05);
-            
     }
-
-    #topbar{
-    position: relative;
-    z-index: 100;
-}
 
     /* 🔥 MENU BUTTON */
     #dropdownBtn {
@@ -232,23 +223,14 @@
     <div class="topbar-inner flex items-center justify-between gap-2">
         
         <div class="flex grow items-center gap-2 xxl:gap-4">
-
             <a href="{{ route('index1') }}" class="topbar-logo hidden shrink-0">
                 <img width="174" height="38" src="{{ asset('assets/images/SIT_LOGO.png') }}" alt="logo"
                     class="logo-full2 hidden lg:block" />
             </a>
-
-           <!-- MOBILE SIDEBAR BUTTON -->
-            <div class="relative lg:hidden">
-                <button
-                    id="sidebar-toggle-btn"
-                    class="flex h-10 w-10 cursor-pointer items-center justify-center
-                    rounded-full border border-n30 bg-primary text-white
-                    dark:border-n500 md:h-12 md:w-12"
-                >
-                    <i class="las la-bars text-xl"></i>
-                </button>
-            </div>
+            <button class="flex items-center rounded-s-2xl bg-primary px-0.5 py-3 text-xl text-n0"
+                id="sidebar-toggle-btn">
+                <i class="las la-angle-left text-lg"></i>
+            </button>
             <!-- Select layout -->
 
             <!-- Dropdown Trigger -->
@@ -490,6 +472,34 @@
 
         <div class="  flex items-center gap-3 sm:gap-1 xxl:gap-2">
 
+            <!-- mobile Search  -->
+            <div class="relative lg:hidden">
+                <button id="mobile-search-btn"
+                    class="flex h-10 w-10 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-n30 bg-primary/5 dark:border-n500 dark:bg-bg3 md:h-12 md:w-12">
+                    <i class="las la-search"></i>
+                </button>
+                <div id="mobile-search"
+                    class="hide invisible absolute -left-8 top-full z-20 flex min-w-max max-w-[250px] origin-[20%_20%] gap-3 overflow-y-auto rounded-md bg-n0 p-3 opacity-0 shadow-[0px_6px_30px_0px_rgba(0,0,0,0.08)] duration-300 dark:bg-bg4">
+                    <form
+                        class="flex w-full items-center justify-between gap-3 rounded-[30px] border border-n30 bg-secondary/5 p-1 focus-within:border-primary dark:border-n500 dark:bg-bg3 xxl:p-2">
+                        <input type="text" placeholder="Search" class="w-full bg-transparent py-1 ltr:pl-4 rtl:pr-4" />
+                        <button
+                            class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-n0 lg:h-8 lg:w-8">
+                            <i class="las la-search text-lg"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- dark mode toggle -->
+            <!-- <button id="darkModeToggle" aria-label="dark mode switch"
+                class="h-10 w-10 shrink-0 rounded-full border border-n30 bg-primary/5 dark:border-n500 dark:bg-bg3 md:h-12 md:w-12">
+                <i class="las la-sun text-2xl dark:hidden"></i>
+                <span class="hidden text-n30 dark:block">
+                    <i class="las la-moon text-2xl"></i>
+                </span>
+            </button> -->
+
             <!-- Profile dropdown -->
             <div class="relative shrink-0">
                 @php
@@ -626,31 +636,12 @@
 
     // ✅ Close dropdown & submenus when clicking outside
     document.addEventListener("click", (e) => {
-
-    // sidebar pe click hua to kuch mat karo
-    if (e.target.closest("#sidebar")) {
-        return;
-    }
-
-    // toggle button pe click hua to kuch mat karo
-    if (e.target.closest("#sidebar-toggle-btn")) {
-        return;
-    }
-
-    // dropdown close logic
-    if (
-        !dropdownMenu.contains(e.target) &&
-        !dropdownBtn.contains(e.target)
-    ) {
-
-        dropdownMenu.classList.add("hidden");
-        dropdownArrow.classList.remove("rotate-180");
-
-        hideAllSubmenus();
-
-    }
-
-});
+        if (!dropdownMenu.contains(e.target) && e.target !== dropdownBtn) {
+            dropdownMenu.classList.add("hidden");
+            dropdownArrow.classList.remove("rotate-180");
+            hideAllSubmenus();
+        }
+    });
 
     // ✅ Utility: Hide all submenus
     function hideAllSubmenus() {

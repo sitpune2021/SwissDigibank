@@ -54,7 +54,7 @@
 
 </head>
 
-<body class="vertical bg-secondary/5 dark:bg-bg3 hidden">
+<body class="vertical bg-secondary/5 dark:bg-bg3">
     <!-- Loader -->
     {{-- <div
         class="loader flex items-center justify-center min-w-screen min-h-screen fixed !z-50 inset-0 bg-n0 dark:bg-bg4">
