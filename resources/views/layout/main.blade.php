@@ -8,7 +8,7 @@
 </section>
 
 <main class="main-content has-sidebar">
-    <div class="main-inner">
+    <div class="main-inner" style="top: -65px;">
         @hasSection('page-title')
             @include('layout.breadcrub')
         @endif

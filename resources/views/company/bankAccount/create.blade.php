@@ -260,7 +260,7 @@ $isView = $mode === 'view';
                 </button>
                 @endif
 
-                <a href="{{ route('unencumbered-deposits.index') }}" class="btn-outline uppercase" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
+                <a href="{{ route('bank-account.index') }}" class="btn-outline uppercase" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                     BACK
                 </a>
             </div>

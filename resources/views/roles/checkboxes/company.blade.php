@@ -1,4 +1,4 @@
-<div class="tab-panel hidden">
+<div>
 
     <!----------------- PROFILE -------------------->
     <div class="payload-section">
@@ -18,7 +18,7 @@
         <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance_1" name="permissions[]" value="company.company-profile.profile"
+                    <input type="checkbox" id="show_sms_balance_1" name="permissions[show_sms_balance_1]" value="show_company_profile"
                         class="item-checkbox  form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance_1" class="text-base font-semibold cursor-pointer mb-0">Show Company
                         Profile</label>
@@ -27,19 +27,19 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance_3" name="permissions[]" value="company.company-profile.profile"
+                    <input type="checkbox" id="show_sms_balance_3" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance_3" class="text-base font-semibold cursor-pointer mb-0">Edit Company
                         Profile</label>
                 </div>
             </div>
-
         </div>
     </div>
 
     <br>
     <!----------------- Branches -------------------->
     <div class="payload-section">
+
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">Branches</div>
             <div class="col-span-2 md:col-span-1">
@@ -53,11 +53,12 @@
                 </div>
             </div>
         </div>
+
         <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="check_all" name="permissions[]" value="company.branch.manage-branch" class="item-checkbox form-checkbox h-5 w-5 text-primary">
+                    <input type="checkbox" id="check_all" class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
                         Branch
                         List
@@ -67,7 +68,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value="company.branch.add-branch"
+                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Add New
                         Branch</label>
@@ -76,7 +77,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_branch" name="permissions[]" value="company.branch.add-branch"
+                    <input type="checkbox" id="show_branch" name="permissions[]" value="show_branch"
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Show Branch
                         Info</label>
@@ -85,7 +86,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value="company.branch.add-branch"
+                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Edit Branch
                         Info</label>
@@ -93,14 +94,16 @@
             </div>
 
         </div>
+
     </div>
 
     <br>
     <!----------------- Promoters -------------------->
     <div class="payload-section">
+
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">Promoters</div>
-          <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="check_all_dashboard"
                         class="check-all form-checkbox h-5 w-5 text-primary">
@@ -117,7 +120,7 @@
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="show_sms_balance"
-                     name="permissions[]" value="company.promoters.manage-promotors"
+                     name="permissions[show_sms_balance]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Promoters
                         List</label>
@@ -126,7 +129,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value="company.promoters.add-promoter"
+                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Add New
                         Promoter</label>
@@ -135,7 +138,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value="company.promoters.show"
+                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Show Promoter
                         Info</label>
@@ -144,7 +147,7 @@
 
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value="company.promoters.add-promoter"
+                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
                         class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Edit Promoter
                         Info</label>
@@ -169,7 +172,7 @@
     <div class="payload-section">
         <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
             <div class="uppercase font-semibold text-lg">Minors</div>
-           <div class="col-span-2 md:col-span-1">
+            <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="check_all_dashboard"
                         class="check-all form-checkbox h-5 w-5 text-primary">
@@ -180,9 +183,8 @@
                 </div>
             </div>
         </div>
+
         <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-
-
             <div class="col-span-2 md:col-span-1">
                 <div class="flex items-center gap-2 space-x-2">
                     <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
@@ -201,59 +203,8 @@
                 </div>
             </div>
         </div>
+
     </div>
-
-    <br>
-    <!----------------- Promoters Login Credentials-------------------->
-    <!-- <div class="payload-section">
-        <div class="mb-3 flex justify-between bg-secondary/5 py-3 px-6 rounded-10">
-            <div class="uppercase font-semibold text-lg">
-                Promoters Login Credentials
-            </div>
-             <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="check_all_dashboard"
-                        class="check-all form-checkbox h-5 w-5 text-primary">
-                    <label for="check_all" class="text-base font-semibold cursor-pointer mb-0">
-                        Check
-                        All
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Reset Promoter
-                        Login
-                        Password</label>
-                </div>
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Lock/Unlock
-                        Promoter
-                        Account</label>
-                </div>
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Reset & Send
-                        Promoter Login Credentials via SMS</label>
-                </div>
-            </div>
-        </div>
-    </div> -->
     
     <br>
     <!----------------- Promoters Share Holdings-------------------->
@@ -370,7 +321,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <br>

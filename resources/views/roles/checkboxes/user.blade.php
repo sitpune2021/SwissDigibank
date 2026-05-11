@@ -1,4 +1,4 @@
-<div class="tab-panel hidden">
+<div>
 
     <!---------------------------Roles---------------------------->
     <div class="mb-3 payload-section">
