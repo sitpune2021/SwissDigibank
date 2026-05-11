@@ -168,12 +168,8 @@ Route::middleware('auth.user')->group(function () {
         Route::resource('bank-account', BankAccountController::class);
     });
 
-    // Route::group(['prefix' => 'user'], function () {
-    //     Route::resource('roles', RoleController::class);
-    //     Route::resource('users', UserController::class);
-    // });
-
-    // Route::post('/role-permission-store', [RoleController::class, 'store'])->name('role_permission.store');
+   
+    Route::post('/role-permission-store', [RoleController::class, 'store'])->name('role_permission.store');
 
     Route::group(['prefix' => 'user'], function () {
 

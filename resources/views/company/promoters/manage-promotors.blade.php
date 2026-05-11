@@ -1,196 +1,724 @@
 @extends('layout.main')
-@section('page-title', 'PROMOTERS MANAGEMENT')
+
+@section('page-title')
+
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+    <!-- LEFT TITLE AREA -->
+    <div class="flex items-center gap-3 min-w-0">
+
+        <!-- ICON -->
+        <div
+            class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
+            style="
+                background: linear-gradient(135deg,#f59e0b,#dc2626);
+                box-shadow:
+                    0 8px 20px rgba(239,68,68,.25),
+                    inset 0 1px 0 rgba(255,255,255,.35);
+            "
+        >
+
+            <i class="las la-users text-white text-xl sm:text-2xl"></i>
+
+        </div>
+
+        <!-- TITLE -->
+        <div class="min-w-0">
+
+            <h2 class="text-lg sm:text-xl lg:text-2xl
+                font-extrabold uppercase tracking-wide
+                text-gray-800 leading-tight truncate">
+
+                Promoters Management
+
+            </h2>
+
+            <p class="text-[11px] sm:text-sm text-gray-500 font-medium mt-1">
+
+                Manage promoters details, shares & records
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT BADGE -->
+    <div class="hidden md:flex items-center gap-2
+        px-4 py-2 rounded-xl
+        bg-gradient-to-r from-slate-100 to-slate-50
+        border border-slate-200 shadow-sm">
+
+        <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-600">
+
+            Banking Panel
+
+        </span>
+
+    </div>
+
+</div>
+
+@endsection
+
 
 @section('action-button')
-<a class="btn-primary uppercase btns-add-index" href="{{ route('promotor.create') }}" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
-    ADD PROMOTER
+
+<a href="{{ route('promotor.create') }}"
+    class="inline-flex items-center gap-2
+    px-4 sm:px-5 py-2.5
+    rounded-xl text-xs sm:text-sm font-bold uppercase
+    shadow-lg transition-all duration-300 hover:scale-105"
+    style="background:linear-gradient(90deg,#e1d315,#e30f0f); color:#111;">
+
+    <span>Add Promoter</span>
+
 </a>
+
 @endsection
 
 <style>
 
+/* =========================
+    TABLE ROW ANIMATION
+========================= */
+
 @keyframes fadeRow{
-0%{
-opacity:0;
-transform:translateY(10px);
-}
-100%{
-opacity:1;
-transform:translateY(0);
-}
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 
 .table-row{
-animation:fadeRow .4s ease forwards;
+    animation:fadeRow .4s ease forwards;
+    transition:.25s ease;
 }
 
-/* hover animation */
+.table-row:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(0,0,0,.06);
+}
+
+/* =========================
+    ACTION BUTTONS
+========================= */
+
+.action-btn{
+    height:36px;
+    min-width:82px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+
+    padding:0 12px;
+
+    border-radius:10px;
+
+    font-size:13px;
+    font-weight:600;
+
+    color:#fff;
+
+    transition:.25s ease;
+}
+
+.action-btn:hover{
+    transform:translateY(-1px);
+}
+
+.action-view{
+    background:linear-gradient(135deg,#2563eb,#06b6d4);
+}
+
+.action-edit{
+    background:linear-gradient(135deg,#f59e0b,#f97316);
+}
+
+.action-delete{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+}
+
+/* DELETE FORM FIX */
+
+.delete-form{
+    margin:0 !important;
+    display:flex;
+    align-items:center;
+}
+
+/* =========================
+    MOBILE RESPONSIVE TABLE
+========================= */
+
+@media(max-width:768px){
+
+    .box{
+        padding:0 !important;
+        background:transparent !important;
+        box-shadow:none !important;
+    }
+
+    /* TABLE SCROLL */
+    .table-wrapper{
+        width:100%;
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+
+        border-radius:18px;
+    }
+
+    /* TABLE WIDTH */
+    #transactionTable1{
+        min-width:950px;
+        width:100%;
+        border-collapse:collapse;
+    }
+
+    /* HEADINGS */
+    #transactionTable1 thead th{
+
+        font-size:11px !important;
+
+        padding:14px 12px !important;
+
+        white-space:nowrap;
+    }
+
+    /* TABLE DATA */
+    #transactionTable1 tbody td{
+
+        padding:14px 12px !important;
+
+        white-space:nowrap;
+
+        font-size:13px;
+    }
+
+    /* PROMOTER NAME */
+    #transactionTable1 tbody td:first-child{
+
+        min-width:260px;
+    }
+
+    /* ACTION BUTTONS */
+    .action-group{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:8px;
+
+        flex-wrap:nowrap;
+    }
+
+    .action-btn{
+
+        min-width:78px;
+        height:34px;
+
+        padding:0 10px;
+
+        font-size:12px;
+
+        border-radius:10px;
+    }
+
+    /* SEARCH */
+    .search-box,
+    form{
+        width:100% !important;
+        max-width:100% !important;
+    }
+
+    /* REMOVE HOVER */
+    .table-row:hover{
+        transform:none;
+        box-shadow:none;
+    }
+}
+
+</style>
+
+<style>
+
+/* =========================
+    PAGE ENTRY ANIMATION
+========================= */
+
+@keyframes pageReveal{
+
+    0%{
+        opacity:0;
+        transform:scale(.985) translateY(16px);
+        filter:blur(8px);
+    }
+
+    60%{
+        opacity:1;
+        transform:scale(1.005) translateY(-2px);
+        filter:blur(0);
+    }
+
+    100%{
+        opacity:1;
+        transform:scale(1) translateY(0);
+        filter:blur(0);
+    }
+}
+
+/* MAIN BOX PREMIUM EFFECT */
+
+.bank-page-animate{
+
+    animation:pageReveal .75s cubic-bezier(.22,1,.36,1);
+
+    transform-origin:top center;
+}
+
+/* =========================
+    TABLE POPUP EFFECT
+========================= */
+
+@keyframes popupRow{
+
+    0%{
+        opacity:0;
+        transform:perspective(1000px) rotateX(-12deg) translateY(18px);
+    }
+
+    100%{
+        opacity:1;
+        transform:perspective(1000px) rotateX(0deg) translateY(0);
+    }
+}
+
+.table-row{
+
+    opacity:0;
+
+    animation:popupRow .55s cubic-bezier(.22,1,.36,1) forwards;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        background .25s ease;
+}
+
+/* PREMIUM HOVER */
 
 .table-row:hover{
-transform:scale(1.01);
-box-shadow:0 4px 12px rgba(0,0,0,0.08);
-transition:all .25s ease;
+
+    transform:translateY(-3px) scale(1.004);
+
+    box-shadow:
+        0 10px 24px rgba(15,23,42,.08),
+        0 4px 10px rgba(59,130,246,.08);
+
+    background:#fcfdff;
+}
+
+/* =========================
+    TABLE WRAPPER GLASS EFFECT
+========================= */
+
+.table-premium{
+
+    position:relative;
+
+    overflow:hidden;
+
+    border-radius:24px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.95),
+            rgba(248,250,252,.96)
+        );
+
+    border:1px solid rgba(226,232,240,.9);
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.06),
+        inset 0 1px 0 rgba(255,255,255,.7);
+}
+
+/* TOP SHINE EFFECT */
+
+.table-premium::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:-120%;
+
+    width:60%;
+    height:100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.45),
+            transparent
+        );
+
+    transform:skewX(-25deg);
+
+    animation:shineMove 4.5s infinite;
+}
+
+@keyframes shineMove{
+
+    100%{
+        left:150%;
+    }
+}
+
+/* =========================
+    HEADER ANIMATION
+========================= */
+
+thead tr{
+
+    animation:headerDrop .5s ease;
+}
+
+@keyframes headerDrop{
+
+    from{
+        opacity:0;
+        transform:translateY(-10px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* =========================
+    MOBILE OPTIMIZATION
+========================= */
+
+@media(max-width:768px){
+
+    .bank-page-animate{
+        animation-duration:.55s;
+    }
+
+    .table-row:hover{
+        transform:none;
+    }
+
+    .table-premium{
+        border-radius:18px;
+    }
 }
 
 </style>
 
 @section('content')
 
-<div class="box col-span-12 lg:col-span-6">
-    
-    <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
-        
-        <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 mb-4">
-            
-        </form>
+<div class="box col-span-12 lg:col-span-6 bank-page-animate">
 
-        <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
-            <form method="GET" action="{{ route('promotor.index') }}"
-                class="relative flex items-center gap-2 bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xl:max-w-[319px]">
-                <input type="text" id="transaction-search" name="search" placeholder="Search"
-                    value="{{ request('search') }}"
-                    class="bg-transparent border-none text-sm ltr:pl-4 rtl:pr-4 py-1 w-full" />
-                <button type="submit"
-                    class="w-7 h-7 bg-primary shrink-0 rounded-full w-7 h-7 lg:w-8 lg:h-8 flex justify-center items-center text-n0">
-                    <i class="las la-search text-lg"></i>
-                </button>
-                @if (request('search'))
-                <a href="{{ route('promotor.index') }}"
-                    class="w-7 h-7 bg-grey-500 hover:bg-grey-900 text-dark rounded-full flex items-center justify-center transition duration-200"
-                    title="Clear Search">
-                    <i class="las la-times text-lg"></i>
-                </a>
-                @endif
-            </form>
-        </div>
+    <div class="mb-3">
+        <x-searchbox />
     </div>
 
-    <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
-        <x-alert />
-    </div>
+    <!-- TABLE -->
+    <div class="table-wrapper w-full overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm table-premium">
 
-    <div class="overflow-x-auto pb-4 lg:pb-6">
+        <table class="w-full" id="transactionTable1">
 
-        <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+            <!-- TABLE HEAD -->
+            <thead class="bg-gradient-to-r from-slate-100 via-white to-slate-100 border-b border-gray-200">
 
-            <thead class="bg-gray-100 dark:bg-bg3 sticky top-0" style="background-color: bisque;">
-                <tr class="text-gray-700 dark:text-gray-200 text-sm font-semibold uppercase tracking-wider">
+                <tr class="text-[11px] sm:text-xs lg:text-sm uppercase tracking-wider font-bold text-black">
 
-                    <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">
-                            NAME
+                    <!-- PROMOTER -->
+                    <th class="px-3 sm:px-5 py-4 text-left whitespace-nowrap">
+
+                        <div class="flex items-center gap-2">
+
+                            <div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+
+                                <i class="las la-user text-primary text-sm sm:text-base"></i>
+
+                            </div>
+
+                            <span>Promoter Name</span>
+
                         </div>
-                    </th>
-                    <th class="text-end !py-5 min-w-[100px] cursor-pointer" data-sortable="false">
-                        <div class="text-start">
-                            GENDER
-                        </div>
+
                     </th>
 
-                    <th class="text-start !py-5 min-w-[100px] cursor-pointer">
-                        <div class="flex items-center gap-1">
-                            SENIOR CTZ.
+                    <!-- GENDER -->
+                    <th class="px-3 sm:px-5 py-4 text-center whitespace-nowrap">
+
+                        <div class="flex items-center justify-center gap-2">
+
+                            <div class="w-7 h-7 rounded-lg bg-pink-100 flex items-center justify-center shrink-0">
+
+                                <i class="las la-venus-mars text-pink-600 text-sm sm:text-base"></i>
+
+                            </div>
+
+                            <span>Gender</span>
+
                         </div>
+
                     </th>
-                    <th class="text-start !py-5 min-w-[130px] cursor-pointer">
-                        <div class="flex items-center gap-1">
-                            ENROLLMENT DATE
+
+                    <!-- SENIOR -->
+                    <th class="px-3 sm:px-5 py-4 text-center whitespace-nowrap">
+
+                        <div class="flex items-center justify-center gap-2">
+
+                            <div class="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center shrink-0">
+
+                                <i class="las la-user-shield text-yellow-600 text-sm sm:text-base"></i>
+
+                            </div>
+
+                            <span>Senior Citizen</span>
+
                         </div>
+
                     </th>
-                    <th class="text-start !py-5 cursor-pointer">
-                        <div class="flex items-center gap-1">
-                            KYC STATUS
+
+                    <!-- ENROLLMENT -->
+                    <th class="px-3 sm:px-5 py-4 text-center whitespace-nowrap">
+
+                        <div class="flex items-center justify-center gap-2">
+
+                            <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
+
+                                <i class="las la-calendar text-blue-600 text-sm sm:text-base"></i>
+
+                            </div>
+
+                            <span>Enrollment Date</span>
+
                         </div>
+
                     </th>
-                    <th class="text-center !py-5" data-sortable="false">ACTION</th>
+
+                    <!-- KYC -->
+                    <th class="px-3 sm:px-5 py-4 text-center whitespace-nowrap">
+
+                        <div class="flex items-center justify-center gap-2">
+
+                            <div class="w-7 h-7 rounded-lg bg-green-100 flex items-center justify-center shrink-0">
+
+                                <i class="las la-id-card text-green-600 text-sm sm:text-base"></i>
+
+                            </div>
+
+                            <span>KYC Status</span>
+
+                        </div>
+
+                    </th>
+
+                    <!-- ACTION -->
+                    <th class="px-3 sm:px-5 py-4 text-center whitespace-nowrap">
+
+                        <div class="flex items-center justify-center gap-2">
+
+                            <div class="w-7 h-7 rounded-lg bg-gray-200 flex items-center justify-center shrink-0">
+
+                                <i class="las la-cogs text-gray-700 text-sm sm:text-base"></i>
+
+                            </div>
+
+                            <span>Actions</span>
+
+                        </div>
+
+                    </th>
+
                 </tr>
+
             </thead>
+
             <tbody>
-                @foreach ($promotors as $promotor)
-               <tr class="table-row dark:even:bg-bg3 border-b hover:bg-gray-50 dark:hover:bg-bg3"
-                    style="animation-delay: {{ $loop->index * 0.05 }}s">
-                    
-                    <td class="px-4 py-3">
+
+                @forelse($promotors as $promotor)
+
+                <tr class="table-row border-b border-gray-100"
+                    style="animation-delay:{{ $loop->index * 0.05 }}s">
+
+                    <!-- NAME -->
+                    <td class="px-5 py-4" data-label="Promoter">
+
                         <div class="flex items-center gap-3">
 
-                            <!-- Icon (Blue) -->
-                            <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full">
-                                <i class="las la-user text-blue-600"></i>
-                            </div>
+                            <!-- NAME + CUSTOMER NO IN SINGLE LINE -->
+                            <div class="flex flex-col">
 
-                            <!-- Name + Link -->
-                            <div>
-                                <a href="{{ $promotor?->id ? route('promotor.show', base64_encode($promotor->id)) : '#' }}"
-                                class="block">
+                                <a href="{{ route('promotor.show', base64_encode($promotor->id)) }}"
+                                    class="font-semibold text-primary hover:underline text-sm sm:text-base">
 
-                                    <!-- Name (Green) -->
-                                    <p class="font-semibold text-green-600 hover:text-green-700 transition">
-                                        {{ trim(implode(' ', array_filter([$promotor->first_name,$promotor->middle_name,$promotor->last_name]))) }}
-                                    </p>
+                                    {{ trim(implode(' ', array_filter([
+                                        $promotor->first_name,
+                                        $promotor->middle_name,
+                                        $promotor->last_name
+                                    ]))) }}
 
-                                    <!-- Customer No -->
-                                    <p class="text-xs text-gray-400">
-                                        CUSTOMER NO: {{ $promotor->folio_no }}
-                                    </p>
+                                    <span class="text-gray-500 font-medium ml-2">
+                                        | Customer No: {{ $promotor->folio_no }}
+                                    </span>
 
                                 </a>
+
                             </div>
 
                         </div>
+
                     </td>
-                    <td class="text-start !py-5 min-w-[130px] cursor-pointer">
-                        <span class="px-2">
-                            {{ $promotor->gender ?? '' }}
-                        </span>
+
+                    <!-- GENDER -->
+                    <td class="px-5 py-4 text-center"
+                        data-label="Gender">
+
+                        {{ $promotor->gender ?? '-' }}
+
                     </td>
-                    <td class="py-2 px-3">
-                        @if (($promotor->is_senior ?? '') === 'Yes')
-                        <span
-                            class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16">
+
+                    <!-- SENIOR -->
+                    <td class="px-5 py-4 text-center"
+                        data-label="Senior Citizen">
+
+                        @if(($promotor->is_senior ?? '') === 'Yes')
+
+                        <span class="px-4 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary">
                             Yes
                         </span>
+
                         @else
-                        <span
-                            class="block w-28 rounded-[30px] border border-n30 bg-error/10 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16">
-                            {{ $promotor->is_senior ?? 'No' }}
+
+                        <span class="px-4 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-600">
+                            No
                         </span>
+
                         @endif
+
                     </td>
-                    <td class="py-5 px-6">{{ $promotor->enrollment_date->format('d-m-Y') ?? '' }}</td>
-                    <td class="py-2">
-                        @if (optional($promotor->kyc)->kyc_status == 'completed')
-                        <span
-                            class="text-primary uppercase">
-                            {{ optional($promotor->kyc)->kyc_status ?? 'N/A' }}
+
+                    <!-- ENROLLMENT -->
+                    <td class="px-5 py-4 text-center"
+                        data-label="Enrollment Date">
+
+                        {{ $promotor->enrollment_date ? \Carbon\Carbon::parse($promotor->enrollment_date)->format('d-m-Y') : '-' }}
+
+                    </td>
+
+                    <!-- KYC -->
+                    <td class="px-5 py-4 text-center"
+                        data-label="KYC Status">
+
+                        @if(optional($promotor->kyc)->kyc_status == 'completed')
+
+                        <span class="uppercase text-primary font-semibold">
+                            Completed
                         </span>
+
                         @else
-                        <span style=""
-                            class="text-warning uppercase">
-                            {{ optional($promotor->kyc)->kyc_status ?? 'N/A' }}
+
+                        <span class="uppercase text-warning font-semibold">
+                            {{ optional($promotor->kyc)->kyc_status ?? 'Pending' }}
                         </span>
+
                         @endif
+
                     </td>
-                    <td class="py-2 px-6">
-                        <div class="flex justify-center">
-                            @include('partials._vertical-options', [
-                            'id' => base64_encode($promotor->id),
-                            'viewRoute' => 'promotor.show',
-                            'editRoute' => 'promotor.edit',
-                            'deleteRoute' => 'promotor.destroy',
-                            ])
+
+                    <!-- ACTION -->
+                    <td class="px-5 py-4 text-center align-middle"
+                        data-label="Actions">
+
+                        <div class="flex items-center justify-center gap-2 action-group">
+
+                            <!-- VIEW -->
+                            <a href="{{ route('promotor.show', base64_encode($promotor->id)) }}"
+                                class="action-btn action-view">
+
+                                <i class="las la-eye"></i>
+                                <span>VIEW</span>
+
+                            </a>
+
+                            <!-- EDIT -->
+                            <a href="{{ route('promotor.edit', base64_encode($promotor->id)) }}"
+                                class="action-btn action-edit">
+
+                                <i class="las la-edit"></i>
+                                <span>EDIT</span>
+
+                            </a>
+
+                            <!-- DELETE -->
+                            <form action="{{ route('promotor.destroy', base64_encode($promotor->id)) }}"
+                                method="POST"
+                                class="delete-form"
+                                onsubmit="return confirm('Delete this promoter?')">
+
+                                @csrf
+                                @method('DELETE')
+
+                                <button type="submit"
+                                    class="action-btn action-delete">
+
+                                    <i class="las la-trash"></i>
+                                    <span>DELETE</span>
+
+                                </button>
+
+                            </form>
+
                         </div>
+
                     </td>
+
                 </tr>
-                @endforeach
+
+                @empty
+
+                <tr>
+
+                    <td colspan="6"
+                        class="py-10 text-center text-gray-500">
+
+                        No promoter records found.
+
+                    </td>
+
+                </tr>
+
+                @endforelse
+
             </tbody>
 
         </table>
-        
+
     </div>
-    
-    <div class="mt-4">
+
+    <!-- PAGINATION -->
+    <div class="mt-5">
         <x-pagination :paginator="$promotors"/>
     </div>
 
 </div>
+
 @endsection
