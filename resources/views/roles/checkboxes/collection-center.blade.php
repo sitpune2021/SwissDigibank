@@ -1,4 +1,4 @@
-<div class="tab-panel hidden">
+<div">
 
 <!----------------- Collection Centers --------------------> 
     <div class="payload-section">
@@ -115,16 +115,6 @@
                     </label>
                 </div>
             </div>
-
-            <!-- <div class="col-span-2 md:col-span-1">
-                <div class="flex items-center gap-2 space-x-2">
-                    <input type="checkbox" id="add_group_comment" name="permissions[add_group_comment]" value=""
-                        class="item-checkbox form-checkbox h-5 w-5 text-primary">
-                    <label for="add_group_comment" class="text-base font-semibold cursor-pointer mb-0">
-                       Add Group Comment
-                    </label>
-                </div>
-            </div> -->
 
         </div>
     </div>
