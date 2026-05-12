@@ -680,58 +680,12 @@ use Illuminate\Support\Facades\Storage;
 
         <!-- Consumer durable loan LOAN  -->
         <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-4">
-        <a href="{{ route('consumer_loan.schemes.index') }}">
-
-        <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-purple-400">
-
-        <div class="flex items-center justify-between mb-4">
-        <span class="text-sm font-semibold text-gray-500 uppercase">
-        Consumer Durable Loan
-        </span>
-        </div>
-
-        <div class="flex items-center gap-4">
-
-        <div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
-        <i class="text-3xl las xl:text-5xl la-tv"></i>
-        </div>
-
-        <div>
-        <h2 class="text-2xl font-bold text-gray-800">0</h2>
-        <p class="text-xs text-gray-500">Durable Loans</p>
-        </div>
-
-        </div>
-        </div>
-        </a>
+       
         </div>
 
         <!-- Agricultural LOAN  -->
         <div class="neo-card p-5 col-span-12 sm:col-span-6 lg:col-span-4">
-        <a href="{{ route('agricultural_loan.schemes.index') }}">
-
-        <div class="bg-white dark:bg-bg4 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 border border-gray-100 hover:border-green-400">
-
-        <div class="flex items-center justify-between mb-4">
-        <span class="text-sm font-semibold text-gray-500 uppercase">
-        Agricultural Loan
-        </span>
-        </div>
-
-        <div class="flex items-center gap-4">
-
-        <div class="w-14 xl:w-[72px] h-14 xl:h-[72px] flex items-center justify-center bg-primary/5 text-primary border border-n30 dark:border-n500 rounded-xl shadow-lg">
-        <i class="text-3xl las xl:text-5xl la-leaf"></i>
-        </div>
-
-        <div>
-        <h2 class="text-2xl font-bold text-gray-800">0</h2>
-        <p class="text-xs text-gray-500">Agriculture Loans</p>
-        </div>
-
-        </div>
-        </div>
-        </a>
+      
         </div>
 
     </div>
