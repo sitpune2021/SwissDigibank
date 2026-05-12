@@ -1,12 +1,19 @@
 @extends('layout.main')
 
+@php
+    $permissions = auth()->user()->rolePermission->permissions ?? [];
+    $isSuperAdmin = auth()->user()->role_id == 1;
+@endphp
+
 @section('action-button')
-<a href="{{ route('branch.create') }}"
-    class="px-4 py-2 rounded-xl text-sm font-semibold shadow-md transition-all duration-200
-    hover:scale-105"
-    style="background:linear-gradient(90deg,#e1d315,#e30f0f); color:#111;">
-    ADD BRANCH
-</a>
+   @if($isSuperAdmin || in_array('branch.create', $permissions))
+        <a href="{{ route('branch.create') }}"
+            class="px-4 py-2 rounded-xl text-sm font-semibold shadow-md transition-all duration-200
+            hover:scale-105"
+            style="background:linear-gradient(90deg,#e1d315,#e30f0f); color:#111;">
+            ADD BRANCH
+        </a>
+    @endif
 @endsection
 
 @section('page-title')
@@ -596,15 +603,18 @@ thead tr{
 
                         <div class="action-group">
 
-                            <!-- VIEW -->
+                            {{-- VIEW --}}
+                            @if($isSuperAdmin || in_array('branch.show', $permissions))
                             <a href="{{ route('branch.show', base64_encode($branch->id)) }}"
                                 class="action-btn action-view">
 
                                 <i class="las la-eye"></i>
                                 <span>VIEW</span>
-                                
-                            </a>
 
+                            </a>
+                            @endif
+
+                            @if($isSuperAdmin || in_array('branch.edit', $permissions))
                             <!-- EDIT -->
                             <a href="{{ route('branch.edit', base64_encode($branch->id)) }}"
                                 class="action-btn action-edit">
@@ -613,7 +623,9 @@ thead tr{
                                 <span>EDIT</span>                            
 
                             </a>
+                            @endif
 
+                            @if($isSuperAdmin || in_array('branch.delete', $permissions))
                             <!-- DELETE -->
                             <form action="{{ route('branch.destroy', base64_encode($branch->id)) }}"
                                 method="POST"
@@ -631,6 +643,7 @@ thead tr{
                                 </button>
 
                             </form>
+                            @endif
 
                         </div>
 

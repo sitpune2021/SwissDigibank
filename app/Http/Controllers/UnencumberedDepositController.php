@@ -14,6 +14,16 @@ class UnencumberedDepositController extends Controller
 
     public function index()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('unencumbered-deposits.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $deposite = UnencumberedDeposit::with('bank')->paginate(10);
 
         return view(
@@ -22,14 +32,24 @@ class UnencumberedDepositController extends Controller
         );
     }
 
-
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('unencumbered-deposits.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $banks = Bank::orderBy('name')->get();
         $mode = 'create';
 
         return view('company.unencumbered-deposits.create', compact('banks', 'mode'));
     }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -62,6 +82,16 @@ class UnencumberedDepositController extends Controller
 
     public function edit(UnencumberedDeposit $unencumberedDeposit)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('unencumbered-deposits.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $banks = Bank::orderBy('name')->get();
         $mode = 'edit';
 
@@ -70,6 +100,7 @@ class UnencumberedDepositController extends Controller
             compact('unencumberedDeposit', 'banks', 'mode')
         );
     }
+
     public function update(Request $request, UnencumberedDeposit $unencumberedDeposit)
     {
         $validated = $request->validate([
@@ -106,6 +137,16 @@ class UnencumberedDepositController extends Controller
 
     public function show(UnencumberedDeposit $unencumberedDeposit)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('unencumbered-deposits.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $banks = Bank::orderBy('name')->get();
         $mode = 'show';
 
@@ -114,6 +155,7 @@ class UnencumberedDepositController extends Controller
             compact('unencumberedDeposit', 'banks', 'mode')
         );
     }
+
     public function destroy(string $id)
     {
     }

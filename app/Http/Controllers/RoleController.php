@@ -23,89 +23,37 @@ class RoleController extends Controller
 
     public function create()
     {
-    $roles = Role::all();
+        //$roles = Role::all();
+        $roles = Role::where('id', '!=', 1)->get();
 
-    $menuItems = [
-        [
-            'title' => 'DASHBOARD',
-            'id' => 'dashboardSection'
-        ],
-        [
-            'title' => 'COMPANY',
-            'id' => 'companySection'
-        ],
-        [
-            'title' => 'USER',
-            'id' => 'userSection'
-        ],
-        [
-            'title' => 'COLLECTION CENTER',
-            'id' => 'collectionCenter'
-        ],
-        [
-            'title' => 'CUSTOMER MANAGEMENT',
-            'id' => 'customer'
-        ],
-    ];
+        $menuItems = [
+            [
+                'title' => 'DASHBOARD',
+                'id' => 'dashboardSection'
+            ],
+            [
+                'title' => 'COMPANY',
+                'id' => 'companySection'
+            ],
+            [
+                'title' => 'USER',
+                'id' => 'userSection'
+            ],
+            [
+                'title' => 'COLLECTION CENTER',
+                'id' => 'collectionCenter'
+            ],
+            [
+                'title' => 'CUSTOMER MANAGEMENT',
+                'id' => 'customer'
+            ],
+        ];
 
-    return view('roles.add-role', compact(
-        'roles',
-        'menuItems'
-    ));
+        return view('roles.add-role', compact(
+            'roles',
+            'menuItems'
+        ));
     }
-    
-    // public function store(Request $request)
-    // {
-    //     try {
-
-    //         $request->validate([
-    //             'role_id' => 'required|exists:roles,id',
-    //             'role_position' => 'nullable|string',
-    //             'permission_type' => 'required|in:admin,agent,both',
-    //             'active' => 'required|in:Yes,No',
-    //             'permissions' => 'nullable|array',
-    //         ]);
-
-    //         Log::info('Storing new role permission', [
-    //             'role_id' => $request->role_id,
-
-    //             'role_position' => $request->role_position,
-    //             'permission_type' => $request->permission_type,
-    //             'active' => $request->active,
-    //             'permissions' => $request->permissions,
-    //         ]);
-
-    //         // Save to database
-    //         $rolePermission = RolePermission::updateOrCreate(
-    //             ['role_id' => $request->role_id],
-    //             [
-    //                 'role_position'  => $request->role_position,
-    //                 'permission_type'=> $request->permission_type,
-    //                 'active'         => $request->active,
-    //                 'permissions'    => $request->permissions ?? [],
-    //             ]
-    //         );
-
-    //         Log::info('Role permission saved successfully', [
-    //             'id' => $rolePermission->id,
-    //             'role_id' => $rolePermission->role_id,
-    //         ]);
-
-    //         return redirect()
-    //             ->route('roles.index')
-    //             ->with('success', 'Role permissions saved successfully!');
-    //     } catch (\Exception $e) {
-    //         // Log any error
-    //         Log::error('Error storing role permission', [
-    //             'message' => $e->getMessage(),
-    //             'stack' => $e->getTraceAsString(),
-    //             'input' => $request->all(),
-    //         ]);
-
-    //         return redirect()->back()->with('error', 'Failed to save role permissions.');
-    //     }
-    // }
-
     
     public function store(Request $request)
     {

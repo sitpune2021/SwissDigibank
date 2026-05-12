@@ -21,6 +21,16 @@ class BranchController extends Controller
 
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('branch.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $user = Auth::user();
 
@@ -81,6 +91,15 @@ class BranchController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('branch.create', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
         try {
             $dynamicOptions = [
                 'states' => State::pluck('name', 'id')
@@ -173,6 +192,16 @@ class BranchController extends Controller
 
     public function show($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('branch.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $decryptedId = base64_decode($id);
             $branch = Branch::findOrFail($decryptedId);
@@ -220,6 +249,16 @@ class BranchController extends Controller
 
     public function edit($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('branch.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $decryptedId = base64_decode($id);
             $branch = Branch::findOrFail($decryptedId);
@@ -303,6 +342,14 @@ class BranchController extends Controller
 
     public function destroy($id)
     {
+        $permissions = auth()->user()->rolePermission->permissions ?? [];
+
+        if (!in_array('branch.delete', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $id = base64_decode($id); // ✔ correct
 
@@ -322,20 +369,6 @@ class BranchController extends Controller
                 ->with('error', 'Failed to delete branch.');
         }
     }
-
-    // public function destroy($id)
-    // {
-    //     try {
-    //         $branch = Branch::findOrFail($id);
-    //         $branch->delete();
-
-    //         return redirect()->route('branch.index')->with('success', 'Branch deleted successfully.');
-    //     } catch (\Exception $e) {
-    //         Log::error('Error deleting branch', ['error' => $e->getMessage()]);
-    //         return redirect()->back()->with('error', 'Failed to delete branch.');
-    //     }
-    // }
-
     
     public function getBranches()
     {

@@ -43,19 +43,19 @@ class RoleSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'AGENT APP',
+                'name' => 'Loan Officer',
                 'guard_name' => 'web',
-                'description' => 'Agent application role',
+                'description' => 'EMI management',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            // [
-            //     'name' => 'Promoter',
-            //     'guard_name' => 'web',
-            //     'description' => 'Promoter role with special permissions',
-            //     'created_at' => now(),
-            //     'updated_at' => now(),
-            // ],
+            [
+                'name' => 'Promoter',
+                'guard_name' => 'web',
+                'description' => 'Promoter role with special permissions',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
             // [
             //     'name' => 'Director',
             //     'guard_name' => 'web',
@@ -64,7 +64,7 @@ class RoleSeeder extends Seeder
             //     'updated_at' => now(),
             // ],
             [
-                'name' => 'Member',
+                'name' => 'Customer',
                 'guard_name' => 'web',
                 'description' => 'Customer role',
                 'created_at' => now(),

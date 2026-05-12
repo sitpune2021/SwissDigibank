@@ -15,6 +15,17 @@ class BankAccountController extends Controller
 
     public function index()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        // SUPER ADMIN = FULL ACCESS
+        if ($user->role_id != 1 && !in_array('bank-account.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $bankAcc = BankAccount::with('bank')->paginate(25);
 
         return view('company.bankAccount.index', compact('bankAcc'));
@@ -22,6 +33,16 @@ class BankAccountController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('bank-account.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $mode = 'create';
         $banks = Bank::all();
         $branches = Branch::all();
@@ -81,6 +102,16 @@ class BankAccountController extends Controller
 
     public function show(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('bank-account.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $mode = 'view';
         $bankAccount = BankAccount::findOrFail($id);
         $banks = Bank::all();
@@ -96,6 +127,16 @@ class BankAccountController extends Controller
 
     public function edit(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('bank-account.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $mode = 'edit';
         $bankAccount = BankAccount::findOrFail($id);
         $banks = Bank::all();

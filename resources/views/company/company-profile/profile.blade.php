@@ -22,20 +22,41 @@
             @foreach ($companyprofile as $key => $section)
                 <div class="col-span-6 ">
                     <div class="mb-6  xxl:p-8 xxxl:p-10" style="height: 100%;">
-                        <div class="pb-4 mb-4  bb-dashed md:mb-6 md:pb-6 flex   justify-between">
+                        <div class="pb-4 mb-4 bb-dashed md:mb-6 md:pb-6 flex justify-between">
+
                             <h4 class="h3 text-secondry">
                                 {{ $section['heading'] }}
                             </h4>
-                            @if ($key == 'company' && Route::currentRouteName() === 'company.index')
+
+                            @php
+                                $permissions = auth()->user()->rolePermission->permissions ?? [];
+                                $isSuperAdmin = auth()->user()->role_id == 1;
+                            @endphp
+
+                            @if (
+                                $key == 'company' &&
+                                Route::currentRouteName() === 'company.index' &&
+                                (
+                                    $isSuperAdmin ||
+                                    in_array('company.edit', $permissions)
+                                )
+                            )
+
                                 <a href="{{ route('company.edit', $company->id) }}"
-                                    class="inline-flex items-center justify-center w-8 h-8 text-white rounded-full bg-primary hover:bg-green-700">
+                                    class="inline-flex items-center justify-center
+                                        w-8 h-8 text-white rounded-full
+                                        bg-primary hover:bg-green-700">
+
                                     <i class="text-lg las la-edit"></i>
+
                                 </a>
+
                             @endif
+
                         </div>
+
                         @php
                             $isForm = !isset($show) || !$show;
-
                         @endphp
 
                         @if ($isForm)
