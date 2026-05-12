@@ -3,14 +3,14 @@
 return [
     [
         'title' => 'DASHBOARD',
-        'icon' => 'las la-tachometer-alt',
+        'icon' => 'las la-chart-line',
         'route' => 'index1',
         'position' => '0',
         'active' => '1'
     ],
     [
         'title' => 'COMPANY',
-        'icon' => 'las la-building',
+        'icon' => 'las la-landmark',
         'position' => '2',
         'active' => '1',
         'submenu' => [
@@ -26,7 +26,7 @@ return [
     ],
     [
         'title' => 'USER',
-        'icon' => 'las la-users-cog',
+        'icon' => 'las la-user-shield',
         'position' => '3',
         'active' => '1',
         'submenu' => [
@@ -36,7 +36,7 @@ return [
     ],
     [
         'title' => 'COLL.CENTER/GROUPS',
-        'icon' => 'las la-layer-group',
+        'icon' => 'las la-network-wired',
         'position' => '3',
         'active' => '1',
         'submenu' => [
@@ -47,7 +47,7 @@ return [
     ],
     [
         'title' => 'CUSTOMER',
-        'icon' => 'las la-user-friends',
+        'icon' => 'las la-users',
         'position' => '4',
         'active' => '1',
         'submenu' => [
@@ -84,7 +84,7 @@ return [
     ],
     [
         'title' => 'MDS/RD/DDS',
-        'icon' => 'las la-university',
+        'icon' => 'las la-coins',
         'position' => '7',
         'active' => '1',
         'submenu' => [
@@ -96,7 +96,7 @@ return [
     ],
     [
         'title' => 'GOLD LOAN',
-        'icon' => 'las la-university',
+        'icon' => 'las la-coins',
         'position' => '9',
         'active' => '1',
         'submenu' => [
@@ -110,7 +110,7 @@ return [
     ],
     [
         'title' => 'PROP./MORTGAGE LOAN',
-        'icon' => 'las la-university',
+        'icon' => 'las la-home',
         'position' => '9',
         'active' => '1',
         'submenu' => [
@@ -124,7 +124,7 @@ return [
     ],
     [
         'title' => 'LOAN AGAINST DEPOSIT',
-        'icon' => 'las la-university',
+        'icon' => 'las la-file-invoice-dollar',
         'position' => '9',
         'active' => '1',
         'submenu' => [
@@ -138,7 +138,7 @@ return [
     ],
     [
         'title' => 'BUSINESS LOAN',
-        'icon' => 'las la-university',
+        'icon' => 'las la-briefcase',
         'position' => '9',
         'active' => '1',
         'submenu' => [
@@ -151,7 +151,7 @@ return [
     ],
     [
         'title' => 'CC / OD  LIMIT',
-        'icon' => 'las la-university',
+        'icon' => 'las la-credit-card',
         'position' => '9',
         'active' => '1',
         'submenu' => [
@@ -163,7 +163,7 @@ return [
     ],
     [
         'title' => 'DAILY / WEEKLY LOAN',
-        'icon' => 'las la-university',
+        'icon' => 'las la-calendar-week',
         'position' => '9',
         'active' => '1',
         'submenu' => [
@@ -175,7 +175,7 @@ return [
     ],
     [
         'title' => 'PERSONAL LOAN',
-        'icon' => 'las la-university',
+        'icon' => 'las la-hand-holding-usd',
         'position' => '9',
         'active' => '1',
         'submenu' => [
@@ -188,7 +188,7 @@ return [
     ],
     [
         'title' => 'VEHICLE LOAN',
-        'icon' => 'las la-university',
+        'icon' => 'las la-hand-holding-usd',
         'position' => '9',
         'active' => '1',
         'submenu' => [
@@ -202,7 +202,7 @@ return [
     ],
     [
         'title' => 'FIXED LOAN',
-        'icon' => 'las la-university',
+        'icon' => 'las la-money-check-alt',
         'position' => '9',
         'active' => '1',
         'submenu' => [
@@ -212,27 +212,27 @@ return [
             ['title' => 'ACCOUNTS', 'route' => 'fixed_loan.account.index'],
         ],
     ],
-    [
-        'title' => 'AGRICULTURAL LOAN',
-        'icon' => 'las la-university',
-        'position' => '9',
-        'active' => '1',
-        'submenu' => [
-            ['title' => 'SCHEMES', 'route' => 'agricultural_loan.schemes.index'],
-        ],
-    ],
-    [
-        'title' => 'CONSUMER DURABLE LOAN',
-        'icon' => 'las la-university',
-        'position' => '9',
-        'active' => '1',
-        'submenu' => [
-            ['title' => 'SCHEMES', 'route' => 'consumer_loan.schemes.index'],
-        ],
-    ],
+    // [
+    //     'title' => 'AGRICULTURAL LOAN',
+    //     'icon' => 'las la-university',
+    //     'position' => '9',
+    //     'active' => '1',
+    //     'submenu' => [
+    //         ['title' => 'SCHEMES', 'route' => 'agricultural_loan.schemes.index'],
+    //     ],
+    // ],
+    // [
+    //     'title' => 'CONSUMER DURABLE LOAN',
+    //     'icon' => 'las la-university',
+    //     'position' => '9',
+    //     'active' => '1',
+    //     'submenu' => [
+    //         ['title' => 'SCHEMES', 'route' => 'consumer_loan.schemes.index'],
+    //     ],
+    // ],
     [
         'title' => 'LOCKERS',
-        'icon' => 'las la-lock',
+        'icon' => 'las la-vault',
         'position' => '9',
         'active' => '1',
         'submenu' => [
@@ -242,21 +242,21 @@ return [
     ],
     [
         'title' => 'PAYMENTs TO COLLECT',
-        'icon' => 'las la-user',
+        'icon' => 'las la-money-bill-wave',
         'position' => '9',
         'active' => '1',
         'route' => 'payments-to-collect.index'
     ],
     [
         'title' => 'PAYMENTs TO RELEASE',
-        'icon' => 'las la-user',
+        'icon' => 'las la-paper-plane',
         'position' => '9',
         'active' => '1',
         'route' => 'payments-to-release.index'
     ],
     [
         'title' => 'APPROVALS',
-        'icon' => 'las la-university',
+        'icon' => 'las la-check-double',
         'position' => '5',
         'active' => '1',
         'submenu' => [
@@ -270,7 +270,7 @@ return [
     ],
     [
         'title' => 'ASSOCIATES / ADVISORS',
-        'icon' => 'las la-user',
+        'icon' => 'las la-user-tie',
         'position' => '8',
         'active' => '1',
         'submenu' => [
@@ -282,14 +282,14 @@ return [
     ],
     [
         'title' => 'NOTICE BOARD',
-        'icon' => 'las la-book',
+        'icon' => 'las la-bullhorn',
         'position' => '5',
         'active' => '1',
         'route' => 'notice-boards.index',
     ],
     [
         'title' => 'PRINT DOCUMENTS',
-        'icon' => 'las la-clipboard',
+        'icon' => 'las la-print',
         'position' => '6',
         'active' => '1',
         'submenu' => [
@@ -304,14 +304,14 @@ return [
     ],
     [
         'title' => 'PASSBOOK',
-        'icon' => 'las la-book',
+        'icon' => 'las la-book-open',
         'position' => '5',
         'active' => '1',
         'route' => 'passbook.index',
     ],
     [
         'title' => 'REPORTS',
-        'icon' => 'las la-book',
+        'icon' => 'las la-chart-bar',
         'position' => '10',
         'active' => '1',
         'submenu' => [
@@ -348,7 +348,7 @@ return [
     ],
     [
         'title' => 'HR MANAGEMENT',
-        'icon' => 'las la-user',
+        'icon' => 'las la-id-badge',
         'position' => '6',
         'active' => '1',
         'submenu' => [
@@ -360,7 +360,7 @@ return [
     ],
     [
         'title' => 'SOFTWARE SETTINGS',
-        'icon' => 'las la-wrench',
+        'icon' => 'las la-cogs',
         'position' => '6',
         'active' => '1',
         'submenu' => [
@@ -387,74 +387,5 @@ return [
         ],
     ],
 
-    // [
-    //     'title' => 'ACCOUNTS',
-    //     'icon' => 'las la-user',
-    //     'position' => '9',
-    //     'active' => '1',
-    //     'submenu' => [
-    //         // ['title' => 'TREE', 'route' => 'tree.index'],
-    //         ['title' => 'VENDORS', 'route' => 'vendors.index'],
-    //         ['title' => 'LEDGER GROUPS', 'route' => 'ledger-group.index'],
-    //         ['title' => 'LEDGERS', 'route' => 'ledger.index'],
-    // ['title' => 'ENTRIES', 'route' => 'entries.index'],
-    // ['title' => 'TRIAL BALANCE', 'route' => 'trial-balance.index'],
-    // ['title' => 'PROFIT AND LOSS(P & L)', 'route' => 'profit-loss.index'],
-    // ['title' => 'INCOME STATEMENT', 'route' => 'income-statement.index'],
-    // ['title' => 'BALANCE SHEET', 'route' => 'balance-sheet.index'],
-    // ['title' => 'FY REPORT', 'route' => 'fy-report.index'],
-    //     ],
-    // ],
-
-    // [
-    //     'title' => 'NEW JOURNAL ENTRY',
-    //     'icon' => 'las la-user',
-    //     'position' => '9',
-    //     'active' => '1',
-    //     'route' => 'journal-entry.index'
-
-    // ],
-    // [
-    //     'title' => 'DAY BOOK',
-    //     'icon' => 'las la-user',
-    //     'position' => '9',
-    //     'active' => '1',
-    //     'route' => 'day-book.index'
-
-    // ],
-    // [
-    //     'title' => 'SCHEDULE SMS',
-    //     'icon' => 'las la-user',
-    //     'position' => '9',
-    //     'active' => '1',
-    //     'route' => 'schedule-sms.index'
-
-    // ],
-    // [
-    //     'title' => 'REPORTS',
-    //     'icon' => 'las la-user',
-    //     'position' => '9',
-    //     'active' => '1',
-    //     'submenu' => [
-    //         ['title' => 'ASSOCIATE REPORT', 'route' => 'associate-report.index'],
-    //         ['title' => 'BRANCH REPORT', 'route' => 'branch-report.index'],
-    //         ['title' => 'MATURITY REPORT', 'route' => 'maturity-report.index'],
-    //         ['title' => 'LOAN REPORT', 'route' => 'loan-report.index'],
-    //     ],
-    // ],
-    // [
-    //     'title' => 'DAILY COLLECTION',
-    //     'icon' => 'las la-user',
-    //     'position' => '9',
-    //     'active' => '1',
-    //     'submenu' => [
-    //         ['title' => 'DASHBOARD', 'route' => 'dashboard.index'],
-    //         ['title' => 'ASSOCIATE COLLECTION APPROVAL', 'route' => 'associate-approvals.index'],
-    //         ['title' => 'ASSOCIATE COLLECTION REPORT', 'route' => 'associate-report.index'],
-    //         ['title' => 'COLLECTION REPORT', 'route' => 'collection-report.index'],
-    //         ['title' => 'ACTIVE ASSOCIATE', 'route' => 'active-associate.index'],
-    //         ['title' => ' ASSOCIATE COLLECTION LIMIT', 'route' => 'associate-limit.index'],
-    //     ],
-    // ],
 
 ];
