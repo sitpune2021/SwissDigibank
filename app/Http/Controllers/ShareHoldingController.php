@@ -15,8 +15,19 @@ use Illuminate\Validation\ValidationException;
 
 class ShareHoldingController extends Controller
 {
+
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shareholding.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $query = Shareholding::query();
             if ($request->has('search')) {
@@ -53,6 +64,16 @@ class ShareHoldingController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shareholding.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $shareholding = null;
             $route = route('shareholding.store');
@@ -206,6 +227,16 @@ if ($request->pay_mode === 'cheque' && $request->bank_id) {
 
     public function show($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shareholding.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $decryptedId = base64_decode($id);
             $shareholding = Shareholding::findOrFail($decryptedId);
@@ -224,13 +255,24 @@ if ($request->pay_mode === 'cheque' && $request->bank_id) {
             abort(404);
         }
     }
+
     public function edit($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shareholding.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $decryptedId = base64_decode($id);
             $shareholding = Shareholding::findOrFail($decryptedId);
             $route = route('shareholding.update', $decryptedId);
-$formFields = array_filter(config('share_form'), function ($item) {
+            $formFields = array_filter(config('share_form'), function ($item) {
                 return is_array($item) && isset($item['name']);
             });            $method = 'PUT';
             $dynamicOptions = [
@@ -242,6 +284,7 @@ $formFields = array_filter(config('share_form'), function ($item) {
         }
         // return view('branch.add-branch', compact('branch', 'states'));
     }
+
     public function update(Request $request, $id)
     {
         try {
@@ -300,4 +343,6 @@ $formFields = array_filter(config('share_form'), function ($item) {
             abort(404);
         }
     }
+
+
 }

@@ -15,6 +15,17 @@ class DirectorController extends Controller
 
     public function index(Request $request)
     {
+
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shareholding.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $query = Director::with('member');
 
@@ -52,6 +63,16 @@ class DirectorController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shareholding.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $dynamicOptions = [
                 'member' =>  Member::pluck('member_info_first_name', 'id')
@@ -95,6 +116,16 @@ class DirectorController extends Controller
 
     public function show(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shareholding.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $decryptedId = base64_decode($id);
             $director = Director::findOrFail($decryptedId);
@@ -118,6 +149,16 @@ class DirectorController extends Controller
 
     public function edit(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shareholding.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+        
         try {
             $dynamicOptions = [
                 'member' =>  Member::pluck('member_info_first_name', 'id')

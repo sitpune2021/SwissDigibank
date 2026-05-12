@@ -8,6 +8,7 @@ use App\Models\State;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\RolePermission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,17 @@ class CompanyController extends Controller
 
     public function index()
     {
+        //dd(auth()->user()->rolePermission);
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('company.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $userId = Auth::id();
             $company = Company::with(['State', 'incorporationState',])->where('user_id',  $userId)
@@ -50,6 +62,16 @@ class CompanyController extends Controller
 
     public function edit($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('company.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $company = Company::findOrFail($id);
 

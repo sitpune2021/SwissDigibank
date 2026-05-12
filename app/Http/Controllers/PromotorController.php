@@ -24,8 +24,19 @@ use Illuminate\Support\Facades\Log;
 
 class PromotorController extends Controller
 {
+
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('promotor.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             // return abort(404);
             $query = Promotor::query();
@@ -63,6 +74,16 @@ class PromotorController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('promotor.create', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $dynamicOptions = [
                 'branches' => Branch::pluck('branch_name', 'id'),
@@ -334,6 +355,16 @@ class PromotorController extends Controller
 
     public function show($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('promotor.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $decryptedId = base64_decode($id);
 
@@ -363,8 +394,19 @@ class PromotorController extends Controller
             abort(404);
         }
     }
+
     public function edit($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('promotor.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $decryptedId = base64_decode($id);
             // $promoter = Promotor::with('minor')->findOrFail($decryptedId);
@@ -985,6 +1027,7 @@ class PromotorController extends Controller
             ->route('promotor.show', base64_encode($promotor->id))
             ->with('success', 'Nominee updated successfully.');
     }
+    
     public function viewTransactions($id)
     {
         $promotor = Promotor::findOrFail($id);
