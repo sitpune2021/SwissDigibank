@@ -63,20 +63,23 @@
 
 @endsection
 
+@php
+    $permissions = auth()->user()->rolePermission->permissions ?? [];
+    $isSuperAdmin = auth()->user()->role_id == 1;
+@endphp
 
 @section('action-button')
+    @if($isSuperAdmin || in_array('branch.create', $permissions))
+        <a href="{{ route('promotor.create') }}"
+            class="inline-flex items-center gap-2
+            px-4 sm:px-5 py-2.5
+            rounded-xl text-xs sm:text-sm font-bold uppercase
+            shadow-lg transition-all duration-300 hover:scale-105"
+            style="background:linear-gradient(90deg,#e1d315,#e30f0f); color:#111;">
 
-<a href="{{ route('promotor.create') }}"
-    class="inline-flex items-center gap-2
-    px-4 sm:px-5 py-2.5
-    rounded-xl text-xs sm:text-sm font-bold uppercase
-    shadow-lg transition-all duration-300 hover:scale-105"
-    style="background:linear-gradient(90deg,#e1d315,#e30f0f); color:#111;">
-
-    <span>Add Promoter</span>
-
-</a>
-
+            <span>Add Promoter</span>
+        </a>
+    @endif
 @endsection
 
 <style>
@@ -651,6 +654,7 @@ thead tr{
                         <div class="flex items-center justify-center gap-2 action-group">
 
                             <!-- VIEW -->
+                            @if($isSuperAdmin || in_array('promotor.show', $permissions))
                             <a href="{{ route('promotor.show', base64_encode($promotor->id)) }}"
                                 class="action-btn action-view">
 
@@ -658,8 +662,10 @@ thead tr{
                                 <span>VIEW</span>
 
                             </a>
+                            @endif
 
                             <!-- EDIT -->
+                            @if($isSuperAdmin || in_array('promotor.edit', $permissions))
                             <a href="{{ route('promotor.edit', base64_encode($promotor->id)) }}"
                                 class="action-btn action-edit">
 
@@ -667,8 +673,10 @@ thead tr{
                                 <span>EDIT</span>
 
                             </a>
+                            @endif
 
                             <!-- DELETE -->
+                            @if(in_array('promotor.destroy', $permissions))
                             <form action="{{ route('promotor.destroy', base64_encode($promotor->id)) }}"
                                 method="POST"
                                 class="delete-form"
@@ -686,6 +694,7 @@ thead tr{
                                 </button>
 
                             </form>
+                            @endif
 
                         </div>
 

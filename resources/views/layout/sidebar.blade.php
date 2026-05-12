@@ -35,6 +35,12 @@
 
 @endphp
 
+@php
+
+    $permissions = auth()->user()?->rolePermission?->permissions ?? [];
+
+@endphp
+
 <style>
 .submenu {
     margin: 0;
@@ -259,21 +265,45 @@
                         @foreach ($menuItems as $item)
 
                         @php
-                            // Skip main menu if no permission for any submenu
+
                             $hasSubPermission = false;
 
-                            if($item->submenus->isNotEmpty()) {
-                                foreach($item->submenus as $sub) {
-                                    if(hasPermission($sub->route)) {
-                                        $hasSubPermission = true;
-                                        break;
-                                    }
-                                }
+                            // SUPER ADMIN
+                            if(auth()->user()->role_id == 1){
+
+                                $hasSubPermission = true;
+
                             } else {
-                                $hasSubPermission = hasPermission($item->route);
+
+                                // CHECK SUBMENUS
+                                if($item->submenus->isNotEmpty()) {
+
+                                    foreach($item->submenus as $sub) {
+
+                                        if(in_array($sub->route, $permissions)) {
+
+                                            $hasSubPermission = true;
+                                            break;
+
+                                        }
+
+                                    }
+
+                                } else {
+
+                                    if(in_array($item->route, $permissions)) {
+
+                                        $hasSubPermission = true;
+
+                                    }
+
+                                }
+
                             }
 
+                            // HIDE MENU
                             if(!$hasSubPermission) continue;
+
                         @endphp
                         @php
 
@@ -347,7 +377,7 @@
 
                             <ul class="submenu {{ $submenuActive ? 'submenu-show' : '' }}">
                                 @foreach ($item->submenus as $sub)
-                                @if(!hasPermission($sub->route))
+                                @if(auth()->user()->role_id != 1 && !in_array($sub->route, $permissions))
                                     @continue
                                 @endif
                                 <li>

@@ -79,9 +79,13 @@
 
 @endsection
 
+@php
+    $permissions = auth()->user()->rolePermission->permissions ?? [];
+    $isSuperAdmin = auth()->user()->role_id == 1;
+@endphp
 
 @section('action-button')
-
+@if($isSuperAdmin || in_array('bank-account.create', $permissions))
 <a href="{{ route('bank-account.create') }}"
     class="inline-flex items-center gap-2
     px-4 sm:px-5 py-2.5 rounded-xl
@@ -92,7 +96,7 @@
     <span>Add Bank</span>
 
 </a>
-
+@endif
 @endsection
 
 <style>
@@ -520,6 +524,7 @@ thead tr{
                                 <div class="flex items-center justify-center gap-2 whitespace-nowrap">
 
                                     <!-- VIEW -->
+                                    @if($isSuperAdmin || in_array('bank-account.show', $permissions))
                                     <a href="{{ route('bank-account.show', base64_encode($item->id)) }}"
                                         class="action-btn action-view">
 
@@ -528,8 +533,10 @@ thead tr{
                                         <span>View</span>
 
                                     </a>
+                                    @endif
 
                                     <!-- EDIT -->
+                                    @if($isSuperAdmin || in_array('bank-account.edit', $permissions))
                                     <a href="{{ route('bank-account.edit', base64_encode($item->id)) }}"
                                         class="action-btn action-edit">
 
@@ -538,6 +545,7 @@ thead tr{
                                         <span>Edit</span>
 
                                     </a>
+                                    @endif
 
                                 </div>
 

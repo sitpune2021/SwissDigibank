@@ -62,20 +62,24 @@
 
 @endsection
 
+@php
+    $permissions = auth()->user()->rolePermission->permissions ?? [];
+    $isSuperAdmin = auth()->user()->role_id == 1;
+@endphp
 
 @section('action-button')
+    @if($isSuperAdmin || in_array('shareholding.create', $permissions))
+        <a href="{{ route('shareholding.create') }}"
+            class="inline-flex items-center gap-2
+            px-4 sm:px-5 py-2.5
+            rounded-xl text-xs sm:text-sm font-bold uppercase
+            shadow-lg transition-all duration-300 hover:scale-105"
+            style="background:linear-gradient(90deg,#e1d315,#e30f0f); color:#111;">
 
-<a href="{{ route('shareholding.create') }}"
-    class="inline-flex items-center gap-2
-    px-4 sm:px-5 py-2.5
-    rounded-xl text-xs sm:text-sm font-bold uppercase
-    shadow-lg transition-all duration-300 hover:scale-105"
-    style="background:linear-gradient(90deg,#e1d315,#e30f0f); color:#111;">
+            <span>Allocate Share</span>
 
-    <span>Allocate Share</span>
-
-</a>
-
+        </a>
+    @endif
 @endsection
 
 <style>
@@ -533,6 +537,7 @@ thead tr{
                         <div class="flex items-center justify-center gap-2 whitespace-nowrap">
 
                             <!-- VIEW -->
+                            @if($isSuperAdmin || in_array('shareholding.show', $permissions))
                             <a href="{{ route('shareholding.show', base64_encode($share->id)) }}"
                                 class="action-btn action-view">
 
@@ -541,8 +546,10 @@ thead tr{
                                 <span>View</span>
 
                             </a>
+                            @endif
 
                             <!-- EDIT -->
+                            @if($isSuperAdmin || in_array('shareholding.edit', $permissions))
                             <a href="{{ route('shareholding.edit', base64_encode($share->id)) }}"
                                 class="action-btn action-edit">
 
@@ -551,6 +558,7 @@ thead tr{
                                 <span>Edit</span>
 
                             </a>
+                            @endif
 
                         </div>
 
@@ -602,7 +610,9 @@ thead tr{
                 @error($name)
                 <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
                 @enderror
+                @if(in_array('shareholding.transfer', $permissions))
                 <button class="btn-primary rounded-10 " type="submit"> UPDATE </button>
+                @endif
             </form>
         </div>
     </div>
