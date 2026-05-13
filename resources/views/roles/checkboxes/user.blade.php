@@ -20,20 +20,20 @@
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value="roles.manage-permission"
+                        <input type="checkbox" id="roles_index" name="permissions[]" value="roles.index"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Permission/ Role
+                    <label for="roles_index" class="text-base font-semibold cursor-pointer mb-0">Permission/ Role
                         List</label>
                 </div>
             </div>
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value="roles.add-role"
+                        <input type="checkbox" id="roles_create" name="permissions[]" value="roles.create"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Add New
+                    <label for="roles_create" class="text-base font-semibold cursor-pointer mb-0">Add New
                         Permission/
                         Role</label>
                 </div>
@@ -41,23 +41,24 @@
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
+                        <input type="checkbox" id="roles_show" name="permissions[]" value="roles.show"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Show Permission/
+                    <label for="roles_show" class="text-base font-semibold cursor-pointer mb-0">Show Permission/
                         Role Info</label>
                 </div>
             </div>
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value=""
+                        <input type="checkbox" id="roles_edit" name="permissions[]" value="roles.edit"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Edit Permission/
+                    <label for="roles_edit" class="text-base font-semibold cursor-pointer mb-0">Edit Permission/
                         Role Info</label>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -81,30 +82,28 @@
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value="users.manage-user"
+                        <input type="checkbox" id="users_index" name="permissions[]" value="users.index"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Users List</label>
+                    <label for="users_index" class="text-base font-semibold cursor-pointer mb-0">Users List</label>
                 </div>
             </div>
-
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value="users.add-user"
+                        <input type="checkbox" id="users_create" name="permissions[]" value="users.create"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Add Users</label>
+                    <label for="users_create" class="text-base font-semibold cursor-pointer mb-0">Add Users</label>
                 </div>
-            </div>
-            
+            </div>           
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value="users.add-user"
+                        <input type="checkbox" id="users_show" name="permissions[]" value="users.show"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">
+                    <label for="users_show" class="text-base font-semibold cursor-pointer mb-0">
                         Show User
                         Info
                     </label>
@@ -113,10 +112,10 @@
             <div class="grid grid-cols-6 gap-2 xxl:gap-2">
                 <div class="flex items-center gap-2 col-span-6">
                     <div class="">
-                        <input type="checkbox" id="show_sms_balance" name="permissions[]" value="users.add-user"
+                        <input type="checkbox" id="users_edit" name="permissions[]" value="users.edit"
                             class="item-checkbox form-checkbox h-5 w-5 text-primary">
                     </div>
-                    <label for="show_sms_balance" class="text-base font-semibold cursor-pointer mb-0">Edit User
+                    <label for="users_edit" class="text-base font-semibold cursor-pointer mb-0">Edit User
                         Info</label>
                 </div>
             </div>

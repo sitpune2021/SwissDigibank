@@ -16,6 +16,16 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('users.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $query = User::query();
 
@@ -42,6 +52,16 @@ class UserController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('users.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $employees = Employee::all();
 
@@ -115,6 +135,16 @@ class UserController extends Controller
 
     public function show(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('users.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $decryptedId = base64_decode($id);
             $user = User::with('employees', 'branches', 'roles')->findOrFail($decryptedId);
@@ -131,6 +161,16 @@ class UserController extends Controller
 
     public function edit(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('users.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $decryptedId = base64_decode($id);
             $user = User::with('employees', 'branches', 'roles')->findOrFail($decryptedId);
