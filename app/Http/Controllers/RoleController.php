@@ -16,6 +16,16 @@ class RoleController extends Controller
 
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('roles.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $roles = RolePermission::with('role')->latest()->get();
 
         return view('roles.manage-permission', compact('roles'));
@@ -23,6 +33,16 @@ class RoleController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('roles.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         //$roles = Role::all();
         $roles = Role::where('id', '!=', 1)->get();
 
@@ -105,6 +125,16 @@ class RoleController extends Controller
 
     public function edit($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('roles.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
     $rolePermission = RolePermission::with('role')->findOrFail($id);
     $roles = Role::all();
     $allPermissions = Permissions::all();
@@ -211,6 +241,16 @@ class RoleController extends Controller
 
     public function show($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('roles.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $rolePermission = RolePermission::with('role')->findOrFail($id);
 
         // 🔥 SAME MENU ITEMS LIKE CREATE

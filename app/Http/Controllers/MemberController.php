@@ -54,9 +54,7 @@ class MemberController extends Controller
                     abort(403, 'Member record not found for this user.');
                 }
             }
-
-            //$query = Member::with(['branch', 'kyc']);
-            $query = Member::with(['branch', 'kyc','user']);
+            $query = Member::with(['branch', 'kyc']);
 
             if ($request->has('search') && $request->search != '') {
                 $search = $request->search;
@@ -87,8 +85,7 @@ class MemberController extends Controller
                 });
             }
 
-            //$members = $query->latest()->paginate(30);
-            $members = $query->latest()->paginate(25)->onEachSide(1);
+            $members = $query->latest()->paginate(10);
 
             session()->forget('member_id');
             return view('members.member.index', compact('members'));
@@ -96,124 +93,7 @@ class MemberController extends Controller
             abort(404);
         }
     }
-
-    public function resendMemberOtp(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required'
-        ]);
-
-        try {
-
-            $user = User::findOrFail($request->user_id);
-
-            // ✅ OTP generate
-                //$user->otp = rand(1000,9999);
-                $user->otp = 1234;
-                $user->otp_verified = 0;
-                $user->otp_expires_at = now()->addMinutes(5); // OTP valid 5 minutes
-                $user->save();
-
-            $apiKey = env('MUFFINPAY_API_KEY');
-            $url = env('MUFFINPAY_URL');
-
-            $payload = [
-                "firstName" => $user->fname ?? "User",
-                "lastName" => $user->lname ?? "User",
-                "email" => $user->email,
-                "mobileNumber" => $user->mobile,
-                "userType" => "ROLE_INDIVIDUAL_MERCHANT_USER",
-                "userCatg" => "INDIVIDUAL"
-            ];
-
-            $xverify = \App\Helpers\MufinHelper::generateXVerify($payload);
-
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'apiKey' => $apiKey,
-                'xverifyv2' => $xverify
-            ])
-            ->withBody(json_encode($payload, JSON_UNESCAPED_SLASHES), 'application/json')
-            ->withOptions([
-                'verify' => false
-            ])
-            ->post($url.'/user/create');
-
-            $data = $response->json();
-
-            Log::info('MuffinPay Resend OTP Response', $data);
-
-            if ($response->successful()) {
-
-                return response()->json([
-                    'status' => true,
-                    'message' => 'OTP sent successfully to '.$user->mobile
-                ]);
-
-            } else {
-
-                Log::error('MuffinPay resend OTP failed', [
-                    'response' => $response->body()
-                ]);
-
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Failed to resend OTP'
-                ]);
-            }
-
-        } catch (\Exception $e) {
-
-            Log::error('Resend OTP Error', [
-                'error' => $e->getMessage()
-            ]);
-
-            return response()->json([
-                'status' => false,
-                'message' => 'Something went wrong'
-            ]);
-        }
-    }
-
-    public function verifyMemberOtp(Request $request)
-    {
-    $request->validate([
-    'user_id' => 'required',
-    'otp' => 'required|digits:4'
-    ]);
-
-    $user = User::findOrFail($request->user_id);
-
-    if(now()->greaterThan($user->otp_expires_at))
-    {
-    return response()->json([
-    'status'=>false,
-    'message'=>'OTP expired. Please resend OTP.'
-    ]);
-    }
-
-    if($user->otp == $request->otp)
-    {
-    $user->otp_verified = 1;
-    $user->save();
-
-    Log::info('Member OTP verified',[
-    'user_id'=>$user->id
-    ]);
-
-    return response()->json([
-    'status'=>true,
-    'message'=>'OTP Verified Successfully'
-    ]);
-    }
-
-    return response()->json([
-    'status'=>false,
-    'message'=>'Invalid OTP'
-    ]);
-    }
-
+    
     public function create()
     {
         try {
@@ -221,11 +101,9 @@ class MemberController extends Controller
                 'states'   => State::pluck('name', 'id'),
                 'branch'   => Branch::pluck('branch_name', 'id'),
                 'religion' => Religion::pluck('name', 'id'),
-                'groups'   => Group::where('is_active', 1)->pluck('group_name', 'id'),
             ];
-
             // $banks = Bank::all();
-            $banks = Bank::pluck('name', 'id');
+             $banks = Bank::pluck('name', 'id');
             $sections = config('member_form');
             $member   = null;
             $route    = route('member.store');
@@ -261,461 +139,313 @@ class MemberController extends Controller
             abort(404);
         }
     }
-
+   
     public function store(Request $request)
     {
-        $request->validate([
-            // Membership
-            'membership_type' => 'required|in:nominal,regular',
+    $request->validate([
 
-            // Basic Info
-            'member_info_title' => 'required|in:Md,Mr,Ms,Mrs',
-            'member_info_gender' => 'required|in:male,female,other',
+        // Membership
+        'membership_type' => 'required|in:nominal,regular',
 
-            'member_info_first_name'  => 'required|regex:/^[A-Za-z]+$/|max:50',
-            'member_info_middle_name' => 'nullable|regex:/^[A-Za-z]+$/|max:50',
-            'member_info_last_name'   => 'required|regex:/^[A-Za-z]+$/|max:50',
+        // Basic Info
+        'general_branch' => 'required',
 
-            'member_info_dob' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+        'member_info_title' => 'required|in:Md,Mr,Ms,Mrs',
+        'member_info_gender' => 'required|in:male,female,other',
 
-            // Contact
-            'member_info_email' => [
-                'required',
-                'email:rfc,dns',
-                'max:255',
-                'unique:members,member_info_email',
-                'unique:users,email'
-            ],
+        'member_info_first_name' => 'required|string|max:255',
+        'member_info_last_name'  => 'required|string|max:255',
 
-            'member_info_mobile_no' => [
-                'required',
-                'digits:10',
-                'regex:/^[6-9]\d{9}$/',
-                'unique:members,member_info_mobile_no',
-                'unique:users,mobile'
-            ],
+        'member_info_dob' => 'required|date',
 
-            // Address
-            'member_address_state' => 'required|integer',
-            'member_address_pincode' => 'required|digits:6',
-            'member_address_country' => 'required|regex:/^[A-Za-z\s]+$/',
+        'member_info_email' => 'required|email|unique:members,member_info_email|unique:users,email',
 
-            // KYC
-            'member_kyc_aadhaar_no' => [
-                'nullable',
-                'digits:12',
-                'regex:/^[2-9]{1}[0-9]{11}$/',
-                'unique:kyc_and_nominees,member_kyc_aadhaar_no'
-            ],
+        'member_info_mobile_no' => 'required|digits:10|unique:members,member_info_mobile_no|unique:users,mobile',
 
-            'member_kyc_pan_no' => [
-                'nullable',
-                'regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/',
-                'unique:kyc_and_nominees,member_kyc_pan_no'
-            ],
+        // Address
+        'member_address_state' => 'required|integer',
+        'member_address_pincode' => 'required|digits:6',
 
-            // Charges
-            'charges_transaction_date' => 'required|date|before_or_equal:today',
-            'charges_net_fee' => 'required|numeric|min:1',
-            'charges_pay_mode' => 'required|in:cash,online,cheque',
+        // KYC
+        'member_kyc_aadhaar_no' => 'required|digits:12|unique:kyc_and_nominees,member_kyc_aadhaar_no',
 
-        ], [
+        'member_kyc_pan_no' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/|unique:kyc_and_nominees,member_kyc_pan_no',
 
-            // 🔥 CUSTOM MESSAGES
+        // Charges
+        'charges_transaction_date' => 'required|date',
+        'charges_net_fee' => 'required|numeric',
+        'charges_pay_mode' => 'required|in:cash,online,cheque',
 
-            'membership_type.required' => 'Please select membership type.',
+    ]);
 
-            'member_info_first_name.required' => 'First name is required.',
-            'member_info_first_name.regex' => 'First name should contain only letters.',
+    try {
 
-            'member_info_last_name.required' => 'Last name is required.',
-            'member_info_last_name.regex' => 'Last name should contain only letters.',
+        Log::info('MEMBER STORE START');
 
-            'member_info_dob.required' => 'Date of birth is required.',
-            'member_info_dob.before_or_equal' => 'Member must be at least 18 years old.',
+        // ===================================
+        // FORMAT DATES
+        // ===================================
 
-            'member_info_email.required' => 'Email is required.',
-            'member_info_email.email' => 'Enter a valid email address.',
-            'member_info_email.unique' => 'This email is already registered.',
+        $dates = [
+            'general_enrollment_date',
+            'member_info_dob',
+            'charges_transaction_date',
+            'cheque_date'
+        ];
 
-            'member_info_mobile_no.required' => 'Mobile number is required.',
-            'member_info_mobile_no.digits' => 'Mobile must be 10 digits.',
-            'member_info_mobile_no.regex' => 'Enter a valid Indian mobile number.',
-            'member_info_mobile_no.unique' => 'This mobile number is already registered.',
+        foreach ($dates as $dateField) {
 
-            'member_address_state.required' => 'Please select state.',
-            'member_address_pincode.required' => 'Pincode is required.',
-            'member_address_pincode.digits' => 'Pincode must be 6 digits.',
+            if ($request->filled($dateField)) {
 
-            'member_kyc_aadhaar_no.digits' => 'Aadhaar must be 12 digits.',
-            'member_kyc_aadhaar_no.regex' => 'Enter valid Aadhaar number.',
-            'member_kyc_aadhaar_no.unique' => 'This Aadhaar is already used.',
+                $request->merge([
+                    $dateField => Carbon::parse($request->$dateField)->format('Y-m-d')
+                ]);
+            }
+        }
 
-            'member_kyc_pan_no.regex' => 'Enter valid PAN (ABCDE1234F).',
-            'member_kyc_pan_no.unique' => 'This PAN is already used.',
+        // ===================================
+        // GENERATE MEMBER NO
+        // ===================================
 
-            'charges_transaction_date.required' => 'Transaction date is required.',
-            'charges_net_fee.required' => 'Amount is required.',
-            'charges_net_fee.min' => 'Amount must be greater than 0.',
+        $nextId = (Member::max('id') ?? 0) + 1;
 
-            'charges_pay_mode.required' => 'Please select payment mode.',
+        $memberNo = str_pad($nextId, 6, '0', STR_PAD_LEFT);
+
+        // ===================================
+        // CREATE MEMBER
+        // ===================================
+
+        $memberData = $request->only((new Member)->getFillable());
+
+        $memberData['member_no'] = $memberNo;
+
+        Log::info('MEMBER DATA', $memberData);
+
+        $member = Member::create($memberData);
+
+        Log::info('MEMBER CREATED', [
+            'member_id' => $member->id
         ]);
 
-        try {
-            // Format date fields into Y-m-d
-            $dates = [
-                'general_enrollment_date',
-                'member_info_dob',
-                'charges_transaction_date',
-                'online_transfer_date',
-                'cheque_date'
-            ];
+        // ===================================
+        // CREATE ADDRESS
+        // ===================================
 
-            foreach ($dates as $dateField) {
-                if ($request->filled($dateField)) {
-                    $request->merge([$dateField => Carbon::parse($request->$dateField)->format('Y-m-d')]);
+        $addressData = $request->only((new Address)->getFillable());
+
+        $member->address()->create([
+            ...$addressData,
+            'member_id' => $member->id
+        ]);
+
+        Log::info('ADDRESS CREATED');
+
+        // ===================================
+        // CREATE KYC
+        // ===================================
+
+        $kycData = $request->only((new KycAndNominee)->getFillable());
+
+        $member->kyc()->create([
+            ...$kycData,
+            'member_id' => $member->id
+        ]);
+
+        Log::info('KYC CREATED');
+
+        // ===================================
+        // STORE DOCUMENTS
+        // ===================================
+
+        if ($request->has('documents')) {
+
+            foreach ($request->documents as $doc) {
+
+                if (
+                    isset($doc['file']) &&
+                    $doc['file'] instanceof \Illuminate\Http\UploadedFile
+                ) {
+
+                    $path = $doc['file']->store('documents', 'public');
+
+                    KycDocument::create([
+                        'member_id' => $member->id,
+                        'document_category' => $doc['category'],
+                        'document_type' => $doc['type'] ?? null,
+                        'file_path' => $path,
+                    ]);
                 }
             }
 
-            // Generate padded member_no
-            $nextId = (Member::max('id') ?? 0) + 1;
-            $memberNo = str_pad($nextId, 6, '0', STR_PAD_LEFT);
+            Log::info('DOCUMENTS STORED');
+        }
 
-            // Create Member (only once ✅)
-            $memberData = $request->only((new Member)->getFillable());
-            $memberData['member_no'] = $memberNo;
-            $member = Member::create($memberData);
+        // ===================================
+        // MEMBERSHIP TRANSACTION
+        // ===================================
 
-            Log::info('Member created successfully', ['member_id' => $member->id, 'member_no' => $member->member_no]);
+        MembershipChargeTransaction::create([
 
-            // Create Address
-            $addressData = $request->only((new Address)->getFillable());
-            $member->address()->create(array_merge($addressData, ['member_id' => $member->id]));
+            'member_id' => $member->id,
 
-            // Create KYC & Nominee
-            $kycData = $request->only((new KycAndNominee)->getFillable());
-            $member->kyc()->create(array_merge($kycData, [
-                'member_id' => $member->id,
+            'transaction_date' => $request->charges_transaction_date,
 
-                // ✅ ADD THESE FLAGS
-                'aadhaar_submitted' => !empty($request->member_kyc_aadhaar_no) ? 1 : 0,
-                'otp_verified' => 0,
-                'aadhaar_ref_id' => session('aadhaar_ref_id'),
+            'membership_fee' => $request->charges_membership_fee ?? 0,
 
-                'pan_verified' => !empty($request->member_kyc_pan_no) ? 1 : 0,
+            'net_fee_to_collect' => $request->charges_net_fee,
 
-                'selfie_uploaded' => isset($request->documents[0]['file']) ? 1 : 0,
-            ]));
-            // Store KYC documents
-            if ($request->has('documents')) {
-                foreach ($request->documents as $doc) {
-                    if (isset($doc['file']) && $doc['file'] instanceof \Illuminate\Http\UploadedFile) {
-                        $path = $doc['file']->store('documents', 'public');
-                        KycDocument::create([
-                            'member_id' => $member->id,
-                            'document_category' => $doc['category'],
-                            'document_type' => $doc['type'] ?? null,
-                            'file_path' => $path,
-                        ]);
-                    }
-                }
-            }
+            'remarks' => $request->charges_remarks,
 
-            // Store Membership Charge Transaction
-            $transaction = MembershipChargeTransaction::create([
-                'member_id' => $member->id,
-                'transaction_date' => Carbon::parse($request->charges_transaction_date)->format('Y-m-d'),
-                'membership_fee' => $request->charges_membership_fee ?? 0,
-                'net_fee_to_collect' => $request->charges_net_fee,
-                'remarks' => $request->charges_remarks ?? null,
-                'charges_pay_mode' => $request->charges_pay_mode,
-                'online_utr_no' => $request->charges_pay_mode === 'online' ? $request->online_utr_no : null,
-                'online_transfer_mode' => $request->charges_pay_mode === 'online' ? $request->online_transfer_mode : null,
-                'bank_id' => in_array($request->charges_pay_mode, ['cheque', 'online']) ? $request->bank_id : null,
-                'cheque_no' => $request->charges_pay_mode === 'cheque' ? $request->cheque_no : null,
-                'cheque_date' => $request->charges_pay_mode === 'cheque' ? Carbon::parse($request->cheque_date)->format('Y-m-d') : null,
-                'type' => "Membership Charges" ?? null,
+            'charges_pay_mode' => $request->charges_pay_mode,
+
+            'online_utr_no' => $request->charges_pay_mode == 'online'
+                ? $request->online_utr_no
+                : null,
+
+            'online_transfer_mode' => $request->charges_pay_mode == 'online'
+                ? $request->online_transfer_mode
+                : null,
+
+            'bank_id' => in_array($request->charges_pay_mode, ['online', 'cheque'])
+                ? $request->bank_id
+                : null,
+
+            'cheque_no' => $request->charges_pay_mode == 'cheque'
+                ? $request->cheque_no
+                : null,
+
+            'cheque_date' => $request->charges_pay_mode == 'cheque'
+                ? $request->cheque_date
+                : null,
+
+            'type' => 'Membership Charges'
+        ]);
+
+        Log::info('MEMBERSHIP TRANSACTION CREATED');
+
+        // ===================================
+        // CREATE USER
+        // ===================================
+
+        Log::info('USER CREATE START');
+
+        $memberRole = Role::where('name', 'Customer')->first();
+
+        if (!$memberRole) {
+
+            Log::error('MEMBER ROLE NOT FOUND');
+
+        } else {
+
+            Log::info('MEMBER ROLE FOUND', [
+                'role_id' => $memberRole->id
             ]);
 
-            // ✅ Log the transaction data
-            Log::info('MembershipChargeTransaction stored', [
-                'transaction_id' => $transaction->id,
-                'member_id' => $transaction->member_id,
-                'pay_mode' => $transaction->charges_pay_mode,
-                'bank_id' => $transaction->bank_id,
-                'cheque_no' => $transaction->cheque_no,
-                'cheque_date' => $transaction->cheque_date,
-                'online_utr_no' => $transaction->online_utr_no,
-                'online_transfer_mode' => $transaction->online_transfer_mode,
-            ]);
+            $userData = [
 
-            $managerRole = Role::where('name', 'Member')->first();
+                'name' => $request->member_info_first_name . ' ' . $request->member_info_last_name,
 
-            if ($managerRole) {
-                $user = User::create([
-                    'name'       => $managerRole->name ?? 'Member',
-                    'fname'      => $request->member_info_first_name ?? 'Member',
-                    'lname'      => $request->member_info_last_name ?? 'Member',
-                    'email'      => $request->member_info_email ?? 'member' . $member->id . '@gmail.com',
-                    'mobile'     => $request->member_info_mobile_no ?? null,
-                    'username'   => 'Member' . $member->id,
-                    'password'   => Hash::make('member123'),
-                    'role_id'    => $managerRole->id,
-                    'branch_id'  => $member->general_branch ?? null,
-                    'user_active' => true,
-                ]);
-                $member->user_id = $user->id;
-                $member->save();
-            }
+                'fname' => $request->member_info_first_name,
 
-            $apiKey = env('MUFFINPAY_API_KEY');
-            $saltKey = env('MUFFINPAY_SALT_KEY');
+                'lname' => $request->member_info_last_name,
 
-            $payload = [
-                "firstName" => $member->member_info_first_name,
-                "lastName" => $member->member_info_last_name,
-                "email" => $member->member_info_email,
-                "mobileNumber" => $member->member_info_mobile_no,
-                "userType" => "ROLE_INDIVIDUAL_MERCHANT_USER",
-                "userCatg" => "INDIVIDUAL"
+                'email' => $request->member_info_email,
+
+                'mobile' => $request->member_info_mobile_no,
+
+                'username' => 'MEM' . $member->id,
+
+                'password' => Hash::make('member123'),
+
+                'role_id' => $memberRole->id,
+
+                'branch_id' => $member->general_branch,
+
+                'user_active' => 1,
             ];
 
-            $xverify = MufinHelper::generateXVerify($payload);
-            $body = json_encode($payload, JSON_UNESCAPED_SLASHES);
+            Log::info('USER DATA', $userData);
 
-
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'apiKey' => $apiKey,
-                'xverifyv2' => $xverify
-            ])
-                ->withBody($body, 'application/json')
-                ->withOptions([
-                    'verify' => false // ❌ disables SSL verification
-                ])
-                ->post(env('MUFFINPAY_URL') . '/user/create');
-
-            $data = $response->json();
-
-            Log::info('MuffinPay Create User', $data);
-
-            if ($response->successful()) {
-
-                $data = $response->json();
-
-                Log::info('MufinPay API Response', $data);
-
-                $mufUserId = $data['data']['userId'] ?? null;
-
-                if ($mufUserId && isset($user)) {
-
-                    $user->muf_user_id = $mufUserId;
-                    $user->save();
-
-                    Log::info('MufinPay User ID Stored', [
-                        'user_id' => $user->id,
-                        'muf_user_id' => $mufUserId
-                    ]);
-                }
-            } else {
-
-                Log::error('MuffinPay API Failed', [
-                    'response' => $response->body()
-                ]);
-            }
-
-            $kyc = KycAndNominee::where('member_id', $member->id)->first();
-
-            if ($kyc && !empty($request->member_kyc_pan_no) && !empty($user->muf_user_id)) {
-
-                $kyc->member_kyc_pan_no = $request->member_kyc_pan_no;
-                $kyc->save();
-
-                $panPayload = [
-                    "idType" => "PAN_CARD",
-                    "userId" => $user->muf_user_id,
-                    "pan" => [
-                        "number" => $kyc->member_kyc_pan_no,
-                        "dob" => Carbon::parse($member->member_info_dob)->format('d/m/Y'),
-                        "name" => trim(
-                            $member->member_info_first_name . ' ' .
-                                $member->member_info_middle_name . ' ' .
-                                $member->member_info_last_name
-                        )
-                    ]
-                ];
-
-                $xverifyPan = MufinHelper::generateXVerify($panPayload);
-                $body = json_encode($panPayload, JSON_UNESCAPED_SLASHES);
-
-
-                $panResponse = Http::withHeaders([
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                    'apiKey' => env('MUFFINPAY_API_KEY'),
-                    'xverifyv2' => $xverifyPan
-                ])
-                    ->withBody($body, 'application/json') // ✅ MUST
-                    ->post(env('MUFFINPAY_URL') . '/kyc/submit');
-
-                $panData = $panResponse->json();
-                if ($panResponse->successful()) {
-
-                    $kyc->update([
-                        'pan_verified' => 1
-                    ]);
-                }
-                Log::info('PAN Payload', $panPayload);
-                Log::info('PAN Response', $panData);
-            }
-            $kyc = KycAndNominee::where('member_id', $member->id)->first();
-
-            if ($kyc && !empty($kyc->member_kyc_aadhaar_no) && !empty($user->muf_user_id)) {
-
-                $aadhaarPayload = [
-                    "idType" => "AADHAAR_CARD",
-                    "userId" => $user->muf_user_id,
-                    "aadhar" => [ // ✅ FIXED
-                        "aadharNumber" => $kyc->member_kyc_aadhaar_no
-                    ]
-                ];
-
-                $body = json_encode($aadhaarPayload, JSON_UNESCAPED_SLASHES);
-
-                $xverifyAadhaar = MufinHelper::generateXVerify($aadhaarPayload);
-                $aadhaarResponse = Http::withHeaders([
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                    'apiKey' => env('MUFFINPAY_API_KEY'),
-                    'xverifyv2' => $xverifyAadhaar
-                ])
-                    ->withBody($body, 'application/json') // ✅ MUST
-                    ->post(env('MUFFINPAY_URL') . '/kyc/submit');
-
-                $aadhaarData = $aadhaarResponse->json();
-
-                Log::info('AADHAAR PAYLOAD', $aadhaarPayload);
-                Log::info('AADHAAR RESPONSE', $aadhaarData);
-                // ✅ ADD THIS AFTER $aadhaarData
-
-                if (isset($aadhaarData['data']['aadharOtpResponse']['aadharRefId'])) {
-
-                    $kyc->update([
-                        'aadhaar_submitted' => 1,
-                        'aadhaar_ref_id' => $aadhaarData['data']['aadharOtpResponse']['aadharRefId']
-                    ]);
-
-                    Log::info('AADHAAR OTP SENT SUCCESS', [
-                        'ref_id' => $aadhaarData['data']['aadharOtpResponse']['aadharRefId']
-                    ]);
-
-                    // 🔥 IMPORTANT → redirect for OTP screen
-                    return redirect()
-                        ->route('member.edit', $member->id)
-                        ->with('success', 'OTP Sent');
-                } else {
-
-                    Log::error('AADHAAR FAILED', $aadhaarData);
-                }
-            }
             try {
-                $member = \App\Models\Member::find($member->id);
-                $mobile = $member->member_info_mobile_no;
-                // if ($member && !empty($member->member_info_mobile_no)) {
-                $dlttemplateid = 1707173529330693298;
-                $password = "member123";
 
-                $message = "Dear Customer, Thanks for becoming member of $mobile. Your login USERNAME - $mobile, PASSWORD -  $password. Note - Don't disclose USERNAME/PASSWORD to anyone. SBC GLOBAL
-                ";
-                \App\Helpers\SmsHelper::sendSms($mobile, $message, $dlttemplateid);
+                $user = User::create($userData);
+
+                Log::info('USER CREATED SUCCESSFULLY', [
+                    'user_id' => $user->id
+                ]);
+
+                $member->update([
+                    'user_id' => $user->id
+                ]);
+
+                Log::info('MEMBER UPDATED WITH USER ID', [
+                    'member_id' => $member->id,
+                    'user_id' => $user->id
+                ]);
+
             } catch (\Exception $e) {
-                Log::error('Error while sending SMS', ['error' => $e->getMessage()]);
-            }
-            return redirect()->route('member.index')
-                ->with('otp_success', true)
-                ->with('mobile', $member->member_info_mobile_no)
-                ->with('userId', $user->muf_user_id)
-                ->with('local_user_id', $user->id);   // 🔥 ADD THIS LINE
-        } catch (ValidationException $e) {
-            throw $e;
-        } catch (\Exception $e) {
-            Log::error('Error during member store: ' . $e->getMessage(), ['exception' => $e]);
-            return back()->withErrors(['error' => 'An error occurred while creating the member. Please try again.']);
-        }
-    }
 
-    public function verifyMobileOtp(Request $request)
-    {
-        Log::info('OTP VERIFY START', [
-            'mobileNumber' => $request->mobileNumber,
-            'otp' => $request->otp,
-            'userId' => $request->userId
-        ]);
+                Log::error('USER CREATE FAILED', [
+
+                    'message' => $e->getMessage(),
+
+                    'line' => $e->getLine(),
+
+                    'file' => $e->getFile()
+                ]);
+            }
+        }
+
+        // ===================================
+        // SEND SMS
+        // ===================================
 
         try {
 
-            $payload = [
-                "mobileNumber" => $request->mobileNumber,
-                "otp" => $request->otp,
-                "userId" => $request->userId
-            ];
+            $mobile = $member->member_info_mobile_no;
 
-            $url = env('MUFFINPAY_URL') . '/user/verify-otp';
+            $password = "member123";
 
-            $xverify = \App\Helpers\MufinHelper::generateXVerify($payload);
+            $message = "Dear Customer, Your Login ID: $mobile Password: $password";
 
-            $body = json_encode($payload, JSON_UNESCAPED_SLASHES);
+            \App\Helpers\SmsHelper::sendSms(
+                $mobile,
+                $message,
+                1707173529330693298
+            );
 
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'apiKey' => env('MUFFINPAY_API_KEY'),
-                'xverifyv2' => $xverify   // 🔥 MOST IMPORTANT
-            ])
-                ->withBody($body, 'application/json')   // 🔥 MUST
-                ->withOptions([
-                'verify' => false   // 🔥 SSL FIX
-            ])
-                ->post($url);
-            Log::info('OTP FULL RESPONSE', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
+            Log::info('SMS SENT SUCCESSFULLY');
 
-            $data = $response->json();
-            // ✅ SUCCESS
-            if (isset($data['code']) && $data['code'] === '0000') {
-
-                $user = \App\Models\User::find($request->local_user_id);
-                if ($user) {
-
-                    $user->update([
-                        'otp' => $request->otp,
-                        'otp_verified' => 1,
-                        'otp_expires_at' => now()
-                    ]);
-
-                    Log::info('USER OTP UPDATED', [
-                        'user_id' => $user->id
-                    ]);
-                } else {
-                    Log::warning('USER NOT FOUND');
-                }
-                return response()->json([
-                    'success' => true,
-                    'message' => 'OTP Verified'
-                ]);
-            }
-            return response()->json([
-                'success' => false,
-                'message' => $data['message'] ?? $response->body()
-            ]);
         } catch (\Exception $e) {
 
-
-            dd($e->getMessage());
+            Log::error('SMS ERROR', [
+                'message' => $e->getMessage()
+            ]);
         }
+
+        Log::info('MEMBER STORE COMPLETE');
+
+        return redirect()
+            ->route('member.index')
+            ->with('success', 'Member created successfully.');
+
+    } catch (\Exception $e) {
+
+        Log::error('MEMBER STORE ERROR', [
+
+            'message' => $e->getMessage(),
+
+            'line' => $e->getLine(),
+
+            'file' => $e->getFile()
+        ]);
+
+        return back()
+            ->withInput()
+            ->withErrors([
+                'error' => $e->getMessage()
+            ]);
+    }
     }
 
     public function submitPanKyc(Request $request, $id)
@@ -2615,4 +2345,6 @@ $xverify = hash('sha256', $finalString);
             return back()->withErrors('There was an error storing your comment.');
         }
     }
+
+    
 }
