@@ -118,6 +118,21 @@
 
                     <tr class="text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider text-gray-700">
 
+                        <!-- SR NO -->
+                        <th class="px-3 sm:px-5 py-4 text-center min-w-[90px]">
+
+                            <div class="flex items-center justify-center gap-2">
+
+                                <div class="w-7 h-7 rounded-lg bg-gray-200 flex items-center justify-center shrink-0">
+                                    <i class="las la-hashtag text-sm sm:text-base text-black"></i>
+                                </div>
+
+                                <span class="text-black whitespace-nowrap">SR NO</span>
+
+                            </div>
+
+                        </th>
+
                         <!-- BANK NAME -->
                         <th class="text-start py-4 px-3 sm:px-5 min-w-[220px] whitespace-nowrap">
 
@@ -201,6 +216,13 @@
                     @foreach ($bankAcc as $item)
                         <tr class="table-row dark:even:bg-bg3 border-b hover:bg-gray-50 dark:hover:bg-bg3"
                             style="animation-delay: {{ $loop->index * 0.05 }}s">
+
+                            <!-- SR NO -->
+                            <td class="px-6 py-5 text-center font-semibold text-gray-700">
+
+                                {{ $loop->iteration }}
+
+                            </td>
 
                             <td class="py-4 px-6">
 

@@ -14,8 +14,10 @@ class CollectionCenterController extends Controller
 {
     
 
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->search;
+
         $collectionCenters = CollectionCenter::with([
             'groups',
             'branch',
@@ -23,7 +25,28 @@ class CollectionCenterController extends Controller
             'centerHeadEmployee',
             'centerCashierMember',
             'centerCashierEmployee'
-        ])->orderBy('created_at', 'desc')->get();
+        ])
+
+        ->when($search, function ($query) use ($search) {
+
+            $query->where('center_name', 'like', "%{$search}%")
+
+                ->orWhere('center_no', 'like', "%{$search}%")
+
+                ->orWhereHas('branch', function ($q) use ($search) {
+
+                    $q->where('branch_name', 'like', "%{$search}%");
+
+                });
+
+        })
+
+        ->orderBy('created_at', 'desc')
+
+        ->paginate(20)
+
+        ->withQueryString();
+
         return view('collection-centers.index', compact('collectionCenters'));
     }
 
