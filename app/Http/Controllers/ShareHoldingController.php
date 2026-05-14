@@ -141,9 +141,10 @@ class ShareHoldingController extends Controller
 
                 // Cheque
                 // 'bank_name'           => 'required_if:pay_mode,cheque|nullable|exists:banks,id',
-                 'bank_id'           => 'required_if:pay_mode,cheque|nullable|exists:banks,id',
-                'cheque_no'         => 'required_if:pay_mode,cheque|nullable|string|max:255',
-                'cheque_date'       => 'required_if:pay_mode,cheque|date',
+                // Cheque
+                'bank_id'     => 'required_if:pay_mode,cheque|nullable|exists:banks,id',
+                'cheque_no'   => 'required_if:pay_mode,cheque|nullable|string|max:255',
+                'cheque_date' => 'nullable|required_if:pay_mode,cheque|date',
 
                 // Saving Account
                 'saving_account_id' => 'required_if:pay_mode,saving_ac|nullable|exists:accounts,id',
