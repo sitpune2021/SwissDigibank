@@ -224,7 +224,20 @@ ALLOCATED SHARES'
 
                 // Hide all conditional first
                 document.querySelectorAll('.conditional').forEach(el => {
+
                     el.style.display = 'none';
+
+                    // hidden field values clear karo
+                    el.querySelectorAll('input, select').forEach(field => {
+
+                        field.value = '';
+
+                        if(field.type === 'radio' || field.type === 'checkbox'){
+                            field.checked = false;
+                        }
+
+                    });
+
                 });
 
                 if (payMode === 'online_tr') {

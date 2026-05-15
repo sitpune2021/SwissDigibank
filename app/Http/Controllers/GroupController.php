@@ -13,23 +13,50 @@ use Carbon\Carbon;
 class GroupController extends Controller
 {
 
-    public function index()
+
+    public function index(Request $request)
     {
+        $search = $request->search;
+
         $groups = Group::with([
-            'collectionCenter:id,center_name',
-            'groupHead:id,member_info_first_name'
-        ])
-            ->withCount('members') // 🔑 MEMBER COUNT
+                'collectionCenter:id,center_name',
+                'groupHead:id,member_info_first_name'
+            ])
+            ->withCount('members')
+
+            // SEARCH
+            ->when($search, function ($query) use ($search) {
+
+                $query->where('group_name', 'like', "%{$search}%")
+                    ->orWhere('group_no', 'like', "%{$search}%")
+
+                    ->orWhereHas('collectionCenter', function ($q) use ($search) {
+
+                        $q->where('center_name', 'like', "%{$search}%");
+
+                    })
+
+                    ->orWhereHas('groupHead', function ($q) use ($search) {
+
+                        $q->where('member_info_first_name', 'like', "%{$search}%");
+
+                    });
+
+            })
+
             ->orderBy('created_at', 'desc')
-            ->get();
-            
+
+            // PAGINATION
+            ->paginate(10)
+
+            // SEARCH VALUE PAGE CHANGE PE RAHEGI
+            ->withQueryString();
 
         return view('groups.index', compact('groups'));
     }
 
-
     public function getBranches($centerId)
-{
+    {
     $center = CollectionCenter::with('branch')->find($centerId);
 
     if (!$center || !$center->branch) {
@@ -42,18 +69,7 @@ class GroupController extends Controller
             'branch_name' => $center->branch->branch_name,
         ]
     ]);
-}
-    // public function getBranches($centerId)
-    // {
-    //     Log::info('Center ID: ' . $centerId);
-    //     $branches = CollectionCenter::where('id', $centerId)->get();
-
-    //     Log::info('Branches: ' . $branches->toJson());
-    //     Log::info('branches ID: ' . $branches);
-    //     return response()->json($branches);
-    // }
-
-
+    }
 
     public function create()
     {
@@ -63,10 +79,6 @@ class GroupController extends Controller
         $members = Member::all();
         return view('groups.create', compact('isEdit', 'collectionCenters', 'branches', 'members'));
     }
-
-
-
-
 
     public function store(Request $request)
     {
@@ -123,8 +135,6 @@ class GroupController extends Controller
             ->route('groups.index')
             ->with('success', 'Group created successfully');
     }
-
-
 
     public function show($encodedId)
     {
@@ -211,8 +221,6 @@ class GroupController extends Controller
             ->with('success', 'Group updated successfully');
     }
 
-
-
     /**
      * Remove the specified resource from storage.
      */
@@ -220,4 +228,6 @@ class GroupController extends Controller
     {
         //
     }
+
+
 }
