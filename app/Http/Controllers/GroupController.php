@@ -16,6 +16,16 @@ class GroupController extends Controller
 
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('groups.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $search = $request->search;
 
         $groups = Group::with([
@@ -73,6 +83,16 @@ class GroupController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('groups.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $isEdit = false;
         $collectionCenters = CollectionCenter::all();
         $branches = Branch::all();
@@ -138,6 +158,16 @@ class GroupController extends Controller
 
     public function show($encodedId)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('groups.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $id = base64_decode($encodedId);
         // Fetch the group by ID with related data
         $group = Group::with([
@@ -161,6 +191,16 @@ class GroupController extends Controller
      */
     public function edit($encodedId)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('groups.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $id = base64_decode($encodedId);
         $group = Group::with(relations: 'members')->findOrFail($id);
 

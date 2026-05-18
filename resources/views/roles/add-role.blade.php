@@ -320,6 +320,20 @@
 
                     </button>
 
+                    <a href="{{ route('roles.index') }}"
+                         class="inline-flex items-center justify-center
+                            min-w-[220px]
+                            px-8 py-4
+                            rounded-2xl
+                            text-black font-bold text-base md:text-lg
+                            shadow-lg hover:shadow-2xl
+                            transition-all duration-300 hover:scale-[1.02]"
+                            style="background:linear-gradient(90deg,#e1d315,#e30f0f);">
+
+                        <span>BACK</span>
+
+                    </a>
+
                 </div>
 
             </div>
