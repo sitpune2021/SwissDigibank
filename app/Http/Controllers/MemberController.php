@@ -39,6 +39,16 @@ class MemberController extends Controller
 
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('member.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $user = Auth::user();
 
@@ -96,6 +106,16 @@ class MemberController extends Controller
     
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('member.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $dynamicOptions = [
                 'states'   => State::pluck('name', 'id'),
@@ -897,6 +917,16 @@ $xverify = hash('sha256', $finalString);
 
     public function show(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('member.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $dynamicOptions = [
                 'states' => State::pluck('name', 'id'),
@@ -1021,6 +1051,16 @@ $xverify = hash('sha256', $finalString);
 
     public function edit(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('member.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $dynamicOptions = [
                 'states'   => State::pluck('name', 'id'),

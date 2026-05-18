@@ -16,6 +16,16 @@ class CollectionCenterController extends Controller
 
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('collection-centers.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $search = $request->search;
 
         $collectionCenters = CollectionCenter::with([
@@ -52,6 +62,16 @@ class CollectionCenterController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('collection-centers.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         return view('collection-centers.create', [
             'branches' => Branch::all(),      // Branch dropdown
             'members' => Member::all(),      // Members dropdown
@@ -139,6 +159,16 @@ class CollectionCenterController extends Controller
 
     public function show(string $encodedId)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('collection-centers.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $id = base64_decode($encodedId); // decode the Base64 ID
         $center = CollectionCenter::with([
             'groups',
@@ -154,6 +184,16 @@ class CollectionCenterController extends Controller
  
     public function edit(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('collection-centers.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+        
         $decodedId = base64_decode($id);
 
         $center = CollectionCenter::findOrFail($decodedId);

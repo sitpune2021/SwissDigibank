@@ -80,8 +80,13 @@
 
 @endsection
 
-@section('action-button')
+@php
+    $permissions = auth()->user()->rolePermission->permissions ?? [];
+    $isSuperAdmin = auth()->user()->role_id == 1;
+@endphp
 
+@section('action-button')
+@if($isSuperAdmin || in_array('collection-centers.create', $permissions))
 <a href="{{ route('collection-centers.create') }}"
     class="inline-flex items-center gap-2
     px-4 sm:px-5 py-2.5 rounded-xl
@@ -92,7 +97,7 @@
     <span>Add Collection</span>
 
 </a>
-
+@endif
 @endsection
 
 @section('content')
@@ -354,6 +359,7 @@
                                 <div class="flex items-center justify-center gap-2">
 
                                     <!-- VIEW -->
+                                    @if($isSuperAdmin || in_array('collection-centers.show', $permissions))
                                     <a href="{{ route('collection-centers.show', base64_encode($center->id)) }}"
                                         class="action-btn action-view">
 
@@ -361,8 +367,10 @@
                                         <span>VIEW</span>
 
                                     </a>
+                                    @endif
 
                                     <!-- EDIT -->
+                                    @if($isSuperAdmin || in_array('collection-centers.edit', $permissions))
                                     <a href="{{ route('collection-centers.edit', base64_encode($center->id)) }}"
                                         class="action-btn action-edit">
 
@@ -370,6 +378,7 @@
                                         <span>EDIT</span>
 
                                     </a>
+                                    @endif
 
                                 </div>
 

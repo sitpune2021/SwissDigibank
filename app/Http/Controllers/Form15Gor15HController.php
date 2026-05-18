@@ -16,6 +16,16 @@ class Form15Gor15HController extends Controller
 
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('form15g15h.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $perPage = $request->input('perPage', 10);
             $query = Form15G15H::with(['member', 'promotor'])->latest();
@@ -48,6 +58,16 @@ class Form15Gor15HController extends Controller
 
     public function create(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('form15g15h.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $memberId = $request->member_id ?? session('member_id');
             $type = $request->type ?? session('type');
@@ -141,6 +161,16 @@ class Form15Gor15HController extends Controller
 
     public function show(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('form15g15h.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $form15g15h = Form15G15H::findOrFail($id);
             return view('members.form15g15h.show', compact('form15g15h'));
@@ -151,6 +181,16 @@ class Form15Gor15HController extends Controller
 
     public function edit(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('form15g15h.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $form15g15h = Form15G15H::findOrFail($id);
 
@@ -288,6 +328,7 @@ class Form15Gor15HController extends Controller
             abort(404);
         }
     }
+
     public function download($member_id)
     {
         $form = Form15G15H::where('member_id', $member_id)->latest()->first();
@@ -305,6 +346,7 @@ class Form15Gor15HController extends Controller
 
         return redirect()->back()->with('error', 'File not found.');
     }
+    
     public function downloadByPromoter($promoter_id)
     {
         $form = Form15G15H::where('promotor_id', $promoter_id)->latest()->first();

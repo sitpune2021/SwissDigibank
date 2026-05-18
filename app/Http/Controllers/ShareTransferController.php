@@ -15,16 +15,58 @@ class ShareTransferController extends Controller
 {
     
 
-    public function index()
+    public function index(Request $request)
     {
-        try {
-            $shareholdings = ShareTransfer::with('promotor', 'members')
-                ->where('status', 'approved')
-                ->orderBy('id', 'desc')->paginate(10);
-            return view('members.shares-transfer.index', compact('shareholdings'));
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            abort(404);
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shares-transfer.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
         }
+
+        $search = $request->search;
+
+        $shareholdings = ShareTransfer::with(['promotor', 'members.branch'])
+
+            ->where('status', 'approved')
+
+            ->when($search, function ($query) use ($search) {
+
+                $query->where(function ($q) use ($search) {
+
+                    // SHARE RANGE
+                    $q->where('from_share_no', 'LIKE', "%{$search}%")
+                    ->orWhere('to_share_no', 'LIKE', "%{$search}%")
+
+                    // TRANSFEROR
+                    ->orWhereHas('promotor', function ($subQuery) use ($search) {
+
+                        $subQuery->where('first_name', 'LIKE', "%{$search}%");
+
+                    })
+
+                    // TRANSFEREE
+                    ->orWhereHas('members', function ($subQuery) use ($search) {
+
+                        $subQuery->where('member_info_first_name', 'LIKE', "%{$search}%")
+                            ->orWhere('member_no', 'LIKE', "%{$search}%");
+
+                    });
+
+                });
+
+            })
+
+            ->latest()
+
+            ->paginate(20)
+
+            ->withQueryString();
+
+        return view('members.shares-transfer.index', compact('shareholdings'));
     }
 
     public function selectForShareSplit(Request $request)
@@ -49,6 +91,16 @@ class ShareTransferController extends Controller
 
     public function transferForm(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shares-transfer.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $memberId = $request->input('member_id');
         try {
             Log::debug("Starting transferForm method.", ['memberId' => $memberId]);
@@ -213,6 +265,16 @@ class ShareTransferController extends Controller
 
     public function show(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shares-transfer.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $shareholding = ShareTransfer::with('promotor', 'members')->findOrFail($id);
             return view('members.shares-transfer.view', compact('shareholding'));
@@ -223,6 +285,16 @@ class ShareTransferController extends Controller
 
     public function print($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shares-transfer.print', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $shareholding = ShareTransfer::with('promotor', 'members')->findOrFail($id);
 
@@ -252,6 +324,16 @@ class ShareTransferController extends Controller
 
     public function edit($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('shares-transfer.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $shareholding = ShareTransfer::findOrFail($id);
 
         $members = Member::pluck('member_info_first_name', 'id');
@@ -299,7 +381,6 @@ class ShareTransferController extends Controller
             ->with('success', 'Share transfer updated successfully');
     }
 
-   
     public function destroy($id)
     {
         try {
