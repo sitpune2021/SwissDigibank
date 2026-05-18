@@ -1,98 +1,279 @@
 @extends('layout.main')
-@section('page-title', 'CUSTOMER Management')
+@extends('layout.tablestyle')
+
+@section('page-title')
+
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 w-full">
+
+    <!-- LEFT SIDE -->
+    <div class="flex items-center gap-3 min-w-0">
+
+        <!-- PREMIUM ICON -->
+        <div
+            class="relative overflow-hidden
+            w-11 h-11 sm:w-12 sm:h-12
+            rounded-2xl flex items-center justify-center shrink-0"
+
+            style="
+                background: linear-gradient(135deg,#06b6d4,#2563eb);
+                box-shadow:
+                    0 10px 25px rgba(37,99,235,.30),
+                    inset 0 1px 0 rgba(255,255,255,.35);
+            "
+        >
+
+            <!-- SHINE -->
+            <div
+                class="absolute inset-0"
+                style="
+                    background:
+                    linear-gradient(
+                        135deg,
+                        rgba(255,255,255,.28),
+                        transparent 45%
+                    );
+                "
+            ></div>
+
+            <i class="las la-user-tie text-white text-xl sm:text-2xl relative z-10"></i>
+
+        </div>
+
+        <!-- TITLE -->
+        <div class="min-w-0">
+
+            <h2 class="text-lg sm:text-xl lg:text-2xl
+                font-extrabold uppercase tracking-wide
+                text-gray-800 dark:text-white leading-tight break-words">
+
+                CUSTOMER Management
+
+            </h2>
+
+            <p class="text-[11px] sm:text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">
+
+                Efficiently manage customer profiles, member activities.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT SIDE BADGE -->
+    <div class="hidden md:flex items-center gap-2
+        px-4 py-2 rounded-xl
+        bg-gradient-to-r from-slate-100 to-slate-50
+        border border-slate-200 shadow-sm shrink-0">
+
+        <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-600">
+
+            Banking Panel
+
+        </span>
+
+    </div>
+
+</div>
+
+@endsection
+
+@php
+    $permissions = auth()->user()->rolePermission->permissions ?? [];
+    $isSuperAdmin = auth()->user()->role_id == 1;
+@endphp
 
 @section('action-button')
+@if($isSuperAdmin || in_array('member.create', $permissions))
+<a href="{{ route('member.create') }}"
+    class="inline-flex items-center gap-2
+    px-4 sm:px-5 py-2.5 rounded-xl
+    text-xs sm:text-sm font-bold uppercase tracking-wide
+    shadow-lg hover:scale-105 transition-all duration-300"
+    style="background:linear-gradient(90deg,#e1d315,#e30f0f); color:#111;">
 
-    <a class="btn-primary uppercase" href="{{ route('member.create') }}">
-        ADD CUSTOMER
-    </a>
+    <span>Add CUSTOMER</span>
 
+</a>
+@endif
 @endsection
 
 @section('content')
 
-        <div class="box col-span-12 lg:col-span-6">
-            <x-searchbox />
-                <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
+    <div class="box col-span-12 lg:col-span-6 bank-page-animate">
+
+        <x-searchbox />
+
+        <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
             <x-alert />
         </div>
 
 
-        <div class="overflow-x-auto pb-4 lg:pb-6">
+        <div class="overflow-x-auto pb-4 lg:pb-6 table-premium">
             
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 
-                <thead style="background-color: bisque;">
-                    <tr class="bg-secondary/5 dark:bg-bg3">
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                GROUP
+                <thead
+                    class="bg-gradient-to-r from-slate-100 via-blue-50 to-cyan-50
+                    dark:from-bg3 dark:via-bg4 dark:to-bg3
+                    border-y border-slate-200 dark:border-white/10"
+                >
+                    <tr>
+
+                        <!-- SR NO -->
+                        <th class="text-start !py-4 px-4 sm:px-6 min-w-[120px]">
+                            <div class="flex items-center gap-2 text-slate-700 dark:text-white">
+
+                                <!-- ICON BOX -->
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                    bg-indigo-100 dark:bg-indigo-500/10">
+
+                                    <i class="las la-hashtag text-indigo-600 dark:text-indigo-400 text-lg"></i>
+
+                                </div>
+
+                                <!-- TEXT -->
+                                <div>
+
+                                    <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                        SR No
+                                    </h6>
+
+                                </div>
+
                             </div>
                         </th>
-                        <th class="text-start text-center !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1 text-center">
-                                BRANCH
+
+                        <!-- BRANCH -->
+                        <th class="text-center !py-4 px-4 sm:px-6 min-w-[140px]">
+                            <div class="flex items-center justify-center gap-2 text-slate-700 dark:text-white">
+
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                    bg-cyan-100 dark:bg-cyan-500/10">
+                                    <i class="las la-code-branch text-cyan-600 dark:text-cyan-400 text-lg"></i>
+                                </div>
+
+                                <div class="text-left">
+                                    <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                        Branch Info
+                                    </h6>
+                                </div>
+
                             </div>
                         </th>
-                        <th class="text-start !py-5 px-6 min-w-[130px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                CUSTOMER NAME
+
+                        <!-- CUSTOMER -->
+                        <th class="text-start !py-4 px-4 sm:px-6 min-w-[200px]">
+                            <div class="flex items-center gap-2 text-slate-700 dark:text-white">
+
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                    bg-violet-100 dark:bg-violet-500/10">
+                                    <i class="las la-user-tie text-violet-600 dark:text-violet-400 text-lg"></i>
+                                </div>
+
+                                <div>
+                                   <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                        Customer Name
+                                    </h6>
+                                </div>
+
                             </div>
                         </th>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                SENIOR CTZ
+
+                        <!-- MOBILE -->
+                        <th class="text-start !py-4 px-4 sm:px-6 min-w-[150px]">
+                            <div class="flex items-center gap-2 text-slate-700 dark:text-white">
+
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                    bg-indigo-100 dark:bg-indigo-500/10">
+                                    <i class="las la-mobile text-indigo-600 dark:text-indigo-400 text-lg"></i>
+                                </div>
+
+                                <div>
+                                    <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                        Mobile No
+                                    </h6>
+                                </div>
+
                             </div>
                         </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                ENROLL DATE
+
+                        <!-- ENROLL DATE -->
+                        <th class="text-start !py-4 px-4 sm:px-6 min-w-[160px]">
+                            <div class="flex items-center gap-2 text-slate-700 dark:text-white">
+
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                    bg-emerald-100 dark:bg-emerald-500/10">
+                                    <i class="las la-calendar-check text-emerald-600 dark:text-emerald-400 text-lg"></i>
+                                </div>
+
+                                <div>
+                                    <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                        Enroll Date
+                                    </h6>
+                                </div>
+
                             </div>
                         </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                AADHAR NO
+
+                        <!-- KYC -->
+                        <th class="text-start !py-4 px-4 sm:px-6 min-w-[140px]">
+                            <div class="flex items-center gap-2 text-slate-700 dark:text-white">
+
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                    bg-green-100 dark:bg-green-500/10">
+                                    <i class="las la-shield-alt text-green-600 dark:text-green-400 text-lg"></i>
+                                </div>
+
+                                <div>
+                                    <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                        KYC Status
+                                    </h6>
+                                </div>
+
+                            </div>
+                        </th>                       
+
+                        <!-- ACTION -->
+                        <th class="text-center !py-4 px-4 min-w-[120px]">
+                            <div class="flex items-center justify-center gap-2 text-slate-700 dark:text-white">
+
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                    bg-red-100 dark:bg-red-500/10">
+                                    <i class="las la-cog text-red-600 dark:text-red-400 text-lg"></i>
+                                </div>
+
+                                <div class="text-left">
+                                    <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400">
+                                        Controls
+                                    </p>
+
+                                    <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                        Action
+                                    </h6>
+                                </div>
+
                             </div>
                         </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                PAN NO
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                KYC STATUS
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                MOBILE NO
-                            </div>
-                        </th>
-                        <th class="text-start !py-5 px-6 min-w-[100px] cursor-pointer">
-                            <div class="flex items-center gap-1">
-                                STATUS
-                            </div>
-                        </th>
-                        <th class="text-center !py-5" data-sortable="false">ACTION</th>
+
                     </tr>
                 </thead>
                 
                 <tbody>
                     @foreach ($members as $index => $item)
-                        <tr class="border-b dark:border-bg3">
+                        <tr class="table-row border-b border-gray-100"
+                            style="animation-delay:{{ $loop->index * 0.05 }}s">
                             
-                            <td class="py-3 px-6">{{ $item->general_group }}</td>                                                 
+                            <!-- SR NO -->
+                            <td class="px-6 py-5 text-center font-semibold text-gray-700">
+
+                                {{ $loop->iteration }}
+                            </td>                                                
                             
                             <td class="px-3 py-3">
                                 <div class="flex items-center gap-2">
-
-                                    <!-- Branch Icon -->
-                                    <div class="w-8 h-8 flex items-center justify-center 
-                                                bg-blue-100 rounded-lg">
-                                        <i class="las la-building text-blue-600 text-sm"></i>
-                                    </div>
 
                                     <!-- Branch Name -->
                                     <span class="text-gray-700 font-medium">
@@ -104,12 +285,6 @@
 
                             <td class="px-3 py-3">
                                 <div class="flex items-center gap-2">
-
-                                    <!-- Customer Icon -->
-                                    <div class="w-9 h-9 flex items-center justify-center 
-                                                bg-green-100 rounded-full">
-                                        <i class="las la-user text-blue-600"></i>
-                                    </div>
 
                                     <!-- Name + Number -->
                                     <div>
@@ -125,52 +300,17 @@
                                     </div>
 
                                 </div>
-                            </td>                         
+                            </td> 
 
                             <td class="py-3 px-6">
-                                @php
-                                    $age = \Carbon\Carbon::parse($item->member_info_dob)->age;
-                                @endphp
-
-                              <div class="px-2">
-                                  @if ($age >= 60)
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-primary/20 py-2 text-center text-xs text-primary dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
-                                        Yes
-                                    </span>
-                                @else
-                                    <span
-                                        class="block w-28 rounded-[30px] border border-n30 bg-error/20 py-2 text-center text-xs text-error dark:border-n500 dark:bg-bg3 xxl:w-16 text-center">
-                                        No
-                                    </span>
-                                @endif
-                              </div>
-                            </td>
+                                {{ $item->member_info_mobile_no }}
+                            </td>                        
 
                             <td class="py-3 px-6">
                               <div class="px-2">
                                   {{ \Carbon\Carbon::parse($item->general_enrollment_date)->format('d-m-Y') }}
                               </div>
                             </td>
-
-                            <td class="py-3 px-6">
-                                {{ $item->kyc?->member_kyc_aadhaar_no ?? 'N/A' }}
-                            </td>
-
-                            <td class="py-3 px-6">
-                                {{ $item->kyc?->member_kyc_pan_no ?? 'N/A' }}
-                            </td>
-
-                            <!-- <td class="py-3 px-6">
-                               <div class="px-2">
-                                 @php
-                                    $hasKYC = $item->kyc?->member_kyc_aadhaar_no || $item->kyc?->member_kyc_pan_no;
-                                @endphp
-                                <span class="text-sm {{ $hasKYC ? 'text-primary' : 'text-error' }}">
-                                    {{ $hasKYC ? 'COMPLETED' : 'PENDING' }}
-                                </span>
-                               </div>
-                            </td> -->
 
                             <td class="py-3 px-6">
                                 <div class="px-2">
@@ -198,50 +338,35 @@
                                 </div>
                             </td>
 
-                            <td class="py-3 px-6">
-                                {{ $item->member_info_mobile_no }}
-                            </td>
+                            <!-- ACTION -->
+                            <td class="text-center px-4 py-4">
 
-                            <td class="py-3 px-6">
-                                <span class=" px-2 py-1 rounded bg-green-100 text-green-700">
-                                    Active
-                                </span>
-                            </td>
+                                <div class="flex items-center justify-center gap-2">
 
-                            <!-- <td class="py-2 px-6">
-                                <div class="flex justify-center">
+                                    <!-- VIEW -->
+                                    @if($isSuperAdmin || in_array('member.show', $permissions))
+                                    <a href="{{ route('member.show', $item->id) }}"
+                                        class="action-btn action-view">
 
-                                    @if($item->user && $item->user->otp_verified != 1)
+                                        <i class="las la-eye"></i>
+                                        <span>VIEW</span>
 
-                                    <button 
-                                    onclick="openOtpModal('{{ $item->user->id }}')" 
-                                    class="px-3 py-1 text-xs rounded bg-warning text-white">
-                                    VERIFY / RESEND OTP
-                                    </button>
+                                    </a>
+                                    @endif
 
-                                    @else
+                                    <!-- EDIT -->
+                                    @if($isSuperAdmin || in_array('member.edit', $permissions))
+                                    <a href="{{ route('member.edit', $item->id) }}"
+                                        class="action-btn action-edit">
 
-                                        @include('partials._vertical-options', [
-                                        'id' => $item->id,
-                                        'viewRoute' => 'member.show',
-                                        'editRoute' => 'member.edit',
-                                        ])
+                                        <i class="las la-edit"></i>
+                                        <span>EDIT</span>
 
+                                    </a>
                                     @endif
 
                                 </div>
-                            </td> -->
 
-                             <td class="py-2 px-6">
-                                <div class="flex justify-center">
-                                   
-                                        @include('partials._vertical-options', [
-                                        'id' => $item->id,
-                                        'viewRoute' => 'member.show',
-                                        'editRoute' => 'member.edit',
-                                        ])
-
-                                </div>
                             </td>
 
                         </tr>

@@ -6,23 +6,76 @@ use Illuminate\Http\Request;
 use App\Models\Minor;
 use App\Models\Member;
 use Illuminate\Support\Facades\Log;
-
 use Illuminate\Support\Facades\Validator;
 
 class MinorController extends Controller
 {
-    public function index()
+   
+
+    public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('minor.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
-            $minors = Minor::latest()->get();
+
+            $search = $request->search;
+
+            $minors = Minor::with(['member.branch'])
+
+                ->when($search, function ($query) use ($search) {
+
+                    $query->where('first_name', 'LIKE', "%{$search}%")
+
+                        ->orWhereHas('member', function ($q) use ($search) {
+
+                            $q->where('member_info_first_name', 'LIKE', "%{$search}%")
+                            ->orWhere('member_no', 'LIKE', "%{$search}%");
+
+                        })
+
+                        ->orWhereHas('member.branch', function ($q) use ($search) {
+
+                            $q->where('branch_name', 'LIKE', "%{$search}%");
+
+                        });
+
+                })
+
+                ->latest()
+
+                ->paginate(20)
+
+                ->withQueryString();
+
             return view('members.minor.index', compact('minors'));
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+
+        } catch (\Exception $e) {
+
             abort(404);
+
         }
     }
 
     public function create(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('minor.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             // $memberId = $request->member_id ?? session('member_id');
             // $memberId = $request->member_id ?? session('member_id');
@@ -122,6 +175,16 @@ class MinorController extends Controller
     // {{-- 18-09-22 changes  --}}
     public function show(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('minor.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $sections = config('minor_form');
             $minor = Minor::findOrFail($id);
@@ -140,6 +203,16 @@ class MinorController extends Controller
     }
     public function edit(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('minor.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $method = 'PUT';
         $minor = Minor::findOrFail($id);
         $sections = config('minor_form');
@@ -238,4 +311,6 @@ class MinorController extends Controller
     }
 
     public function destroy(string $id) {}
+
+
 }
