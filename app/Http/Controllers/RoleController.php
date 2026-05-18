@@ -77,50 +77,50 @@ class RoleController extends Controller
     
     public function store(Request $request)
     {
-    try {
+        try {
 
-        $request->validate([
-            'role_id' => 'required|exists:roles,id',
-            'role_position' => 'nullable|string',
-            'permission_type' => 'required|in:admin,agent,both',
-            'active' => 'required|in:Yes,No',
-            'permissions' => 'nullable|array',
-        ]);
+            $request->validate([
+                'role_id' => 'required|exists:roles,id',
+                'role_position' => 'nullable|string',
+                'permission_type' => 'required|in:admin,agent,both',
+                'active' => 'required|in:Yes,No',
+                'permissions' => 'nullable|array',
+            ]);
 
-        Log::info('Storing new role permission', [
-            'role_id' => $request->role_id,
-        ]);
+            Log::info('Storing new role permission', [
+                'role_id' => $request->role_id,
+            ]);
 
-        RolePermission::updateOrCreate(
-            ['role_id' => $request->role_id],
-            [
-                'role_position'   => $request->role_position,
-                'permission_type' => $request->permission_type,
-                'active'          => $request->active,
-                'permissions'     => $request->permissions ?? [],
-            ]
-        );
+            RolePermission::updateOrCreate(
+                ['role_id' => $request->role_id],
+                [
+                    'role_position'   => $request->role_position,
+                    'permission_type' => $request->permission_type,
+                    'active'          => $request->active,
+                    'permissions'     => $request->permissions ?? [],
+                ]
+            );
 
-        return redirect()
-            ->route('roles.index')
-            ->with('success', 'Role permissions saved successfully!');
+            return redirect()
+                ->route('roles.index')
+                ->with('success', 'Role permissions saved successfully!');
 
-    } catch (ValidationException $e) {
+        } catch (ValidationException $e) {
 
-        // IMPORTANT
-        throw $e;
+            // IMPORTANT
+            throw $e;
 
-    } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-        Log::error('Error storing role permission', [
-            'message' => $e->getMessage(),
-        ]);
+            Log::error('Error storing role permission', [
+                'message' => $e->getMessage(),
+            ]);
 
-        return redirect()
-            ->back()
-            ->withInput()
-            ->with('error', 'Failed to save role permissions.');
-    }
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Failed to save role permissions.');
+        }
     }
 
     public function edit($id)
@@ -135,84 +135,50 @@ class RoleController extends Controller
 
         }
 
-    $rolePermission = RolePermission::with('role')->findOrFail($id);
-    $roles = Role::all();
-    $allPermissions = Permissions::all();
+        $rolePermission = RolePermission::with('role')->findOrFail($id);
 
-    $selectedPermissions = $rolePermission->permissions ?? [];
+        $roles = Role::where('id', '!=', 1)->get();
 
-    $menuItems1 = [
-        ['title' => 'DASHBOARD'],
-        ['title' => 'COMPANY'],
-        ['title' => 'USER MANAGEMENT'],
-        ['title' => 'COLLECTION CENTERS'],
-        ['title' => 'CUSTOMER MANAGEMENT'],
-    ];
+        $selectedPermissions = $rolePermission->permissions ?? [];
+            //dd($rolePermission->permissions);
+        // SAME AS CREATE PAGE
+        $menuItems = [
 
-    $menuItems2 = [
-        ['title' => 'SAVING ACCOUNTS'],
-        ['title' => 'FIXED DEPOSITS'],
-        ['title' => 'RECURRING DEPOSITS'],
-        ['title' => 'GOLD LOAN'],
-        ['title' => 'PROPERTY LOAN'],
-    ];
+            [
+                'title' => 'DASHBOARD',
+                'id' => 'dashboardSection'
+            ],
 
-    $menuItems3 = [
-        ['title' => 'DEPOSIT LOAN'],
-        ['title' => 'BUSINESS LOAN'],
-        ['title' => 'CC LIMIT'],
-        ['title' => 'VEHICLE LOAN'],
-    ];
+            [
+                'title' => 'COMPANY',
+                'id' => 'companySection'
+            ],
 
-    $menuItems4 = [
-        ['title' => 'PERSONAL LOAN'],
-        ['title' => 'DAILY WEEKLY'],
-        ['title' => 'FIXED LOAN'],
-        ['title' => 'APPROVALS'],
-        ['title' => 'PASSBOOKS'],
-        ['title' => 'PRINT DOCUMENTS'],
-        ['title' => 'ADVISORS'],
-    ];
+            [
+                'title' => 'USER',
+                'id' => 'userSection'
+            ],
 
-    $menuItems5 = [];
+            [
+                'title' => 'COLLECTION CENTER',
+                'id' => 'collectionCenter'
+            ],
 
-    $menuItems6 = [
-        ['title' => 'REPORTS'],
-        ['title' => 'HR MANAGEMENT'],
-        ['title' => 'SOFTWARE SETTINGS'],
-        ['title' => 'ACCOUNTING'],
-    ];
+            [
+                'title' => 'CUSTOMER MANAGEMENT',
+                'id' => 'customer'
+            ],
 
-    $menuItems7 = [
-        ['title' => 'LOCKERS'],
-    ];
+        ];
 
-    $menuItems8 = [
-        ['title' => 'NOTICE BOARD'],
-    ];
+        return view('roles.edit-role', compact(
 
-    $menuItems9 = [];
+            'rolePermission',
+            'roles',
+            'selectedPermissions',
+            'menuItems'
 
-    $menuItems10 = [
-        ['title' => 'PAYMENT COLLECTIONS'],
-    ];
-
-    return view('roles.edit-role', compact(
-        'rolePermission',
-        'roles',
-        'allPermissions',
-        'selectedPermissions',
-        'menuItems1',
-        'menuItems2',
-        'menuItems3',
-        'menuItems4',
-        'menuItems5',
-        'menuItems6',
-        'menuItems7',
-        'menuItems8',
-        'menuItems9',
-        'menuItems10'
-    ));
+        ));
     }
 
     public function update(Request $request, $id)
@@ -253,75 +219,48 @@ class RoleController extends Controller
 
         $rolePermission = RolePermission::with('role')->findOrFail($id);
 
-        // 🔥 SAME MENU ITEMS LIKE CREATE
-        $menuItems1 = [
-            ['title' => 'DASHBOARD'],
-            ['title' => 'COMPANY'],
-            ['title' => 'USER MANAGEMENT'],
-            ['title' => 'COLLECTION CENTERS'],
-            ['title' => 'CUSTOMER MANAGEMENT'],
-        ];
+        $roles = Role::where('id', '!=', 1)->get();
 
-        $menuItems2 = [
-            ['title' => 'SAVING ACCOUNTS'],
-            ['title' => 'FIXED DEPOSITS'],
-            ['title' => 'RECURRING DEPOSITS'],
-            ['title' => 'GOLD LOAN', 'id' => 'gold-loan'],
-            ['title' => 'PROPERTY LOAN', 'id' => 'property-loan'],
-        ];
+        $selectedPermissions = $rolePermission->permissions ?? [];
 
-        $menuItems3 = [
-            ['title' => 'DEPOSIT LOAN'],
-            ['title' => 'BUSINESS LOAN'],
-            ['title' => 'CC LIMIT'],
-            ['title' => 'VEHICLE LOAN'],
-        ];
+        // SAME AS CREATE & EDIT
+        $menuItems = [
 
-        $menuItems4 = [
-            ['title' => 'PERSONAL LOAN'],
-            ['title' => 'DAILY WEEKLY'],
-            ['title' => 'FIXED LOAN'],
-            ['title' => 'APPROVALS'],
-            ['title' => 'PASSBOOKS'],
-            ['title' => 'PRINT DOCUMENTS'],
-            ['title' => 'ADVISORS'],
-        ];
+            [
+                'title' => 'DASHBOARD',
+                'id' => 'dashboardSection'
+            ],
 
-        $menuItems5 = [];
-        $menuItems6 = [
-            ['title' => 'REPORTS'],
-            ['title' => 'HR MANAGEMENT'],
-            ['title' => 'SOFTWARE SETTINGS'],
-            ['title' => 'ACCOUNTING'],
-        ];
-        $menuItems7 = [
-            ['title' => 'LOCKERS'],
-        ];
-        $menuItems8 = [
-            ['title' => 'NOTICE BOARD'],
-        ];
-        $menuItems9 = [];
-        $menuItems10 = [
-            ['title' => 'PAYMENT COLLECTIONS'],
+            [
+                'title' => 'COMPANY',
+                'id' => 'companySection'
+            ],
+
+            [
+                'title' => 'USER',
+                'id' => 'userSection'
+            ],
+
+            [
+                'title' => 'COLLECTION CENTER',
+                'id' => 'collectionCenter'
+            ],
+
+            [
+                'title' => 'CUSTOMER MANAGEMENT',
+                'id' => 'customer'
+            ],
+
         ];
 
         return view('roles.view-role', compact(
+
             'rolePermission',
-            'menuItems1',
-            'menuItems2',
-            'menuItems3',
-            'menuItems4',
-            'menuItems5',
-            'menuItems6',
-            'menuItems7',
-            'menuItems8',
-            'menuItems9',
-            'menuItems10'
-        ) + [
-            'roles' => Role::all(),
-            'selectedPermissions' => $rolePermission->permissions ?? [],
-            'readOnly' => true,
-        ]);
+            'roles',
+            'selectedPermissions',
+            'menuItems'
+
+        ));
     }
 
    

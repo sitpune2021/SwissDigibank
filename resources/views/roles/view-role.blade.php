@@ -3,334 +3,333 @@
 @section('content')
 
 <style>
-    .tab-panel {
-        display: none;
+
+    body{
+        background:#f3f6fb;
     }
 
-    .tab-panel.active {
-        display: block;
+    input[type="checkbox"],
+    input[type="radio"]{
+        accent-color:#16a34a;
     }
+
+    .glass-card{
+        background:rgba(255,255,255,0.88);
+        backdrop-filter:blur(10px);
+    }
+
+    .custom-input{
+        width:100%;
+        height:56px;
+        border:1px solid #dbe3ee;
+        background:#f8fafc;
+    }
+
+    .radio-card{
+        background:#fff;
+        border:1px solid #e5e7eb;
+        border-radius:18px;
+        min-height:56px;
+    }
+
+    .menu-scroll::-webkit-scrollbar{
+        height:5px;
+    }
+
+    .menu-scroll::-webkit-scrollbar-thumb{
+        background:#d1d5db;
+        border-radius:20px;
+    }
+
+    .menu-tab.active-tab{
+        background:#2563eb !important;
+        color:#fff !important;
+        border-color:#2563eb !important;
+    }
+
 </style>
 
-@php use Illuminate\Support\Str; @endphp
+<div class="w-full px-2 md:px-4 py-5">
 
- <div class="box col-span-12 lg:col-span-6">
+    <div class="glass-card rounded-[28px] shadow-xl border border-white/50 p-4 md:p-8">
 
-        <div class="mb-6 pb-6 bb-dashed flex justify-between items-center">
-            <h3 class="h3">SHOW ROLE / PERMISSION</h3>
-                <ol class="breadcrumb flex text-sm text-gray-600 mt-1 space-x-1">
-                </ol>
-            <hr class="my-2 border-gray-300" />
+        {{-- HEADER --}}
+        <div class="mb-8">
+
+            <h2 class="text-2xl md:text-4xl font-bold text-gray-800">
+                View Role / Permission
+            </h2>
+
+            <p class="text-gray-500 mt-2 text-sm md:text-base">
+                Role access & permission details
+            </p>
+
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
-            <div class="col-span-2 md:col-span-1">
-                <label for="name" class="mb-4 md:text-lg font-medium block">
-                    ROLE NAME
-                </label>
+        {{-- FORM AREA --}}
+        <div class="bg-gradient-to-br from-blue-50 via-white to-indigo-50
+                    rounded-[28px] p-4 md:p-7 border border-blue-100 shadow-inner">
 
-                <select name="role_id"
-                    class="w-full border rounded px-3 py-2"
-                    {{ ($readOnly ?? false) ? 'disabled' : '' }}>
+            {{-- FIRST ROW --}}
+            <div class="grid grid-cols-12 gap-6">
 
-                    <option value="">Select Role</option>
-                    @foreach($roles as $role)
-                        <option value="{{ $role->id }}"
-                            {{ ($rolePermission->role_id ?? '') == $role->id ? 'selected' : '' }}>
-                            {{ $role->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+                {{-- ROLE --}}
+                <div class="col-span-12 md:col-span-6">
 
-            <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">
-                <label for="role_position" class="mb-4 md:text-lg font-medium block">
-                    ROLE POSITION/ WEIGHT-AGE
-                </label>
-                <input type="text"
-                    name="role_position"
-                    value="{{ $rolePermission->role_position ?? '' }}"
-                    class="w-full text-sm bg-secondary/5 border rounded px-3 py-2"
-                    {{ ($readOnly ?? false) ? 'readonly' : '' }}
-                />
-            </div>
-
-            <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">
-                <label for="permission_type" class="uppercase md:text-lg font-medium block mb-4">
-                    Permission Type
-                    <span class="text-error">*</span>
-                </label>
-                <div class="flex">
-                    <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio"
-                            name="permission_type"
-                            value="admin"
-                            {{ ($rolePermission->permission_type ?? '') == 'admin' ? 'checked' : '' }}
-                            {{ ($readOnly ?? false) ? 'disabled' : '' }}
-                        >
-                        <span class="text-gray-70 capitalize">Admin Type</span>
+                    <label class="font-semibold text-gray-700 mb-2 block">
+                        Role Name
                     </label>
-                    <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio"
-                            name="permission_type"
-                            value="agent"
-                            {{ ($rolePermission->permission_type ?? '') == 'agent' ? 'checked' : '' }}
-                            {{ ($readOnly ?? false) ? 'disabled' : '' }}
-                        >
-                        <span class="text-gray-70 capitalize">Agent Type</span>
+
+                    <select disabled
+                        class="custom-input rounded-2xl px-4">
+
+                        @foreach($roles as $role)
+
+                            <option value="{{ $role->id }}"
+                                {{ $rolePermission->role_id == $role->id ? 'selected' : '' }}>
+
+                                {{ $role->name }}
+
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+                {{-- ROLE POSITION --}}
+                <div class="col-span-12 md:col-span-6">
+
+                    <label class="font-semibold text-gray-700 mb-2 block">
+                        Role Position
                     </label>
-                    <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio"
-                            name="permission_type"
-                            value="both"
-                            {{ ($rolePermission->permission_type ?? '') == 'both' ? 'checked' : '' }}
-                            {{ ($readOnly ?? false) ? 'disabled' : '' }}
-                        >
-                        <span class="text-gray-70 capitalize">Both Type</span>
-                    </label>
+
+                    <input type="text"
+                        readonly
+                        value="{{ $rolePermission->role_position }}"
+                        class="custom-input rounded-2xl px-4">
+
                 </div>
 
             </div>
 
-            <div class="col-span-2 md:col-span-1 md:grid-cols-2 lg:grid-cols-3">
-                <label for="active" class="uppercase md:text-lg font-medium block mb-4">
-                    Active
-                    <span class="text-error">*</span>
-                </label>
-                <div class="flex">
-                    <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio"
-                            name="active"
-                            value="Yes"
-                            {{ ($rolePermission->active ?? '') == 'Yes' ? 'checked' : '' }}
-                            {{ ($readOnly ?? false) ? 'disabled' : '' }}
-                        >
-                        <span class="text-gray-70 capitalize">Yes</span>
+            <div class="h-6"></div>
+
+            {{-- SECOND ROW --}}
+            <div class="grid grid-cols-12 gap-6">
+
+                {{-- PERMISSION TYPE --}}
+                <div class="col-span-12 md:col-span-6">
+
+                    <label class="font-semibold text-gray-700 mb-2 block">
+                        Permission Type
                     </label>
-                    <label class="flex items-center gap-2 space-x-2 p-2">
-                        <input type="radio"
-                            name="active"
-                            value="No"
-                            {{ ($rolePermission->active ?? '') == 'No' ? 'checked' : '' }}
-                            {{ ($readOnly ?? false) ? 'disabled' : '' }}
-                        >
-                        <span class="text-gray-70 capitalize">No</span>
-                    </label>
+
+                    <div class="radio-card flex flex-wrap items-center gap-6 px-5 py-4 shadow-sm">
+
+                        <label class="flex items-center gap-2">
+
+                            <input type="radio"
+                                disabled
+                                {{ $rolePermission->permission_type == 'admin' ? 'checked' : '' }}>
+
+                            Admin
+
+                        </label>
+
+                        <label class="flex items-center gap-2">
+
+                            <input type="radio"
+                                disabled
+                                {{ $rolePermission->permission_type == 'agent' ? 'checked' : '' }}>
+
+                            Agent
+
+                        </label>
+
+                        <label class="flex items-center gap-2">
+
+                            <input type="radio"
+                                disabled
+                                {{ $rolePermission->permission_type == 'both' ? 'checked' : '' }}>
+
+                            Both
+
+                        </label>
+
+                    </div>
+
                 </div>
+
+                {{-- ACTIVE --}}
+                <div class="col-span-12 md:col-span-6">
+
+                    <label class="font-semibold text-gray-700 mb-2 block">
+                        Active Status
+                    </label>
+
+                    <div class="radio-card flex items-center gap-6 px-5 py-4 shadow-sm">
+
+                        <label class="flex items-center gap-2">
+
+                            <input type="radio"
+                                disabled
+                                {{ $rolePermission->active == 'Yes' ? 'checked' : '' }}>
+
+                            Yes
+
+                        </label>
+
+                        <label class="flex items-center gap-2">
+
+                            <input type="radio"
+                                disabled
+                                {{ $rolePermission->active == 'No' ? 'checked' : '' }}>
+
+                            No
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {{-- MENU TABS --}}
+        <div class="mt-10">
+
+            <div class="menu-scroll flex gap-3 overflow-x-auto pb-3">
+
+                @foreach($menuItems as $menu)
+
+                    <button
+                        type="button"
+                        class="menu-tab shrink-0 px-6 py-3 rounded-2xl
+                               bg-white border border-gray-200
+                               font-semibold text-gray-700"
+                        data-target="{{ $menu['id'] }}">
+
+                        {{ $menu['title'] }}
+
+                    </button>
+
+                @endforeach
+
+            </div>
+
+        </div>
+
+        {{-- TAB CONTENT --}}
+        <div class="mt-6 space-y-6">
+
+            {{-- DASHBOARD --}}
+            <div id="dashboardSection" class="permission-section hidden">
+
+                @include('roles.checkboxes.dashboard')
+
+            </div>
+
+            {{-- COMPANY --}}
+            <div id="companySection" class="permission-section hidden">
+
+                @include('roles.checkboxes.company')
+
+            </div>
+
+            {{-- USER --}}
+            <div id="userSection" class="permission-section hidden">
+
+                @include('roles.checkboxes.user')
+
+            </div>
+
+            {{-- COLLECTION CENTER --}}
+            <div id="collectionCenter" class="permission-section hidden">
+
+                @include('roles.checkboxes.collection-center')
+
+            </div>
+
+            {{-- CUSTOMER --}}
+            <div id="customer" class="permission-section hidden overflow-auto">
+
+                @include('roles.checkboxes.member-management')
+
             </div>
 
         </div><br>
 
-            <h3>VIEW ROLE PERMISSION</h3>
+        {{-- BACK BUTTON --}}
+        <div class="mt-10 pt-6 border-t border-gray-200">
 
-            <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 xxxl:gap-6">
+            <a href="{{ route('roles.index') }}"
+                class="inline-flex items-center justify-center
+                    min-w-[220px]
+                    px-8 py-4
+                    rounded-2xl
+                    text-black font-bold text-base md:text-lg
+                    shadow-lg hover:shadow-2xl
+                    transition-all duration-300 hover:scale-[1.02]"
+                style="background:linear-gradient(90deg,#e1d315,#e30f0f);">
 
-                <div class="col-span-2 md:col-span-6 md:grid-cols-2 lg:grid-cols-3  ">
-                    <div class="main-inner ">
-                        <button id="menuToggleBtn" type="button"
-                            class="md:hidden flex items-center gap-2 min-w-max py-2 px-3 relative z-[3] rounded-lg bg-primary text-n0 chatbtn">
-                            <i class="las la-bars"></i> <span>Menu</span>
-                        </button>
-                        <div class="flex  flex-col relative gap-4 xxl:gap-6 max-md:mt-3 tabs ">
-                            <div id="chat-sidebar"
-                                class="max-md:box md:bg-transparent duration-500 max-md:w-[280px] max-md:max-h-[600px]
-                                 max-md:overflow-y-auto max-md:rounded-xl max-md:absolute ltr:max-md:left-0 rtl:max-md:right-0 z-[3] max-md:bg-n0 max-md:dark:bg-bg4
-                               max-md:top-0 md:col-span-5 xl:col-span-4 max-md:min-w-[300px] chathide overflow-x-auto">
-                                <div class="md:box sticky top-20">
-                                    @php
-                                        $allMenus = array_merge(
-                                            $menuItems1,
-                                            $menuItems2,
-                                            $menuItems3,
-                                            $menuItems4,
-                                            $menuItems5,
-                                            $menuItems6,
-                                            $menuItems7,
-                                            $menuItems8,
-                                            $menuItems9,
-                                            $menuItems10,
-                                        );
+                BACK
 
-                                        // Number of columns you want in each row
-                                        $columns = 4;
+            </a>
 
-                                        // Chunk array into rows
-                                        $rows = array_chunk($allMenus, $columns);
-                                    @endphp
+        </div>
 
-                                    <table class="w-full whitespace-nowrap flex gap-3 overflow-x -auto">
-                                        @foreach ($rows as $row)
-                                            <tr class="">
-                                                @foreach ($row as $item)
-                                                    <td class="  text-start " style="padding: 5px 20px">
-                                                        <button type="button" class="tab-link" data-target="{{ $item['id'] ?? Str::slug($item['title']) }}">
-                                                            {{ $item['title'] }}
-                                                        </button>
-                                                    </td>
-                                                @endforeach
-                                            </tr>
-                                        @endforeach
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="col-span-12 md:col-span-7 xl:col-span-8 box xl:p-8">
-                                
-                                <div class="bb-dashed border-secondary/20 mb-4 pb-4 lg:mb-6 lg:pb-6">                    
-                                   
-                                    <!---------------------Dashboard------------------------>
+    </div>
 
-                                    @include('roles.checkboxes.dashboard')
-                                
-                                    <!---------------------Company Profile------------------------>
-
-                                    @include('roles.checkboxes.company')
-
-                                    <!---------------------User Management------------------------>
-
-                                    @include('roles.checkboxes.user')
-
-                                    <!---------------------COLLECTION CENTERS------------------------>
-
-                                    @include('roles.checkboxes.collection-center')
-
-                                    <!---------------------MEMBER(customer) MANAGEMENT	------------------------>
-
-                                    @include('roles.checkboxes.member-management')
-
-                                    <!---------------------SAVING ACCOUNTS------------------------>
-
-                                    @include('roles.checkboxes.saving-acc')
-
-                                    <!---------------------FIXED DEPOSITS------------------------>
-
-                                    @include('roles.checkboxes.fixed-deposit')
-
-                                    <!---------------------RECURRING DEPOSITS------------------------>
-
-                                    @include('roles.checkboxes.recuring')
-
-                                    <!---------------------GOLD LOAN------------------------>
-
-                                    @include('roles.checkboxes.gold-loan')
-
-                                    <!---------------------PROPERTY LOAN------------------------>
-
-                                    @include('roles.checkboxes.property-loan')
-
-                                    <!---------------------DEPOSIT LOAN------------------------>
-
-                                    @include('roles.checkboxes.deposit-loan')
-
-                                    <!---------------------OTHER LOAN------------------------>
-
-                                    @include('roles.checkboxes.business-loan')
-                                    
-                                    <!--------------------CC LIMIT------------------------>
-                                      
-                                    @include('roles.checkboxes.cc-limit')
-
-                                    <!--------------------VEHICLE LOAN------------------------>
-                                    
-                                    @include('roles.checkboxes.vehicle-loan')
-                                    
-                                    <!--------------------PERSONAL LOAN------------------------>
-                                    
-                                    @include('roles.checkboxes.personal-loan')
-
-                                    <!--------------------DAILY WEEKLY LOAN------------------------>
-                                    
-                                    @include('roles.checkboxes.dailyweekly-loan')
-
-                                    <!---------------------FIXED LOAN------------------------>
-                                     
-                                    @include('roles.checkboxes.fixed-loan')
-                                    
-                                    <!---------------------APPROVALS------------------------>
-
-                                    @include('roles.checkboxes.approvals')
-
-                                    <!---------------------PASSBOOKS------------------------>
-                                    @include('roles.checkboxes.passbook')
-
-                                    <!---------------------PRINT DOCUMENTS------------------------>
-                                    <div class="tab-panel hidden collection-center">
-                                        @include('roles.checkboxes.print-documents')
-                                    </div>
-
-                                    <!---------------------ADVISORS------------------------>
-                                    @include('roles.checkboxes.advisors')
-
-                                    <!--------------------REPORTS------------------------>
-                                    @include('roles.checkboxes.reports')
-
-                                    <!--------------------HR MANAGEMENT------------------------>
-                                    @include('roles.checkboxes.hr-management')
-
-                                    <!--------------------SOFTWARE SETTINGS------------------------>
-                                    @include('roles.checkboxes.software-settings')
-
-                                    <!--------------------	ACCOUNTING------------------------>
-                                    @include('roles.checkboxes.accounting')
-
-                                    <!--------------------LOCKERS------------------------>
-                                    @include('roles.checkboxes.lockers')
-
-                                    <!--------------------	NOTICE BOARD------------------------>
-                                    @include('roles.checkboxes.notice-board')
-                                    
-                                    <!---------------------PAYMENT COLLECTIONS	------------------------>
-                                    @include('roles.checkboxes.payment-col')
-
-                                </div>
-                                <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
-                                    <button class="btn-outline" type="reset">
-                                        <a href="{{ route('roles.index') }}">
-                                        Cancel
-                                        </a>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                </div>
-                
+</div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
 
-        const buttons = document.querySelectorAll(".tab-link");
-        const panels = document.querySelectorAll(".tab-panel");
+document.addEventListener("DOMContentLoaded", function () {
 
-        // Sab hide karo
-        panels.forEach(panel => panel.classList.remove("active"));
+    const tabs = document.querySelectorAll(".menu-tab");
 
-        // Default first show
-        if (buttons.length > 0) {
-            const firstTarget = buttons[0].dataset.target;
-            const firstPanel = document.getElementById(firstTarget);
-            if (firstPanel) {
-                firstPanel.classList.add("active");
-            }
-        }
+    const sections = document.querySelectorAll(".permission-section");
 
-        buttons.forEach(button => {
-            button.addEventListener("click", function () {
+    tabs.forEach(tab => {
 
-                const target = this.dataset.target;
+        tab.addEventListener("click", function () {
 
-                panels.forEach(panel => panel.classList.remove("active"));
+            const target = this.dataset.target;
 
-                const selected = document.getElementById(target);
+            sections.forEach(section => {
 
-                if (selected) {
-                    selected.classList.add("active");
-                }
+                section.classList.add("hidden");
+
             });
+
+            document.getElementById(target)
+                .classList.remove("hidden");
+
+            tabs.forEach(btn => {
+
+                btn.classList.remove("active-tab");
+
+            });
+
+            this.classList.add("active-tab");
+
         });
 
     });
-</script>
 
+    // DEFAULT TAB
+    if (tabs.length > 0) {
+
+        tabs[0].click();
+
+    }
+
+});
+
+</script>
 
 @endsection
