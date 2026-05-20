@@ -78,8 +78,8 @@ return [
             ['title' => 'SCHEMES', 'route' => 'fd-mis-schemes.index'],
             ['title' => 'CALCULATOR', 'route' => 'calculator.index'],
             ['title' => 'FD ACCOUNTS', 'route' => 'fd-mis-schemes.fd_index'],
-            ['title' => 'MIS ACCOUNTS', 'route' => 'misaccount.index'],
-            ['title' => 'SWEEP IN ACCOUNTS', 'route' => 'sweep-in-accounts']
+            ['title' => 'MIS ACCOUNTS', 'route' => 'misaccount.index']
+            //['title' => 'SWEEP IN ACCOUNTS', 'route' => 'sweep-in-accounts']
         ]
     ],
     [

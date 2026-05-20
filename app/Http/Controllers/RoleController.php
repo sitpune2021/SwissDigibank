@@ -56,7 +56,7 @@ class RoleController extends Controller
                 'id' => 'companySection'
             ],
             [
-                'title' => 'USER',
+                'title' => 'USER MANAGEMENT',
                 'id' => 'userSection'
             ],
             [
@@ -66,6 +66,14 @@ class RoleController extends Controller
             [
                 'title' => 'CUSTOMER MANAGEMENT',
                 'id' => 'customer'
+            ],
+            [
+                'title' => 'SAVING / CURRENT ACCOUNTS',
+                'id' => 'savin_current_account'
+            ],
+            [
+                'title' => 'FD / MIS MANAGEMENT',
+                'id' => 'fd_mis_account'
             ],
         ];
 

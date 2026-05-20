@@ -216,17 +216,20 @@
             {{-- MENU TABS --}}
             <div class="mt-10">
 
-                <div class="menu-scroll flex gap-3 overflow-x-auto pb-3">
+                <div class="flex flex-wrap gap-3">
 
                     @foreach($menuItems as $menu)
 
                         <button
                             type="button"
-                            class="menu-tab shrink-0 px-6 py-3 rounded-2xl
-                                   bg-white border border-gray-200
-                                   font-semibold text-gray-700
-                                   hover:bg-primary hover:text-white
-                                   transition-all duration-300"
+                            class="menu-tab
+                                px-6 py-3 rounded-2xl
+                                bg-white border border-gray-200
+                                font-semibold text-gray-700
+                                hover:bg-primary hover:text-white
+                                transition-all duration-300
+                                shadow-sm hover:shadow-md"
+
                             data-target="{{ $menu['id'] }}">
 
                             {{ $menu['title'] }}
@@ -274,10 +277,24 @@
 
                 </div>
 
-               <div id="customer"
+                <div id="customer"
                     class="permission-section hidden overflow-auto">
 
                     @include('roles.checkboxes.member-management')
+
+                </div>
+
+                <div id="savin_current_account"
+                    class="permission-section hidden overflow-auto">
+
+                    @include('roles.checkboxes.saving-acc')
+
+                </div>
+
+                <div id="fd_mis_account"
+                    class="permission-section hidden overflow-auto">
+
+                    @include('roles.checkboxes.fixed-deposit')
 
                 </div>
 
