@@ -221,13 +221,13 @@
                         <div class="flex gap-6">
                             <label class="flex gap-2">
                                 <input type="radio" name="is_active" value="1" {{ old('is_active', $group->is_active ??
-        1) == 1 ? 'checked' : '' }} checked>
+                                    1) == 1 ? 'checked' : '' }} checked>
                                 <p>Yes</p>
                             </label>
 
                             <label class="flex gap-2">
                                 <input type="radio" name="is_active" value="0" {{ old('is_active', $group->is_active ??
-        1) == 0 ? 'checked' : '' }}>
+                                    1) == 0 ? 'checked' : '' }}>
                                 <p>No</p>
                             </label>
                         </div>
@@ -239,12 +239,12 @@
 
                
                 {{-- Buttons --}}
-                <div class="flex justify-center gap-3 mt-6 col-span-2">
-                    <button type="submit" class="btn-primary uppercase">
+                <div class="flex justify-right gap-3 mt-6 col-span-2">
+                    <button type="submit" class="btn-primary uppercase" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                         {{ $isEdit ? 'Update Group' : 'Add Group' }}
                     </button>
 
-                    <a href="{{ route('groups.index') }}" class="btn-outline uppercase">
+                    <a href="{{ route('groups.index') }}" class="btn-outline uppercase" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                         BACK
                     </a>
                 </div>

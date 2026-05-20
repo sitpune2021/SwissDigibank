@@ -10,8 +10,20 @@ use Illuminate\Validation\ValidationException;
 
 class SchemesController extends Controller
 {
+
+
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('schemes.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $query = Scheme::query();
 
@@ -38,6 +50,16 @@ class SchemesController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('schemes.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $sections = config('schemes_form');
             $schemes = null;
@@ -177,6 +199,16 @@ class SchemesController extends Controller
 
     public function show(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('schemes.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $sections = config('schemes_form');
             $show = true;
@@ -190,9 +222,18 @@ class SchemesController extends Controller
         }
     }
 
-
     public function edit(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('schemes.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $sections = config('schemes_form');
             $schemes = Scheme::findOrFail($id);
@@ -205,7 +246,6 @@ class SchemesController extends Controller
             abort(404);
         }
     }
-
 
     public function update(Request $request, string $id)
     {
@@ -301,4 +341,6 @@ class SchemesController extends Controller
     }
 
     public function destroy(string $id) {}
+
+
 }

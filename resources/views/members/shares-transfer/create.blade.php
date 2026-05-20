@@ -210,10 +210,10 @@
                 <div class="col-span-2 flex gap-4 md:gap-6 mt-2">
                     {{-- Show Submit button only if not view page --}}
 
-                    <button class="btn-primary" type="submit">
+                    <button class="btn-primary" type="submit" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                         TRANSFER SHARE
                     </button>
-                    <a href="{{ route('shares-transfer.index') }}"
+                    <a href="{{ route('shares-transfer.index') }}" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;"
                         class="btn-outline inline-flex items-center justify-center">
                         BACK
                     </a>

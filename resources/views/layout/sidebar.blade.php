@@ -235,7 +235,8 @@
 }
 </style>
 
-<aside id="sidebar" class="sidebar mobile-sidebar" style="background: linear-gradient(180deg,#0f172a,#020617); border-right:1px solid rgba(59,130,246,0.25); box-shadow:0 0 30px rgba(59,130,246,0.2);">
+<!-- <aside id="sidebar" class="sidebar mobile-sidebar" style="background: linear-gradient(180deg,#0f172a,#020617); border-right:1px solid rgba(59,130,246,0.25); box-shadow:0 0 30px rgba(59,130,246,0.2);"> -->
+<aside id="sidebar" class="sidebar mobile-sidebar" style="background: linear-gradient(180deg,#111112, #0b0b0c); border-right:1px solid rgba(59,130,246,0.25); box-shadow:0 0 30px rgba(59,130,246,0.2);">
     
     <div class="sidebar-inner relative" >
         <div class="logo-column">

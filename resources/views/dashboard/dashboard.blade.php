@@ -37,12 +37,12 @@ use Illuminate\Support\Facades\Storage;
         <h2 class="text-xl font-bold text-gray-800 dark:text-white tracking-wide">
             Welcome, {{ auth()->user()->name }}
         </h2>
-        <p class="text-sm text-gray-500">Dashboard Overview</p>
+        <p class="text-sm text-gray-500" style="color: #e93d09;">Dashboard Overview</p>
     </div>
 
     <div class="text-right">
         <p class="text-sm text-gray-500">Today</p>
-        <h3 class="font-semibold text-gray-800 dark:text-white">
+        <h3 class="font-semibold text-gray-800 dark:text-white" style="color: #e93d09;">
             {{ date('d M Y') }}
         </h3>
     </div>

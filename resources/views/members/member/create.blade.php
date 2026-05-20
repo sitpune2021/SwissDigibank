@@ -622,13 +622,13 @@ $member['member_info_first_name'] .
             {{-- Save button and other controls --}}
             <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
                 @if (isset($method))
-                <button class="btn-primary" type="submit"> {{ $method === 'PUT' ? 'UPDATE' : 'SAVE' }} CUSTOMER
+                <button class="btn-primary" type="submit" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;"> {{ $method === 'PUT' ? 'UPDATE' : 'SAVE' }} CUSTOMER
                 </button>
                 @if ($method !== 'PUT')
-                <!-- Only show Reset button if not 'Update' --> <button class="btn-outline" type="reset"
+                <!-- Only show Reset button if not 'Update' --> <button class="btn-outline" type="reset" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;"
                     onclick="document.getElementById('companyForm').reset();"> RESET </button>
                 @endif
-                @endif <a href="{{ route('member.index') }}"
+                @endif <a href="{{ route('member.index') }}" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;"
                     class="btn-outline inline-flex items-center justify-center"> BACK </a>
                 {{-- @if ($method !== 'PUT')
                 <!-- Only show Reset button if not 'Update' --> <button class="btn-outline" type="reset"

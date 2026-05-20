@@ -386,19 +386,19 @@
         <div class="col-span-2 flex gap-4 md:gap-6 mt-4">
 
             @if (isset($method) && empty($show))
-                <button class="btn-primary" type="submit">
+                <button class="btn-primary" type="submit" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                     {{ $method === 'PUT' ? 'UPDATE' : 'SAVE' }} SCHEME
                 </button>
             @endif
 
             @if ($method === 'POST' && empty($show))
-                <button class="btn-outline" type="reset" onclick="document.getElementById('Schemes_Form').reset();">
+                <button class="btn-outline" type="reset" onclick="document.getElementById('Schemes_Form').reset();" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                     RESET
                 </button>
             @endif
 
             <!-- Always show BACK unless $show mode blocked -->
-            <a href="{{ route('schemes.index') }}" class="btn-outline inline-flex items-center justify-center">
+            <a href="{{ route('schemes.index') }}" class="btn-outline inline-flex items-center justify-center" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                 BACK
             </a>
 
