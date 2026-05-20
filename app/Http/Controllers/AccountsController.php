@@ -39,6 +39,16 @@ class AccountsController extends Controller
 
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('accounts.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
             $Accounts = Account::with(['members', 'users', 'minor', 'scheme', 'address'])
                 ->orderBy('created_at', 'desc')
@@ -54,6 +64,16 @@ class AccountsController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('accounts.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         try {
            
             $members = Member::pluck('member_info_first_name', 'id', 'member_info_mobile_no');
@@ -280,6 +300,15 @@ class AccountsController extends Controller
 
     public function show(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('accounts.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
 
         try {
             $decryptedId = base64_decode($id);

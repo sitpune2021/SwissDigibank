@@ -259,22 +259,22 @@
                 </div>
 
                 @if(isset($center))
-    <p class="text-sm text-error mt-5 px-6 ">
-        <strong>Note:</strong>
-        <strong>
-            If you change the collection center's branch, the system will automatically update
-        the branch in all groups associated with this collection center
-        </strong>
-        (<strong>{{ $center->center_name }}</strong>).
-    </p>
-@endif
+                    <p class="text-sm text-error mt-5 px-6 ">
+                        <strong>Note:</strong>
+                        <strong>
+                            If you change the collection center's branch, the system will automatically update
+                        the branch in all groups associated with this collection center
+                        </strong>
+                        (<strong>{{ $center->center_name }}</strong>).
+                    </p>
+                @endif
 
                 {{-- Buttons --}}
-                <div class="flex justify-center gap-3 mt-6 col-span-2">
-                    <button type="submit" class="btn-primary uppercase">
+                <div class="flex justify-right gap-3 mt-6 col-span-2">
+                    <button type="submit" class="btn-primary uppercase" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                         {{ isset($center) ? 'Update Center' : 'Add Center' }}
                     </button>
-                    <a href="{{ route('collection-centers.index') }}" class="btn-outline uppercase">
+                    <a href="{{ route('collection-centers.index') }}" class="btn-outline uppercase" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
                         BACK
                     </a>
                 </div>

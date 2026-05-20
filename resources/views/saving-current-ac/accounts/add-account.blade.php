@@ -604,10 +604,10 @@
 
                 {{-- Buttons --}}
                 <div class="col-span-2 flex gap-4 mt-4">
-                    <button class="btn-primary" type="submit">{{ $method === 'PUT' ? 'UPDATE' : 'OPEN' }}
+                    <button class="btn-primary" type="submit" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">{{ $method === 'PUT' ? 'UPDATE' : 'OPEN' }}
                         ACCOUNT</button>
-                    <button class="btn-outline" type="reset">RESET</button>
-                    <button class="btn-outline" type="button"
+                    <button class="btn-outline" type="reset" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">RESET</button>
+                    <button class="btn-outline" type="button" style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;"
                         onclick="window.location.href='{{ route('accounts.index') }}'">BACK</button>
                 </div>
             </form>

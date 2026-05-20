@@ -19,7 +19,7 @@ return [
             ['title' => 'PROMOTORS', 'route' => 'promotor.index'],
             ['title' => 'PROMOTOR SHARE HOLDINGS', 'route' => 'shareholding.index'],
             ['title' => 'DIRECTOR', 'route' => 'director.index'],
-            ['title' => 'UNENCUMBERED DEPOSITS', 'route' => 'unencumbered-deposits.index'],
+            //['title' => 'UNENCUMBERED DEPOSITS', 'route' => 'unencumbered-deposits.index'],
             ['title' => 'BANK ACCOUNT', 'route' => 'bank-account.index'],
 
         ],
@@ -78,8 +78,8 @@ return [
             ['title' => 'SCHEMES', 'route' => 'fd-mis-schemes.index'],
             ['title' => 'CALCULATOR', 'route' => 'calculator.index'],
             ['title' => 'FD ACCOUNTS', 'route' => 'fd-mis-schemes.fd_index'],
-            ['title' => 'MIS ACCOUNTS', 'route' => 'misaccount.index'],
-            ['title' => 'SWEEP IN ACCOUNTS', 'route' => 'sweep-in-accounts']
+            ['title' => 'MIS ACCOUNTS', 'route' => 'misaccount.index']
+            //['title' => 'SWEEP IN ACCOUNTS', 'route' => 'sweep-in-accounts']
         ]
     ],
     [
