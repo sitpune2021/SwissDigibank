@@ -13,7 +13,7 @@ class BankAccountController extends Controller
 {
 
 
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
 
@@ -26,7 +26,43 @@ class BankAccountController extends Controller
 
         }
 
-        $bankAcc = BankAccount::with('bank')->paginate(25);
+        $search = $request->search;
+
+        $bankAcc = BankAccount::with('bank')
+
+            ->when($search, function ($query) use ($search) {
+
+                $query->where('account_no', 'like', "%{$search}%")
+
+                    ->orWhere('account_open_date', 'like', "%{$search}%")
+
+                    ->orWhereHas('bank', function ($q) use ($search) {
+
+                        $q->where('name', 'like', "%{$search}%");
+
+                    })
+
+                    ->orWhere(function ($q) use ($search) {
+
+                        if (strtolower($search) == 'active') {
+
+                            $q->where('account_active', 1);
+
+                        }
+
+                        if (strtolower($search) == 'inactive') {
+
+                            $q->where('account_active', 0);
+
+                        }
+
+                    });
+
+            })
+
+            ->latest()
+            ->paginate(25)
+            ->withQueryString();
 
         return view('company.bankAccount.index', compact('bankAcc'));
     }

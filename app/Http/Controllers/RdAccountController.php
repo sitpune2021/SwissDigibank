@@ -29,7 +29,8 @@ use Illuminate\Validation\ValidationException;
 
 class RdAccountController extends Controller
 {
-    public function index()
+   
+    public function index(Request $request)
     {
         $user = auth()->user();
 
@@ -38,12 +39,40 @@ class RdAccountController extends Controller
         if ($user->role_id != 1 && !in_array('mds-rd-accounts.rd-account-index', $permissions)) {
 
             abort(403, 'Permission Denied');
-
         }
 
+        $search = $request->search;
+
         $rdAccounts = RdAccount::with(['member', 'branch', 'minor', 'scheme'])
+
+            ->when($search, function ($query) use ($search) {
+
+                $query->where('rd_no', 'like', "%{$search}%")
+
+                    ->orWhere('rd_amount', 'like', "%{$search}%")
+
+                    ->orWhereHas('member', function ($q) use ($search) {
+
+                        $q->where('member_no', 'like', "%{$search}%")
+                            ->orWhere('member_info_first_name', 'like', "%{$search}%")
+                            ->orWhere('member_info_middle_name', 'like', "%{$search}%")
+                            ->orWhere('member_info_last_name', 'like', "%{$search}%");
+                    })
+
+                    ->orWhereHas('branch', function ($q) use ($search) {
+
+                        $q->where('branch_name', 'like', "%{$search}%");
+                    })
+
+                    ->orWhereHas('scheme', function ($q) use ($search) {
+
+                        $q->where('scheme_name', 'like', "%{$search}%");
+                    });
+            })
+
             ->latest()
-            ->paginate(10);
+            ->paginate(20)
+            ->withQueryString();
 
         return view('mds_rd_accounts.mds-rd-account.index', compact('rdAccounts'));
     }

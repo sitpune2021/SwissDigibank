@@ -80,15 +80,14 @@
 
 @section('content')
 
-<div class="col-span-12 box lg:col-span-6 bank-page-animate">
+<div class="box col-span-12 lg:col-span-6 bank-page-animate">
 
     <div class="mb-3">
         <x-searchbox />
     </div>
 
-    @include('fields.errormessage')
-
-    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-x-auto table-premium">
+    <!-- TABLE -->
+    <div class="table-wrapper w-full overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm table-premium">
 
         <table class="w-full min-w-[1100px] whitespace-nowrap select-all-table border-separate border-spacing-y-2"
 

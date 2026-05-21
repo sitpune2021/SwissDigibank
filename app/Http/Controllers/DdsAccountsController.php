@@ -36,7 +36,7 @@ class DdsAccountsController extends Controller
 {
 
 
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
 
@@ -45,32 +45,67 @@ class DdsAccountsController extends Controller
         if ($user->role_id != 1 && !in_array('dds-accounts.index', $permissions)) {
 
             abort(403, 'Permission Denied');
-
         }
 
         Log::info('DdsAccountsController@index called');
 
+        $search = $request->search;
+
         $ddaccounts = DdsAccount::with(['member', 'branch', 'scheme', 'transactions'])
+
+            ->when($search, function ($query) use ($search) {
+
+                $query->where('dd_no', 'like', "%{$search}%")
+
+                    ->orWhere('dd_amount', 'like', "%{$search}%")
+
+                    ->orWhereHas('member', function ($q) use ($search) {
+
+                        $q->where('member_no', 'like', "%{$search}%")
+                            ->orWhere('member_info_first_name', 'like', "%{$search}%")
+                            ->orWhere('member_info_middle_name', 'like', "%{$search}%")
+                            ->orWhere('member_info_last_name', 'like', "%{$search}%");
+                    })
+
+                    ->orWhereHas('branch', function ($q) use ($search) {
+
+                        $q->where('branch_name', 'like', "%{$search}%");
+                    })
+
+                    ->orWhereHas('scheme', function ($q) use ($search) {
+
+                        $q->where('scheme_name', 'like', "%{$search}%");
+                    });
+            })
+
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(20)
+            ->withQueryString();
 
         foreach ($ddaccounts as $account) {
 
-            $installments = $account->total_installments ?? 0; // Default to 0 if not set
+            $installments = $account->total_installments ?? 0;
+
             $openDate = $account->open_date ? Carbon::parse($account->open_date) : null;
+
             $today = Carbon::today();
 
             $diff = 0;
+
             if ($openDate) {
+
                 $frequency = strtolower($account->rd_dd_frequency);
 
                 switch ($frequency) {
+
                     case 'daily':
                         $diff = $openDate->diffInDays($today);
                         break;
+
                     case 'monthly':
                         $diff = $openDate->diffInMonths($today);
                         break;
+
                     case 'yearly':
                         $diff = $openDate->diffInYears($today);
                         break;
@@ -78,14 +113,21 @@ class DdsAccountsController extends Controller
             }
 
             if ($account->scheme) {
+
                 $tenureType = $account->scheme->tenure_of_rd_dd_type ?? 'months';
+
                 $tenureValue = $account->scheme->tenure_of_rd_dd_value ?? 12;
 
                 if ($tenureType === 'months') {
+
                     $installments = $tenureValue;
+
                 } elseif ($tenureType === 'days') {
+
                     $installments = ceil($tenureValue / 30);
+
                 } elseif ($tenureType === 'years') {
+
                     $installments = $tenureValue * 12;
                 }
             }
@@ -93,14 +135,21 @@ class DdsAccountsController extends Controller
             $shouldHavePaid = min($diff, $installments);
 
             $totalPrincipalPaid = $account->transactions->sum('amount');
+
             $installmentCleared = floor($totalPrincipalPaid / $account->dd_amount);
+
             $paid = $installmentCleared;
+
             $due = max($shouldHavePaid - $paid, 0);
 
             $overdue = 0;
+
             if (!empty($account->maturity_date)) {
+
                 $maturityDate = Carbon::parse($account->maturity_date);
+
                 if ($today->gt($maturityDate)) {
+
                     $overdue = $installments - $paid;
                 }
             }
@@ -108,9 +157,13 @@ class DdsAccountsController extends Controller
             $notDue = $installments - $paid - $due;
 
             $account->paid_installments = $paid;
+
             $account->due_installments = $due;
+
             $account->overdue_installments = $overdue;
+
             $account->canceled_installments = 0;
+
             $account->not_due_installments = max($notDue, 0);
         }
 

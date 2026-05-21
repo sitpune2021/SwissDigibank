@@ -327,7 +327,7 @@ class FDController extends Controller
         }
     }
 
-    public function fd_index()
+    public function fd_index(Request $request)
     {
         $user = auth()->user();
 
@@ -339,9 +339,49 @@ class FDController extends Controller
 
         }
 
-        $accounts = FdAccount::with('member', 'branch') // eager load relations if needed
+        $search = $request->search;
+
+        $accounts = FdAccount::with(['member', 'branch', 'fdscheme'])
+
+            ->when($search, function ($query) use ($search) {
+
+                $query->where('fd_no', 'like', "%{$search}%")
+                
+                    ->orWhere('fd_amount', 'like', "%{$search}%")
+
+                    ->orWhere('interest_payout_type', 'like', "%{$search}%")
+
+                    ->orWhereHas('member', function ($q) use ($search) {
+
+                        $q->where('member_no', 'like', "%{$search}%")
+                        
+                            ->orWhere('member_info_first_name', 'like', "%{$search}%")
+                            
+                            ->orWhere('member_info_middle_name', 'like', "%{$search}%")
+                            
+                            ->orWhere('member_info_last_name', 'like', "%{$search}%");
+
+                    })
+
+                    ->orWhereHas('branch', function ($q) use ($search) {
+
+                        $q->where('branch_name', 'like', "%{$search}%");
+
+                    })
+
+                    ->orWhereHas('fdscheme', function ($q) use ($search) {
+
+                        $q->where('scheme_name', 'like', "%{$search}%");
+
+                    });
+
+            })
+
             ->orderBy('id', 'desc')
-            ->paginate(10);
+
+            ->paginate(10)
+
+            ->withQueryString();
 
         return view('fd_mis_account.fd-account.index', compact('accounts'));
     }

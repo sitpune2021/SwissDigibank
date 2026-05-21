@@ -15,21 +15,39 @@ class RdschemesController extends Controller
 {
 
 
-  public function index()
+  public function index(Request $request)
   {
-    $user = auth()->user();
+      $user = auth()->user();
 
-    $permissions = $user->rolePermission->permissions ?? [];
+      $permissions = $user->rolePermission->permissions ?? [];
 
-    if ($user->role_id != 1 && !in_array('rdschemes.index', $permissions)) {
+      if ($user->role_id != 1 && !in_array('rdschemes.index', $permissions)) {
 
-        abort(403, 'Permission Denied');
+          abort(403, 'Permission Denied');
 
-    }
+      }
 
-    $schemes = Rdscheme::orderBy('id', 'desc')->get();
+      $search = $request->search;
 
-    return view('rdschemes.index', compact('schemes'));
+      $schemes = Rdscheme::query()
+
+          ->when($search, function ($query) use ($search) {
+
+              $query->where('scheme_code', 'like', "%{$search}%")
+                  ->orWhere('scheme_name', 'like', "%{$search}%")
+                  ->orWhere('min_rd_dd_amount', 'like', "%{$search}%")
+                  ->orWhere('rd_dd_frequency', 'like', "%{$search}%")
+                  ->orWhere('anuual_interest_rate', 'like', "%{$search}%")
+                  ->orWhere('interest_compounding_interval', 'like', "%{$search}%")
+                  ->orWhere('active', 'like', "%{$search}%");
+
+          })
+
+          ->orderBy('id', 'desc')
+          ->paginate(20)
+          ->withQueryString();
+
+      return view('rdschemes.index', compact('schemes'));
   }
 
   public function create()

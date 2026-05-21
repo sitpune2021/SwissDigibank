@@ -127,14 +127,29 @@
 
                     </th>
 
-                    <!-- CUSTOMER -->
-                    <th class="text-start px-4 sm:px-6 py-4 min-w-[190px]">
+                   <!-- CUSTOMER DETAILS -->
+                    <th class="text-start px-3 sm:px-4 py-3 min-w-[160px] sm:min-w-[180px]">
 
-                        <div class="flex items-center gap-2 text-xs sm:text-sm font-bold uppercase tracking-wide">
+                        <div class="flex items-center gap-2">
 
-                            <i class="las la-user-alt text-success text-base"></i>
+                            <!-- ICON -->
+                            <div class="w-7 h-7 rounded-lg bg-green-100 
+                                flex items-center justify-center shrink-0">
 
-                            <span>Customer Name</span>
+                                <i class="las la-user-alt text-green-600 text-sm"></i>
+
+                            </div>
+
+                            <!-- TEXT -->
+                            <div class="leading-tight">
+
+                                <span>
+
+                                    Customer Details
+
+                                </span>
+
+                            </div>
 
                         </div>
 
@@ -352,6 +367,10 @@
 
         </table>
 
+    </div>
+
+    <div class="mt-4">
+        <x-pagination :paginator="$misaccounts"/>
     </div>
 
 </div>

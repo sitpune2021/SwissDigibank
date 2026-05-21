@@ -290,7 +290,9 @@
 
     </div>
 
-    <x-pagination :paginator="$accounts" />
+    <div class="mt-4">
+        <x-pagination :paginator="$accounts"/>
+    </div>
 
 </div>
 

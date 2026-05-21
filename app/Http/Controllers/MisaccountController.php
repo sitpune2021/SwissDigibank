@@ -28,7 +28,7 @@ class MisaccountController extends Controller
 {
 
 
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
 
@@ -40,8 +40,52 @@ class MisaccountController extends Controller
 
         }
 
-        $misaccounts = MisAccount::orderBy('id', 'desc')->get();
-        $branches    = Branch::all();
+        $search = $request->search;
+
+        $misaccounts = MisAccount::with(['member', 'branch', 'fdscheme'])
+
+            ->when($search, function ($query) use ($search) {
+
+                $query->where('mis_account_no', 'like', "%{$search}%")
+
+                    ->orWhere('mis_amount', 'like', "%{$search}%")
+
+                    ->orWhere('interest_payout_type', 'like', "%{$search}%")
+
+                    ->orWhereHas('member', function ($q) use ($search) {
+
+                        $q->where('member_no', 'like', "%{$search}%")
+
+                            ->orWhere('member_info_first_name', 'like', "%{$search}%")
+
+                            ->orWhere('member_info_middle_name', 'like', "%{$search}%")
+
+                            ->orWhere('member_info_last_name', 'like', "%{$search}%");
+
+                    })
+
+                    ->orWhereHas('branch', function ($q) use ($search) {
+
+                        $q->where('branch_name', 'like', "%{$search}%");
+
+                    })
+
+                    ->orWhereHas('fdscheme', function ($q) use ($search) {
+
+                        $q->where('scheme_name', 'like', "%{$search}%");
+
+                    });
+
+            })
+
+            ->orderBy('id', 'desc')
+
+            ->paginate(20)
+
+            ->withQueryString();
+
+        $branches = Branch::all();
+
         return view('fd_mis_account.misaccount.index', compact('misaccounts', 'branches'));
     }
 

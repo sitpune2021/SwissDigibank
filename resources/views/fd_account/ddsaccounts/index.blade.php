@@ -294,6 +294,10 @@
         </table>
 
     </div>
+
+    <div class="mt-4">  
+        <x-pagination :paginator="$ddaccounts" />
+    </div>
         
 </div>
    

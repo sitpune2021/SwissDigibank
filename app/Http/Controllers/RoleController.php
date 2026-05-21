@@ -26,7 +26,25 @@ class RoleController extends Controller
 
         }
 
-        $roles = RolePermission::with('role')->latest()->get();
+        $search = $request->search;
+
+        $roles = RolePermission::with('role')
+
+            ->when($search, function ($query) use ($search) {
+
+                $query->whereHas('role', function ($q) use ($search) {
+
+                    $q->where('name', 'like', "%{$search}%");
+
+                })
+
+                ->orWhere('active', 'like', "%{$search}%");
+
+            })
+
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         return view('roles.manage-permission', compact('roles'));
     }

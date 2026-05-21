@@ -310,33 +310,10 @@
 
         </table>
 
-        @if ($rdAccounts->hasPages())
-        <div class="flex items-center justify-center space-x-2 mt-6">
-            {{-- Previous Page Link --}}
-            @if ($rdAccounts->onFirstPage())
-            <button class="px-3 py-1 border rounded-lg text-gray-400 bg-gray-100 cursor-not-allowed">Prev</button>
-            @else
-            <a href="{{ $rdAccounts->previousPageUrl() }}" class="px-3 py-1 border rounded-lg text-gray-600 hover:bg-gray-200">Prev</a>
-            @endif
+    </div>
 
-            {{-- Pagination Elements --}}
-            @foreach ($rdAccounts->getUrlRange(1, $rdAccounts->lastPage()) as $page => $url)
-            @if ($page == $rdAccounts->currentPage())
-            <span class="px-3 py-1 border rounded-lg bg-primary text-white">{{ $page }}</span>
-            @else
-            <a href="{{ $url }}" class="px-3 py-1 border rounded-lg hover:bg-gray-200">{{ $page }}</a>
-            @endif
-            @endforeach
-
-            {{-- Next Page Link --}}
-            @if ($rdAccounts->hasMorePages())
-            <a href="{{ $rdAccounts->nextPageUrl() }}" class="px-3 py-1 border rounded-lg text-gray-600 hover:bg-gray-200">Next</a>
-            @else
-            <button class="px-3 py-1 border rounded-lg text-gray-400 bg-gray-100 cursor-not-allowed">Next</button>
-            @endif
-        </div>
-        @endif
-
+    <div class="mt-4">  
+        <x-pagination :paginator="$rdAccounts" />
     </div>
    
 </div>

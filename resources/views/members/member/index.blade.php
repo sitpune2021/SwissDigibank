@@ -102,17 +102,15 @@
 
 @section('content')
 
-    <div class="box col-span-12 lg:col-span-6 bank-page-animate">
+<div class="box col-span-12 lg:col-span-6 bank-page-animate">
 
+    <div class="mb-3">
         <x-searchbox />
+    </div>
 
-        <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
-            <x-alert />
-        </div>
+    <!-- TABLE -->
+    <div class="table-wrapper w-full overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm table-premium">
 
-
-        <div class="overflow-x-auto pb-4 lg:pb-6 table-premium">
-            
             <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
                 
                 <thead
@@ -246,10 +244,6 @@
                                 </div>
 
                                 <div class="text-left">
-                                    <p class="text-[10px] uppercase tracking-widest font-bold text-slate-400">
-                                        Controls
-                                    </p>
-
                                     <h6 class="text-xs sm:text-sm font-extrabold uppercase">
                                         Action
                                     </h6>
