@@ -30,6 +30,16 @@ class MisaccountController extends Controller
 
     public function index()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('misaccount.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $misaccounts = MisAccount::orderBy('id', 'desc')->get();
         $branches    = Branch::all();
         return view('fd_mis_account.misaccount.index', compact('misaccounts', 'branches'));
@@ -37,6 +47,16 @@ class MisaccountController extends Controller
 
     public function create(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('misaccount.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $members        = Member::with(['address', 'branch'])->get();
         $minors         = Minor::all();
         $branches       = Branch::all();
@@ -343,8 +363,6 @@ class MisaccountController extends Controller
         return $credit - $debit;
     }
 
-
-
     public function calculateMISDetails(
         $fd_scheme_id,
         $principal,
@@ -640,7 +658,6 @@ class MisaccountController extends Controller
         return [$results, round($totalInterest, 2)];
     }
 
-
     public function misPayout($id)
     {
         $misAccount = Misaccount::with(['member.address', 'branch', 'fdScheme.fdslabs'])
@@ -683,7 +700,6 @@ class MisaccountController extends Controller
 
         return view('fd_mis_account.misaccount.mispayout', compact('misAccount', 'payouts'));
     }
-
 
     public function processPayout(Request $request)
     {
@@ -755,9 +771,18 @@ class MisaccountController extends Controller
         }
     }
 
-
     public function edit(Misaccount $misaccount)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('misaccount.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $members        = Member::with(['address', 'branch'])->get();
         $minors         = Minor::all();
         $branches       = Branch::all();
@@ -933,6 +958,16 @@ class MisaccountController extends Controller
 
     public function show($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('misaccount.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $misaccount = MisAccount::with(['member', 'transactions', 'fdScheme.fdslabs'])
             ->where('id', $id)
             ->firstOrFail();
@@ -992,6 +1027,7 @@ class MisaccountController extends Controller
             )
         );
     }
+
     // edit editBranch
     public function updateBranch(Request $request, $misaccountId)
     {
@@ -1112,6 +1148,7 @@ class MisaccountController extends Controller
         return redirect()->route('misaccount.show', $id)
             ->with('success', 'Nominee details updated successfully!');
     }
+
     public function foreClose($id)
     {
         $misaccount = Misaccount::with(['member', 'fdScheme.fdslabs'])
@@ -1391,6 +1428,7 @@ class MisaccountController extends Controller
         return redirect()->route('misaccount.index')
             ->with('Success', 'MIS Account Deleted Successfully');
     }
+
     public function linkSavingsAccount($id)
     {
         $misaccount = MisAccount::with('member.accounts')->findOrFail($id);
@@ -1531,6 +1569,7 @@ class MisaccountController extends Controller
 
         return view('fd_mis_account.misaccount.print-documents.mis-bond-print', compact('pdfUrl'));
     }
+
     protected function numToWords($number)
     {
         $words = [
@@ -1739,7 +1778,6 @@ class MisaccountController extends Controller
             ->with('success', 'Documents uploaded successfully.');
     }
 
-
     public function addComment($id)
     {
         $misaccount = Misaccount::with('comments')->findOrFail($id);
@@ -1796,4 +1834,6 @@ class MisaccountController extends Controller
 
         return back()->with('success', 'Document deleted successfully.');
     }
+
+
 }

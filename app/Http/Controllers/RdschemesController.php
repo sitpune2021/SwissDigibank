@@ -13,8 +13,20 @@ use Illuminate\Validation\ValidationException;
 
 class RdschemesController extends Controller
 {
+
+
   public function index()
   {
+    $user = auth()->user();
+
+    $permissions = $user->rolePermission->permissions ?? [];
+
+    if ($user->role_id != 1 && !in_array('rdschemes.index', $permissions)) {
+
+        abort(403, 'Permission Denied');
+
+    }
+
     $schemes = Rdscheme::orderBy('id', 'desc')->get();
 
     return view('rdschemes.index', compact('schemes'));
@@ -22,6 +34,15 @@ class RdschemesController extends Controller
 
   public function create()
   {
+    $user = auth()->user();
+
+    $permissions = $user->rolePermission->permissions ?? [];
+
+    if ($user->role_id != 1 && !in_array('rdschemes.index', $permissions)) {
+
+        abort(403, 'Permission Denied');
+
+    }
     return view("rdschemes.create");
   }
 
@@ -87,6 +108,16 @@ class RdschemesController extends Controller
 
   public function show($id)
   {
+    $user = auth()->user();
+
+    $permissions = $user->rolePermission->permissions ?? [];
+
+    if ($user->role_id != 1 && !in_array('rdschemes.index', $permissions)) {
+
+        abort(403, 'Permission Denied');
+
+    }
+
     // fetch scheme by id
     $scheme = Rdscheme::findOrFail($id);
 
@@ -96,6 +127,16 @@ class RdschemesController extends Controller
 
   public function edit($id)
   {
+    $user = auth()->user();
+
+    $permissions = $user->rolePermission->permissions ?? [];
+
+    if ($user->role_id != 1 && !in_array('rdschemes.index', $permissions)) {
+
+        abort(403, 'Permission Denied');
+
+    }
+
     $scheme = Rdscheme::findOrFail($id);
     return view('rdschemes.edit', compact('scheme'));
   }
@@ -147,4 +188,6 @@ class RdschemesController extends Controller
 
     return redirect()->back()->with('success', 'Commission Chart updated successfully!');
   }
+
+  
 }

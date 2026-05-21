@@ -12,11 +12,31 @@ class RDCalculatorController extends Controller
 
     public function index()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('rd-calculator.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+        
         // return view('rd_account.calculator.index');
     }
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('rd-calculator.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $schemes = Rdscheme::select('scheme_code', 'scheme_name')->get(); 
         return view('mds_rd_accounts.calculators.create', compact('schemes'));
     }

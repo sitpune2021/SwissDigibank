@@ -75,6 +75,10 @@ class RoleController extends Controller
                 'title' => 'FD / MIS MANAGEMENT',
                 'id' => 'fd_mis_account'
             ],
+            [
+                'title' => 'RD / DD MANAGEMENT',
+                'id' => 'rd_dd_account'
+            ],
         ];
 
         return view('roles.add-role', compact(

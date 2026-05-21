@@ -298,6 +298,13 @@
 
                 </div>
 
+                <div id="rd_dd_account"
+                    class="permission-section hidden overflow-auto">
+
+                    @include('roles.checkboxes.recuring')
+
+                </div>
+
             </div><br>
 
             {{-- BUTTONS --}}

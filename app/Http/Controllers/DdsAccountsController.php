@@ -34,8 +34,20 @@ use App\Models\Passbook;
 
 class DdsAccountsController extends Controller
 {
+
+
     public function index()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('dds-accounts.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         Log::info('DdsAccountsController@index called');
 
         $ddaccounts = DdsAccount::with(['member', 'branch', 'scheme', 'transactions'])
@@ -105,9 +117,18 @@ class DdsAccountsController extends Controller
         return view('fd_account.ddsaccounts.index', compact('ddaccounts'));
     }
 
-
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('dds-accounts.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         Log::info('DdsAccountsController@create called');
         $members  = Member::all();
         $branches = Branch::all();
@@ -384,6 +405,16 @@ class DdsAccountsController extends Controller
 
     public function show($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('dds-accounts.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         Log::info("DdsAccountsController@show called for ID: $id");
 
         $ddaccount = DdsAccount::with(['member', 'branch', 'scheme', 'transactions', 'account'])->findOrFail($id);
@@ -548,6 +579,16 @@ class DdsAccountsController extends Controller
     }
     public function edit(DdsAccount $ddaccount)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('dds-accounts.edit', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         Log::info("DdsAccountsController@edit called for ID: {$ddaccount->id}");
         $members = Member::select('id', 'member_info_first_name', 'member_info_last_name', 'mobile_no')
             ->orderBy('member_info_first_name')
@@ -678,6 +719,7 @@ class DdsAccountsController extends Controller
         $ddaccount->save();
         return back()->with('success', 'Branch updated successfully');
     }
+
     function calculateMaturity(
         $depositAmount,
         $installments,
@@ -731,7 +773,6 @@ class DdsAccountsController extends Controller
             'maturity_date'   => $maturityDate,
         ];
     }
-
 
     public function installments($id)
     {
@@ -813,6 +854,7 @@ class DdsAccountsController extends Controller
             'installments' => $paginatedInstallments,
         ]);
     }
+
     public function installmentReceipt($id, $instNo)
     {
         $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme')->findOrFail($id);
@@ -975,7 +1017,6 @@ class DdsAccountsController extends Controller
         $pdf = Pdf::loadView('fd_account.ddsaccounts.installmentReceipt', $data);
         return $pdf->stream('installment-receipt.pdf');
     }
-
 
     public function regenerateInstallment($id)
     {
@@ -1413,6 +1454,7 @@ class DdsAccountsController extends Controller
 
         return redirect()->route('dds-accounts.transactions', $id)->with('success', 'Withdrawal successful!');
     }
+
     public function printReceipt($id, $transactionId)
     {
         $transaction = DdsAccount::with(['member', 'transactions' => function ($query) use ($transactionId) {
@@ -1443,6 +1485,7 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.transactionPrintReceipt2', compact('transaction', 'printedOn', 'printedBy'));
     }
+
     public function createLinkSavingAcc($id)
     {
         $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')
@@ -1532,6 +1575,7 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.creditReverse', compact('ddaccount', 'savingAccounts'));
     }
+
     public function storeCreditInterest(Request $request, $id)
     {
         Log::info("DDS Interest Transaction Start", [
@@ -1640,7 +1684,6 @@ class DdsAccountsController extends Controller
         }
     }
 
-
     public function createMarkLienAccount($id)
     {
         $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')->findOrFail($id);
@@ -1651,6 +1694,7 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.markLienAccount', compact('ddaccount', 'savingAccounts'));
     }
+
     public function accountNominee(string $id)
     {
         $ddAccount = DdsAccount::with(['member', 'nominee'])
@@ -1661,6 +1705,7 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.account-nominee', compact('ddAccount', 'member'));
     }
+
     public function changeAccountInfo($id)
     {
         $ddaccount = DdsAccount::with(
@@ -1843,7 +1888,6 @@ class DdsAccountsController extends Controller
         }
     }
 
-
     public function changeMinorInfo($id)
     {
         $ddaccount = DdsAccount::with('member', 'branch', 'transactions', 'scheme', 'account')
@@ -1855,6 +1899,7 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.addMinorOrUpdate', compact('ddaccount', 'minors'));
     }
+
     public function updateMinor(Request $request, $id)
     {
         $request->validate([
@@ -1901,6 +1946,7 @@ class DdsAccountsController extends Controller
             return back()->with('error', 'Something went wrong while updating minor.');
         }
     }
+
     public function createforeClose($id)
     {
         $ddaccount = DdsAccount::with(['member', 'branch', 'scheme', 'transactions', 'account'])
@@ -1925,6 +1971,7 @@ class DdsAccountsController extends Controller
             'balanceAvailable'    => $balanceAvailable,
         ]);
     }
+
     public function addComment($id)
     {
         $ddaccount = DdsAccount::with('comments')->findOrFail($id);
@@ -1981,11 +2028,13 @@ class DdsAccountsController extends Controller
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
+
     public function uploadDocuments($id)
     {
         $ddaccount = DdsAccount::with('member')->findOrFail($id);
         return view('fd_account.ddsaccounts.upload_documents', compact('ddaccount'));
     }
+
     public function storeDocuments(Request $request, $id)
     {
         Log::info('📄 storeDocuments() called', [
@@ -2124,6 +2173,7 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.print-documents.accountopeningformView', compact('account'));
     }
+
     public function ddOpeningForm($id)
     {
         $account = DdsAccount::with([
@@ -2175,6 +2225,7 @@ class DdsAccountsController extends Controller
 
         return view('fd_account.ddsaccounts.print-documents.closingfromView',    array_merge($data, compact('ddAccount')));
     }
+
     public function ddClosingForm($id)
     {
         $ddAccount = DdsAccount::with(['member.branch'])->findOrFail($id);
@@ -2211,4 +2262,6 @@ class DdsAccountsController extends Controller
 
         return $pdf->download('dd-closing-form-' . $ddAccount->id . '.pdf');
     }
+
+
 }
