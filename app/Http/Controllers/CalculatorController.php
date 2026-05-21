@@ -18,10 +18,32 @@ class CalculatorController extends Controller
         return round($number, $precision);
     }
 
-    public function index() {}
+    public function index() 
+    {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('calculator.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
+    }
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('calculator.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         return view('fd_account.calculator.create');
     }
 

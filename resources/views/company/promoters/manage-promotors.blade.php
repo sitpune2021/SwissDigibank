@@ -68,7 +68,7 @@
 @endphp
 
 @section('action-button')
-    @if($isSuperAdmin || in_array('branch.create', $permissions))
+    @if($isSuperAdmin || in_array('promotor.create', $permissions))
         <a href="{{ route('promotor.create') }}"
             class="inline-flex items-center gap-2
             px-4 sm:px-5 py-2.5

@@ -80,218 +80,218 @@
 
 @section('content')
 
-<div class="col-span-12 box lg:col-span-6 bank-page-animate">
+<div class="box col-span-12 lg:col-span-6 bank-page-animate">
 
-    <x-searchbox />
-    <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
-        <x-alert />
+    <div class="mb-3">
+        <x-searchbox />
     </div>
 
-   <div class="overflow-x-auto pb-4 lg:pb-6 table-premium">
+    <!-- TABLE -->
+    <div class="table-wrapper w-full overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm table-premium">
 
-    <table
-        class="w-full min-w-max whitespace-nowrap select-all-table border-separate border-spacing-y-2"
-        id="transactionTable1">
+        <table
+            class="w-full min-w-max whitespace-nowrap select-all-table border-separate border-spacing-y-2"
+            id="transactionTable1">
 
-        <thead class="bg-gradient-to-r from-orange-50 via-white to-orange-50 border-b border-gray-200 sticky top-0 z-10">
+            <thead class="bg-gradient-to-r from-orange-50 via-white to-orange-50 border-b border-gray-200 sticky top-0 z-10">
 
-            <tr class="text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider text-gray-700">
+                <tr class="text-[11px] sm:text-xs lg:text-sm font-bold uppercase tracking-wider text-gray-700">
 
-                <!-- SR NO -->
-                <th class="text-start py-4 px-3 sm:px-5 min-w-[100px] whitespace-nowrap">
+                    <!-- SR NO -->
+                    <th class="text-start py-4 px-3 sm:px-5 min-w-[100px] whitespace-nowrap">
 
-                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2">
 
-                        <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
-                            <i class="las la-hashtag text-blue-600 text-sm"></i>
+                            <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
+                                <i class="las la-hashtag text-blue-600 text-sm"></i>
+                            </div>
+
+                            <span>SR NO</span>
+
                         </div>
 
-                        <span>SR NO</span>
+                    </th>
 
-                    </div>
+                    <!-- ROLE NAME -->
+                    <th class="text-start py-4 px-3 sm:px-5 min-w-[220px] whitespace-nowrap">
 
-                </th>
+                        <div class="flex items-center gap-2">
 
-                <!-- ROLE NAME -->
-                <th class="text-start py-4 px-3 sm:px-5 min-w-[220px] whitespace-nowrap">
+                            <div class="w-7 h-7 rounded-lg bg-cyan-100 flex items-center justify-center shrink-0">
+                                <i class="las la-user-shield text-cyan-600 text-sm"></i>
+                            </div>
 
-                    <div class="flex items-center gap-2">
+                            <span>ROLE NAME</span>
 
-                        <div class="w-7 h-7 rounded-lg bg-cyan-100 flex items-center justify-center shrink-0">
-                            <i class="las la-user-shield text-cyan-600 text-sm"></i>
                         </div>
 
-                        <span>ROLE NAME</span>
+                    </th>
 
-                    </div>
+                    <!-- ACTIVE -->
+                    <th class="text-start py-4 px-3 sm:px-5 min-w-[150px] whitespace-nowrap">
 
-                </th>
+                        <div class="flex items-center gap-2">
 
-                <!-- ACTIVE -->
-                <th class="text-start py-4 px-3 sm:px-5 min-w-[150px] whitespace-nowrap">
+                            <div class="w-7 h-7 rounded-lg bg-green-100 flex items-center justify-center shrink-0">
+                                <i class="las la-toggle-on text-green-600 text-sm"></i>
+                            </div>
 
-                    <div class="flex items-center gap-2">
+                            <span>STATUS</span>
 
-                        <div class="w-7 h-7 rounded-lg bg-green-100 flex items-center justify-center shrink-0">
-                            <i class="las la-toggle-on text-green-600 text-sm"></i>
                         </div>
 
-                        <span>STATUS</span>
+                    </th>
 
-                    </div>
+                    <!-- ACTION -->
+                    <th class="text-center py-4 px-3 sm:px-5 min-w-[180px] whitespace-nowrap">
 
-                </th>
+                        <div class="flex items-center justify-center gap-2">
 
-                <!-- ACTION -->
-                <th class="text-center py-4 px-3 sm:px-5 min-w-[180px] whitespace-nowrap">
+                            <div class="w-7 h-7 rounded-lg bg-gray-200 flex items-center justify-center shrink-0">
+                                <i class="las la-cogs text-gray-700 text-sm"></i>
+                            </div>
 
-                    <div class="flex items-center justify-center gap-2">
+                            <span>ACTIONS</span>
 
-                        <div class="w-7 h-7 rounded-lg bg-gray-200 flex items-center justify-center shrink-0">
-                            <i class="las la-cogs text-gray-700 text-sm"></i>
                         </div>
 
-                        <span>ACTIONS</span>
+                    </th>
 
-                    </div>
+                </tr>
 
-                </th>
+            </thead>
 
-            </tr>
+            <tbody>
 
-        </thead>
+                @forelse($roles as $key => $role)
 
-        <tbody>
+                <tr
+                    class="table-row bg-white dark:bg-bg3 border border-gray-100 dark:border-gray-700"
+                    style="animation-delay: {{ $loop->index * 0.05 }}s">
 
-            @forelse($roles as $key => $role)
+                    <!-- SR -->
+                    <td class="px-4 py-4">
 
-            <tr
-                class="table-row bg-white dark:bg-bg3 border border-gray-100 dark:border-gray-700"
-                style="animation-delay: {{ $loop->index * 0.05 }}s">
+                        <div class="font-semibold text-gray-700">
 
-                <!-- SR -->
-                <td class="px-4 py-4">
+                            {{ $key + 1 }}
 
-                    <div class="font-semibold text-gray-700">
+                        </div>
 
-                        {{ $key + 1 }}
+                    </td>
 
-                    </div>
+                    <!-- ROLE -->
+                    <td class="px-4 py-4">
 
-                </td>
+                        <div class="flex items-center gap-3">
 
-                <!-- ROLE -->
-                <td class="px-4 py-4">
+                            <div>
 
-                    <div class="flex items-center gap-3">
+                                <div class="font-bold text-gray-800">
 
-                        <div>
+                                    {{ $role->role->name ?? '-' }}
 
-                            <div class="font-bold text-gray-800">
+                                </div>
 
-                                {{ $role->role->name ?? '-' }}
+                                <div class="text-xs text-gray-500">
+
+                                    Role Permission
+
+                                </div>
 
                             </div>
 
-                            <div class="text-xs text-gray-500">
+                        </div>
 
-                                Role Permission
+                    </td>
 
-                            </div>
+                    <!-- ACTIVE -->
+                    <td class="px-4 py-4">
+
+                        @if($role->active == 'Yes')
+
+                            <span
+                                class="inline-flex items-center justify-center
+                                px-4 py-2 rounded-full
+                                bg-green-100 text-green-700
+                                text-xs font-bold">
+
+                                Active
+
+                            </span>
+
+                        @else
+
+                            <span
+                                class="inline-flex items-center justify-center
+                                px-4 py-2 rounded-full
+                                bg-red-100 text-red-700
+                                text-xs font-bold">
+
+                                Inactive
+
+                            </span>
+
+                        @endif
+
+                    </td>
+
+                    <!-- ACTION -->
+                    <td class="px-4 py-4">
+
+                        <div class="flex flex-wrap items-center justify-center gap-2">
+
+                            @if($isSuperAdmin || in_array('roles.show', $permissions))
+
+                            <a href="{{ route('roles.show', $role->id) }}"
+                                class="action-btn action-view">
+
+                                <i class="las la-eye text-sm"></i>
+
+                                <span>View</span>
+
+                            </a>
+
+                            @endif
+
+                            @if($isSuperAdmin || in_array('roles.edit', $permissions))
+
+                            <a href="{{ route('roles.edit', $role->id) }}"
+                                class="action-btn action-edit">
+
+                                <i class="las la-edit text-sm"></i>
+
+                                <span>Edit</span>
+
+                            </a>
+
+                            @endif
 
                         </div>
 
-                    </div>
+                    </td>
 
-                </td>
+                </tr>
 
-                <!-- ACTIVE -->
-                <td class="px-4 py-4">
+                @empty
 
-                    @if($role->active == 'Yes')
+                <tr>
 
-                        <span
-                            class="inline-flex items-center justify-center
-                            px-4 py-2 rounded-full
-                            bg-green-100 text-green-700
-                            text-xs font-bold">
+                    <td colspan="7" class="text-center py-10 text-gray-500 font-medium">
 
-                            Active
+                        No Roles Found
 
-                        </span>
+                    </td>
 
-                    @else
+                </tr>
 
-                        <span
-                            class="inline-flex items-center justify-center
-                            px-4 py-2 rounded-full
-                            bg-red-100 text-red-700
-                            text-xs font-bold">
+                @endforelse
 
-                            Inactive
+            </tbody>
 
-                        </span>
+        </table>
 
-                    @endif
-
-                </td>
-
-                <!-- ACTION -->
-                <td class="px-4 py-4">
-
-                    <div class="flex flex-wrap items-center justify-center gap-2">
-
-                        @if($isSuperAdmin || in_array('roles.show', $permissions))
-
-                        <a href="{{ route('roles.show', $role->id) }}"
-                            class="action-btn action-view">
-
-                            <i class="las la-eye text-sm"></i>
-
-                            <span>View</span>
-
-                        </a>
-
-                        @endif
-
-                        @if($isSuperAdmin || in_array('roles.edit', $permissions))
-
-                        <a href="{{ route('roles.edit', $role->id) }}"
-                            class="action-btn action-edit">
-
-                            <i class="las la-edit text-sm"></i>
-
-                            <span>Edit</span>
-
-                        </a>
-
-                        @endif
-
-                    </div>
-
-                </td>
-
-            </tr>
-
-            @empty
-
-            <tr>
-
-                <td colspan="7" class="text-center py-10 text-gray-500 font-medium">
-
-                    No Roles Found
-
-                </td>
-
-            </tr>
-
-            @endforelse
-
-        </tbody>
-
-    </table>
-
-</div>
+    </div>
 
 </div>
 

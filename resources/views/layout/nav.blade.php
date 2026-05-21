@@ -1,59 +1,131 @@
 
 <style>
-    #topbar::before {
-    content: "";
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    top: -100px;
-    left: -100px;
-
-    background: radial-gradient(circle, rgba(0,255,255,0.15), transparent);
-    filter: blur(100px);
-
-    pointer-events: none;
-    z-index: -1;
-}
+    
     /* 🔥 NAVBAR GLASS EFFECT */
     #topbar {
-        background: linear-gradient(90deg, #0f172a, #1e293b);
-        backdrop-filter: blur(15px);
-        border-bottom: 1px solid rgba(0,255,255,0.15);
+    background:
+        linear-gradient(
+            135deg,
+            #0f172a 0%,
+            #111827 45%,
+            #1e293b 100%
+        );
 
-        box-shadow: 
-            0 3px 6px rgba(0,0,0,0.3),
-            inset 0 0 20px rgba(0,255,255,0.05);
-            
-    }
+    backdrop-filter: blur(18px);
+
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+
+    box-shadow:
+        0 4px 20px rgba(0,0,0,0.35),
+        inset 0 -1px 0 rgba(255,255,255,0.04);
+}
 
     #topbar{
     position: relative;
     z-index: 100;
 }
 
-    /* 🔥 MENU BUTTON */
-    #dropdownBtn {
-        background: rgba(0,255,255,0.08);
-        color: #e54d3d;
-        border-radius: 10px;
-        padding: 6px 14px;
-        transition: 0.3s;
+@media (max-width:768px){
+
+    #topbar{
+
+        padding-left:12px !important;
+        padding-right:12px !important;
     }
 
-    #dropdownBtn:hover {
-        background: rgba(0,255,255,0.2);
-        box-shadow: 0 0 12px rgba(0,255,255,0.6);
+    .topbar-inner{
+
+        gap:10px !important;
     }
+
+    #dropdownBtn{
+
+        padding:8px 14px !important;
+
+        font-size:12px !important;
+    }
+}
+
+#sidebar-toggle-btn{
+
+    position: relative;
+
+    z-index: 99999;
+}
+
+#sidebar-toggle-btn i{
+
+    text-shadow: 0 0 12px rgba(255,255,255,0.35);
+}
+
+    /* 🔥 MENU BUTTON */
+    #dropdownBtn {
+
+    background: rgba(255,255,255,0.06);
+
+    color: #f8fafc;
+
+    border-radius: 14px;
+
+    padding: 10px 18px;
+
+    border: 1px solid rgba(255,255,255,0.08);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: .5px;
+
+    transition: all .3s ease;
+}
+
+#dropdownBtn:hover {
+
+    transform: translateY(-1px);
+
+    background: rgba(255,255,255,0.10);
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,0.25);
+
+}
 
     /* 🔥 MAIN DROPDOWN */
     #dropdownMenu {
-        background: rgba(15, 23, 42, 0.95) !important;
-        backdrop-filter: blur(18px);
-        border: 1px solid rgba(0,255,255,0.2);
-        border-radius: 12px;
 
-        animation: fadeSlide 0.25s ease;
-    }
+    background: rgba(15,23,42,0.96) !important;
+
+    backdrop-filter: blur(22px);
+
+    border: 1px solid rgba(255,255,255,0.06);
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,0.45);
+
+    padding: 10px;
+}
+
+#dropdownMenu li,
+#accountsMenu li,
+#reportsMenu li,
+#dailycollectionMenu li,
+#compliancesMenu li {
+
+    border-radius: 12px;
+
+    margin-bottom: 4px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition: all .25s ease;
+}
 
     /* 🔥 SUBMENUS */
     #accountsMenu,
@@ -84,11 +156,13 @@
     #reportsMenu li:hover,
     #dailycollectionMenu li:hover,
     #compliancesMenu li:hover {
-        background: rgba(0,255,255,0.12);
+        background: rgba(255,255,255,0.07);
         color: white;
 
         transform: translateX(5px);
-        box-shadow: 0 0 10px rgba(0,255,255,0.4);
+        box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.04),
+    0 8px 18px rgba(0,0,0,0.18);
     }
 
     /* 🔥 ICON GLOW */
@@ -156,31 +230,38 @@
 
 <style>
     .profile-avatar {
+
     border-radius: 50%;
-    border: 2px solid rgba(0,255,255,0.4);
-    box-shadow: 
-        0 0 10px rgba(0,255,255,0.6),
-        0 0 25px rgba(0,255,255,0.3),
-        inset 0 0 5px rgba(0,255,255,0.5);
-    transition: all 0.3s ease;
+
+    border: 2px solid rgba(255,255,255,0.12);
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,0.35);
+
+    transition: all .3s ease;
 }
 
 .profile-avatar:hover {
-    transform: scale(1.08);
-    box-shadow: 
-        0 0 15px rgba(0,255,255,1),
-        0 0 35px rgba(0,255,255,0.6);
-}
-.profile-dropdown {
-    background: rgba(10, 15, 25, 0.85);
-    backdrop-filter: blur(18px);
-    border: 1px solid rgba(0,255,255,0.2);
+
+    transform: translateY(-2px) scale(1.03);
 
     box-shadow:
-        0 10px 40px rgba(0,0,0,0.6),
-        0 0 30px rgba(0,255,255,0.15);
+        0 12px 25px rgba(0,0,0,0.45);
+}
+.profile-dropdown {
 
-    transition: all 0.3s ease;
+    background: rgba(15,23,42,0.97);
+
+    backdrop-filter: blur(24px);
+
+    border: 1px solid rgba(255,255,255,0.06);
+
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 18px 50px rgba(0,0,0,0.5);
 }
 .profile-dropdown .user-info {
     border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -225,6 +306,32 @@
     color: #ff6b6b;
     font-weight: 600;
 }
+.navbar-top {
+
+    position: sticky;
+
+    top: 0;
+
+    overflow: visible;
+}
+
+#topbar {
+
+    animation: navbarFade .4s ease;
+}
+
+@keyframes navbarFade {
+
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 </style>
 
 <nav class="navbar-top topbarfull z-20 gap-3 bg-n0 py-3 shadow-sm duration-300 border-b border-n0 dark:border-n700 dark:bg-bg4 xl:py-4 xxxl:py-6" id="topbar" style="background: aliceblue;">
@@ -238,23 +345,42 @@
                     class="logo-full2 hidden lg:block" />
             </a>
 
-           <!-- MOBILE SIDEBAR BUTTON -->
-            <div class="relative lg:hidden">
+            <!-- MOBILE SIDEBAR BUTTON -->
+            <div class="relative lg:hidden shrink-0 z-[9999]">
+
                 <button
                     id="sidebar-toggle-btn"
-                    class="flex h-10 w-10 cursor-pointer items-center justify-center
-                    rounded-full border border-n30 bg-primary text-white
-                    dark:border-n500 md:h-12 md:w-12"
+
+                    class="mobile-toggle-btn
+                    flex
+                    h-11
+                    w-11
+                    cursor-pointer
+                    items-center
+                    justify-center
+                    rounded-2xl
+                    shrink-0
+                    transition-all
+                    duration-300
+                    md:h-12
+                    md:w-12"
                 >
-                    <i class="las la-bars text-xl"></i>
+
+                    <i class="las la-bars"></i>
+
                 </button>
+
             </div>
-            <!-- Select layout -->
 
             <!-- Dropdown Trigger -->
-            <div class="whitespace-norwrap  relative inline-block grow items-center gap-2 xxl:gap-4 ">
+            <div class="whitespace-nowrap relative inline-block grow min-w-0 items-center gap-2 xxl:gap-4">
                 <!-- Main button -->
-                <button id="dropdownBtn" class="btn-outline uppercase py-2 px-1 transition" style="box-shadow: 0px 5px 15px 15px rgba(0, 0, 0, 0.2); background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
+                <button id="dropdownBtn" class="btn-outline uppercase py-2 px-1 transition" style="
+                    background: linear-gradient(135deg,#f59e0b,#d97706) !important;
+                    color:white;
+                    border:1px solid rgba(255,255,255,0.08);
+                    box-shadow:0 6px 20px rgba(245,158,11,0.35);
+                ">
                     Menu
                     <i id="dropdownArrow" class="las la-angle-down ml-2 transition-transform duration-200"></i>
                 </button>
@@ -559,7 +685,10 @@
                             <a href="#"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                                 class="flex items-center gap-3 px-5 py-3 text-red-500 hover:bg-red-500 hover:text-white transition"
-                                style="background: linear-gradient(90deg, #e1d315, #e30f0f) !important; color: black;">
+                                style="
+background:linear-gradient(135deg,#ef4444,#dc2626);
+color:white;
+">
                                 <i class="las la-sign-out-alt text-lg"></i>
                                 Logout
                             </a>

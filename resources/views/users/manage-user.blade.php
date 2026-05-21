@@ -80,17 +80,14 @@
 
 @section('content')
 
-    <!-- Latest Transactions -->
     <div class="box col-span-12 lg:col-span-6 bank-page-animate">
 
-        <x-searchbox />
-
-        <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6"
-            style="flex-direction: row-reverse;">
-            <x-alert />
+        <div class="mb-3">
+            <x-searchbox />
         </div>
 
-        <div class="overflow-x-auto table-premium">
+        <!-- TABLE -->
+        <div class="table-wrapper w-full overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm table-premium">
 
             <table class="select-all-table" id="transactionTable1">
 
