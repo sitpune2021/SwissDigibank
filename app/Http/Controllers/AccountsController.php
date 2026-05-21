@@ -50,15 +50,43 @@ class AccountsController extends Controller
         }
 
         try {
+
+            $search = $request->search;
+
             $Accounts = Account::with(['members', 'users', 'minor', 'scheme', 'address'])
+
+                ->when($search, function ($query) use ($search) {
+
+                    $query->where('account_no', 'like', "%{$search}%")
+                        ->orWhere('account_type', 'like', "%{$search}%")
+
+                        ->orWhereHas('scheme', function ($q) use ($search) {
+                            $q->where('scheme_name', 'like', "%{$search}%");
+                        })
+
+                        ->orWhereHas('members', function ($q) use ($search) {
+                            $q->where('member_info_first_name', 'like', "%{$search}%")
+                            ->orWhere('member_info_last_name', 'like', "%{$search}%")
+                            ->orWhere('member_no', 'like', "%{$search}%");
+                        });
+
+                })
+
                 ->orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->paginate(20)
+                ->withQueryString();
 
             $Transactions = MembershipChargeTransaction::orderBy('created_at', 'desc')->get();
 
-            return view('saving-current-ac.accounts.index', compact('Accounts', 'Transactions'));
+            return view('saving-current-ac.accounts.index', compact(
+                'Accounts',
+                'Transactions'
+            ));
+
         } catch (\Exception $e) {
+
             abort(404, 'Data not found.');
+
         }
     }
 

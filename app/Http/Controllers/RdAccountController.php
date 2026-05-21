@@ -29,18 +29,66 @@ use Illuminate\Validation\ValidationException;
 
 class RdAccountController extends Controller
 {
-    public function index()
+   
+    public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('mds-rd-accounts.rd-account-index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+        }
+
+        $search = $request->search;
 
         $rdAccounts = RdAccount::with(['member', 'branch', 'minor', 'scheme'])
+
+            ->when($search, function ($query) use ($search) {
+
+                $query->where('rd_no', 'like', "%{$search}%")
+
+                    ->orWhere('rd_amount', 'like', "%{$search}%")
+
+                    ->orWhereHas('member', function ($q) use ($search) {
+
+                        $q->where('member_no', 'like', "%{$search}%")
+                            ->orWhere('member_info_first_name', 'like', "%{$search}%")
+                            ->orWhere('member_info_middle_name', 'like', "%{$search}%")
+                            ->orWhere('member_info_last_name', 'like', "%{$search}%");
+                    })
+
+                    ->orWhereHas('branch', function ($q) use ($search) {
+
+                        $q->where('branch_name', 'like', "%{$search}%");
+                    })
+
+                    ->orWhereHas('scheme', function ($q) use ($search) {
+
+                        $q->where('scheme_name', 'like', "%{$search}%");
+                    });
+            })
+
             ->latest()
-            ->paginate(10);
+            ->paginate(20)
+            ->withQueryString();
 
         return view('mds_rd_accounts.mds-rd-account.index', compact('rdAccounts'));
     }
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('mds-rd-accounts.rd-account-index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $members = Member::select(
             'id',
             'member_info_first_name',
@@ -272,7 +320,6 @@ class RdAccountController extends Controller
         }
     }
 
-
     private function calculateRdEstimate(
         $monthlyInstallment,
         $tenureValue,
@@ -328,7 +375,6 @@ class RdAccountController extends Controller
             'tenure_months'   => $tenureMonths,
         ];
     }
-
 
     private function computeRdMaturity($rdAccount, $scheme): array
     {
@@ -470,10 +516,18 @@ class RdAccountController extends Controller
         }
     }
 
-
-
     public function show($id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('rd-accounts.show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $rdAccount = RdAccount::with(['Scheme', 'member.address', 'branch', 'minor', 'nominee', 'rdTransactions' => function ($q) {
             $q->whereIn('approve_status', ['Pending', 'Approved'])
                 ->orderBy('t_date', 'desc')
@@ -496,7 +550,6 @@ class RdAccountController extends Controller
 
         return view('mds_rd_accounts.mds-rd-account.view.view-rd-account', compact('rdAccount', 'documents', 'passbooks', 'balance', 'branches', 'calc', 'receivedAmount'));
     }
-
 
     private function processRDInstallments($rdAccount, $scheme, $transactions = null)
     {
@@ -717,36 +770,6 @@ class RdAccountController extends Controller
         return $balances;
     }
 
-    //     public static function getAccountBalance($rd_account_ids)
-    // {
-    //     if (!is_array($rd_account_ids)) {
-    //         $rd_account_ids = [$rd_account_ids];
-    //     }
-
-    //     $transactions = RdTransactions::whereIn('rd_account_id', $rd_account_ids)
-    //         ->where('approve_status', 'approved')
-    //         ->where('reverse_status', 0)
-    //         ->get();
-
-    //     $balances = [];
-
-    //     foreach ($transactions->groupBy('rd_account_id') as $rd_account_id => $group) {
-
-    //         $credit = $group->where('transaction_type', 'credit')->sum(function ($t) {
-    //             return $t->amount_received ?? $t->amount;
-    //         });
-
-    //         $debit = $group->where('transaction_type', 'debit')->sum(function ($t) {
-    //             return $t->amount_received ?? $t->amount;
-    //         });
-
-    //         $balances[$rd_account_id] = $credit - $debit;
-    //     }
-
-    //     return $balances;
-    // }
-
-
     public function installmentReceipt($id)
     {
         $rdaccount = RdTransactions::with([
@@ -873,6 +896,7 @@ class RdAccountController extends Controller
         $pdf = Pdf::loadView('mds_rd_accounts.mds-rd-account.view.print-installments', $data);;
         return $pdf->stream('installment-receipt.pdf');
     }
+
     public function instalmlmentReceipt($id)
     {
 
@@ -905,7 +929,6 @@ class RdAccountController extends Controller
         return $pdf->stream('payment-receipt-' . $id . '.pdf');
     }
 
-
     public function showDepositForm($id)
     {
         $rdAccount = RdAccount::with('member', 'scheme', 'rdTransactions')->findOrFail($id);
@@ -921,7 +944,6 @@ class RdAccountController extends Controller
 
         return view('mds_rd_accounts.mds-rd-account.view.deposit-money', compact('rdAccount', 'balance', 'receivedAmount'));
     }
-
 
     public function storeDeposit(Request $request, $rdAccountId)
     {
@@ -1040,7 +1062,6 @@ class RdAccountController extends Controller
             return back()->withErrors("Something went wrong while processing the deposit.");
         }
     }
-
 
     public function showWithdrawForm($id)
     {
@@ -1323,78 +1344,6 @@ class RdAccountController extends Controller
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
-    // Show Add Nominee Form
-    // public function showAddNomineeForm($id)
-    // {
-    //     $rdAccount = RdAccount::with(['member', 'scheme', 'minor', 'nominee'])
-    //         ->findOrFail($id);
-
-    //     return view('mds_rd_accounts.mds-rd-account.view.account-detail.add-nominee', compact('rdAccount'));
-    // }
-
-    // public function saveNominee(Request $request, $id)
-    // {
-    //     try {
-    //         $rdAccount = RdAccount::with('nominee')->findOrFail($id);
-
-    //         $request->validate([
-    //             'nominees'            => 'required|array|min:1',
-    //             'nominees.*.name'     => 'required|string|max:255',
-    //             'nominees.*.relation' => 'required|string|max:255',
-    //             'nominees.*.address'  => 'required|string|max:255',
-    //         ]);
-
-    //         $existingNominees = $rdAccount->nominee;
-
-    //         foreach ($request->nominees as $index => $nomineeData) {
-    //             // If nominee exists at this index → update
-    //             if (isset($existingNominees[$index])) {
-    //                 $existingNominees[$index]->update([
-    //                     'nominee_name'     => $nomineeData['name'],
-    //                     'nominee_relation' => $nomineeData['relation'],
-    //                     'nominee_address'  => $nomineeData['address'],
-    //                 ]);
-
-    //                 Log::info('Nominee updated', [
-    //                     'rd_account_id' => $rdAccount->id,
-    //                     'nominee_id'    => $existingNominees[$index]->id,
-    //                     'updated_data'  => $nomineeData,
-    //                     'user_id'       => Auth::id() ?? null,
-    //                 ]);
-    //             } else {
-    //                 // Else create a new nominee
-    //                 $newNominee = $rdAccount->nominee()->create([
-    //                     'nominee_name'     => $nomineeData['name'],
-    //                     'nominee_relation' => $nomineeData['relation'],
-    //                     'nominee_address'  => $nomineeData['address'],
-    //                 ]);
-
-    //                 Log::info('Nominee created', [
-    //                     'rd_account_id' => $rdAccount->id,
-    //                     'nominee_id'    => $newNominee->id,
-    //                     'created_data'  => $nomineeData,
-    //                     'user_id'       => Auth::id() ?? null,
-    //                 ]);
-    //             }
-    //         }
-
-    //         return redirect()->route('rd-accounts.show', $rdAccount->id)
-    //             ->with('success', 'Nominees saved successfully.');
-    //     } catch (ValidationException $e) {
-    //         throw $e;
-    //     } catch (\Exception $e) {
-    //         Log::error('Error saving nominees', [
-    //             'rd_account_id' => $id,
-    //             'error_message' => $e->getMessage(),
-    //             'trace'         => $e->getTraceAsString(),
-    //             'user_id'       => Auth::id() ?? null,
-    //         ]);
-
-    //         return redirect()->route('rd-accounts.show', $id)
-    //             ->with('error', 'An error occurred while saving nominees. Please try again.');
-    //     }
-    // }
-
 
     // Show Add Nominee Form
     public function showAddNomineeForm($id)
@@ -1404,6 +1353,7 @@ class RdAccountController extends Controller
 
         return view('mds_rd_accounts.mds-rd-account.view.account-detail.add-nominee', compact('rdAccount'));
     }
+
     public function showMinorForm($id)
     {
         $rdAccount = RdAccount::with(['member', 'scheme', 'minor', 'branch'])->findOrFail($id);
@@ -1533,6 +1483,7 @@ class RdAccountController extends Controller
 
         return view('mds_rd_accounts.mds-rd-account.view.print-documents.rd-bond-view', $data);
     }
+
     public function rdBondForm($id)
     {
         // Load RD account with required relations
@@ -1576,7 +1527,6 @@ class RdAccountController extends Controller
 
         return view('mds_rd_accounts.mds-rd-account.view.print-documents.accountopeningformview', compact('account'));
     }
-
 
     public function rdOpeningForm($id)
     {
@@ -1633,6 +1583,7 @@ class RdAccountController extends Controller
 
         return view('mds_rd_accounts.mds-rd-account.view.print-documents.closingformView', $data);
     }
+
     public function rdClosingForm($id)
     {
         $rdAccount = RdAccount::with(['member.branch'])->findOrFail($id);
@@ -1669,4 +1620,6 @@ class RdAccountController extends Controller
 
         return $pdf->download('rd-closing-form-' . $rdAccount->id . '.pdf');
     }
+
+    
 }

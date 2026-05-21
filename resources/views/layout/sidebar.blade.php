@@ -31,7 +31,7 @@
     // Final logo path with fallback
     $logoPath = $sidebarLogo 
         ? asset('storage/' . $sidebarLogo->image_path)
-        :  asset('assets/images/SIT_LOGO.png');
+        :  asset('assets/images/SIT_LOGO1.png');
 
 @endphp
 
@@ -67,55 +67,170 @@
     scroll-behavior: smooth;
 }
     /* 🔥 HOVER EFFECT */
-.menu-btn:hover {
-    background: rgba(59,130,246,0.15) !important;
-    color: #fff !important;
-    transform: translateX(6px);
-    box-shadow: 0 0 12px rgba(59,130,246,0.6);
+.menu-btn:hover{
+
+    background:
+    linear-gradient(
+    90deg,
+    rgba(37,99,235,0.22),
+    rgba(6,182,212,0.16)
+    ) !important;
+
+    transform:translateX(5px);
+
+    border-color:rgba(59,130,246,0.25);
+
+    box-shadow:
+    0 10px 25px rgba(2,6,23,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+
+    color:#fff !important;
 }
 
 /* 🔥 ACTIVE MENU */
-.menu-btn.active {
-    /* background: linear-gradient(90deg,#e54d3d,#06b6d4) !important; */
-    background: linear-gradient(90deg,#e54d3d,#d4c406) !important;
-    color: #fff !important;
-    box-shadow: 0 0 15px rgba(59,130,246,0.8);
+.menu-btn.active{
+
+    background:
+    linear-gradient(
+    90deg,
+    #0a0a0a,
+    #0891b2
+    ) !important;
+
+    color:#fff !important;
+
+    border-color:rgba(255,255,255,0.10);
+
+    box-shadow:
+    0 12px 24px rgba(37,99,235,0.30),
+    0 0 0 1px rgba(255,255,255,0.04);
+
 }
 
 /* 🔥 LEFT ACTIVE LINE */
-.menu-li.active::before {
-    content: "";
-    position: absolute;
-    left: -8px;
-    top: 6px;
-    height: 75%;
-    width: 3px;
-    background: linear-gradient(#3b82f6,#06b6d4);
-    border-radius: 5px;
-    box-shadow: 0 0 8px rgba(59,130,246,0.8);
+.menu-li.active::before{
+    content:"";
+    position:absolute;
+
+    left:-10px;
+    top:10%;
+
+    width:4px;
+    height:80%;
+
+    border-radius:20px;
+
+    background:
+    linear-gradient(
+    180deg,
+    #60a5fa,
+    #22d3ee
+    );
+
+    box-shadow:
+    0 0 14px rgba(59,130,246,0.8);
+}
+
+.menu-icon{
+    width:34px;
+    height:34px;
+
+    border-radius:10px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(255,255,255,0.04);
+
+    border:1px solid rgba(255,255,255,0.05);
+
+    transition:.3s;
+}
+
+.menu-btn:hover .menu-icon,
+.menu-btn.active .menu-icon{
+
+    background:rgba(255,255,255,0.12);
+
+    transform:scale(1.06);
+
+    box-shadow:0 0 15px rgba(255,255,255,0.08);
 }
 
 /* 🔥 SUBMENU STYLE */
-.submenu-link {
-    color: #94a3b8;
-    border-radius: 8px;
-    padding: 6px 10px;
-    transition: 0.25s;
+.submenu-link{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    color:#94a3b8;
+
+    padding:10px 14px !important;
+
+    margin:4px 0;
+
+    border-radius:12px;
+
+    transition:all .25s ease;
 }
 
 /* 🔥 SUBMENU HOVER */
-.submenu-link:hover {
-    color: #fff;
-    background: rgba(59,130,246,0.12);
-    transform: translateX(6px);
+.submenu-link:hover{
+
+    color:#fff;
+
+    background:
+    linear-gradient(
+    90deg,
+    rgba(59,130,246,0.15),
+    rgba(6,182,212,0.08)
+    );
+
+    transform:translateX(4px);
+}
+.menu-ul{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.menu-container::-webkit-scrollbar{
+    width:6px;
+}
+
+.menu-container::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.menu-container::-webkit-scrollbar-thumb{
+    background:rgba(148,163,184,0.25);
+    border-radius:20px;
+}
+
+.menu-container::-webkit-scrollbar-thumb:hover{
+    background:rgba(59,130,246,0.5);
 }
 
 /* 🔥 ICON GLOW */
 .menu-btn:hover i {
     text-shadow: 0 0 8px #3b82f6;
 }
-.menu-btn {
-    background: transparent !important;
+.menu-btn{
+    position:relative;
+    width:100%;
+    padding:12px 14px !important;
+
+    border-radius:16px !important;
+
+    background:rgba(255,255,255,0.03) !important;
+
+    border:1px solid rgba(255,255,255,0.04);
+
+    transition:all .28s ease;
+
+    overflow:hidden;
 }
 .menu-li {
     background: transparent !important;
@@ -233,19 +348,54 @@
         padding:8px 10px !important;
     }
 }
+.submenu{
+    margin-top:8px;
+
+    padding:8px;
+
+    border-radius:16px;
+
+    background:
+    rgba(255,255,255,0.02);
+
+    border:
+    1px solid rgba(255,255,255,0.03);
+}
 </style>
 
 <!-- <aside id="sidebar" class="sidebar mobile-sidebar" style="background: linear-gradient(180deg,#0f172a,#020617); border-right:1px solid rgba(59,130,246,0.25); box-shadow:0 0 30px rgba(59,130,246,0.2);"> -->
-<aside id="sidebar" class="sidebar mobile-sidebar" style="background: linear-gradient(180deg,#111112, #0b0b0c); border-right:1px solid rgba(59,130,246,0.25); box-shadow:0 0 30px rgba(59,130,246,0.2);">
+<aside id="sidebar" class="sidebar mobile-sidebar"
+    style="
+    background:
+    linear-gradient(180deg,#071028 0%, #0b1736 45%, #111827 100%);
+    border-right:1px solid rgba(148,163,184,0.15);
+    box-shadow:
+    0 0 40px rgba(15,23,42,0.9),
+    0 0 18px rgba(59,130,246,0.12);
+    backdrop-filter: blur(16px);
+    ">
     
     <div class="sidebar-inner relative" >
         <div class="logo-column">
             
-            <div class="logo-container" style="height: 130px; margin-bottom: 20px;">
+            <div class="logo-container"
+                style="
+                height:140px;
+                margin-bottom:18px;
+                padding:16px 12px;
+                border-bottom:1px solid rgba(255,255,255,0.06);
+                background:linear-gradient(180deg,rgba(255,255,255,0.04),transparent);
+            ">
                 <div class="logo-inner">                   
                     <a href="{{ route('index1') }}" class="logo-wrapper">
                         <!-- Full Logo -->
-                        <img src="{{ $logoPath }} " width="174" height="50" class="logo-full" alt="logo" style="width: 225px; height: 100px;" />
+                        <img src="{{ $logoPath }} " width="174" height="50" class="logo-full" alt="logo" style="
+                            width:225px;
+                            height:100px;
+                            filter:
+                            drop-shadow(0 0 10px rgba(255,255,255,0.08))
+                            drop-shadow(0 0 18px rgba(59,130,246,0.20));
+                        " />
 
                         <!-- Icon Logo -->
                         <img src="{{ $logoPath }}" width="37" height="36" class="logo-icon hidden" alt="logo" />
@@ -398,7 +548,11 @@
                                     <span class="menu-icon ">
                                         <i class="{{ $item->icon }}"></i>
                                     </span>
-                                    <span class="menu-title font-medium" style="font-size: 14px !important ;">
+                                    <span class="menu-title font-semibold tracking-wide"
+                                        style="
+                                        font-size:13.5px !important;
+                                        letter-spacing:0.3px;
+                                    ">
                                         {{ $item->title }}
                                     </span>
                                 </span>

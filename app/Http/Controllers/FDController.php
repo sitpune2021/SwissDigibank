@@ -34,6 +34,15 @@ class FDController extends Controller
 
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('fd-mis-schemes.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
 
         $search = $request->input('search');
 
@@ -52,6 +61,16 @@ class FDController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('fd-mis-schemes.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         return view('fd_mis_account.fd_scheme.add-scheme');
     }
 
@@ -156,6 +175,16 @@ class FDController extends Controller
 
     public function show(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('fd-mis-schemes.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $fdScheme = FDScheme::with('fdslabs')->findOrFail($id);
         foreach ($fdScheme->fdslabs as $slab) {
             if (!empty($slab->day_from) && !empty($slab->day_to)) {
@@ -171,6 +200,16 @@ class FDController extends Controller
 
     public function edit(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('fd-mis-schemes.index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $fdScheme = FDScheme::with('fdslabs')->findOrFail($id);
         return view('fd_mis_account.fd_scheme.add-scheme', compact('fdScheme'));
     }
@@ -288,17 +327,77 @@ class FDController extends Controller
         }
     }
 
-    public function fd_index()
+    public function fd_index(Request $request)
     {
-        $accounts = FdAccount::with('member', 'branch') // eager load relations if needed
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('fd-mis-schemes.fd_index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
+        $search = $request->search;
+
+        $accounts = FdAccount::with(['member', 'branch', 'fdscheme'])
+
+            ->when($search, function ($query) use ($search) {
+
+                $query->where('fd_no', 'like', "%{$search}%")
+                
+                    ->orWhere('fd_amount', 'like', "%{$search}%")
+
+                    ->orWhere('interest_payout_type', 'like', "%{$search}%")
+
+                    ->orWhereHas('member', function ($q) use ($search) {
+
+                        $q->where('member_no', 'like', "%{$search}%")
+                        
+                            ->orWhere('member_info_first_name', 'like', "%{$search}%")
+                            
+                            ->orWhere('member_info_middle_name', 'like', "%{$search}%")
+                            
+                            ->orWhere('member_info_last_name', 'like', "%{$search}%");
+
+                    })
+
+                    ->orWhereHas('branch', function ($q) use ($search) {
+
+                        $q->where('branch_name', 'like', "%{$search}%");
+
+                    })
+
+                    ->orWhereHas('fdscheme', function ($q) use ($search) {
+
+                        $q->where('scheme_name', 'like', "%{$search}%");
+
+                    });
+
+            })
+
             ->orderBy('id', 'desc')
-            ->paginate(10);
+
+            ->paginate(10)
+
+            ->withQueryString();
 
         return view('fd_mis_account.fd-account.index', compact('accounts'));
     }
 
     public function fd_create()
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('fd-mis-schemes.fd_index', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $members = Member::all();
         $schemes = FDScheme::all();
         $savings = Account::with('members')->get();
@@ -742,6 +841,7 @@ class FDController extends Controller
             'netMaturityAmount'  => round($netMaturityAmount, 2),
         ];
     }
+
     public function updateBranch(Request $request, $id)
     {
         $request->validate([
@@ -757,6 +857,16 @@ class FDController extends Controller
 
     public function fd_show(string $id)
     {
+        $user = auth()->user();
+
+        $permissions = $user->rolePermission->permissions ?? [];
+
+        if ($user->role_id != 1 && !in_array('fd-mis-schemes.fd_show', $permissions)) {
+
+            abort(403, 'Permission Denied');
+
+        }
+
         $fdAccount = FdAccount::with([
             'member.address',
             'branch',
@@ -812,36 +922,38 @@ class FDController extends Controller
             $calculation
         ));
     }
-public function getMemberSavings($member_id)
-{
-    try {
-        $savings = Account::where('member_id', $member_id)
-            ->where('account_type', 'SAVING')
-        ->where('account_status', 1)
-        ->orwhere('approve_status', 1)
-        ->get();
 
-        $data = $savings->map(function ($acc) {
-            $balance = AccountsTransactionsHelper::getAccountBalacec($acc->id);
+    public function getMemberSavings($member_id)
+    {
+        try {
+            $savings = Account::where('member_id', $member_id)
+                ->where('account_type', 'SAVING')
+            ->where('account_status', 1)
+            ->orwhere('approve_status', 1)
+            ->get();
 
-            return [
-                'id' => $acc->id,
-                'account_no' => $acc->account_no,
-                'balance' => $balance['total_balance'] ?? 0
-            ];
-        });
+            $data = $savings->map(function ($acc) {
+                $balance = AccountsTransactionsHelper::getAccountBalacec($acc->id);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $data
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage()
-        ], 500);
+                return [
+                    'id' => $acc->id,
+                    'account_no' => $acc->account_no,
+                    'balance' => $balance['total_balance'] ?? 0
+                ];
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
-}
+
     function processPeriod(
         $results,
         $periodStart,
@@ -1871,7 +1983,6 @@ public function getMemberSavings($member_id)
         return $pdf->download('fd-closing-form-' . $fdAccount->id . '.pdf');
     }
 
-
     public function fdForeClosingFormview($id)
     {
         $fdAccount = FdAccount::with(['member', 'fdScheme.fdslabs'])
@@ -2125,7 +2236,6 @@ public function getMemberSavings($member_id)
             ->with('success', 'FD foreclosure request raised successfully.');
     }
 
-
     public function removeAccount($id)
     {
         $fdAccount = FdAccount::findOrFail($id);
@@ -2135,7 +2245,6 @@ public function getMemberSavings($member_id)
             compact('fdAccount')
         );
     }
-
 
     public function confirmRemoveAccount(Request $request, $id)
     {
@@ -2167,4 +2276,6 @@ public function getMemberSavings($member_id)
             'days' => $days
         ];
     }
+
+    
 }

@@ -87,39 +87,12 @@
 
 <div class="box col-span-12 lg:col-span-6 bank-page-animate">
 
-    <div class="flex flex-wrap gap-4 justify-between items-center bb-dashed mb-4 pb-4 lg:mb-6 lg:pb-6">
-        
-        <form method="GET" action="{{ url()->current() }}" class="flex items-center gap-2 mb-4">
-          
-        </form>
-
-        <div class="flex items-center gap-4 flex-wrap grow sm:justify-end">
-            <form action="{{ route('shareholding.index') }}"
-                class="bg-primary/5 dark:bg-bg3 border border-n30 dark:border-n500 flex gap-3 rounded-[30px] focus-within:border-primary p-1 items-center justify-between min-w-[200px] xxl:max-w-[319px] ">
-                <input type="text" name="search" id="transaction-search" placeholder="Search"
-                    value="{{ request('search') }}"
-                    class="bg-transparent  border-none text-sm ltr:pl-4 rtl:pr-4 py-1 w-full" />
-                <button
-                    class="bg-primary shrink-0 rounded-full w-7 h-7 lg:w-8 lg:h-8 flex justify-center items-center text-n0">
-                    <i class="las la-search text-lg"></i>
-                </button>
-                @if (request('search'))
-                <a href="{{ route('shareholding.index') }}"
-                    class="w-7 h-7 bg-grey-500 hover:bg-grey-900 text-dark rounded-full flex items-center justify-center transition duration-200"
-                    title="Clear Search">
-                    <i class="las la-times text-lg"></i>
-                </a>
-                @endif
-            </form>
-        </div>
-
+    <div class="mb-3">
+        <x-searchbox />
     </div>
 
-    <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
-        <x-alert />
-    </div>
-
-    <div class="overflow-x-auto pb-4 lg:pb-6 table-premium">
+    <!-- TABLE -->
+    <div class="table-wrapper w-full overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm table-premium">
 
         <table class="w-full whitespace-nowrap overflow-x-auto  select-all-table " id="transactionTable1">
             

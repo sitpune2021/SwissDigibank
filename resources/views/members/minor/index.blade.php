@@ -87,266 +87,265 @@
 
 @section('content')
 
-    <div class="box col-span-12 lg:col-span-6 bank-page-animate">
+<div class="box col-span-12 lg:col-span-6 bank-page-animate">
 
-            <x-searchbox />
+    <div class="mb-3">
+        <x-searchbox />
+    </div>
 
-            <div class="flex flex-wrap gap-4 justify-between mb-4 pb-4 lg:mb-6 lg:pb-6" style="flex-direction: row-reverse;">
-                <x-alert />
-            </div>
+    <!-- TABLE -->
+    <div class="table-wrapper w-full overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm table-premium">
 
 
-            <div class="overflow-x-auto pb-4 lg:pb-6 table-premium">
+        <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
 
-                <table class="w-full whitespace-nowrap select-all-table" id="transactionTable1">
+            <thead
+                class="bg-gradient-to-r from-slate-100 via-cyan-50 to-blue-50
+                dark:from-bg3 dark:via-bg4 dark:to-bg3
+                border-y border-slate-200 dark:border-white/10"
+            >
+                <tr>
 
-                    <thead
-                        class="bg-gradient-to-r from-slate-100 via-cyan-50 to-blue-50
-                        dark:from-bg3 dark:via-bg4 dark:to-bg3
-                        border-y border-slate-200 dark:border-white/10"
-                    >
-                        <tr>
+                    <!-- SR NO -->
+                    <th class="text-start !py-4 px-4 sm:px-6 min-w-[120px]">
+                        <div class="flex items-center gap-2 text-slate-700 dark:text-white">
 
-                            <!-- SR NO -->
-                            <th class="text-start !py-4 px-4 sm:px-6 min-w-[120px]">
-                                <div class="flex items-center gap-2 text-slate-700 dark:text-white">
+                            <!-- ICON BOX -->
+                            <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                bg-indigo-100 dark:bg-indigo-500/10">
 
-                                    <!-- ICON BOX -->
-                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center
-                                        bg-indigo-100 dark:bg-indigo-500/10">
+                                <i class="las la-hashtag text-indigo-600 dark:text-indigo-400 text-lg"></i>
 
-                                        <i class="las la-hashtag text-indigo-600 dark:text-indigo-400 text-lg"></i>
+                            </div>
 
-                                    </div>
+                            <!-- TEXT -->
+                            <div>
 
-                                    <!-- TEXT -->
-                                    <div>
+                                <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                    SR No
+                                </h6>
 
-                                        <h6 class="text-xs sm:text-sm font-extrabold uppercase">
-                                            SR No
-                                        </h6>
+                            </div>
 
-                                    </div>
+                        </div>
+                    </th>
 
-                                </div>
-                            </th>
+                    <!-- BRANCH -->
+                    <th class="text-start !py-4 px-4 sm:px-6 min-w-[160px]">
+                        <div class="flex items-center gap-2 text-slate-700 dark:text-white">
 
-                            <!-- BRANCH -->
-                            <th class="text-start !py-4 px-4 sm:px-6 min-w-[160px]">
-                                <div class="flex items-center gap-2 text-slate-700 dark:text-white">
+                            <!-- ICON -->
+                            <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                bg-cyan-100 dark:bg-cyan-500/10">
 
-                                    <!-- ICON -->
-                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center
-                                        bg-cyan-100 dark:bg-cyan-500/10">
+                                <i class="las la-code-branch text-cyan-600 dark:text-cyan-400 text-lg"></i>
 
-                                        <i class="las la-code-branch text-cyan-600 dark:text-cyan-400 text-lg"></i>
+                            </div>
 
-                                    </div>
+                            <!-- TEXT -->
+                            <div>
 
-                                    <!-- TEXT -->
-                                    <div>
+                                <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                    Branch
+                                </h6>
 
-                                        <h6 class="text-xs sm:text-sm font-extrabold uppercase">
-                                            Branch
-                                        </h6>
+                            </div>
 
-                                    </div>
+                        </div>
+                    </th>
 
-                                </div>
-                            </th>
+                    <!-- MINOR NAME -->
+                    <th class="text-start !py-4 px-4 sm:px-6 min-w-[190px]">
+                        <div class="flex items-center gap-2 text-slate-700 dark:text-white">
 
-                            <!-- MINOR NAME -->
-                            <th class="text-start !py-4 px-4 sm:px-6 min-w-[190px]">
-                                <div class="flex items-center gap-2 text-slate-700 dark:text-white">
+                            <!-- ICON -->
+                            <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                bg-blue-100 dark:bg-blue-500/10">
 
-                                    <!-- ICON -->
-                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center
-                                        bg-blue-100 dark:bg-blue-500/10">
+                                <i class="las la-child text-blue-600 dark:text-blue-400 text-lg"></i>
 
-                                        <i class="las la-child text-blue-600 dark:text-blue-400 text-lg"></i>
+                            </div>
 
-                                    </div>
+                            <!-- TEXT -->
+                            <div>
 
-                                    <!-- TEXT -->
-                                    <div>
+                                <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                    Minor Name
+                                </h6>
 
-                                        <h6 class="text-xs sm:text-sm font-extrabold uppercase">
-                                            Minor Name
-                                        </h6>
+                            </div>
 
-                                    </div>
+                        </div>
+                    </th>
 
-                                </div>
-                            </th>
+                    <!-- CUSTOMER NAME -->
+                    <th class="text-start !py-4 px-4 sm:px-6 min-w-[220px]">
+                        <div class="flex items-center gap-2 text-slate-700 dark:text-white">
 
-                            <!-- CUSTOMER NAME -->
-                            <th class="text-start !py-4 px-4 sm:px-6 min-w-[220px]">
-                                <div class="flex items-center gap-2 text-slate-700 dark:text-white">
+                            <!-- ICON -->
+                            <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                bg-violet-100 dark:bg-violet-500/10">
 
-                                    <!-- ICON -->
-                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center
-                                        bg-violet-100 dark:bg-violet-500/10">
+                                <i class="las la-user-tie text-violet-600 dark:text-violet-400 text-lg"></i>
 
-                                        <i class="las la-user-tie text-violet-600 dark:text-violet-400 text-lg"></i>
+                            </div>
 
-                                    </div>
+                            <!-- TEXT -->
+                            <div>
 
-                                    <!-- TEXT -->
-                                    <div>
+                                <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                    Customer Name
+                                </h6>
 
-                                        <h6 class="text-xs sm:text-sm font-extrabold uppercase">
-                                            Customer Name
-                                        </h6>
+                            </div>
 
-                                    </div>
+                        </div>
+                    </th>
 
-                                </div>
-                            </th>
+                    <!-- ENROLLMENT DATE -->
+                    <th class="text-start !py-4 px-4 sm:px-6 min-w-[190px]">
+                        <div class="flex items-center gap-2 text-slate-700 dark:text-white">
 
-                            <!-- ENROLLMENT DATE -->
-                            <th class="text-start !py-4 px-4 sm:px-6 min-w-[190px]">
-                                <div class="flex items-center gap-2 text-slate-700 dark:text-white">
+                            <!-- ICON -->
+                            <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                bg-emerald-100 dark:bg-emerald-500/10">
 
-                                    <!-- ICON -->
-                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center
-                                        bg-emerald-100 dark:bg-emerald-500/10">
+                                <i class="las la-calendar-check text-emerald-600 dark:text-emerald-400 text-lg"></i>
 
-                                        <i class="las la-calendar-check text-emerald-600 dark:text-emerald-400 text-lg"></i>
+                            </div>
 
-                                    </div>
+                            <!-- TEXT -->
+                            <div>
 
-                                    <!-- TEXT -->
-                                    <div>
+                                <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                    Enrollment Date
+                                </h6>
 
-                                        <h6 class="text-xs sm:text-sm font-extrabold uppercase">
-                                            Enrollment Date
-                                        </h6>
+                            </div>
 
-                                    </div>
+                        </div>
+                    </th>
 
-                                </div>
-                            </th>
+                    <!-- ACTION -->
+                    <th class="text-center !py-4 px-4 min-w-[130px]">
+                        <div class="flex items-center justify-center gap-2 text-slate-700 dark:text-white">
 
-                            <!-- ACTION -->
-                            <th class="text-center !py-4 px-4 min-w-[130px]">
-                                <div class="flex items-center justify-center gap-2 text-slate-700 dark:text-white">
+                            <!-- ICON -->
+                            <div class="w-8 h-8 rounded-xl flex items-center justify-center
+                                bg-amber-100 dark:bg-amber-500/10">
 
-                                    <!-- ICON -->
-                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center
-                                        bg-amber-100 dark:bg-amber-500/10">
+                                <i class="las la-cogs text-amber-600 dark:text-amber-400 text-lg"></i>
 
-                                        <i class="las la-cogs text-amber-600 dark:text-amber-400 text-lg"></i>
+                            </div>
 
-                                    </div>
+                            <!-- TEXT -->
+                            <div class="text-left">
+                                <h6 class="text-xs sm:text-sm font-extrabold uppercase">
+                                    Action
+                                </h6>
 
-                                    <!-- TEXT -->
-                                    <div class="text-left">
-                                        <h6 class="text-xs sm:text-sm font-extrabold uppercase">
-                                            Action
-                                        </h6>
+                            </div>
 
-                                    </div>
+                        </div>
+                    </th>
 
-                                </div>
-                            </th>
+                </tr>
+            </thead>
 
-                        </tr>
-                    </thead>
+            <tbody>
+                @foreach ($minors as $index => $minor)
+                <tr class="table-row border-b border-gray-100"
+                    style="animation-delay:{{ $loop->index * 0.05 }}s">
 
-                    <tbody>
-                        @foreach ($minors as $index => $minor)
-                        <tr class="table-row border-b border-gray-100"
-                            style="animation-delay:{{ $loop->index * 0.05 }}s">
+                    <!-- SR NO -->
+                    <td class="px-6 py-5 text-center font-semibold text-gray-700">
 
-                            <!-- SR NO -->
-                            <td class="px-6 py-5 text-center font-semibold text-gray-700">
+                        {{ $loop->iteration }}
+                    </td> 
 
-                                {{ $loop->iteration }}
-                            </td> 
+                    <td class="px-3 py-3">
+                        <div class="flex items-center gap-2">                             
 
-                            <td class="px-3 py-3">
-                                <div class="flex items-center gap-2">                             
+                            <!-- Branch Name -->
+                            <span class="text-gray-700 font-medium">
+                                {{ $minor->member->branch->branch_name ?? 'N/A' }}
+                            </span>
 
-                                    <!-- Branch Name -->
-                                    <span class="text-gray-700 font-medium">
-                                        {{ $minor->member->branch->branch_name ?? 'N/A' }}
-                                    </span>
+                        </div>
+                    </td>
 
-                                </div>
-                            </td>
+                    <td class="px-6 py-4">{{ $minor->first_name ?? 'N/A' }}</td>
 
-                            <td class="px-6 py-4">{{ $minor->first_name ?? 'N/A' }}</td>
+                    <td class="px-6 py-4">
+                        @if ($minor->member)
 
-                            <td class="px-6 py-4">
-                                @if ($minor->member)
+                        <a href="{{ $minor->member?->id ? route('member.show', $minor->member->id) : '#' }}"
+                        class="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition">
 
-                                <a href="{{ $minor->member?->id ? route('member.show', $minor->member->id) : '#' }}"
-                                class="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition">
+                            <!-- ID + Name -->
+                            <div class="leading-tight">
+                                
+                                <!-- Name -->
+                                <p class="font-semibold text-primary">
+                                    {{ $minor->member->member_info_first_name ?? 'N/A' }}
+                                </p>
+                                <!-- Customer ID -->
+                                <p class="text-xs text-gray-400">
+                                    Customer No : {{ $minor->member->member_no 
+                                    ?? ($minor->member->id ? str_pad($minor->member->id, 6, '0', STR_PAD_LEFT) : 'N/A') }}
+                                </p>
 
-                                    <!-- ID + Name -->
-                                    <div class="leading-tight">
-                                        
-                                        <!-- Name -->
-                                        <p class="font-semibold text-primary">
-                                            {{ $minor->member->member_info_first_name ?? 'N/A' }}
-                                        </p>
-                                        <!-- Customer ID -->
-                                        <p class="text-xs text-gray-400">
-                                            Customer No : {{ $minor->member->member_no 
-                                            ?? ($minor->member->id ? str_pad($minor->member->id, 6, '0', STR_PAD_LEFT) : 'N/A') }}
-                                        </p>
+                            </div>
 
-                                    </div>
+                        </a>
 
-                                </a>
+                        @else
+                            N/A
+                        @endif
+                    </td>
 
-                                @else
-                                    N/A
-                                @endif
-                            </td>
+                    <td class="px-6 py-4">
+                        {{ $minor->enrollment_date ? \Carbon\Carbon::parse($minor->enrollment_date)->format('d-m-Y') : 'N/A' }}
+                    </td>
 
-                            <td class="px-6 py-4">
-                                {{ $minor->enrollment_date ? \Carbon\Carbon::parse($minor->enrollment_date)->format('d-m-Y') : 'N/A' }}
-                            </td>
+                    <!-- ACTION -->
+                    <td class="text-center px-4 py-4">
 
-                            <!-- ACTION -->
-                            <td class="text-center px-4 py-4">
+                        <div class="flex items-center justify-center gap-2">
 
-                                <div class="flex items-center justify-center gap-2">
+                            <!-- VIEW -->
+                            @if($isSuperAdmin || in_array('minor.show', $permissions))
+                            <a href="{{ route('minor.show', $minor->id) }}"
+                                class="action-btn action-view">
 
-                                    <!-- VIEW -->
-                                    @if($isSuperAdmin || in_array('minor.show', $permissions))
-                                    <a href="{{ route('minor.show', $minor->id) }}"
-                                        class="action-btn action-view">
+                                <i class="las la-eye"></i>
+                                <span>VIEW</span>
 
-                                        <i class="las la-eye"></i>
-                                        <span>VIEW</span>
+                            </a>
+                            @endif
 
-                                    </a>
-                                    @endif
+                            <!-- EDIT -->
+                            @if($isSuperAdmin || in_array('minor.edit', $permissions))
+                            <a href="{{ route('minor.edit', $minor->id) }}"
+                                class="action-btn action-edit">
 
-                                    <!-- EDIT -->
-                                    @if($isSuperAdmin || in_array('minor.edit', $permissions))
-                                    <a href="{{ route('minor.edit', $minor->id) }}"
-                                        class="action-btn action-edit">
+                                <i class="las la-edit"></i>
+                                <span>EDIT</span>
 
-                                        <i class="las la-edit"></i>
-                                        <span>EDIT</span>
+                            </a>
+                            @endif
 
-                                    </a>
-                                    @endif
+                        </div>
 
-                                </div>
+                    </td>
 
-                            </td>
-
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                
-            </div>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
         
     </div>
+        
+</div>
 
 @endsection
