@@ -1,128 +1,4 @@
-<!DOCTYPE html>
-<html dir="ltr">
-
-    <head>              
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" type="image/x-icon" />
-        @vite('resources/css/app.scss')
-        <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
-        <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
-        <title>Swiss Payment - Digital Banking</title>
-
-        <style>
-            html,
-            body {
-                overflow-x: auto;
-                /* horizontal scroll allowed */
-                overflow-y: auto;
-                /* vertical scroll disabled */
-            }
-        </style>
-
-        <style>
-            .otp-modal {
-                display: none;
-                position: fixed;
-                z-index: 9999;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.7);
-
-                justify-content: center;
-                align-items: center;
-            }
-
-            .otp-box {
-                background: white;
-                padding: 25px;
-                border-radius: 12px;
-                width: 320px;
-                text-align: center;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            }
-
-           .otp-box-input {
-                width: 55px;
-                height: 60px;
-                text-align: center;
-                font-size: 24px;
-                border: 2px solid #e5e7eb;
-                border-radius: 12px;
-                transition: 0.2s;
-            }
-
-            .otp-box-input:focus {
-                border-color: #06b6d4;
-                box-shadow: 0 0 10px rgba(6,182,212,0.4);
-            }
-
-            @keyframes scaleIn {
-                from {
-                    transform: scale(0.8);
-                    opacity: 0;
-                }
-                to {
-                    transform: scale(1);
-                    opacity: 1;
-                }
-            }
-
-            /* 🌌 Animated Background Glow */
-            body::before {
-                content: "";
-                position: fixed;
-                width: 600px;
-                height: 600px;
-                background: radial-gradient(circle, rgba(0,255,255,0.15), transparent);
-                top: -100px;
-                left: -100px;
-                filter: blur(120px);
-                animation: moveGlow 10s infinite alternate;
-            }
-
-            @keyframes moveGlow {
-                0% { transform: translate(0,0); }
-                100% { transform: translate(200px,150px); }
-            }
-
-            /* 🔥 Neon Card Glow */
-            .neon-card {
-                border: 1px solid rgba(0,255,255,0.2);
-                box-shadow: 0 0 25px rgba(0,255,255,0.15),
-                            0 0 60px rgba(0,255,255,0.05);
-            }
-
-            /* 🚀 Neon Button */
-            .neon-btn {
-                background: linear-gradient(90deg, #00f0ff, #0066ff);
-                box-shadow: 0 0 15px rgba(0,240,255,0.6);
-            }
-            .neon-btn:hover {
-                box-shadow: 0 0 25px rgba(0,240,255,1);
-                transform: translateY(-1px);
-            }
-
-            /* 🧠 Input Focus Glow */
-            input:focus {
-                box-shadow: 0 0 12px rgba(0,255,255,0.6) !important;
-            }
-
-            /* 🔢 OTP Neon Boxes */
-            .otp-box-input {
-                background: rgba(255,255,255,0.05);
-                color: white;
-                border: 1px solid rgba(0,255,255,0.3);
-            }
-            .otp-box-input:focus {
-                border-color: #00f0ff;
-                box-shadow: 0 0 12px rgba(0,255,255,0.8);
-            }
-        </style>
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-    </head>
+@extends('layout.loginstyle')
 
     <body class="vertical">
 
@@ -136,23 +12,16 @@
             @endif
 
             <!-- BACKGROUND -->
-            <div class="absolute inset-0"
-                style="
-                    background-image: url('{{ asset('assets/images/sbc_new_logo7.png') }}');
-                    background-size: cover;
-                    background-position: center;
-                    background-repeat: no-repeat;
-                ">
-            </div>
+            <div class="absolute inset-0 login-bg"></div>
 
             <!-- DARK OVERLAY -->
             <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-cyan-900 to-slate-800"></div>
 
             <!-- CONTENT -->
-            <div class="relative z-10 flex justify-center items-center min-h-screen px-4">
+            <div class="relative z-10 flex justify-center items-center min-h-screen px-4 py-6">
 
                 <!-- WIDTH -->
-                <div class="w-[270px] sm:w-[300px]">
+                <div class="login-wrapper">
                     
                     <form id="loginForm">
                         @csrf
@@ -160,22 +29,71 @@
                         <!-- 🔥 CARD -->
                         <div class="
                             relative
+                            login-card
                             bg-white/10
                             backdrop-blur-3xl
                             border border-white/20
-                            rounded-3xl
-                            px-5 py-6
-                            shadow-[0_20px_60px_rgba(0,0,0,0.7)]
-                            transition-all duration-300" 
-                            style="width: 420px; background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); animation: scaleIn 0.4s ease;">
-
+                            rounded-[26px]
+                            px-4 sm:px-5
+                            py-4 sm:py-5
+                            shadow-[0_20px_80px_rgba(0,0,0,0.75)]
+                            transition-all duration-300"
+                            style="
+                            background: linear-gradient(
+                                145deg,
+                                rgba(255,255,255,0.10),
+                                rgba(255,255,255,0.05)
+                            );
+                            backdrop-filter: blur(20px);
+                            animation: scaleIn 0.4s ease;
+                        ">
                             <!-- TITLE -->
-                            <h2 class="text-white text-2xl font-semibold text-center mb-6 tracking-wide">
+                            <h2 class="text-white text-xl sm:text-2xl font-semibold text-center mb-3 tracking-wide">
                                 Secure Banking Login
                             </h2>
                            
-                            <div class="text-center mb-4 text-white text-xs text-cyan-300">
-                                🔐 Trusted Secure Login • End-to-End Encrypted
+                            <div class="text-center mb-4">
+    
+                                <div class="text-white text-xs text-cyan-300 tracking-wide">
+                                    🔐 Trusted Secure Login • End-to-End Encrypted
+                                </div>
+
+                                <!-- PREMIUM LINE -->
+                                <div style="
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    margin-top:12px;
+                                ">
+
+                                    <!-- LEFT LINE -->
+                                    <div style="
+                                        width:70px;
+                                        height:1.5px;
+                                        background:linear-gradient(to right, transparent, #22d3ee);
+                                        box-shadow:0 0 10px rgba(34,211,238,0.7);
+                                    "></div>
+
+                                    <!-- CENTER DOT -->
+                                    <div style="
+                                        width:8px;
+                                        height:8px;
+                                        border-radius:50%;
+                                        background:#22d3ee;
+                                        margin:0 10px;
+                                        box-shadow:0 0 12px rgba(34,211,238,1);
+                                    "></div>
+
+                                    <!-- RIGHT LINE -->
+                                    <div style="
+                                        width:70px;
+                                        height:1.5px;
+                                        background:linear-gradient(to left, transparent, #22d3ee);
+                                        box-shadow:0 0 10px rgba(34,211,238,0.7);
+                                    "></div>
+
+                                </div>
+
                             </div>
 
                             <!-- EMAIL -->
@@ -223,10 +141,42 @@
                                 </a>
                             </div>
 
-                            <div class="flex items-center my-4">
-                                <div class="flex-grow h-px bg-white/30"></div>
-                                <span class="px-3 text-xs text-gray-300" style="color: blanchedalmond;">OR</span>
-                                <div class="flex-grow h-px bg-white/30"></div>
+                            <div style="
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                margin:20px 0;
+                            ">
+
+                                <!-- LEFT GLOW LINE -->
+                                <div style="
+                                    flex:1;
+                                    height:1.5px;
+                                    background:linear-gradient(to right, transparent, rgba(34,211,238,0.9));
+                                    box-shadow:0 0 10px rgba(34,211,238,0.6);
+                                "></div>
+
+                                <!-- OR TEXT -->
+                                <div style="
+                                    padding:0 14px;
+                                    font-size:11px;
+                                    letter-spacing:2px;
+                                    color:#dbeafe;
+                                    font-weight:600;
+                                    text-transform:uppercase;
+                                    text-shadow:0 0 10px rgba(255,255,255,0.5);
+                                ">
+                                    OR
+                                </div>
+
+                                <!-- RIGHT GLOW LINE -->
+                                <div style="
+                                    flex:1;
+                                    height:1.5px;
+                                    background:linear-gradient(to left, transparent, rgba(34,211,238,0.9));
+                                    box-shadow:0 0 10px rgba(34,211,238,0.6);
+                                "></div>
+
                             </div>
 
                             <button type="button" onclick="biometricLogin()"
@@ -315,95 +265,95 @@
 
         </div>
 
-            <!-- 🔥 PREMIUM FORGOT PASSWORD MODAL -->
-            <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered">
-                    
-                    <div class="modal-content border-0 bg-transparent shadow-none">
+        <!-- 🔥 PREMIUM FORGOT PASSWORD MODAL -->
+        <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                
+                <div class="modal-content border-0 bg-transparent shadow-none">
 
-                        <div class="otp-box neon-card" style="
-                            background: rgba(0,0,0,0.85);
-                            backdrop-filter: blur(20px);
-                            color:white;
-                            border-radius:20px;
-                            padding:25px;
-                            width:100%;
-                            animation: scaleIn 0.3s ease;
-                        ">
+                    <div class="otp-box neon-card" style="
+                        background: rgba(0,0,0,0.85);
+                        backdrop-filter: blur(20px);
+                        color:white;
+                        border-radius:20px;
+                        padding:25px;
+                        width:100%;
+                        animation: scaleIn 0.3s ease;
+                    ">
 
-                            <!-- TITLE -->
-                            <h4 style="font-weight:600;">
-                                🔐 Reset Password
-                            </h4>
+                        <!-- TITLE -->
+                        <h4 style="font-weight:600;">
+                            🔐 Reset Password
+                        </h4>
 
-                            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">
-                                Enter your registered email to receive reset link
-                            </p>
+                        <p style="font-size:12px; color:#aaa; margin-bottom:15px;">
+                            Enter your registered email to receive reset link
+                        </p>
 
-                            <!-- SUCCESS -->
-                            @if(session('success'))
-                                <div style="color:#22c55e; font-size:13px; margin-bottom:10px;">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
+                        <!-- SUCCESS -->
+                        @if(session('success'))
+                            <div style="color:#22c55e; font-size:13px; margin-bottom:10px;">
+                                {{ session('success') }}
+                            </div>
+                        @endif
 
-                            <!-- ERROR -->
-                            @if(session('error'))
-                                <div style="color:#ff6b6b; font-size:13px; margin-bottom:10px;">
-                                    {{ session('error') }}
-                                </div>
-                            @endif
+                        <!-- ERROR -->
+                        @if(session('error'))
+                            <div style="color:#ff6b6b; font-size:13px; margin-bottom:10px;">
+                                {{ session('error') }}
+                            </div>
+                        @endif
 
-                            <!-- VALIDATION -->
-                            @if($errors->any())
-                                <div style="color:#ff6b6b; font-size:13px; margin-bottom:10px;">
-                                    @foreach($errors->all() as $error)
-                                        <div>{{ $error }}</div>
-                                    @endforeach
-                                </div>
-                            @endif
+                        <!-- VALIDATION -->
+                        @if($errors->any())
+                            <div style="color:#ff6b6b; font-size:13px; margin-bottom:10px;">
+                                @foreach($errors->all() as $error)
+                                    <div>{{ $error }}</div>
+                                @endforeach
+                            </div>
+                        @endif
 
-                            <!-- FORM -->
-                            <form action="/forgot-password" method="POST">
-                                @csrf
+                        <!-- FORM -->
+                        <form action="/forgot-password" method="POST">
+                            @csrf
 
-                                <!-- EMAIL INPUT -->
-                                <div style="margin-bottom:15px;">
-                                    <input type="email" name="email"
-                                        class="w-full px-4 py-3 rounded-xl 
-                                        bg-white/10 text-white text-sm
-                                        border border-cyan-400/30
-                                        focus:ring-2 focus:ring-cyan-400
-                                        outline-none transition"
-                                        placeholder="Enter your email"
-                                        required>
-                                </div><br>
+                            <!-- EMAIL INPUT -->
+                            <div style="margin-bottom:15px;">
+                                <input type="email" name="email"
+                                    class="w-full px-4 py-3 rounded-xl 
+                                    bg-white/10 text-white text-sm
+                                    border border-cyan-400/30
+                                    focus:ring-2 focus:ring-cyan-400
+                                    outline-none transition"
+                                    placeholder="Enter your email"
+                                    required>
+                            </div><br>
 
-                                <!-- BUTTON -->
-                                <div style="display:flex; gap:10px; margin-top:10px;">
+                            <!-- BUTTON -->
+                            <div style="display:flex; gap:10px; margin-top:10px;">
 
-                                    <!-- SEND BUTTON -->
-                                    <button type="submit"
-                                        class="w-50 py-2 rounded-lg text-white neon-btn">
-                                        ✉ Send Reset Link
-                                    </button>
+                                <!-- SEND BUTTON -->
+                                <button type="submit"
+                                    class="w-50 py-2 rounded-lg text-white neon-btn">
+                                    ✉ Send Reset Link
+                                </button>
 
-                                    <!-- CANCEL BUTTON -->
-                                    <button type="button" data-bs-dismiss="modal"
-                                        class="w-50 py-2 rounded-lg border border-gray-500 text-gray-300">
-                                        Cancel
-                                    </button>
+                                <!-- CANCEL BUTTON -->
+                                <button type="button" data-bs-dismiss="modal"
+                                    class="w-50 py-2 rounded-lg border border-gray-500 text-gray-300">
+                                    Cancel
+                                </button>
 
-                                </div>
+                            </div>
 
-                            </form>
-
-                        </div>
+                        </form>
 
                     </div>
 
                 </div>
+
             </div>
+        </div>
 
         <!-- PASSWORD TOGGLE -->
         <script>
@@ -840,4 +790,3 @@
 
     </body>
 
-</html>
