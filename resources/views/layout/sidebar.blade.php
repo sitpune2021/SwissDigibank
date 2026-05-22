@@ -71,40 +71,78 @@
 
     background:
     linear-gradient(
-    90deg,
-    rgba(37,99,235,0.22),
-    rgba(6,182,212,0.16)
+        135deg,
+        rgba(59,130,246,0.22),
+        rgba(6,182,212,0.14)
     ) !important;
 
-    transform:translateX(5px);
+    transform:
+        translateX(5px)
+        scale(1.01);
 
-    border-color:rgba(59,130,246,0.25);
+    border-color:
+        rgba(96,165,250,0.22);
 
     box-shadow:
-    0 10px 25px rgba(2,6,23,0.45),
-    inset 0 1px 0 rgba(255,255,255,0.04);
+        0 10px 35px rgba(37,99,235,0.18),
+        0 0 18px rgba(59,130,246,0.15);
 
     color:#fff !important;
 }
+/* =========================================
+   NEO MENU TEXT
+========================================= */
 
+.neo-menu-text{
+
+    color:#f8fafc !important;
+
+    font-weight:600;
+
+    letter-spacing:0.4px;
+
+    text-shadow:
+        0 0 8px rgba(255,255,255,0.15),
+        0 0 16px rgba(59,130,246,0.12);
+
+    transition:all .28s ease;
+}
+
+/* HOVER */
+.menu-btn:hover .neo-menu-text{
+
+    color:#ffffff !important;
+
+    text-shadow:
+        0 0 10px rgba(255,255,255,0.35),
+        0 0 22px rgba(59,130,246,0.28);
+}
+
+/* ACTIVE */
+.menu-btn.active .neo-menu-text{
+
+    color:#ffffff !important;
+
+    text-shadow:
+        0 0 12px rgba(255,255,255,0.45),
+        0 0 28px rgba(96,165,250,0.45);
+}
 /* 🔥 ACTIVE MENU */
 .menu-btn.active{
 
     background:
     linear-gradient(
-    90deg,
-    #0a0a0a,
-    #0891b2
+        90deg,
+        #33697e,
+        #33697e
     ) !important;
 
     color:#fff !important;
 
-    border-color:rgba(255,255,255,0.10);
+    border-color:transparent;
 
     box-shadow:
-    0 12px 24px rgba(37,99,235,0.30),
-    0 0 0 1px rgba(255,255,255,0.04);
-
+        0 10px 25px rgba(37,99,235,0.25);
 }
 
 /* 🔥 LEFT ACTIVE LINE */
@@ -132,20 +170,34 @@
 }
 
 .menu-icon{
-    width:34px;
-    height:34px;
 
-    border-radius:10px;
+    width:36px;
+    height:36px;
+
+    border-radius:14px;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    background:rgba(255,255,255,0.04);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.08),
+            rgba(255,255,255,0.03)
+        );
 
-    border:1px solid rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
 
     transition:.3s;
+
+    color:#bfdbfe;
+
+    backdrop-filter: blur(10px);
+
+    box-shadow:
+        0 6px 14px rgba(0,0,0,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
 .menu-btn:hover .menu-icon,
@@ -165,7 +217,7 @@
     align-items:center;
     gap:10px;
 
-    color:#94a3b8;
+    color:#cbd5e1;
 
     padding:10px 14px !important;
 
@@ -218,19 +270,32 @@
     text-shadow: 0 0 8px #3b82f6;
 }
 .menu-btn{
+
     position:relative;
     width:100%;
+
     padding:12px 14px !important;
 
-    border-radius:16px !important;
+    border-radius:18px !important;
 
-    background:rgba(255,255,255,0.03) !important;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.05),
+            rgba(255,255,255,0.02)
+        ) !important;
 
-    border:1px solid rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08);
 
-    transition:all .28s ease;
+    transition:all .32s ease;
 
     overflow:hidden;
+
+    backdrop-filter: blur(16px);
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.05);
 }
 .menu-li {
     background: transparent !important;
@@ -349,32 +414,373 @@
     }
 }
 .submenu{
-    margin-top:8px;
 
-    padding:8px;
+    margin-top:10px;
 
-    border-radius:16px;
+    padding:10px;
+
+    border-radius:18px;
 
     background:
-    rgba(255,255,255,0.02);
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.05),
+            rgba(255,255,255,0.02)
+        );
+
+    backdrop-filter: blur(18px);
 
     border:
-    1px solid rgba(255,255,255,0.03);
+        1px solid rgba(255,255,255,0.06);
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.22);
+}
+/* =========================================
+   PREMIUM ANIMATED NEO SIDEBAR
+========================================= */
+
+.neo-sidebar{
+
+    position: relative;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            180deg,
+            #040404 0%,
+            #1b1b1d 35%,
+            #2c3440 100%
+        );
+
+    border-right:1px solid rgba(255,255,255,0.08);
+
+    box-shadow:
+        0 0 40px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+
+    backdrop-filter: blur(20px);
+}
+
+/* =========================================
+   MOVING GRADIENT LIGHT
+========================================= */
+
+.neo-sidebar::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:420px;
+    height:420px;
+
+    top:-120px;
+    left:-140px;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(59,130,246,0.18),
+            transparent 70%
+        );
+
+    animation:
+        floatingGlow 10s ease-in-out infinite;
+
+    pointer-events:none;
+}
+
+/* SECOND LIGHT */
+
+.neo-sidebar::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:360px;
+    height:360px;
+
+    bottom:-120px;
+    right:-100px;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(168,85,247,0.16),
+            transparent 70%
+        );
+
+    animation:
+        floatingGlow2 12s ease-in-out infinite;
+
+    pointer-events:none;
+}
+
+/* =========================================
+   FLOAT ANIMATION
+========================================= */
+
+@keyframes floatingGlow{
+
+    0%{
+        transform:
+            translate(0px,0px)
+            scale(1);
+    }
+
+    50%{
+        transform:
+            translate(40px,30px)
+            scale(1.1);
+    }
+
+    100%{
+        transform:
+            translate(0px,0px)
+            scale(1);
+    }
+}
+
+@keyframes floatingGlow2{
+
+    0%{
+        transform:
+            translate(0px,0px)
+            scale(1);
+    }
+
+    50%{
+        transform:
+            translate(-30px,-40px)
+            scale(1.08);
+    }
+
+    100%{
+        transform:
+            translate(0px,0px)
+            scale(1);
+    }
+}
+
+/* =========================================
+   SHINING TOP LIGHT
+========================================= */
+
+.logo-container::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:-100%;
+
+    width:120%;
+    height:2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,0.7),
+            transparent
+        );
+
+    animation:
+        shineMove 4s linear infinite;
+}
+
+    @keyframes shineMove{
+
+        0%{
+            left:-100%;
+        }
+
+        100%{
+            left:120%;
+        }
+    }
+.menu-btn::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+        linear-gradient(
+            120deg,
+            transparent,
+            rgba(255,255,255,0.08),
+            transparent
+        );
+
+    transform:translateX(-100%);
+
+    transition:0.6s;
+}
+
+.menu-btn:hover::before{
+    transform:translateX(100%);
+}
+/* =========================================
+   RIGHT SIDE VERTICAL ANIMATION
+========================================= */
+
+.neo-sidebar .sidebar-right-glow{
+
+    position:absolute;
+
+    top:0;
+    right:0;
+
+    width:3px;
+    height:100%;
+
+    overflow:hidden;
+
+    z-index:2;
+}
+
+.neo-sidebar .sidebar-right-glow::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-30%;
+
+    right:0;
+
+    width:100%;
+    height:220px;
+
+    border-radius:50px;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent,
+            #60a5fa,
+            #22d3ee,
+            transparent
+        );
+
+    box-shadow:
+        0 0 25px #3b82f6,
+        0 0 40px #06b6d4;
+
+    animation:
+        verticalLightMove 5s linear infinite;
+}
+
+/* =========================================
+   TOP HORIZONTAL ANIMATION
+========================================= */
+
+.neo-sidebar .sidebar-top-glow{
+
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:3px;
+
+    overflow:hidden;
+
+    z-index:2;
+}
+
+.neo-sidebar .sidebar-top-glow::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:-30%;
+
+    top:0;
+
+    width:220px;
+    height:100%;
+
+    border-radius:50px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #818cf8,
+            #38bdf8,
+            transparent
+        );
+
+    box-shadow:
+        0 0 25px #6366f1,
+        0 0 40px #38bdf8;
+
+    animation:
+        horizontalLightMove 4s linear infinite;
+}
+
+/* =========================================
+   ANIMATION KEYFRAMES
+========================================= */
+
+@keyframes verticalLightMove{
+
+    0%{
+        top:-30%;
+    }
+
+    100%{
+        top:120%;
+    }
+}
+
+@keyframes horizontalLightMove{
+
+    0%{
+        left:-30%;
+    }
+
+    100%{
+        left:120%;
+    }
 }
 </style>
 
 <!-- <aside id="sidebar" class="sidebar mobile-sidebar" style="background: linear-gradient(180deg,#0f172a,#020617); border-right:1px solid rgba(59,130,246,0.25); box-shadow:0 0 30px rgba(59,130,246,0.2);"> -->
-<aside id="sidebar" class="sidebar mobile-sidebar"
+<!-- <aside id="sidebar" class="sidebar mobile-sidebar"
     style="
     background:
-    linear-gradient(180deg,#071028 0%, #0b1736 45%, #111827 100%);
-    border-right:1px solid rgba(148,163,184,0.15);
+    linear-gradient(
+        180deg,
+        #040404 0%,
+        #262424f2 45%,
+        #393f4c 100%
+    );
+
+    border-right:1px solid rgba(255,255,255,0.08);
+
     box-shadow:
-    0 0 40px rgba(15,23,42,0.9),
-    0 0 18px rgba(59,130,246,0.12);
-    backdrop-filter: blur(16px);
-    ">
-    
+        0 10px 40px rgba(0,0,0,0.45),
+        0 0 25px rgba(59,130,246,0.08);
+
+    backdrop-filter: blur(18px);
+"> -->
+<aside id="sidebar" class="sidebar mobile-sidebar neo-sidebar">
+    <div class="sidebar-top-glow"></div>
+<div class="sidebar-right-glow"></div>
     <div class="sidebar-inner relative" >
         <div class="logo-column">
             
@@ -491,7 +897,13 @@
 
                         <li class="menu-li {{ $isActive || $submenuActive ? 'active' : '' }}    ">
                             @if ($item->submenus->isNotEmpty())
-                            <button style="padding: 8px 14px; color:#cbd5e1; background: rgba(59,130,246,0.08); border-radius:10px; transition:0.25s;"
+                            <button style="
+    padding: 8px 14px;
+    color:#ffffff;
+    background: rgba(255,255,255,0.04);
+    border-radius:14px;
+    transition:0.25s;
+"
                                 class="menu-btn group !bg-transparent dark:!bg-transparent {{ $isActive || $submenuActive ? 'active' : '' }}"
                                 type="button" onclick="
                                     const submenu = this.nextElementSibling;
@@ -515,7 +927,7 @@
                                     <span class="menu-icon" style="font-size: 14px !important;">
                                         <i class="{{ $item->icon }}"></i>
                                     </span>
-                                    <span class="menu-title font-medium  text-start "
+                                    <span class="menu-title neo-menu-text font-medium text-start"
                                         style="font-size: 14px !important;">{{ $item->title }}</span>
                                 </span>
                                 <span class="plus-minus" style="font-size: 14px !important;">
@@ -542,7 +954,7 @@
                                 @endforeach
                             </ul>
                             @else
-                            <a href="{{ route($item?->route) }}" style="padding:8px 14px; color:#cbd5e1; background: rgba(255,255,255,0.03); border-radius:10px; transition:0.25s;"
+                            <a href="{{ route($item?->route) }}" style="padding:8px 14px; color:#e2e8f0; background: rgba(255,255,255,0.03); border-radius:10px; transition:0.25s;"
                                 class="menu-btn border-n30 !bg-transparent dark:!bg-transparent flex items-center justify-center gap-2 {{ $isActive ? 'active' : '' }}">
                                 <span class=" flex justify-start gap-2 ">
                                     <span class="menu-icon ">
