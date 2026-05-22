@@ -39,12 +39,6 @@
                             shadow-[0_20px_80px_rgba(0,0,0,0.75)]
                             transition-all duration-300"
                             style="
-                            background: linear-gradient(
-                                145deg,
-                                rgba(255,255,255,0.10),
-                                rgba(255,255,255,0.05)
-                            );
-                            backdrop-filter: blur(20px);
                             animation: scaleIn 0.4s ease;
                         ">
                             <!-- TITLE -->
