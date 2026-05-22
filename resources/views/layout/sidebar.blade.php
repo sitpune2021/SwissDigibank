@@ -133,8 +133,8 @@
     background:
     linear-gradient(
         90deg,
-        #000000,
-        #9b0ead
+        #33697e,
+        #33697e
     ) !important;
 
     color:#fff !important;
