@@ -22,7 +22,8 @@
 
                 <!-- WIDTH -->
                 <div class="login-wrapper">
-                    
+
+                    <!-- Login Card Form -->
                     <form id="loginForm">
                         @csrf
 
@@ -203,25 +204,59 @@
                         left:0;
                         width:100%;
                         height:100%;
-                        background: rgba(0,0,0,0.75);
-                        backdrop-filter: blur(10px);
+
+                        background:
+                            radial-gradient(circle at top, rgba(34,211,238,0.12), transparent 40%),
+                            rgba(0,0,0,0.82);
+
+                        backdrop-filter: blur(18px);
+
                         justify-content:center;
                         align-items:center;
                     ">
-                        <div class="otp-box neon-card" style="
-                            background: rgba(0,0,0,0.85);
-                            backdrop-filter: blur(20px);
+                        <div class="otp-box neon-card otp-premium-card" style="
+                            position:relative;
+                            overflow:hidden;
+
+                            background: linear-gradient(
+                                145deg,
+                                rgba(15,23,42,0.96),
+                                rgba(2,6,23,0.92)
+                            );
+
+                            backdrop-filter: blur(30px) saturate(180%);
+
+                            border:1px solid rgba(34,211,238,0.18);
+
                             color:white;
-                            border-radius:20px;
-                            padding:25px;
+                            border-radius:32px;
+                            padding:30px;
                             width:340px;
-                            animation: scaleIn 0.3s ease;
+
+                            box-shadow:
+                                0 25px 80px rgba(0,0,0,0.8),
+                                0 0 35px rgba(34,211,238,0.12);
+
+                            animation:
+                                scaleIn 0.35s ease,
+                                otpFloat 6s ease-in-out infinite;
                         ">
-                            <h4 style="font-weight:600;">
+                            <h4 style="
+                                font-weight:700;
+                                letter-spacing:1px;
+                                text-align:center;
+                                text-shadow:0 0 20px rgba(34,211,238,0.35);
+                            ">
                                 🔐 OTP Verification
                             </h4>
 
-                            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">
+                            <p style="
+                                font-size:12px;
+                                color:#cbd5e1;
+                                margin-bottom:18px;
+                                text-align:center;
+                                letter-spacing:0.4px;
+                            ">
                                 Enter the OTP sent to your registered device
                             </p>
 
@@ -237,7 +272,9 @@
                             </div>
 
                             <button onclick="verifyOtp()" 
-                                class="w-full py-2 rounded-lg text-white neon-btn">
+                                class="w-full py-2.5 rounded-2xl text-white neon-btn
+                                    hover:scale-[1.02] active:scale-[0.98]
+                                    transition-all duration-300">
                                 ✔ Verify & Continue
                             </button>
                             <!-- TIMER -->
@@ -247,7 +284,9 @@
 
                             <!-- RESEND BUTTON -->
                             <button id="resendBtn" onclick="resendOtp()" 
-                                class="w-full mt-2 py-2 rounded-lg border border-cyan-400 text-cyan-300" disabled>
+                                class="w-full py-2.5 rounded-2xl text-white neon-btn
+                                    hover:scale-[1.02] active:scale-[0.98]
+                                    transition-all duration-300" disabled>
                                 Resend OTP
                             </button>
                         </div>
@@ -260,19 +299,37 @@
         </div>
 
         <!-- 🔥 PREMIUM FORGOT PASSWORD MODAL -->
-        <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+        <div class="modal fade forgot-modal" id="forgotPasswordModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 
                 <div class="modal-content border-0 bg-transparent shadow-none">
 
-                    <div class="otp-box neon-card" style="
-                        background: rgba(0,0,0,0.85);
-                        backdrop-filter: blur(20px);
+                    <div class="forgot-card" style="
+                        position:relative;
+                        overflow:hidden;
+
+                        background: linear-gradient(
+                            145deg,
+                            rgba(255,255,255,0.12),
+                            rgba(255,255,255,0.05)
+                        );
+
+                        backdrop-filter: blur(35px) saturate(180%);
+
+                        border:1px solid rgba(34,211,238,0.18);
+
                         color:white;
-                        border-radius:20px;
-                        padding:25px;
+                        border-radius:30px;
+                        padding:28px;
                         width:100%;
-                        animation: scaleIn 0.3s ease;
+
+                        box-shadow:
+                            0 25px 80px rgba(0,0,0,0.7),
+                            0 0 30px rgba(34,211,238,0.12);
+
+                        animation:
+                            scaleIn 0.35s ease,
+                            forgotFloat 6s ease-in-out infinite;
                     ">
 
                         <!-- TITLE -->
@@ -283,6 +340,38 @@
                         <p style="font-size:12px; color:#aaa; margin-bottom:15px;">
                             Enter your registered email to receive reset link
                         </p>
+
+                        <div style="
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            margin-bottom:18px;
+                        ">
+
+                            <div style="
+                                width:65px;
+                                height:1.5px;
+                                background:linear-gradient(to right, transparent, #22d3ee);
+                                box-shadow:0 0 10px rgba(34,211,238,0.7);
+                            "></div>
+
+                            <div style="
+                                width:8px;
+                                height:8px;
+                                border-radius:50%;
+                                background:#22d3ee;
+                                margin:0 10px;
+                                box-shadow:0 0 12px rgba(34,211,238,1);
+                            "></div>
+
+                            <div style="
+                                width:65px;
+                                height:1.5px;
+                                background:linear-gradient(to left, transparent, #22d3ee);
+                                box-shadow:0 0 10px rgba(34,211,238,0.7);
+                            "></div>
+
+                        </div>
 
                         <!-- SUCCESS -->
                         @if(session('success'))
@@ -315,8 +404,7 @@
                             <div style="margin-bottom:15px;">
                                 <input type="email" name="email"
                                     class="w-full px-4 py-3 rounded-xl 
-                                    bg-white/10 text-white text-sm
-                                    border border-cyan-400/30
+                                    text-sm
                                     focus:ring-2 focus:ring-cyan-400
                                     outline-none transition"
                                     placeholder="Enter your email"
