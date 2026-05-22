@@ -182,11 +182,11 @@
                 border-radius: 48px;
 
                 /* GLASS EFFECT */
-                background: linear-gradient(
+                /* background: linear-gradient(
                     145deg,
                     rgba(255,255,255,0.12),
                     rgba(255,255,255,0.04)
-                );
+                ); */
 
                 border: 1px solid rgba(255,255,255,0.18);
 
@@ -196,7 +196,7 @@
                     0 0 25px rgba(34,211,238,0.12),
                     inset 0 1px 1px rgba(255,255,255,0.08);
 
-                backdrop-filter: blur(24px);
+                backdrop-filter: blur(10px);
 
                 /* ANIMATION */
                 animation:
