@@ -149,6 +149,19 @@
 
                         </th>
 
+                        <!-- ROLE -->
+                        <th class="text-start py-4 px-3 md:px-5 min-w-[150px]">
+
+                            <div class="flex items-center gap-2 whitespace-nowrap">
+
+                                <i class="las la-user-shield text-base text-blue-600"></i>
+
+                                <span>ROLE</span>
+
+                            </div>
+
+                        </th>
+
                         <!-- ACTIVE -->
                         <th class="text-start py-4 px-3 md:px-5 min-w-[120px]">
 
@@ -200,6 +213,9 @@
                         </td>
                         <td class="px-6 py-4  ">{{ $user->email }}</td>
                         <td class="px-6 py-4">{{ $user->mobile ?? 'N/A' }}</td>
+                        <td class="px-6 py-4">
+                            {{ $user->role->name ?? 'N/A' }}
+                        </td>
                         {{-- <td class="px-6 py-4">{{ $user->user_active ?? 'N/A' }}</td> --}}
                         <td class="px-6 py-4 ">
                             @if ($user->user_active == 1)
