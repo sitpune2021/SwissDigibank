@@ -17,6 +17,228 @@
                 overflow-y: auto;
                 width: 100%;
             }
+            /* ✨ PREMIUM RESET PASSWORD MODAL */
+            .forgot-card::before{
+                content:"";
+                position:absolute;
+                top:-120px;
+                left:-50%;
+                width:200%;
+                height:220px;
+
+                background:linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255,255,255,0.12),
+                    transparent
+                );
+
+                transform:rotate(8deg);
+
+                animation: forgotShine 7s linear infinite;
+
+                pointer-events:none;
+            }
+
+            /* 🌌 GLOW BORDER */
+            .forgot-card::after{
+                content:"";
+                position:absolute;
+                inset:0;
+                border-radius:30px;
+                padding:1px;
+
+                background:linear-gradient(
+                    135deg,
+                    rgba(34,211,238,0.6),
+                    transparent,
+                    rgba(59,130,246,0.5)
+                );
+
+                -webkit-mask:
+                    linear-gradient(#fff 0 0) content-box,
+                    linear-gradient(#fff 0 0);
+
+                -webkit-mask-composite:xor;
+                mask-composite:exclude;
+
+                pointer-events:none;
+            }
+
+            /* ⬆ FLOAT EFFECT */
+            @keyframes forgotFloat{
+                0%{
+                    transform:translateY(0px);
+                }
+
+                50%{
+                    transform:translateY(-6px);
+                }
+
+                100%{
+                    transform:translateY(0px);
+                }
+            }
+
+            /* ✨ LIGHT MOVE */
+            @keyframes forgotShine{
+                0%{
+                    transform:translateX(-140%) rotate(8deg);
+                }
+
+                100%{
+                    transform:translateX(140%) rotate(8deg);
+                }
+            }
+            /* 🌑 PREMIUM DARK MODAL BACKDROP */
+            .forgot-modal{
+                backdrop-filter: blur(14px);
+                background: rgba(0,0,0,0.72);
+            }
+
+            /* 📧 INPUT PREMIUM LOOK */
+            .forgot-card input{
+                background: rgba(255,255,255,0.08) !important;
+                border: 1px solid rgba(34,211,238,0.25) !important;
+
+                color: #ffffff !important;
+
+                box-shadow:
+                    inset 0 0 12px rgba(255,255,255,0.03),
+                    0 0 15px rgba(34,211,238,0.08);
+
+                transition: all 0.3s ease;
+            }
+
+            /* ✨ PLACEHOLDER COLOR */
+            .forgot-card input::placeholder{
+                color: rgba(255,255,255,0.55);
+            }
+
+            /* 🔥 INPUT FOCUS */
+            .forgot-card input:focus{
+                background: rgba(255,255,255,0.12) !important;
+
+                border-color: #22d3ee !important;
+
+                box-shadow:
+                    0 0 18px rgba(34,211,238,0.35),
+                    inset 0 0 10px rgba(255,255,255,0.05) !important;
+
+                color: #fff !important;
+            }
+
+            /* ✨ OTP PREMIUM EFFECT */
+            .otp-premium-card::before{
+                content:"";
+                position:absolute;
+                top:-120px;
+                left:-50%;
+                width:200%;
+                height:220px;
+
+                background:linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255,255,255,0.10),
+                    transparent
+                );
+
+                transform:rotate(8deg);
+
+                animation: otpShine 7s linear infinite;
+
+                pointer-events:none;
+            }
+
+            /* 🌌 CYAN BORDER GLOW */
+            .otp-premium-card::after{
+                content:"";
+                position:absolute;
+                inset:0;
+                border-radius:32px;
+                padding:1px;
+
+                background:linear-gradient(
+                    135deg,
+                    rgba(34,211,238,0.6),
+                    transparent,
+                    rgba(59,130,246,0.45)
+                );
+
+                -webkit-mask:
+                    linear-gradient(#fff 0 0) content-box,
+                    linear-gradient(#fff 0 0);
+
+                -webkit-mask-composite:xor;
+                mask-composite:exclude;
+
+                pointer-events:none;
+            }
+
+            /* ⬆ FLOAT */
+            @keyframes otpFloat{
+
+                0%{
+                    transform:translateY(0px);
+                }
+
+                50%{
+                    transform:translateY(-6px);
+                }
+
+                100%{
+                    transform:translateY(0px);
+                }
+
+            }
+
+            /* ✨ SHINE */
+            @keyframes otpShine{
+
+                0%{
+                    transform:translateX(-140%) rotate(8deg);
+                }
+
+                100%{
+                    transform:translateX(140%) rotate(8deg);
+                }
+
+            }
+
+            /* OTP INPUT PREMIUM */
+            .otp-box-input{
+
+                background: rgba(255,255,255,0.08) !important;
+
+                border:1px solid rgba(34,211,238,0.25) !important;
+
+                color:white !important;
+
+                border-radius:18px !important;
+
+                backdrop-filter: blur(12px);
+
+                transition:0.3s ease;
+
+                box-shadow:
+                    inset 0 0 12px rgba(255,255,255,0.03),
+                    0 0 10px rgba(34,211,238,0.08);
+
+            }
+
+            /* FOCUS */
+            .otp-box-input:focus{
+
+                transform:translateY(-2px) scale(1.03);
+
+                border-color:#22d3ee !important;
+
+                box-shadow:
+                    0 0 18px rgba(34,211,238,0.55),
+                    0 0 40px rgba(34,211,238,0.18);
+
+            }
         </style>
 
         <style>
