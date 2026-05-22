@@ -73,8 +73,211 @@ class AuthenticationController extends Controller
         $user->otp_blocked_until = null;
         $user->save();
 
-        Mail::raw("Your OTP is: " . $user->otp, function ($message) use ($user) {
-            $message->to($user->email)->subject('Login OTP');
+        // Mail::raw("Your OTP is: " . $user->otp, function ($message) use ($user) {
+        //     $message->to($user->email)->subject('Login OTP');
+        // });
+
+        Mail::send([], [], function ($message) use ($user) {
+
+            $message->to($user->email)
+                ->subject('🔐 Secure Banking OTP')
+                ->html('
+                
+                <div style="
+                    
+                    padding:40px 20px;
+                    font-family:Arial,sans-serif;
+                ">
+
+                    <div style="
+                        max-width:520px;
+                        margin:auto;
+
+                        background:linear-gradient(
+                            145deg,
+                            rgba(15,23,42,0.98),
+                            rgba(2,6,23,0.95)
+                        );
+
+                        border-radius:28px;
+                        overflow:hidden;
+
+                        border:1px solid rgba(34,211,238,0.25);
+
+                        box-shadow:
+                            0 25px 80px rgba(0,0,0,0.7);
+                    ">
+
+                        <!-- TOP GLOW -->
+                        <div style="
+                            height:5px;
+                            background:linear-gradient(
+                                90deg,
+                                #06b6d4,
+                                #3b82f6
+                            );
+                        "></div>
+
+                        <div style="padding:38px; color:white;">
+
+                            <!-- ICON -->
+                            <div style="text-align:center;">
+
+                                <div style="
+                                    width:78px;
+                                    height:78px;
+                                    margin:auto;
+                                    border-radius:50%;
+
+                                    background:rgba(34,211,238,0.10);
+
+                                    border:1px solid rgba(34,211,238,0.35);
+
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+
+                                    font-size:34px;
+
+                                    box-shadow:
+                                        0 0 30px rgba(34,211,238,0.25);
+                                ">
+                                    🔐
+                                </div>
+
+                            </div>
+
+                            <!-- TITLE -->
+                            <h2 style="
+                                text-align:center;
+                                margin-top:22px;
+                                margin-bottom:10px;
+
+                                font-size:28px;
+                                font-weight:700;
+
+                                letter-spacing:0.5px;
+                            ">
+                                Secure OTP Verification
+                            </h2>
+
+                            <!-- TEXT -->
+                            <p style="
+                                text-align:center;
+                                color:#cbd5e1;
+                                font-size:14px;
+                                line-height:24px;
+                            ">
+                                Use the OTP below to securely access your banking account.
+                            </p>
+
+                            <!-- OTP BOX -->
+                            <div style="
+                                margin:35px 0;
+                                text-align:center;
+                            ">
+
+                                <div style="
+                                    display:inline-block;
+
+                                    padding:18px 40px;
+
+                                    border-radius:24px;
+
+                                    background:
+                                        linear-gradient(
+                                            145deg,
+                                            rgba(34,211,238,0.16),
+                                            rgba(59,130,246,0.10)
+                                        );
+
+                                    border:1px solid rgba(34,211,238,0.30);
+
+                                    box-shadow:
+                                        0 0 35px rgba(34,211,238,0.18);
+                                ">
+
+                                    <span style="
+                                        font-size:44px;
+                                        font-weight:800;
+
+                                        letter-spacing:12px;
+
+                                        color:#22d3ee;
+
+                                        text-shadow:
+                                            0 0 25px rgba(34,211,238,0.45);
+                                    ">
+                                        '.$user->otp.'
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <!-- EXPIRY -->
+                            <div style="
+                                text-align:center;
+                                color:#facc15;
+                                font-size:13px;
+                                margin-top:-8px;
+                            ">
+                                ⏳ OTP valid for only 60 seconds
+                            </div>
+
+                            <!-- SECURITY BOX -->
+                            <div style="
+                                margin-top:30px;
+
+                                background:rgba(255,255,255,0.04);
+
+                                border:1px solid rgba(255,255,255,0.06);
+
+                                border-radius:18px;
+
+                                padding:18px;
+                            ">
+
+                                <div style="
+                                    color:#22d3ee;
+                                    font-size:13px;
+                                    font-weight:700;
+                                    margin-bottom:8px;
+                                ">
+                                    SECURITY NOTICE
+                                </div>
+
+                                <div style="
+                                    color:#cbd5e1;
+                                    font-size:13px;
+                                    line-height:22px;
+                                ">
+                                    Never share this OTP with anyone.
+                                    Our bank never asks for OTP or passwords.
+                                </div>
+
+                            </div>
+
+                            <!-- FOOTER -->
+                            <div style="
+                                margin-top:30px;
+                                text-align:center;
+
+                                color:#94a3b8;
+                                font-size:12px;
+                                line-height:22px;
+                            ">
+                                © '.date('Y').' Secure Banking System<br>
+                                End-to-End Encrypted Authentication
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                ');
         });
 
         return response()->json([
@@ -569,14 +772,216 @@ class AuthenticationController extends Controller
         $token = Str::random(64);
 
         $user->reset_token = $token;
-        $user->reset_token_expires_at = now()->addMinutes(30);
+        $user->reset_token_expires_at = now()->addMinutes(5);
         $user->save();
 
         $link = url('/reset-password/' . $token);
 
-        Mail::raw("Click here to reset password: $link", function ($message) use ($user) {
+        // Mail::raw("Click here to reset password: $link", function ($message) use ($user) {
+        //     $message->to($user->email)
+        //             ->subject('Reset Password');
+        // });
+
+        Mail::send([], [], function ($message) use ($user, $link) {
+
             $message->to($user->email)
-                    ->subject('Reset Password');
+                ->subject('🔐 Secure Password Reset')
+                ->html('
+
+                <div style="
+                    padding:40px 20px;
+                    font-family:Arial,sans-serif;
+                ">
+
+                    <div style="
+                        max-width:540px;
+                        margin:auto;
+
+                        background:linear-gradient(
+                            145deg,
+                            rgba(15,23,42,0.98),
+                            rgba(2,6,23,0.95)
+                        );
+
+                        border-radius:30px;
+                        overflow:hidden;
+
+                        border:1px solid rgba(34,211,238,0.22);
+
+                        box-shadow:
+                            0 25px 80px rgba(0,0,0,0.7);
+                    ">
+
+                        <!-- TOP BAR -->
+                        <div style="
+                            height:5px;
+
+                            background:linear-gradient(
+                                90deg,
+                                #06b6d4,
+                                #3b82f6
+                            );
+                        "></div>
+
+                        <div style="
+                            padding:40px;
+                            color:white;
+                        ">
+
+                            <!-- ICON -->
+                            <div style="text-align:center;">
+
+                                <div style="
+                                    width:82px;
+                                    height:82px;
+                                    margin:auto;
+
+                                    border-radius:50%;
+
+                                    background:rgba(34,211,238,0.10);
+
+                                    border:1px solid rgba(34,211,238,0.35);
+
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+
+                                    font-size:36px;
+
+                                    box-shadow:
+                                        0 0 35px rgba(34,211,238,0.25);
+                                ">
+                                    🔐
+                                </div>
+
+                            </div>
+
+                            <!-- TITLE -->
+                            <h2 style="
+                                text-align:center;
+                                margin-top:24px;
+                                margin-bottom:10px;
+
+                                font-size:28px;
+                                font-weight:700;
+
+                                letter-spacing:0.5px;
+                            ">
+                                Reset Your Password
+                            </h2>
+
+                            <!-- TEXT -->
+                            <p style="
+                                text-align:center;
+                                color:#cbd5e1;
+                                font-size:14px;
+                                line-height:25px;
+                            ">
+                                We received a secure request to reset your account password.
+                                Click the button below to continue.
+                            </p>
+
+                            <!-- BUTTON -->
+                            <div style="
+                                text-align:center;
+                                margin:38px 0;
+                            ">
+
+                                <a href="'.$link.'" style="
+                                    display:inline-block;
+
+                                    padding:16px 34px;
+
+                                    border-radius:18px;
+
+                                    background:linear-gradient(
+                                        90deg,
+                                        #06b6d4,
+                                        #3b82f6
+                                    );
+
+                                    color:white;
+
+                                    text-decoration:none;
+
+                                    font-size:15px;
+                                    font-weight:700;
+                                    letter-spacing:0.5px;
+
+                                    box-shadow:
+                                        0 10px 30px rgba(34,211,238,0.35);
+                                ">
+                                    Reset Password →
+                                </a>
+
+                            </div>
+
+                            <!-- EXPIRY -->
+                            <div style="
+                                text-align:center;
+                                color:#facc15;
+                                font-size:13px;
+                                margin-top:-10px;
+                            ">
+                                ⏳ This secure link expires in 5 minutes
+                            </div>
+
+                            <!-- SECURITY -->
+                            <div style="
+                                margin-top:32px;
+
+                                background:rgba(255,255,255,0.04);
+
+                                border:1px solid rgba(255,255,255,0.06);
+
+                                border-radius:18px;
+
+                                padding:18px;
+                            ">
+
+                                <div style="
+                                    color:#22d3ee;
+                                    font-size:13px;
+                                    font-weight:700;
+                                    margin-bottom:8px;
+                                ">
+                                    SECURITY NOTICE
+                                </div>
+
+                                <div style="
+                                    color:#cbd5e1;
+                                    font-size:13px;
+                                    line-height:22px;
+                                ">
+                                    If you did not request a password reset,
+                                    please ignore this email immediately.
+                                    Your account remains secure.
+                                </div>
+
+                            </div>
+
+                            <!-- FOOTER -->
+                            <div style="
+                                margin-top:34px;
+
+                                text-align:center;
+
+                                color:#94a3b8;
+
+                                font-size:12px;
+                                line-height:22px;
+                            ">
+                                © '.date('Y').' Secure Banking System<br>
+                                End-to-End Encrypted Security
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                ');
         });
 
         return back()->with('success', 'Reset link sent to email');
@@ -587,10 +992,17 @@ class AuthenticationController extends Controller
         $user = User::where('reset_token', $token)->first();
 
         if (!$user || now()->gt($user->reset_token_expires_at)) {
-            return "Link expired";
+            return view('authentication.link-expired');
         }
 
-        return view('authentication.reset-password', compact('token'));
+        // ⏰ expiry format
+        $expiresAt = \Carbon\Carbon::parse($user->reset_token_expires_at)
+                        ->format('d M Y • h:i A');
+
+        return view('authentication.reset-password', compact(
+            'token',
+            'expiresAt'
+        ));
     }
 
     public function updatePassword(Request $request)
