@@ -192,12 +192,12 @@
                         <li class="menu-li {{ $isActive || $submenuActive ? 'active' : '' }}    ">
                             @if ($item->submenus->isNotEmpty())
                             <button style="
-    padding: 8px 14px;
-    color:#ffffff;
-    background: rgba(255,255,255,0.04);
-    border-radius:14px;
-    transition:0.25s;
-    "
+                                padding: 8px 14px;
+                                color:#ffffff;
+                                background: rgba(255,255,255,0.04);
+                                border-radius:14px;
+                                transition:0.25s;
+                                "
                                 class="menu-btn group !bg-transparent dark:!bg-transparent {{ $isActive || $submenuActive ? 'active' : '' }}"
                                 type="button" onclick="
                                     const submenu = this.nextElementSibling;
@@ -233,7 +233,7 @@
                             </button>
 
                             <ul class="submenu {{ $submenuActive ? 'submenu-show' : '' }}">
-                                @foreach ($item->submenus as $sub)
+                                @foreach ($filteredSubmenus as $sub)
                                 @if(auth()->user()->role_id != 1 && !in_array($sub->route, $permissions))
                                     @continue
                                 @endif
